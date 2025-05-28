@@ -45,6 +45,9 @@
     @vite(['resources/css/dashboard.css', 'resources/js/app.js'])
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 
+    {{-- Custom CSS  --}}
+    @stack('css')
+
 </head>
 
 <body x-data="dashboardData()" class="animated-bg min-h-screen">
@@ -576,6 +579,9 @@
     `;
         document.head.appendChild(style);
     </script>
+
+    {{-- Custom JS --}}
+    @stack('js')
 
 </body>
 
