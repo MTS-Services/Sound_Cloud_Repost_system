@@ -40,7 +40,7 @@
     --color-bg-black: #000000;
     --color-bg-primary: oklch(70.4% 0.14 182.503);
     --color-bg-secondary: oklch(69.6% 0.17 162.48);
-    --color-bg-active: #E2F0ED;
+    --color-bg-active: #e7eceb;
 
     --color-bg-dark-primary: #1A1C20;
     --color-bg-dark-secondary: #17181C;
@@ -61,7 +61,7 @@
     --color-text-active: #1CA577;
 
     --color-text-dark-primary: #ffffff99; /* done */
-    --color-text-dark-secondary: #FDFAF6;
+    --color-text-dark-secondary: #222831;
     --color-text-dark-tertiary: #f0fdfa;
     --color-text-dark-muted: #BEC3C4;
     --color-text-dark-active: #1CA577;
@@ -394,7 +394,7 @@
     }
 
     .glass-card {
-        @apply backdrop-blur-md bg-gradient-to-tl from-white/50 to-gradient-light-quaternary/20 shadow-glass-card;
+        @apply backdrop-blur-md bg-gradient-to-tr from-white/50 to-gradient-light-quaternary/20 shadow-glass-card;
     }
 
     .dark .glass-card {
