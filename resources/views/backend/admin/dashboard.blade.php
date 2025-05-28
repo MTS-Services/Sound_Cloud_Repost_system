@@ -1,14 +1,14 @@
 <x-admin::layout>
-
     <x-slot name="title">Admin Dashboard</x-slot>
+    <x-slot name="breadcrumb">Dashboard</x-slot>
     <x-slot name="page_slug">admin-dashboard</x-slot>
 
     <div class="mx-auto space-y-6">
-        
-        <x-admin.theme-toggle/>
+
+        <x-admin.theme-toggle />
 
         <!-- Stats Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6" x-show="activeTab === 'dashboard'"
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6"
             x-transition:enter="transition-all duration-500" x-transition:enter-start="opacity-0 translate-y-8"
             x-transition:enter-end="opacity-100 translate-y-0">
 
@@ -23,7 +23,8 @@
                         +12%
                     </div>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1" x-text="stats.users.toLocaleString()">
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1"
+                    x-text="stats.users.toLocaleString()">
                     12,384</h3>
                 <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Total Users</p>
                 <div class="mt-4 h-1 bg-white/10 rounded-full overflow-hidden">
@@ -93,8 +94,7 @@
         </div>
 
         <!-- Charts Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" x-show="activeTab === 'dashboard'"
-            x-transition:enter="transition-all duration-500 delay-200"
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" x-transition:enter="transition-all duration-500 delay-200"
             x-transition:enter-start="opacity-0 translate-y-8" x-transition:enter-end="opacity-100 translate-y-0">
 
             <!-- Main Chart -->
@@ -111,7 +111,8 @@
                             <option value="weekly">Weekly</option>
                             <option value="daily">Daily</option>
                         </select>
-                        <button class="btn-primary text-text-white text-sm px-4 py-2 rounded-xl flex items-center gap-2">
+                        <button
+                            class="btn-primary text-text-white text-sm px-4 py-2 rounded-xl flex items-center gap-2">
                             <i data-lucide="download" class="w-4 h-4"></i>
                             Export
                         </button>
@@ -337,7 +338,8 @@
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                                        <span class="text-text-white text-xs font-medium" x-text="project.team"></span>
+                                        <span class="text-text-white text-xs font-medium"
+                                            x-text="project.team"></span>
                                     </div>
                                 </div>
                             </div>
@@ -345,7 +347,8 @@
                             <p class="text-text-dark-primary text-sm mb-4" x-text="project.description"></p>
                             <div class="flex items-center justify-between mb-3">
                                 <span class="text-text-dark-primary text-sm">Progress</span>
-                                <span class="text-text-white text-sm font-medium" x-text="project.progress + '%'"></span>
+                                <span class="text-text-white text-sm font-medium"
+                                    x-text="project.progress + '%'"></span>
                             </div>
                             <div class="h-2 bg-white/10 rounded-full overflow-hidden">
                                 <div class="h-full bg-gradient-to-r from-blue-400 to-purple-500 rounded-full transition-all duration-1000"

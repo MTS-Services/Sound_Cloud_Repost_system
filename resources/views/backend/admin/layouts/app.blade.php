@@ -61,7 +61,7 @@
         <div class="flex-1 flex flex-col min-h-screen custom-scrollbar overflow-y-auto">
             <!-- Header -->
 
-            <x-admin::header />
+            <x-admin::header :breadcrumb="$breadcrumb"/>
 
             <!-- Main Content Area -->
             <main class="flex-1 p-4 lg:p-6">
