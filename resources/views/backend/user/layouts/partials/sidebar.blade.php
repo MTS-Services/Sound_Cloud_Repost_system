@@ -1,14 +1,17 @@
  <!-- Mobile menu button -->
-    <div class="lg:hidden fixed top-4 left-4 z-50">
-        <button id="mobile-menu-btn" class="p-2 rounded-md bg-white shadow-md">
-            <i data-lucide="menu" class="w-6 h-6"></i>
+    <div class="lg:hidden fixed top-4 left-4 z-35">
+        <button id="mobile-menu-btn" class="p-2 rounded-md bg-white shadow-sm hover:text-black">
+            <i data-lucide="menu" class="w-6 h-6 text-gray-500"></i>
         </button>
     </div>
 
     <!-- Sidebar -->
     <div id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-40">
-        <div class="p-6">
+        <div class="p-6 flex justify-between">
             <h1 class="text-xl font-bold text-orange-600">{{ __('RepostChain') }}</h1>
+            <span class="p-2 rounded-md bg-white shadow-sm lg:hidden" id="close_menu">
+                <i data-lucide="x" class="w-4 h-4 text-gray-500"></i>
+            </span>
         </div>
         
         <!-- Submit Track Button -->

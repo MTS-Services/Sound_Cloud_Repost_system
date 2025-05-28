@@ -86,10 +86,10 @@
             </div>
 
             <!-- Tab Content -->
-            <div id="overview" class="tab-content p-6">
+            <div id="overview" class="tab-pane p-6 block">
                 <!-- Statistics Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-orange-50 p-6 rounded-lg">
+                    <div class="bg-orange-50 p-6 rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
                         <div class="flex items-center">
                             <div class="bg-orange-100 p-3 rounded-lg mr-4">
                                 <i data-lucide="music" class="w-6 h-6 text-orange-600"></i>
@@ -101,7 +101,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-blue-50 p-6 rounded-lg">
+                    <div class="bg-blue-50 p-6 rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
                         <div class="flex items-center">
                             <div class="bg-blue-100 p-3 rounded-lg mr-4">
                                 <i data-lucide="repeat" class="w-6 h-6 text-blue-600"></i>
@@ -113,7 +113,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-green-50 p-6 rounded-lg">
+                    <div class="bg-green-50 p-6 rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
                         <div class="flex items-center">
                             <div class="bg-green-100 p-3 rounded-lg mr-4">
                                 <i data-lucide="users" class="w-6 h-6 text-green-600"></i>
@@ -125,7 +125,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-yellow-50 p-6 rounded-lg">
+                    <div class="bg-yellow-50 p-6 rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
                         <div class="flex items-center">
                             <div class="bg-yellow-100 p-3 rounded-lg mr-4">
                                 <i data-lucide="trending-up" class="w-6 h-6 text-yellow-600"></i>
@@ -191,7 +191,7 @@
                 </div>
             </div>
 
-            <div id="transactions" class="tab-content p-6 hidden">
+            <div id="transactions" class="tab-pane p-6 hidden">
                 <div class="text-center py-12">
                     <i data-lucide="credit-card" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Credit Transactions</h3>
@@ -199,7 +199,7 @@
                 </div>
             </div>
 
-            <div id="history" class="tab-content p-6 hidden">
+            <div id="history" class="tab-pane p-6 hidden">
                 <div class="text-center py-12">
                     <i data-lucide="history" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Repost History</h3>
@@ -214,7 +214,7 @@
     <script>
         // Tab functionality (only for profile page)
         const tabBtns = document.querySelectorAll('.tab-btn');
-        const tabContents = document.querySelectorAll('.tab-content');
+        const tabContents = document.querySelectorAll('.tab-pane');
 
         tabBtns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -236,7 +236,7 @@
             });
         });
 
-           // // Animate progress circle on load
+        // // Animate progress circle on load
         // window.addEventListener('load', () => {
         //     const progressCircle = document.querySelector('.progress-circle path:last-child');
         //     if (progressCircle) {
