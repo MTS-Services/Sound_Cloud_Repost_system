@@ -11,8 +11,4 @@ class DashboardController extends Controller
     {
         return view('backend.admin.dashboard');
     }
-    public function dashboard2nd()
-    {
-        return view('backend.admin.2nd');
-    }
 }

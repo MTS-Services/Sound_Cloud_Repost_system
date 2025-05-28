@@ -1,5 +1,5 @@
 @props([
-    'icon' => '',
+    'icon' => 'folder', // Default parent icon
     'name' => 'Multi Navlink',
     'boxicon' => false,
     'active' => '',
@@ -10,6 +10,11 @@
 ])
 
 @php
+    // Default icons for different levels
+    $defaultParentIcon = $icon ?: 'folder';
+    $defaultSubitemIcon = 'file';
+    $defaultMultiSubitemIcon = 'circle';
+
     // Check if main item or any sub-item is active
     $isMainActive = $type === 'single' && $page_slug == $active;
     $isDropdownActive = false;
@@ -50,9 +55,9 @@
             <div
                 class="w-8 h-8 bg-bg-black/10 dark:bg-bg-white/10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                 @if ($boxicon)
-                    <i class="{{ $icon }} text-blue"></i>
+                    <i class="{{ $defaultParentIcon }} text-blue"></i>
                 @else
-                    <i data-lucide="{{ $icon }}"
+                    <i data-lucide="{{ $defaultParentIcon }}"
                         class="w-5 h-5 stroke-bg-black dark:stroke-bg-white flex-shrink-0"></i>
                 @endif
             </div>
@@ -74,9 +79,9 @@
             <div
                 class="w-8 h-8 bg-bg-black/10 dark:bg-bg-white/10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                 @if ($boxicon)
-                    <i class="{{ $icon }} text-blue"></i>
+                    <i class="{{ $defaultParentIcon }} text-blue"></i>
                 @else
-                    <i data-lucide="{{ $icon }}"
+                    <i data-lucide="{{ $defaultParentIcon }}"
                         class="w-5 h-5 stroke-bg-black dark:stroke-bg-white flex-shrink-0"></i>
                 @endif
             </div>
@@ -86,18 +91,12 @@
                 x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0"
                 x-transition:leave="transition-all duration-200" x-transition:leave-start="opacity-100 translate-x-0"
                 x-transition:leave-end="opacity-0 -translate-x-4"
-                class="font-medium {{ $isAnyActive ? 'text-text-black dark:text-text-white' : 'text-text-light-secondary dark:text-text-dark-primary' }}">{{ __($name) }}</span>
+                class="font-medium text-left {{ $isAnyActive ? 'text-text-black dark:text-text-white' : 'text-text-light-secondary dark:text-text-dark-primary' }}">{{ __($name) }}</span>
 
             <!-- Dropdown Arrow -->
             <div x-show="(desktop && sidebar_expanded) || (!desktop && mobile_menu_open)"
                 class="ml-auto transition-transform duration-200" :class="open ? 'rotate-180' : ''">
                 <i data-lucide="chevron-down" class="w-4 h-4 stroke-bg-black dark:stroke-bg-white"></i>
-            </div>
-
-            <!-- Active Indicator -->
-            <div x-show="(desktop && sidebar_expanded) || (!desktop && mobile_menu_open)"
-                class="ml-auto {{ $isAnyActive ? 'block' : 'hidden' }}">
-                <div class="w-2 h-2 bg-violet-400 dark:bg-violet-300 rounded-full animate-pulse"></div>
             </div>
         </button>
     @endif
@@ -114,26 +113,26 @@
             class="ml-4 mt-2 space-y-1 border-l-2 border-bg-black/10 dark:border-bg-white/10 pl-4">
 
             @foreach ($items as $item)
+                @php
+                    // Set default icon for subitem level
+                    $subitemIcon = $item['icon'] ?? $defaultSubitemIcon;
+                    $subitemBoxicon = $item['boxicon'] ?? false;
+                @endphp
+
                 @if (isset($item['type']) && $item['type'] === 'single')
                     <!-- Single Navigation Item -->
                     <a href="{{ $item['route'] }}"
                         class="sidebar-item flex items-center gap-4 p-2 rounded-lg hover:bg-bg-black/5 dark:hover:bg-bg-white/5 text-text-white transition-all duration-200 group {{ isset($item['active']) && $page_slug == $item['active'] ? 'bg-violet-50 dark:bg-violet-900/20' : '' }}">
                         <div
                             class="w-6 h-6 bg-bg-black/5 dark:bg-bg-white/5 rounded-md flex items-center justify-center group-hover:scale-110 transition-transform">
-                            @if (isset($item['boxicon']) && $item['boxicon'])
-                                <i class="{{ $item['icon'] }} text-xs"></i>
+                            @if ($subitemBoxicon)
+                                <i class="{{ $subitemIcon }} text-xs"></i>
                             @else
-                                <i data-lucide="{{ $item['icon'] }}" class="w-3 h-3 stroke-current"></i>
+                                <i data-lucide="{{ $subitemIcon }}" class="w-3 h-3 stroke-current"></i>
                             @endif
                         </div>
                         <span
-                            class="font-medium text-sm {{ isset($item['active']) && $page_slug == $item['active'] ? 'text-violet-600 dark:text-violet-400' : 'text-text-light-secondary dark:text-text-dark-primary' }}">{{ __($item['name']) }}</span>
-                        @if (isset($item['active']) && $page_slug == $item['active'])
-                            <div class="ml-auto">
-                                <div class="w-1.5 h-1.5 bg-violet-400 dark:bg-violet-300 rounded-full animate-pulse">
-                                </div>
-                            </div>
-                        @endif
+                            class="font-medium text-sm  text-left {{ isset($item['active']) && $page_slug == $item['active'] ? 'text-violet-600 dark:text-violet-400' : 'text-text-light-secondary dark:text-text-dark-primary' }}">{{ __($item['name']) }}</span>
                     </a>
                 @elseif (isset($item['subitems']) && count($item['subitems']) > 0)
                     <!-- Multi-dropdown item -->
@@ -151,10 +150,10 @@
                             class="flex items-center gap-3 p-2 rounded-lg hover:bg-bg-black/5 dark:hover:bg-bg-white/5 text-text-light-secondary dark:text-text-dark-primary transition-all duration-200 w-full group">
                             <div
                                 class="w-6 h-6 bg-bg-black/5 dark:bg-bg-white/5 rounded-md flex items-center justify-center group-hover:scale-110 transition-transform">
-                                @if (isset($item['boxicon']) && $item['boxicon'])
-                                    <i class="{{ $item['icon'] }} text-xs"></i>
+                                @if ($subitemBoxicon)
+                                    <i class="{{ $subitemIcon }} text-xs"></i>
                                 @else
-                                    <i data-lucide="{{ $item['icon'] }}" class="w-3 h-3 stroke-current"></i>
+                                    <i data-lucide="{{ $subitemIcon }}" class="w-3 h-3 stroke-current"></i>
                                 @endif
                             </div>
                             <span class="font-medium text-sm flex-1 text-left">{{ __($item['name']) }}</span>
@@ -173,14 +172,19 @@
                             class="ml-6 mt-1 space-y-1 border-l border-bg-black/5 dark:border-bg-white/5 pl-3">
 
                             @foreach ($item['subitems'] as $subitem)
+                                @php
+                                    // Set default icon for multi-subitem level
+                                    $multiSubitemIcon = $subitem['icon'] ?? $defaultMultiSubitemIcon;
+                                    $multiSubitemBoxicon = $subitem['boxicon'] ?? false;
+                                @endphp
                                 <a href="{{ $subitem['route'] }}"
                                     class="flex items-center gap-3 p-2 rounded-lg hover:bg-bg-black/5 dark:hover:bg-bg-white/5 transition-all duration-200 group {{ isset($subitem['active']) && $page_slug == $subitem['active'] ? 'bg-violet-50 dark:bg-violet-900/20' : '' }}">
                                     <div
                                         class="w-5 h-5 bg-bg-black/5 dark:bg-bg-white/5 rounded flex items-center justify-center group-hover:scale-110 transition-transform">
-                                        @if (isset($subitem['boxicon']) && $subitem['boxicon'])
-                                            <i class="{{ $subitem['icon'] }} text-xs"></i>
+                                        @if ($multiSubitemBoxicon)
+                                            <i class="{{ $multiSubitemIcon }} text-xs"></i>
                                         @else
-                                            <i data-lucide="{{ $subitem['icon'] }}"
+                                            <i data-lucide="{{ $multiSubitemIcon }}"
                                                 class="w-2.5 h-2.5 stroke-current"></i>
                                         @endif
                                     </div>
@@ -203,10 +207,10 @@
                         class="flex items-center gap-3 p-2 rounded-lg hover:bg-bg-black/5 dark:hover:bg-bg-white/5 transition-all duration-200 group {{ isset($item['active']) && $page_slug == $item['active'] ? 'bg-violet-50 dark:bg-violet-900/20' : '' }}">
                         <div
                             class="w-6 h-6 bg-bg-black/5 dark:bg-bg-white/5 rounded-md flex items-center justify-center group-hover:scale-110 transition-transform">
-                            @if (isset($item['boxicon']) && $item['boxicon'])
-                                <i class="{{ $item['icon'] }} text-xs"></i>
+                            @if ($subitemBoxicon)
+                                <i class="{{ $subitemIcon }} text-xs"></i>
                             @else
-                                <i data-lucide="{{ $item['icon'] }}" class="w-3 h-3 stroke-current"></i>
+                                <i data-lucide="{{ $subitemIcon }}" class="w-3 h-3 stroke-current"></i>
                             @endif
                         </div>
                         <span
