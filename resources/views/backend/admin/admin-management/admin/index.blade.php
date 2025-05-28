@@ -71,26 +71,23 @@
             </div>
 
             <!-- DataTable Container -->
-            <div
-                class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table id="dataTable" class="table w-full table-zebra">
-                        <thead class="bg-gray-50 dark:bg-gray-700">
-                            <tr>
-                                <th class="text-left font-semibold text-gray-900 dark:text-gray-100">ID</th>
-                                <th class="text-left font-semibold text-gray-900 dark:text-gray-100">Name</th>
-                                <th class="text-left font-semibold text-gray-900 dark:text-gray-100">Email</th>
-                                <th class="text-left font-semibold text-gray-900 dark:text-gray-100">Role</th>
-                                <th class="text-left font-semibold text-gray-900 dark:text-gray-100">Status</th>
-                                <th class="text-left font-semibold text-gray-900 dark:text-gray-100">Created Date</th>
-                                <th class="text-left font-semibold text-gray-900 dark:text-gray-100">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Dynamic data will be populated here -->
-                        </tbody>
-                    </table>
-                </div>
+            <div class="overflow-x-auto">
+                <table id="dataTable" class="table w-full table-zebra">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th class="text-left font-semibold text-gray-900 dark:text-gray-100">ID</th>
+                            <th class="text-left font-semibold text-gray-900 dark:text-gray-100">Name</th>
+                            <th class="text-left font-semibold text-gray-900 dark:text-gray-100">Email</th>
+                            <th class="text-left font-semibold text-gray-900 dark:text-gray-100">Role</th>
+                            <th class="text-left font-semibold text-gray-900 dark:text-gray-100">Status</th>
+                            <th class="text-left font-semibold text-gray-900 dark:text-gray-100">Created Date</th>
+                            <th class="text-left font-semibold text-gray-900 dark:text-gray-100">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic data will be populated here -->
+                    </tbody>
+                </table>
             </div>
         </div>
 
