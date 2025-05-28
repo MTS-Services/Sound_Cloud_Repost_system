@@ -33,7 +33,10 @@
             }
         })();
     </script>
-    <script src="{{ asset('assets/js/theme-toggle.js') }}"></script>
+    {{-- toggle theme for system, light and Dark Mode --}}
+    {{-- <script src="{{ asset('assets/js/toggle-theme-3.js') }}"></script> --}}
+    {{-- Toggle theme only dark mode and light mode --}}
+    <script src="{{ asset('assets/js/toggle-theme.js') }}"></script>
 
     @vite(['resources/css/dashboard.css', 'resources/js/app.js'])
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -55,13 +58,13 @@
         <x-admin::side-bar />
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col min-h-screen">
+        <div class="flex-1 flex flex-col min-h-screen custom-scrollbar overflow-y-auto">
             <!-- Header -->
 
             <x-admin::header />
 
             <!-- Main Content Area -->
-            <main class="flex-1 p-4 lg:p-6 custom-scrollbar overflow-y-auto">
+            <main class="flex-1 p-4 lg:p-6">
                 {{ $slot }}
             </main>
         </div>
@@ -80,6 +83,8 @@
             return {
                 // Responsive state
                 desktop: window.innerWidth >= 1024,
+                mobile: window.innerWidth <= 768,
+                tablet: window.innerWidth < 1024,
                 sidebar_expanded: window.innerWidth >= 1024,
                 mobile_menu_open: false,
 
@@ -379,29 +384,23 @@
                     }
                 },
 
-                toggleTheme() {
-                    this.darkMode = !this.darkMode;
-                    // Add theme switching logic here
-                    console.log('Theme toggled:', this.darkMode ? 'dark' : 'light');
-                },
-
                 toggleNotifications() {
                     this.showNotifications = !this.showNotifications;
                 },
 
-                handleSearch() {
-                    if (this.searchQuery.length > 0) {
-                        console.log('Searching for:', this.searchQuery);
-                        // Add search logic here
-                    }
-                },
+                // handleSearch() {
+                //     if (this.searchQuery.length > 0) {
+                //         console.log('Searching for:', this.searchQuery);
+                //         // Add search logic here
+                //     }
+                // },
 
-                focusSearch() {
-                    const searchInput = document.querySelector('input[type="text"]');
-                    if (searchInput) {
-                        searchInput.focus();
-                    }
-                },
+                // focusSearch() {
+                //     const searchInput = document.querySelector('input[type="text"]');
+                //     if (searchInput) {
+                //         searchInput.focus();
+                //     }
+                // },
 
                 showDetails(type) {
                     console.log('Showing details for:', type);

@@ -8,18 +8,13 @@ use Illuminate\View\Component;
 
 class Notification extends Component
 {
-    public $active;
-
-    public function __construct($active = null)
+    public function __construct()
     {
-        $this->active = $active;
+        //
     }
 
-    /**
-     * Get the view / contents that represent the component.
-     */
     public function render(): View|Closure|string
     {
-        return view('components.admin.notification');
+        return view('backend.admin.layouts.partials.notification');
     }
 }

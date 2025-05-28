@@ -60,14 +60,14 @@
     --color-text-black: #000000;
     --color-text-active: #1CA577;
 
-    --color-text-dark-primary: #ffffff99;
+    --color-text-dark-primary: #ffffff99; /* done */
     --color-text-dark-secondary: #FDFAF6;
     --color-text-dark-tertiary: #f0fdfa;
     --color-text-dark-muted: #BEC3C4;
     --color-text-dark-active: #1CA577;
 
-    --color-text-light-primary: #7A8783;
-    --color-text-light-secondary: #FDFAF6;
+    --color-text-light-primary: #1e2939; /* done */
+    --color-text-light-secondary: #4a5565; /* done */
     --color-text-light-tertiary: #F7F7F7;
     --color-text-light-muted: #BEC3C4;
     --color-text-light-active: #1CA577;

@@ -64,10 +64,11 @@
                 }">
                 <i data-lucide="search" class="group-hover:text-text-active transition-all duration-200 ease-in-out"
                     :class="focus ? 'animate-scalePulse' : ''"></i>
+                    
             </button>
 
             <!-- Search Results Dropdown with smooth transition -->
-            <div class="absolute top-[130%] w-full max-w-full bg-bg-light-tertiary dark:bg-bg-dark-tertiary z-10 rounded-2xl overflow-hidden shadow-lg"
+            <div class="absolute top-[130%] w-full max-w-full bg-bg-light-primary dark:bg-bg-dark-tertiary z-10 rounded-2xl overflow-hidden shadow-lg"
                 x-show="focus && (searchResults.length > 0 || value.length > 0)"
                 x-transition:enter="transition-opacity ease-out duration-300"
                 x-transition:enter-start="opacity-0 transform translate-y-3"
@@ -80,7 +81,7 @@
                     'left-0': !tablet,
                 }">
                 <div class="text-center relative h-fit min-h-24 max-h-56 overflow-auto">
-                    <div class="sticky top-0 z-20 bg-bg-light-tertiary dark:bg-bg-dark-tertiary">
+                    <div class="sticky top-0 z-20 bg-bg-light-secondary dark:bg-bg-dark-tertiary">
                         <div class="p-2">
                             <h4 class="font-medium">{{ __('Search Results for') }} "<span class="font-normal break-all"
                                     x-text="value"></span>"</h4>
@@ -88,7 +89,7 @@
                         </div>
                     </div>
 
-                    <div class="p-4 pt-0">
+                    <div class="py-4 pt-0">
                         <!-- Displaying search results -->
                         <ul class="space-y-2">
                             <template x-for="result in searchResults" :key="result.id">
