@@ -59,6 +59,29 @@
                 active="admin-dashboard" :page_slug="$active" />
 
             {{-- 2. SIMPLE DROPDOWN (multiple items under one parent) --}}
+
+            <x-admin.navlink type="dropdown" icon="users" name="Admin Management" :page_slug="$active"
+                :items="[
+                    [
+                        'name' => 'Admin',
+                        'route' => '#',
+                        'icon' => 'user',
+                        'active' => 'admin-users',
+                    ],
+                    [
+                        'name' => 'Role',
+                        'route' => '#',
+                        'icon' => 'shield-alert',
+                        'active' => 'admin-users-add',
+                    ],
+                    [
+                        'name' => 'Permission',
+                        'route' => '#',
+                        'icon' => 'shield',
+                        'active' => 'admin-users-roles',
+                    ],
+                ]" />
+
             <x-admin.navlink type="dropdown" icon="users" name="User Management" :page_slug="$active"
                 :items="[
                     [
