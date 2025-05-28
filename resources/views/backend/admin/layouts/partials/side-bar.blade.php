@@ -53,8 +53,368 @@
         <!-- Navigation Menu -->
         <nav class="p-2 space-y-2">
             <!-- Dashboard -->
-            <x-admin.single-navlink active="admin-dashboard" icon="layout-dashboard" :page_slug="$active" name="Dashboard" :route="route('admin.dashboard')" />
-            <x-admin.single-navlink active="admin-dashboard-2" icon="layout-dashboard" :page_slug="$active" name="Dashboard 2nd" :route="route('admin.dashboard.2')" />
+
+            {{-- 1. SINGLE NAVLINK (replaces your original single-navlink) --}}
+            <x-admin.multi-navlink type="single" icon="layout-dashboard" name="Dashboard" :route="route('admin.dashboard')"
+                active="admin-dashboard" :page_slug="$active" />
+
+            {{-- 2. SIMPLE DROPDOWN (multiple items under one parent) --}}
+            <x-admin.multi-navlink type="dropdown" icon="users" name="User Management" :page_slug="$active"
+                :items="[
+                    [
+                        'name' => 'All Users',
+                        'route' => route('admin.dashboard'),
+                        'icon' => 'user',
+                        'active' => 'admin-dashboard',
+                    ],
+                    [
+                        'name' => 'Add User',
+                        'route' => route('admin.dashboard.2'),
+                        'icon' => 'user-plus',
+                        'active' => 'admin-users-create',
+                    ],
+                    [
+                        'name' => 'User Roles',
+                        'route' => '#',
+                        'icon' => 'shield',
+                        'active' => 'admin-users-roles',
+                    ],
+                ]" />
+
+            {{-- 3. MIXED NAVIGATION (Single items + Dropdowns in one parent) --}}
+            <x-admin.multi-navlink type="dropdown" icon="shopping-cart" name="E-commerce" :page_slug="$active"
+                :items="[
+                    [
+                        'type' => 'single',
+                        'name' => 'Dashboard',
+                       'route' => '#',
+                        'icon' => 'bar-chart-3',
+                        'active' => 'admin-ecommerce-dashboard',
+                    ],
+                    [
+                        'name' => 'Products',
+                        'icon' => 'package',
+                        'subitems' => [
+                            [
+                                'name' => 'All Products',
+                                'route' => '#',
+                                'icon' => 'list',
+                                'active' => 'admin-products-index',
+                            ],
+                            [
+                                'name' => 'Add Product',
+                                'route' => '#',
+                                'icon' => 'plus',
+                                'active' => 'admin-products-create',
+                            ],
+                            [
+                                'name' => 'Categories',
+                                'route' => '#',
+                                'icon' => 'tag',
+                                'active' => 'admin-products-categories',
+                            ],
+                        ],
+                    ],
+                    [
+                        'type' => 'single',
+                        'name' => 'Inventory',
+                        'route' => '#',
+                        'icon' => 'warehouse',
+                        'active' => 'admin-inventory-index',
+                    ],
+                    [
+                        'name' => 'Orders',
+                        'icon' => 'shopping-bag',
+                        'subitems' => [
+                            [
+                                'name' => 'All Orders',
+                                'route' => '#',
+                                'icon' => 'list',
+                                'active' => 'admin-orders-index',
+                            ],
+                            [
+                                'name' => 'Pending Orders',
+                                'route' => '#',
+                                'icon' => 'clock',
+                                'active' => 'admin-orders-pending',
+                            ],
+                        ],
+                    ],
+                    [
+                        'type' => 'single',
+                        'name' => 'Reports',
+                        'route' => '#',
+                        'icon' => 'file-text',
+                        'active' => 'admin-ecommerce-reports',
+                    ],
+                ]" />
+
+            {{-- 4.{{-- Single Dropdown Usage --}}
+            <x-admin.dropdown-navlink icon="users" name="User Management" :page_slug="$active" :items="[
+                [
+                    'name' => 'All Users',
+                    'route' => '#',
+                    'icon' => 'user',
+                    'active' => 'admin-users-index',
+                ],
+                [
+                    'name' => 'Add User',
+                    'route' => '#',
+                    'icon' => 'user-plus',
+                    'active' => 'admin-users-create',
+                ],
+                [
+                    'name' => 'User Roles',
+                    'route' => '#',
+                    'icon' => 'shield',
+                    'active' => 'admin-users-roles',
+                ],
+            ]" />
+
+            {{-- Multi-Dropdown Usage --}}
+            <x-admin.dropdown-navlink icon="shopping-cart" name="E-commerce" :page_slug="$active" :items="[
+                [
+                    'name' => 'Products',
+                    'icon' => 'package',
+                    'subitems' => [
+                        [
+                            'name' => 'All Products',
+                            'route' => '#',
+                            'icon' => 'list',
+                            'active' => 'admin-products-index',
+                        ],
+                        [
+                            'name' => 'Add Product',
+                            'route' => '#',
+                            'icon' => 'plus',
+                            'active' => 'admin-products-create',
+                        ],
+                        [
+                            'name' => 'Categories',
+                            'route' => '#',
+                            'icon' => 'tag',
+                            'active' => 'admin-products-categories',
+                        ],
+                    ],
+                ],
+                [
+                    'name' => 'Orders',
+                    'icon' => 'shopping-bag',
+                    'subitems' => [
+                        [
+                            'name' => 'All Orders',
+                            'route' => '#',
+                            'icon' => 'list',
+                            'active' => 'admin-orders-index',
+                        ],
+                        [
+                            'name' => 'Pending Orders',
+                            'route' => '#',
+                            'icon' => 'clock',
+                            'active' => 'admin-orders-pending',
+                        ],
+                        [
+                            'name' => 'Completed Orders',
+                            'route' => '#',
+                            'icon' => 'check-circle',
+                            'active' => 'admin-orders-completed',
+                        ],
+                    ],
+                ],
+                [
+                    'name' => 'Reports',
+                    'route' => '#',
+                    'icon' => 'bar-chart',
+                    'active' => 'admin-ecommerce-reports',
+                ],
+            ]" />
+
+            {{-- Mixed Dropdown (Single + Multi items in same dropdown) --}}
+            <x-admin.dropdown-navlink icon="settings" name="Settings" :page_slug="$active" :items="[
+                [
+                    'name' => 'General Settings',
+                    'route' => '#',
+                    'icon' => 'sliders',
+                    'active' => 'admin-settings-general',
+                ],
+                [
+                    'name' => 'Email Settings',
+                    'icon' => 'mail',
+                    'subitems' => [
+                        [
+                            'name' => 'SMTP Config',
+                            'route' => '#',
+                            'icon' => 'server',
+                            'active' => 'admin-settings-email-smtp',
+                        ],
+                        [
+                            'name' => 'Email Templates',
+                            'route' => '#',
+                            'icon' => 'file-text',
+                            'active' => 'admin-settings-email-templates',
+                        ],
+                    ],
+                ],
+                [
+                    'name' => 'Security',
+                    'route' => '#',
+                    'icon' => 'lock',
+                    'active' => 'admin-settings-security',
+                ],
+            ]" />
+
+            {{-- Using with Boxicons instead of Lucide --}}
+            <x-admin.dropdown-navlink icon="bx bx-cog" :boxicon="true" name="System" :page_slug="$active"
+                :items="[
+                    [
+                        'name' => 'Cache Management',
+                        'route' => '#',
+                        'icon' => 'bx bx-data',
+                        'boxicon' => true,
+                        'active' => 'admin-system-cache',
+                    ],
+                    [
+                        'name' => 'Logs',
+                        'route' => '#',
+                        'icon' => 'bx bx-file',
+                        'boxicon' => true,
+                        'active' => 'admin-system-logs',
+                    ],
+                ]" />
+
+            {{-- <x-admin.single-navlink active="admin-dashboard" icon="layout-dashboard" :page_slug="$active" name="Dashboard"
+                :route="route('admin.dashboard')" />
+            <x-admin.single-navlink active="admin-dashboard-2" icon="layout-dashboard" :page_slug="$active"
+                name="Dashboard 2nd" :route="route('admin.dashboard.2')" />
+
+            <x-admin.dropdown-navlink icon="users" name="Admin Management" :page_slug="$active" :items="[
+                [
+                    'name' => 'All Users',
+                    'route' => route('admin.dashboard'),
+                    'icon' => 'user',
+                    'active' => 'admin-dashboard',
+                ],
+                [
+                    'name' => 'Add User',
+                    'route' => route('admin.dashboard.2'),
+                    'icon' => 'user-plus',
+                    'active' => 'admin-dashboard-2',
+                ],
+                [
+                    'name' => 'User Roles',
+                    'route' => '#',
+                    'icon' => 'shield',
+                    'active' => 'admin-users-roles',
+                ],
+            ]" />
+            <x-admin.dropdown-navlink icon="shopping-cart" name="E-commerce" :page_slug="$active" :items="[
+                [
+                    'name' => 'Products',
+                    'icon' => 'package',
+                    'subitems' => [
+                        [
+                            'name' => 'All Products',
+                            'route' => '#',
+                            'icon' => 'list',
+                            'active' => 'admin-products-index',
+                        ],
+                        [
+                            'name' => 'Add Product',
+                            'route' => '#',
+                            'icon' => 'plus',
+                            'active' => 'admin-products-create',
+                        ],
+                        [
+                            'name' => 'Categories',
+                            'route' => '#',
+                            'icon' => 'tag',
+                            'active' => 'admin-products-categories',
+                        ],
+                    ],
+                ],
+                [
+                    'name' => 'Orders',
+                    'icon' => 'shopping-bag',
+                    'subitems' => [
+                        [
+                            'name' => 'All Orders',
+                            'route' => '#',
+                            'icon' => 'list',
+                            'active' => 'admin-orders-index',
+                        ],
+                        [
+                            'name' => 'Pending Orders',
+                            'route' => '#',
+                            'icon' => 'clock',
+                            'active' => 'admin-orders-pending',
+                        ],
+                        [
+                            'name' => 'Completed Orders',
+                            'route' => '#',
+                            'icon' => 'check-circle',
+                            'active' => 'admin-orders-completed',
+                        ],
+                    ],
+                ],
+                [
+                    'name' => 'Reports',
+                    'route' => '#',
+                    'icon' => 'bar-chart',
+                    'active' => 'admin-ecommerce-reports',
+                ],
+            ]" />
+            <x-admin.dropdown-navlink icon="settings" name="Settings" :page_slug="$active" :items="[
+                [
+                    'name' => 'General Settings',
+                    'route' => '#',
+                    'icon' => 'sliders',
+                    'active' => 'admin-settings-general',
+                ],
+                [
+                    'name' => 'Email Settings',
+                    'icon' => 'mail',
+                    'subitems' => [
+                        [
+                            'name' => 'SMTP Config',
+                            'route' => '#',
+                            'icon' => 'server',
+                            'active' => 'admin-settings-email-smtp',
+                        ],
+                        [
+                            'name' => 'Email Templates',
+                            'route' => '#',
+                            'icon' => 'file-text',
+                            'active' => 'admin-settings-email-templates',
+                        ],
+                    ],
+                ],
+                [
+                    'name' => 'Security',
+                    'route' => '#',
+                    'icon' => 'lock',
+                    'active' => 'admin-settings-security',
+                ],
+            ]" />
+            <x-admin.dropdown-navlink icon="bx bx-cog" :boxicon="true" name="System" :page_slug="$active"
+                :items="[
+                    [
+                        'name' => 'Cache Management',
+                        'route' => '#',
+                        'icon' => 'bx bx-data',
+                        'boxicon' => true,
+                        'active' => 'admin-system-cache',
+                    ],
+                    [
+                        'name' => 'Logs',
+                        'route' => '#',
+                        'icon' => 'bx bx-file',
+                        'boxicon' => true,
+                        'active' => 'admin-system-logs',
+                    ],
+                ]" /> --}}
+
+
+
 
             <!-- Analytics -->
             {{-- <a href="#" @click="setActiveTab('analytics')" :class="{ 'active': activeTab === 'analytics' }"
