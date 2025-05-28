@@ -3,7 +3,7 @@
     <x-slot name="breadcrumb">Dashboard</x-slot>
     <x-slot name="page_slug">admin-dashboard</x-slot>
 
-    <div class="mx-auto space-y-6">
+    <section>
         <!-- Stats Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6"
             x-transition:enter="transition-all duration-500" x-transition:enter-start="opacity-0 translate-y-8"
@@ -174,5 +174,5 @@
                 </div>
             </div>
         </div> --}}
-    </div>
+    </section>
 </x-admin::layout>

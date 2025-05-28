@@ -64,9 +64,9 @@
                 :items="[
                     [
                         'name' => 'Admin',
-                        'route' => '#',
+                        'route' => route('am.admin.index'),
                         'icon' => 'user',
-                        'active' => 'admin-users',
+                        'active' => 'admin',
                     ],
                     [
                         'name' => 'Role',

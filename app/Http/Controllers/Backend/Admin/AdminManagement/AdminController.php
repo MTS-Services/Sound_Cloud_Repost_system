@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Admin\AdminManagement;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Admin;
 
 class AdminController extends Controller
 {
@@ -14,7 +15,8 @@ class AdminController extends Controller
 
     public function index()
     {
-        return view('backend.admin.admin-management.admin.index');
+        $data['admins'] = Admin::all();
+        return view('backend.admin.admin-management.admin.index', $data);
     }
 
     /**
@@ -22,7 +24,7 @@ class AdminController extends Controller
      */
     public function create()
     {
-        //
+        return view('backend.admin.admin-management.admin.create');
     }
 
     /**

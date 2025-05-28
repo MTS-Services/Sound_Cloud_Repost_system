@@ -59,17 +59,19 @@
     <div class="flex h-screen">
         <!-- Sidebar -->
 
-        <x-admin::side-bar :active="$page_slug"/>
+        <x-admin::side-bar :active="$page_slug" />
 
         <!-- Main Content -->
         <div class="flex-1 flex flex-col min-h-screen custom-scrollbar overflow-y-auto">
             <!-- Header -->
 
-            <x-admin::header :breadcrumb="$breadcrumb"/>
+            <x-admin::header :breadcrumb="$breadcrumb" />
 
             <!-- Main Content Area -->
             <main class="flex-1 p-4 lg:p-6">
-                {{ $slot }}
+                <div class="mx-auto space-y-6">
+                    {{ $slot }}
+                </div>
             </main>
         </div>
     </div>

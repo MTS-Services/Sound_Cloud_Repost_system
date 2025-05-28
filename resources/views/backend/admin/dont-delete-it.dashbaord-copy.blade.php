@@ -3,7 +3,7 @@
     <x-slot name="breadcrumb">Dashboard</x-slot>
     <x-slot name="page_slug">admin-dashboard</x-slot>
 
-    <div class="mx-auto space-y-6">
+    <section>
 
         <x-admin.theme-toggle />
 
@@ -395,5 +395,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 </x-admin::layout>
