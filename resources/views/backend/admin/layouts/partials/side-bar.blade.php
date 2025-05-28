@@ -1,4 +1,4 @@
-<aside class="transition-all duration-300 ease-in-out z-50 max-h-screen overflow-y-auto custom-scrollbar"
+<aside class="transition-all duration-300 ease-in-out z-50 max-h-screen"
     :class="{
         'relative': desktop,
         'w-72': desktop && sidebar_expanded,
@@ -8,27 +8,28 @@
         'w-72 -translate-x-full': !desktop && !mobile_menu_open,
     }">
 
-    <div class="glass-card h-full shadow-2xl border-r border-white/20 custom-scrollbar overflow-y-auto">
+    <div class="glass-card h-full custom-scrollbar overflow-y-auto my-2 ml-2 mr-1 rounded-xl">
         <!-- Sidebar Header -->
-        <div class="p-6 border-b border-white/10">
+        <a href="{{ route('admin.dashboard') }}" class="p-3 border-b border-white/10 inline-block">
             <div class="flex items-center gap-4">
-                <div class="w-10 h-10 btn-primary rounded-xl flex items-center justify-center shadow-lg">
-                    <i data-lucide="zap" class="w-6 h-6 text-text-white"></i>
+                <div
+                    class="w-10 h-10 glass-card shadow inset-shadow-lg bg-bg-white dark:bg-bg-black p-0 rounded-xl flex items-center justify-center">
+                    <i data-lucide="zap" class="!w-4 !h-4"></i>
                 </div>
                 <div x-show="(desktop && sidebar_expanded) || (!desktop && mobile_menu_open)"
                     x-transition:enter="transition-all duration-300 delay-75"
-                    x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0"
-                    x-transition:leave="transition-all duration-200"
+                    x-transition:enter-start="opacity-0 translate-x-4"
+                    x-transition:enter-end="opacity-100 translate-x-0" x-transition:leave="transition-all duration-200"
                     x-transition:leave-start="opacity-100 translate-x-0"
                     x-transition:leave-end="opacity-0 -translate-x-4">
-                    <h1 class="text-xl font-bold text-text-white">Dashboard</h1>
-                    <p class="text-text-dark-primary text-sm">Dashboard Pro</p>
+                    <h1 class="text-xl font-bold text-text-light-primary dark:text-text-white">Dashboard</h1>
+                    <p class="text-text-light-secondary dark:text-text-dark-primary text-sm">Dashboard Pro</p>
                 </div>
             </div>
-        </div>
+        </a>
 
         <!-- Quick Stats (Collapsed Sidebar) -->
-        <div x-show="desktop && !sidebar_expanded" x-transition:enter="transition-all duration-300 delay-100"
+        {{-- <div x-show="desktop && !sidebar_expanded" x-transition:enter="transition-all duration-300 delay-100"
             x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
             class="p-4 border-b border-white/10">
             <div class="space-y-3">
@@ -47,30 +48,16 @@
                     <i data-lucide="trending-up" class="w-4 h-4 text-purple-400"></i>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <!-- Navigation Menu -->
-        <nav class="p-4 space-y-2">
+        <nav class="p-2 space-y-2">
             <!-- Dashboard -->
-            <a href="#" @click="setActiveTab('dashboard')" :class="{ 'active': activeTab === 'dashboard' }"
-                class="sidebar-item flex items-center gap-4 p-3 rounded-xl hover:bg-white/10 text-text-white transition-all duration-200 group">
-                <div
-                    class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5 text-blue-400 flex-shrink-0"></i>
-                </div>
-                <span x-show="(desktop && sidebar_expanded) || (!desktop && mobile_menu_open)"
-                    x-transition:enter="transition-all duration-300 delay-75"
-                    x-transition:enter-start="opacity-0 translate-x-4"
-                    x-transition:enter-end="opacity-100 translate-x-0" x-transition:leave="transition-all duration-200"
-                    x-transition:leave-start="opacity-100 translate-x-0"
-                    x-transition:leave-end="opacity-0 -translate-x-4" class="font-medium">Dashboard</span>
-                <div x-show="(desktop && sidebar_expanded) || (!desktop && mobile_menu_open)" class="ml-auto">
-                    <div class="w-2 h-2 bg-blue-400 rounded-full pulse-slow"></div>
-                </div>
-            </a>
+            <x-admin.single-navlink active="admin-dashboard" icon="layout-dashboard" :page_slug="$active" name="Dashboard" :route="route('admin.dashboard')" />
+            <x-admin.single-navlink active="admin-dashboard-2" icon="layout-dashboard" :page_slug="$active" name="Dashboard 2nd" :route="route('admin.dashboard.2')" />
 
             <!-- Analytics -->
-            <a href="#" @click="setActiveTab('analytics')" :class="{ 'active': activeTab === 'analytics' }"
+            {{-- <a href="#" @click="setActiveTab('analytics')" :class="{ 'active': activeTab === 'analytics' }"
                 class="sidebar-item flex items-center gap-4 p-3 rounded-xl hover:bg-white/10 text-text-white transition-all duration-200 group">
                 <div
                     class="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform relative">
@@ -132,13 +119,12 @@
                 <span x-show="(desktop && sidebar_expanded) || (!desktop && mobile_menu_open)"
                     x-transition:enter="transition-all duration-300 delay-75"
                     x-transition:enter-start="opacity-0 translate-x-4"
-                    x-transition:enter-end="opacity-100 translate-x-0"
-                    x-transition:leave="transition-all duration-200"
+                    x-transition:enter-end="opacity-100 translate-x-0" x-transition:leave="transition-all duration-200"
                     x-transition:leave-start="opacity-100 translate-x-0"
                     x-transition:leave-end="opacity-0 -translate-x-4" class="font-medium">Messages</span>
                 <div x-show="(desktop && sidebar_expanded) || (!desktop && mobile_menu_open)"
                     class="ml-auto bg-pink-500 text-text-white text-xs px-2 py-1 rounded-full">3</div>
-            </a>
+            </a> --}}
 
             <!-- Divider -->
             <div class="my-4 border-t border-white/10"></div>
@@ -153,8 +139,7 @@
                 <span x-show="(desktop && sidebar_expanded) || (!desktop && mobile_menu_open)"
                     x-transition:enter="transition-all duration-300 delay-75"
                     x-transition:enter-start="opacity-0 translate-x-4"
-                    x-transition:enter-end="opacity-100 translate-x-0"
-                    x-transition:leave="transition-all duration-200"
+                    x-transition:enter-end="opacity-100 translate-x-0" x-transition:leave="transition-all duration-200"
                     x-transition:leave-start="opacity-100 translate-x-0"
                     x-transition:leave-end="opacity-0 -translate-x-4" class="font-medium">Settings</span>
             </a>
@@ -169,8 +154,7 @@
                 <span x-show="(desktop && sidebar_expanded) || (!desktop && mobile_menu_open)"
                     x-transition:enter="transition-all duration-300 delay-75"
                     x-transition:enter-start="opacity-0 translate-x-4"
-                    x-transition:enter-end="opacity-100 translate-x-0"
-                    x-transition:leave="transition-all duration-200"
+                    x-transition:enter-end="opacity-100 translate-x-0" x-transition:leave="transition-all duration-200"
                     x-transition:leave-start="opacity-100 translate-x-0"
                     x-transition:leave-end="opacity-0 -translate-x-4" class="font-medium">Help &
                     Support</span>
@@ -183,15 +167,13 @@
                 <div class="relative">
                     <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face&auto=format"
                         alt="Profile" class="w-10 h-10 rounded-xl object-cover ring-2 ring-white/20">
-                    <div
-                        class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white/20">
+                    <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white/20">
                     </div>
                 </div>
                 <div x-show="(desktop && sidebar_expanded) || (!desktop && mobile_menu_open)"
                     x-transition:enter="transition-all duration-300 delay-75"
                     x-transition:enter-start="opacity-0 translate-x-4"
-                    x-transition:enter-end="opacity-100 translate-x-0"
-                    x-transition:leave="transition-all duration-200"
+                    x-transition:enter-end="opacity-100 translate-x-0" x-transition:leave="transition-all duration-200"
                     x-transition:leave-start="opacity-100 translate-x-0"
                     x-transition:leave-end="opacity-0 -translate-x-4" class="flex-1">
                     <p class="text-text-white text-sm font-medium">Alex Johnson</p>

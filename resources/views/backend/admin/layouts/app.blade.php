@@ -55,7 +55,7 @@
     <div class="flex h-screen">
         <!-- Sidebar -->
 
-        <x-admin::side-bar />
+        <x-admin::side-bar :active="$page_slug"/>
 
         <!-- Main Content -->
         <div class="flex-1 flex flex-col min-h-screen custom-scrollbar overflow-y-auto">
@@ -89,7 +89,7 @@
                 mobile_menu_open: false,
 
                 // App state
-                activeTab: 'dashboard',
+                // activeTab: 'dashboard',
                 searchQuery: '',
                 darkMode: true,
                 showNotifications: false,
@@ -372,17 +372,17 @@
                     }
                 },
 
-                setActiveTab(tab) {
-                    this.activeTab = tab;
-                    this.closeMobileMenu();
+                // setActiveTab(tab) {
+                //     this.activeTab = tab;
+                //     this.closeMobileMenu();
 
-                    // Reinitialize chart if switching to dashboard
-                    if (tab === 'dashboard') {
-                        this.$nextTick(() => {
-                            this.initChart();
-                        });
-                    }
-                },
+                //     // Reinitialize chart if switching to dashboard
+                //     if (tab === 'dashboard') {
+                //         this.$nextTick(() => {
+                //             this.initChart();
+                //         });
+                //     }
+                // },
 
                 toggleNotifications() {
                     this.showNotifications = !this.showNotifications;
