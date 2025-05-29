@@ -4,7 +4,19 @@
     <x-slot name="page_slug">admin</x-slot>
 
     <section>
+
         <div class="glass-card rounded-2xl p-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-text-black dark:text-text-white">{{ __('User Management') }}</h2>
+                <a href="{{ route('am.admin.create') }}"
+                    class="btn-primary px-4 py-2 rounded-xl text-text-white flex items-center gap-2">
+                    <i data-lucide="user-plus" class="w-4 h-4"></i>
+                    Add User
+                </a>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 mt-6">
             <div class="overflow-x-auto">
                 <table class="table datatable table-zebra">
                     <thead>
