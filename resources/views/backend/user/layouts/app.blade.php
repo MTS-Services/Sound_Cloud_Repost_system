@@ -7,7 +7,6 @@
     {{-- csrf --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Sound Cloud') }}</title>
-    {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     {{-- Custom CSS --}}
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/custome.css') }}">
@@ -26,7 +25,8 @@
 
         {{-- Main Content --}}
         <div class="p-6">
-            @yield('content')
+            {{-- @yield('content') --}}
+             {{ $slot }}
         </div>
     </div>
 
@@ -47,7 +47,7 @@
         closeMenu.addEventListener('click', () => {
             sidebar.classList.toggle('-translate-x-full');
             overlay.classList.toggle('hidden');
-            mobileMenuBtn.classList.add('block',)
+            mobileMenuBtn.classList.add('block', )
             mobileMenuBtn.classList.remove('hidden')
         });
 
@@ -75,7 +75,6 @@
                 activeItem.classList.remove('text-gray-700');
             }
         }
-
     </script>
     @stack('js')
 </body>

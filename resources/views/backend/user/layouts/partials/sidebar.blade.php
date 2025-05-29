@@ -46,7 +46,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="@if ($page_slug == '') active @endif sidebar-item flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700" data-page="campaigns">
+                    <a href="{{route('user.profile.campains')}}" class="@if ($page_slug == 'campains') active @endif sidebar-item flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700" data-page="campaigns">
                         <i data-lucide="megaphone" class="w-5 h-5 mr-3"></i>
                         <span>{{ __('My Campaigns') }}</span>
                     </a>
