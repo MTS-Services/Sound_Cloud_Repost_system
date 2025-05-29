@@ -115,4 +115,55 @@ class AdminController extends Controller
         session()->flash('success', 'Admin deleted successfully');
         return redirect()->route('am.admin.index');
     }
+
+    public function trash(Request $request)
+    {
+        if ($request->ajax()) {
+            $query = Admin::orderBy('name', 'asc')->onlyTrashed();
+            return DataTables::eloquent($query)
+                ->editColumn('action', function ($admin) {
+                    $menuItems = $this->trashedMenuItems($admin);
+                    return view('components.action-buttons', compact('menuItems'))->render();
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+        return view('backend.admin.admin-management.admin.trash');
+    }
+
+    protected function trashedMenuItems($model): array
+    {
+        return [
+            [
+                'routeName' => 'am.admin.restore',
+                'params' => [encrypt($model->id)],
+                'label' => 'Restore',
+                'permissions' => ['admin-restore']
+            ],
+            [
+                'routeName' => 'am.admin.permanent-delete',
+                'params' => [encrypt($model->id)],
+                'label' => 'Permanent Delete',
+                'p-delete' => true,
+                'permissions' => ['admin-permanent-delete']
+            ]
+
+        ];
+    }
+
+    public function restore(string $id)
+    {
+        $admin = Admin::onlyTrashed()->findOrFail(decrypt($id));
+        $admin->restore();
+        session()->flash('success', 'Admin restored successfully');
+        return redirect()->route('am.admin.trash');
+    }
+
+    public function permanentDelete(string $id)
+    {
+        $admin = Admin::onlyTrashed()->findOrFail(decrypt($id));
+        $admin->forceDelete();
+        session()->flash('success', 'Admin permanently deleted successfully');
+        return redirect()->route('am.admin.trash');
+    }
 }

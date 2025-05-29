@@ -7,16 +7,10 @@
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Admin List') }}</h2>
-                <div class="flex items-center gap-2">
-                    <a href="{{ route('am.admin.trash') }}"
-                        class="btn-primary px-4 py-2 rounded-xl flex items-center gap-2">
-                        {{ __('Trash') }}
-                    </a>
-                    <a href="{{ route('am.admin.create') }}"
-                        class="btn-primary px-4 py-2 rounded-xl text-text-white flex items-center gap-2">
-                        {{ __('Add New') }}
-                    </a>
-                </div>
+                <a href="{{ route('am.admin.index') }}"
+                    class="btn-primary px-4 py-2 rounded-xl text-text-white flex items-center gap-2">
+                    {{ __('Back') }}
+                </a>
             </div>
         </div>
 
@@ -27,7 +21,7 @@
                         <th>{{ __('SL') }}</th>
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Email') }}</th>
-                        <th>{{ __('Created Date') }}</th>
+                        <th>{{ __('Deleted Date') }}</th>
                         <th>{{ __('Action') }}</th>
                     </tr>
                 </thead>
@@ -45,20 +39,18 @@
                     //name and data, orderable, searchable
                     ['name', true, true],
                     ['email', true, true],
-                    ['created_at', true, true],
+                    ['deleted_at', true, true],
                     ['action', false, false],
                 ];
                 const details = {
                     table_columns: table_columns,
                     main_class: '.datatable',
                     displayLength: 10,
-                    main_route: "{{ route('am.admin.index') }}",
+                    main_route: "{{ route('am.admin.trash') }}",
                     order_route: "{{ route('update.sort.order') }}",
                     export_columns: [0, 1, 2, 3],
                     model: 'Admin',
                 };
-                // initializeDataTable(details);
-
                 initializeDataTable(details);
             })
         </script>
