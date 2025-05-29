@@ -36,7 +36,7 @@
 
              <!-- Notifications -->
              <button @click="toggleNotifications()"
-                 class="relative p-2 rounded-xl hover:bg-bg-white/10 transition-colors">
+                 class="relative p-2 rounded-xl hover:bg-bg-black/10 dark:hover:bg-bg-white/10 transition-colors">
                  <i data-lucide="bell" class="w-5 h-5 text-text-white"></i>
                  <div x-show="notifications.length > 0"
                      class="absolute top-1 right-1 w-2 h-2 bg-red-400 rounded-full notification-badge">
@@ -45,10 +45,17 @@
 
              <!-- Profile -->
              <div class="relative" x-data="{ open: false }">
-                 <button @click="open = !open"
-                     class="flex items-center gap-2 p-1 rounded-xl hover:bg-bg-white/10 transition-colors">
+                 {{-- <button @click="open = !open"
+                     class=" flex items-center gap-2 p-1 rounded-xl hover:bg-bg-white/10 transition-colors">
                      <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face&auto=format"
-                         alt="Profile" class="w-8 h-8 rounded-lg object-cover">
+                         alt="Profile" class="avatar rounded-lg object-cover">
+                 </button> --}}
+
+                 <button @click="open = !open" class="avatar">
+                     <div class="w-8 rounded-xl">
+                         <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face&auto=format"
+                             alt="" class="object-cover w-full h-full">
+                     </div>
                  </button>
 
                  <!-- Profile Dropdown -->
@@ -56,15 +63,19 @@
                      x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                      x-transition:leave="transition ease-in duration-75"
                      x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                     class="absolute right-0 mt-2 w-48 glass-card rounded-xl shadow-lg py-2 z-50">
-                     <a href="#"
+                     class="absolute right-0 mt-2 w-fit min-w-40 glass-card bg-bg-white dark:bg-bg-dark-tertiary rounded-xl shadow-lg py-2 z-50">
+                     <x-admin.profile-navlink route="#" name="{{ __('Profile') }}" />
+                     <x-admin.profile-navlink route="#" name="{{ __('Settings') }}" />
+                     <x-admin.profile-navlink route="{{ route('admin.logout') }}" logout='true'
+                         name="{{ __('Sign Out') }}" />
+                     {{-- <a href="#"
                          class="block px-4 py-2 text-text-white hover:bg-bg-white/10 transition-colors">Profile</a>
                      <a href="#"
                          class="block px-4 py-2 text-text-white hover:bg-bg-white/10 transition-colors">Settings</a>
                      <div class="border-t border-white/10 my-2"></div>
                      <a href="#"
                          class="block px-4 py-2 text-text-white hover:bg-bg-white/10 transition-colors">Sign
-                         out</a>
+                         out</a> --}}
                  </div>
              </div>
          </div>
@@ -75,7 +86,7 @@
          <nav class="flex items-center gap-2 text-sm text-text-light-primary/60 dark:text-text-dark-primary">
              <a href="{{ route('admin.dashboard') }}" class="hover:text-text-white transition-colors">Dashboard</a>
              <i data-lucide="chevron-right" class="w-4 h-4"></i>
-             <span class="text-text-light-primary dark:text-text-white capitalize" x-text="activeTab"></span>
+             <span class="text-text-light-primary dark:text-text-white capitalize"> {{ $breadcrumb }}</span>
          </nav>
      </div>
  </header>
