@@ -7,7 +7,7 @@
                 <h2 class="text-2xl text-black font-semibold  mb-2">Dashboard</h2>
                 <p class="text-gray-600">Welcome back, {{ auth()->user()->name }}</p>
             </div>
-            <div class="flex items-center gap-2 mt-4 bg-orange-600 text-white py-2 px-4 rounded-full">
+            <div class="flex items-center gap-2 mt-4 bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700">
                 <span class=""><i data-lucide="plus"
                         class="w-4 h-4 inline-block border border-gray-300  text-center rounded-full h-6 w-6 p-1 tex-white"></i></span>
                 <a href="#">{{ __('Submit Track') }}</a>

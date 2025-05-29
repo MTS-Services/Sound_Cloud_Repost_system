@@ -104,7 +104,7 @@
                     <div class="bg-blue-50 p-6 rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
                         <div class="flex items-center">
                             <div class="bg-blue-100 p-3 shadow-sm rounded-lg mr-4">
-                                <i data-lucide="repeat" class="w-6 h-6 text-blue-600"></i>
+                                <i data-lucide="refresh-cw" class="w-6 h-6 text-blue-600"></i>
                             </div>
                             <div>
                                 <div class="text-2xl font-bold text-gray-900">18</div>
@@ -167,7 +167,7 @@
                         <div class="shadow-sm rounded-lg p-4 hover:shadow-md transition-shadow">
                             <div class="flex items-center mb-3">
                                 <div class="bg-blue-100 p-2 rounded-lg mr-3">
-                                    <i data-lucide="repeat" class="w-5 h-5 text-blue-600"></i>
+                                    <i data-lucide="refresh-cw" class="w-5 h-5 text-blue-600"></i>
                                 </div>
                                 <div>
                                     <div class="font-semibold text-gray-900">Repost Champion</div>
@@ -176,7 +176,7 @@
                             </div>
                         </div>
 
-                        <div class="shadow-sm rounded-lg p-4 hover:shadow-md transition-shadow opacity-50">
+                        <div class="shadow-sm rounded-lg p-4 hover:shadow-md transition-shadow opacity-100">
                             <div class="flex items-center mb-3">
                                 <div class="bg-gray-100 p-2 rounded-lg mr-3">
                                     <i data-lucide="music" class="w-5 h-5 text-gray-600"></i>

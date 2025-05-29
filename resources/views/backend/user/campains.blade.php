@@ -6,7 +6,7 @@
         <!-- Header -->
         <div class="flex justify-between items-start mb-8">
             <div>
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">My Campaigns</h1>
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">My Campaigns</h1>
                 <p class="text-gray-600">Track the performance of your submitted tracks</p>
             </div>
             <button
@@ -47,8 +47,8 @@
             <!-- Summer Vibes Campaign -->
             <div class="campaign-card bg-white rounded-lg shadow-sm border border-gray-200 p-6" data-status="active">
                 <div class="flex justify-center gap-5">
-                    <div class="w-30">
-                        <div class="w-full h-30 rounded-lg overflow-hidden flex-shrink-0">
+                    <div class="w-48 h-32"> 
+                        <div class="w-full h-full rounded-lg overflow-hidden flex-shrink-0">
                             <img src="{{ asset('frontend/user/image/music-notes.jpg') }}" alt="Summer Vibes Album Cover"
                                 class="w-full h-full object-cover bg-gradient-to-br from-yellow-400 via-red-500 to-pink-500">
                         </div>
@@ -143,8 +143,8 @@
             </div>
             <div class="campaign-card bg-white rounded-lg shadow-sm border border-gray-200 p-6" data-status="completed">
                 <div class="flex justify-center gap-5">
-                    <div class="w-30">
-                        <div class="w-full h-30 rounded-lg overflow-hidden flex-shrink-0">
+                    <div class="w-48 h-32"> 
+                        <div class="w-full h-full rounded-lg overflow-hidden flex-shrink-0">
                             <img src="{{ asset('frontend/user/image/music-notes.jpg') }}"
                                 alt="Summer Vibes Album Cover"
                                 class="w-full h-full object-cover bg-gradient-to-br from-yellow-400 via-red-500 to-pink-500">
