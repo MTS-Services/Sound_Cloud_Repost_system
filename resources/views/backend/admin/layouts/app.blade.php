@@ -44,14 +44,14 @@
 
     @vite(['resources/css/dashboard.css', 'resources/js/app.js'])
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <link rel="stylesheet" href="{{asset('assets/css/datatable.css')}}">
+    <link rel="stylesheet" href="{{ asset('assets/css/datatable.css') }}">
 
     {{-- Custom CSS  --}}
     @stack('css')
 
 </head>
 
-<body x-data="dashboardData()" class="animated-bg min-h-screen">
+<body x-data="dashboardData()" class="animated-bg">
 
     <!-- Mobile/Tablet Overlay -->
     <div x-show="mobile_menu_open && !desktop" x-transition:enter="transition-all duration-300 ease-out"
@@ -66,7 +66,7 @@
         <x-admin::side-bar :active="$page_slug" />
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col min-h-screen custom-scrollbar overflow-y-auto">
+        <div class="flex-1 flex flex-col custom-scrollbar overflow-y-auto">
             <!-- Header -->
 
             <x-admin::header :breadcrumb="$breadcrumb" />

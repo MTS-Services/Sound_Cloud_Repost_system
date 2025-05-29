@@ -18,7 +18,10 @@
 
 .dataTable .action-btn:hover {
     transform: rotate(90deg);
-    color: var(--primary-color) !important;
+}
+
+.dataTable .action-btn:hover i{
+    color: var(--color-text-active) !important;
 }
 
 .dataTable .reorder:hover {

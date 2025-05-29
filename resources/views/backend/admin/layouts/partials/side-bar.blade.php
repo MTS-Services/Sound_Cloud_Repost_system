@@ -1,4 +1,4 @@
-<aside class="transition-all duration-300 ease-in-out z-50 max-h-screen"
+<aside class="transition-all duration-300 ease-in-out z-50 max-h-screen py-2"
     :class="{
         'relative': desktop,
         'w-72': desktop && sidebar_expanded,
@@ -8,7 +8,7 @@
         'w-72 -translate-x-full': !desktop && !mobile_menu_open,
     }">
 
-    <div class="glass-card h-full custom-scrollbar overflow-y-auto my-2 ml-2 mr-1 rounded-xl">
+    <div class="glass-card h-full custom-scrollbar overflow-y-auto ml-2 mr-1 rounded-xl">
         <!-- Sidebar Header -->
         <a href="{{ route('admin.dashboard') }}" class="p-3 border-b border-white/10 inline-block">
             <div class="flex items-center gap-4">

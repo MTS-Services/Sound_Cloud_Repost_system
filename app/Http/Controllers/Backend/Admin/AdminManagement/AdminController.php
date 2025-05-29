@@ -39,12 +39,6 @@ class AdminController extends Controller
                 'permissions' => ['admin-list', 'admin-delete', 'admin-status']
             ],
             [
-                'routeName' => 'am.admin.status',
-                'params' => [encrypt($model->id)],
-                'label' => $model->status_btn_label,
-                'permissions' => ['admin-status']
-            ],
-            [
                 'routeName' => 'am.admin.edit',
                 'params' => [encrypt($model->id)],
                 'label' => 'Edit',
