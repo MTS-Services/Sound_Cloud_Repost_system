@@ -15,7 +15,7 @@
             <div class="flex items-center space-x-2">
                 <img src="{{ asset('frontend/user/user.jpg') }}" alt="Alex Rodriguez" class="w-8 h-8 rounded-full">
                 <div class="text-sm">
-                    <span class="font-semibold text-black">Alex Rodriguez</span>
+                    <span class="font-semibold text-black">{{ auth()->user()->name }}</span>
                     <div class="text-green-500 text-xs">● Online</div>
                 </div>
             </div>

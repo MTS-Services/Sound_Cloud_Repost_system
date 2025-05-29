@@ -40,19 +40,19 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="@if ($page_slug == '') active @endif sidebar-item flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700" data-page="repost-feed">
+                    <a href="{{ route('user.repost-feed') }}" class="@if ($page_slug == 'repost-feed') active @endif sidebar-item flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700" data-page="repost-feed">
                         <i data-lucide="repeat" class="w-5 h-5 mr-3"></i>
                         <span>{{ __('Repost Feed') }}</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{route('user.profile.campains')}}" class="@if ($page_slug == 'campains') active @endif sidebar-item flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700" data-page="campaigns">
+                    <a href="{{route('user.campains')}}" class="@if ($page_slug == 'campains') active @endif sidebar-item flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700" data-page="campaigns">
                         <i data-lucide="megaphone" class="w-5 h-5 mr-3"></i>
                         <span>{{ __('My Campaigns') }}</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="@if ($page_slug == '') active @endif sidebar-item flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700" data-page="analytics">
+                    <a href="{{ route('user.analytics') }}" class="@if ($page_slug == 'analytics') active @endif sidebar-item flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700" data-page="analytics">
                         <i data-lucide="bar-chart-3" class="w-5 h-5 mr-3"></i>
                         <span>{{ __('Analytics') }}</span>
                     </a>

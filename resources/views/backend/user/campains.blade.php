@@ -46,199 +46,215 @@
         <div class="space-y-6">
             <!-- Summer Vibes Campaign -->
             <div class="campaign-card bg-white rounded-lg shadow-sm border border-gray-200 p-6" data-status="active">
-                <div class="flex items-start justify-between mb-4">
-                    <div class="flex items-start gap-4">
-                        <div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-                            <img src="/placeholder.svg?height=80&width=80" alt="Summer Vibes Album Cover"
+                <div class="flex justify-center gap-5">
+                    <div class="w-30">
+                        <div class="w-full h-30 rounded-lg overflow-hidden flex-shrink-0">
+                            <img src="{{ asset('frontend/user/image/music-notes.jpg') }}" alt="Summer Vibes Album Cover"
                                 class="w-full h-full object-cover bg-gradient-to-br from-yellow-400 via-red-500 to-pink-500">
                         </div>
-                        <div>
-                            <div class="flex items-center gap-3 mb-2">
-                                <h3 class="text-xl font-semibold text-gray-900">Summer Vibes</h3>
-                                <span
-                                    class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Active</span>
+                    </div>
+                    <div class="w-full">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-start gap-4">
+                                <div>
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <h3 class="text-xl font-semibold text-gray-900">Summer Vibes</h3>
+                                        <span
+                                            class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Active</span>
+                                    </div>
+                                    <div class="flex items-center gap-4 text-sm text-gray-500">
+                                        <div class="flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                                </path>
+                                            </svg>
+                                            Created 10/04/2025
+                                        </div>
+                                        <div class="flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            Expires 17/04/2025
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="flex items-center gap-4 text-sm text-gray-500">
-                                <div class="flex items-center gap-1">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="text-right">
+                                <p class="text-sm text-gray-600 mb-2">Budget used: 14/20 credits</p>
+                                <div class="w-32 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-orange-500 h-2 rounded-full" style="width: 70%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stats -->
+                        <div class="grid grid-cols-3 gap-6 mt-5">
+                            <div class="bg-white rounded-lg shadow-sm py-2 text-center">
+                                <div class="flex items-center justify-center mb-2">
+                                    <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
                                         </path>
                                     </svg>
-                                    Created 10/04/2025
                                 </div>
-                                <div class="flex items-center gap-1">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="text-2xl font-bold text-gray-900">24</div>
+                                <div class="text-sm text-gray-500">Reposts</div>
+                            </div>
+                            <div class="bg-white rounded-lg shadow-sm py-2 text-center">
+                                <div class="flex items-center justify-center mb-2">
+                                    <svg class="w-5 h-5 text-cyan-500" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H15M9 10V9a2 2 0 012-2h2a2 2 0 012 2v1M9 10v5a2 2 0 002 2h2a2 2 0 002-2v-5">
+                                        </path>
                                     </svg>
-                                    Expires 17/04/2025
                                 </div>
+                                <div class="text-2xl font-bold text-gray-900">342</div>
+                                <div class="text-sm text-gray-500">Plays</div>
+                            </div>
+                            <div class="bg-white rounded-lg shadow-sm py-2 text-center">
+                                <div class="flex items-center justify-center mb-2">
+                                    <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-900">38</div>
+                                <div class="text-sm text-gray-500">Likes</div>
                             </div>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <p class="text-sm text-gray-600 mb-2">Budget used: 14/20 credits</p>
-                        <div class="w-32 bg-gray-200 rounded-full h-2">
-                            <div class="bg-orange-500 h-2 rounded-full" style="width: 70%"></div>
+                    <div class="w-48 flex flex-col justify-end">
+                        <!-- Actions -->
+                        <div class="flex flex-col items-center gap-3">
+                            <a href="#"
+                                class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                    </path>
+                                </svg>
+                                View Details
+                            </a>
+                            <a href="#"
+                                class="text-gray-600 hover:text-gray-800 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors border border-gray-300">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                Add Credits
+                            </a>
                         </div>
                     </div>
-                </div>
-
-                <!-- Stats -->
-                <div class="grid grid-cols-3 gap-6 mb-4">
-                    <div class="text-center">
-                        <div class="flex items-center justify-center mb-2">
-                            <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
-                                </path>
-                            </svg>
-                        </div>
-                        <div class="text-2xl font-bold text-gray-900">24</div>
-                        <div class="text-sm text-gray-500">Reposts</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="flex items-center justify-center mb-2">
-                            <svg class="w-5 h-5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H15M9 10V9a2 2 0 012-2h2a2 2 0 012 2v1M9 10v5a2 2 0 002 2h2a2 2 0 002-2v-5">
-                                </path>
-                            </svg>
-                        </div>
-                        <div class="text-2xl font-bold text-gray-900">342</div>
-                        <div class="text-sm text-gray-500">Plays</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="flex items-center justify-center mb-2">
-                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
-                                </path>
-                            </svg>
-                        </div>
-                        <div class="text-2xl font-bold text-gray-900">38</div>
-                        <div class="text-sm text-gray-500">Likes</div>
-                    </div>
-                </div>
-
-                <!-- Actions -->
-                <div class="flex justify-between items-center">
-                    <button
-                        class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
-                            </path>
-                        </svg>
-                        View Details
-                    </button>
-                    <button
-                        class="text-gray-600 hover:text-gray-800 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                        </svg>
-                        Add Credits
-                    </button>
                 </div>
             </div>
-
-            <!-- Midnight Dreams Campaign -->
-            <div class="campaign-card bg-white rounded-lg shadow-sm border border-gray-200 p-6"
-                data-status="completed">
-                <div class="flex items-start justify-between mb-4">
-                    <div class="flex items-start gap-4">
-                        <div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-                            <img src="/placeholder.svg?height=80&width=80" alt="Midnight Dreams Album Cover"
-                                class="w-full h-full object-cover bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+            <div class="campaign-card bg-white rounded-lg shadow-sm border border-gray-200 p-6" data-status="complete">
+                <div class="flex justify-center gap-5">
+                    <div class="w-30">
+                        <div class="w-full h-30 rounded-lg overflow-hidden flex-shrink-0">
+                            <img src="{{ asset('frontend/user/image/music-notes.jpg') }}" alt="Summer Vibes Album Cover"
+                                class="w-full h-full object-cover bg-gradient-to-br from-yellow-400 via-red-500 to-pink-500">
                         </div>
-                        <div>
-                            <div class="flex items-center gap-3 mb-2">
-                                <h3 class="text-xl font-semibold text-gray-900">Midnight Dreams</h3>
-                                <span
-                                    class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Completed</span>
+                    </div>
+                    <div class="w-full">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-start gap-4">
+                                <div>
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <h3 class="text-xl font-semibold text-gray-900">Summer Vibes</h3>
+                                        <span
+                                            class="bg-orange-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Complete</span>
+                                    </div>
+                                    <div class="flex items-center gap-4 text-sm text-gray-500">
+                                        <div class="flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                                </path>
+                                            </svg>
+                                            Created 10/04/2025
+                                        </div>
+                                        <div class="flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            Expires 17/04/2025
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="flex items-center gap-4 text-sm text-gray-500">
-                                <div class="flex items-center gap-1">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="text-right">
+                                <p class="text-sm text-gray-600 mb-2">Budget used: 14/20 credits</p>
+                                <div class="w-32 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-orange-500 h-2 rounded-full" style="width: 70%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stats -->
+                        <div class="grid grid-cols-3 gap-6 mt-5">
+                            <div class="bg-white rounded-lg shadow-sm py-2 text-center">
+                                <div class="flex items-center justify-center mb-2">
+                                    <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
                                         </path>
                                     </svg>
-                                    Created 15/03/2025
                                 </div>
-                                <div class="flex items-center gap-1">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="text-2xl font-bold text-gray-900">24</div>
+                                <div class="text-sm text-gray-500">Reposts</div>
+                            </div>
+                            <div class="bg-white rounded-lg shadow-sm py-2 text-center">
+                                <div class="flex items-center justify-center mb-2">
+                                    <svg class="w-5 h-5 text-cyan-500" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M5 13l4 4L19 7"></path>
+                                            d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H15M9 10V9a2 2 0 012-2h2a2 2 0 012 2v1M9 10v5a2 2 0 002 2h2a2 2 0 002-2v-5">
+                                        </path>
                                     </svg>
-                                    Ended 22/03/2025
                                 </div>
+                                <div class="text-2xl font-bold text-gray-900">342</div>
+                                <div class="text-sm text-gray-500">Plays</div>
+                            </div>
+                            <div class="bg-white rounded-lg shadow-sm py-2 text-center">
+                                <div class="flex items-center justify-center mb-2">
+                                    <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-900">38</div>
+                                <div class="text-sm text-gray-500">Likes</div>
                             </div>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <p class="text-sm text-gray-600 mb-2">Budget used: 15/15 credits</p>
-                        <div class="w-32 bg-gray-200 rounded-full h-2">
-                            <div class="bg-orange-500 h-2 rounded-full" style="width: 100%"></div>
+                    <div class="w-48  flex flex-col justify-end">
+                        <!-- Actions -->
+                        <div class="flex flex-col items-center gap-3">
+                            <a href="#"
+                                class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                    </path>
+                                </svg>
+                                View Details
+                            </a>
                         </div>
                     </div>
-                </div>
-
-                <!-- Stats -->
-                <div class="grid grid-cols-3 gap-6 mb-4">
-                    <div class="text-center">
-                        <div class="flex items-center justify-center mb-2">
-                            <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
-                                </path>
-                            </svg>
-                        </div>
-                        <div class="text-2xl font-bold text-gray-900">18</div>
-                        <div class="text-sm text-gray-500">Reposts</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="flex items-center justify-center mb-2">
-                            <svg class="w-5 h-5 text-cyan-500" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H15M9 10V9a2 2 0 012-2h2a2 2 0 012 2v1M9 10v5a2 2 0 002 2h2a2 2 0 002-2v-5">
-                                </path>
-                            </svg>
-                        </div>
-                        <div class="text-2xl font-bold text-gray-900">215</div>
-                        <div class="text-sm text-gray-500">Plays</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="flex items-center justify-center mb-2">
-                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
-                                </path>
-                            </svg>
-                        </div>
-                        <div class="text-2xl font-bold text-gray-900">27</div>
-                        <div class="text-sm text-gray-500">Likes</div>
-                    </div>
-                </div>
-
-                <!-- Actions -->
-                <div class="flex justify-start">
-                    <button
-                        class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
-                            </path>
-                        </svg>
-                        View Details
-                    </button>
                 </div>
             </div>
         </div>

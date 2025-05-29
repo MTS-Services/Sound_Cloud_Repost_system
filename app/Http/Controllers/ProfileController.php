@@ -16,10 +16,7 @@ class ProfileController extends Controller
         return view('backend.user.profile.profile');
     }
 
-    public function campains()
-    {
-        return view('backend.user.campains');
-    }
+   
     /**
      * Display the user's profile form.
      */

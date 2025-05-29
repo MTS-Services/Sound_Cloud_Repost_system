@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Backend\User\AnalyticsController;
+use App\Http\Controllers\Backend\User\CampaignsController;
+use App\Http\Controllers\Backend\User\RepostFeedController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 
@@ -14,6 +17,8 @@ Route::group(['as' => 'user.'], function () {
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-        Route::get('/campains', [ProfileController::class, 'campains'])->name('profile.campains');
+        Route::get('/campains', [CampaignsController::class, 'campains'])->name('campains');
+        Route::get('/repost-feed', [RepostFeedController::class, 'repostFeed'])->name('repost-feed');
+        Route::get('/analytics',[AnalyticsController::class, 'analytics'])->name('analytics');
     });
 });
