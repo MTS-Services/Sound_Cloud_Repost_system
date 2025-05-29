@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend\Admin\AdminManagement;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Backend\Admin\AdminManagement\AdminRequest;
 use App\Models\Admin;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -60,15 +61,18 @@ class AdminController extends Controller
      */
     public function create()
     {
-        //
+        return view('backend.admin.admin-management.admin.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(AdminRequest $request)
     {
-        //
+        $validated = $request->validated();
+        Admin::create($validated);
+        session()->flash('success', 'Admin created successfully');
+        return redirect()->route('am.admin.index');
     }
 
     /**
