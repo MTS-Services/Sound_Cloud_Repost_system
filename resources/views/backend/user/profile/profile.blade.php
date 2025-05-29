@@ -8,11 +8,11 @@
                 <h1 class="text-3xl font-bold text-gray-900 mb-2">My Profile</h1>
                 <p class="text-gray-600">Manage your account and view your activity</p>
             </div>
-            <button
+            <a href="#"
                 class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                 <i data-lucide="edit" class="w-4 h-4"></i>
                 <span class="text-gray-700">Edit Profile</span>
-            </button>
+            </a>
         </div>
         <!-- Profile Card -->
         <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -38,7 +38,7 @@
                             </div>
                             <a href="#" class="text-orange-600 hover:underline">SoundCloud Profile</a>
                         </div>
-                        <div class="flex space-x-2 mt-3">
+                        <div class="flex space-x-2 mt-4">
                             <span class="bg-orange-600 text-white px-3 py-1 rounded-full text-xs">Top
                                 Reposter</span>
                             <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-xs">Quality
@@ -66,7 +66,7 @@
                     </div>
                     <div class="mt-2">
                         <div class="font-semibold text-gray-900">Credibility Score</div>
-                        <button class="text-orange-600 text-sm hover:underline">Show details ></button>
+                        <a href="#" class="text-orange-600 text-sm hover:underline">Show details ></a>
                     </div>
                 </div>
             </div>
@@ -74,14 +74,14 @@
 
         <!-- Tabs -->
         <div class="bg-white rounded-lg shadow-sm mb-6">
-            <div class="border-b">
+            <div class="shadow-sm">
                 <nav class="flex space-x-8 px-6">
-                    <button class="tab-btn py-4 px-1 border-b-2 border-orange-600 text-orange-600 font-medium"
-                        data-tab="overview">Overview</button>
-                    <button class="tab-btn py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700"
-                        data-tab="transactions">Credit Transactions</button>
-                    <button class="tab-btn py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700"
-                        data-tab="history">Repost History</button>
+                    <a href="#" class="tab-btn py-4 px-1 border-b-2 border-orange-600 text-orange-600 font-medium"
+                        data-tab="overview">Overview</a>
+                    <a href="#" class="tab-btn py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700"
+                        data-tab="transactions">Credit Transactions</a>
+                    <a href="#" class="tab-btn py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700"
+                        data-tab="history">Repost History</a>
                 </nav>
             </div>
 
@@ -89,7 +89,7 @@
             <div id="overview" class="tab-pane p-6 block">
                 <!-- Statistics Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-orange-50 p-6 rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
+                    <div class="bg-orange-50 p-6 shadow-sm rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
                         <div class="flex items-center">
                             <div class="bg-orange-100 p-3 rounded-lg mr-4">
                                 <i data-lucide="music" class="w-6 h-6 text-orange-600"></i>
@@ -103,7 +103,7 @@
 
                     <div class="bg-blue-50 p-6 rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
                         <div class="flex items-center">
-                            <div class="bg-blue-100 p-3 rounded-lg mr-4">
+                            <div class="bg-blue-100 p-3 shadow-sm rounded-lg mr-4">
                                 <i data-lucide="repeat" class="w-6 h-6 text-blue-600"></i>
                             </div>
                             <div>
@@ -113,7 +113,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-green-50 p-6 rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
+                    <div class="bg-green-50 p-6 shadow-sm rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
                         <div class="flex items-center">
                             <div class="bg-green-100 p-3 rounded-lg mr-4">
                                 <i data-lucide="users" class="w-6 h-6 text-green-600"></i>
@@ -125,7 +125,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-yellow-50 p-6 rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
+                    <div class="bg-yellow-50 p-6 shadow-sm rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
                         <div class="flex items-center">
                             <div class="bg-yellow-100 p-3 rounded-lg mr-4">
                                 <i data-lucide="trending-up" class="w-6 h-6 text-yellow-600"></i>
@@ -152,7 +152,7 @@
                 <div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Achievements</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="shadow-sm rounded-lg p-4 hover:shadow-md transition-shadow">
                             <div class="flex items-center mb-3">
                                 <div class="bg-orange-100 p-2 rounded-lg mr-3">
                                     <i data-lucide="star" class="w-5 h-5 text-orange-600"></i>
@@ -164,7 +164,7 @@
                             </div>
                         </div>
 
-                        <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="shadow-sm rounded-lg p-4 hover:shadow-md transition-shadow">
                             <div class="flex items-center mb-3">
                                 <div class="bg-blue-100 p-2 rounded-lg mr-3">
                                     <i data-lucide="repeat" class="w-5 h-5 text-blue-600"></i>
@@ -176,7 +176,7 @@
                             </div>
                         </div>
 
-                        <div class="border rounded-lg p-4 hover:shadow-md transition-shadow opacity-50">
+                        <div class="shadow-sm rounded-lg p-4 hover:shadow-md transition-shadow opacity-50">
                             <div class="flex items-center mb-3">
                                 <div class="bg-gray-100 p-2 rounded-lg mr-3">
                                     <i data-lucide="music" class="w-5 h-5 text-gray-600"></i>

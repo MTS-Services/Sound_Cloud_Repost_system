@@ -1,4 +1,4 @@
-<header class="bg-white shadow-sm border-b px-6 py-4 sticky top-0 z-30">
+<header class="bg-white shadow-lg px-6 py-4 sticky top-0 z-30">
     <div class="flex justify-between items-center">
         <div>
             {{-- <h1 id="page-title" class="text-2xl font-bold text-gray-900">My Profile</h1> --}}
