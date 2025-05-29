@@ -37,7 +37,7 @@ class AdminRequest extends FormRequest
     public function update(): array
     {
         return [
-            'email' => ['required', 'string', 'email', Rule::unique('admins', 'email')->ignore($this->route('admin')->id)],
+            'email' => ['required', 'string', 'email', Rule::unique('admins', 'email')->ignore(decrypt($this->route('admin')))],
         ];
     }
 }

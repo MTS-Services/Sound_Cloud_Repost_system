@@ -88,15 +88,21 @@ class AdminController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $admin = Admin::findOrFail(decrypt($id));
+        return view('backend.admin.admin-management.admin.edit', compact('admin'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(AdminRequest $request, string $id)
     {
-        //
+        $admin = Admin::findOrFail(decrypt($id));
+        $validated = $request->validated();
+        $validated['password'] = isset($validated['password']) ? $validated['password'] : $admin->password;
+        $admin->update($validated);
+        session()->flash('success', 'Admin updated successfully');
+        return redirect()->route('am.admin.index');
     }
 
     /**
@@ -104,6 +110,10 @@ class AdminController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        dd($id);
+        $admin = Admin::findOrFail(decrypt($id));
+        $admin->delete();
+        session()->flash('success', 'Admin deleted successfully');
+        return redirect()->route('am.admin.index');
     }
 }
