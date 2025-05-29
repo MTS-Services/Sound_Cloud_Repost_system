@@ -8,28 +8,20 @@ use App\Http\Controllers\Backend\Admin\DashboardController as AdminDashboardCont
 Route::group(['middleware' => ['auth:admin'], 'prefix' => 'admin'], function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'dashboard'])->name('admin.dashboard');
 
-    // Admin Management
-    Route::group(['as' => 'am.', 'prefix' => 'admin-management'], function () {
-        // Route::resource('admin', AdminController::class);
-        Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
-        // DataTable API Routes
+    Route::prefix('admin-management')->name('am.')->group(function () {
         Route::prefix('admin')->name('admin.')->group(function () {
-            // Fetch data for DataTable
-            Route::post('/fetch', [AdminController::class, 'fetch'])->name('fetch');
+            // Main index page
+            Route::get('/', [AdminController::class, 'index'])->name('index');
 
-            // CRUD Operations
+            // AJAX endpoints for DataTable
+            Route::get('/fetch', [AdminController::class, 'fetch'])->name('fetch');
             Route::post('/save', [AdminController::class, 'save'])->name('save');
-            Route::put('/update/{id}', [AdminController::class, 'update'])->name('update');
-            Route::delete('/delete/{id}', [AdminController::class, 'delete'])->name('delete');
-
-            // Bulk Operations
+            Route::put('/{id}', [AdminController::class, 'update'])->name('update');
+            Route::delete('/{id}', [AdminController::class, 'delete'])->name('delete');
             Route::post('/bulk-action', [AdminController::class, 'bulkAction'])->name('bulk-action');
 
-            // Export
+            // Optional: Export endpoint
             Route::get('/export', [AdminController::class, 'export'])->name('export');
-
-            // Statistics
-            Route::get('/statistics', [AdminController::class, 'statistics'])->name('statistics');
         });
     });
 });
