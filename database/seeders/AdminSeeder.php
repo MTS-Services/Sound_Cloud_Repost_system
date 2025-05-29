@@ -28,5 +28,7 @@ class AdminSeeder extends Seeder
             'email' => 'testadmin@dev.com',
             'password' => 'testadmin@dev.com',
         ]);
+
+        Admin::factory()->count(20)->create();
     }
 }

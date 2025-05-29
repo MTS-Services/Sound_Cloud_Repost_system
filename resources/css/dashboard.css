@@ -1,5 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+@import url('datatables.net-dt');
+@import url('datatables.net-autofill-dt');
+@import url('datatables.net-buttons-dt');
+@import url('datatables.net-colreorder-dt');
+@import url('datatables.net-fixedcolumns-dt');
+@import url('datatables.net-fixedheader-dt');
+@import url('datatables.net-responsive-dt');
+@import url('datatables.net-rowreorder-dt');
+@import url('datatables.net-scroller-dt');
+@import url('datatables.net-searchbuilder-dt');
+
 @import 'tailwindcss';
 @plugin "daisyui";
 
@@ -8,8 +19,6 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source "../views";
 @source '*';
-/* @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *)); */
-
 
 :root {
     --primary: #1CA577;
@@ -60,14 +69,17 @@
     --color-text-black: #000000;
     --color-text-active: #1CA577;
 
-    --color-text-dark-primary: #ffffff99; /* done */
+    --color-text-dark-primary: #ffffff99;
+    /* done */
     --color-text-dark-secondary: #222831;
     --color-text-dark-tertiary: #f0fdfa;
     --color-text-dark-muted: #BEC3C4;
     --color-text-dark-active: #1CA577;
 
-    --color-text-light-primary: #1e2939; /* done */
-    --color-text-light-secondary: #4a5565; /* done */
+    --color-text-light-primary: #1e2939;
+    /* done */
+    --color-text-light-secondary: #4a5565;
+    /* done */
     --color-text-light-tertiary: #F7F7F7;
     --color-text-light-muted: #BEC3C4;
     --color-text-light-active: #1CA577;
@@ -142,7 +154,7 @@
 
     /* Grandient Colors */
     --color-gradient-light-primary: #faf9f9;
-    --color-gradient-light-secondary:  #fcfbfd; 
+    --color-gradient-light-secondary: #fcfbfd;
     --color-gradient-light-tertiary: #FBFBFB;
     --color-gradient-light-quaternary: #d1d5dc;
     --color-gradient-light-quinary: #56ab91;
@@ -253,7 +265,8 @@
     --animate-bounce-slow: bounce 2s infinite;
 
     /* Box Shadow */
-    --shadow-glass-card : rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+    --shadow-glass-card : rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
+    rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
 }
 
 @layer components {
@@ -349,8 +362,7 @@
     }
 
     .animated-bg {
-        @apply bg-[length:400%_400%] animate-gradientBG bg-gradient-to-br from-gradient-light-primary 
-        via-gradient-light-secondary to-gradient-light-tertiary;
+        @apply bg-[length:400%_400%] animate-gradientBG bg-gradient-to-br from-gradient-light-primary via-gradient-light-secondary to-gradient-light-tertiary;
     }
 
     /* .animated-bg {
