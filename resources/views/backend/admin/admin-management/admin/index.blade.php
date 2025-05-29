@@ -1,5 +1,5 @@
 <x-admin::layout>
-    <x-slot name="title">Admin</x-slot>
+    <x-slot name="title">Admin List</x-slot>
     <x-slot name="breadcrumb">Admin List</x-slot>
     <x-slot name="page_slug">admin</x-slot>
     <section>
@@ -24,11 +24,11 @@
             <table class="table datatable table-zebra">
                 <thead>
                     <tr>
-                        <th>{{ __('SL') }}</th>
+                        <th width="5%">{{ __('SL') }}</th>
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Email') }}</th>
                         <th>{{ __('Created Date') }}</th>
-                        <th>{{ __('Action') }}</th>
+                        <th width="10%">{{ __('Action') }}</th>
                     </tr>
                 </thead>
                 <tbody>

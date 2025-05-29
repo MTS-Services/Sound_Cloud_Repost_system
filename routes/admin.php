@@ -1,7 +1,9 @@
 <?php
 
-use App\Http\Controllers\Backend\Admin\AdminManagement\AdminController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Backend\Admin\AdminManagement\RoleController;
+use App\Http\Controllers\Backend\Admin\AdminManagement\AdminController;
+use App\Http\Controllers\Backend\Admin\AdminManagement\PermissionController;
 use App\Http\Controllers\Backend\Admin\DashboardController as AdminDashboardController;
 
 
@@ -10,12 +12,16 @@ Route::group(['middleware' => ['auth:admin'], 'prefix' => 'admin'], function () 
 
     // Admin Management
     Route::group(['as' => 'am.', 'prefix' => 'admin-management'], function () {
-        // Admin
+        // Admin Routes
         Route::resource('admin', AdminController::class);
         Route::controller(AdminController::class)->name('admin.')->prefix('admin')->group(function () {
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{admin}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{admin}', 'permanentDelete')->name('permanent-delete');
         });
+        // Role Routes
+        Route::resource('role', RoleController::class);
+        // Permission Routes
+        Route::resource('permission', PermissionController::class);
     });
 });

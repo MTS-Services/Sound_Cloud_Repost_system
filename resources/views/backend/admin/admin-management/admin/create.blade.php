@@ -1,6 +1,6 @@
 <x-admin::layout>
-    <x-slot name="title">Admin</x-slot>
-    <x-slot name="breadcrumb">Admin List</x-slot>
+    <x-slot name="title">Create Admin</x-slot>
+    <x-slot name="breadcrumb">Create Admin</x-slot>
     <x-slot name="page_slug">admin</x-slot>
 
     <section>
@@ -32,7 +32,8 @@
                                         <circle cx="12" cy="7" r="4"></circle>
                                     </g>
                                 </svg>
-                                <input type="text" placeholder="Name" value="{{ old('name') }}" name="name" class="flex-1" />
+                                <input type="text" placeholder="Name" value="{{ old('name') }}" name="name"
+                                    class="flex-1" />
                             </label>
                             <x-input-error class="mt-2" :messages="$errors->get('name')" />
                         </div>
@@ -48,7 +49,8 @@
                                         <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                                     </g>
                                 </svg>
-                                <input type="email" name="email" value="{{ old('email') }}" placeholder="example@gmail.com" class="flex-1" />
+                                <input type="email" name="email" value="{{ old('email') }}"
+                                    placeholder="example@gmail.com" class="flex-1" />
                             </label>
                             <x-input-error class="mt-2" :messages="$errors->get('email')" />
                         </div>
@@ -84,7 +86,8 @@
                                         <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
                                     </g>
                                 </svg>
-                                <input type="password" name="password_confirmation" placeholder="Confirm Password" class="flex-1" />
+                                <input type="password" name="password_confirmation" placeholder="Confirm Password"
+                                    class="flex-1" />
                             </label>
                             <x-input-error class="mt-2" :messages="$errors->get('password_confirmation')" />
                         </div>

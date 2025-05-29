@@ -1,6 +1,6 @@
 <x-admin::layout>
-    <x-slot name="title">Edit Admin</x-slot>
-    <x-slot name="breadcrumb">Edit Admin</x-slot>
+    <x-slot name="title">Admin</x-slot>
+    <x-slot name="breadcrumb">Admin List</x-slot>
     <x-slot name="page_slug">admin</x-slot>
 
     <section>

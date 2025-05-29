@@ -1,6 +1,6 @@
 <x-admin::layout>
-    <x-slot name="title">Admin Trash</x-slot>
-    <x-slot name="breadcrumb">Admin Trash</x-slot>
+    <x-slot name="title">Admin</x-slot>
+    <x-slot name="breadcrumb">Admin List</x-slot>
     <x-slot name="page_slug">admin</x-slot>
     <section>
 
@@ -18,11 +18,11 @@
             <table class="table datatable table-zebra">
                 <thead>
                     <tr>
-                        <th width="5%">{{ __('SL') }}</th>
+                        <th>{{ __('SL') }}</th>
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Email') }}</th>
                         <th>{{ __('Deleted Date') }}</th>
-                        <th width="10%">{{ __('Action') }}</th>
+                        <th>{{ __('Action') }}</th>
                     </tr>
                 </thead>
                 <tbody>

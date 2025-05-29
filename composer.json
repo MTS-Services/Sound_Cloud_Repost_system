@@ -12,6 +12,8 @@
         "php": "^8.2",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
+        "league/csv": "9.23.0",
+        "spatie/laravel-permission": "^6.18",
         "yajra/laravel-datatables": "12.0"
     },
     "require-dev": {

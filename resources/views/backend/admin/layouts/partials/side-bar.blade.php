@@ -70,15 +70,15 @@
                     ],
                     [
                         'name' => 'Role',
-                        'route' => '#',
+                        'route' => route('am.role.index'),
                         'icon' => 'shield-alert',
-                        'active' => 'admin-users-add',
+                        'active' => 'role',
                     ],
                     [
                         'name' => 'Permission',
-                        'route' => '#',
+                        'route' => route('am.permission.index'),
                         'icon' => 'shield',
-                        'active' => 'admin-users-roles',
+                        'active' => 'permission',
                     ],
                 ]" />
 

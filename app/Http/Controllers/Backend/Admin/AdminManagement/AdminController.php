@@ -6,16 +6,37 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Backend\Admin\AdminManagement\AdminRequest;
 use App\Models\Admin;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Yajra\DataTables\Facades\DataTables;
 
-class AdminController extends Controller
+class AdminController extends Controller implements HasMiddleware
 {
+
+    public static function middleware(): array
+    {
+        return [
+            'auth:admin', // Applies 'auth:admin' to all methods
+
+            // Permission middlewares using the Middleware class
+            // new Middleware('permission:admin-list', only: ['index']),
+            // new Middleware('permission:admin-details', only: ['show']),
+            // new Middleware('permission:admin-create', only: ['create', 'store']),
+            // new Middleware('permission:admin-edit', only: ['edit', 'update']),
+            // new Middleware('permission:admin-delete', only: ['destroy']),
+            // new Middleware('permission:admin-status', only: ['status']),
+            // new Middleware('permission:admin-recycle-bin', only: ['recycleBin']),
+            // new Middleware('permission:admin-restore', only: ['restore']),
+            // new Middleware('permission:admin-permanent-delete', only: ['permanentDelete']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $query = Admin::orderBy('sort_order', 'asc')
+        $query = Admin::orderBy('name', 'asc')
             ->latest();
         if ($request->ajax()) {
             return DataTables::eloquent($query)
