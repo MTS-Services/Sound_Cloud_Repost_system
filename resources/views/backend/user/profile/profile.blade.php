@@ -1,6 +1,6 @@
-@extends('backend.user.layouts.app', ['page_slug' => 'profile'])
-@section('title', 'Profile')
-@section('content')
+<x-user::layout>
+
+    <x-slot name="page_slug">profile</x-slot>
     <div id="content-profile" class="page-content">
         <!-- Header -->
         <div class="flex justify-between items-start mb-8">
@@ -208,43 +208,43 @@
             </div>
         </div>
     </div>
-@endsection
-
-@push('js')
-    <script>
-        // Tab functionality (only for profile page)
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        const tabContents = document.querySelectorAll('.tab-pane');
-
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const tabId = btn.getAttribute('data-tab');
-
-                // Update tab buttons
-                tabBtns.forEach(b => {
-                    b.classList.remove('border-orange-600', 'text-orange-600');
-                    b.classList.add('border-transparent', 'text-gray-500');
+    @push('js')
+        <script>
+            // Tab functionality (only for profile page)
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-pane');
+    
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tabId = btn.getAttribute('data-tab');
+    
+                    // Update tab buttons
+                    tabBtns.forEach(b => {
+                        b.classList.remove('border-orange-600', 'text-orange-600');
+                        b.classList.add('border-transparent', 'text-gray-500');
+                    });
+                    btn.classList.remove('border-transparent', 'text-gray-500');
+                    btn.classList.add('border-orange-600', 'text-orange-600');
+    
+                    // Update tab content
+                    tabContents.forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    document.getElementById(tabId).classList.remove('hidden');
                 });
-                btn.classList.remove('border-transparent', 'text-gray-500');
-                btn.classList.add('border-orange-600', 'text-orange-600');
-
-                // Update tab content
-                tabContents.forEach(content => {
-                    content.classList.add('hidden');
-                });
-                document.getElementById(tabId).classList.remove('hidden');
             });
-        });
+    
+            // // Animate progress circle on load
+            // window.addEventListener('load', () => {
+            //     const progressCircle = document.querySelector('.progress-circle path:last-child');
+            //     if (progressCircle) {
+            //         progressCircle.style.strokeDashoffset = '13';
+            //         setTimeout(() => {
+            //             progressCircle.style.strokeDashoffset = '0';
+            //         }, 500);
+            //     }
+            // });
+        </script>
+    @endpush
+</x-user::layout>
 
-        // // Animate progress circle on load
-        // window.addEventListener('load', () => {
-        //     const progressCircle = document.querySelector('.progress-circle path:last-child');
-        //     if (progressCircle) {
-        //         progressCircle.style.strokeDashoffset = '13';
-        //         setTimeout(() => {
-        //             progressCircle.style.strokeDashoffset = '0';
-        //         }, 500);
-        //     }
-        // });
-    </script>
-@endpush
