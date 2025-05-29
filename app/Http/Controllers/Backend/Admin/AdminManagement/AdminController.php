@@ -110,7 +110,6 @@ class AdminController extends Controller
      */
     public function destroy(string $id)
     {
-        dd($id);
         $admin = Admin::findOrFail(decrypt($id));
         $admin->delete();
         session()->flash('success', 'Admin deleted successfully');

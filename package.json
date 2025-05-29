@@ -31,6 +31,7 @@
         "datatables.net-searchbuilder-dt": "^1.8.2",
         "jquery": "^3.7.1",
         "jszip": "^3.10.1",
-        "pdfmake": "^0.2.20"
+        "pdfmake": "^0.2.20",
+        "sweetalert2": "^11.22.0"
     }
 }
