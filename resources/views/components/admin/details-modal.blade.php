@@ -15,7 +15,7 @@
             <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                        <i data-lucide="user" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
+                        <i data-lucide="layout-list" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
                     </div>
                     <div>
                         <h3 id="modal-title" class="text-xl font-bold text-gray-900 dark:text-white">
@@ -63,63 +63,18 @@
             <!-- Footer -->
             <div
                 class="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 rounded-b-2xl">
-                <button onclick="closeDetailsModal()"
-                    class="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                <button class="btn btn-sm btn-primary" onclick="exportDetailsAsCSV()"><i
+                        class="bx bx-download text-white"></i> {{ __('CSV') }}</button>
+                <button onclick="closeDetailsModal()" class="btn btn-sm btn-error">
                     {{ __('Close') }}
-                </button>
-                <button onclick="exportDetails()"
-                    class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
-                    <i data-lucide="download" class="w-4 h-4 mr-2"></i>
-                    {{ __('Export') }}
                 </button>
             </div>
         </div>
     </div>
 </div>
 
-@push('styles')
+@push('css')
     <style>
-        .glass-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .dark .glass-card {
-            background: rgba(31, 41, 55, 0.9);
-            border: 1px solid rgba(75, 85, 99, 0.3);
-        }
-
-        .animate-fade-in {
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .animate-slide-up {
-            animation: slideUp 0.3s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
         .detail-item {
             transition: all 0.2s ease;
         }

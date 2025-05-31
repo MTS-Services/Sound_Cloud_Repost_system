@@ -212,23 +212,47 @@ function closeDetailsModal() {
     currentId = null;
 }
 
-function exportDetails() {
+// function exportDetails() {
+//     if (!currentModalData) return;
+
+//     try {
+//         const dataStr = JSON.stringify(currentModalData, null, 2);
+//         const dataBlob = new Blob([dataStr], { type: 'application/json' });
+//         const url = URL.createObjectURL(dataBlob);
+//         const link = document.createElement('a');
+//         link.href = url;
+//         link.download = `details-${Date.now()}.json`;
+//         link.click();
+//         URL.revokeObjectURL(url);
+//     } catch (error) {
+//         console.error('Export failed:', error);
+//         alert('Export failed. Please try again.');
+//     }
+// }
+
+
+function exportDetailsAsCSV() {
     if (!currentModalData) return;
 
     try {
-        const dataStr = JSON.stringify(currentModalData, null, 2);
-        const dataBlob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(dataBlob);
+        let csv = 'Key,Value\n';
+        for (const [key, value] of Object.entries(currentModalData)) {
+            csv += `"${key}","${value ?? 'N/A'}"\n`;
+        }
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `details-${Date.now()}.json`;
+        link.download = `details-${Date.now()}.csv`;
         link.click();
         URL.revokeObjectURL(url);
     } catch (error) {
-        console.error('Export failed:', error);
-        alert('Export failed. Please try again.');
+        console.error('CSV export failed:', error);
+        alert('Export to CSV failed. Please try again.');
     }
 }
+
 
 // Close modal on Escape key
 document.addEventListener('keydown', function (e) {
