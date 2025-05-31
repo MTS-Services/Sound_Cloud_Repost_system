@@ -6,8 +6,8 @@
         <!-- Header -->
         <div class="flex justify-between items-start mb-8">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 mb-2">My Campaigns</h1>
-                <p class="text-gray-600">Track the performance of your submitted tracks</p>
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">{{ __('My Campaigns') }}</h1>
+                <p class="text-gray-600">Track the performance of your submitted tracks') }}</p>
             </div>
             <button
                 class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
@@ -15,7 +15,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>
-                New Campaign
+                {{ __('New Campaign') }}
             </button>
         </div>
 
@@ -26,17 +26,17 @@
                     <button
                         class="tab-button active border-b-2 border-orange-500 py-2 px-1 text-sm font-medium text-orange-600"
                         data-tab="all">
-                        All Campaigns
+                        {{ __('All Campaigns') }}
                     </button>
                     <button
                         class="tab-button border-b-2 border-transparent py-2 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
                         data-tab="active">
-                        Active
+                        {{ __('Active') }}
                     </button>
                     <button
                         class="tab-button border-b-2 border-transparent py-2 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
                         data-tab="completed">
-                        Completed
+                        {{ __('Completed') }}
                     </button>
                 </nav>
             </div>
@@ -58,9 +58,9 @@
                             <div class="flex items-start gap-4">
                                 <div>
                                     <div class="flex items-center gap-3 mb-2">
-                                        <h3 class="text-xl font-semibold text-gray-900">Summer Vibes</h3>
+                                        <h3 class="text-xl font-semibold text-gray-900">{{ __('Summer Vibes') }}</h3>
                                         <span
-                                            class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Active</span>
+                                            class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">{{ __('Active') }}</span>
                                     </div>
                                     <div class="flex items-center gap-4 text-sm text-gray-500">
                                         <div class="flex items-center gap-1">
@@ -70,7 +70,7 @@
                                                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
                                                 </path>
                                             </svg>
-                                            Created 10/04/2025
+                                            {{ __('Created 10/04/2025') }}
                                         </div>
                                         <div class="flex items-center gap-1">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
@@ -78,13 +78,13 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                             </svg>
-                                            Expires 17/04/2025
+                                            {{ __('Expires 17/04/2025') }}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="text-right">
-                                <p class="text-sm text-gray-600 mb-2">Budget used: 14/20 credits</p>
+                                <p class="text-sm text-gray-600 mb-2">{{ __('Budget used: 14/20 credits') }}</p>
                                 <div class="w-32 bg-gray-200 rounded-full h-2">
                                     <div class="bg-orange-500 h-2 rounded-full" style="width: 70%"></div>
                                 </div>
@@ -98,14 +98,14 @@
                                     <i data-lucide="refresh-ccw" class="w-5 h-5 text-pink-500"></i>
                                 </div>
                                 <div class="text-2xl font-bold text-gray-900">24</div>
-                                <div class="text-sm text-gray-500">Reposts</div>
+                                <div class="text-sm text-gray-500">{{ __('Reposts') }}</div>
                             </div>
                             <div class="bg-white rounded-lg shadow-sm py-2 text-center">
                                 <div class="flex items-center justify-center mb-2">
                                     <i data-lucide="eye" class="w-5 h-5 text-blue-500"></i>
                                 </div>
                                 <div class="text-2xl font-bold text-gray-900">342</div>
-                                <div class="text-sm text-gray-500">Plays</div>
+                                <div class="text-sm text-gray-500">{{ __('Plays') }}</div>
                             </div>
                             <div class="bg-white rounded-lg shadow-sm py-2 text-center">
                                 <div class="flex items-center justify-center mb-2">
@@ -117,7 +117,7 @@
                                     </svg>
                                 </div>
                                 <div class="text-2xl font-bold text-gray-900">38</div>
-                                <div class="text-sm text-gray-500">Likes</div>
+                                <div class="text-sm text-gray-500">{{ __('Likes') }}</div>
                             </div>
                         </div>
                     </div>
@@ -218,7 +218,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="w-48  flex flex-col justify-end">
+                    <div class="w-52  flex flex-col justify-end">
                         <!-- Actions -->
                         <div class="flex flex-col items-center gap-3">
                             <a href="#"

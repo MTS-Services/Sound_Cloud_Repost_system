@@ -98,7 +98,9 @@
          </ul>
      </nav>
      <div class="flex items-center space-x-2 border-t border-gray-100 px-6 py-4 bg-white fixed bottom-0 w-full">
-         <img src="{{ asset('frontend/user/user.jpg') }}" alt="Alex Rodriguez" class="w-8 h-8 rounded-full">
+         <a href="{{ route('user.profile') }}">
+             <img src="{{ asset('frontend/user/user.jpg') }}" alt="Alex Rodriguez" class="w-8 h-8 rounded-full">
+         </a>
          <div class="text-sm">
              <span class="font-semibold text-black">{{ auth()->user()->name }}</span>
              <div class="text-green-500 text-xs">● Online</div>
