@@ -551,6 +551,7 @@
         document.head.appendChild(style);
     </script>
     {{-- Custom JS --}}
+    <script src="{{ asset('assets/js/details-modal.js') }}"></script>
     <script src="{{ asset('assets/js/password.js') }}"></script>
     @stack('js')
 

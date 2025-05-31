@@ -75,77 +75,37 @@
                     const route = "{{ route('am.admin.show', ':id') }}";
 
                     const details = [{
-                            label: 'Name',
-                            key: 'name'
+                            label: '{{ __('Name') }}',
+                            key: 'name',
                         },
                         {
-                            label: 'Email',
-                            key: 'email'
+                            label: '{{ __('Email') }}',
+                            key: 'email',
                         },
                         {
-                            label: 'Role',
-                            key: 'role_id'
+                            label: '{{ __('Role') }}',
+                            key: 'role_id',
                         },
                         {
-                            label: 'Created By',
-                            key: 'created_by'
+                            label: '{{ __('Phone') }}',
+                            key: 'phone',
                         },
                         {
-                            label: 'Created At',
-                            key: 'created_at'
+                            label: '{{ __('Created By') }}',
+                            key: 'created_by',
+                        },
+                        {
+                            label: '{{ __('Created Date') }}',
+                            key: 'created_at',
+                        },
+                        {
+                            label: '{{ __('Hello') }}',
+                            key: 'hello',
                         }
                     ];
 
-                    showDetailsModal(route, id, 'Admin Details', details);
+                    showDetailsModal(route, id, '{{ __('Admin Details') }}', details);
                 });
-
-
-                function showDetailsModal(apiRouteWithPlaceholder, id, title = 'Details', details = null) {
-                    const url = apiRouteWithPlaceholder.replace(':id', id);
-
-                    axios.post(url)
-                        .then(res => {
-                            const data = res.data?.admin || res.data;
-                            let html = '';
-
-                            if (details && Array.isArray(details)) {
-                                // Show only specified keys
-                                details.forEach(item => {
-                                    const label = item.label || item.key;
-                                    const value = data[item.key] ?? 'N/A';
-
-                                    html += `
-                        <div class="flex justify-between border-b py-2">
-                            <span class="font-medium text-gray-700 dark:text-gray-300">${label}</span>
-                            <span class="text-gray-900 dark:text-white">${value}</span>
-                        </div>
-                    `;
-                                });
-                            } else {
-                                // Fallback: show everything
-                                for (const [key, value] of Object.entries(data)) {
-                                    const formattedKey = key
-                                        .replace(/_/g, ' ')
-                                        .replace(/\b\w/g, l => l.toUpperCase());
-
-                                    html += `
-                        <div class="flex justify-between border-b py-2">
-                            <span class="font-medium text-gray-700 dark:text-gray-300">${formattedKey}</span>
-                            <span class="text-gray-900 dark:text-white">${value ?? 'N/A'}</span>
-                        </div>
-                    `;
-                                }
-                            }
-
-                            document.getElementById('modal-title').innerText = title;
-                            document.getElementById('modal-content').innerHTML = html;
-                            details_modal.showModal();
-                        })
-                        .catch(err => {
-                            console.error('Error loading details:', err);
-                        });
-                }
-
             });
         </script>
     @endpush
