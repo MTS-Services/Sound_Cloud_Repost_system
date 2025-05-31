@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend\Admin\AdminManagement;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AdminManagement\AdminRequest;
 use App\Models\Admin;
+use App\Services\Admin\AdminManagement\AdminService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -13,6 +14,13 @@ use Yajra\DataTables\Facades\DataTables;
 class AdminController extends Controller implements HasMiddleware
 {
 
+    protected AdminService $adminService;
+
+    public function __construct(AdminService $adminService)
+    {
+        $this->adminService = $adminService;
+    }
+    
     public static function middleware(): array
     {
         return [

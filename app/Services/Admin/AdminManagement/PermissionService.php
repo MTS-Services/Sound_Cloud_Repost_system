@@ -44,7 +44,7 @@ class PermissionService
         return $permission;
     }
 
-    public function restore(string $encryptedId): Permission
+    public function   restore(string $encryptedId): Permission
     {
         $permission = $this->getDeletedPermission($encryptedId);
         $permission->update(['updated_by' => admin()->id]);
