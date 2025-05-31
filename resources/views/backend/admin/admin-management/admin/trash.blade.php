@@ -18,6 +18,7 @@
                         <th width="5%">{{ __('SL') }}</th>
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Email') }}</th>
+                        <th>{{ __('Role') }}</th>
                         <th>{{ __('Deleted By') }}</th>
                         <th>{{ __('Deleted Date') }}</th>
                         <th width="10%">{{ __('Action') }}</th>
@@ -37,6 +38,8 @@
                     //name and data, orderable, searchable
                     ['name', true, true],
                     ['email', true, true],
+                    ['role_id', true, true],
+                    ['deleted_by', true, true],
                     ['deleted_at', true, true],
                     ['action', false, false],
                 ];

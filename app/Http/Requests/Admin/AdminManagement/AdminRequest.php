@@ -25,6 +25,7 @@ class AdminRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'min:3'],
+            'role' => 'required|exists:roles,id',
         ] + ($this->isMethod('POST') ? $this->store() : $this->update());;
     }
     protected function store(): array

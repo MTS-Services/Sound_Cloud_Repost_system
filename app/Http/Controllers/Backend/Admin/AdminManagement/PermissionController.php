@@ -8,8 +8,10 @@ use App\Services\Admin\AdminManagement\PermissionService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class PermissionController extends Controller
+class PermissionController extends Controller implements HasMiddleware
 {
 
     protected function redirectIndex(): RedirectResponse
@@ -27,6 +29,24 @@ class PermissionController extends Controller
     public function __construct(PermissionService $permissionService)
     {
         $this->permissionService = $permissionService;
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            'auth:admin', // Applies 'auth:admin' to all methods
+
+            // Permission middlewares using the Middleware class
+            new Middleware('permission:permisison-list', only: ['index']),
+            new Middleware('permission:permisison-details', only: ['show']),
+            new Middleware('permission:permisison-create', only: ['create', 'store']),
+            new Middleware('permission:permisison-edit', only: ['edit', 'update']),
+            new Middleware('permission:permisison-delete', only: ['destroy']),
+            new Middleware('permission:permisison-trash', only: ['trash']),
+            new Middleware('permission:permisison-restore', only: ['restore']),
+            new Middleware('permission:permisison-permanent-delete', only: ['permanentDelete']),
+            //add more permissions if needed
+        ];
     }
 
     public function index(Request $request)

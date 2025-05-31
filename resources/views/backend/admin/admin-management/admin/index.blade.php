@@ -23,6 +23,7 @@
                         <th width="5%">{{ __('SL') }}</th>
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Email') }}</th>
+                        <th>{{ __('Role') }}</th>
                         <th>{{ __('Created By') }}</th>
                         <th>{{ __('Created Date') }}</th>
                         <th width="10%">{{ __('Action') }}</th>
@@ -42,6 +43,7 @@
                     //name and data, orderable, searchable
                     ['name', true, true],
                     ['email', true, true],
+                    ['role_id', true, true],
                     ['created_by', true, true],
                     ['created_at', true, true],
                     ['action', false, false],

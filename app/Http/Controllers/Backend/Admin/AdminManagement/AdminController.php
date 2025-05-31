@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AdminManagement\AdminRequest;
 use App\Models\Admin;
 use App\Services\Admin\AdminManagement\AdminService;
+use App\Services\Admin\AdminManagement\RoleService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -14,13 +16,25 @@ use Yajra\DataTables\Facades\DataTables;
 class AdminController extends Controller implements HasMiddleware
 {
 
-    protected AdminService $adminService;
+    protected function redirectIndex(): RedirectResponse
+    {
+        return redirect()->route('am.admin.index');
+    }
 
-    public function __construct(AdminService $adminService)
+    protected function redirectTrashed(): RedirectResponse
+    {
+        return redirect()->route('am.admin.trash');
+    }
+
+    protected AdminService $adminService;
+    protected RoleService $roleService;
+
+    public function __construct(AdminService $adminService, RoleService $roleService)
     {
         $this->adminService = $adminService;
+        $this->roleService = $roleService;
     }
-    
+
     public static function middleware(): array
     {
         return [
@@ -44,15 +58,17 @@ class AdminController extends Controller implements HasMiddleware
      */
     public function index(Request $request)
     {
-        $query = Admin::orderBy('name', 'asc')
-            ->latest();
         if ($request->ajax()) {
+            $query = $this->adminService->getAdmins();
             return DataTables::eloquent($query)
+                ->editColumn('role_id', function ($admin) {
+                    return optional($admin->role)->name;
+                })
                 ->editColumn('action', function ($admin) {
                     $menuItems = $this->menuItems($admin);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['role_id', 'action'])
                 ->make(true);
         }
         return view('backend.admin.admin-management.admin.index');
@@ -90,7 +106,8 @@ class AdminController extends Controller implements HasMiddleware
      */
     public function create()
     {
-        return view('backend.admin.admin-management.admin.create');
+        $data['roles'] = $this->roleService->getRoles()->select(['id', 'name'])->get();
+        return view('backend.admin.admin-management.admin.create', $data);
     }
 
     /**
@@ -98,10 +115,16 @@ class AdminController extends Controller implements HasMiddleware
      */
     public function store(AdminRequest $request)
     {
-        $validated = $request->validated();
-        Admin::create($validated);
-        session()->flash('success', 'Admin created successfully');
-        return redirect()->route('am.admin.index');
+        try {
+            $validated = $request->validated();
+            $validated['role_id'] = $request->role;
+            $this->adminService->createAdmin($validated);
+            session()->flash('success', 'Admin created successfully!');
+        } catch (\Throwable $e) {
+            session()->flash('error', 'Admin create failed!');
+            throw $e;
+        }
+        return $this->redirectIndex();
     }
 
     /**
@@ -117,8 +140,9 @@ class AdminController extends Controller implements HasMiddleware
      */
     public function edit(string $id)
     {
-        $admin = Admin::findOrFail(decrypt($id));
-        return view('backend.admin.admin-management.admin.edit', compact('admin'));
+        $data['admin'] = $this->adminService->getAdmin($id);
+        $data['roles'] = $this->roleService->getRoles()->select('id', 'name')->get();
+        return view('backend.admin.admin-management.admin.edit', $data);
     }
 
     /**
@@ -126,12 +150,17 @@ class AdminController extends Controller implements HasMiddleware
      */
     public function update(AdminRequest $request, string $id)
     {
-        $admin = Admin::findOrFail(decrypt($id));
-        $validated = $request->validated();
-        $validated['password'] = isset($validated['password']) ? $validated['password'] : $admin->password;
-        $admin->update($validated);
-        session()->flash('success', 'Admin updated successfully');
-        return redirect()->route('am.admin.index');
+        try {
+            $admin = $this->adminService->getAdmin($id);
+            $validated = $request->validated();
+            $validated['role_id'] = $request->role;
+            $this->adminService->updateAdmin($admin, $validated);
+            session()->flash('success', 'Admin updated successfully!');
+        } catch (\Throwable $e) {
+            session()->flash('error', 'Admin update failed!');
+            throw $e;
+        }
+        return $this->redirectIndex();
     }
 
     /**
@@ -139,16 +168,25 @@ class AdminController extends Controller implements HasMiddleware
      */
     public function destroy(string $id)
     {
-        $admin = Admin::findOrFail(decrypt($id));
-        $admin->delete();
-        session()->flash('success', 'Admin deleted successfully');
-        return redirect()->route('am.admin.index');
+        try {
+            $admin = $this->adminService->getAdmin($id);
+            if ($admin->role_id == 1) {
+                session()->flash('error', 'Can not delete Super Admin!');
+                return $this->redirectIndex();
+            }
+            $this->adminService->delete($admin);
+            session()->flash('success', 'Admin deleted successfully!');
+        } catch (\Throwable $e) {
+            session()->flash('error', 'Admin delete failed!');
+            throw $e;
+        }
+        return $this->redirectIndex();
     }
 
     public function trash(Request $request)
     {
         if ($request->ajax()) {
-            $query = Admin::orderBy('name', 'asc')->onlyTrashed();
+            $query = $this->adminService->getAdmins()->onlyTrashed();
             return DataTables::eloquent($query)
                 ->editColumn('action', function ($admin) {
                     $menuItems = $this->trashedMenuItems($admin);
@@ -182,17 +220,25 @@ class AdminController extends Controller implements HasMiddleware
 
     public function restore(string $id)
     {
-        $admin = Admin::onlyTrashed()->findOrFail(decrypt($id));
-        $admin->restore();
-        session()->flash('success', 'Admin restored successfully');
-        return redirect()->route('am.admin.trash');
+        try {
+            $this->adminService->restore($id);
+            session()->flash('success', "Admin restored successfully");
+        } catch (\Throwable $e) {
+            session()->flash('Admin restore failed');
+            throw $e;
+        }
+        return $this->redirectTrashed();
     }
 
     public function permanentDelete(string $id)
     {
-        $admin = Admin::onlyTrashed()->findOrFail(decrypt($id));
-        $admin->forceDelete();
-        session()->flash('success', 'Admin permanently deleted successfully');
-        return redirect()->route('am.admin.trash');
+        try {
+            $this->adminService->permanentDelete($id);
+            session()->flash('success', "Admin permanently deleted successfully");
+        } catch (\Throwable $e) {
+            session()->flash('Admin permanent delete failed');
+            throw $e;
+        }
+        return $this->redirectTrashed();
     }
 }

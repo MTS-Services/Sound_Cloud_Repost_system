@@ -1,6 +1,6 @@
 <x-admin::layout>
-    <x-slot name="title">{{__('Update Admin')}}</x-slot>
-    <x-slot name="breadcrumb">{{__('Update Admin')}}</x-slot>
+    <x-slot name="title">{{ __('Update Admin') }}</x-slot>
+    <x-slot name="breadcrumb">{{ __('Update Admin') }}</x-slot>
     <x-slot name="page_slug">admin</x-slot>
 
     <section>
@@ -88,6 +88,15 @@
                                 <input type="password" name="password_confirmation" placeholder="Confirm Password"
                                     class="flex-1" />
                             </label>
+                            <x-input-error class="mt-2" :messages="$errors->get('password_confirmation')" />
+                        </div>
+                        <div class="space-y-2">
+                            <p class="label">{{ __('Role') }}</p>
+                            <select name="role" class="input select select2">
+                                @foreach ($roles as $role)
+                                    <option value="{{ $role->id }}" {{ $admin->role_id == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
+                                @endforeach
+                            </select>
                             <x-input-error class="mt-2" :messages="$errors->get('password_confirmation')" />
                         </div>
                     </div>

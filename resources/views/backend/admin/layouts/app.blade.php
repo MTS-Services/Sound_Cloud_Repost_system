@@ -100,7 +100,9 @@
 
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
     <script>
-        lucide.createIcons();
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
     </script>
 
     <script>
@@ -549,6 +551,7 @@
         document.head.appendChild(style);
     </script>
     {{-- Custom JS --}}
+    <script src="{{ asset('assets/js/password.js') }}"></script>
     @stack('js')
 
 </body>

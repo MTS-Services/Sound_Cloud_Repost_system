@@ -55,7 +55,7 @@
                         <!-- Password -->
                         <div class="space-y-2">
                             <p class="label">{{ __('Password') }}</p>
-                            <label class="input flex items-center gap-2">
+                            <label class="input relative flex items-center gap-2">
                                 <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                     <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none"
                                         stroke="currentColor">
@@ -65,9 +65,16 @@
                                         <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
                                     </g>
                                 </svg>
-                                <input type="password" name="password" placeholder="Password" class="flex-1" />
+                                <input :type="$store.password.showPassword ? 'text' : 'password'" name="password"
+                                    placeholder="Password" class="flex-1" />
+                                <button type="button"
+                                    @click="$store.password.showPassword = !$store.password.showPassword ; $nextTick(() => lucide.createIcons())">
+                                    <i :data-lucide="$store.password.showPassword ? 'eye-off' : 'eye'"
+                                        class="w-4 h-4"></i>
+                                </button>
                             </label>
                             <x-input-error class="mt-2" :messages="$errors->get('password')" />
+
                         </div>
 
                         <!-- Confirm Password -->
@@ -83,9 +90,23 @@
                                         <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
                                     </g>
                                 </svg>
-                                <input type="password" name="password_confirmation" placeholder="Confirm Password"
-                                    class="flex-1" />
+                                <input :type="$store.password.showPassword ? 'text' : 'password'"
+                                    name="password_confirmation" placeholder="Confirm Password" class="flex-1" />
+                                <button type="button"
+                                    @click="$store.password.showPassword = !$store.password.showPassword ; $nextTick(() => lucide.createIcons())">
+                                    <i :data-lucide="$store.password.showPassword ? 'eye-off' : 'eye'"
+                                        class="w-4 h-4"></i>
+                                </button>
                             </label>
+                            <x-input-error class="mt-2" :messages="$errors->get('password_confirmation')" />
+                        </div>
+                        <div class="space-y-2">
+                            <p class="label">{{ __('Role') }}</p>
+                            <select name="role" class="input select select2">
+                                @foreach ($roles as $role)
+                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                @endforeach
+                            </select>
                             <x-input-error class="mt-2" :messages="$errors->get('password_confirmation')" />
                         </div>
                     </div>
@@ -98,7 +119,5 @@
             {{-- documentation will be loded here and add md:col-span-2 class --}}
 
         </div>
-
-
     </section>
 </x-admin::layout>
