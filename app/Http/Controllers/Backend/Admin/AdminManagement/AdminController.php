@@ -33,7 +33,7 @@ class AdminController extends Controller implements HasMiddleware
             new Middleware('permission:admin-edit', only: ['edit', 'update']),
             new Middleware('permission:admin-delete', only: ['destroy']),
             new Middleware('permission:admin-status', only: ['status']),
-            new Middleware('permission:admin-recycle-bin', only: ['trash']),
+            new Middleware('permission:admin-trash', only: ['trash']),
             new Middleware('permission:admin-restore', only: ['restore']),
             new Middleware('permission:admin-permanent-delete', only: ['permanentDelete']),
         ];

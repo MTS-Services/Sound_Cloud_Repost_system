@@ -1,10 +1,10 @@
 <?php
 
-namespace {{ namespace }};
+namespace App\Http\Requests\Admin\AdminManagement;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class {{ class }} extends FormRequest
+class RoleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,20 +22,9 @@ class {{ class }} extends FormRequest
     public function rules(): array
     {
         return [
-            //
-        ] + ($this->isMethod('POST') ? $this->store() : $this->update());
-    }
-
-    protected function store(): array
-    {
-        return [
-            //
-        ];
-    }
-    protected function update(): array
-    {
-        return [
-            //
+            'name' => 'required|string',
+            'permissions' => 'required|array',
+            'permissions.*' => 'required|integer',
         ];
     }
 }

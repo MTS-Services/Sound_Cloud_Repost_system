@@ -18,7 +18,7 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source "../views";
-@source '*';
+@source '../../**';
 
 :root {
     --primary: #1CA577;
