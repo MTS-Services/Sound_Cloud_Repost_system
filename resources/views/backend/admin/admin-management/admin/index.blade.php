@@ -15,6 +15,7 @@
                 </div>
             </div>
         </div>
+        <button onclick="details_modal.showModal()" class="btn btn-primary">Open modal</button>
 
         <div class="glass-card rounded-2xl p-6">
             <table class="table datatable table-zebra">
@@ -34,6 +35,8 @@
             </table>
         </div>
     </section>
+
+    <x-admin.details-modal title="Admin Details" />
 
     @push('js')
         <script src="{{ asset('assets/js/datatable.js') }}"></script>
@@ -61,6 +64,89 @@
 
                 initializeDataTable(details);
             })
+        </script>
+
+        {{-- Details Modal --}}
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+
+                $(document).on('click', '.view', function() {
+                    const id = $(this).data('id');
+                    const route = "{{ route('am.admin.show', ':id') }}";
+
+                    const details = [{
+                            label: 'Name',
+                            key: 'name'
+                        },
+                        {
+                            label: 'Email',
+                            key: 'email'
+                        },
+                        {
+                            label: 'Role',
+                            key: 'role_id'
+                        },
+                        {
+                            label: 'Created By',
+                            key: 'created_by'
+                        },
+                        {
+                            label: 'Created At',
+                            key: 'created_at'
+                        }
+                    ];
+
+                    showDetailsModal(route, id, 'Admin Details', details);
+                });
+
+
+                function showDetailsModal(apiRouteWithPlaceholder, id, title = 'Details', details = null) {
+                    const url = apiRouteWithPlaceholder.replace(':id', id);
+
+                    axios.post(url)
+                        .then(res => {
+                            const data = res.data?.admin || res.data;
+                            let html = '';
+
+                            if (details && Array.isArray(details)) {
+                                // Show only specified keys
+                                details.forEach(item => {
+                                    const label = item.label || item.key;
+                                    const value = data[item.key] ?? 'N/A';
+
+                                    html += `
+                        <div class="flex justify-between border-b py-2">
+                            <span class="font-medium text-gray-700 dark:text-gray-300">${label}</span>
+                            <span class="text-gray-900 dark:text-white">${value}</span>
+                        </div>
+                    `;
+                                });
+                            } else {
+                                // Fallback: show everything
+                                for (const [key, value] of Object.entries(data)) {
+                                    const formattedKey = key
+                                        .replace(/_/g, ' ')
+                                        .replace(/\b\w/g, l => l.toUpperCase());
+
+                                    html += `
+                        <div class="flex justify-between border-b py-2">
+                            <span class="font-medium text-gray-700 dark:text-gray-300">${formattedKey}</span>
+                            <span class="text-gray-900 dark:text-white">${value ?? 'N/A'}</span>
+                        </div>
+                    `;
+                                }
+                            }
+
+                            document.getElementById('modal-title').innerText = title;
+                            document.getElementById('modal-content').innerHTML = html;
+                            details_modal.showModal();
+                        })
+                        .catch(err => {
+                            console.error('Error loading details:', err);
+                        });
+                }
+
+            });
         </script>
     @endpush
 </x-admin::layout>

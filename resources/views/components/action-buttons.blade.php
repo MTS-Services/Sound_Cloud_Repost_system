@@ -72,7 +72,7 @@
                     <li>
                         <a href="{{ $delete || $pDelete ? 'javascript:void(0)' : $route }}"
                             target="{{ $menuItem['target'] ?? '' }}" title="{{ $menuItem['title'] ?? '' }}"
-                            class="px-4 py-2 text-sm rounded-md text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-150 ease-in-out {{ $menuItem['className'] ?? '' }}"
+                            class="px-4 py-2 text-sm rounded-md text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-150 ease-in-out {{ $menuItem['className'] ?? '' }} block"
                             @if ($delete) @click="open = false; confirmDelete(() => document.getElementById('{{ $div_id }}').submit())"
                             @elseif($pDelete)
                                 @click="open = false; confirmPermanentDelete(() => document.getElementById('{{ $div_id }}').submit())" @endif
