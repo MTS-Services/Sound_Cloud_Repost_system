@@ -3,12 +3,25 @@
 namespace App\Http\Controllers\Backend\Admin\AdminManagement;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\AdminManagement\PermissionRequest;
 use App\Services\Admin\AdminManagement\PermissionService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Http\RedirectResponse;
 
 class PermissionController extends Controller
 {
+
+    protected function redirectIndex(): RedirectResponse
+    {
+        return redirect()->route('am.permission.index');
+    }
+
+    protected function redirectTrashed(): RedirectResponse
+    {
+        return redirect()->route('am.permission.trash');
+    }
+
     protected PermissionService $permissionService;
 
     public function __construct(PermissionService $permissionService)
@@ -18,8 +31,8 @@ class PermissionController extends Controller
 
     public function index(Request $request)
     {
-        $query = $this->permissionService->getPermissions();
         if ($request->ajax()) {
+            $query = $this->permissionService->getPermissions();
             return DataTables::eloquent($query)
                 ->editColumn('action', function ($permission) {
                     $menuItems = $this->menuItems($permission);
@@ -39,32 +52,48 @@ class PermissionController extends Controller
                 'data-id' => encrypt($model->id),
                 'className' => 'view',
                 'label' => 'Details',
-                'permissions' => ['admin-list', 'admin-delete', 'admin-status']
+                'permissions' => ['permission-list', 'permission-delete', 'permission-status']
             ],
             [
-                'routeName' => 'am.admin.edit',
+                'routeName' => 'am.permission.edit',
                 'params' => [encrypt($model->id)],
                 'label' => 'Edit',
-                'permissions' => ['admin-edit']
+                'permissions' => ['permission-edit']
             ],
 
             [
-                'routeName' => 'am.admin.destroy',
+                'routeName' => 'am.permission.destroy',
                 'params' => [encrypt($model->id)],
                 'label' => 'Delete',
                 'delete' => true,
-                'permissions' => ['admin-delete']
+                'permissions' => ['permission-delete']
             ]
 
         ];
     }
 
     /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        return view('backend.admin.admin-management.permission.create');
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PermissionRequest $request)
     {
-        //
+        try {
+            $validated = $request->validated();
+            $this->permissionService->createPermission($validated);
+            session()->flash('success', "Permission created successfully");
+        } catch (\Throwable $e) {
+            session()->flash('Permission creation failed');
+            throw $e;
+        }
+        return $this->redirectIndex();
     }
 
     /**
@@ -80,15 +109,25 @@ class PermissionController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $data['permission'] = $this->permissionService->getPermission($id);
+        return view('backend.admin.admin-management.permission.edit', $data);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(PermissionRequest $request, string $id)
     {
-        //
+        try {
+            $permission = $this->permissionService->getPermission($id);
+            $validated = $request->validated();
+            $this->permissionService->updatePermission($permission, $validated);
+            session()->flash('success', "Permission updated successfully");
+        } catch (\Throwable $e) {
+            session()->flash('Permission update failed');
+            throw $e;
+        }
+        return $this->redirectIndex();
     }
 
     /**
@@ -96,6 +135,73 @@ class PermissionController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $permission = $this->permissionService->delete($id);
+            session()->flash('success', "Permission deleted successfully");
+        } catch (\Throwable $e) {
+            session()->flash('Permission delete failed');
+            throw $e;
+        }
+        return $this->redirectIndex();
+    }
+
+    public function trash(Request $request)
+    {
+
+        if ($request->ajax()) {
+            $query = $this->permissionService->getPermissions()->onlyTrashed();
+            return DataTables::eloquent($query)
+                ->editColumn('action', function ($permission) {
+                    $menuItems = $this->trashedMenuItems($permission);
+                    return view('components.action-buttons', compact('menuItems'))->render();
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+        return view('backend.admin.admin-management.permission.trash');
+    }
+
+    protected function trashedMenuItems($model): array
+    {
+        return [
+            [
+                'routeName' => 'am.permission.restore',
+                'params' => [encrypt($model->id)],
+                'label' => 'Restore',
+                'permissions' => ['role-restore']
+            ],
+            [
+                'routeName' => 'am.permission.permanent-delete',
+                'params' => [encrypt($model->id)],
+                'label' => 'Permanent Delete',
+                'p-delete' => true,
+                'permissions' => ['role-permanent-delete']
+            ]
+
+        ];
+    }
+
+    public function restore(string $id): RedirectResponse
+    {
+        try {
+            $this->permissionService->restore($id);
+            session()->flash('success', "Permission restored successfully");
+        } catch (\Throwable $e) {
+            session()->flash('Permission restore failed');
+            throw $e;
+        }
+        return $this->redirectTrashed();
+    }
+
+    public function permanentDelete(string $id): RedirectResponse
+    {
+        try {
+            $this->permissionService->permanentDelete($id);
+            session()->flash('success', "Permission permanently deleted successfully");
+        } catch (\Throwable $e) {
+            session()->flash('Permission permanent delete failed');
+            throw $e;
+        }
+        return $this->redirectTrashed();
     }
 }

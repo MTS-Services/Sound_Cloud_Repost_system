@@ -1,16 +1,13 @@
 <x-admin::layout>
-    <x-slot name="title">Create Admin</x-slot>
-    <x-slot name="breadcrumb">Create Admin</x-slot>
+    <x-slot name="title">{{ __('Create Admin') }}</x-slot>
+    <x-slot name="breadcrumb">{{ __('Create Admin') }}</x-slot>
     <x-slot name="page_slug">admin</x-slot>
 
     <section>
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Create Admin') }}</h2>
-                <a href="{{ route('am.admin.index') }}"
-                    class="btn-primary px-4 py-2 rounded-xl text-text-white flex items-center gap-2">
-                    {{ __('Back') }}
-                </a>
+                <x-admin.primary-link href="{{ route('am.admin.index') }}">{{ __('Back') }} </x-admin.primary-link>
             </div>
         </div>
 
@@ -93,7 +90,7 @@
                         </div>
                     </div>
                     <div class="flex justify-end mt-5">
-                        <button class="btn-primary px-4 py-2 rounded-xl text-text-white">{{ __('Create') }}</button>
+                        <x-admin.primary-button>{{ __('Create') }}</x-admin.primary-button>
                     </div>
                 </form>
             </div>

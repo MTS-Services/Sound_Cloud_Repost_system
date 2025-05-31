@@ -22,8 +22,7 @@ class PermissionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'prefix' => 'required',
-
+            'prefix' => 'required|string',
         ] + ($this->isMethod('POST') ? $this->store() : $this->update());
     }
     protected function store(): array

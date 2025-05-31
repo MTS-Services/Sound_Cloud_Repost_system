@@ -1,6 +1,6 @@
 <x-admin::layout>
-    <x-slot name="title">Admin List</x-slot>
-    <x-slot name="breadcrumb">Admin List</x-slot>
+    <x-slot name="title">{{ __('Admin List') }}</x-slot>
+    <x-slot name="breadcrumb">{{ __('Admin List') }}</x-slot>
     <x-slot name="page_slug">admin</x-slot>
     <section>
 
@@ -8,14 +8,10 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Admin List') }}</h2>
                 <div class="flex items-center gap-2">
-                    <a href="{{ route('am.admin.trash') }}"
-                        class="btn-primary px-4 py-2 rounded-xl flex items-center gap-2">
-                        {{ __('Trash') }}
-                    </a>
-                    <a href="{{ route('am.admin.create') }}"
-                        class="btn-primary px-4 py-2 rounded-xl text-text-white flex items-center gap-2">
-                        {{ __('Add New') }}
-                    </a>
+                    <x-admin.secondary-link error="true" href="{{ route('am.admin.trash') }}">{{ __('Trash') }}
+                    </x-admin.secondary-link>
+                    <x-admin.primary-link href="{{ route('am.admin.create') }}">{{ __('Add') }}
+                    </x-admin.primary-link>
                 </div>
             </div>
         </div>
@@ -27,6 +23,7 @@
                         <th width="5%">{{ __('SL') }}</th>
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Email') }}</th>
+                        <th>{{ __('Created By') }}</th>
                         <th>{{ __('Created Date') }}</th>
                         <th width="10%">{{ __('Action') }}</th>
                     </tr>
@@ -45,6 +42,7 @@
                     //name and data, orderable, searchable
                     ['name', true, true],
                     ['email', true, true],
+                    ['created_by', true, true],
                     ['created_at', true, true],
                     ['action', false, false],
                 ];

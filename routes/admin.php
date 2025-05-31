@@ -23,5 +23,10 @@ Route::group(['middleware' => ['auth:admin'], 'prefix' => 'admin'], function () 
         Route::resource('role', RoleController::class);
         // Permission Routes
         Route::resource('permission', PermissionController::class);
+        Route::controller(PermissionController::class)->name('permission.')->prefix('permission')->group(function () {
+            Route::get('/trash/bin', 'trash')->name('trash');
+            Route::get('/restore/{permission}', 'restore')->name('restore');
+            Route::delete('/permanent-delete/{permission}', 'permanentDelete')->name('permanent-delete');
+        });
     });
 });
