@@ -129,7 +129,11 @@ class RoleController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(string $id) {}
+    public function show(Request $request,string $id) {
+        $data = $this->roleService->getRole($id);
+        $data->load(['permissions:id,name,prefix']);
+        return response()->json($data);
+    }
 
     /**
      * Show the form for editing the specified resource.

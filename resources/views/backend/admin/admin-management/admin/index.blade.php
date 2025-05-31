@@ -15,8 +15,6 @@
                 </div>
             </div>
         </div>
-        <button onclick="details_modal.showModal()" class="btn btn-primary">Open modal</button>
-
         <div class="glass-card rounded-2xl p-6">
             <table class="table datatable table-zebra">
                 <thead>
@@ -36,7 +34,8 @@
         </div>
     </section>
 
-    <x-admin.details-modal title="Admin Details" />
+    {{-- Details Modal --}}
+    <x-admin.details-modal/>
 
     @push('js')
         <script src="{{ asset('assets/js/datatable.js') }}"></script>
@@ -89,14 +88,6 @@
                         {
                             label: '{{ __('Phone') }}',
                             key: 'phone',
-                        },
-                        {
-                            label: '{{ __('Created By') }}',
-                            key: 'created_by',
-                        },
-                        {
-                            label: '{{ __('Created Date') }}',
-                            key: 'created_at',
                         },
                         {
                             label: '{{ __('Hello') }}',

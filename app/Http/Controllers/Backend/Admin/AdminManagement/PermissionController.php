@@ -119,9 +119,10 @@ class PermissionController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
-        //
+        $data = $this->permissionService->getPermission($id);
+        return response()->json($data);
     }
 
     /**

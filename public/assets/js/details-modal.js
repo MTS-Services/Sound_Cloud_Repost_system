@@ -14,6 +14,19 @@ function showDetailsModal(apiRouteWithPlaceholder, id, title = 'Details', detail
     currentId = id;
     currentModalConfig = detailsConfig;
 
+    const commonDetailConfig = [
+        { label: 'Created By', key: 'created_by' },
+        { label: 'Created Date', key: 'created_at' },
+        { label: 'Updated By', key: 'updated_by' },
+        { label: 'Updated Date', key: 'updated_at' },
+    ]
+
+    if (detailsConfig) {
+        detailsConfig.push(...commonDetailConfig);
+    } else {
+        detailsConfig = commonDetailConfig;
+    }
+
     // Set modal title immediately
     modalTitleElement.innerText = title;
 
@@ -29,7 +42,7 @@ function showDetailsModal(apiRouteWithPlaceholder, id, title = 'Details', detail
     // Make API call
     axios.post(url)
         .then(res => {
-            const data = res.data?.admin || res.data;
+            const data = res.data;
             currentModalData = data;
             loadModalDetails(data, detailsConfig);
         })
@@ -46,11 +59,23 @@ function loadModalDetails(data, detailsConfig) {
         if (detailsConfig && Array.isArray(detailsConfig)) {
             detailsConfig.forEach(item => {
                 const label = item.label || item.key;
-                const value = data[item.key] ?? 'N/A';
+                let rawValue = data[item.key];
+
+                let formattedValue;
+
+                if (item.loop && Array.isArray(rawValue)) {
+                    // Looping through nested items (e.g., permissions)
+                    formattedValue = rawValue.map(subItem =>
+                        formatValue(subItem[item.loopKey], item.key)
+                    ).join(', ');
+                } else {
+                    // Single value
+                    formattedValue = formatValue(rawValue, item.key);
+                }
                 const icon = item.icon || getDefaultIcon(item.key);
 
                 // Format different types of values
-                let displayValue = formatValue(value, item.key);
+                let displayValue = formattedValue;
 
                 html += `
                     <div class="detail-item flex items-center justify-between py-4 px-4 rounded-lg">
@@ -119,9 +144,10 @@ function formatValue(value, key) {
         return `<a href="mailto:${value}" class="text-blue-600 dark:text-blue-400 hover:underline">${value}</a>`;
     } else if (key.toLowerCase().includes('phone')) {
         return `<a href="tel:${value}" class="text-blue-600 dark:text-blue-400 hover:underline">${value}</a>`;
-    } else if (key.toLowerCase().includes('date') || key.toLowerCase().includes('created_at') || key.toLowerCase().includes('updated_at')) {
-        return formatDate(value);
-    } else {
+    }//  else if (key.toLowerCase().includes('date') || key.toLowerCase().includes('created_at') || key.toLowerCase().includes('updated_at')) {
+    //     return formatDate(value);
+    // } 
+    else {
         return `<span class="text-gray-900 dark:text-white font-medium">${value}</span>`;
     }
 }
@@ -143,29 +169,30 @@ function formatStatus(status) {
     return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colorClass}">${status}</span>`;
 }
 
-function formatDate(dateString) {
-    try {
-        const date = new Date(dateString);
-        const options = {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        };
-        return `<span class="text-gray-900 dark:text-white font-medium">${date.toLocaleDateString('en-US', options)}</span>`;
-    } catch (error) {
-        return `<span class="text-gray-900 dark:text-white font-medium">${dateString}</span>`;
-    }
-}
+// function formatDate(dateString) {
+//     try {
+//         const date = new Date(dateString);
+//         const options = {
+//             year: 'numeric',
+//             month: 'short',
+//             day: 'numeric',
+//             hour: '2-digit',
+//             minute: '2-digit'
+//         };
+//         return `<span class="text-gray-900 dark:text-white font-medium">${date.toLocaleDateString('en-US', options)}</span>`;
+//     } catch (error) {
+//         return `<span class="text-gray-900 dark:text-white font-medium">${dateString}</span>`;
+//     }
+// }
 
 function getDefaultIcon(key) {
     const keyLower = key.toLowerCase();
 
+    if (keyLower.includes('permission')) return 'shield-check';
+    if (keyLower.includes('role')) return 'shield';
     if (keyLower.includes('name')) return 'user';
     if (keyLower.includes('email')) return 'mail';
     if (keyLower.includes('phone')) return 'phone';
-    if (keyLower.includes('role')) return 'shield';
     if (keyLower.includes('status')) return 'activity';
     if (keyLower.includes('created')) return 'calendar';
     if (keyLower.includes('updated')) return 'edit';

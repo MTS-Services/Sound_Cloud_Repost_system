@@ -33,6 +33,9 @@
         </div>
     </section>
 
+    {{-- Details Modal --}}
+    <x-admin.details-modal/>
+
     @push('js')
         <script src="{{ asset('assets/js/datatable.js') }}"></script>
         <script>
@@ -57,6 +60,29 @@
 
                 initializeDataTable(details);
             })
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+
+                $(document).on('click', '.view', function() {
+                    const id = $(this).data('id');
+                    const route = "{{ route('am.role.show', ':id') }}";
+
+                    const details = [{
+                            label: '{{ __('Role Name') }}',
+                            key: 'name',
+                        },
+                        {
+                            label: '{{ __('Permisisons') }}',
+                            key: 'permissions',
+                            loop: true,
+                            loopKey: 'name',
+                        },
+                    ];
+
+                    showDetailsModal(route, id, '{{ __('Role Details') }}', details);
+                });
+            });
         </script>
     @endpush
 </x-admin::layout>

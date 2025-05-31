@@ -132,7 +132,7 @@ class AdminController extends Controller implements HasMiddleware
      */
     public function show(Request $request, string $id)
     {
-        $data['admin'] = $this->adminService->getAdmin($id);
+        $data= $this->adminService->getAdmin($id);
         return response()->json($data);
     }
 

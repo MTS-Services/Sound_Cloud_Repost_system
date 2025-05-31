@@ -34,6 +34,8 @@
         </div>
     </section>
 
+    <x-admin.details-modal />
+
     @push('js')
         <script src="{{ asset('assets/js/datatable.js') }}"></script>
         <script>
@@ -59,6 +61,29 @@
 
                 initializeDataTable(details);
             })
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+
+                $(document).on('click', '.view', function() {
+                    const id = $(this).data('id');
+                    const route = "{{ route('am.permission.show', ':id') }}";
+
+                    const details = [{
+                            label: '{{ __('Prefix') }}',
+                            key: 'prefix',
+                        },
+                        {
+                            label: '{{ __('Permisisons Name') }}',
+                            key: 'name',
+                            icon: 'shield-check',
+                        },
+                    ];
+
+                    showDetailsModal(route, id, '{{ __('Permisisons Details') }}', details);
+                });
+            });
         </script>
     @endpush
 </x-admin::layout>
