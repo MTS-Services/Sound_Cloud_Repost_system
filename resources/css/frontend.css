@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@import 'tailwindcss';
+@plugin "daisyui";
+
+@plugin '@tailwindcss/forms';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../**';
+@source "./**";
+@source "../views";
+@source "../views/*.blade.php";
+
+
+@layer base {
+
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentcolor);
+        scroll-behavior: smooth;
+    }
+}
+
+
+/* Toggle Theme mode */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme {
+
+    /* Breakpoints */
+    --breakpoint-xs: 480px;
+    --breakpoint-sm: 640px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
+    --breakpoint-xl: 1280px;
+    --breakpoint-2xl: 1440px;
+    --breakpoint-3xl: 1600px;
+    --breakpoint-4xl: 1920px;
+    --breakpoint-5xl: 2560px;
+
+    /* Fonts */
+    --font-poppins: 'Poppins', sans-serif;
+
+    /* Colors  */
+    /* Bacground */
+    --color-bg-primary: #fb3802;
+    --color-bg-primary-hover: #fd5f33;
+    --color-bg-primaryLight: #fff2f2;
+    --color-bg-white: #ffffff;
+    --color-bg-black: #000000;
+
+    --color-bg-dark-primary: #202020;
+    --color-bg-dark-secondary: #181818;
+    --color-bg-dark-gray-primary: #6c6c6c;
+    --color-bg-dark-gray-secondary: #707070;
+
+    --color-bg-light-primary: #fafafa;
+    --color-bg-light-secondary: #f4f4f4;
+
+    --color-bg-light-gray-primary: #b8b8b8;
+    --color-bg-light-gray-secondary: #bfbfbf;
+    --color-bg-light-gray-tertiary: #b3b3b3;
+
+    /* Text */
+    --color-text-black: #000000;
+    --color-text-white: #ffffff;
+
+    --color-text-dark-primary: #202020;
+    --color-text-dark-secondary: #181818;
+    --color-text-dark-gray-primary: #6c6c6c;
+    --color-text-dark-gray-secondary: #707070;
+
+    --color-text-light-primary: #fafafa;
+    --color-text-light-secondary: #f4f4f4;
+    --color-text-light-gray-primary: #b8b8b8;
+    --color-text-light-gray-secondary: #bfbfbf;
+    --color-text-light-gray-tertiary: #b3b3b3;
+
+    /* Border */
+    --color-border-white: #ffffff;
+    --color-border-black: #000000;
+
+    --color-border-dark-primary: #202020;
+    --color-border-dark-secondary: #181818;
+    --color-border-dark-gray-primary: #6c6c6c;
+    --color-border-dark-gray-secondary: #707070;
+
+    --color-border-light-primary: #fafafa;
+    --color-border-light-secondary: #f4f4f4;
+    --color-border-light-gray-primary: #b8b8b8;
+    --color-border-light-gray-secondary: #bfbfbf;
+    --color-border-light-gray-tertiary: #b3b3b3;
+}
+
+@utility container {
+    padding-inline: 10px;
+    margin-inline: auto;
+    @apply max-w-screen-2xl;
+
+    @variants sm, md, lg, xl, 2xl {
+        max-width: 100%;
+    }
+}
