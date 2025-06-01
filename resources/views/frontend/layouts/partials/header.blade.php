@@ -1,4 +1,4 @@
-<header class="bg-bg-dark-primary sticky top-0 z-50">
+{{-- <header class="bg-bg-dark-primary sticky top-0 z-50">
     <div class="container">
         <nav class="navbar">
             <div class="navbar-start">
@@ -17,4 +17,4 @@
             </div>
         </nav>
     </div>
-</header>
+</header> --}}
