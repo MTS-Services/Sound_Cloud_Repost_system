@@ -7,6 +7,8 @@
                             </div>
                         </div>
                         <div class="hidden md:flex items-center space-x-8">
+                            <a href="#about"
+                                class="nav-link text-gray-secondary dark:text-gray-primary hover:text-primary-tartiary transition-colors duration-200 font-medium">About</a>
                             <a href="#features"
                                 class="nav-link text-gray-secondary dark:text-gray-primary hover:text-primary-tartiary transition-colors duration-200 font-medium">Features</a>
                             <a href="#how-it-works"
@@ -14,8 +16,6 @@
                                 It Works</a>
                             <a href="#pricing"
                                 class="nav-link text-gray-secondary dark:text-gray-primary hover:text-primary-tartiary transition-colors duration-200 font-medium">Pricing</a>
-                            <a href="#about"
-                                class="nav-link text-gray-secondary dark:text-gray-primary hover:text-primary-tartiary transition-colors duration-200 font-medium">About</a>
                             <a href="#testimonials"
                                 class="nav-link text-gray-secondary dark:text-gray-primary hover:text-primary-tartiary transition-colors duration-200 font-medium">Testimonials</a>
                             <a href="#faq"
@@ -56,6 +56,8 @@
                 <div class="hidden md:hidden bg-white dark:bg-dark-secondary shadow-md transition-colors duration-300"
                     id="mobile-menu">
                     <div class="px-2 pt-2 pb-3 space-y-1">
+                        <a href="#about"
+                            class="nav-link block px-3 py-2 text-gray-secondary dark:text-gray-primary hover:bg-primary-50 dark:hover:bg-dark-tartiary hover:text-primary-tartiary rounded-md">About</a>
                         <a href="#features"
                             class="nav-link block px-3 py-2 text-gray-secondary dark:text-gray-primary hover:bg-primary-50 dark:hover:bg-dark-tartiary hover:text-primary-tartiary rounded-md">Features</a>
                         <a href="#how-it-works"
@@ -63,8 +65,6 @@
                             It Works</a>
                         <a href="#pricing"
                             class="nav-link block px-3 py-2 text-gray-secondary dark:text-gray-primary hover:bg-primary-50 dark:hover:bg-dark-tartiary hover:text-primary-tartiary rounded-md">Pricing</a>
-                        <a href="#about"
-                            class="nav-link block px-3 py-2 text-gray-secondary dark:text-gray-primary hover:bg-primary-50 dark:hover:bg-dark-tartiary hover:text-primary-tartiary rounded-md">About</a>
                         <a href="#testimonials"
                             class="nav-link block px-3 py-2 text-gray-secondary dark:text-gray-primary hover:bg-primary-50 dark:hover:bg-dark-tartiary hover:text-primary-tartiary rounded-md">Testimonials</a>
                         <a href="#faq"
