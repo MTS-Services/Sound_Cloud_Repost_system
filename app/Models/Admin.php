@@ -3,14 +3,21 @@
 namespace App\Models;
 
 use App\Models\AuthBaseModel;
+use Spatie\Permission\Traits\HasRoles;
 
 class Admin extends AuthBaseModel
 {
+    use HasRoles;
     protected $guard = 'admin';
     protected $fillable = [
         'name',
         'email',
         'password',
+        'role_id',
+
+        'created_by',
+        'updated_by',
+        'deleted_by',
     ];
     protected $hidden = [
         'password',
@@ -22,5 +29,10 @@ class Admin extends AuthBaseModel
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id')->select(['name', 'id']);
     }
 }
