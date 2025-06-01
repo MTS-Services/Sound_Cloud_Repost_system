@@ -8,7 +8,7 @@
         'w-72 -translate-x-full': !desktop && !mobile_menu_open,
     }">
 
-    <div class="glass-card h-full custom-scrollbar overflow-y-auto ml-2 mr-1 rounded-xl">
+    <div class="glass-card h-full custom-scrollbar rounded-xl ">
         <!-- Sidebar Header -->
         <a href="{{ route('admin.dashboard') }}" class="p-3 border-b border-white/10 inline-block">
             <div class="flex items-center gap-4">
@@ -27,7 +27,6 @@
                 </div>
             </div>
         </a>
-
         <!-- Quick Stats (Collapsed Sidebar) -->
         {{-- <div x-show="desktop && !sidebar_expanded" x-transition:enter="transition-all duration-300 delay-100"
             x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
@@ -71,16 +70,17 @@
                     [
                         'name' => 'Role',
                         'route' => route('am.role.index'),
-                        'icon' => 'shield-alert',
+                        'icon' => 'shield',
                         'active' => 'role',
                     ],
                     [
                         'name' => 'Permission',
                         'route' => route('am.permission.index'),
-                        'icon' => 'shield',
+                        'icon' => 'shield-check',
                         'active' => 'permission',
                     ],
                 ]" />
+
 
             <x-admin.navlink type="dropdown" icon="users" name="User Management" :page_slug="$active"
                 :items="[

@@ -1,6 +1,6 @@
 <div class="flex flex-wrap items-center justify-center gap-3" x-data="{ open: false }">
     <!-- Drag icon -->
-    <i class="icon-grid cursor-move text-xl"></i>
+    <i data-lucide="layout-grid" class="cursor-move text-xl"></i>
 
     <!-- Dropdown container -->
     <div class="relative dropdown">
@@ -93,3 +93,7 @@
         </ul>
     </div>
 </div>
+
+<script>
+    lucide.createIcons();
+</script>

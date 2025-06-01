@@ -66,7 +66,7 @@
 
 </head>
 
-<body x-data="dashboardData()" class="animated-bg">
+<body x-data="dashboardData()" class="animated-bg overflow-x-hidden">
 
     <!-- Mobile/Tablet Overlay -->
     <div x-show="mobile_menu_open && !desktop" x-transition:enter="transition-all duration-300 ease-out"
@@ -99,12 +99,6 @@
     <x-admin::notification />
 
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-        });
-    </script>
-
     <script>
         function dashboardData() {
             return {
@@ -474,9 +468,9 @@
 
         // Initialize Lucide icons after DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
-            if (typeof lucide !== 'undefined') {
+            // if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
-            }
+            // }
         });
 
         // Smooth scrolling for anchor links
