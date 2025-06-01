@@ -419,7 +419,6 @@
     }
 
     .btn-primary {
-
         @apply bg-gradient-to-r from-bg-primary to-bg-secondary text-text-white py-2 px-4 rounded-full transition-all duration-300 ease-in-out relative overflow-hidden;
     }
 
@@ -500,7 +499,7 @@ input {
 }
 
 /* Tooltip styles */
-.tooltip {
+/* .tooltip {
     position: relative;
 }
 
@@ -524,4 +523,4 @@ input {
 
 .tooltip:hover::after {
     opacity: 1;
-}
+} */

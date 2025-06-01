@@ -89,9 +89,9 @@
         <!-- Dropdown Button -->
         <button
             @click="((desktop && sidebar_expanded) || (!desktop && mobile_menu_open)) ? (open = !open) : toggleCollapsedDropdown()"
-            class="sidebar-item flex items-center gap-4 p-3 rounded-xl hover:bg-bg-black/10 dark:hover:bg-bg-white/10 text-text-white transition-all duration-200 group w-full relative {{ $isAnyActive ? 'active' : '' }}">
+            class="sidebar-item flex items-center gap-4 p-3 rounded-xl hover:bg-bg-black/10 dark:hover:bg-bg-white/10 text-text-white transition-all duration-200 group w-full {{ $isAnyActive ? 'active' : '' }}"> {{-- relative --}}
             <div
-                class="w-8 h-8 bg-bg-black/10 dark:bg-bg-white/10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform relative">
+                class="w-8 h-8 bg-bg-black/10 dark:bg-bg-white/10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform"> {{-- relative --}}
                 @if ($boxicon)
                     <i class="{{ $defaultParentIcon }} text-blue"></i>
                 @else
@@ -132,7 +132,7 @@
             x-transition:leave-end="opacity-0 translate-x-2 scale-95"
             class="hidden absolute z-[9999] min-w-64 max-w-80 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 py-3 left-full ml-2 top-0"
             :class="(collapsedDropdown && !((desktop && sidebar_expanded) || (!desktop && mobile_menu_open)) ? '!block' : '!hidden')"
-            style="backdrop-filter: blur(12px);" x-init="// Calculate position relative to the trigger button
+            style="backdrop-filter: blur(12px);" x-init="// Calculate position relative  to the trigger button
             $nextTick(() => {
                 if (collapsedDropdown) {
                     const triggerRect = $el.previousElementSibling.getBoundingClientRect();
@@ -174,8 +174,8 @@
                         
                         $el.style.top = topPosition + 'px';
                     });
-                }
-            ">
+                }"
+            >
 
             <!-- Header -->
             <div class="px-4 pb-3 border-b border-gray-200 dark:border-gray-700">
