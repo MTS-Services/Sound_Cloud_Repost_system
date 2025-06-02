@@ -15,10 +15,10 @@ function showDetailsModal(apiRouteWithPlaceholder, id, title = 'Details', detail
     currentModalConfig = detailsConfig;
 
     const commonDetailConfig = [
-        { label: 'Created By', key: 'created_by' },
-        { label: 'Created Date', key: 'created_at' },
-        { label: 'Updated By', key: 'updated_by' },
-        { label: 'Updated Date', key: 'updated_at' },
+        { label: 'Created By', key: 'creater_name' },
+        { label: 'Created Date', key: 'created_at_formatted' },
+        { label: 'Updated By', key: 'updater_name' },
+        { label: 'Updated Date', key: 'updated_at_formatted' },
     ]
 
     if (detailsConfig) {
