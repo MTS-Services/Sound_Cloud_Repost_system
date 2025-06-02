@@ -66,11 +66,11 @@ function loadModalDetails(data, detailsConfig) {
                 if (item.loop && Array.isArray(rawValue)) {
                     // Looping through nested items (e.g., permissions)
                     formattedValue = rawValue.map(subItem =>
-                        formatValue(subItem[item.loopKey], item.key)
+                        formatValue(subItem[item.loopKey], item.key, item.type)
                     ).join(', ');
                 } else {
                     // Single value
-                    formattedValue = formatValue(rawValue, item.key);
+                    formattedValue = formatValue(rawValue, item.key, item.type);
                 }
                 const icon = item.icon || getDefaultIcon(item.key);
 
@@ -132,9 +132,36 @@ function loadModalDetails(data, detailsConfig) {
     }
 }
 
-function formatValue(value, key) {
+function formatValue(value, key, type) {
     if (value === null || value === undefined || value === '') {
         return '<span class="text-gray-400 dark:text-gray-500 italic">N/A</span>';
+    }
+
+    // Handle image type
+    if (type === 'image') {
+        return `
+            <div class="relative group cursor-pointer" onclick="openImageLightbox('${value}')">
+                <img src="${value}" alt="Preview" 
+                     class="w-20 h-20 object-cover rounded-lg border-2 border-gray-200 dark:border-gray-600 hover:border-blue-400 transition-all duration-200 shadow-sm hover:shadow-md">
+                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 rounded-lg transition-all duration-200 flex items-center justify-center">
+                    <i data-lucide="zoom-in" class="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200"></i>
+                </div>
+            </div>
+        `;
+    }
+
+    // Handle video type
+    if (type === 'video') {
+        return `
+            <div class="relative group cursor-pointer" onclick="openVideoLightbox('${value}')">
+                <div class="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-lg border-2 border-gray-200 dark:border-gray-600 hover:border-blue-400 transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center">
+                    <div class="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-40 rounded-lg transition-all duration-200 flex items-center justify-center">
+                        <i data-lucide="play" class="w-8 h-8 text-white opacity-80 group-hover:opacity-100 transition-opacity duration-200"></i>
+                    </div>
+                    <i data-lucide="video" class="w-8 h-8 text-gray-500 dark:text-gray-400"></i>
+                </div>
+            </div>
+        `;
     }
 
     // Format based on key type
@@ -144,10 +171,7 @@ function formatValue(value, key) {
         return `<a href="mailto:${value}" class="text-blue-600 dark:text-blue-400 hover:underline">${value}</a>`;
     } else if (key.toLowerCase().includes('phone')) {
         return `<a href="tel:${value}" class="text-blue-600 dark:text-blue-400 hover:underline">${value}</a>`;
-    }//  else if (key.toLowerCase().includes('date') || key.toLowerCase().includes('created_at') || key.toLowerCase().includes('updated_at')) {
-    //     return formatDate(value);
-    // } 
-    else {
+    } else {
         return `<span class="text-gray-900 dark:text-white font-medium">${value}</span>`;
     }
 }
@@ -169,22 +193,6 @@ function formatStatus(status) {
     return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colorClass}">${status}</span>`;
 }
 
-// function formatDate(dateString) {
-//     try {
-//         const date = new Date(dateString);
-//         const options = {
-//             year: 'numeric',
-//             month: 'short',
-//             day: 'numeric',
-//             hour: '2-digit',
-//             minute: '2-digit'
-//         };
-//         return `<span class="text-gray-900 dark:text-white font-medium">${date.toLocaleDateString('en-US', options)}</span>`;
-//     } catch (error) {
-//         return `<span class="text-gray-900 dark:text-white font-medium">${dateString}</span>`;
-//     }
-// }
-
 function getDefaultIcon(key) {
     const keyLower = key.toLowerCase();
 
@@ -201,13 +209,110 @@ function getDefaultIcon(key) {
     if (keyLower.includes('department')) return 'building';
     if (keyLower.includes('address')) return 'map-pin';
     if (keyLower.includes('id')) return 'hash';
+    if (keyLower.includes('image')) return 'image';
+    if (keyLower.includes('video')) return 'video';
 
     return 'info';
 }
 
+// Image Lightbox Functions
+function openImageLightbox(imageSrc) {
+    const lightboxHtml = `
+        <div id="image-lightbox" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-fade-in">
+            <div class="relative max-w-7xl max-h-[90vh] mx-4">
+                <button onclick="closeLightbox()" class="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors duration-200 z-10">
+                    <i data-lucide="x" class="w-8 h-8"></i>
+                </button>
+                <img src="${imageSrc}" alt="Full Size Preview" 
+                     class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl animate-scale-in">
+                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-full text-sm backdrop-blur-sm">
+                    <i data-lucide="zoom-in" class="w-4 h-4 inline mr-2"></i>
+                    Click anywhere to close
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', lightboxHtml);
+    document.body.style.overflow = 'hidden';
+    
+    // Add click to close functionality
+    document.getElementById('image-lightbox').addEventListener('click', function(e) {
+        if (e.target === this || e.target.tagName === 'IMG') {
+            closeLightbox();
+        }
+    });
+    
+    // Reinitialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+}
+
+// Video Lightbox Functions
+function openVideoLightbox(videoSrc) {
+    const lightboxHtml = `
+        <div id="video-lightbox" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-fade-in">
+            <div class="relative max-w-4xl max-h-[90vh] mx-4 bg-black rounded-lg overflow-hidden shadow-2xl animate-scale-in">
+                <div class="absolute top-4 right-4 z-10">
+                    <button onclick="closeLightbox()" class="bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-200 backdrop-blur-sm">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <video id="lightbox-video" class="w-full h-auto max-h-[90vh]" controls autoplay>
+                    <source src="${videoSrc}" type="video/mp4">
+                    <source src="${videoSrc}" type="video/webm">
+                    <source src="${videoSrc}" type="video/ogg">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-full text-sm backdrop-blur-sm">
+                    <i data-lucide="play" class="w-4 h-4 inline mr-2"></i>
+                    Use controls to play/pause
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', lightboxHtml);
+    document.body.style.overflow = 'hidden';
+    
+    // Add click to close functionality (but not on video element)
+    document.getElementById('video-lightbox').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeLightbox();
+        }
+    });
+    
+    // Reinitialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+}
+
+// Close Lightbox Function
+function closeLightbox() {
+    const imageLightbox = document.getElementById('image-lightbox');
+    const videoLightbox = document.getElementById('video-lightbox');
+    
+    if (imageLightbox) {
+        imageLightbox.remove();
+    }
+    
+    if (videoLightbox) {
+        // Pause video before removing
+        const video = document.getElementById('lightbox-video');
+        if (video) {
+            video.pause();
+        }
+        videoLightbox.remove();
+    }
+    
+    document.body.style.overflow = 'auto';
+}
+
 function showModalError() {
     document.getElementById('loading-state').classList.add('hidden');
-    document.getElementById('details-content').classList.add('hidden');
+    document.getElementById('details-content').addClass('hidden');
     document.getElementById('error-state').classList.remove('hidden');
 
     // Reinitialize Lucide icons if available
@@ -239,25 +344,6 @@ function closeDetailsModal() {
     currentId = null;
 }
 
-// function exportDetails() {
-//     if (!currentModalData) return;
-
-//     try {
-//         const dataStr = JSON.stringify(currentModalData, null, 2);
-//         const dataBlob = new Blob([dataStr], { type: 'application/json' });
-//         const url = URL.createObjectURL(dataBlob);
-//         const link = document.createElement('a');
-//         link.href = url;
-//         link.download = `details-${Date.now()}.json`;
-//         link.click();
-//         URL.revokeObjectURL(url);
-//     } catch (error) {
-//         console.error('Export failed:', error);
-//         alert('Export failed. Please try again.');
-//     }
-// }
-
-
 function exportDetailsAsCSV() {
     if (!currentModalData) return;
 
@@ -280,13 +366,19 @@ function exportDetailsAsCSV() {
     }
 }
 
-
 // Close modal on Escape key
 document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
         const modal = document.getElementById('details_modal');
         if (!modal.classList.contains('hidden')) {
             closeDetailsModal();
+        }
+        
+        // Also close lightbox if open
+        const imageLightbox = document.getElementById('image-lightbox');
+        const videoLightbox = document.getElementById('video-lightbox');
+        if (imageLightbox || videoLightbox) {
+            closeLightbox();
         }
     }
 });
