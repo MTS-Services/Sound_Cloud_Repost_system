@@ -1,6 +1,6 @@
 <div class="flex flex-wrap items-center justify-center gap-3" x-data="{ open: false }">
     <!-- Drag icon -->
-    <i data-lucide="layout-grid" class="cursor-move text-xl"></i>
+    <i data-lucide="layout-grid" class="reorder cursor-move text-xl"></i>
 
     <!-- Dropdown container -->
     <div class="relative dropdown">
