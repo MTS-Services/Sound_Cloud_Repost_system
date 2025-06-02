@@ -38,12 +38,35 @@
     {{-- Toggle theme only dark mode and light mode --}}
     <script src="{{ asset('assets/js/toggle-theme.js') }}"></script>
 
+
+    {{-- BoxIcon  --}}
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
     @vite(['resources/css/dashboard.css', 'resources/js/app.js'])
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="{{ asset('assets/css/datatable.css') }}">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (session('success'))
+                showAlert('success', '{{ session('success') }}');
+            @endif
+
+            @if (session('error'))
+                showAlert('error', '{{ session('error') }}');
+            @endif
+
+            @if (session('warning'))
+                showAlert('warning', '{{ session('warning') }}');
+            @endif
+        });
+    </script>
+    {{-- Custom CSS  --}}
+    @stack('css')
 
 </head>
 
-<body x-data="dashboardData()" class="animated-bg min-h-screen">
+<body x-data="dashboardData()" class="animated-bg overflow-x-hidden">
 
     <!-- Mobile/Tablet Overlay -->
     <div x-show="mobile_menu_open && !desktop" x-transition:enter="transition-all duration-300 ease-out"
@@ -55,17 +78,19 @@
     <div class="flex h-screen">
         <!-- Sidebar -->
 
-        <x-admin::side-bar />
+        <x-admin::side-bar :active="$page_slug" />
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col min-h-screen custom-scrollbar overflow-y-auto">
+        <div class="flex-1 flex flex-col custom-scrollbar overflow-y-auto">
             <!-- Header -->
 
-            <x-admin::header />
+            <x-admin::header :breadcrumb="$breadcrumb" />
 
             <!-- Main Content Area -->
             <main class="flex-1 p-4 lg:p-6">
-                {{ $slot }}
+                <div class="mx-auto space-y-6">
+                    {{ $slot }}
+                </div>
             </main>
         </div>
     </div>
@@ -74,10 +99,6 @@
     <x-admin::notification />
 
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
-    <script>
-        lucide.createIcons();
-    </script>
-
     <script>
         function dashboardData() {
             return {
@@ -89,7 +110,7 @@
                 mobile_menu_open: false,
 
                 // App state
-                activeTab: 'dashboard',
+                // activeTab: 'dashboard',
                 searchQuery: '',
                 darkMode: true,
                 showNotifications: false,
@@ -133,53 +154,6 @@
                         icon: 'mail',
                         iconBg: 'bg-yellow-500/20',
                         iconColor: 'text-yellow-400'
-                    }
-                ],
-
-                users: [{
-                        id: 1,
-                        name: 'John Doe',
-                        username: '@johndoe',
-                        email: 'john@example.com',
-                        role: 'admin',
-                        status: 'active',
-                        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face&auto=format'
-                    },
-                    {
-                        id: 2,
-                        name: 'Jane Smith',
-                        username: '@janesmith',
-                        email: 'jane@example.com',
-                        role: 'manager',
-                        status: 'active',
-                        avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=40&h=40&fit=crop&crop=face&auto=format'
-                    },
-                    {
-                        id: 3,
-                        name: 'Mike Johnson',
-                        username: '@mikej',
-                        email: 'mike@example.com',
-                        role: 'user',
-                        status: 'inactive',
-                        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face&auto=format'
-                    },
-                    {
-                        id: 4,
-                        name: 'Sarah Wilson',
-                        username: '@sarahw',
-                        email: 'sarah@example.com',
-                        role: 'manager',
-                        status: 'active',
-                        avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face&auto=format'
-                    },
-                    {
-                        id: 5,
-                        name: 'David Brown',
-                        username: '@davidb',
-                        email: 'david@example.com',
-                        role: 'user',
-                        status: 'active',
-                        avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face&auto=format'
                     }
                 ],
 
@@ -372,17 +346,17 @@
                     }
                 },
 
-                setActiveTab(tab) {
-                    this.activeTab = tab;
-                    this.closeMobileMenu();
+                // setActiveTab(tab) {
+                //     this.activeTab = tab;
+                //     this.closeMobileMenu();
 
-                    // Reinitialize chart if switching to dashboard
-                    if (tab === 'dashboard') {
-                        this.$nextTick(() => {
-                            this.initChart();
-                        });
-                    }
-                },
+                //     // Reinitialize chart if switching to dashboard
+                //     if (tab === 'dashboard') {
+                //         this.$nextTick(() => {
+                //             this.initChart();
+                //         });
+                //     }
+                // },
 
                 toggleNotifications() {
                     this.showNotifications = !this.showNotifications;
@@ -494,9 +468,9 @@
 
         // Initialize Lucide icons after DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
-            if (typeof lucide !== 'undefined') {
+            // if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
-            }
+            // }
         });
 
         // Smooth scrolling for anchor links
@@ -570,6 +544,10 @@
     `;
         document.head.appendChild(style);
     </script>
+    {{-- Custom JS --}}
+    <script src="{{ asset('assets/js/details-modal.js') }}"></script>
+    <script src="{{ asset('assets/js/password.js') }}"></script>
+    @stack('js')
 
 </body>
 
