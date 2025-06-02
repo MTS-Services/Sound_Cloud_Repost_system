@@ -4,12 +4,11 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    public function home(): View
+    public function landing(): View
     {
-        return view('frontend.pages.home');
+        return view('frontend.pages.landing-page.landing');
     }
 }

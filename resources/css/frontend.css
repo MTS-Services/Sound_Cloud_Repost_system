@@ -64,6 +64,20 @@
     --color-bg-light-gray-secondary: #bfbfbf;
     --color-bg-light-gray-tertiary: #b3b3b3;
 
+    /* Langding start colors  */
+    --color-primary: '#FF5500';
+    --color-primary-hover': '#FF7730';
+    --color-secondary: '#333333';
+    --color-dark-bg: '#121212';
+    --color-dark-darker': '#0A0A0A';
+    --color-dark-card: '#1E1E1E';
+    --color-dark-lighter: '#1E1E1E';
+    --color-dark-border: '#2A2A2A';
+
+
+    --font-sans: ['Inter', 'sans-serif'];
+    /* End Landing Colors */
+
     /* Text */
     --color-text-black: #000000;
     --color-text-white: #ffffff;
