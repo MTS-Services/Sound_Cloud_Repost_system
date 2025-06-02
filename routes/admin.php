@@ -1,7 +1,9 @@
 <?php
 
-use App\Http\Controllers\Backend\Admin\AdminManagement\AdminController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Backend\Admin\AdminManagement\RoleController;
+use App\Http\Controllers\Backend\Admin\AdminManagement\AdminController;
+use App\Http\Controllers\Backend\Admin\AdminManagement\PermissionController;
 use App\Http\Controllers\Backend\Admin\DashboardController as AdminDashboardController;
 
 
@@ -10,26 +12,29 @@ Route::group(['middleware' => ['auth:admin'], 'prefix' => 'admin'], function () 
 
     // Admin Management
     Route::group(['as' => 'am.', 'prefix' => 'admin-management'], function () {
-        // Route::resource('admin', AdminController::class);
-        Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
-        // DataTable API Routes
-        Route::prefix('admin')->name('admin.')->group(function () {
-            // Fetch data for DataTable
-            Route::post('/fetch', [AdminController::class, 'fetch'])->name('fetch');
-
-            // CRUD Operations
-            Route::post('/save', [AdminController::class, 'save'])->name('save');
-            Route::put('/update/{id}', [AdminController::class, 'update'])->name('update');
-            Route::delete('/delete/{id}', [AdminController::class, 'delete'])->name('delete');
-
-            // Bulk Operations
-            Route::post('/bulk-action', [AdminController::class, 'bulkAction'])->name('bulk-action');
-
-            // Export
-            Route::get('/export', [AdminController::class, 'export'])->name('export');
-
-            // Statistics
-            Route::get('/statistics', [AdminController::class, 'statistics'])->name('statistics');
+        // Admin Routes
+        Route::resource('admin', AdminController::class);
+        Route::controller(AdminController::class)->name('admin.')->prefix('admin')->group(function () {
+            Route::post('/show/{admin}', 'show')->name('show');
+            Route::get('/trash/bin', 'trash')->name('trash');
+            Route::get('/restore/{admin}', 'restore')->name('restore');
+            Route::delete('/permanent-delete/{admin}', 'permanentDelete')->name('permanent-delete');
+        });
+        // Role Routes
+        Route::resource('role', RoleController::class);
+        Route::controller(RoleController::class)->name('role.')->prefix('role')->group(function () {
+            Route::post('/show/{role}', 'show')->name('show');
+            Route::get('/trash/bin', 'trash')->name('trash');
+            Route::get('/restore/{role}', 'restore')->name('restore');
+            Route::delete('/permanent-delete/{role}', 'permanentDelete')->name('permanent-delete');
+        });
+        // Permission Routes
+        Route::resource('permission', PermissionController::class);
+        Route::controller(PermissionController::class)->name('permission.')->prefix('permission')->group(function () {
+            Route::post('/show/{permission}', 'show')->name('show');
+            Route::get('/trash/bin', 'trash')->name('trash');
+            Route::get('/restore/{permission}', 'restore')->name('restore');
+            Route::delete('/permanent-delete/{permission}', 'permanentDelete')->name('permanent-delete');
         });
     });
 });

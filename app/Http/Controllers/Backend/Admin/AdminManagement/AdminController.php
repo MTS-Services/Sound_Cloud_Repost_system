@@ -3,390 +3,150 @@
 namespace App\Http\Controllers\Backend\Admin\AdminManagement;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\AdminManagement\AdminRequest;
+use App\Http\Traits\AuditRelationTraits;
 use App\Models\Admin;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
+use App\Services\Admin\AdminManagement\AdminService;
+use App\Services\Admin\AdminManagement\RoleService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Yajra\DataTables\Facades\DataTables;
 
-
-class AdminController extends Controller
+class AdminController extends Controller implements HasMiddleware
 {
-    public function __construct()
+    use AuditRelationTraits;
+
+    protected function redirectIndex(): RedirectResponse
     {
-        // $this->middleware('auth:admin');
+        return redirect()->route('am.admin.index');
     }
 
-    public function index()
+    protected function redirectTrashed(): RedirectResponse
     {
+        return redirect()->route('am.admin.trash');
+    }
+
+    protected AdminService $adminService;
+    protected RoleService $roleService;
+
+    public function __construct(AdminService $adminService, RoleService $roleService)
+    {
+        $this->adminService = $adminService;
+        $this->roleService = $roleService;
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            'auth:admin', // Applies 'auth:admin' to all methods
+
+            // Permission middlewares using the Middleware class
+            new Middleware('permission:admin-list', only: ['index']),
+            new Middleware('permission:admin-details', only: ['show']),
+            new Middleware('permission:admin-create', only: ['create', 'store']),
+            new Middleware('permission:admin-edit', only: ['edit', 'update']),
+            new Middleware('permission:admin-delete', only: ['destroy']),
+            new Middleware('permission:admin-status', only: ['status']),
+            new Middleware('permission:admin-trash', only: ['trash']),
+            new Middleware('permission:admin-restore', only: ['restore']),
+            new Middleware('permission:admin-permanent-delete', only: ['permanentDelete']),
+        ];
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
+    {
+        if ($request->ajax()) {
+            $query = $this->adminService->getAdmins();
+            return DataTables::eloquent($query)
+                ->editColumn('role_id', function ($admin) {
+                    return optional($admin->role)->name;
+                })
+                ->editColumn('email_verified_at', function ($admin) {
+                    return "<span class='badge badge-soft " . $admin->verify_color . "'>" . $admin->verify_label . "</span>";
+                })
+                ->editColumn('created_by', function ($admin) {
+                    return $this->creater_name($admin);
+                })
+                ->editColumn('created_at', function ($admin) {
+                    return $admin->created_at_formatted;
+                })
+                ->editColumn('action', function ($admin) {
+                    $menuItems = $this->menuItems($admin);
+                    return view('components.action-buttons', compact('menuItems'))->render();
+                })
+                ->rawColumns(['role_id', 'email_verified_at', 'created_by', 'created_at', 'action'])
+                ->make(true);
+        }
         return view('backend.admin.admin-management.admin.index');
     }
 
-    public function fetch(Request $request)
+    protected function menuItems($model): array
     {
-        try {
-            $query = Admin::query();
+        return [
+            [
+                'routeName' => 'javascript:void(0)',
+                'data-id' => encrypt($model->id),
+                'className' => 'view',
+                'label' => 'Details',
+                'permissions' => ['admin-list', 'admin-delete', 'admin-status']
+            ],
+            [
+                'routeName' => 'am.admin.edit',
+                'params' => [encrypt($model->id)],
+                'label' => 'Edit',
+                'permissions' => ['admin-edit']
+            ],
 
-            // Apply filters if provided
-            // if ($request->has('status') && $request->status !== '') {
-            //     $query->where('status', $request->status);
-            // }
+            [
+                'routeName' => 'am.admin.destroy',
+                'params' => [encrypt($model->id)],
+                'label' => 'Delete',
+                'delete' => true,
+                'permissions' => ['admin-delete']
+            ]
 
-            // if ($request->has('role') && $request->role !== '') {
-            //     $query->where('role', $request->role);
-            // }
-
-            // Apply search if provided
-            if ($request->has('search') && $request->search !== '') {
-                $search = $request->search;
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'LIKE', "%{$search}%")
-                        ->orWhere('email', 'LIKE', "%{$search}%")
-                        ->orWhere('role', 'LIKE', "%{$search}%");
-                });
-            }
-
-            // Get data with pagination info
-            $data = $query->select([
-                'id',
-                'name',
-                'email',
-                'created_at',
-                'updated_at'
-            ])
-                ->orderBy('created_at', 'desc')
-                ->get();
-
-            return response()->json($data);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Failed to fetch data',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Store a new admin record
-     */
-    public function save(Request $request)
-    {
-        try {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users,email',
-                'role' => 'required|in:Administrator,Manager,User,Guest',
-                'status' => 'required|in:Active,Inactive,Pending',
-                'password' => 'nullable|string|min:8|confirmed'
-            ]);
-
-            // Set default password if not provided
-            if (empty($validated['password'])) {
-                $validated['password'] = 'password123'; // You might want to generate a random password
-            }
-
-            $validated['password'] = Hash::make($validated['password']);
-
-            $user = Admin::create($validated);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Admin created successfully',
-                'data' => $user
-            ], 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'error' => 'Validation failed',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Failed to create admin',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Update an existing admin record
-     */
-    public function update(Request $request, $id)
-    {
-        try {
-            $user = Admin::findOrFail($id);
-
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => [
-                    'required',
-                    'email',
-                    Rule::unique('users', 'email')->ignore($user->id)
-                ],
-                'role' => 'required|in:Administrator,Manager,User,Guest',
-                'status' => 'required|in:Active,Inactive,Pending',
-                'password' => 'nullable|string|min:8|confirmed'
-            ]);
-
-            // Only update password if provided
-            if (!empty($validated['password'])) {
-                $validated['password'] = Hash::make($validated['password']);
-            } else {
-                unset($validated['password']);
-            }
-
-            $user->update($validated);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Admin updated successfully',
-                'data' => $user->fresh()
-            ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'error' => 'Admin not found'
-            ], 404);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'error' => 'Validation failed',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Failed to update admin',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Delete an admin record
-     */
-    public function delete($id)
-    {
-        try {
-            $user = Admin::findOrFail($id);
-
-            // Prevent deleting current user
-            if ($user->id === auth()->id()) {
-                return response()->json([
-                    'error' => 'Cannot delete your own account'
-                ], 403);
-            }
-
-            $user->delete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Admin deleted successfully'
-            ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'error' => 'Admin not found'
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Failed to delete admin',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Bulk operations
-     */
-    public function bulkAction(Request $request)
-    {
-        try {
-            $validated = $request->validate([
-                'action' => 'required|in:delete,activate,deactivate',
-                'ids' => 'required|array|min:1',
-                'ids.*' => 'integer|exists:users,id'
-            ]);
-
-            $ids = $validated['ids'];
-            $action = $validated['action'];
-
-            // Prevent bulk operations on current user
-            if (in_array(auth()->id(), $ids)) {
-                return response()->json([
-                    'error' => 'Cannot perform bulk operations on your own account'
-                ], 403);
-            }
-
-            switch ($action) {
-                case 'delete':
-                    Admin::whereIn('id', $ids)->delete();
-                    $message = 'Selected admins deleted successfully';
-                    break;
-
-                case 'activate':
-                    Admin::whereIn('id', $ids)->update(['status' => 'Active']);
-                    $message = 'Selected admins activated successfully';
-                    break;
-
-                case 'deactivate':
-                    Admin::whereIn('id', $ids)->update(['status' => 'Inactive']);
-                    $message = 'Selected admins deactivated successfully';
-                    break;
-            }
-
-            return response()->json([
-                'success' => true,
-                'message' => $message
-            ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'error' => 'Validation failed',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Bulk operation failed',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Export data
-     */
-    public function export(Request $request)
-    {
-        try {
-            $format = $request->get('format', 'csv');
-            $query = Admin::query();
-
-            // Apply same filters as fetch method
-            if ($request->has('status') && $request->status !== '') {
-                $query->where('status', $request->status);
-            }
-
-            if ($request->has('role') && $request->role !== '') {
-                $query->where('role', $request->role);
-            }
-
-            $data = $query->select([
-                'id',
-                'name',
-                'email',
-                'role',
-                'status',
-                'created_at'
-            ])->get();
-
-            switch ($format) {
-                case 'csv':
-                    return $this->exportToCsv($data);
-                case 'json':
-                    return $this->exportToJson($data);
-                case 'excel':
-                    return $this->exportToExcel($data);
-                default:
-                    return response()->json(['error' => 'Invalid format'], 400);
-            }
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Export failed',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Export to CSV
-     */
-    private function exportToCsv($data)
-    {
-        $filename = 'admins_' . date('Y-m-d_H-i-s') . '.csv';
-
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => "attachment; filename=\"$filename\"",
         ];
-
-        $callback = function () use ($data) {
-            $file = fopen('php://output', 'w');
-
-            // Add CSV headers
-            fputcsv($file, ['ID', 'Name', 'Email', 'Role', 'Status', 'Created At']);
-
-            // Add data rows
-            foreach ($data as $row) {
-                fputcsv($file, [
-                    $row->id,
-                    $row->name,
-                    $row->email,
-                    $row->role,
-                    $row->status,
-                    $row->created_at->format('Y-m-d H:i:s')
-                ]);
-            }
-
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
     }
-
-    /**
-     * Export to JSON
-     */
-    private function exportToJson($data)
-    {
-        $filename = 'admins_' . date('Y-m-d_H-i-s') . '.json';
-
-        return response()->json($data)
-            ->header('Content-Disposition', "attachment; filename=\"$filename\"");
-    }
-
-    /**
-     * Get statistics for dashboard
-     */
-    public function statistics()
-    {
-        try {
-            $stats = [
-                'total' => Admin::count(),
-                'active' => Admin::where('status', 'Active')->count(),
-                'inactive' => Admin::where('status', 'Inactive')->count(),
-                'pending' => Admin::where('status', 'Pending')->count(),
-                'by_role' => Admin::select('role')
-                    ->selectRaw('count(*) as count')
-                    ->groupBy('role')
-                    ->pluck('count', 'role'),
-                'recent' => Admin::where('created_at', '>=', now()->subDays(7))->count()
-            ];
-
-            return response()->json($stats);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Failed to get statistics',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
-
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        return view('backend.admin.admin-management.admin.create');
+        $data['roles'] = $this->roleService->getRoles()->select(['id', 'name'])->get();
+        return view('backend.admin.admin-management.admin.create', $data);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(AdminRequest $request)
     {
-        //
+        try {
+            $validated = $request->validated();
+            $validated['role_id'] = $request->role;
+            $this->adminService->createAdmin($validated);
+            session()->flash('success', 'Admin created successfully!');
+        } catch (\Throwable $e) {
+            session()->flash('error', 'Admin create failed!');
+            throw $e;
+        }
+        return $this->redirectIndex();
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
-        //
+        $data = $this->adminService->getAdmin($id);
+        $data['creater_name'] = $this->creater_name($data);
+        $data['updater_name'] = $this->updater_name($data);
+        return response()->json($data);
     }
 
     /**
@@ -394,22 +154,116 @@ class AdminController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $data['admin'] = $this->adminService->getAdmin($id);
+        $data['roles'] = $this->roleService->getRoles()->select('id', 'name')->get();
+        return view('backend.admin.admin-management.admin.edit', $data);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    // public function update(Request $request, string $id)
-    // {
-    //     //
-    // }
+    public function update(AdminRequest $request, string $id)
+    {
+        try {
+            $admin = $this->adminService->getAdmin($id);
+            // if role id is super admin and admin is not super admin then can not update
+            if ($admin->role_id == 1 && admin()->role_id != 1) {
+                session()->flash('error', 'You can not update Super Admin!');
+                return $this->redirectIndex();
+            }
+            $validated = $request->validated();
+            $validated['role_id'] = $request->role;
+            $this->adminService->updateAdmin($admin, $validated);
+            session()->flash('success', 'Admin updated successfully!');
+        } catch (\Throwable $e) {
+            session()->flash('error', 'Admin update failed!');
+            throw $e;
+        }
+        return $this->redirectIndex();
+    }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $admin = $this->adminService->getAdmin($id);
+            if ($admin->role_id == 1) {
+                session()->flash('error', 'Can not delete Super Admin!');
+                return $this->redirectIndex();
+            }
+            $this->adminService->delete($admin);
+            session()->flash('success', 'Admin deleted successfully!');
+        } catch (\Throwable $e) {
+            session()->flash('error', 'Admin delete failed!');
+            throw $e;
+        }
+        return $this->redirectIndex();
+    }
+
+    public function trash(Request $request)
+    {
+        if ($request->ajax()) {
+            $query = $this->adminService->getAdmins()->onlyTrashed();
+            return DataTables::eloquent($query)
+                ->editColumn('deleted_by', function ($admin) {
+                    return $this->deleter_name($admin);
+                })
+                ->editColumn('deleted_at', function ($admin) {
+                    return $admin->deleted_at_formatted;
+                })
+                ->editColumn('action', function ($admin) {
+                    $menuItems = $this->trashedMenuItems($admin);
+                    return view('components.action-buttons', compact('menuItems'))->render();
+                })
+                ->rawColumns(['deleted_by', 'deleted_at', 'action'])
+                ->make(true);
+        }
+        return view('backend.admin.admin-management.admin.trash');
+    }
+
+    protected function trashedMenuItems($model): array
+    {
+        return [
+            [
+                'routeName' => 'am.admin.restore',
+                'params' => [encrypt($model->id)],
+                'label' => 'Restore',
+                'permissions' => ['admin-restore']
+            ],
+            [
+                'routeName' => 'am.admin.permanent-delete',
+                'params' => [encrypt($model->id)],
+                'label' => 'Permanent Delete',
+                'p-delete' => true,
+                'permissions' => ['admin-permanent-delete']
+            ]
+
+        ];
+    }
+
+    public function restore(string $id)
+    {
+        try {
+            $this->adminService->restore($id);
+            session()->flash('success', "Admin restored successfully");
+        } catch (\Throwable $e) {
+            session()->flash('Admin restore failed');
+            throw $e;
+        }
+        return $this->redirectTrashed();
+    }
+
+    public function permanentDelete(string $id)
+    {
+        try {
+            $this->adminService->permanentDelete($id);
+            session()->flash('success', "Admin permanently deleted successfully");
+        } catch (\Throwable $e) {
+            session()->flash('Admin permanent delete failed');
+            throw $e;
+        }
+        return $this->redirectTrashed();
     }
 }
