@@ -10,14 +10,14 @@ use App\Http\Controllers\Auth\PasswordResetLinkController as UserPasswordResetLi
 use App\Http\Controllers\Auth\RegisteredUserController as UserRegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController as UserVerifyEmailController;
 
-use App\Http\Controllers\backend\admin\Auth\AuthenticatedSessionController as AdminAuthenticatedSessionController;
-use App\Http\Controllers\backend\admin\Auth\ConfirmablePasswordController as AdminConfirmablePasswordController;
-use App\Http\Controllers\backend\admin\Auth\EmailVerificationNotificationController as AdminEmailVerificationNotificationController;
-use App\Http\Controllers\backend\admin\Auth\EmailVerificationPromptController as AdminEmailVerificationPromptController;
-use App\Http\Controllers\backend\admin\Auth\NewPasswordController as AdminNewPasswordController;
-use App\Http\Controllers\backend\admin\Auth\PasswordController as AdminPasswordController;
-use App\Http\Controllers\backend\admin\Auth\PasswordResetLinkController as AdminPasswordResetLinkController;
-use App\Http\Controllers\backend\admin\Auth\VerifyEmailController as AdminVerifyEmailController;
+use App\Http\Controllers\Backend\Admin\Auth\AuthenticatedSessionController as AdminAuthenticatedSessionController;
+use App\Http\Controllers\Backend\Admin\Auth\ConfirmablePasswordController as AdminConfirmablePasswordController;
+use App\Http\Controllers\Backend\Admin\Auth\EmailVerificationNotificationController as AdminEmailVerificationNotificationController;
+use App\Http\Controllers\Backend\Admin\Auth\EmailVerificationPromptController as AdminEmailVerificationPromptController;
+use App\Http\Controllers\Backend\Admin\Auth\NewPasswordController as AdminNewPasswordController;
+use App\Http\Controllers\Backend\Admin\Auth\PasswordController as AdminPasswordController;
+use App\Http\Controllers\Backend\Admin\Auth\PasswordResetLinkController as AdminPasswordResetLinkController;
+use App\Http\Controllers\Backend\Admin\Auth\VerifyEmailController as AdminVerifyEmailController;
 
 use Illuminate\Support\Facades\Route;
 
