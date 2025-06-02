@@ -144,14 +144,15 @@ function storage_url($urlOrArray)
 
 function auth_storage_url($url, $gender = false)
 {
-    $image = asset('default_img/other-1.png');
+    $image = asset('default_img/other.png');
     if ($gender == 1) {
-        $image = asset('default_img/male-1.jpeg');
+        $image = asset('default_img/male.jpeg');
     } elseif ($gender == 2) {
-        $image = asset('default_img/female-1.jpg');
+        $image = asset('default_img/female.jpg');
     }
     return $url ? asset('storage/' . $url) : $image;
 }
+
 function getSubmitterType($className)
 {
     $className = basename(str_replace('\\', '/', $className));

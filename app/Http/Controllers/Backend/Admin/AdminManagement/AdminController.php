@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Admin\AdminManagement;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AdminManagement\AdminRequest;
+use App\Http\Traits\AuditRelationTraits;
 use App\Models\Admin;
 use App\Services\Admin\AdminManagement\AdminService;
 use App\Services\Admin\AdminManagement\RoleService;
@@ -15,6 +16,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class AdminController extends Controller implements HasMiddleware
 {
+    use AuditRelationTraits;
 
     protected function redirectIndex(): RedirectResponse
     {
@@ -64,11 +66,20 @@ class AdminController extends Controller implements HasMiddleware
                 ->editColumn('role_id', function ($admin) {
                     return optional($admin->role)->name;
                 })
+                ->editColumn('email_verified_at', function ($admin) {
+                    return "<span class='badge badge-soft " . $admin->verify_color . "'>" . $admin->verify_label . "</span>";
+                })
+                ->editColumn('created_by', function ($admin) {
+                    return $this->creater_name($admin);
+                })
+                ->editColumn('created_at', function ($admin) {
+                    return $admin->created_at_formatted;
+                })
                 ->editColumn('action', function ($admin) {
                     $menuItems = $this->menuItems($admin);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['role_id', 'action'])
+                ->rawColumns(['role_id', 'email_verified_at', 'created_by', 'created_at', 'action'])
                 ->make(true);
         }
         return view('backend.admin.admin-management.admin.index');
@@ -132,7 +143,9 @@ class AdminController extends Controller implements HasMiddleware
      */
     public function show(Request $request, string $id)
     {
-        $data= $this->adminService->getAdmin($id);
+        $data = $this->adminService->getAdmin($id);
+        $data['creater_name'] = $this->creater_name($data);
+        $data['updater_name'] = $this->updater_name($data);
         return response()->json($data);
     }
 
@@ -153,6 +166,11 @@ class AdminController extends Controller implements HasMiddleware
     {
         try {
             $admin = $this->adminService->getAdmin($id);
+            // if role id is super admin and admin is not super admin then can not update
+            if ($admin->role_id == 1 && admin()->role_id != 1) {
+                session()->flash('error', 'You can not update Super Admin!');
+                return $this->redirectIndex();
+            }
             $validated = $request->validated();
             $validated['role_id'] = $request->role;
             $this->adminService->updateAdmin($admin, $validated);
@@ -189,11 +207,17 @@ class AdminController extends Controller implements HasMiddleware
         if ($request->ajax()) {
             $query = $this->adminService->getAdmins()->onlyTrashed();
             return DataTables::eloquent($query)
+                ->editColumn('deleted_by', function ($admin) {
+                    return $this->deleter_name($admin);
+                })
+                ->editColumn('deleted_at', function ($admin) {
+                    return $admin->deleted_at_formatted;
+                })
                 ->editColumn('action', function ($admin) {
                     $menuItems = $this->trashedMenuItems($admin);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['deleted_by', 'deleted_at', 'action'])
                 ->make(true);
         }
         return view('backend.admin.admin-management.admin.trash');
