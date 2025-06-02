@@ -1,0 +1,18 @@
+.filepond--file-info {
+    color: #000 !important;
+}
+
+.filepond--file-info-main,
+.filepond--file-info-sub {
+    color: #fff !important;
+}
+
+.filepond--file-action-button {
+    filter: none !important;
+    /* ensure delete icon is visible */
+}
+
+.filepond--file-action-button svg {
+    fill: #fff !important;
+    stroke: #fff !important;
+}
