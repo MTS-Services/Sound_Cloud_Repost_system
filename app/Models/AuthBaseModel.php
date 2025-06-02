@@ -48,12 +48,7 @@ class AuthBaseModel extends Authenticatable
 
         'verify_label',
         'verify_color',
-
-        'creater_name',
-        'updater_name',
-        'deleter_name',
-
-
+        
         'created_at_human',
         'updated_at_human',
         'deleted_at_human',
@@ -84,29 +79,6 @@ class AuthBaseModel extends Authenticatable
         return $query->whereNull('email_verified_at');
     }
 
-    public function getCreaterNameAttribute()
-    {
-        return $this->creater_admin?->name
-            ?? $this->creater?->name
-            ?? "System Generate";
-    }
-
-    // Accessor for updater
-    public function getUpdaterNameAttribute()
-    {
-        return $this->updater_admin?->name
-            ?? $this->updater?->name
-            ?? "Null";
-    }
-
-    // Accessor for deleter
-    public function getDeleterNameAttribute()
-    {
-        return $this->deleter_admin?->name
-            ?? $this->deleter?->name
-            ?? "Null";
-    }
-
     // Accessor for created time
     public function getCreatedAtFormattedAttribute()
     {
@@ -116,13 +88,13 @@ class AuthBaseModel extends Authenticatable
     // Accessor for updated time
     public function getUpdatedAtFormattedAttribute()
     {
-        return $this->created_at != $this->updated_at ? timeFormat($this->updated_at) : 'Null';
+        return $this->created_at != $this->updated_at ? timeFormat($this->updated_at) : 'N/A';
     }
 
     // Accessor for deleted time
     public function getDeletedAtFormattedAttribute()
     {
-        return $this->deleted_at ? timeFormat($this->deleted_at) : 'Null';
+        return $this->deleted_at ? timeFormat($this->deleted_at) : 'N/A';
     }
 
     // Accessor for created time human readable
@@ -134,13 +106,13 @@ class AuthBaseModel extends Authenticatable
     // Accessor for updated time human readable
     public function getUpdatedAtHumanAttribute()
     {
-        return $this->created_at != $this->updated_at ? timeFormatHuman($this->updated_at) : 'Null';
+        return $this->created_at != $this->updated_at ? timeFormatHuman($this->updated_at) : 'N/A';
     }
 
     // Accessor for deleted time human readable
     public function getDeletedAtHumanAttribute()
     {
-        return $this->deleted_at ? timeFormatHuman($this->deleted_at) : 'Null';
+        return $this->deleted_at ? timeFormatHuman($this->deleted_at) : 'N/A';
     }
 
     // Accessor for modified image
