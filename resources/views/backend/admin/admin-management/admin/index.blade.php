@@ -23,6 +23,7 @@
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Email') }}</th>
                         <th>{{ __('Role') }}</th>
+                        <th>{{ __('Verified') }}</th>
                         <th>{{ __('Created By') }}</th>
                         <th>{{ __('Created Date') }}</th>
                         <th width="10%">{{ __('Action') }}</th>
@@ -46,6 +47,7 @@
                     ['name', true, true],
                     ['email', true, true],
                     ['role_id', true, true],
+                    ['email_verified_at', true, true],
                     ['created_by', true, true],
                     ['created_at', true, true],
                     ['action', false, false],

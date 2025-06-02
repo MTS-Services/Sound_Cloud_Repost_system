@@ -64,11 +64,20 @@ class AdminController extends Controller implements HasMiddleware
                 ->editColumn('role_id', function ($admin) {
                     return optional($admin->role)->name;
                 })
+                ->editColumn('email_verified_at', function ($admin) {
+                    return "<span class='badge badge-soft " . $admin->verify_color . "'>" . $admin->verify_label . "</span>";
+                })
+                ->editColumn('created_by', function ($admin) {
+                    return $admin->creater_name;
+                })
+                ->editColumn('created_at', function ($admin) {
+                    return $admin->created_at_formatted;
+                })
                 ->editColumn('action', function ($admin) {
                     $menuItems = $this->menuItems($admin);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['role_id', 'action'])
+                ->rawColumns(['role_id' ,'email_verified_at', 'created_by', 'created_at', 'action'])
                 ->make(true);
         }
         return view('backend.admin.admin-management.admin.index');
@@ -132,7 +141,7 @@ class AdminController extends Controller implements HasMiddleware
      */
     public function show(Request $request, string $id)
     {
-        $data= $this->adminService->getAdmin($id);
+        $data = $this->adminService->getAdmin($id);
         return response()->json($data);
     }
 
