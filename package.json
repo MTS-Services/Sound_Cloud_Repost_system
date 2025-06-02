@@ -19,6 +19,7 @@
         "vite": "^6.2.4"
     },
     "dependencies": {
+        "ckeditor5": "^45.1.0",
         "datatables.net-autofill-dt": "^2.7.0",
         "datatables.net-buttons-dt": "^3.2.3",
         "datatables.net-colreorder-dt": "^2.1.0",

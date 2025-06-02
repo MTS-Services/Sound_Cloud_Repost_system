@@ -36,7 +36,7 @@
     </section>
 
     {{-- Details Modal --}}
-    <x-admin.details-modal/>
+    <x-admin.details-modal />
 
     @push('js')
         <script src="{{ asset('assets/js/datatable.js') }}"></script>
@@ -88,12 +88,18 @@
                             key: 'role_id',
                         },
                         {
-                            label: '{{ __('Phone') }}',
-                            key: 'phone',
+                            label: '{{ __('Image') }}',
+                            key: 'modified_image',
+                            type: 'image',
                         },
                         {
-                            label: '{{ __('Hello') }}',
-                            key: 'hello',
+                            label: '{{ __('Video') }}',
+                            key: 'video',
+                            type: 'video',
+                        },
+                        {
+                            label: '{{ __('Desctiption') }}',
+                            key: 'description',
                         }
                     ];
 
