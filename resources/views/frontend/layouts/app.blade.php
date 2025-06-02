@@ -12,7 +12,7 @@
     </title>
 
     {{-- Theme selector && Theme store --}}
-    <script>
+    {{-- <script>
         // On page load, immediately apply theme from localStorage to prevent flash
         (function() {
             let theme = localStorage.getItem('theme') || 'system';
@@ -28,22 +28,23 @@
             }
         })();
     </script>
-    <script src="{{ asset('assets/js/theme-toggle.js') }}"></script>
+    <script src="{{ asset('assets/js/theme-toggle.js') }}"></script> --}}
 
     {{-- End theme selector && Theme store --}}
 
+    {{-- FontAwesome  --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+
     <script src="{{ asset('assets/frontend/js/jquery.js') }}"></script>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/frontend.css', 'resources/js/app.js'])
 
     @stack('css')
 </head>
 
-<body x-data>
+<body class="font-poppins">
 
     {{-- Header --}}
     <x-frontend::header :page="$page_slug" />
-
-    <x-frontend.theme-toggle />
 
     {{ $slot }}
 
