@@ -28,6 +28,7 @@ class AdminRequest extends FormRequest
             'role' => 'required|exists:roles,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg',
             'description' => 'nullable|string',
+            'video' => 'nullable',
         ] + ($this->isMethod('POST') ? $this->store() : $this->update());;
     }
     protected function store(): array

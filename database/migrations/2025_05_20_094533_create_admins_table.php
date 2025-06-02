@@ -28,6 +28,7 @@ return new class extends Migration
             $this->addAdminAuditColumns($table);
 
             $table->text('description')->nullable();
+            $table->string('video')->nullable();
         });
     }
 

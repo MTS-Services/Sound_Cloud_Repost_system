@@ -129,7 +129,7 @@ class AdminController extends Controller implements HasMiddleware
         try {
             $validated = $request->validated();
             $validated['role_id'] = $request->role;
-            $this->adminService->createAdmin($validated, $request->file('image'));
+            $this->adminService->createAdmin($validated, $request->file('image'), $request->file('video'));
             session()->flash('success', 'Admin created successfully!');
         } catch (\Throwable $e) {
             session()->flash('error', 'Admin create failed!');

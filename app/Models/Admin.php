@@ -17,6 +17,7 @@ class Admin extends AuthBaseModel
         'email_verified_at',
         'image',
         'description',
+        'video',
 
         'created_by',
         'updated_by',
