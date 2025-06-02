@@ -1,6 +1,6 @@
-<aside class="transition-all duration-300 ease-in-out z-50 max-h-screen"
+<aside class="transition-all duration-300 ease-in-out z-50 max-h-screen py-2 pl-2"
     :class="{
-        'relative': desktop,
+        // 'relative': desktop,
         'w-72': desktop && sidebar_expanded,
         'w-20': desktop && !sidebar_expanded,
         'fixed top-0 left-0 h-full': !desktop,
@@ -8,7 +8,7 @@
         'w-72 -translate-x-full': !desktop && !mobile_menu_open,
     }">
 
-    <div class="glass-card h-full custom-scrollbar overflow-y-auto my-2 ml-2 mr-1 rounded-xl">
+    <div class="glass-card h-full custom-scrollbar rounded-xl overflow-y-auto">
         <!-- Sidebar Header -->
         <a href="{{ route('admin.dashboard') }}" class="p-3 border-b border-white/10 inline-block">
             <div class="flex items-center gap-4">
@@ -27,7 +27,6 @@
                 </div>
             </div>
         </a>
-
         <!-- Quick Stats (Collapsed Sidebar) -->
         {{-- <div x-show="desktop && !sidebar_expanded" x-transition:enter="transition-all duration-300 delay-100"
             x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
@@ -70,17 +69,27 @@
                     ],
                     [
                         'name' => 'Role',
-                        'route' => '#',
-                        'icon' => 'shield-alert',
-                        'active' => 'admin-users-add',
+                        'route' => route('am.role.index'),
+                        'icon' => 'shield',
+                        'active' => 'role',
                     ],
                     [
                         'name' => 'Permission',
-                        'route' => '#',
-                        'icon' => 'shield',
-                        'active' => 'admin-users-roles',
+                        'route' => route('am.permission.index'),
+                        'icon' => 'shield-check',
+                        'active' => 'permission',
                     ],
                 ]" />
+            <x-admin.navlink type="dropdown" icon="users" name="Package Management" :page_slug="$active"
+                :items="[
+                    [
+                        'name' => 'Credit',
+                        'route' => route('pm.credit.index'),
+                        'icon' => 'user',
+                        'active' => 'credit',
+                    ],
+                ]" />
+
 
             <x-admin.navlink type="dropdown" icon="users" name="User Management" :page_slug="$active"
                 :items="[

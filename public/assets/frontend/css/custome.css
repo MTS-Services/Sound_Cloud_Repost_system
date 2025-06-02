@@ -1,0 +1,18 @@
+.sidebar-item {
+    transition: all 0.2s ease-in-out;
+}
+
+.sidebar-item:hover {
+    background-color: #f3f4f6;
+    transform: translateX(4px);
+}
+
+.sidebar-item.active {
+    background-color: #fef2f2;
+    color: #dc2626;
+    border-right: 3px solid #dc2626;
+}
+
+.sidebar-item.active:hover {
+    background-color: #fef2f2;
+}

@@ -44,13 +44,29 @@
 
     @vite(['resources/css/dashboard.css', 'resources/js/app.js'])
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="{{ asset('assets/css/datatable.css') }}">
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (session('success'))
+                showAlert('success', '{{ session('success') }}');
+            @endif
+
+            @if (session('error'))
+                showAlert('error', '{{ session('error') }}');
+            @endif
+
+            @if (session('warning'))
+                showAlert('warning', '{{ session('warning') }}');
+            @endif
+        });
+    </script>
     {{-- Custom CSS  --}}
     @stack('css')
 
 </head>
 
-<body x-data="dashboardData()" class="animated-bg min-h-screen">
+<body x-data="dashboardData()" class="animated-bg overflow-x-hidden">
 
     <!-- Mobile/Tablet Overlay -->
     <div x-show="mobile_menu_open && !desktop" x-transition:enter="transition-all duration-300 ease-out"
@@ -65,7 +81,7 @@
         <x-admin::side-bar :active="$page_slug" />
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col min-h-screen custom-scrollbar overflow-y-auto">
+        <div class="flex-1 flex flex-col custom-scrollbar overflow-y-auto">
             <!-- Header -->
 
             <x-admin::header :breadcrumb="$breadcrumb" />
@@ -83,10 +99,6 @@
     <x-admin::notification />
 
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
-    <script>
-        lucide.createIcons();
-    </script>
-
     <script>
         function dashboardData() {
             return {
@@ -456,9 +468,9 @@
 
         // Initialize Lucide icons after DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
-            if (typeof lucide !== 'undefined') {
+            // if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
-            }
+            // }
         });
 
         // Smooth scrolling for anchor links
@@ -533,6 +545,8 @@
         document.head.appendChild(style);
     </script>
     {{-- Custom JS --}}
+    <script src="{{ asset('assets/js/details-modal.js') }}"></script>
+    <script src="{{ asset('assets/js/password.js') }}"></script>
     @stack('js')
 
 </body>

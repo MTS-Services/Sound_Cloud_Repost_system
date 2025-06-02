@@ -45,7 +45,7 @@
                         'min-w-40 xs:min-w-full xs:max-w-full': tablet,
                         'max-w-full': !tablet,
                     }"
-                    placeholder="{{ $placeholder }}" @focus="focus = true" @blur="focus = false" />
+                    placeholder="{{ $placeholder }}" name="search" @focus="focus = true" @blur="focus = false" />
 
                 <button type="submit"
                     class="btn join-item rounded-r-full border-border-light-tertiary dark:border-border-dark-tertiary bg-bg-light-primary dark:bg-bg-dark-primary hover:bg-bg-light-secondary dark:hover:bg-bg-dark-secondary focus:outline-none pl-2 group"

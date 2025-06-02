@@ -1,5 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+@import url('datatables.net-dt');
+@import url('datatables.net-autofill-dt');
+@import url('datatables.net-buttons-dt');
+@import url('datatables.net-colreorder-dt');
+@import url('datatables.net-fixedcolumns-dt');
+@import url('datatables.net-fixedheader-dt');
+@import url('datatables.net-responsive-dt');
+@import url('datatables.net-rowreorder-dt');
+@import url('datatables.net-scroller-dt');
+@import url('datatables.net-searchbuilder-dt');
+
 @import 'tailwindcss';
 @plugin "daisyui";
 
@@ -13,6 +24,7 @@
 @source '../../public/**/*.css';
 /* @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *)); */
 
+@source '../../**';
 
 :root {
     --primary: #1CA577;
@@ -63,14 +75,17 @@
     --color-text-black: #000000;
     --color-text-active: #1CA577;
 
-    --color-text-dark-primary: #ffffff99; /* done */
+    --color-text-dark-primary: #ffffff99;
+    /* done */
     --color-text-dark-secondary: #222831;
     --color-text-dark-tertiary: #f0fdfa;
     --color-text-dark-muted: #BEC3C4;
     --color-text-dark-active: #1CA577;
 
-    --color-text-light-primary: #1e2939; /* done */
-    --color-text-light-secondary: #4a5565; /* done */
+    --color-text-light-primary: #1e2939;
+    /* done */
+    --color-text-light-secondary: #4a5565;
+    /* done */
     --color-text-light-tertiary: #F7F7F7;
     --color-text-light-muted: #BEC3C4;
     --color-text-light-active: #1CA577;
@@ -145,7 +160,7 @@
 
     /* Grandient Colors */
     --color-gradient-light-primary: #faf9f9;
-    --color-gradient-light-secondary:  #fcfbfd; 
+    --color-gradient-light-secondary: #fcfbfd;
     --color-gradient-light-tertiary: #FBFBFB;
     --color-gradient-light-quaternary: #d1d5dc;
     --color-gradient-light-quinary: #56ab91;
@@ -256,7 +271,8 @@
     --animate-bounce-slow: bounce 2s infinite;
 
     /* Box Shadow */
-    --shadow-glass-card : rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+    --shadow-glass-card : rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
+    rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
 }
 
 @layer components {
@@ -283,8 +299,9 @@
 
 
 @layer base {
+
     * {
-        @apply font-inter transition-all duration-200 ease-linear dark:text-text-dark-primary text-text-light-primary;
+        @apply font-inter transition-all duration-200 ease-linear;
     }
 
     /* For Firefox  */
@@ -343,7 +360,7 @@
 
 @layer components {
 
-    /* .gradient-light { 
+    /* .gradient-light {
         @apply bg-gradient-to-b from-gradient-light-primary to-gradient-light-secondary dark:bg-none;
     } */
 
@@ -352,8 +369,7 @@
     }
 
     .animated-bg {
-        @apply bg-[length:400%_400%] animate-gradientBG bg-gradient-to-br from-gradient-light-primary 
-        via-gradient-light-secondary to-gradient-light-tertiary;
+        @apply bg-[length:400%_400%] animate-gradientBG bg-gradient-to-br from-gradient-light-primary via-gradient-light-secondary to-gradient-light-tertiary;
     }
 
     /* .animated-bg {
@@ -409,7 +425,6 @@
     }
 
     .btn-primary {
-
         @apply bg-gradient-to-r from-bg-primary to-bg-secondary text-text-white py-2 px-4 rounded-full transition-all duration-300 ease-in-out relative overflow-hidden;
     }
 
@@ -420,6 +435,16 @@
     .btn-primary:hover::before {
         @apply left-full;
     }
+
+}
+
+
+/* input {
+    @apply focus:outline-0 focus-within:outline-0 focus:ring-0 focus:border-border-active focus-within:border-border-active w-full;
+} */
+
+.input {
+    @apply focus:outline-0 focus-within:outline-0 focus:ring-0 focus:border-border-active focus-within:border-border-active w-full;
 }
 
 /* Notification badge */
@@ -434,11 +459,11 @@
 
 .card-hover:hover {
     transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 } */
 
 /* Progress bar animation */
-/* .progress-bar {
+.progress-bar {
     animation: progressLoad 2s ease-out;
 }
 
@@ -446,10 +471,10 @@
     0% {
         width: 0%;
     }
-} */
+}
 
 /* Shimmer effect */
-/* .shimmer {
+.shimmer {
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
     background-size: 200% 100%;
     animation: shimmer 2s infinite;
@@ -463,10 +488,10 @@
     100% {
         background-position: 200% 0;
     }
-} */
+}
 
 /* Interactive elements */
-/* .interactive-card {
+.interactive-card {
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -477,31 +502,31 @@
 
 .interactive-card:active {
     transform: scale(0.98);
-} */
+}
 
 /* Tooltip styles */
 /* .tooltip {
-            position: relative;
-        }
+    position: relative;
+}
 
-        .tooltip::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-            margin-bottom: 8px;
-        }
+.tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    margin-bottom: 8px;
+}
 
-        .tooltip:hover::after {
-            opacity: 1;
-        } */
+.tooltip:hover::after {
+    opacity: 1;
+} */
