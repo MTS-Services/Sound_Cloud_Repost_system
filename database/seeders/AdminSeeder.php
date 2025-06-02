@@ -19,20 +19,23 @@ class AdminSeeder extends Seeder
             'password' => 'superadmin@dev.com',
             'role_id' => 1,
         ]);
+
         $superadmin->assignRole($superadmin->role->name);
         $admin = Admin::create([
             'name' => 'Admin',
             'email' => 'admin@dev.com',
             'password' => 'admin@dev.com',
-            'role_id' => 2,
+            'role_id' => 2, 
         ]);
+
         $admin->assignRole($admin->role->name);
         $test = Admin::create([
-            'name' => 'Test Admin',
+            'name' => 'Test Admin',  
             'email' => 'testadmin@dev.com',
             'password' => 'testadmin@dev.com',
             'role_id' => 2,
         ]);
+
         $test->assignRole($test->role->name);
     }
 }

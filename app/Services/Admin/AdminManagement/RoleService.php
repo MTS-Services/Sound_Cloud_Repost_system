@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class RoleService
-{
+{        
     protected PermissionService $permissionService;
     public function __construct(PermissionService $permissionService)
     {
@@ -17,7 +17,7 @@ class RoleService
     {
         return Role::orderBy($orderBy, $order)->latest();
     }
-
+    
     public function getRole(string $encryptedId): Role | Collection
     {
         return Role::findOrFail(decrypt($encryptedId));

@@ -9,18 +9,18 @@ use Illuminate\Support\Facades\DB;
 class CreditService
 {
     public function getCredits($orderBy = 'name', $order = 'asc')
-    {
+    {   
         return Credit::orderBy($orderBy, $order)->latest();
     }
     public function getCredit(string $encryptedId): Credit | Collection
-    {
+    {   
         return Credit::findOrFail(decrypt($encryptedId));
-    }
+    }   
     public function getDeletedCredit(string $encryptedId): Credit | Collection
-    {
+    {   
         return Credit::onlyTrashed()->findOrFail(decrypt($encryptedId));
     }
-
+        
     public function createCredit(array $data, $file = null): Credit
     {
         return DB::transaction(function () use ($data, $file) {
@@ -66,3 +66,4 @@ class CreditService
         ]);
     }
 }
+   

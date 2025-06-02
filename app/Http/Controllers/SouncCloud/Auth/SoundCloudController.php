@@ -114,7 +114,7 @@ class SoundCloudController extends Controller
             return redirect()->route('profile')
                 ->with('error', 'Please connect to SoundCloud first.');
         }
-
+    
         try {
             $syncedCount = $this->soundCloudService->syncUserTracks($user);
             $this->soundCloudService->updateUserProfile($user);
@@ -159,9 +159,9 @@ class SoundCloudController extends Controller
         // If authenticated user exists, link SoundCloud account
         if (Auth::guard('web')->check()) {
             $user = Auth::guard('web')->user();
-            $user->update([
+            $user->update([       
                 'soundcloud_id' => $soundCloudUser->getId(),
-                'soundcloud_username' => $soundCloudUser->getNickname(),
+                'soundcloud_username' => $soundCloudUser->getNickname(),  
                 'soundcloud_avatar' => $soundCloudUser->getAvatar(),
                 'soundcloud_followers_count' => $soundCloudUser->user['followers_count'] ?? 0,
                 'soundcloud_followings_count' => $soundCloudUser->user['followings_count'] ?? 0,
