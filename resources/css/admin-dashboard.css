@@ -7,7 +7,7 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source "../views";
-@source '*';
+@source '../../**';
 /* @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *)); */
 
 

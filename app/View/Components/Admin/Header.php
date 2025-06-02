@@ -9,10 +9,12 @@ use Illuminate\View\Component;
 class Header extends Component
 {
     public $active;
+    public $breadcrumb;
 
-    public function __construct($active = null)
+    public function __construct($active = null ,$breadcrumb = null)
     {
         $this->active = $active;
+        $this->breadcrumb = $breadcrumb;
     }
     public function render(): View|Closure|string
     {

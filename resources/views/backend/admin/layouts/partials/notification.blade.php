@@ -3,7 +3,7 @@
     x-transition:enter-start="opacity-0 translate-x-full" x-transition:enter-end="opacity-100 translate-x-0"
     x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 translate-x-0"
     x-transition:leave-end="opacity-0 translate-x-full"
-    class="fixed right-0 top-0 h-full w-80 glass-card z-50 p-6 overflow-y-auto custom-scrollbar">
+    class="hidden fixed right-0 top-0 h-full w-80 glass-card z-50 p-6 overflow-y-auto custom-scrollbar" :class="showNotifications ? '!block' : '!hidden'">
     <div class="flex items-center justify-between mb-6">
         <h3 class="text-xl font-bold text-text-white">Notifications</h3>
         <button @click="toggleNotifications()" class="p-2 rounded-lg hover:bg-white/10 transition-colors">
