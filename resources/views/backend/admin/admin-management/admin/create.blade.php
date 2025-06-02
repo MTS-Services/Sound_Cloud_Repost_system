@@ -3,6 +3,10 @@
     <x-slot name="breadcrumb">{{ __('Create Admin') }}</x-slot>
     <x-slot name="page_slug">admin</x-slot>
 
+    @push('css')
+        <link rel="stylesheet" href="{{ asset('assets/css/filepond.css') }}">
+    @endpush
+
     <section>
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
@@ -109,6 +113,12 @@
                             </select>
                             <x-input-error class="mt-2" :messages="$errors->get('password_confirmation')" />
                         </div>
+                        <div class="space-y-2 col-span-2">
+                            <p class="label">{{ __('Role') }}</p>
+                            <input type="file" name="image" class="filepond" id="image"
+                                accept="image/jpeg, image/png, image/jpg, image/webp, image/svg">
+                            <x-input-error class="mt-2" :messages="$errors->get('image')" />
+                        </div>
                     </div>
                     <div class="flex justify-end mt-5">
                         <x-admin.primary-button>{{ __('Create') }}</x-admin.primary-button>
@@ -120,4 +130,13 @@
 
         </div>
     </section>
+    @push('js')
+        <script src="{{ asset('assets/js/filepond.js') }}"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                
+                file_upload(["#image"], ["image/jpeg", "image/png", "image/jpg, image/webp, image/svg"]);
+            });
+        </script>
+    @endpush
 </x-admin::layout>
