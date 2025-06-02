@@ -16,6 +16,7 @@ import FilePondPluginImageTransform from "filepond-plugin-image-transform";
 import "filepond/dist/filepond.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 import "filepond-plugin-image-edit/dist/filepond-plugin-image-edit.css";
+import '../css/filepond.css'
 
 window.FilePond = FilePond;
 // Register the plugin

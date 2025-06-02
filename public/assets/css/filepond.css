@@ -1,18 +1,29 @@
+/* Make sure FilePond containers use a white/light background */
+.filepond--panel-root,
+.filepond--item-panel,
+.filepond--image-preview-wrapper {
+  background-color: #fff !important;
+}
+
+/* Fix text colors for file name and size */
 .filepond--file-info {
-    color: #000 !important;
+  color: #000 !important;
 }
 
 .filepond--file-info-main,
 .filepond--file-info-sub {
-    color: #fff !important;
+  color: #000 !important;
 }
 
+/* Fix action button (like the X/delete icon) */
 .filepond--file-action-button {
-    filter: none !important;
-    /* ensure delete icon is visible */
+  filter: none !important;
 }
 
-.filepond--file-action-button svg {
-    fill: #fff !important;
-    stroke: #fff !important;
+/* Optional: Prevent any inherited dark mode styles */
+html.dark .filepond--panel-root,
+html.dark .filepond--item-panel,
+html.dark .filepond--image-preview-wrapper {
+  background-color: #fff !important;
+  color: #000 !important;
 }

@@ -293,9 +293,9 @@
 
 
 @layer base {
-    
+
     * {
-        @apply font-inter transition-all duration-200 ease-linear dark:text-text-dark-primary text-text-light-primary;
+        @apply font-inter transition-all duration-200 ease-linear;
     }
 
     /* For Firefox  */
@@ -433,9 +433,9 @@
 }
 
 
-input {
+/* input {
     @apply focus:outline-0 focus-within:outline-0 focus:ring-0 focus:border-border-active focus-within:border-border-active w-full;
-}
+} */
 
 .input {
     @apply focus:outline-0 focus-within:outline-0 focus:ring-0 focus:border-border-active focus-within:border-border-active w-full;
