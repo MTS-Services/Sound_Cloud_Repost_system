@@ -1,0 +1,27 @@
+
+name: Deploy Application to Live Server
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  live-server-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.LIVE_HOST }}
+          port: ${{ secrets.LIVE_PORT }}
+          username: ${{ secrets.LIVE_USERNAME }}
+          password: ${{ secrets.LIVE_PASSWORD }}
+          script: |
+            cd domains
+            cd repostchain.com
+            cd public_html
+            git fetch --all
+            git reset --hard origin/main
