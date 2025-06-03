@@ -24,14 +24,11 @@ class AdminService
         return Admin::onlyTrashed()->findOrFail(decrypt($encryptedId));
     }
 
-    public function createAdmin(array $data, $file = null, $video = null): Admin
+    public function createAdmin(array $data, $file = null): Admin
     {
-        return DB::transaction(function () use ($data, $file, $video) {
+        return DB::transaction(function () use ($data, $file) {
             if ($file) {
                 $data['image'] = $this->handleFileUpload($file,  'admins', $data['name']);
-            }
-            if ($video) {
-                $data['video'] = $this->handleFileUpload($video,  'admins', $data['name']);
             }
             $data['created_by'] = admin()->id;
             $admin = Admin::create($data);
@@ -43,6 +40,10 @@ class AdminService
     public function updateAdmin(Admin $admin, array $data, $file = null): Admin
     {
         return DB::transaction(function () use ($admin, $data, $file) {
+            if ($file) {
+                $data['image'] = $this->handleFileUpload($file,  'admins', $data['name']);
+                $this->fileDelete($admin->image);
+            }
             $data['password'] = $data['password'] ?? $admin->password;
             $data['updated_by'] = admin()->id;
             $admin->update($data);
