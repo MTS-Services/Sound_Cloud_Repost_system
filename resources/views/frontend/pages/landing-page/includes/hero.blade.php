@@ -7,10 +7,10 @@
                     <div class="lg:w-1/2 text-center lg:text-left">
                         <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
                             Grow Your Music Reach
-                            <span class="block text-gradient">Trade Reposts, Earn Credits, Build Fans</span>
+                            <span class="block text-gradient">Build Fans, Share Feedback</span>
                         </h1>
                         <p class="text-lg text-gray-300 mb-8 max-w-lg mx-auto lg:mx-0">
-                            Join thousands of artists who grow their SoundCloud and YouTube audience through our collaborative promotion platform.
+                            Join More than thousands of music creators and grow audiance Through our collaborative platform. <br> 100% Free to use 
                         </p>
                         <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                             <button class="bg-primary hover:bg-primary-hover text-white px-8 py-3 rounded-md text-lg transition-all shadow-md hover:shadow-lg flex items-center justify-center">

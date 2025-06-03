@@ -54,7 +54,7 @@
                             </svg>
                         </div>
                         <h3 class="text-xl font-bold mb-3">Earn by Reposting</h3>
-                        <p class="text-gray-400">Get credits automatically when you repost tracks from other artists in the network.</p>
+                        <p class="text-gray-400">Get points automatically when you repost tracks from other artists in the network.</p>
                         <div class="mt-4 h-1 w-16 bg-primary/30 rounded-full"></div>
                     </div>
                 </div>
