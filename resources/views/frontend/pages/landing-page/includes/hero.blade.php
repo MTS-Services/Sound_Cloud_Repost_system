@@ -21,7 +21,7 @@
                                 </svg>
                                 Connect SoundCloud
                             </button>
-                            <button class="border-2 border-primary text-primary hover:bg-primary/10 px-8 py-3 rounded-md text-lg transition-all flex items-center justify-center">
+                            <button class="border-2 border-primary text-primary hover:text-white hover:bg-primary duration-300 px-8 py-3 rounded-md text-lg transition-all flex items-center justify-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
                                     <polygon points="5 3 19 12 5 21 5 3"></polygon>
                                 </svg>
