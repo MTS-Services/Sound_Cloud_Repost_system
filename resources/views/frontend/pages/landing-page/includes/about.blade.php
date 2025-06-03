@@ -47,7 +47,7 @@
                             </div>
                             <div>
                                 <h3 class="text-xl font-bold mb-2 text-white">Fair System</h3>
-                                <p class="text-gray-400">Our credit-based system ensures fair exchanges between artists, preventing spam and promoting quality content.</p>
+                                <p class="text-gray-400">Our system ensures fair Collabration between artists, preventing spam and promoting quality content.</p>
                             </div>
                         </div>
                     </div>

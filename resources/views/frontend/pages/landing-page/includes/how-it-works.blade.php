@@ -34,8 +34,8 @@
                                 <path d="M8 16H3v5"></path>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold mb-2 text-center">Earn Credits</h3>
-                        <p class="text-gray-400 text-center">Listen to and repost tracks from other artists to earn promotion credits.</p>
+                        <h3 class="text-xl font-bold mb-2 text-center">Earn Points</h3>
+                        <p class="text-gray-400 text-center">Listen to and repost tracks from other artists to earn promotion points.</p>
                         <div class="absolute inset-0 border-2 border-transparent group-hover:border-primary/30 rounded-lg transition-all duration-300"></div>
                     </div>
                     
@@ -52,7 +52,7 @@
                             </svg>
                         </div>
                         <h3 class="text-xl font-bold mb-2 text-center">Repost Tracks</h3>
-                        <p class="text-gray-400 text-center">Use your credits to get your tracks reposted by other artists.</p>
+                        <p class="text-gray-400 text-center">Use your ponts to get your tracks reposted by other artists.</p>
                         <div class="absolute inset-0 border-2 border-transparent group-hover:border-primary/30 rounded-lg transition-all duration-300"></div>
                     </div>
                     

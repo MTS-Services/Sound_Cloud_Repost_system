@@ -34,7 +34,7 @@
        @include('frontend.pages.landing-page.includes.testimonials')
 
         <!-- FAQ Section -->
-       @include('frontend.pages.landing-page.includes.faq')
+       {{-- @include('frontend.pages.landing-page.includes.faq') --}}
         <!-- CTA Section -->
         @include('frontend.pages.landing-page.includes.cta')
     </main>

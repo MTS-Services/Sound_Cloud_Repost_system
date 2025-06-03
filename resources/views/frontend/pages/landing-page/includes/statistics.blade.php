@@ -18,7 +18,7 @@
                         <div class="text-4xl md:text-5xl font-bold mb-2 text-gradient flex justify-center">
                             <span class="counter" data-target="1250000">0</span><span>+</span>
                         </div>
-                        <p class="text-gray-300">Credits Circulated</p>
+                        <p class="text-gray-300">Feedback Circulated</p>
                     </div>
                     
                     <div class="text-center bg-dark-card p-6 rounded-lg shadow-md">

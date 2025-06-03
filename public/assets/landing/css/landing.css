@@ -1,70 +1,78 @@
-   body {
-            background-color: #121212;
-            color: white;
-            font-family: 'Inter', sans-serif;
-        }
-        
-        .text-gradient {
-            background: linear-gradient(90deg, #FF5500 0%, #FF7730 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .wave-pattern {
-            background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff5500' fill-opacity='0.05'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6h-2c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-        
-        .waveform {
-            position: relative;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .waveform span {
-            background: #FF5500;
-            width: 4px;
-            height: 100%;
-            margin: 0 3px;
-            border-radius: 3px;
-            animation: wave 1.2s linear infinite;
-            transform-origin: bottom;
-        }
-        
-        .waveform span:nth-child(2n) {
-            animation-delay: 0.2s;
-        }
-        
-        .waveform span:nth-child(3n) {
-            animation-delay: 0.4s;
-        }
-        
-        .waveform span:nth-child(4n) {
-            animation-delay: 0.6s;
-        }
-        
-        @keyframes wave {
-            0% { height: 10%; }
-            50% { height: 100%; }
-            100% { height: 10%; }
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .pulse-animation {
-            animation: pulse 2s infinite;
-        }
-        
-        .mobile-menu {
-            display: none;
-        }
-        
-        .mobile-menu.active {
-            display: block;
-        }
+:root {
+    --color-primary: #FF5500;
+    --color-primary-light: #FF7730;
+    --color-bg: #121212;
+    --color-text: #ffffff;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: 'Inter', sans-serif;
+}
+
+.text-gradient {
+    background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.wave-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff5500' fill-opacity='0.05'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6h-2c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    /* You may also dynamically generate the SVG with JS to inject var(--color-primary) */
+}
+
+.waveform {
+    position: relative;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.waveform span {
+    background: var(--color-primary);
+    width: 4px;
+    height: 100%;
+    margin: 0 3px;
+    border-radius: 3px;
+    animation: wave 1.2s linear infinite;
+    transform-origin: bottom;
+}
+
+.waveform span:nth-child(2n) {
+    animation-delay: 0.2s;
+}
+
+.waveform span:nth-child(3n) {
+    animation-delay: 0.4s;
+}
+
+.waveform span:nth-child(4n) {
+    animation-delay: 0.6s;
+}
+
+@keyframes wave {
+    0% { height: 10%; }
+    50% { height: 100%; }
+    100% { height: 10%; }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+.mobile-menu {
+    display: none;
+}
+
+.mobile-menu.active {
+    display: block;
+}

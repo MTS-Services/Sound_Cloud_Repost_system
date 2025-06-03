@@ -37,7 +37,7 @@
                     </div>
                     
                     <div class="mt-8 pt-8 border-t border-dark-border text-center">
-                        <p class="text-gray-400 text-sm">No credit card required. Start with our free plan and upgrade anytime.</p>
+                        <p class="text-gray-400 text-sm">100% free to use.</p>
                     </div>
                 </div>
             </div>
