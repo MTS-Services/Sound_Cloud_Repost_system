@@ -46,27 +46,12 @@
 
     /* Colors  */
     /* Bacground */
-    --color-bg-primary: #fb3802;
-    --color-bg-primary-hover: #fd5f33;
-    --color-bg-primaryLight: #fff2f2;
-    --color-bg-white: #ffffff;
-    --color-bg-black: #000000;
-
-    --color-bg-dark-primary: #202020;
-    --color-bg-dark-secondary: #181818;
-    --color-bg-dark-gray-primary: #6c6c6c;
-    --color-bg-dark-gray-secondary: #707070;
-
-    --color-bg-light-primary: #fafafa;
-    --color-bg-light-secondary: #f4f4f4;
-
-    --color-bg-light-gray-primary: #b8b8b8;
-    --color-bg-light-gray-secondary: #bfbfbf;
-    --color-bg-light-gray-tertiary: #b3b3b3;
+  
 
     /* Langding start colors  */
-    --color-primary: '#FF5500' !important;
-    --color-primary-hover': '#FF7730'!important;
+     /* Text */
+    --color-text-primary: '#FF5500' !important;
+    --color-text-primary-hover': '#FF7730'!important;
     --color-secondary: '#333333'!important;
     --color-dark-bg: '#121212'!important;
     --color-dark-darker': '#0A0A0A'!important;
@@ -74,39 +59,19 @@
     --color-dark-lighter: '#1E1E1E'!important;
     --color-dark-border: '#2A2A2A'!important;
 
+    --color-primary-light: #FF7730;
+    --color-bg-primary: #121212;
+    --color-text-white: #ffffff;
 
+    
+    /* Fonts */
     --font-sans: ['Inter', 'sans-serif'];
     /* End Landing Colors */
 
-    /* Text */
-    --color-text-black: #000000;
-    --color-text-white: #ffffff;
-
-    --color-text-dark-primary: #202020;
-    --color-text-dark-secondary: #181818;
-    --color-text-dark-gray-primary: #6c6c6c;
-    --color-text-dark-gray-secondary: #707070;
-
-    --color-text-light-primary: #fafafa;
-    --color-text-light-secondary: #f4f4f4;
-    --color-text-light-gray-primary: #b8b8b8;
-    --color-text-light-gray-secondary: #bfbfbf;
-    --color-text-light-gray-tertiary: #b3b3b3;
-
+   
+  
     /* Border */
-    --color-border-white: #ffffff;
-    --color-border-black: #000000;
-
-    --color-border-dark-primary: #202020;
-    --color-border-dark-secondary: #181818;
-    --color-border-dark-gray-primary: #6c6c6c;
-    --color-border-dark-gray-secondary: #707070;
-
-    --color-border-light-primary: #fafafa;
-    --color-border-light-secondary: #f4f4f4;
-    --color-border-light-gray-primary: #b8b8b8;
-    --color-border-light-gray-secondary: #bfbfbf;
-    --color-border-light-gray-tertiary: #b3b3b3;
+  
 }
 
 @utility container {
