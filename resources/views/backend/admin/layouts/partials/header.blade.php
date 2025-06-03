@@ -30,8 +30,10 @@
                     class="p-2 rounded-xl hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
                     data-tooltip="Toggle theme"
                     :title="$store.theme.current.charAt(0).toUpperCase() + $store.theme.current.slice(1) + ' mode'">
-                    <i data-lucide="sun" x-show="!$store.theme.darkMode" class="w-5 h-5 text-white"></i>
-                    <i data-lucide="moon" x-show="$store.theme.darkMode" class="w-5 h-5 text-white"></i>
+                    <i data-lucide="sun" x-show="!$store.theme.darkMode"
+                        class="w-5 h-5 text-text-light-primary dark:text-text-white"></i>
+                    <i data-lucide="moon" x-show="$store.theme.darkMode"
+                        class="w-5 h-5 text-text-light-primary dark:text-text-white"></i>
                 </button>
 
 
@@ -39,7 +41,7 @@
                 <!-- Notifications -->
                 <button @click="toggleNotifications()"
                     class="relative p-2 rounded-xl hover:bg-bg-black/10 dark:hover:bg-bg-white/10 transition-colors">
-                    <i data-lucide="bell" class="w-5 h-5 text-text-white"></i>
+                    <i data-lucide="bell" class="w-5 h-5 text-text-light-primary dark:text-text-white"></i>
                     <div x-show="notifications.length > 0"
                         class="absolute top-1 right-1 w-2 h-2 bg-red-400 rounded-full notification-badge">
                     </div>
@@ -65,7 +67,8 @@
                         x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                         x-transition:leave="transition ease-in duration-75"
                         x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                        class="hidden absolute right-0 mt-2 w-fit min-w-40 glass-card bg-bg-white dark:bg-bg-dark-tertiary rounded-xl shadow-lg py-2 z-50" :class="open ? '!block' : '!hidden'">
+                        class="hidden absolute right-0 mt-2 w-fit min-w-40 glass-card bg-bg-white dark:bg-bg-dark-tertiary rounded-xl shadow-lg py-2 z-50"
+                        :class="open ? '!block' : '!hidden'">
                         <x-admin.profile-navlink route="#" name="{{ __('Profile') }}" />
                         <x-admin.profile-navlink route="#" name="{{ __('Settings') }}" />
                         <x-admin.profile-navlink route="{{ route('admin.logout') }}" logout='true'

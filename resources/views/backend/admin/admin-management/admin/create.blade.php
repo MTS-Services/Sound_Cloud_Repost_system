@@ -4,7 +4,7 @@
     <x-slot name="page_slug">admin</x-slot>
 
     @push('css')
-        <link rel="stylesheet" href="{{ asset('assets/css/filepond.css') }}">
+        {{-- <link rel="stylesheet" href="{{ asset('assets/css/filepond.css') }}"> --}}
     @endpush
 
     <section>

@@ -1,0 +1,117 @@
+/* public/assets/css/datatable.css */
+
+.dynamic-datatable-wrapper {
+    --primary-color: #3b82f6;
+    --primary-hover: #2563eb;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --warning-color: #f59e0b;
+}
+
+/* Glass card effect */
+.glass-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.dark .glass-card {
+    background: rgba(31, 41, 55, 0.8);
+    border: 1px solid rgba(75, 85, 99, 0.2);
+}
+
+/* Button styles */
+.btn-primary {
+    background: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+}
+
+/* Table enhancements */
+.dynamic-datatable-wrapper table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.dynamic-datatable-wrapper th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.dynamic-datatable-wrapper tr:hover {
+    transform: translateX(2px);
+    transition: all 0.2s ease;
+}
+
+/* Loading spinner */
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Modal animations */
+.dynamic-datatable-wrapper .fixed {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Toast animations */
+#toast-admin-table {
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive enhancements */
+@media (max-width: 768px) {
+    .dynamic-datatable-wrapper .flex-1 {
+        min-width: 0;
+    }
+    
+    .dynamic-datatable-wrapper .space-x-3 > * + * {
+        margin-left: 0.5rem;
+    }
+}
+
+/* Custom scrollbar */
+.dynamic-datatable-wrapper .overflow-x-auto::-webkit-scrollbar {
+    height: 6px;
+}
+
+.dynamic-datatable-wrapper .overflow-x-auto::-webkit-scrollbar-track {
+    background: #f3f4f6;
+    border-radius: 3px;
+}
+
+.dynamic-datatable-wrapper .overflow-x-auto::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+}
+
+.dynamic-datatable-wrapper .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
