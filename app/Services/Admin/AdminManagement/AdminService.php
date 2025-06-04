@@ -40,6 +40,10 @@ class AdminService
     public function updateAdmin(Admin $admin, array $data, $file = null): Admin
     {
         return DB::transaction(function () use ($admin, $data, $file) {
+            if ($file) {
+                $data['image'] = $this->handleFileUpload($file,  'admins', $data['name']);
+                $this->fileDelete($admin->image);
+            }
             $data['password'] = $data['password'] ?? $admin->password;
             $data['updated_by'] = admin()->id;
             $admin->update($data);

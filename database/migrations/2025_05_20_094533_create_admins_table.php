@@ -26,8 +26,6 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
             $this->addAdminAuditColumns($table);
-
-            $table->text('description')->nullable();
         });
     }
 

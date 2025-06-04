@@ -114,12 +114,6 @@
                             <x-input-error class="mt-2" :messages="$errors->get('password_confirmation')" />
                         </div>
                         <div class="space-y-2 col-span-2">
-                            <p class="label">{{ __('Description') }}</p>
-                            <textarea name="description" class="textarea"></textarea>
-                            <x-input-error class="mt-2" :messages="$errors->get('password_confirmation')" />
-                        </div>
-
-                        <div class="space-y-2 col-span-2">
                             <p class="label">{{ __('Image') }}</p>
                             <input type="file" name="image" class="filepond" id="image"
                                 accept="image/jpeg, image/png, image/jpg, image/webp, image/svg">
@@ -137,7 +131,6 @@
         </div>
     </section>
     @push('js')
-        <script src="{{ asset('assets/js/ckEditor.js') }}"></script>
         <script src="{{ asset('assets/js/filepond.js') }}"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
