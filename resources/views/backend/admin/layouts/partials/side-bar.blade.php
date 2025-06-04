@@ -7,7 +7,7 @@
         'w-72 translate-x-0': !desktop && mobile_menu_open,
         'w-72 -translate-x-full': !desktop && !mobile_menu_open,
     }">
-
+        
     <div class="glass-card h-full custom-scrollbar rounded-xl overflow-y-auto">
         <!-- Sidebar Header -->
         <a href="{{ route('admin.dashboard') }}" class="p-3 border-b border-white/10 inline-block">
@@ -95,22 +95,10 @@
                 :items="[
                     [
                         'name' => 'All Users',
-                        'route' => '#',
+                        'route' => route('um.user.index'),
                         'icon' => 'user',
-                        'active' => 'admin-users',
-                    ],
-                    [
-                        'name' => 'Add User',
-                        'route' => '#',
-                        'icon' => 'user-plus',
-                        'active' => 'admin-users-add',
-                    ],
-                    [
-                        'name' => 'User Roles',
-                        'route' => '#',
-                        'icon' => 'shield',
-                        'active' => 'admin-users-roles',
-                    ],
+                        'active' => 'admin-user',
+                    ],                   
                 ]" />
 
             {{-- 3. MIXED NAVIGATION (Single items + Dropdowns in one parent) --}}

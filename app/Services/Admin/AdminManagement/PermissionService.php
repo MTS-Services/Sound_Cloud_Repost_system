@@ -11,7 +11,7 @@ class PermissionService
     {
         return Permission::orderBy($orderBy, $order)->latest();
     }
-
+        
     public function getPermission($encryptedId): Permission | Collection
     {
         return Permission::findOrFail(decrypt($encryptedId));

@@ -6,12 +6,11 @@ use App\Http\Traits\FileManagementTrait;
 use App\Models\Admin;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
-
+       
 class AdminService
-{
-    use FileManagementTrait;
-
-
+{   
+    use FileManagementTrait; 
+    
     public function getAdmins($orderBy = 'name', $order = 'asc')
     {
         return Admin::orderBy($orderBy, $order)->latest();
@@ -47,7 +46,7 @@ class AdminService
             $admin->syncRoles($admin->role->name);
             return $admin;
         });
-    }
+    }  
 
     public function delete(Admin $admin): void
     {
@@ -76,3 +75,6 @@ class AdminService
         ]);
     }
 }
+
+
+    
