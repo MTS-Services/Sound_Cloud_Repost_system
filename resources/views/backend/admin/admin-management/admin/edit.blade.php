@@ -94,10 +94,18 @@
                             <p class="label">{{ __('Role') }}</p>
                             <select name="role" class="input select select2">
                                 @foreach ($roles as $role)
-                                    <option value="{{ $role->id }}" {{ $admin->role_id == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
+                                    <option value="{{ $role->id }}"
+                                        {{ $admin->role_id == $role->id ? 'selected' : '' }}>{{ $role->name }}
+                                    </option>
                                 @endforeach
                             </select>
                             <x-input-error class="mt-2" :messages="$errors->get('password_confirmation')" />
+                        </div>                        
+                        <div class="space-y-2 col-span-2">
+                            <p class="label">{{ __('Image') }}</p>
+                            <input type="file" name="image" class="filepond" id="image"
+                                accept="image/jpeg, image/png, image/jpg, image/webp, image/svg">
+                            <x-input-error class="mt-2" :messages="$errors->get('image')" />
                         </div>
                     </div>
                     <div class="flex justify-end mt-5">
@@ -110,6 +118,18 @@
 
         </div>
 
+        @push('js')
+            <script src="{{ asset('assets/js/filepond.js') }}"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+
+                    file_upload(["#image"], ["image/jpeg", "image/png", "image/jpg, image/webp, image/svg"], {
+                        "#image": "{{ $admin->modified_image }}"
+                    });
+
+                });
+            </script>
+        @endpush
 
     </section>
 </x-admin::layout>

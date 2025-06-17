@@ -2,13 +2,16 @@
 
 namespace App\Services\Admin\AdminManagement;
 
+use App\Http\Traits\FileManagementTrait;
 use App\Models\Admin;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class AdminService
 {
-     public function getAdmins($orderBy = 'name', $order = 'asc')
+    use FileManagementTrait;
+
+    public function getAdmins($orderBy = 'name', $order = 'asc')
     {
         return Admin::orderBy($orderBy, $order)->latest();
     }
@@ -24,6 +27,9 @@ class AdminService
     public function createAdmin(array $data, $file = null): Admin
     {
         return DB::transaction(function () use ($data, $file) {
+            if ($file) {
+                $data['image'] = $this->handleFileUpload($file,  'admins', $data['name']);
+            }
             $data['created_by'] = admin()->id;
             $admin = Admin::create($data);
             $admin->assignRole($admin->role->name);
@@ -34,8 +40,12 @@ class AdminService
     public function updateAdmin(Admin $admin, array $data, $file = null): Admin
     {
         return DB::transaction(function () use ($admin, $data, $file) {
+            if ($file) {
+                $data['image'] = $this->handleFileUpload($file,  'admins', $data['name']);
+                $this->fileDelete($admin->image);
+            }
             $data['password'] = $data['password'] ?? $admin->password;
-            $data['updated_by'] = admin()->id;           
+            $data['updated_by'] = admin()->id;
             $admin->update($data);
             $admin->syncRoles($admin->role->name);
             return $admin;
@@ -63,7 +73,7 @@ class AdminService
 
     public function toggleStatus(Admin $admin): void
     {
-        $admin->update( [
+        $admin->update([
             'status' => !$admin->status,
             'updated_by' => admin()->id
         ]);
