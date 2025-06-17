@@ -16,7 +16,7 @@
              <a href="#how-it-works" class="text-gray-300 hover:text-white transition-colors">How it Works</a>
              <a href="#features" class="text-gray-300 hover:text-white transition-colors">Features</a>
              <a href="#testimonials" class="text-gray-300 hover:text-white transition-colors">Testimonials</a>
-             <a href="#faq" class="text-gray-300 hover:text-white transition-colors">FAQ</a>
+             {{-- <a href="#faq" class="text-gray-300 hover:text-white transition-colors">FAQ</a> --}}
              {{-- <button class="p-2 rounded-full hover:bg-dark-lighter text-gray-300" id="theme-toggle">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="4"></circle>
@@ -30,12 +30,12 @@
                         <path d="m19.07 4.93-1.41 1.41"></path>
                     </svg>
                 </button> --}}
-             <button
+             <a href="{{ route('login') }}"
                  class="border-2 border-primary text-primary hover:bg-primary/10 px-3 py-1.5 rounded-md text-sm transition-all">Log
-                 In</button>
-             <button
+                 In</a>
+             <a href=" {{ route('register') }}"
                  class="bg-primary hover:bg-primary-hover text-white px-3 py-1.5 rounded-md text-sm transition-all shadow-md hover:shadow-lg">Sign
-                 Up</button>
+                 Up</a>
          </nav>
 
          <div class="md:hidden flex items-center space-x-4">
@@ -75,12 +75,12 @@
              <a href="#testimonials" class="block text-gray-300 hover:text-white transition-colors">Testimonials</a>
              <a href="#faq" class="block text-gray-300 hover:text-white transition-colors">FAQ</a>
              <div class="flex space-x-4 pt-4">
-                 <button
+                 <a href="{{ route('login') }}"
                      class="border-2 border-primary text-primary hover:bg-primary/10 px-3 py-1.5 rounded-md text-sm transition-all">Log
-                     In</button>
-                 <button
+                     In</a>
+                 <a href=" {{ route('register') }}"
                      class="bg-primary hover:bg-primary-hover text-white px-3 py-1.5 rounded-md text-sm transition-all">Sign
-                     Up</button>
+                     Up</a>
              </div>
          </div>
      </div>

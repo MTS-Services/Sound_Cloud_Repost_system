@@ -25,35 +25,35 @@ function initializeDataTable({
             iDisplayLength: displayLength,
             rowReorder: row_reorder_settings,
             buttons: [
-                "copy",
-                {
-                    extend: "pdfHtml5",
-                    download: "open",
-                    orientation: "portrait",
-                    pageSize: "A4",
-                    exportOptions: {
-                        columns: export_columns,
-                    },
-                    customize: function (doc) {
-                        doc.defaultStyle = {
-                            font: "Roboto",
-                            fontSize: 10,
-                        };
-                        // doc.pageMargins = [30, 30, 30, 30];
-                    },
-                },
-                {
-                    extend: "print",
-                    exportOptions: {
-                        columns: export_columns, // Modify as needed
-                    },
-                },
-                {
-                    extend: "csv",
-                    exportOptions: {
-                        columns: export_columns, // Modify as needed
-                    },
-                },
+                // "copy",
+                // {
+                //     extend: "pdfHtml5",
+                //     download: "open",
+                //     orientation: "portrait",
+                //     pageSize: "A4",
+                //     exportOptions: {
+                //         columns: export_columns,
+                //     },
+                //     customize: function (doc) {
+                //         doc.defaultStyle = {
+                //             font: "Roboto",
+                //             fontSize: 10,
+                //         };
+                //         // doc.pageMargins = [30, 30, 30, 30];
+                //     },
+                // },
+                // {
+                //     extend: "print",
+                //     exportOptions: {
+                //         columns: export_columns, // Modify as needed
+                //     },
+                // },
+                // {
+                //     extend: "csv",
+                //     exportOptions: {
+                //         columns: export_columns, // Modify as needed
+                //     },
+                // },
                 "pageLength",
             ],
             ajax: {
