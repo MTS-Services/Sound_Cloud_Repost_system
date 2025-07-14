@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\UserInformation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,8 @@ class ProfileController extends Controller
 {
     public function profile()
     {
-        return view('backend.user.profile.profile');
+        $data['user'] = UserInformation::where('user_id', user()->id)->first();
+        return view('backend.user.profile.profile', $data);
     }
 
    

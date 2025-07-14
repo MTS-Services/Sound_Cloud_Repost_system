@@ -19,24 +19,23 @@
             <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between">
                 <div class="flex items-center space-x-4 mb-4 lg:mb-0">
                     <div class="relative">
-                        <img src="{{ asset('frontend/user/user.jpg') }}" alt="Alex Rodriguez"
-                            class="w-20 h-20 rounded-full">
+                        <img src="{{ user()->avatar }}" alt="{{ user()->name }}" class="w-20 h-20 rounded-full">
                         <div class="absolute bottom-0 right-0 w-6 h-6 bg-green-500 rounded-full border-2 border-white">
                         </div>
                     </div>
                     <div>
-                        <h2 class="text-xl font-bold text-gray-900">Alex Rodriguez</h2>
-                        <p class="text-gray-600">@alexrodriguez</p>
+                        <h2 class="text-xl font-bold text-gray-900">{{ user()->name }}</h2>
+                        {{-- <p class="text-gray-600">Email Not Provided from SoundCloud Profile... </p> --}}
                         <div class="flex items-center space-x-4 mt-2 text-sm text-gray-600">
                             <div class="flex items-center">
                                 <i data-lucide="calendar" class="w-4 h-4 mr-1"></i>
-                                Joined 15/08/2023
+                                {{ __('Joined') }} {{ user()->created_at->diffForHumans() }}
                             </div>
                             <div class="flex items-center">
                                 <i data-lucide="users" class="w-4 h-4 mr-1"></i>
-                                2,458 followers
+                                {{ $user->followers_count }} {{ __('Followers') }}
                             </div>
-                            <a href="#" class="text-orange-600 hover:underline">SoundCloud Profile</a>
+                            <a href="{{ $user->soundcloud_permalink_url}}" class="text-orange-600 hover:underline">SoundCloud Profile</a>
                         </div>
                         <div class="flex space-x-2 mt-4">
                             <span class="bg-orange-600 text-white px-3 py-1 rounded-full text-xs">Top
@@ -78,9 +77,11 @@
                 <nav class="flex space-x-8 px-6">
                     <a href="#" class="tab-btn py-4 px-1 border-b-2 border-orange-600 text-orange-600 font-medium"
                         data-tab="overview">Overview</a>
-                    <a href="#" class="tab-btn py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700"
+                    <a href="#"
+                        class="tab-btn py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700"
                         data-tab="transactions">Credit Transactions</a>
-                    <a href="#" class="tab-btn py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700"
+                    <a href="#"
+                        class="tab-btn py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700"
                         data-tab="history">Repost History</a>
                 </nav>
             </div>
@@ -89,7 +90,8 @@
             <div id="overview" class="tab-pane p-6 block">
                 <!-- Statistics Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-orange-50 p-6 shadow-sm rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
+                    <div
+                        class="bg-orange-50 p-6 shadow-sm rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
                         <div class="flex items-center">
                             <div class="bg-orange-100 p-3 rounded-lg mr-4">
                                 <i data-lucide="music" class="w-6 h-6 text-orange-600"></i>
@@ -113,7 +115,8 @@
                         </div>
                     </div>
 
-                    <div class="bg-green-50 p-6 shadow-sm rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
+                    <div
+                        class="bg-green-50 p-6 shadow-sm rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
                         <div class="flex items-center">
                             <div class="bg-green-100 p-3 rounded-lg mr-4">
                                 <i data-lucide="users" class="w-6 h-6 text-green-600"></i>
@@ -125,7 +128,8 @@
                         </div>
                     </div>
 
-                    <div class="bg-yellow-50 p-6 shadow-sm rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
+                    <div
+                        class="bg-yellow-50 p-6 shadow-sm rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
                         <div class="flex items-center">
                             <div class="bg-yellow-100 p-3 rounded-lg mr-4">
                                 <i data-lucide="trending-up" class="w-6 h-6 text-yellow-600"></i>
@@ -213,11 +217,11 @@
             // Tab functionality (only for profile page)
             const tabBtns = document.querySelectorAll('.tab-btn');
             const tabContents = document.querySelectorAll('.tab-pane');
-    
+
             tabBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const tabId = btn.getAttribute('data-tab');
-    
+
                     // Update tab buttons
                     tabBtns.forEach(b => {
                         b.classList.remove('border-orange-600', 'text-orange-600');
@@ -225,7 +229,7 @@
                     });
                     btn.classList.remove('border-transparent', 'text-gray-500');
                     btn.classList.add('border-orange-600', 'text-orange-600');
-    
+
                     // Update tab content
                     tabContents.forEach(content => {
                         content.classList.add('hidden');
@@ -233,7 +237,7 @@
                     document.getElementById(tabId).classList.remove('hidden');
                 });
             });
-    
+
             // // Animate progress circle on load
             // window.addEventListener('load', () => {
             //     const progressCircle = document.querySelector('.progress-circle path:last-child');
@@ -247,4 +251,3 @@
         </script>
     @endpush
 </x-user::layout>
-
