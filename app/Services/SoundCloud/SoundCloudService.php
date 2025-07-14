@@ -41,6 +41,8 @@ class SoundCloudService
             Log::error('SoundCloud API Error', [
                 'user_id' => $user->id,
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'line' => $e->getLine(),
             ]);
 
             throw $e;
