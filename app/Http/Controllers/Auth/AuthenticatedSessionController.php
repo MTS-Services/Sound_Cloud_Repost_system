@@ -20,7 +20,7 @@ class AuthenticatedSessionController extends Controller
         if (Auth::guard('web')->check()) {
             return redirect()->intended(route('user.dashboard', absolute: false));
         }
-        return view('auth.login');
+        return redirect()->url('/');
     }
 
     /**
