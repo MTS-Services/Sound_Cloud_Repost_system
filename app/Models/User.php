@@ -18,29 +18,15 @@ class User extends AuthBaseModel
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'email_verified_at',
-        'password',
-        'status',
+        'sort_order',
         'soundcloud_id',
-        'soundcloud_username',
-        'soundcloud_avatar',
-        'soundcloud_track_count',
-        'soundcloud_followings_count',
-        'soundcloud_followers_count',
-        'soundcloud_access_token',
-        'soundcloud_refresh_token',
-        'soundcloud_token_expires_at',
+        'name',
+        'nickname',
+        'avatar',
+        'token',
+        'refresh_token',
+        'expires_in',
         'last_sync_at',
-        'credits',
-
-        'creater_id',
-        'creater_type',
-        'updater_id',
-        'updater_type',
-        'deleter_id',
-        'deleter_type',
     ];
 
     /**
@@ -49,12 +35,11 @@ class User extends AuthBaseModel
      * @var list<string>
      */
     protected $hidden = [
-        'password',
+        'token',
+        'refresh_token',
         'remember_token',
-        'soundcloud_access_token',
-        'soundcloud_refresh_token',
-
     ];
+
 
     /**
      * Get the attributes that should be cast.
@@ -64,15 +49,19 @@ class User extends AuthBaseModel
     protected function casts(): array
     {
         return [
+            'expires_in' => 'integer',
             'email_verified_at' => 'datetime',
-            'soundcloud_token_expires_at' => 'datetime',
             'last_sync_at' => 'datetime',
-            'password' => 'hashed',
-
         ];
     }
 
-    // Relationships
+    // ================================  Relationships ===================================
+
+    public function userInfo()
+    {
+        return $this->hasOne(UserInformation::class);
+    }
+
     public function soundcloudTracks()
     {
         return $this->hasMany(SoundcloudTrack::class);
@@ -97,5 +86,4 @@ class User extends AuthBaseModel
 
         return $this->soundcloud_token_expires_at->isPast();
     }
-
 }

@@ -17,14 +17,16 @@ return new class extends Migration {
             $table->id();
             $table->unsignedBigInteger('sort_order')->default(0);
            
-            $table->string('name');
-            $table->string('nickname')->nullable();
+            $table->string('email')->unique()->nullable();
+            $table->unsignedBigInteger('soundcloud_id')->unique();
+            $table->string('name')->index();
+            $table->string('nickname')->nullable()->index();
             $table->string('avatar')->nullable();
             $table->text('token')->nullable();
             $table->string('refresh_token')->nullable();
-            $table->timestamp('expires_in')->nullable();
+            $table->bigInteger('expires_in')->nullable()->index();
 
-
+            $table->timestamp('last_synced_at')->nullable()->index();
             $table->rememberToken();
             $table->timestamps();
             $this->addMorphedAuditColumns($table);
