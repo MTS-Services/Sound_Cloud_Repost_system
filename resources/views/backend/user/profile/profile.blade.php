@@ -35,7 +35,7 @@
                                 <i data-lucide="users" class="w-4 h-4 mr-1"></i>
                                 {{ $user->followers_count }} {{ __('Followers') }}
                             </div>
-                            <a href="{{ $user->soundcloud_permalink_url}}" class="text-orange-600 hover:underline">SoundCloud Profile</a>
+                            <a href="{{ $user->soundcloud_permalink_url}}" target="_blank" class="text-orange-600 hover:underline">SoundCloud Profile</a>
                         </div>
                         <div class="flex space-x-2 mt-4">
                             <span class="bg-orange-600 text-white px-3 py-1 rounded-full text-xs">Top
