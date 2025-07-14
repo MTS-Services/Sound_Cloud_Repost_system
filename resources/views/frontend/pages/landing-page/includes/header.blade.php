@@ -30,12 +30,17 @@
                         <path d="m19.07 4.93-1.41 1.41"></path>
                     </svg>
                 </button> --}}
-             <a href="{{ route('login') }}"
-                 class="border-2 border-primary text-primary hover:bg-primary/10 px-3 py-1.5 rounded-md text-sm transition-all">Log
-                 In</a>
-             <a href=" {{ route('register') }}"
-                 class="bg-primary hover:bg-primary-hover text-white px-3 py-1.5 rounded-md text-sm transition-all shadow-md hover:shadow-lg">Sign
-                 Up</a>
+             <a href="{{ route('soundcloud.redirect') }}"
+                 class="w-fit px-2 py-1 flex gap-2 items-center justify-center border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                 <svg width="24" height="24" viewBox="0 0 512 512" fill="currentColor"
+                     xmlns="http://www.w3.org/2000/svg">
+                     <path
+                         d="M437.019 211.35c-13.398 0-26.193 2.519-38.018 7.477-7.664-67.457-65.098-120.037-134.644-120.037-6.837 0-13.672 0.557-20.342 1.66-9.725 1.558-16.883 10.135-16.883 20.004v231.77c0 11.175 9.064 20.238 20.238 20.238h189.649c49.452 0 89.981-40.529 89.981-89.981s-40.529-89.981-89.981-89.981zM65.26 239.723c-11.156 0-20.238 9.082-20.238 20.238v81.481c0 11.156 9.082 20.238 20.238 20.238s20.238-9.082 20.238-20.238v-81.481c0-11.156-9.082-20.238-20.238-20.238zm53.744-34.942c-11.156 0-20.238 9.082-20.238 20.238v116.423c0 11.156 9.082 20.238 20.238 20.238s20.238-9.082 20.238-20.238V224.999c0-11.156-9.082-20.238-20.238-20.238zm53.744-25.26c-11.156 0-20.238 9.082-20.238 20.238v141.683c0 11.156 9.082 20.238 20.238 20.238s20.238-9.082 20.238-20.238V200.02c0-11.156-9.082-20.238-20.238-20.238zm53.744-13.385c-11.156 0-20.238 9.082-20.238 20.238v154.98c0 11.156 9.082 20.238 20.238 20.238s20.238-9.082 20.238-20.238V186.376c0-11.156-9.082-20.238-20.238-20.238z" />
+                 </svg>
+
+                 Continue with SoundCloud
+             </a>
+
          </nav>
 
          <div class="md:hidden flex items-center space-x-4">
@@ -74,13 +79,17 @@
              <a href="#features" class="block text-gray-300 hover:text-white transition-colors">Features</a>
              <a href="#testimonials" class="block text-gray-300 hover:text-white transition-colors">Testimonials</a>
              <a href="#faq" class="block text-gray-300 hover:text-white transition-colors">FAQ</a>
-             <div class="flex space-x-4 pt-4">
-                 <a href="{{ route('login') }}"
-                     class="border-2 border-primary text-primary hover:bg-primary/10 px-3 py-1.5 rounded-md text-sm transition-all">Log
-                     In</a>
-                 <a href=" {{ route('register') }}"
-                     class="bg-primary hover:bg-primary-hover text-white px-3 py-1.5 rounded-md text-sm transition-all">Sign
-                     Up</a>
+             <div class="pt-4">
+                 <a href="{{ route('soundcloud.redirect') }}"
+                     class="w-fit px-2 py-1 flex gap-2 items-center justify-center border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                     <svg width="24" height="24" viewBox="0 0 512 512" fill="currentColor"
+                         xmlns="http://www.w3.org/2000/svg">
+                         <path
+                             d="M437.019 211.35c-13.398 0-26.193 2.519-38.018 7.477-7.664-67.457-65.098-120.037-134.644-120.037-6.837 0-13.672 0.557-20.342 1.66-9.725 1.558-16.883 10.135-16.883 20.004v231.77c0 11.175 9.064 20.238 20.238 20.238h189.649c49.452 0 89.981-40.529 89.981-89.981s-40.529-89.981-89.981-89.981zM65.26 239.723c-11.156 0-20.238 9.082-20.238 20.238v81.481c0 11.156 9.082 20.238 20.238 20.238s20.238-9.082 20.238-20.238v-81.481c0-11.156-9.082-20.238-20.238-20.238zm53.744-34.942c-11.156 0-20.238 9.082-20.238 20.238v116.423c0 11.156 9.082 20.238 20.238 20.238s20.238-9.082 20.238-20.238V224.999c0-11.156-9.082-20.238-20.238-20.238zm53.744-25.26c-11.156 0-20.238 9.082-20.238 20.238v141.683c0 11.156 9.082 20.238 20.238 20.238s20.238-9.082 20.238-20.238V200.02c0-11.156-9.082-20.238-20.238-20.238zm53.744-13.385c-11.156 0-20.238 9.082-20.238 20.238v154.98c0 11.156 9.082 20.238 20.238 20.238s20.238-9.082 20.238-20.238V186.376c0-11.156-9.082-20.238-20.238-20.238z" />
+                     </svg>
+
+                     Continue with SoundCloud
+                 </a>
              </div>
          </div>
      </div>
