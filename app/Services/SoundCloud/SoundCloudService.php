@@ -59,7 +59,7 @@ class SoundCloudService
                 [
                     'title' => $trackData['title'],
                     'description' => $trackData['description'],
-                    'permalink' => $trackData['permalink'] ?? null,
+                    'permalink' => $trackData['permalink'] ?? basename($trackData['permalink_url'] ?? ''),
                     'permalink_url' => $trackData['permalink_url'] ?? null,
                     'artwork_url' => $trackData['artwork_url'] ?? null,
                     'duration' => $trackData['duration'],
