@@ -85,6 +85,7 @@ class SoundCloudService
 
     public function getUserProfile(User $user): array
     {
+        
         if (!$user->isSoundCloudConnected()) {
             throw new \Exception('User is not connected to SoundCloud');
         }

@@ -70,7 +70,7 @@ class User extends AuthBaseModel
     // Helper methods
     public function isSoundCloudConnected(): bool
     {
-        return !empty($this->soundcloud_access_token);
+        return !empty($this->token);
     }
 
     public function getSoundCloudAvatarAttribute($value): string

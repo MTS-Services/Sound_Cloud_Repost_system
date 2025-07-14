@@ -55,6 +55,8 @@ class SoundCloudController extends Controller
             // Login user
             Auth::guard('web')->login($user, true);
 
+            dd(Auth::guard('web')->check());
+
             return redirect()->route('dashboard')
                 ->with('success', 'Successfully connected to SoundCloud!');
         } catch (\Exception $e) {
