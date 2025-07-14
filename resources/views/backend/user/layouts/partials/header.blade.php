@@ -25,9 +25,8 @@
                 <ul tabindex="0"
                     class="menu menu-sm dropdown-content bg-gray-50 rounded-box z-1 mt-3 w-52 shadow py-2">
                     <li>
-                        <div
-                            class="flex items-center space-x-2 border-b border-gray-100 px-6 py-4 w-full">
-                            <img src="{{ asset('frontend/user/user.jpg') }}" alt="Alex Rodriguez"
+                        <div class="flex items-center space-x-2 border-b border-gray-100 px-6 py-4 w-full">
+                            <img src="{{ auth_storage_url(auth()->user()->avatar) }}" alt="Alex Rodriguez"
                                 class="w-8 h-8 rounded-full">
                             <div class="text-sm">
                                 <span class="font-semibold text-black">{{ auth()->user()->name }}</span>
