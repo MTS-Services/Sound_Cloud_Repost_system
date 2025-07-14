@@ -47,17 +47,17 @@ class SoundCloudController extends Controller
             $user = $this->findOrCreateUser($soundCloudUser);
 
             // Sync user tracks
-            $this->soundCloudService->syncUserTracks($user);
+            // $this->soundCloudService->syncUserTracks($user);
 
-            // Update user profile data
-            $this->soundCloudService->updateUserProfile($user);
+            // // Update user profile data
+            // $this->soundCloudService->updateUserProfile($user);
 
             // Login user
             Auth::guard('web')->login($user, true);
 
-            dd(Auth::guard('web')->check());
+            // dd(Auth::guard('web')->check());
 
-            return redirect()->route('dashboard')
+            return redirect()->route('user.dashboard')
                 ->with('success', 'Successfully connected to SoundCloud!');
         } catch (\Exception $e) {
             Log::error('SoundCloud callback error', [
