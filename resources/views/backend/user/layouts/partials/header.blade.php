@@ -25,8 +25,7 @@
                 <ul tabindex="0"
                     class="menu menu-sm dropdown-content bg-gray-50 rounded-box z-1 mt-3 w-52 shadow py-2">
                     <li>
-                        <div
-                            class="flex items-center space-x-2 border-b border-gray-100 px-6 py-4 w-full">
+                        <div class="flex items-center space-x-2 border-b border-gray-100 px-6 py-4 w-full">
                             <img src="{{ asset('frontend/user/user.jpg') }}" alt="Alex Rodriguez"
                                 class="w-8 h-8 rounded-full">
                             <div class="text-sm">
@@ -37,14 +36,12 @@
                     </li>
                     <li>
                         <!-- Authentication -->
-                        <form method="POST" action="{{ route('logout') }}">
+                        <x-responsive-nav-link :href="javascript:void(0)"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            {{ __('Log Out') }}
+                        </x-responsive-nav-link>
+                        <form method="POST" action="{{ route('logout') }}" id="logout-form">
                             @csrf
-
-                            <x-responsive-nav-link :href="route('logout')"
-                                onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                                {{ __('Log Out') }}
-                            </x-responsive-nav-link>
                         </form>
                     </li>
                 </ul>

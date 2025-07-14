@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
-class SoundCloudService
+class SoundCloudServiceCopy
 {
     protected string $baseUrl = 'https://api.soundcloud.com';
 
