@@ -2,14 +2,13 @@
 
 use App\Http\Traits\AuditColumnsTrait;
 use App\Models\Credit;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-     use AuditColumnsTrait, SoftDeletes;
+     use AuditColumnsTrait;
     /**
      * Run the migrations.
      */
@@ -24,7 +23,6 @@ return new class extends Migration
             $table->string('credits')->index();
             $table->text('notes')->nullable();
             $table->timestamps();
-            $table->softDeletes();
 
             $this->addAdminAuditColumns($table);
         });
