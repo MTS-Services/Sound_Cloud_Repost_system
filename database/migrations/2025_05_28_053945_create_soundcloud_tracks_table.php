@@ -1,14 +1,13 @@
 <?php
 
 use App\Http\Traits\AuditColumnsTrait;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
 
-    use SoftDeletes, AuditColumnsTrait;
+    use AuditColumnsTrait;
     /**
      * Run the migrations.
      */
@@ -34,7 +33,6 @@ return new class extends Migration {
             $table->boolean('is_active')->default(true);
             $table->timestamp('published_at')->nullable();
             $table->timestamps();
-            $table->softDeletes();
             $this->addMorphedAuditColumns($table);
 
             $table->unique(['user_id', 'soundcloud_track_id']);
