@@ -40,6 +40,7 @@ class AdminRequest extends FormRequest
     {
         return [
             'email' => ['required', 'string', 'email', Rule::unique('admins', 'email')->ignore(decrypt($this->route('admin')))],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ];
     }
 }

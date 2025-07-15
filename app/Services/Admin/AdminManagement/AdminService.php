@@ -44,6 +44,9 @@ class AdminService
                 $data['image'] = $this->handleFileUpload($file,  'admins', $data['name']);
                 $this->fileDelete($admin->image);
             }
+            if ($data['email'] && $data['email'] != $admin->email) {
+                $data['email_verified_at'] = null;
+            }
             $data['password'] = $data['password'] ?? $admin->password;
             $data['updated_by'] = admin()->id;
             $admin->update($data);

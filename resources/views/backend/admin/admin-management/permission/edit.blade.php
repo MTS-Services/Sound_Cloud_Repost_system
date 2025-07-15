@@ -22,20 +22,17 @@
                     @method('PUT')
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
                         <div class="space-y-2">
-                            <p class="label">{{ __('Prefix') }}</p>
-                            <input type="text" class="input" placeholder="Prefix" value="{{ $permission->prefix }}"
-                                name="prefix" class="flex-1" />
-                            <x-input-error class="mt-2" :messages="$errors->get('prefix')" />
+                            <x-admin.inputs.input name="prefix" label="{{ __('Prefix') }}" placeholder="Enter prefix"
+                                value="{{ $permission->prefix }}" :messages="$errors->get('prefix')" />
                         </div>
                         <div class="space-y-2">
-                            <p class="label">{{ __('Permission Name') }}</p>
-                            <input type="text" class="input" placeholder="Name" value="{{ $permission->name }}"
-                                name="name" class="flex-1" />
-                            <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                            <x-admin.inputs.input name="name" label="{{ __('Name') }}" placeholder="Enter name"
+                                value="{{ $permission->name }}" :messages="$errors->get('name')" />
                         </div>
                     </div>
                     <div class="flex justify-end mt-5">
-                        <x-admin.primary-button>{{ __('Update') }}</x-admin.primary-button>
+                        <x-admin.button type="accent" :button="true"
+                            icon="save">{{ __('Update') }}</x-admin.button>
                     </div>
                 </form>
             </div>

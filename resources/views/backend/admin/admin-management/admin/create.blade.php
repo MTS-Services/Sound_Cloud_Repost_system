@@ -12,7 +12,7 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Create Admin') }}</h2>
                 <x-admin.button href="{{ route('am.admin.index') }}" icon="undo-2" type='info'>
-                    {{ __('Add') }}
+                    {{ __('Back') }}
                 </x-admin.button>
             </div>
         </div>
@@ -23,107 +23,45 @@
             <div class="glass-card rounded-2xl p-6 md:col-span-5">
                 <form action="{{ route('am.admin.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                        <!-- Name -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
                         <div class="space-y-2">
-                            <p class="label">{{ __('Name') }}</p>
-                            <label class="input flex items-center gap-2">
-                                <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                    <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none"
-                                        stroke="currentColor">
-                                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                                        <circle cx="12" cy="7" r="4"></circle>
-                                    </g>
-                                </svg>
-                                <input type="text" placeholder="Name" value="{{ old('name') }}" name="name"
-                                    class="flex-1" />
-                            </label>
-                            <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                            <x-admin.inputs.input name="name" label="{{ __('Name') }}" icon="user"
+                                placeholder="Enter Name" value="{{ old('name') }}"
+                                :messages="$errors->get('name')"></x-admin.inputs.input>
                         </div>
 
-                        <!-- Email -->
                         <div class="space-y-2">
-                            <p class="label">{{ __('Email') }}</p>
-                            <label class="input flex items-center gap-2">
-                                <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                    <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none"
-                                        stroke="currentColor">
-                                        <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-                                    </g>
-                                </svg>
-                                <input type="email" name="email" value="{{ old('email') }}"
-                                    placeholder="example@gmail.com" class="flex-1" />
-                            </label>
-                            <x-input-error class="mt-2" :messages="$errors->get('email')" />
+                            <x-admin.inputs.input name="email" label="{{ __('Email') }}" icon="mail"
+                                placeholder="Enter Email" value="{{ old('email') }}"
+                                :messages="$errors->get('email')"></x-admin.inputs.input>
                         </div>
 
-                        <!-- Password -->
                         <div class="space-y-2">
-                            <p class="label">{{ __('Password') }}</p>
-                            <label class="input relative flex items-center gap-2">
-                                <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                    <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none"
-                                        stroke="currentColor">
-                                        <path
-                                            d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z">
-                                        </path>
-                                        <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
-                                    </g>
-                                </svg>
-                                <input :type="$store.password.showPassword ? 'text' : 'password'" name="password"
-                                    placeholder="Password" class="flex-1" />
-                                <button type="button"
-                                    @click="$store.password.showPassword = !$store.password.showPassword ; $nextTick(() => lucide.createIcons())">
-                                    <i :data-lucide="$store.password.showPassword ? 'eye-off' : 'eye'"
-                                        class="w-4 h-4"></i>
-                                </button>
-                            </label>
-                            <x-input-error class="mt-2" :messages="$errors->get('password')" />
-
+                            <x-admin.inputs.input name="password" label="{{ __('Password') }}" type="password"
+                                icon="key-round" placeholder="Enter Password" :messages="$errors->get('password')"></x-admin.inputs.input>
                         </div>
 
-                        <!-- Confirm Password -->
                         <div class="space-y-2">
-                            <p class="label">{{ __('Confirm Password') }}</p>
-                            <label class="input flex items-center gap-2">
-                                <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                    <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none"
-                                        stroke="currentColor">
-                                        <path
-                                            d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z">
-                                        </path>
-                                        <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
-                                    </g>
-                                </svg>
-                                <input :type="$store.password.showPassword ? 'text' : 'password'"
-                                    name="password_confirmation" placeholder="Confirm Password" class="flex-1" />
-                                <button type="button"
-                                    @click="$store.password.showPassword = !$store.password.showPassword ; $nextTick(() => lucide.createIcons())">
-                                    <i :data-lucide="$store.password.showPassword ? 'eye-off' : 'eye'"
-                                        class="w-4 h-4"></i>
-                                </button>
-                            </label>
-                            <x-input-error class="mt-2" :messages="$errors->get('password_confirmation')" />
+                            <x-admin.inputs.input name="password_confirmation" label="{{ __('Confirm Password') }}"
+                                type="password" icon="key-round" placeholder="Enter Password"
+                                :messages="$errors->get('password_confirmation')"></x-admin.inputs.input>
                         </div>
+
                         <div class="space-y-2">
-                            <p class="label">{{ __('Role') }}</p>
-                            <select name="role" class="input select select2">
-                                @foreach ($roles as $role)
-                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
-                                @endforeach
-                            </select>
-                            <x-input-error class="mt-2" :messages="$errors->get('password_confirmation')" />
+                            <x-admin.inputs.select name="role" label="{{ __('Role') }}" icon="shield"
+                                placeholder="{{ __('Select a Role') }}" :options="$roles->pluck('name', 'id')->toArray()" :selected="old('role')"
+                                :messages="$errors->get('role')" />
                         </div>
-                        <div class="space-y-2 col-span-2">
-                            <p class="label">{{ __('Image') }}</p>
-                            <input type="file" name="image" class="filepond" id="image"
-                                accept="image/jpeg, image/png, image/jpg, image/webp, image/svg">
-                            <x-input-error class="mt-2" :messages="$errors->get('image')" />
+
+                        <div class="space-y-2 sm:col-span-2">
+                            <x-admin.inputs.file name="image" label="{{ __('Image') }}"
+                                accept="image/jpeg, image/png, image/jpg, image/webp, image/svg" :messages="$errors->get('image')" />
                         </div>
                     </div>
                     <div class="flex justify-end mt-5">
-                        <x-admin.button type="accent" :button="true">{{ __('Create') }}</x-admin.button>
+                        <x-admin.button type="accent" :button="true"
+                            icon="save">{{ __('Create') }}</x-admin.button>
                     </div>
                 </form>
             </div>
@@ -136,7 +74,6 @@
         <script src="{{ asset('assets/js/filepond.js') }}"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-
                 file_upload(["#image"], ["image/jpeg", "image/png", "image/jpg, image/webp, image/svg"]);
             });
         </script>

@@ -7,7 +7,9 @@
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Create Credit') }}</h2>
-                <x-admin.primary-link href="{{ route('pm.credit.index') }}">{{ __('Back') }} </x-admin.primary-link>
+                <x-admin.button href="{{ route('pm.credit.index') }}" icon="undo-2" type='info'>
+                    {{ __('Back') }}
+                </x-admin.button>
             </div>
         </div>
 
@@ -18,51 +20,30 @@
                 <form action="{{ route('pm.credit.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                        <!-- Name -->
+
                         <div class="space-y-2">
-                            <p class="label">{{ __('Name') }}</p>
-                            <label class="input flex items-center gap-2">
-                                <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                    <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none"
-                                        stroke="currentColor">
-                                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                                        <circle cx="12" cy="7" r="4"></circle>
-                                    </g>
-                                </svg>
-                                <input type="text" placeholder="Name" value="{{ old('name') }}" name="name"
-                                    class="flex-1" />
-                            </label>
-                            <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                            <x-admin.inputs.input name="name" label="{{ __('Name') }}"
+                                placeholder="Enter Credit Name" value="{{ old('name') }}" :messages="$errors->get('name')" />
                         </div>
 
-                        <!-- Price -->
                         <div class="space-y-2">
-                            <p class="label">{{ __('Price') }}</p>
-                            <label class="input flex items-center gap-2">
-                                <input type="number" name="price" value="{{ old('price') }}"
-                                    placeholder="Enter price" class="flex-1" />
-                            </label>
-                            <x-input-error class="mt-2" :messages="$errors->get('price')" />
+                            <x-admin.inputs.input name="price" label="{{ __('Price') }}" placeholder="Enter Price"
+                                value="{{ old('price') }}" :messages="$errors->get('price')" />
                         </div>
-                        <!-- Credits -->
                         <div class="space-y-2">
-                            <p class="label">{{ __('Credits') }}</p>
-                            <label class="input flex items-center gap-2">
-                                <input type="text" name="credits" value="{{ old('credits') }}"
-                                    placeholder="Enter credits" class="flex-1" />
-                            </label>
-                            <x-input-error class="mt-2" :messages="$errors->get('credits')" />
+                            <x-admin.inputs.input name="credits" label="{{ __('Credits') }}"
+                                placeholder="Enter Credits" value="{{ old('credits') }}" :messages="$errors->get('credits')" />
+                        </div>
+
+                        <div class="space-y-2 sm:col-span-2">
+                            <x-admin.inputs.textarea name="notes" label="{{ __('Notes') }}"
+                                placeholder="Enter notes" value="{{ old('notes') }}" :messages="$errors->get('notes')" />
                         </div>
                     </div>
-                    <!-- notes -->
-                    <div class="space-y-2">
-                       <p class="label py-2">{{ __('Notes') }}</p>
-                        <textarea name="notes" id="notes" rows="4" placeholder="Enter notes"
-                            class="w-full border-gray-300 dark:border-gray-600">{{ old('notes') }}</textarea>
-                        <x-input-error class="mt-2 text-sm text-red-600" :messages="$errors->get('notes')" />
-                    </div>
+
                     <div class="flex justify-end mt-5">
-                        <x-admin.primary-button>{{ __('Create') }}</x-admin.primary-button>
+                        <x-admin.button type="accent" :button="true"
+                            icon="save">{{ __('Create') }}</x-admin.button>
                     </div>
                 </form>
             </div>
