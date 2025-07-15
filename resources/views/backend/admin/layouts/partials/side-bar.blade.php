@@ -64,17 +64,6 @@
                         'permission' => 'permission-list',
                     ],
                 ]" />
-            <x-admin.navlink type="dropdown" icon="users" name="Package Management" :page_slug="$active"
-                :items="[
-                    [
-                        'name' => 'Credit',
-                        'route' => route('pm.credit.index'),
-                        'icon' => 'user',
-                        'active' => 'credit',
-                        'permission' => 'credit-list',
-                    ],
-                ]" />
-
 
             <x-admin.navlink type="dropdown" icon="users" name="User Management" :page_slug="$active"
                 :items="[
@@ -84,6 +73,24 @@
                         'icon' => 'user',
                         'active' => 'admin-users',
                         'permission' => 'user-list',
+                    ],
+                    [
+                        'name' => 'Banned Users',
+                        'route' => '#',
+                        'icon' => 'user',
+                        'active' => 'admin-users',
+                        'permission' => 'user-list',
+                    ],
+                ]" />
+
+            <x-admin.navlink type="dropdown" icon="users" name="Package Management" :page_slug="$active"
+                :items="[
+                    [
+                        'name' => 'Credit',
+                        'route' => route('pm.credit.index'),
+                        'icon' => 'user',
+                        'active' => 'credit',
+                        'permission' => 'credit-list',
                     ],
                 ]" />
         </nav>

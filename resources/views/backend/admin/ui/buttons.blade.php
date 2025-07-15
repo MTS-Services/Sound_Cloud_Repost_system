@@ -105,9 +105,9 @@
             {{-- Wide button --}}
             <x-admin.button type="primary" class="btn-wide">Wide Button</x-admin.button>
             {{-- Square button --}}
-            <x-admin.button type="success" class="btn-square" icon="check"></x-admin.button>
+            <x-admin.button type="success" shape="square" icon="check"></x-admin.button>
             {{-- Circle button --}}
-            <x-admin.button type="info" class="btn-circle" icon="plus"></x-admin.button>
+            <x-admin.button type="info" shape="circle" icon="plus"></x-admin.button>
         </div>
 
         <h3 class="text-xl font-semibold text-gray-700 dark:text-gray-200 mt-6 mb-4">Buttons with Icons (Left & Right)

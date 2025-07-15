@@ -8,10 +8,12 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Credit List') }}</h2>
                 <div class="flex items-center gap-2">
-                    <x-admin.secondary-link error="true" href="{{ route('pm.credit.trash') }}">{{ __('Trash') }}
-                    </x-admin.secondary-link>
-                    <x-admin.primary-link href="{{ route('pm.credit.create') }}">{{ __('Add') }}
-                    </x-admin.primary-link>
+                    <x-admin.button href="{{ route('pm.credit.trash') }}" icon="trash-2" type='secondary'>
+                        {{ __('Trash') }}
+                    </x-admin.button>
+                    <x-admin.button href="{{ route('pm.credit.create') }}" icon="user-plus">
+                        {{ __('Add') }}
+                    </x-admin.button>
                 </div>
             </div>
         </div>
