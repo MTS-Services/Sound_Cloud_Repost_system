@@ -5,12 +5,13 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\AuthBaseModel;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 
 class User extends AuthBaseModel
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable , SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -26,7 +27,16 @@ class User extends AuthBaseModel
         'token',
         'refresh_token',
         'expires_in',
+        'status',
         'last_sync_at',
+
+        'creater_id',
+        'updater_id',
+        'deleter_id',
+
+        'creater_type',
+        'updater_type',
+        'deleter_type',
     ];
 
     /**
@@ -86,4 +96,22 @@ class User extends AuthBaseModel
 
         return $this->soundcloud_token_expires_at->isPast();
     }
+
+    public const STATUS_ACTIVE = 1;
+    public const STATUS_INACTIVE = 2;
+
+    // status list
+    public static function getStatusList(): array
+    {
+        return [
+            self::STATUS_ACTIVE => 'Active',
+            self::STATUS_INACTIVE => 'Inactive',
+        ];
+    }
+    public function getStatusLabelAttribute(): string
+    {
+        return self::getStatusList()[$this->status];
+    }
+
+
 }

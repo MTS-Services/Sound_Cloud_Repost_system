@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Traits\AuditColumnsTrait;
+use App\Models\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -20,12 +21,15 @@ return new class extends Migration {
 
             $table->string('email')->unique()->nullable();
             $table->unsignedBigInteger('soundcloud_id')->unique();
+
             $table->string('name')->index();
+            $table->string('email')->unique()->nullable();
             $table->string('nickname')->nullable()->index();
             $table->string('avatar')->nullable();
             $table->text('token')->nullable();
             $table->string('refresh_token')->nullable();
             $table->bigInteger('expires_in')->nullable()->index();
+            $table->tinyInteger('status')->index()->default(User::STATUS_ACTIVE);
 
             $table->timestamp('last_synced_at')->nullable()->index();
             $table->rememberToken();

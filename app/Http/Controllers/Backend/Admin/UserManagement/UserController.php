@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend\Admin\UserManagement;
 
 use App\Http\Controllers\Controller;
+use App\Services\Admin\UserManagement\UserService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,11 +23,11 @@ class UserController extends Controller implements HasMiddleware
         return redirect()->route('trash route');
     }
 
-    protected ServiceName $serviceName;
+    protected UserService $userService;
 
-    public function __construct(ServiceName $serviceName)
+    public function __construct(UserService $userService)
     {
-        $this->serviceName = $serviceName;
+        $this->userService = $userService;
     }
     
     public static function middleware(): array
@@ -53,7 +54,7 @@ class UserController extends Controller implements HasMiddleware
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = $this->serviceName->getService();
+            $query = $this->userService->getUsers();
             return DataTables::eloquent($query)
                 ->editColumn('action', function ($service) {
                     $menuItems = $this->menuItems($service);
@@ -131,7 +132,7 @@ class UserController extends Controller implements HasMiddleware
      */
     public function edit(string $id): View
     {
-        //$data['permission'] = $this->serviceName->getService($id);
+        //$data['permission'] = $this->userService->getUsers($id);
         return view('view file url...', $data);
     }
 
@@ -169,7 +170,7 @@ class UserController extends Controller implements HasMiddleware
     public function trash(Request $request)
     {
         if ($request->ajax()) {
-            $query = $this->serviceName->getPermissions()->onlyTrashed();
+            $query = $this->userService->getPermissions()->onlyTrashed();
             return DataTables::eloquent($query)
                 ->editColumn('action', function ($permission) {
                     $menuItems = $this->trashedMenuItems($permission);
@@ -204,7 +205,7 @@ class UserController extends Controller implements HasMiddleware
      public function restore(string $id): RedirectResponse
     {
         try {
-            $this->serviceName->restore($id);
+            $this->userService->restore($id);
             session()->flash('success', "Service restored successfully");
         } catch (\Throwable $e) {
             session()->flash('Service restore failed');
@@ -216,7 +217,7 @@ class UserController extends Controller implements HasMiddleware
     public function permanentDelete(string $id): RedirectResponse
     {
         try {
-            $this->serviceName->permanentDelete($id);
+            $this->userService->permanentDelete($id);
             session()->flash('success', "Service permanently deleted successfully");
         } catch (\Throwable $e) {
             session()->flash('Service permanent delete failed');
