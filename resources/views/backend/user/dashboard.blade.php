@@ -2,18 +2,18 @@
     <x-slot name="page_slug">dashboard</x-slot>
     <!-- Dashboard Content (Default) -->
     <div id="content-dashboard" class="page-content ">
-        <div class="p-6 flex justify-between items-center">
+        <div class="p-6 flex flex-col lg:flex-row justify-between lg:items-center">
             <div class="">
                 <h2 class="text-2xl text-black font-semibold  mb-2">Dashboard</h2>
-                <p class="text-gray-600">Welcome back, {{ auth()->user()->name }}</p>
+                <p class="text-gray-600">Welcome back, {{ auth()->user()->name ?? "User" }}</p>
             </div>
-            <div class="flex items-center gap-2 mt-4 bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700">
+            <div class="w-42 flex items-center gap-2 mt-4 bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700">
                 <span class=""><i data-lucide="plus"
                         class="w-4 h-4 inline-block border border-gray-300  text-center rounded-full h-6 w-6 p-1 tex-white"></i></span>
-                <a href="#">{{ __('Submit Track') }}</a>
+                <a href="#" class="text-sm">{{ __('Submit Track') }}</a>
             </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 py-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8 pt-0 md:py-6 ">
             <div class="bg-white rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
                 <div class="flex items-center">
                     <div class="bg-orange-100 p-3 rounded-lg mr-4">
