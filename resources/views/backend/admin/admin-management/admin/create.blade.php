@@ -11,7 +11,7 @@
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Create Admin') }}</h2>
-                <x-admin.button href="{{ route('am.admin.index') }}" icon="undo-2" type='info'>
+                <x-button href="{{ route('am.admin.index') }}" icon="undo-2" type='info'>
                     {{ __('Back') }}
                 </x-admin.button>
             </div>
@@ -26,41 +26,41 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
 
                         <div class="space-y-2">
-                            <x-admin.inputs.input name="name" label="{{ __('Name') }}" icon="user"
+                            <x-inputs.input name="name" label="{{ __('Name') }}" icon="user"
                                 placeholder="Enter Name" value="{{ old('name') }}"
                                 :messages="$errors->get('name')"></x-admin.inputs.input>
                         </div>
 
                         <div class="space-y-2">
-                            <x-admin.inputs.input name="email" label="{{ __('Email') }}" icon="mail"
+                            <x-inputs.input name="email" label="{{ __('Email') }}" icon="mail"
                                 placeholder="Enter Email" value="{{ old('email') }}"
                                 :messages="$errors->get('email')"></x-admin.inputs.input>
                         </div>
 
                         <div class="space-y-2">
-                            <x-admin.inputs.input name="password" label="{{ __('Password') }}" type="password"
+                            <x-inputs.input name="password" label="{{ __('Password') }}" type="password"
                                 icon="key-round" placeholder="Enter Password" :messages="$errors->get('password')"></x-admin.inputs.input>
                         </div>
 
                         <div class="space-y-2">
-                            <x-admin.inputs.input name="password_confirmation" label="{{ __('Confirm Password') }}"
+                            <x-inputs.input name="password_confirmation" label="{{ __('Confirm Password') }}"
                                 type="password" icon="key-round" placeholder="Enter Password"
                                 :messages="$errors->get('password_confirmation')"></x-admin.inputs.input>
                         </div>
 
                         <div class="space-y-2">
-                            <x-admin.inputs.select name="role" label="{{ __('Role') }}" icon="shield"
+                            <x-inputs.select name="role" label="{{ __('Role') }}" icon="shield"
                                 placeholder="{{ __('Select a Role') }}" :options="$roles->pluck('name', 'id')->toArray()" :selected="old('role')"
                                 :messages="$errors->get('role')" />
                         </div>
 
                         <div class="space-y-2 sm:col-span-2">
-                            <x-admin.inputs.file name="image" label="{{ __('Image') }}"
+                            <x-inputs.file name="image" label="{{ __('Image') }}"
                                 accept="image/jpeg, image/png, image/jpg, image/webp, image/svg" :messages="$errors->get('image')" />
                         </div>
                     </div>
                     <div class="flex justify-end mt-5">
-                        <x-admin.button type="accent" :button="true"
+                        <x-button type="accent" :button="true"
                             icon="save">{{ __('Create') }}</x-admin.button>
                     </div>
                 </form>

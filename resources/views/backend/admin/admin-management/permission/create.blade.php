@@ -7,7 +7,7 @@
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Create Permission') }}</h2>
-                <x-admin.button href="{{ route('am.permission.index') }}" icon="undo-2" type='info'>
+                <x-button href="{{ route('am.permission.index') }}" icon="undo-2" type='info'>
                     {{ __('Back') }}
                 </x-admin.button>
             </div>
@@ -20,17 +20,17 @@
                     @csrf
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
                         <div class="space-y-2">
-                            <x-admin.inputs.input name="prefix" label="{{ __('Prefix') }}" placeholder="Enter prefix"
+                            <x-inputs.input name="prefix" label="{{ __('Prefix') }}" placeholder="Enter prefix"
                                 value="{{ old('prefix') }}" :messages="$errors->get('prefix')" />
                         </div>
 
                         <div class="space-y-2">
-                            <x-admin.inputs.input name="name" label="{{ __('Name') }}" placeholder="Enter name"
+                            <x-inputs.input name="name" label="{{ __('Name') }}" placeholder="Enter name"
                                 value="{{ old('name') }}" :messages="$errors->get('name')" />
                         </div>
                     </div>
                     <div class="flex justify-end mt-5">
-                        <x-admin.button type="accent" :button="true"
+                        <x-button type="accent" :button="true"
                             icon="save">{{ __('Create') }}</x-admin.button>
                     </div>
                 </form>
