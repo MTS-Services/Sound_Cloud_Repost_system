@@ -114,7 +114,7 @@
 
         @if ($type === 'single')
             <!-- Single Navlink (like original single-navlink) -->
-            @can($permission)
+            @if (empty($permission) || auth()->user()->can($permission))
                 <a href="{{ $route }}"
                     class="sidebar-item flex items-center gap-4 p-3 rounded-xl hover:bg-bg-black/10 dark:hover:bg-bg-white/10 text-text-white transition-all duration-200 group {{ $isMainActive ? 'active' : '' }}">
                     <div
@@ -146,7 +146,7 @@
                         <div class="w-2 h-2 bg-violet-400 dark:bg-violet-300 rounded-full animate-pulse"></div>
                     </div>
                 </a>
-            @endcan
+            @endif
         @else
             <!-- Dropdown Button -->
             <button
