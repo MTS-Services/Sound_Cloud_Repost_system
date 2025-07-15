@@ -11,7 +11,9 @@
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Create Admin') }}</h2>
-                <x-admin.primary-link href="{{ route('am.admin.index') }}">{{ __('Back') }} </x-admin.primary-link>
+                <x-admin.button href="{{ route('am.admin.index') }}" icon="undo-2" type='info'>
+                    {{ __('Add') }}
+                </x-admin.button>
             </div>
         </div>
 
@@ -121,7 +123,7 @@
                         </div>
                     </div>
                     <div class="flex justify-end mt-5">
-                        <x-admin.primary-button>{{ __('Create') }}</x-admin.primary-button>
+                        <x-admin.button type="accent" :button="true">{{ __('Create') }}</x-admin.button>
                     </div>
                 </form>
             </div>
