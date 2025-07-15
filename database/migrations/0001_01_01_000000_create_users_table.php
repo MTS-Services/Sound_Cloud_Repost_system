@@ -18,8 +18,6 @@ return new class extends Migration {
 
             $table->id();
             $table->unsignedBigInteger('sort_order')->default(0);
-
-            $table->string('email')->unique()->nullable();
             $table->unsignedBigInteger('soundcloud_id')->unique();
 
             $table->string('name')->index();
