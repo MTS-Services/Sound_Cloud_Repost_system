@@ -8,7 +8,7 @@
         'w-72 -translate-x-full': !desktop && !mobile_menu_open,
     }">
 
-    <div class="glass-card h-full custom-scrollbar rounded-xl overflow-y-auto">
+    <div class="sidebar-glass-card h-full custom-scrollbar rounded-xl overflow-y-auto">
         <!-- Sidebar Header -->
         <a href="{{ route('admin.dashboard') }}" class="p-3 border-b border-white/10 inline-block">
             <div class="flex items-center gap-4">
@@ -35,6 +35,9 @@
             <x-admin.navlink type="single" icon="layout-dashboard" name="Dashboard" :route="route('admin.dashboard')"
                 active="admin-dashboard" :page_slug="$active" />
 
+            <x-admin.navlink type="single" icon="layout-dashboard" name="Button UI" :route="route('button-ui')"
+                active="button-ui" :page_slug="$active" />
+
             {{-- 2. SIMPLE DROPDOWN (multiple items under one parent) --}}
 
             <x-admin.navlink type="dropdown" icon="users" name="Admin Management" :page_slug="$active"
@@ -44,18 +47,21 @@
                         'route' => route('am.admin.index'),
                         'icon' => 'user',
                         'active' => 'admin',
+                        'permission' => 'admin-list',
                     ],
                     [
                         'name' => 'Role',
                         'route' => route('am.role.index'),
                         'icon' => 'shield',
                         'active' => 'role',
+                        'permission' => 'role-list',
                     ],
                     [
                         'name' => 'Permission',
                         'route' => route('am.permission.index'),
                         'icon' => 'shield-check',
                         'active' => 'permission',
+                        'permission' => 'permission-list',
                     ],
                 ]" />
             <x-admin.navlink type="dropdown" icon="users" name="Package Management" :page_slug="$active"
@@ -65,6 +71,7 @@
                         'route' => route('pm.credit.index'),
                         'icon' => 'user',
                         'active' => 'credit',
+                        'permission' => 'credit-list',
                     ],
                 ]" />
 
@@ -76,6 +83,7 @@
                         'route' => '#',
                         'icon' => 'user',
                         'active' => 'admin-users',
+                        'permission' => 'user-list',
                     ],
                 ]" />
         </nav>
