@@ -8,11 +8,21 @@
  <!-- Sidebar -->
  <div id="sidebar"
      class="fixed left-0 top-0 h-screen overflow-y-auto w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 justify-between">
-     <div class="p-6 flex justify-between">
+     {{-- <div class="p-6 flex justify-between">
          <h1 class="text-xl font-bold text-orange-600">{{ __('RepostChain') }}</h1>
          <span class="p-2 rounded-md bg-white shadow-sm lg:hidden" id="close_menu">
              <i data-lucide="x" class="w-4 h-4 text-gray-500"></i>
          </span>
+     </div> --}}
+     <div class="flex justify-center items-center py-6">
+         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="h-8 w-8 mr-2 text-orange-600">
+             <path d="M9 18V5l12-2v13"></path>
+             <circle cx="6" cy="18" r="3"></circle>
+             <circle cx="18" cy="16" r="3"></circle>
+         </svg>
+         <span class="text-xl font-bold">RepostChain</span>
      </div>
 
      <!-- Submit Track Button -->
@@ -102,7 +112,7 @@
              <img src="{{ asset('frontend/user/user.jpg') }}" alt="Alex Rodriguez" class="w-8 h-8 rounded-full">
          </a>
          <div class="text-sm">
-             <span class="font-semibold text-black">{{ auth()->user()->name }}</span>
+             <span class="font-semibold text-black">{{ auth()->user()->name ?? 'User' }}</span>
              <div class="text-green-500 text-xs">● Online</div>
          </div>
      </div>
