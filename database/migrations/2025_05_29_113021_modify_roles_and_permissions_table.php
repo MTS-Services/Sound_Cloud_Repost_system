@@ -1,13 +1,14 @@
 <?php
 
 use App\Http\Traits\AuditColumnsTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    use AuditColumnsTrait;
+    use AuditColumnsTrait, SoftDeletes;
     /**
      * Run the migrations.
      */
@@ -16,11 +17,13 @@ return new class extends Migration
         Schema::table('roles', function (Blueprint $table) {
             $table->unsignedBigInteger('sort_order')->default(0);
             $this->addAdminAuditColumns($table);
+            $table->softDeletes();
         });
         Schema::table('permissions', function (Blueprint $table) {
             $table->unsignedBigInteger('sort_order')->default(0);
             $table->string('prefix')->index()->after('guard_name');
             $this->addAdminAuditColumns($table);
+            $table->softDeletes();
         });
     }
 

@@ -4,10 +4,11 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Http\Traits\AuditColumnsTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 return new class extends Migration
 {
-    use AuditColumnsTrait;
+    use AuditColumnsTrait, SoftDeletes;
     /**
      * Run the migrations.
      */
@@ -63,6 +64,7 @@ return new class extends Migration
             $table->bigInteger('upload_seconds_left')->nullable();
 
             $table->timestamps();
+            $table->softDeletes();
             $this->addMorphedAuditColumns($table);           
 
 

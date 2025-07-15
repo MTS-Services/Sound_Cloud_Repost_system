@@ -1,12 +1,13 @@
 <?php
 
 use App\Http\Traits\AuditColumnsTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    use AuditColumnsTrait;
+    use AuditColumnsTrait, SoftDeletes;
     /**
      * Run the migrations.
      */
@@ -23,6 +24,7 @@ return new class extends Migration {
             $table->boolean('is_pro')->default(false);
             $table->boolean('is_verified')->default(false);
             $table->timestamps();
+            $table->softDeletes();
             $this->addMorphedAuditColumns($table);
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
