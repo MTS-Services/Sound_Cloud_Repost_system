@@ -18,13 +18,13 @@ class VerifyEmailController extends Controller
             abort(403);
         }
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('admin.dashboard', absolute: false) . '?verified=1');
+            return redirect()->intended(route('admin.dashboard', absolute: false) . '?verified=1')->with('success', 'Verified successfully');
         }
 
         if ($request->user()->markEmailAsVerified()) {
             event(new Verified($request->user()));
         }
 
-        return redirect()->intended(route('admin.dashboard', absolute: false) . '?verified=1');
+        return redirect()->intended(route('admin.dashboard', absolute: false) . '?verified=1')->with('success', 'Verified successfully');
     }
 }
