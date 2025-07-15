@@ -8,10 +8,12 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Admin List') }}</h2>
                 <div class="flex items-center gap-2">
-                    <x-admin.secondary-link error="true" href="{{ route('am.admin.trash') }}">{{ __('Trash') }}
-                    </x-admin.secondary-link>
-                    <x-admin.primary-link href="{{ route('am.admin.create') }}">{{ __('Add') }}
-                    </x-admin.primary-link>
+                    <x-admin.button href="{{ route('am.admin.trash') }}" icon="trash-2" type='secondary'>
+                        {{ __('Trash') }}
+                    </x-admin.button>
+                    <x-admin.button href="{{ route('am.admin.create') }}" icon="user-plus">
+                        {{ __('Add') }}
+                    </x-admin.button>
                 </div>
             </div>
         </div>
@@ -84,6 +86,12 @@
                             key: 'email',
                         },
                         {
+                            label: '{{ __('Email Verified') }}',
+                            key: 'verify_label',
+                            label_color: 'verify_color',
+                            type: 'badge',
+                        },
+                        {
                             label: '{{ __('Role') }}',
                             key: 'role_id',
                         },
@@ -98,7 +106,7 @@
                             type: 'video',
                         },
                         {
-                            label: '{{ __('Desctiption') }}',
+                            label: '{{ __('Description') }}',
                             key: 'description',
                         }
                     ];

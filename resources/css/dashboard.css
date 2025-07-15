@@ -420,6 +420,14 @@
         @apply backdrop-blur-md bg-transparent bg-gradient-to-b from-gradient-dark-quaternary to-gradient-dark-quinary;
     }
 
+    .sidebar-glass-card {
+        @apply bg-gradient-to-tr from-white/50 to-gradient-light-quaternary/20 shadow-glass-card;
+    }
+
+    .dark .sidebar-glass-card {
+        @apply bg-transparent bg-gradient-to-b from-gradient-dark-quaternary to-gradient-dark-quinary;
+    }
+
     .notification-badge {
         @apply animate-bounce-slow;
     }

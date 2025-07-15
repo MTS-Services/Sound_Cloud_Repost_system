@@ -9,6 +9,12 @@ use App\Http\Controllers\Backend\Admin\PackageManagement\CreditController;
 use App\Http\Controllers\Backend\Admin\UserManagement\UserController;
 
 Route::group(['middleware' => ['auth:admin'], 'prefix' => 'admin'], function () {
+
+    // Button UI Route 
+    Route::get('/button-ui', function () {
+        return view('backend.admin.ui.buttons');
+    })->name('button-ui');
+
     Route::get('/dashboard', [AdminDashboardController::class, 'dashboard'])->name('admin.dashboard');
 
     // Admin Management
