@@ -20,7 +20,7 @@ class Admin extends AuthBaseModel implements MustVerifyEmail
     }
      public function sendEmailVerificationNotification()
     {
-        $this->notify(new AdminVerifyEmail);
+        $this->notify(new AdminVerifyEmail($this));
     }
     protected $guard = 'admin';
     protected $fillable = [

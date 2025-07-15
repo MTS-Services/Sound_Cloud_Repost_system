@@ -11,107 +11,131 @@
     <x-slot name="page_slug">
         admin-login
     </x-slot>
-    <section
-        class="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center">
 
-        <!-- Animated Background Elements -->
-        <div class="absolute inset-0 opacity-40 dark:opacity-20">
-            <div class="floating-shapes">
-                <div class="shape shape-1"></div>
-                <div class="shape shape-2"></div>
-                <div class="shape shape-3"></div>
-                <div class="shape shape-4"></div>
-                <div class="shape shape-5"></div>
-                <div class="shape shape-6"></div>
-            </div>
-        </div>
-        <div
-            class="flex login-card flex-col md:flex-row bg-white dark:bg-gray-800 border-gray-50 border dark:border-black shadow-xl rounded-2xl overflow-hidden w-[1550px] relative py-20">
+    <!-- Custom CSS Variables -->
+  @push('cs')
+    <style>
+        .gradient-bg {
+            background: radial-gradient(ellipse at top, rgba(255, 85, 0, 0.05) 0%, #121212 50%);
+        }
 
-            <a href="{{ url('/') }}"
-                class="flex items-center justify-center absolute top-3 left-3  px-5 py-3 rounded-md animate-scalePulse text-gray-700 gap-2">
-                <i data-lucide="arrow-left"></i>
-                <span>Back To Home</span>
-            </a>
-            <!-- Left: Image -->
-            <div class="hidden md:block md:w-7/12">
-                <img src="{{ asset('/frontend/images/admin.jpg') }}" alt="Admin Login Image"
-                    class="w-full h-full object-cover">
-            </div>
-            <!-- Right: Login Form -->
-            <div class="w-full md:w-2/5 p-8 md:p-12">
-                <div class="text-center">
-                    <h2 class="text-3xl font-bold text-gray-800 dark:text-white">
-                        {{ __('Admin Login') }}
-                    </h2>
-                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                        {{ __('Login to manage the dashboard') }}
-                    </p>
+        .input-glow:focus {
+            box-shadow: 0 0 0 2px rgba(255, 85, 0, 0.5);
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        .shadow-glow {
+            box-shadow: 0 0 10px rgba(255, 85, 0, 0.4), 0 0 25px rgba(255, 85, 0, 0.2);
+        }
+    </style>
+@endpush
+
+<section class="gradient-bg min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+
+    {{-- Background Effects --}}
+    <div class="absolute inset-0 pointer-events-none overflow-hidden">
+        <div class="absolute top-16 left-10 w-28 h-28 bg-[#FF5500] opacity-10 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div class="absolute bottom-16 right-10 w-36 h-36 bg-[#FF7730] opacity-10 rounded-full blur-3xl animate-pulse-slow delay-200"></div>
+        <div class="absolute top-1/3 left-1/4 w-20 h-20 bg-[#FF5500] opacity-5 rounded-full blur-2xl animate-float"></div>
+    </div>
+
+    {{-- Login Card --}}
+    <div class="relative w-full max-w-xl">
+        <div class="bg-[#1E1E1E] border border-[#dacdcd67] rounded-2xl shadow-xl backdrop-blur-md p-14 relative z-10 overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-[#FF5500]/5 to-transparent rounded-2xl"></div>
+
+            <div class="relative z-10 text-white">
+                {{-- Logo --}}
+                <div class="flex justify-center mb-6">
+                    <div class="relative">
+                        <div class="w-14 h-14 bg-gradient-to-br from-[#FF5500] to-[#FF7730] rounded-xl flex items-center justify-center shadow-glow">
+                            <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v6.114A4.369 4.369 0 005 11c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z"/>
+                            </svg>
+                        </div>
+                        <div class="absolute inset-0 rounded-xl border-2 border-[#FF5500]/30 animate-ping"></div>
+                        <div class="absolute inset-0 rounded-xl border border-[#FF5500]/20 animate-pulse"></div>
+                    </div>
                 </div>
 
-                <!-- Session Status -->
-                <x-auth-session-status class="mb-4 text-sm text-green-600 dark:text-green-400 text-center"
-                    :status="session('status')" />
+                {{-- Heading --}}
+                <div class="text-center mb-6">
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-[#FF5500] to-[#FF7730] bg-clip-text text-transparent">
+                        Admin Panel
+                    </h1>
+                    <p class="text-sm text-gray-400">Secure login for administrators</p>
+                </div>
 
-                <!-- Form -->
-                <form method="POST" action="{{ route('admin.login') }}" class="mt-6 space-y-5">
+                {{-- Login Form --}}
+                <form method="POST" action="{{ route('admin.login') }}" class="space-y-5">
                     @csrf
 
-                    <!-- Email -->
+                    {{-- Email --}}
                     <div>
-                        <label class="block text-base  font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            {{ __('Email') }}
-                        </label>
-                        <input type="text" name="email" placeholder="Enter your Email"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black dark:bg-gray-700 dark:text-white dark:border-gray-600" />
-                        <x-input-error class="mt-2" :messages="$errors->get('login')" />
+                        <label for="email" class="block text-sm font-medium text-gray-300">Email Address</label>
+                        <input type="email" name="email" id="email" required
+                            class="mt-2 w-full px-4 py-3 rounded-lg bg-[#2A2A2A] border border-[#333] text-white placeholder-gray-500 focus:outline-none input-glow focus:border-[#FF5500] transition"
+                            placeholder="admin@example.com" value="{{ old('email') }}">
                     </div>
 
-
-                    <!-- Password -->
+                    {{-- Password --}}
                     <div>
-                        <label class="block text-base  font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            {{ __('Password') }}
-                        </label>
-                        <div class="relative">
-                            <input type="password" name="password" placeholder="Password"
-                                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 text-black focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600" />
-                            <button type="button"
-                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white">
-                                <i class="fa-regular fa-eye-slash"></i>
-                            </button>
-                        </div>
-                        <x-input-error class="mt-2" :messages="$errors->get('password')" />
+                        <label for="password" class="block text-sm font-medium text-gray-300">Password</label>
+                        <input type="password" name="password" id="password" required
+                            class="mt-2 w-full px-4 py-3 rounded-lg bg-[#2A2A2A] border border-[#333] text-white placeholder-gray-500 focus:outline-none input-glow focus:border-[#FF5500] transition"
+                            placeholder="••••••••">
                     </div>
 
-
-                    <!-- Remember Me -->
+                    {{-- Remember + Forgot --}}
                     <div class="flex items-center justify-between">
-                        <label for="remember_me"
-                            class="inline-flex items-center text-sm text-gray-600 dark:text-gray-400">
-                            <input id="remember_me" type="checkbox" name="remember"
-                                class="rounded border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:bg-gray-700 dark:focus:ring-offset-gray-800">
-                            <span class="ml-2">{{ __('Remember me') }}</span>
+                        <label class="flex items-center text-sm text-gray-300 cursor-pointer">
+                            <input type="checkbox" name="remember"
+                                class="w-4 h-4 text-[#FF5500] bg-[#1E1E1E] border-[#333] rounded focus:ring-[#FF5500] focus:ring-2">
+                            <span class="ml-2">Remember me</span>
                         </label>
-
-                        @if (Route::has('admin.password.request'))
-                            <a class="text-sm text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 underline"
-                                href="{{ route('admin.password.request') }}">
-                                {{ __('Forgot your password?') }}
-                            </a>
-                        @endif
+                        <a href="{{ route('admin.password.request') }}" class="text-sm text-[#FF5500] hover:text-[#FF7730] font-medium">
+                            Forgot password?
+                        </a>
                     </div>
 
-                    <!-- Submit -->
-                    <div>
-                        <x-primary-button class="w-full py-6 justify-center">
-                            {{ __('Log in') }}
-                        </x-primary-button>
-                    </div>
+                    {{-- Submit Button --}}
+                    <button type="submit"
+                        class="w-full py-3 px-6 font-semibold rounded-xl bg-gradient-to-r from-[#FF5500] to-[#FF7730] hover:from-[#FF7730] hover:to-[#FF5500] transition-all duration-300 transform hover:scale-[1.02] shadow-glow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FF5500] focus:ring-offset-[#1E1E1E]">
+                        <span class="flex items-center justify-center space-x-2">
+                            <span>Login</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                            </svg>
+                        </span>
+                    </button>
                 </form>
+
+                {{-- Optional: Bottom Text --}}
+                <p class="text-center text-xs text-gray-500 mt-6">© {{ now()->year }} RepostChain Admin</p>
             </div>
-
-
         </div>
-    </section>
+
+        {{-- Bottom Accent --}}
+        <div class="absolute -bottom-2 left-4 right-4 h-1 bg-gradient-to-r from-transparent via-[#FF5500] to-transparent rounded-full opacity-60"></div>
+    </div>
+</section>
+
+
     </x-frontend-layout>
