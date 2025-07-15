@@ -1,10 +1,10 @@
 @props([
     'name',
     'label' => '',
-    'options' => [], // Array of options: ['value' => 'text'] or objects with 'id' and 'name'
-    'selected' => null, // The currently selected value
-    'messages' => [], // Array of error messages
-    'placeholder' => null, // Placeholder text for the default disabled option
+    'options' => [],
+    'selected' => null,
+    'messages' => [],
+    'placeholder' => null,
 ])
 
 @if (!empty($label))

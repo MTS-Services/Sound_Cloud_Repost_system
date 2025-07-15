@@ -8,9 +8,10 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Trashed Permission List') }}
                 </h2>
-                <x-button href="{{ route('am.permission.index') }}" icon="undo-2" type='info'>
+                <x-button href="{{ route('am.permission.index') }}" icon="undo-2" type='info'
+                    permission="permission-list">
                     {{ __('Back') }}
-                </x-admin.button>
+                </x-button>
             </div>
         </div>
 

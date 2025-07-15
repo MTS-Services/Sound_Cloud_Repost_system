@@ -7,9 +7,9 @@
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Trashed Credit List') }}</h2>
-                <x-button href="{{ route('pm.credit.index') }}" icon="undo-2" type='info'>
+                <x-button href="{{ route('pm.credit.index') }}" icon="undo-2" type='info' permission="credit-list">
                     {{ __('Back') }}
-                </x-admin.button>
+                </x-button>
             </div>
         </div>
 

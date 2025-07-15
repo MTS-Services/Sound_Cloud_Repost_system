@@ -7,9 +7,10 @@
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Create Permission') }}</h2>
-                <x-button href="{{ route('am.permission.index') }}" icon="undo-2" type='info'>
+                <x-button href="{{ route('am.permission.index') }}" icon="undo-2" type='info'
+                    permission="permission-list">
                     {{ __('Back') }}
-                </x-admin.button>
+                </x-button>
             </div>
         </div>
 
@@ -30,8 +31,7 @@
                         </div>
                     </div>
                     <div class="flex justify-end mt-5">
-                        <x-button type="accent" :button="true"
-                            icon="save">{{ __('Create') }}</x-admin.button>
+                        <x-button type="accent" :button="true" icon="save">{{ __('Create') }}</x-button>
                     </div>
                 </form>
             </div>

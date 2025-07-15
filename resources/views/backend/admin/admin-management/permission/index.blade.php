@@ -8,12 +8,14 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Permission List') }}</h2>
                 <div class="flex items-center gap-2">
-                    <x-button href="{{ route('am.permission.trash') }}" icon="trash-2" type='secondary'>
+                    <x-button href="{{ route('am.permission.trash') }}" icon="trash-2" type='secondary'
+                        permission="permission-trash">
                         {{ __('Trash') }}
-                    </x-admin.button>
-                    <x-button href="{{ route('am.permission.create') }}" icon="user-plus">
+                    </x-button>
+                    <x-button href="{{ route('am.permission.create') }}" icon="user-plus"
+                        permission="permission-create">
                         {{ __('Add') }}
-                    </x-admin.button>
+                    </x-button>
                 </div>
             </div>
         </div>
