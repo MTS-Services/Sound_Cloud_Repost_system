@@ -16,7 +16,7 @@
     'size' => 'sm',
     'icon_position' => 'right',
     'dashed' => false,
-    'circle' => false,
+    'shape' => '',
     'button' => false,
 ])
 
@@ -47,7 +47,7 @@
     $buttonSizeClass = $sizeClasses[$size] ?? '';
 
     $baseClasses = 'btn uppercase tracking-widest';
-    $shapeClass = $circle ? 'btn-circle' : 'rounded-md';
+    $shapeClass = !empty($shape) && in_array($shape, ['circle', 'square']) ? 'btn-' . $shape : 'rounded-md';
 
     $shouldHaveWhiteText = true;
     if ($soft || $outline || $glass || $dashed || in_array($type, ['ghost', 'link', 'light', 'dark'])) {

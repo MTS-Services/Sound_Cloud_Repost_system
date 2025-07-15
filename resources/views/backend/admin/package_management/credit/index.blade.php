@@ -8,10 +8,13 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Credit List') }}</h2>
                 <div class="flex items-center gap-2">
-                    <x-admin.secondary-link error="true" href="{{ route('pm.credit.trash') }}">{{ __('Trash') }}
-                    </x-admin.secondary-link>
-                    <x-admin.primary-link href="{{ route('pm.credit.create') }}">{{ __('Add') }}
-                    </x-admin.primary-link>
+                    <x-button href="{{ route('pm.credit.trash') }}" icon="trash-2" type='secondary'
+                        permission="credit-trash">
+                        {{ __('Trash') }}
+                    </x-button>
+                    <x-button href="{{ route('pm.credit.create') }}" icon="user-plus" permission="credit-create">
+                        {{ __('Add') }}
+                    </x-button>
                 </div>
             </div>
         </div>
@@ -39,6 +42,7 @@
     <x-admin.details-modal />
 
     @push('js')
+        <script src="{{ asset('assets/js/details-modal.js') }}"></script>
         <script src="{{ asset('assets/js/datatable.js') }}"></script>
         <script>
             document.addEventListener('DOMContentLoaded', () => {

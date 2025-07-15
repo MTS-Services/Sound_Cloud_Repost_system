@@ -8,12 +8,13 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Admin List') }}</h2>
                 <div class="flex items-center gap-2">
-                    <x-admin.button href="{{ route('am.admin.trash') }}" icon="trash-2" type='secondary'>
+                    <x-button href="{{ route('am.admin.trash') }}" icon="trash-2" type='secondary'
+                        permission="admin-trash">
                         {{ __('Trash') }}
-                    </x-admin.button>
-                    <x-admin.button href="{{ route('am.admin.create') }}" icon="user-plus">
+                    </x-button>
+                    <x-button href="{{ route('am.admin.create') }}" icon="user-plus" permission="admin-create">
                         {{ __('Add') }}
-                    </x-admin.button>
+                    </x-button>
                 </div>
             </div>
         </div>
@@ -41,6 +42,7 @@
     <x-admin.details-modal />
 
     @push('js')
+        <script src="{{ asset('assets/js/details-modal.js') }}"></script>
         <script src="{{ asset('assets/js/datatable.js') }}"></script>
         <script>
             document.addEventListener('DOMContentLoaded', () => {
@@ -100,15 +102,7 @@
                             key: 'modified_image',
                             type: 'image',
                         },
-                        {
-                            label: '{{ __('Video') }}',
-                            key: 'video',
-                            type: 'video',
-                        },
-                        {
-                            label: '{{ __('Description') }}',
-                            key: 'description',
-                        }
+
                     ];
 
                     showDetailsModal(route, id, '{{ __('Admin Details') }}', details);
