@@ -3,11 +3,25 @@
 namespace App\Models;
 
 use App\Models\AuthBaseModel;
+use App\Notifications\AdminResetPasswordNotification;
+use App\Notifications\AdminVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class Admin extends AuthBaseModel
+class Admin extends AuthBaseModel implements MustVerifyEmail
 {
-    use HasRoles;
+    use HasFactory, HasRoles, Notifiable;
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new AdminResetPasswordNotification($token));
+    }
+     public function sendEmailVerificationNotification()
+    {
+        $this->notify(new AdminVerifyEmail);
+    }
     protected $guard = 'admin';
     protected $fillable = [
         'name',

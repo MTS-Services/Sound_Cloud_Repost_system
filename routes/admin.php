@@ -8,7 +8,7 @@ use App\Http\Controllers\Backend\Admin\DashboardController as AdminDashboardCont
 use App\Http\Controllers\Backend\Admin\PackageManagement\CreditController;
 use App\Http\Controllers\Backend\Admin\UserManagement\UserController;
 
-Route::group(['middleware' => ['auth:admin'], 'prefix' => 'admin'], function () {
+Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'dashboard'])->name('admin.dashboard');
 
     // Admin Management

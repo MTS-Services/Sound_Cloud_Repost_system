@@ -93,7 +93,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
         ->name('password.store');
     // });
 
-    Route::middleware('auth:admin')->group(function () {
+    Route::middleware(['auth:admin'])->group(function () {
         Route::get('verify-email', AdminEmailVerificationPromptController::class)
             ->name('verification.notice');
 
