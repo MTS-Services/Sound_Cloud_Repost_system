@@ -8,10 +8,12 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Permission List') }}</h2>
                 <div class="flex items-center gap-2">
-                    <x-admin.secondary-link error="true" href="{{ route('am.permission.trash') }}">{{ __('Trash') }}
-                    </x-admin.secondary-link>
-                    <x-admin.primary-link href="{{ route('am.permission.create') }}">{{ __('Add') }}
-                    </x-admin.primary-link>
+                    <x-admin.button href="{{ route('am.permission.trash') }}" icon="trash-2" type='secondary'>
+                        {{ __('Trash') }}
+                    </x-admin.button>
+                    <x-admin.button href="{{ route('am.permission.create') }}" icon="user-plus">
+                        {{ __('Add') }}
+                    </x-admin.button>
                 </div>
             </div>
         </div>
@@ -37,6 +39,7 @@
     <x-admin.details-modal />
 
     @push('js')
+        <script src="{{ asset('assets/js/details-modal.js') }}"></script>
         <script src="{{ asset('assets/js/datatable.js') }}"></script>
         <script>
             document.addEventListener('DOMContentLoaded', () => {

@@ -8,6 +8,7 @@ use App\Http\Traits\AuditRelationTraits;
 use App\Models\Admin;
 use App\Services\Admin\AdminManagement\AdminService;
 use App\Services\Admin\AdminManagement\RoleService;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -169,7 +170,7 @@ class AdminController extends Controller implements HasMiddleware
             $admin = $this->adminService->getAdmin($id);
             // if role id is super admin and admin is not super admin then can not update
             if ($admin->role_id == 1 && admin()->role_id != 1) {
-                session()->flash('error', 'You can not update Super Admin!');
+                session()->flash('error', "You don't have permission to update Super Admin! Stay away from here!");
                 return $this->redirectIndex();
             }
             $validated = $request->validated();

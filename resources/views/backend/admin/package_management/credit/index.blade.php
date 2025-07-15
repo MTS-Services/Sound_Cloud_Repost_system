@@ -39,6 +39,7 @@
     <x-admin.details-modal />
 
     @push('js')
+        <script src="{{ asset('assets/js/details-modal.js') }}"></script>
         <script src="{{ asset('assets/js/datatable.js') }}"></script>
         <script>
             document.addEventListener('DOMContentLoaded', () => {

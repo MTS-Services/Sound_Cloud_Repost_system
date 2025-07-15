@@ -20,7 +20,10 @@
     transform: rotate(90deg);
 }
 
-.dataTable .action-btn:hover i{
+.dataTable .action-btn:hover svg,
+.dataTable .reorder:hover svg,
+.dataTable .action-btn:hover i,
+.dataTable .reorder:hover i {
     color: var(--color-text-active) !important;
 }
 
