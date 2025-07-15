@@ -7,7 +7,7 @@
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Update Role') }}</h2>
-                <x-admin.button href="{{ route('am.role.index') }}" icon="undo-2" type='info'>
+                <x-button href="{{ route('am.role.index') }}" icon="undo-2" type='info'>
                     {{ __('Back') }}
                 </x-admin.button>
             </div>
@@ -22,7 +22,7 @@
                     @method('PUT')
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
                         <div class="space-y-2 col-span-2">
-                            <x-admin.inputs.input name="name" label="{{ __('Role Name') }}" placeholder="Role"
+                            <x-inputs.input name="name" label="{{ __('Role Name') }}" placeholder="Role"
                                 value="{{ $role->name }}" :messages="$errors->get('name')" />
                         </div>
                         <div class="col-span-2">
@@ -60,7 +60,7 @@
                         </div>
                     </div>
                     <div class="flex justify-end mt-5">
-                        <x-admin.button type="accent" :button="true"
+                        <x-button type="accent" :button="true"
                             icon="save">{{ __('Update') }}</x-admin.button>
                     </div>
                 </form>
