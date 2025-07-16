@@ -4,12 +4,16 @@ namespace App\Http\Controllers\SouncCloud\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SoundCloud\SoundCloudAuthRequest;
+use App\Models\Product;
+use App\Models\Subscription;
+use App\Models\Track;
 use App\Models\User;
 use App\Models\UserInformation;
 use App\Services\SoundCloud\SoundCloudService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 use Throwable;
@@ -49,8 +53,7 @@ class SoundCloudController extends Controller
             // Sync user tracks
             // $this->soundCloudService->syncUserTracks($user);
 
-            // // Update user profile data
-            $this->soundCloudService->updateUserProfile($user);
+            // $this->soundCloudService->updateUserProfile($user);
 
             // Login user
             Auth::guard('web')->login($user, true);
@@ -138,6 +141,8 @@ class SoundCloudController extends Controller
         try {
             return DB::transaction(function () use ($soundCloudUser) {
 
+
+
                 $user = User::updateOrCreate(
                     ['soundcloud_id' => $soundCloudUser->getId()],
                     [
@@ -197,6 +202,10 @@ class SoundCloudController extends Controller
                     ]
                 );
 
+                // Handle SoundCloud products and user subscriptions
+                $this->syncUserProductsAndSubscriptions($user, $soundCloudUser);
+
+
                 return $user;
             });
         } catch (Throwable $e) {
@@ -204,6 +213,44 @@ class SoundCloudController extends Controller
                 'error' => $e->getMessage(),
             ]);
             throw $e;
+        }
+    }
+
+    /**
+     * Syncs products and user subscriptions based on SoundCloud user data.
+     */
+    protected function syncUserProductsAndSubscriptions(User $user, $soundCloudUser): void
+    {
+        // Clear existing subscriptions for the user to sync fresh ones
+        // This assumes you want to overwrite previous subscriptions with current data
+        $user->subscriptions()->delete();
+
+        if (isset($soundCloudUser->user['subscriptions']) && is_array($soundCloudUser->user['subscriptions'])) {
+            foreach ($soundCloudUser->user['subscriptions'] as $subscriptionData) {
+                $productDetails = $subscriptionData['product'] ?? null;
+
+                if ($productDetails && isset($productDetails['id']) && isset($productDetails['name'])) {
+                    $product = Product::updateOrCreate(
+                        ['product_id' => $productDetails['id']],
+                        ['name' => $productDetails['name']]
+                    );
+
+                    // Create the user's subscription record
+                    Subscription::create([
+                        'user_id' => $user->id,
+                        'product_id' => $product->id,
+                    ]);
+                } else {
+                    Log::warning('SoundCloud subscription found without complete product data.', [
+                        'soundcloud_id' => $soundCloudUser->getId(),
+                        'subscription_data' => $subscriptionData,
+                    ]);
+                }
+            }
+        } else {
+            Log::info('SoundCloud user has no subscriptions array or it is not an array.', [
+                'soundcloud_id' => $soundCloudUser->getId(),
+            ]);
         }
     }
 }

@@ -14,9 +14,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('{{ table }}', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table) {
             $table->id();
 
+            $table->unsignedBigInteger('sort_order')->default(0);
+            $table->string('product_id');
+            $table->string('name');
 
             $table->timestamps();
             $table->softDeletes();
@@ -29,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('{{ table }}');
+        Schema::dropIfExists('products');
     }
 };
