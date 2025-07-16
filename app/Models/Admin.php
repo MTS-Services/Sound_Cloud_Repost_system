@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use App\Models\AuthBaseModel;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Traits\HasRoles;
 
 class Admin extends AuthBaseModel
 {
-    use HasRoles;
+    use HasRoles, SoftDeletes;
     protected $guard = 'admin';
     protected $fillable = [
         'name',
