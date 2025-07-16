@@ -80,14 +80,20 @@ class UserController extends Controller implements HasMiddleware
                 'permissions' => ['permission-list', 'permission-delete', 'permission-status']
             ],
             [
-                'routeName' => '',
+                'routeName' => 'um.user.edit',
                 'params' => [encrypt($model->id)],
                 'label' => 'Edit',
                 'permissions' => ['permission-edit']
             ],
-
             [
-                'routeName' => '',
+                'routeName' => 'um.user.status',
+                'params' => [encrypt($model->id)],
+                'label' => $model->status_btn_label,
+                'className' => $model->status_btn_color,
+                'permissions' => ['permission-status']
+            ],
+            [
+                'routeName' => 'um.user.destroy',
                 'params' => [encrypt($model->id)],
                 'label' => 'Delete',
                 'delete' => true,
@@ -130,11 +136,12 @@ class UserController extends Controller implements HasMiddleware
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id): View
-    {
-        $data['user'] = $this->userService->getUser($id);
-        return view('view file url...', $data);
-    }
+   public function edit(string $id): View
+{
+    $data['user'] = $this->userService->getUser($id)->load('userInfo');
+    return view('backend.admin.user-management.user.edit', $data);
+}
+
 
     /**
      * Update the specified resource in storage.

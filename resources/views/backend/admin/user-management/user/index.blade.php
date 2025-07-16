@@ -24,8 +24,9 @@
                     <tr>
                         <th width="5%">{{ __('SL') }}</th>
                         <th>{{ __('Name') }}</th>
-                        <th>{{ __('Role') }}</th>
+                        <th>{{ __('Soundcloud ID') }}</th>
                         <th>{{ __('Status') }}</th>
+                        <th>{{ __('Last Synced At') }}</th>
                         <th>{{ __('Created By') }}</th>
                         <th>{{ __('Created Date') }}</th>
                         <th width="10%">{{ __('Action') }}</th>
@@ -48,10 +49,10 @@
                 let table_columns = [
                     //name and data, orderable, searchable
                     ['name', true, true],
-                    ['email', true, true],
-                    ['role_id', true, true],
-                    ['email_verified_at', true, true],
-                    ['created_by', true, true],
+                    ['soundcloud_id', true, true],
+                    ['status', true, true],
+                    ['last_synced_at', true, true],
+                    ['creater_id', true, true],
                     ['created_at', true, true],
                     ['action', false, false],
                 ];
@@ -61,8 +62,8 @@
                     displayLength: 10,
                     main_route: "{{ route('um.user.index') }}",
                     order_route: "{{ route('update.sort.order') }}",
-                    export_columns: [0, 1, 2, 3, 4],
-                    model: 'Admin',
+                    export_columns: [0, 1, 2, 3, 4, 5],
+                    model: 'User',
                 };
                 // initializeDataTable(details);
 
@@ -83,18 +84,18 @@
                             key: 'name',
                         },
                         {
-                            label: '{{ __('Email') }}',
-                            key: 'email',
+                            label: '{{ __('Nickname') }}',
+                            key: 'nickname',
                         },
                         {
-                            label: '{{ __('Email Verified') }}',
-                            key: 'verify_label',
-                            label_color: 'verify_color',
+                            label: '{{ __('Status') }}',
+                            key: 'status_label',
+                            label_color: 'status_color',
                             type: 'badge',
                         },
                         {
-                            label: '{{ __('Role') }}',
-                            key: 'role_id',
+                            label: '{{ __('Last Synced At') }}',
+                            key: 'last_synced_at',
                         },
                         {
                             label: '{{ __('Image') }}',
