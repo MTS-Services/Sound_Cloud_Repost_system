@@ -7,9 +7,9 @@
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Update Role') }}</h2>
-                <x-button href="{{ route('am.role.index') }}" icon="undo-2" type='info'>
+                <x-button href="{{ route('am.role.index') }}" icon="undo-2" type='info' permission="role-list">
                     {{ __('Back') }}
-                </x-admin.button>
+                </x-button>
             </div>
         </div>
 
@@ -60,8 +60,7 @@
                         </div>
                     </div>
                     <div class="flex justify-end mt-5">
-                        <x-button type="accent" :button="true"
-                            icon="save">{{ __('Update') }}</x-admin.button>
+                        <x-button type="accent" :button="true" icon="save">{{ __('Update') }}</x-button>
                     </div>
                 </form>
             </div>
