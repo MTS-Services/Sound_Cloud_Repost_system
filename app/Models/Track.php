@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 use App\Models\BaseModel;
 
-class track extends BaseModel
+class Track extends BaseModel
 {
     protected $fillable = [
         'user_id',
+        
         'kind',
         'soundcloud_track_id',
         'urn',

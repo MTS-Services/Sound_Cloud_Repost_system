@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SoundCloud\SoundCloudAuthRequest;
 use App\Models\Product;
 use App\Models\Subscription;
+use App\Models\Track;
 use App\Models\User;
 use App\Models\UserInformation;
 use App\Services\SoundCloud\SoundCloudService;
@@ -50,10 +51,10 @@ class SoundCloudController extends Controller
             $user = $this->findOrCreateUser($soundCloudUser);
 
             // Sync user tracks
-            // $this->soundCloudService->syncUserTracks($user);
+            $this->soundCloudService->syncUserTracks($user);
 
             // // Update user profile data
-            $this->soundCloudService->updateUserProfile($user);
+            // $this->soundCloudService->updateUserProfile($user);
 
             // Login user
             Auth::guard('web')->login($user, true);
@@ -205,17 +206,6 @@ class SoundCloudController extends Controller
                 // Handle SoundCloud products and user subscriptions
                 $this->syncUserProductsAndSubscriptions($user, $soundCloudUser);
 
-                $baseUrl = 'https://api.soundcloud.com';
-
-                $response = Http::withHeaders([
-                    'Authorization' => 'OAuth ' . $soundCloudUser->token,
-                ])->get("{$baseUrl}/tracks");
-
-                if ($response->successful()) {
-                    $responseData = $response->json();
-
-                    dd($responseData);
-                }
 
                 return $user;
             });
