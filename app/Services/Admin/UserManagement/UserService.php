@@ -40,13 +40,9 @@ class UserService
     {
         return DB::transaction(function () use ($user, $data, $file) {
             if ($file) {
-                $data['image'] = $this->handleFileUpload($file,  'admins', $data['name']);
+                $data['image'] = $this->handleFileUpload($file,  'users', $data['name']);
                 $this->fileDelete($user->image);
             }
-            if ($data['email'] && $data['email'] != $user->email) {
-                $data['email_verified_at'] = null;
-            }
-            $data['password'] = $data['password'] ?? $user->password;
             $data['updater_id'] = admin()->id;
             $data['updater_type'] = get_class(admin());
             $user->update($data);

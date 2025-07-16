@@ -22,7 +22,7 @@ class UserController extends Controller implements HasMiddleware
 
     protected function redirectTrashed(): RedirectResponse
     {
-        return redirect()->route('um.user.trashed');
+        return redirect()->route('um.user.trash');
     }
 
     protected UserService $userService;
@@ -40,13 +40,11 @@ class UserController extends Controller implements HasMiddleware
             // Permission middlewares using the Middleware class
             new Middleware('permission:user-list', only: ['index']),
             new Middleware('permission:user-details', only: ['show']),
-            new Middleware('permission:user-create', only: ['create', 'store']),
-            new Middleware('permission:user-edit', only: ['edit', 'update']),
             new Middleware('permission:user-delete', only: ['destroy']),
             new Middleware('permission:user-trash', only: ['trash']),
             new Middleware('permission:user-restore', only: ['restore']),
             new Middleware('permission:user-permanent-delete', only: ['permanentDelete']),
-            new Middleware('permission:user-status', only: ['toggleStatus']),
+            new Middleware('permission:user-status', only: ['status']),
             //add more permissions if needed
         ];
     }
@@ -80,12 +78,6 @@ class UserController extends Controller implements HasMiddleware
                 'permissions' => ['permission-list', 'permission-delete', 'permission-status']
             ],
             [
-                'routeName' => 'um.user.edit',
-                'params' => [encrypt($model->id)],
-                'label' => 'Edit',
-                'permissions' => ['permission-edit']
-            ],
-            [
                 'routeName' => 'um.user.status',
                 'params' => [encrypt($model->id)],
                 'label' => $model->status_btn_label,
@@ -103,70 +95,29 @@ class UserController extends Controller implements HasMiddleware
         ];
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(): View
-    {
-        //
-        return view('view file url ...');
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        try {
-            // $validated = $request->validated();
-            //
-            session()->flash('success', "Service created successfully");
-        } catch (\Throwable $e) {
-            session()->flash('Service creation failed');
-            throw $e;
-        }
-        return $this->redirectIndex();
-    }
+
 
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, string $id) {}
+    public function show(Request $request, string $id)
+    {
+        $data = $this->userService->getUser($id)->load(['userInfo']);
+         $data['creater_name'] = $this->creater_name($data);
+        $data['updater_name'] = $this->updater_name($data);
+        return response()->json($data);
+    }
 
     /**
      * Show the form for editing the specified resource.
      */
-   public function edit(string $id): View
-{
-    $data['user'] = $this->userService->getUser($id)->load('userInfo');
-    return view('backend.admin.user-management.user.edit', $data);
-}
 
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        try {
-            $validated = $request->validated();
-            $user = $this->userService->getUser($id);
-            $this->userService->updateUser($user, $validated, $request->file('image'));
-            session()->flash('success', "Service updated successfully");
-        } catch (\Throwable $e) {
-            session()->flash('Service update failed');
-            throw $e;
-        }
-        return $this->redirectIndex();
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         try {
-            //
+            $user = $this->userService->getUser($id);
+            $this->userService->delete($user);
             session()->flash('success', "Service deleted successfully");
         } catch (\Throwable $e) {
             session()->flash('Service delete failed');
@@ -180,27 +131,27 @@ class UserController extends Controller implements HasMiddleware
         if ($request->ajax()) {
             $query = $this->userService->getUsers()->onlyTrashed();
             return DataTables::eloquent($query)
-                ->editColumn('action', function ($permission) {
-                    $menuItems = $this->trashedMenuItems($permission);
-                    return view('components.action-buttons', compact('menuItems'))->render();
-                })
-                ->rawColumns(['action'])
+                ->editColumn('status', fn($user) => "<span class='badge badge-soft {$user->status_color}'>{$user->status_label}</span>")
+                ->editColumn('deleter_id', fn($admin) => $this->deleter_name($admin))
+                ->editColumn('deleted_at', fn($admin) => $admin->deleted_at_formatted)
+                ->editColumn('action', fn($admin) => view('components.action-buttons', ['menuItems' => $this->trashedMenuItems($admin)])->render())
+                ->rawColumns(['action', 'status', 'deleted_at', 'deleter_id'])
                 ->make(true);
         }
-        return view('view blade file url...');
+        return view('backend.admin.user-management.user.trash');
     }
 
     protected function trashedMenuItems($model): array
     {
         return [
             [
-                'routeName' => '',
+                'routeName' => 'um.user.restore',
                 'params' => [encrypt($model->id)],
                 'label' => 'Restore',
                 'permissions' => ['permission-restore']
             ],
             [
-                'routeName' => '',
+                'routeName' => 'um.user.permanent-delete',
                 'params' => [encrypt($model->id)],
                 'label' => 'Permanent Delete',
                 'p-delete' => true,
