@@ -68,7 +68,7 @@
                 :items="[
                     [
                         'name' => 'All Users',
-                        'route' => '#',
+                        'route' => route('um.user.index'),
                         'icon' => 'user',
                         'active' => 'admin-users',
                         'permission' => 'user-list',

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Backend\Admin\UserManagement;
 
 use App\Http\Controllers\Controller;
+use App\Http\Traits\AuditRelationTraits;
+use App\Services\Admin\UserManagement\UserService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -12,37 +14,39 @@ use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller implements HasMiddleware
 {
+    use AuditRelationTraits;
     protected function redirectIndex(): RedirectResponse
     {
-        return redirect()->route('index route');
+        return redirect()->route('um.user.index');
     }
 
     protected function redirectTrashed(): RedirectResponse
     {
-        return redirect()->route('trash route');
+        return redirect()->route('um.user.trashed');
     }
 
-    protected ServiceName $serviceName;
+    protected UserService $userService;
 
-    public function __construct(ServiceName $serviceName)
+    public function __construct(UserService $userService)
     {
-        $this->serviceName = $serviceName;
+        $this->userService = $userService;
     }
-    
+
     public static function middleware(): array
     {
         return [
             'auth:admin', // Applies 'auth:admin' to all methods
 
             // Permission middlewares using the Middleware class
-            new Middleware('permission:permisison-list', only: ['index']),
-            new Middleware('permission:permisison-details', only: ['show']),
-            new Middleware('permission:permisison-create', only: ['create', 'store']),
-            new Middleware('permission:permisison-edit', only: ['edit', 'update']),
-            new Middleware('permission:permisison-delete', only: ['destroy']),
-            new Middleware('permission:permisison-trash', only: ['trash']),
-            new Middleware('permission:permisison-restore', only: ['restore']),
-            new Middleware('permission:permisison-permanent-delete', only: ['permanentDelete']),
+            new Middleware('permission:user-list', only: ['index']),
+            new Middleware('permission:user-details', only: ['show']),
+            new Middleware('permission:user-create', only: ['create', 'store']),
+            new Middleware('permission:user-edit', only: ['edit', 'update']),
+            new Middleware('permission:user-delete', only: ['destroy']),
+            new Middleware('permission:user-trash', only: ['trash']),
+            new Middleware('permission:user-restore', only: ['restore']),
+            new Middleware('permission:user-permanent-delete', only: ['permanentDelete']),
+            new Middleware('permission:user-status', only: ['toggleStatus']),
             //add more permissions if needed
         ];
     }
@@ -53,16 +57,16 @@ class UserController extends Controller implements HasMiddleware
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = $this->serviceName->getService();
+            $query = $this->userService->getUsers();
             return DataTables::eloquent($query)
-                ->editColumn('action', function ($service) {
-                    $menuItems = $this->menuItems($service);
-                    return view('components.action-buttons', compact('menuItems'))->render();
-                })
-                ->rawColumns(['action'])
+                ->editColumn('status', fn($user) => "<span class='badge badge-soft {$user->status_color}'>{$user->status_label}</span>")
+                ->editColumn('creater_id', fn($admin) => $this->creater_name($admin))
+                ->editColumn('created_at', fn($admin) => $admin->created_at_formatted)
+                ->editColumn('action', fn($admin) => view('components.action-buttons', ['menuItems' => $this->menuItems($admin)])->render())
+                ->rawColumns(['action', 'status', 'created_at', 'creater_id'])
                 ->make(true);
         }
-        return view('view file url..');
+        return view('backend.admin.user-management.user.index');
     }
 
     protected function menuItems($model): array
@@ -107,7 +111,7 @@ class UserController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-         try {
+        try {
             // $validated = $request->validated();
             //
             session()->flash('success', "Service created successfully");
@@ -121,17 +125,14 @@ class UserController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, string $id)
-    {
-        
-    }
+    public function show(Request $request, string $id) {}
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id): View
     {
-        //$data['permission'] = $this->serviceName->getService($id);
+        $data['user'] = $this->userService->getUser($id);
         return view('view file url...', $data);
     }
 
@@ -140,9 +141,10 @@ class UserController extends Controller implements HasMiddleware
      */
     public function update(Request $request, string $id)
     {
-         try {
-            // $validated = $request->validated();
-            //
+        try {
+            $validated = $request->validated();
+            $user = $this->userService->getUser($id);
+            $this->userService->updateUser($user, $validated, $request->file('image'));
             session()->flash('success', "Service updated successfully");
         } catch (\Throwable $e) {
             session()->flash('Service update failed');
@@ -156,7 +158,7 @@ class UserController extends Controller implements HasMiddleware
      */
     public function destroy(string $id)
     {
-         try {
+        try {
             //
             session()->flash('success', "Service deleted successfully");
         } catch (\Throwable $e) {
@@ -169,7 +171,7 @@ class UserController extends Controller implements HasMiddleware
     public function trash(Request $request)
     {
         if ($request->ajax()) {
-            $query = $this->serviceName->getPermissions()->onlyTrashed();
+            $query = $this->userService->getUsers()->onlyTrashed();
             return DataTables::eloquent($query)
                 ->editColumn('action', function ($permission) {
                     $menuItems = $this->trashedMenuItems($permission);
@@ -201,10 +203,10 @@ class UserController extends Controller implements HasMiddleware
         ];
     }
 
-     public function restore(string $id): RedirectResponse
+    public function restore(string $id): RedirectResponse
     {
         try {
-            $this->serviceName->restore($id);
+            $this->userService->restore($id);
             session()->flash('success', "Service restored successfully");
         } catch (\Throwable $e) {
             session()->flash('Service restore failed');
@@ -216,12 +218,19 @@ class UserController extends Controller implements HasMiddleware
     public function permanentDelete(string $id): RedirectResponse
     {
         try {
-            $this->serviceName->permanentDelete($id);
+            $this->userService->permanentDelete($id);
             session()->flash('success', "Service permanently deleted successfully");
         } catch (\Throwable $e) {
             session()->flash('Service permanent delete failed');
             throw $e;
         }
         return $this->redirectTrashed();
+    }
+    public function status(string $id)
+    {
+        $user = $this->userService->getUser($id);
+        $this->userService->toggleStatus($user);
+        session()->flash('success', 'User status updated successfully!');
+        return redirect()->back();
     }
 }

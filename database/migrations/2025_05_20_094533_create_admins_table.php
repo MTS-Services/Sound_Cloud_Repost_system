@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Traits\AuditColumnsTrait;
+use App\Models\Admin;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -19,6 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('sort_order')->default(0);
             $table->string('name');
             $table->string('email')->unique();
+            $table->tinyInteger('status')->default(Admin::STATUS_ACTIVE)->index();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('image')->nullable();
