@@ -54,7 +54,7 @@ class CreditController extends Controller implements HasMiddleware
      */
     public function index(Request $request)
     {
-        
+
         if ($request->ajax()) {
             $query = $this->creditService->getCredits();
             return DataTables::eloquent($query)
@@ -76,26 +76,26 @@ class CreditController extends Controller implements HasMiddleware
                 'data-id' => encrypt($model->id),
                 'className' => 'view',
                 'label' => 'Details',
-                'permissions' => ['credit-list', 'credit-delete', 'credit-status']
+                'permissions' => ['credit-details']
             ],
             [
                 'routeName' => 'pm.credit.edit',
                 'params' => [encrypt($model->id)],
                 'label' => 'Edit',
-                'permissions' => ['permission-edit']
+                'permissions' => ['credit-edit']
             ],
             [
                 'routeName' => 'pm.credit.status',
                 'params' => [encrypt($model->id)],
                 'label' => $model->status_text,
-                'permissions' => ['permission-status']
+                'permissions' => ['credit-status']
             ],
             [
                 'routeName' => 'pm.credit.destroy',
                 'params' => [encrypt($model->id)],
                 'label' => 'Delete',
                 'delete' => true,
-                'permissions' => ['permission-delete']
+                'permissions' => ['credit-delete']
             ]
 
         ];
@@ -106,7 +106,6 @@ class CreditController extends Controller implements HasMiddleware
      */
     public function create(): View
     {
-        //
         return view('backend.admin.package_management.credit.create');
     }
 
@@ -129,7 +128,8 @@ class CreditController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, string $id) {
+    public function show(Request $request, string $id)
+    {
         $data = $this->creditService->getCredit($id);
         return response()->json($data);
     }
@@ -199,14 +199,14 @@ class CreditController extends Controller implements HasMiddleware
                 'routeName' => 'pm.credit.restore',
                 'params' => [encrypt($model->id)],
                 'label' => 'Restore',
-                'permissions' => ['permission-restore']
+                'permissions' => ['credit-restore']
             ],
             [
                 'routeName' => 'pm.credit.permanent-delete',
                 'params' => [encrypt($model->id)],
                 'label' => 'Permanent Delete',
                 'p-delete' => true,
-                'permissions' => ['permission-permanent-delete']
+                'permissions' => ['credit-permanent-delete']
             ]
 
         ];
@@ -235,11 +235,6 @@ class CreditController extends Controller implements HasMiddleware
         }
         return $this->redirectTrashed();
     }
-
-    // public function status(string $id) {
-    //     $data = $this->creditService->toggleStatus($id);
-    //     return response()->json($data);
-    // }
 
     public function status(string $id): RedirectResponse
     {

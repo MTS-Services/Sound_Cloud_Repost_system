@@ -91,7 +91,7 @@
 @endphp
 
 @if (!empty($permission))
-    @if (admin()->can($permission))
+    @if (Auth::user()->can($permission))
         @if ($button)
             <button {{ $disabled ? 'disabled' : '' }} {{ $mergedAttributes }}>
                 @if ($icon_position === 'left')

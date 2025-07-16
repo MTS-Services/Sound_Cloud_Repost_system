@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Admin;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class AdminSeeder extends Seeder
@@ -18,6 +17,7 @@ class AdminSeeder extends Seeder
             'email' => 'superadmin@dev.com',
             'password' => 'superadmin@dev.com',
             'role_id' => 1,
+            'email_verified_at' => now(),
         ]);
         $superadmin->assignRole($superadmin->role->name);
         $admin = Admin::create([
@@ -25,6 +25,7 @@ class AdminSeeder extends Seeder
             'email' => 'admin@dev.com',
             'password' => 'admin@dev.com',
             'role_id' => 2,
+            'email_verified_at' => now(),
         ]);
         $admin->assignRole($admin->role->name);
         $test = Admin::create([

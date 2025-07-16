@@ -94,7 +94,7 @@ class AdminController extends Controller implements HasMiddleware
                 'data-id' => encrypt($model->id),
                 'className' => 'view',
                 'label' => 'Details',
-                'permissions' => ['admin-list', 'admin-delete', 'admin-status']
+                'permissions' => ['admin-details']
             ],
             [
                 'routeName' => 'am.admin.edit',

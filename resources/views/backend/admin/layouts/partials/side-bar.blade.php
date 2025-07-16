@@ -33,12 +33,11 @@
 
             {{-- 1. SINGLE NAVLINK (replaces your original single-navlink) --}}
             <x-admin.navlink type="single" icon="layout-dashboard" name="Dashboard" :route="route('admin.dashboard')"
-                active="admin-dashboard" :page_slug="$active" />
+                active="admin-dashboard" :page_slug="$active" permission="" />
 
             <x-admin.navlink type="single" icon="layout-dashboard" name="Button UI" :route="route('button-ui')"
                 active="button-ui" :page_slug="$active" />
 
-            {{-- 2. SIMPLE DROPDOWN (multiple items under one parent) --}}
 
             <x-admin.navlink type="dropdown" icon="users" name="Admin Management" :page_slug="$active"
                 :items="[
@@ -69,6 +68,13 @@
                 :items="[
                     [
                         'name' => 'All Users',
+                        'route' => '#',
+                        'icon' => 'user',
+                        'active' => 'admin-users',
+                        'permission' => 'user-list',
+                    ],
+                    [
+                        'name' => 'Top Reposters',
                         'route' => '#',
                         'icon' => 'user',
                         'active' => 'admin-users',
