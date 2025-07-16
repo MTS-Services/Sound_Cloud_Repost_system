@@ -72,7 +72,7 @@ class SoundCloudService
     {
         try {
             $tracks = $this->getUserTracks($user, $limit);
-            dd($tracks);
+            dd('$tracks', $tracks);
             $syncedCount = 0;
 
             foreach ($tracks as $trackData) {
