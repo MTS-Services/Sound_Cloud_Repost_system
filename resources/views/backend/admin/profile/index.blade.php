@@ -13,7 +13,7 @@
                         {{ __('View and manage your profile information') }}
                     </p>
                 </div>
-                <x-button href="{{ route('admin.profile.edit') }}" icon="edit" type="primary" class="w-full sm:w-auto">
+                <x-button href="{{ route('admin.profile.edit') }}" icon="edit" type="primary" soft="true"  class="w-full sm:w-auto">
                     {{ __('Edit Profile') }}
                 </x-button>
             </div>
