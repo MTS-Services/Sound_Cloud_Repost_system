@@ -57,7 +57,7 @@
 
                     <button @click="open = !open" class="avatar">
                         <div class="w-8 rounded-xl">
-                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face&auto=format"
+                            <img src="{{ admin()->modified_image ? asset(admin()->modified_image) : asset('images/default-profile.png') }}"
                                 alt="" class="object-cover w-full h-full">
                         </div>
                     </button>

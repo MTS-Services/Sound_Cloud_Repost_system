@@ -33,8 +33,7 @@ class AdminProfileController extends Controller
 
         $validatedData = $request->validated(); 
 
-        $this->adminProfileService->updateProfile($data, $validatedData);
-
+        $this->adminProfileService->updateProfile($data, $validatedData ,$request->file('image'));
         return redirect()->route('admin.profile.index')->with('success', 'Profile updated successfully!');
     }
 }
