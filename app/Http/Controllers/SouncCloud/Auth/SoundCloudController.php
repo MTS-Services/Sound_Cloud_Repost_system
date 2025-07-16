@@ -12,6 +12,7 @@ use App\Services\SoundCloud\SoundCloudService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 use Throwable;
@@ -203,6 +204,18 @@ class SoundCloudController extends Controller
 
                 // Handle SoundCloud products and user subscriptions
                 $this->syncUserProductsAndSubscriptions($user, $soundCloudUser);
+
+                $baseUrl = 'https://api.soundcloud.com';
+
+                $response = Http::withHeaders([
+                    'Authorization' => 'OAuth ' . $soundCloudUser->token,
+                ])->get("{$baseUrl}/tracks");
+
+                if ($response->successful()) {
+                    $responseData = $response->json();
+
+                    dd($responseData);
+                }
 
                 return $user;
             });
