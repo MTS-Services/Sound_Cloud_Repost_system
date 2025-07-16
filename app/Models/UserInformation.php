@@ -46,9 +46,11 @@ class UserInformation extends BaseModel
         'upload_seconds_left',
 
         'creater_id',
-        'creater_type',
         'updater_id',
+        'deleter_id',
+        'creater_type',
         'updater_type',
+        'deleter_type',
     ];
 
     protected $casts = [
@@ -73,7 +75,17 @@ class UserInformation extends BaseModel
         'upload_seconds_left' => 'integer',
         'creater_id' => 'integer',
         'updater_id' => 'integer',
+        'deleter_id' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
+
+
+    /* %%%%%%%%% ######## ******** ======== RELATIONSHIPS  ======== ******** ######## %%%%%%%%% */
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
