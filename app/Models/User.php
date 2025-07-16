@@ -5,6 +5,8 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\AuthBaseModel;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
 
 class User extends AuthBaseModel
@@ -55,16 +57,26 @@ class User extends AuthBaseModel
         ];
     }
 
-    // ================================  Relationships ===================================
+    /* %%%%%%%%% ######## ******** ======== RELATIONSHIPS  ======== ******** ######## %%%%%%%%% */
 
-    public function userInfo()
+    public function userInfo(): HasOne
     {
         return $this->hasOne(UserInformation::class);
     }
 
-    public function soundcloudTracks()
+    public function soundcloudTracks(): HasMany
     {
         return $this->hasMany(SoundcloudTrack::class);
+    }
+
+    public function tracks(): HasMany
+    {
+        return $this->hasMany(Track::class);
+    }
+
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class);
     }
 
     // Helper methods
