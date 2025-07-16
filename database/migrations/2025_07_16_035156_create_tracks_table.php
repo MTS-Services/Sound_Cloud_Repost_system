@@ -16,34 +16,33 @@ return new class extends Migration
     {
         Schema::create('tracks', function (Blueprint $table) {
             $table->id();
-
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->index();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->string('kind')->nullable();
-            $table->string('soundcloud_track_id', 255)->unique();
-            $table->string('urn')->unique()->nullable();
-            $table->bigInteger('duration')->default(0);
+            $table->string('kind')->nullable()->index();
+            $table->string('soundcloud_track_id', 255)->unique()->index();
+            $table->string('urn')->unique()->nullable()->index();
+            $table->bigInteger('duration')->default(0)->index();
             $table->boolean('commentable')->default(false);
             $table->bigInteger('comment_count')->default(0);
-            $table->unsignedInteger('likes_count')->default(0);
             $table->string('sharing')->nullable()->comment('public, private');
-            $table->boolean('streamable')->default(false);
-            $table->string('embeddable_by')->nullable()->comment('all');
-            $table->text('purchase_url')->nullable();
-            $table->string('purchase_title')->nullable();
-            $table->string('genre')->nullable();
-            $table->string('title')->nullable();
+            $table->string('tag_lsit')->nullable()->index();
+            $table->boolean('streamable')->default(false)->index();
+            $table->string('embeddable_by')->nullable()->comment('all')->index();
+            $table->text('purchase_url')->nullable()->index();
+            $table->string('purchase_title')->nullable()->index();
+            $table->string('genre')->nullable()->index();
+            $table->string('title')->nullable()->index();
             $table->longText('description')->nullable();
-            $table->string('label_name')->nullable();
-            $table->string('release')->nullable();
-            $table->string('key_signature')->nullable();
-            $table->string('isrc')->nullable();
-            $table->string('bpm')->nullable();
-            $table->string('release_year')->nullable();
-            $table->string('release_month')->nullable();
-            $table->string('license')->nullable();
-            $table->text('uri')->nullable();
+            $table->string('label_name')->nullable()->index();
+            $table->string('release')->nullable()->index();
+            $table->string('key_signature')->nullable()->index();
+            $table->string('isrc')->nullable()->index();
+            $table->string('bpm')->nullable()->index();
+            $table->string('release_year')->nullable()->index();
+            $table->string('release_month')->nullable()->index();
+            $table->string('license')->nullable()->index();
+            $table->text('uri')->nullable()->index();
 
             $table->text('permalink_url')->nullable();
             $table->text('artwork_url')->nullable();
@@ -52,43 +51,34 @@ return new class extends Migration
             $table->text('waveform_url')->nullable();
             $table->string('available_country_codes')->nullable();
             $table->string('secret_uri')->nullable();
-            $table->boolean('user_favorite')->default(false);
-            $table->bigInteger('user_playback_count')->default(0);
-            $table->bigInteger('playback_count')->default(0);
-            $table->bigInteger('download_count')->default(0);
-            $table->bigInteger('favoritings_count')->default(0);
-            $table->bigInteger('reposts_count')->default(0);
-            $table->boolean('downloadable')->default(false);
-            $table->string('access')->nullable();
+            $table->boolean('user_favorite')->default(false)->index();
+            $table->bigInteger('user_playback_count')->default(0)->index();
+            $table->bigInteger('playback_count')->default(0)->index();
+            $table->bigInteger('download_count')->default(0)->index();
+            $table->bigInteger('favoritings_count')->default(0)->index();
+            $table->bigInteger('reposts_count')->default(0)->index();
+            $table->boolean('downloadable')->default(false)->index();
+            $table->string('access')->nullable()->index();
             $table->string('policy')->nullable();
             $table->string('monetization_model')->nullable();
             $table->string('metadata_artist')->nullable();
-
-            $table->boolean('is_public')->default(true);
-            $table->boolean('is_streamable')->default(true);
-            $table->boolean('is_downloadable')->default(false);
-            $table->boolean('is_monetized')->default(false);
-            $table->date('release_date')->nullable();
-
-            $table->boolean('is_promotable')->default(true);
-            $table->tinyInteger('promotion_priority')->default(1);
-
             $table->timestamp('created_at_soundcloud')->nullable();
+
+            $table->string('type')->nullable()->index();
+
+            // Author details
+            $table->string('author_username')->nullable()->index();
+            $table->bigInteger('author_soundcloud_id')->index();
+            $table->string('author_soundcloud_urn')->index();
+            $table->string('author_soundcloud_kind')->index();
+            $table->string('author_soundcloud_permalink_url')->index();
+            $table->string('author_soundcloud_permalink')->index();
+            $table->string('author_soundcloud_uri')->index();
+
             $table->timestamp('last_sync_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
-
-            $this->addAdminAuditColumns($table);
-
-            // Indexes
-            $table->index('user_id');
-            $table->index('soundcloud_track_id');
-            $table->index('title');
-            $table->index('genre');
-            $table->index('is_public');
-            $table->index('is_promotable');
-            $table->index('playback_count');
-            $table->index('created_at_soundcloud');
+            $this->addMorphedAuditColumns($table);
         });
     }
 
