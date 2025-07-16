@@ -37,7 +37,7 @@ class SoundCloudService
             $response = Http::withHeaders([
                 'Authorization' => 'OAuth ' . $user->token,
             ])->get("{$this->baseUrl}/tracks", [
-                'limit' => min($limit, 200), // SoundCloud API limit for /me/tracks is typically 200
+                'limit' => min($limit, 200), // SoundCloud API limit for /tracks is typically 200
                 'offset' => $offset,
             ]);
 
@@ -72,7 +72,6 @@ class SoundCloudService
     {
         try {
             $tracks = $this->getUserTracks($user, $limit);
-            dd('$tracks', $tracks);
             $syncedCount = 0;
 
             foreach ($tracks as $trackData) {
