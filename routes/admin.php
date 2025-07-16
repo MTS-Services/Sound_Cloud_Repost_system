@@ -17,6 +17,13 @@ Route::group(['middleware' => ['auth:admin','admin'], 'prefix' => 'admin'], func
 
     Route::get('/dashboard', [AdminDashboardController::class, 'dashboard'])->name('admin.dashboard');
 
+    // Admin Profile Routes
+    Route::controller(App\Http\Controllers\Backend\Admin\AdminProfileController::class)->name('admin.profile.')->prefix('profile')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/edit', 'edit')->name('edit');
+        Route::put('/update', 'update')->name('update');
+    });
+
     // Admin Management
     Route::group(['as' => 'am.', 'prefix' => 'admin-management'], function () {
         // Admin Routes
