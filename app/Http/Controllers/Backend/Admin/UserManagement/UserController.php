@@ -58,9 +58,9 @@ class UserController extends Controller implements HasMiddleware
             $query = $this->userService->getUsers();
             return DataTables::eloquent($query)
                 ->editColumn('status', fn($user) => "<span class='badge badge-soft {$user->status_color}'>{$user->status_label}</span>")
-                ->editColumn('creater_id', fn($admin) => $this->creater_name($admin))
-                ->editColumn('created_at', fn($admin) => $admin->created_at_formatted)
-                ->editColumn('action', fn($admin) => view('components.action-buttons', ['menuItems' => $this->menuItems($admin)])->render())
+                ->editColumn('creater_id', fn($user) => $this->creater_name($user))
+                ->editColumn('created_at', fn($user) => $user->created_at_formatted)
+                ->editColumn('action', fn($user) => view('components.action-buttons', ['menuItems' => $this->menuItems($user)])->render())
                 ->rawColumns(['action', 'status', 'created_at', 'creater_id'])
                 ->make(true);
         }
@@ -132,9 +132,9 @@ class UserController extends Controller implements HasMiddleware
             $query = $this->userService->getUsers()->onlyTrashed();
             return DataTables::eloquent($query)
                 ->editColumn('status', fn($user) => "<span class='badge badge-soft {$user->status_color}'>{$user->status_label}</span>")
-                ->editColumn('deleter_id', fn($admin) => $this->deleter_name($admin))
-                ->editColumn('deleted_at', fn($admin) => $admin->deleted_at_formatted)
-                ->editColumn('action', fn($admin) => view('components.action-buttons', ['menuItems' => $this->trashedMenuItems($admin)])->render())
+                ->editColumn('deleter_id', fn($user) => $this->deleter_name($user))
+                ->editColumn('deleted_at', fn($user) => $user->deleted_at_formatted)
+                ->editColumn('action', fn($user) => view('components.action-buttons', ['menuItems' => $this->trashedMenuItems($user)])->render())
                 ->rawColumns(['action', 'status', 'deleted_at', 'deleter_id'])
                 ->make(true);
         }

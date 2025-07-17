@@ -21,19 +21,20 @@ class CreditService
         return Credit::onlyTrashed()->findOrFail(decrypt($encryptedId));
     }
 
-    public function createCredit(array $data, $file = null): Credit
+    public function createCredit(array $data): Credit
     {
-        return DB::transaction(function () use ($data, $file) {
+        return DB::transaction(function () use ($data) {
             $data['created_by'] = admin()->id;
             $credit = Credit::create($data);
             return $credit;
         });
     }
 
-    public function updateCredit(Credit $credit, array $data, $file = null): Credit
+    public function updateCredit(Credit $credit, array $data): Credit
     {
-        return DB::transaction(function () use ($credit, $data, $file) {
-            $data['updated_by'] = admin()->id;           
+        return DB::transaction(function () use ($credit, $data) {
+            $data['updated_by'] = admin()->id;
+            
             $credit->update($data);
             return $credit;
         });

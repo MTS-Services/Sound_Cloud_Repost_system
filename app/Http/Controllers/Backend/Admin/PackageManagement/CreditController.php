@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PackageManagement\CreditRequest;
+use App\Http\Traits\AuditRelationTraits;
 use Illuminate\Http\RedirectResponse;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Routing\Controllers\Middleware;
@@ -14,6 +15,7 @@ use App\Services\Admin\PackageManagement\CreditService;
 
 class CreditController extends Controller implements HasMiddleware
 {
+    use AuditRelationTraits;
     protected function redirectIndex(): RedirectResponse
     {
         return redirect()->route('pm.credit.index');
@@ -45,6 +47,7 @@ class CreditController extends Controller implements HasMiddleware
             new Middleware('permission:credit-trash', only: ['trash']),
             new Middleware('permission:credit-restore', only: ['restore']),
             new Middleware('permission:credit-permanent-delete', only: ['permanentDelete']),
+            new Middleware('permission:credit-status', only: ['status']),
             //add more permissions if needed
         ];
     }
@@ -58,11 +61,11 @@ class CreditController extends Controller implements HasMiddleware
         if ($request->ajax()) {
             $query = $this->creditService->getCredits();
             return DataTables::eloquent($query)
-                ->editColumn('action', function ($credit) {
-                    $menuItems = $this->menuItems($credit);
-                    return view('components.action-buttons', compact('menuItems'))->render();
-                })
-                ->rawColumns(['action'])
+                ->editColumn('status', fn($credit) => "<span class='badge badge-soft {$credit->status_color}'>{$credit->status_label}</span>")
+                ->editColumn('created_by', fn($credit) => $this->creater_name($credit))
+                ->editColumn('created_at', fn($credit) => $credit->created_at_formatted)
+                ->editColumn('action', fn($credit) => view('components.action-buttons', ['menuItems' => $this->menuItems($credit)])->render())
+                ->rawColumns(['action', 'status', 'created_at', 'created_by'])
                 ->make(true);
         }
         return view('backend.admin.package_management.credit.index');
@@ -87,7 +90,7 @@ class CreditController extends Controller implements HasMiddleware
             [
                 'routeName' => 'pm.credit.status',
                 'params' => [encrypt($model->id)],
-                'label' => $model->status_text,
+                'label' => $model->status_btn_label,
                 'permissions' => ['credit-status']
             ],
             [
