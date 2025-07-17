@@ -89,12 +89,12 @@
                     ],
                 ]" />
 
-            <x-admin.navlink type="dropdown" icon="users" name="Package Management" :page_slug="$active"
+            <x-admin.navlink type="dropdown" icon="shopping-cart" name="Package Management" :page_slug="$active"
                 :items="[
                     [
                         'name' => 'Credit',
                         'route' => route('pm.credit.index'),
-                        'icon' => 'user',
+                        'icon' => 'credit-card',
                         'active' => 'credit',
                         'permission' => 'credit-list',
                     ],
