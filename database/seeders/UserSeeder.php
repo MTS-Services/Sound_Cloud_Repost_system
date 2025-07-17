@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
@@ -15,6 +15,8 @@ class UserSeeder extends Seeder
     {
         User::create([
             'name' => 'Test User 1',
+            'email' => 'user@dev.com',
+            'password' => Hash::make('user@dev.com'),
             'soundcloud_id' => 1000000001,
             'status' => User::STATUS_ACTIVE,
             'last_synced_at' => now(),
@@ -22,23 +24,20 @@ class UserSeeder extends Seeder
 
         User::create([
             'name' => 'Test User 2',
+            'email' => 'user2@dev.com',
+            'password' => Hash::make('user@dev.com'),
             'soundcloud_id' => 1000000002,
             'status' => User::STATUS_ACTIVE,
             'last_synced_at' => now(),
-        ]);
-
+        ]); 
         User::create([
             'name' => 'Test User 3',
+            'email' => 'user3@dev.com',
+            'password' => Hash::make('user@dev.com'),
             'soundcloud_id' => 1000000003,
-            'status' => User::STATUS_INACTIVE, // Example of different status
-            'last_synced_at' => now()->subDays(5), // Example of different sync time
-        ]);
-
-        User::create([
-            'name' => 'Test User 4',
-            'soundcloud_id' => 1000000004,
             'status' => User::STATUS_ACTIVE,
             'last_synced_at' => now(),
         ]);
+        
     }
 }

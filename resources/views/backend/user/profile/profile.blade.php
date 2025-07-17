@@ -25,7 +25,7 @@
                     </div>
                     <div>
                         <h2 class="text-xl font-bold text-gray-900">{{ user()->name }}</h2>
-                        {{-- <p class="text-gray-600">Email Not Provided from SoundCloud Profile... </p> --}}
+                        <p class="text-gray-600">{{ user()->email }}</p>
                         <div class="flex items-center space-x-4 mt-2 text-sm text-gray-600">
                             <div class="flex items-center">
                                 <i data-lucide="calendar" class="w-4 h-4 mr-1"></i>
@@ -42,7 +42,7 @@
                                 Reposter</span>
                             <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-xs">Quality
                                 Artist</span>
-                            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-xs">Verified</span>
+                            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-xs">@if(user()->email_verified_at) Verified @else Not Verified @endif</span>
                         </div>
                     </div>
                 </div>
@@ -55,12 +55,12 @@
                                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831">
                             </path>
                             <path class="text-orange-600" stroke="currentColor" stroke-width="2" fill="none"
-                                stroke-dasharray="87, 100" stroke-dashoffset="0"
+                                stroke-dasharray="{{ $user->credibility_score ?? 0 }}, 100" stroke-dashoffset="0"
                                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831">
                             </path>
                         </svg>
                         <div class="absolute inset-0 flex items-center justify-center">
-                            <span class="text-xl font-bold text-orange-600">87%</span>
+                            <span class="text-xl font-bold text-orange-600">{{ $user->credibility_score ?? 0 }}%</span>
                         </div>
                     </div>
                     <div class="mt-2">
@@ -97,7 +97,7 @@
                                 <i data-lucide="music" class="w-6 h-6 text-orange-600"></i>
                             </div>
                             <div>
-                                <div class="text-2xl font-bold text-gray-900">2</div>
+                                <div class="text-2xl font-bold text-gray-900">{{ $user->track_count }}</div>
                                 <div class="text-gray-600">Track Submissions</div>
                             </div>
                         </div>
@@ -109,7 +109,7 @@
                                 <i data-lucide="refresh-cw" class="w-6 h-6 text-blue-600"></i>
                             </div>
                             <div>
-                                <div class="text-2xl font-bold text-gray-900">18</div>
+                                <div class="text-2xl font-bold text-gray-900">{{ $user->reposts_count }}</div>
                                 <div class="text-gray-600">Reposts Given</div>
                             </div>
                         </div>
@@ -122,7 +122,7 @@
                                 <i data-lucide="users" class="w-6 h-6 text-green-600"></i>
                             </div>
                             <div>
-                                <div class="text-2xl font-bold text-gray-900">42</div>
+                                <div class="text-2xl font-bold text-gray-900">{{ $user->public_favorites_count }}</div>
                                 <div class="text-gray-600">Reposts Received</div>
                             </div>
                         </div>
@@ -145,53 +145,13 @@
                 <!-- Your Genres -->
                 <div class="mb-8">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Your Genres</h3>
-                    <div class="flex flex-wrap gap-3">
-                        <span class="bg-orange-100 text-orange-800 px-4 py-2 rounded-full">Electronic</span>
-                        <span class="bg-purple-100 text-purple-800 px-4 py-2 rounded-full">Hip-hop</span>
-                        <span class="bg-red-100 text-red-800 px-4 py-2 rounded-full">Indie</span>
-                    </div>
+                    <p class="text-gray-600">Dynamic genres would be displayed here.</p>
                 </div>
 
                 <!-- Achievements -->
                 <div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Achievements</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="shadow-sm rounded-lg p-4 hover:shadow-md transition-shadow">
-                            <div class="flex items-center mb-3">
-                                <div class="bg-orange-100 p-2 rounded-lg mr-3">
-                                    <i data-lucide="star" class="w-5 h-5 text-orange-600"></i>
-                                </div>
-                                <div>
-                                    <div class="font-semibold text-gray-900">Rising Star</div>
-                                    <div class="text-sm text-gray-600">Completed 10 reposts</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="shadow-sm rounded-lg p-4 hover:shadow-md transition-shadow">
-                            <div class="flex items-center mb-3">
-                                <div class="bg-blue-100 p-2 rounded-lg mr-3">
-                                    <i data-lucide="refresh-cw" class="w-5 h-5 text-blue-600"></i>
-                                </div>
-                                <div>
-                                    <div class="font-semibold text-gray-900">Repost Champion</div>
-                                    <div class="text-sm text-gray-600">Reposted 5 different genres</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="shadow-sm rounded-lg p-4 hover:shadow-md transition-shadow opacity-100">
-                            <div class="flex items-center mb-3">
-                                <div class="bg-gray-100 p-2 rounded-lg mr-3">
-                                    <i data-lucide="music" class="w-5 h-5 text-gray-600"></i>
-                                </div>
-                                <div>
-                                    <div class="font-semibold text-gray-900">Track Master</div>
-                                    <div class="text-sm text-gray-600">Submit 5 tracks (2/5)</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <p class="text-gray-600">Dynamic achievements would be displayed here.</p>
                 </div>
             </div>
 
