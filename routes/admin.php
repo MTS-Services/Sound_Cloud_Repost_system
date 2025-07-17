@@ -6,9 +6,23 @@ use App\Http\Controllers\Backend\Admin\AdminManagement\AdminController;
 use App\Http\Controllers\Backend\Admin\AdminManagement\PermissionController;
 use App\Http\Controllers\Backend\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Backend\Admin\PackageManagement\CreditController;
+use App\Http\Controllers\Backend\Admin\UserManagement\UserController;
 
-Route::group(['middleware' => ['auth:admin'], 'prefix' => 'admin'], function () {
+Route::group(['middleware' => ['auth:admin','admin'], 'prefix' => 'admin'], function () {
+
+    // Button UI Route 
+    Route::get('/button-ui', function () {
+        return view('backend.admin.ui.buttons');
+    })->name('button-ui');
+
     Route::get('/dashboard', [AdminDashboardController::class, 'dashboard'])->name('admin.dashboard');
+
+    // Admin Profile Routes
+    Route::controller(App\Http\Controllers\Backend\Admin\AdminProfileController::class)->name('admin.profile.')->prefix('profile')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/edit', 'edit')->name('edit');
+        Route::put('/update', 'update')->name('update');
+    });
 
     // Admin Management
     Route::group(['as' => 'am.', 'prefix' => 'admin-management'], function () {
@@ -49,6 +63,17 @@ Route::group(['middleware' => ['auth:admin'], 'prefix' => 'admin'], function () 
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{credit}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{credit}', 'permanentDelete')->name('permanent-delete');
+        });
+    });
+
+    Route::group(['as' => 'um.', 'prefix' => 'user-management'], function () {
+        Route::resource('user', UserController::class);
+        Route::controller(UserController::class)->name('user.')->prefix('user')->group(function () {
+            Route::post('/show/{user}', 'show')->name('show');
+            Route::get('/status/{user}', 'status')->name('status');
+            Route::get('/trash/bin', 'trash')->name('trash');
+            Route::get('/restore/{user}', 'restore')->name('restore');
+            Route::delete('/permanent-delete/{user}', 'permanentDelete')->name('permanent-delete');
         });
     });
 });

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Admin\AdminManagement;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AdminManagement\RoleRequest;
+use App\Http\Traits\AuditRelationTraits;
 use App\Services\Admin\AdminManagement\PermissionService;
 use App\Services\Admin\AdminManagement\RoleService;
 use Illuminate\Contracts\View\View;
@@ -15,6 +16,8 @@ use Illuminate\Routing\Controllers\Middleware;
 
 class RoleController extends Controller implements HasMiddleware
 {
+    use AuditRelationTraits;
+
     protected function redirectIndex(): RedirectResponse
     {
         return redirect()->route('am.role.index');
@@ -52,19 +55,28 @@ class RoleController extends Controller implements HasMiddleware
         ];
     }
 
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
+        // dd($query->toArray());
         if ($request->ajax()) {
             $query = $this->roleService->getRoles();
             return DataTables::eloquent($query)
+                ->editColumn('created_by', function ($role) {
+                    // return $role->creater_name;
+                    return $this->creater_name($role);
+                })
+                ->editColumn('created_at', function ($role) {
+                    return $role->created_at_formatted;
+                })
                 ->editColumn('action', function ($role) {
                     $menuItems = $this->menuItems($role);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['created_by', 'created_at', 'action'])
                 ->make(true);
         }
         return view('backend.admin.admin-management.role.index');
@@ -78,7 +90,7 @@ class RoleController extends Controller implements HasMiddleware
                 'data-id' => encrypt($model->id),
                 'className' => 'view',
                 'label' => 'Details',
-                'permissions' => ['permission-list', 'permission-delete', 'permission-status']
+                'permissions' => ['permission-details']
             ],
             [
                 'routeName' => 'am.role.edit',
@@ -129,9 +141,12 @@ class RoleController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(Request $request,string $id) {
+    public function show(Request $request, string $id)
+    {
         $data = $this->roleService->getRole($id);
         $data->load(['permissions:id,name,prefix']);
+        $data['creater_name'] = $this->creater_name($data);
+        $data['updater_name'] = $this->updater_name($data);
         return response()->json($data);
     }
 
@@ -201,11 +216,17 @@ class RoleController extends Controller implements HasMiddleware
         if ($request->ajax()) {
             $query = $this->roleService->getRoles()->onlyTrashed();
             return DataTables::eloquent($query)
+                ->editColumn('deleted_by', function ($role) {
+                    return $this->deleter_name($role);
+                })
+                ->editColumn('deleted_at', function ($role) {
+                    return $role->deleted_at_formatted;
+                })
                 ->editColumn('action', function ($permission) {
                     $menuItems = $this->trashedMenuItems($permission);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['deleted_by', 'deleted_at', 'action'])
                 ->make(true);
         }
         return view('backend.admin.admin-management.role.trash');

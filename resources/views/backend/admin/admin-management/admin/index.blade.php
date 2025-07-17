@@ -8,10 +8,13 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Admin List') }}</h2>
                 <div class="flex items-center gap-2">
-                    <x-admin.secondary-link error="true" href="{{ route('am.admin.trash') }}">{{ __('Trash') }}
-                    </x-admin.secondary-link>
-                    <x-admin.primary-link href="{{ route('am.admin.create') }}">{{ __('Add') }}
-                    </x-admin.primary-link>
+                    <x-button href="{{ route('am.admin.trash') }}" icon="trash-2" type='secondary'
+                        permission="admin-trash">
+                        {{ __('Trash') }}
+                    </x-button>
+                    <x-button href="{{ route('am.admin.create') }}" icon="user-plus" permission="admin-create">
+                        {{ __('Add') }}
+                    </x-button>
                 </div>
             </div>
         </div>
@@ -23,6 +26,7 @@
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Email') }}</th>
                         <th>{{ __('Role') }}</th>
+                        <th>{{ __('Verified') }}</th>
                         <th>{{ __('Created By') }}</th>
                         <th>{{ __('Created Date') }}</th>
                         <th width="10%">{{ __('Action') }}</th>
@@ -35,9 +39,10 @@
     </section>
 
     {{-- Details Modal --}}
-    <x-admin.details-modal/>
+    <x-admin.details-modal />
 
     @push('js')
+        <script src="{{ asset('assets/js/details-modal.js') }}"></script>
         <script src="{{ asset('assets/js/datatable.js') }}"></script>
         <script>
             document.addEventListener('DOMContentLoaded', () => {
@@ -46,6 +51,7 @@
                     ['name', true, true],
                     ['email', true, true],
                     ['role_id', true, true],
+                    ['email_verified_at', true, true],
                     ['created_by', true, true],
                     ['created_at', true, true],
                     ['action', false, false],
@@ -82,17 +88,21 @@
                             key: 'email',
                         },
                         {
+                            label: '{{ __('Email Verified') }}',
+                            key: 'verify_label',
+                            label_color: 'verify_color',
+                            type: 'badge',
+                        },
+                        {
                             label: '{{ __('Role') }}',
                             key: 'role_id',
                         },
                         {
-                            label: '{{ __('Phone') }}',
-                            key: 'phone',
+                            label: '{{ __('Image') }}',
+                            key: 'modified_image',
+                            type: 'image',
                         },
-                        {
-                            label: '{{ __('Hello') }}',
-                            key: 'hello',
-                        }
+
                     ];
 
                     showDetailsModal(route, id, '{{ __('Admin Details') }}', details);

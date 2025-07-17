@@ -26,6 +26,7 @@ class AdminRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'min:3'],
             'role' => 'required|exists:roles,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg',
         ] + ($this->isMethod('POST') ? $this->store() : $this->update());;
     }
     protected function store(): array
@@ -39,6 +40,7 @@ class AdminRequest extends FormRequest
     {
         return [
             'email' => ['required', 'string', 'email', Rule::unique('admins', 'email')->ignore(decrypt($this->route('admin')))],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ];
     }
 }

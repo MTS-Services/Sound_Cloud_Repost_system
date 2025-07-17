@@ -5,9 +5,9 @@
     x-transition:leave-end="opacity-0 translate-x-full"
     class="hidden fixed right-0 top-0 h-full w-80 glass-card z-50 p-6 overflow-y-auto custom-scrollbar" :class="showNotifications ? '!block' : '!hidden'">
     <div class="flex items-center justify-between mb-6">
-        <h3 class="text-xl font-bold text-text-white">Notifications</h3>
-        <button @click="toggleNotifications()" class="p-2 rounded-lg hover:bg-white/10 transition-colors">
-            <i data-lucide="x" class="w-5 h-5 text-text-white"></i>
+        <h3 class="text-xl font-bold text-black dark:text-text-white">Notifications</h3>
+        <button @click="toggleNotifications()" class="p-2 rounded-lg  hover:bg-white/10 transition-colors">
+            <i data-lucide="x" class="w-5 h-5 text-black dark:text-text-white"></i>
         </button>
     </div>
     <div class="space-y-4">
@@ -18,9 +18,9 @@
                         <i :data-lucide="notification.icon" class="w-4 h-4" :class="notification.iconColor"></i>
                     </div>
                     <div class="flex-1">
-                        <p class="text-text-white text-sm font-medium mb-1" x-text="notification.title"></p>
-                        <p class="text-text-dark-primary text-xs" x-text="notification.message"></p>
-                        <span class="text-text-white/40 text-xs" x-text="notification.time"></span>
+                        <p class="text-black dark:text-text-white text-sm font-medium mb-1" x-text="notification.title"></p>
+                        <p class=" text-gray-600 dark:text-text-white/60 text-xs" x-text="notification.message"></p>
+                        <span class="dark:text-text-white/40 text-gray-400 text-xs" x-text="notification.time"></span>
                     </div>
                 </div>
             </div>

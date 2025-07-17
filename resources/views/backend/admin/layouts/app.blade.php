@@ -18,11 +18,9 @@
 
     {{-- Theme selector && Theme store --}}
     <script>
-        // On page load, immediately apply theme from localStorage to prevent flash
         (function() {
             let theme = localStorage.getItem('theme') || 'system';
 
-            // Apply theme immediately
             if (theme === 'system') {
                 const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                 document.documentElement.classList.toggle('dark', systemPrefersDark);
@@ -33,31 +31,30 @@
             }
         })();
     </script>
-    {{-- toggle theme for system, light and Dark Mode --}}
-    {{-- <script src="{{ asset('assets/js/toggle-theme-3.js') }}"></script> --}}
-    {{-- Toggle theme only dark mode and light mode --}}
     <script src="{{ asset('assets/js/toggle-theme.js') }}"></script>
-
 
     {{-- BoxIcon  --}}
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
     @vite(['resources/css/dashboard.css', 'resources/js/app.js'])
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <link rel="stylesheet" href="{{ asset('assets/css/datatable.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
 
+    <script>
+        const content_image_upload_url = '{{ route('file.ci_upload') }}';
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             @if (session('success'))
-                showAlert('success', '{{ session('success') }}');
+                showAlert('success', "{!! session('success') !!}");
             @endif
 
             @if (session('error'))
-                showAlert('error', '{{ session('error') }}');
+                showAlert('error', "{!! session('error') !!}");
             @endif
 
             @if (session('warning'))
-                showAlert('warning', '{{ session('warning') }}');
+                showAlert('warning', "{!! session('warning') !!}");
             @endif
         });
     </script>
@@ -469,7 +466,7 @@
         // Initialize Lucide icons after DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
             // if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
+            lucide.createIcons();
             // }
         });
 
@@ -545,7 +542,6 @@
         document.head.appendChild(style);
     </script>
     {{-- Custom JS --}}
-    <script src="{{ asset('assets/js/details-modal.js') }}"></script>
     <script src="{{ asset('assets/js/password.js') }}"></script>
     @stack('js')
 

@@ -1,25 +1,36 @@
 <?php
 
 use App\Http\Traits\AuditColumnsTrait;
+use App\Models\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    use SoftDeletes, AuditColumnsTrait;
+return new class extends Migration {
+    use AuditColumnsTrait, SoftDeletes;
     /**
      * Run the migrations.
      */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
+
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->unsignedBigInteger('sort_order')->default(0);
+
+            $table->string('email')->unique()->nullable();
+            $table->unsignedBigInteger('soundcloud_id')->unique();
+            $table->string('name')->index();
+            $table->string('nickname')->nullable()->index();
+
+            $table->tinyInteger('status')->default(User::STATUS_ACTIVE)->index(); // Assuming 1 is for active status
+            $table->string('avatar')->nullable();
+            $table->text('token')->nullable();
+            $table->string('refresh_token')->nullable();
+            $table->bigInteger('expires_in')->nullable()->index();
+
+            $table->timestamp('last_synced_at')->nullable()->index();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

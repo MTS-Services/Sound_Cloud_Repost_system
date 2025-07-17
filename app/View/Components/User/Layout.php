@@ -10,6 +10,6 @@ class Layout extends Component
 {
     public function render(): View|Closure|string
     {
-        return view('components.user.layout');
+        return view('backend.user.layouts.app');
     }
 }

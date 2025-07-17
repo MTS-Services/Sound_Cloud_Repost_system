@@ -86,5 +86,95 @@
         .dark .detail-item:hover {
             background: rgba(59, 130, 246, 0.1);
         }
+
+        .detail-item {
+            transition: all 0.2s ease;
+        }
+
+        .detail-item:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .dark .detail-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* Lightbox Animation Styles */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .animate-scale-in {
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        /* Media Preview Hover Effects */
+        .group:hover .w-20.h-20 {
+            transform: scale(1.05);
+        }
+
+        /* Custom scrollbar for video controls */
+        video::-webkit-media-controls-panel {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+
+            #image-lightbox .max-w-7xl,
+            #video-lightbox .max-w-4xl {
+                max-width: 95vw;
+                margin: 1rem;
+            }
+
+            #image-lightbox img,
+            #video-lightbox video {
+                max-height: 80vh;
+            }
+        }
+
+        /* Focus styles for accessibility */
+        button:focus-visible {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+        }
+
+        /* Loading state for images */
+        .detail-item img {
+            transition: opacity 0.3s ease;
+        }
+
+        .detail-item img:not([src]) {
+            opacity: 0;
+        }
+
+        /* Backdrop blur support */
+        @supports (backdrop-filter: blur(4px)) {
+            .backdrop-blur-sm {
+                backdrop-filter: blur(4px);
+            }
+        }
     </style>
 @endpush

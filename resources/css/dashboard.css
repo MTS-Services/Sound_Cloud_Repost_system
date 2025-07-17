@@ -18,6 +18,12 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source "../views";
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../../public/**/*.js';
+@source '../../public/**/*.css';
+/* @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *)); */
+
 @source '../../**';
 
 :root {
@@ -293,9 +299,9 @@
 
 
 @layer base {
-    
+
     * {
-        @apply font-inter transition-all duration-200 ease-linear dark:text-text-dark-primary text-text-light-primary;
+        @apply font-inter transition-all duration-200 ease-linear;
     }
 
     /* For Firefox  */
@@ -354,7 +360,7 @@
 
 @layer components {
 
-    /* .gradient-light { 
+    /* .gradient-light {
         @apply bg-gradient-to-b from-gradient-light-primary to-gradient-light-secondary dark:bg-none;
     } */
 
@@ -412,6 +418,14 @@
 
     .dark .glass-card {
         @apply backdrop-blur-md bg-transparent bg-gradient-to-b from-gradient-dark-quaternary to-gradient-dark-quinary;
+    }
+
+    .sidebar-glass-card {
+        @apply bg-gradient-to-tr from-white/50 to-gradient-light-quaternary/20 shadow-glass-card;
+    }
+
+    .dark .sidebar-glass-card {
+        @apply bg-transparent bg-gradient-to-b from-gradient-dark-quaternary to-gradient-dark-quinary;
     }
 
     .notification-badge {

@@ -14,6 +14,23 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (session('success'))
+                showAlert('success', '{{ session('success') }}');
+            @endif
+
+            @if (session('error'))
+                showAlert('error', '{{ session('error') }}');
+            @endif
+
+            @if (session('warning'))
+                showAlert('warning', '{{ session('warning') }}');
+            @endif
+        });
+
+        const content_image_upload_url = '{{ route('file.ci_upload') }}';
+    </script>
 </head>
 
 <body class="font-sans text-gray-900 antialiased">

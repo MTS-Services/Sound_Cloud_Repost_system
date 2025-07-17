@@ -10,14 +10,14 @@ use App\Http\Controllers\Auth\PasswordResetLinkController as UserPasswordResetLi
 use App\Http\Controllers\Auth\RegisteredUserController as UserRegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController as UserVerifyEmailController;
 
-use App\Http\Controllers\backend\admin\Auth\AuthenticatedSessionController as AdminAuthenticatedSessionController;
-use App\Http\Controllers\backend\admin\Auth\ConfirmablePasswordController as AdminConfirmablePasswordController;
-use App\Http\Controllers\backend\admin\Auth\EmailVerificationNotificationController as AdminEmailVerificationNotificationController;
-use App\Http\Controllers\backend\admin\Auth\EmailVerificationPromptController as AdminEmailVerificationPromptController;
-use App\Http\Controllers\backend\admin\Auth\NewPasswordController as AdminNewPasswordController;
-use App\Http\Controllers\backend\admin\Auth\PasswordController as AdminPasswordController;
-use App\Http\Controllers\backend\admin\Auth\PasswordResetLinkController as AdminPasswordResetLinkController;
-use App\Http\Controllers\backend\admin\Auth\VerifyEmailController as AdminVerifyEmailController;
+use App\Http\Controllers\Backend\Admin\Auth\AuthenticatedSessionController as AdminAuthenticatedSessionController;
+use App\Http\Controllers\Backend\Admin\Auth\ConfirmablePasswordController as AdminConfirmablePasswordController;
+use App\Http\Controllers\Backend\Admin\Auth\EmailVerificationNotificationController as AdminEmailVerificationNotificationController;
+use App\Http\Controllers\Backend\Admin\Auth\EmailVerificationPromptController as AdminEmailVerificationPromptController;
+use App\Http\Controllers\Backend\Admin\Auth\NewPasswordController as AdminNewPasswordController;
+use App\Http\Controllers\Backend\Admin\Auth\PasswordController as AdminPasswordController;
+use App\Http\Controllers\Backend\Admin\Auth\PasswordResetLinkController as AdminPasswordResetLinkController;
+use App\Http\Controllers\Backend\Admin\Auth\VerifyEmailController as AdminVerifyEmailController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -74,26 +74,26 @@ Route::middleware('auth:web')->group(function () {
 
 // Admin Auth Rotues
 Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
-    Route::middleware('guest:admin')->group(function () {
-        Route::get('login', [AdminAuthenticatedSessionController::class, 'create'])
-            ->name('login');
+    // Route::middleware('guest:admin')->group(function () {
+    Route::get('login', [AdminAuthenticatedSessionController::class, 'create'])
+        ->name('login');
 
-        Route::post('login', [AdminAuthenticatedSessionController::class, 'store']);
+    Route::post('login', [AdminAuthenticatedSessionController::class, 'store']);
 
-        Route::get('forgot-password', [AdminPasswordResetLinkController::class, 'create'])
-            ->name('password.request');
+    Route::get('forgot-password', [AdminPasswordResetLinkController::class, 'create'])
+        ->name('password.request');
 
-        Route::post('forgot-password', [AdminPasswordResetLinkController::class, 'store'])
-            ->name('password.email');
+    Route::post('forgot-password', [AdminPasswordResetLinkController::class, 'store'])
+        ->name('password.email');
 
-        Route::get('reset-password/{token}', [AdminNewPasswordController::class, 'create'])
-            ->name('password.reset');
+    Route::get('reset-password/{token}', [AdminNewPasswordController::class, 'create'])
+        ->name('password.reset');
 
-        Route::post('reset-password', [AdminNewPasswordController::class, 'store'])
-            ->name('password.store');
-    });
+    Route::post('reset-password', [AdminNewPasswordController::class, 'store'])
+        ->name('password.store');
+    // });
 
-    Route::middleware('auth:admin')->group(function () {
+    Route::middleware(['auth:admin'])->group(function () {
         Route::get('verify-email', AdminEmailVerificationPromptController::class)
             ->name('verification.notice');
 

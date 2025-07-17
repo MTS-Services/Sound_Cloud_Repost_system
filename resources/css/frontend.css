@@ -1,0 +1,162 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@import 'tailwindcss';
+@plugin "daisyui";
+
+@plugin '@tailwindcss/forms';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../**';
+@source "./**";
+@source "../views";
+@source "../views/*.blade.php";
+
+
+@layer base {
+
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentcolor);
+        scroll-behavior: smooth;
+    }
+}
+
+
+/* Toggle Theme mode */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme {
+
+    /* Breakpoints */
+    --breakpoint-xs: 480px;
+    --breakpoint-sm: 640px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
+    --breakpoint-xl: 1280px;
+    --breakpoint-2xl: 1440px;
+    --breakpoint-3xl: 1600px;
+    --breakpoint-4xl: 1920px;
+    --breakpoint-5xl: 2560px;
+
+    /* Fonts */
+    --font-poppins: 'Poppins', sans-serif;
+
+    /* Colors  */
+    /* Bacground */
+  
+
+    /* Langding start colors  */
+     /* Text */
+    --color-text-primary: '#FF5500' !important;
+    --color-text-primary-hover': '#FF7730'!important;
+    --color-secondary: '#333333'!important;
+    --color-dark-bg: '#121212'!important;
+    --color-dark-darker': '#0A0A0A'!important;
+    --color-dark-card: '#1E1E1E'!important;
+    --color-dark-lighter: '#1E1E1E'!important;
+    --color-dark-border: '#2A2A2A'!important;
+
+    --color-primary-light: #FF7730;
+    --color-bg-primary: #121212;
+    --color-text-white: #ffffff;
+
+    
+    /* Fonts */
+    --font-sans: ['Inter', 'sans-serif'];
+    /* End Landing Colors */
+
+   
+  
+    /* Border */
+  
+}
+
+@utility container {
+    padding-inline: 10px;
+    margin-inline: auto;
+    @apply max-w-screen-2xl;
+
+    @variants sm, md, lg, xl, 2xl {
+        max-width: 100%;
+    }
+}
+.floating-shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.shape {
+    position: absolute;
+    background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(99, 102, 241, 0.05));
+    border-radius: 50%;
+    animation: float 20s infinite ease-in-out;
+}
+
+.shape-1 {
+    width: 80px;
+    height: 80px;
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.shape-2 {
+    width: 120px;
+    height: 120px;
+    top: 60%;
+    right: 15%;
+    animation-delay: -5s;
+}
+
+.shape-3 {
+    width: 60px;
+    height: 60px;
+    top: 80%;
+    left: 20%;
+    animation-delay: -10s;
+}
+
+.shape-4 {
+    width: 100px;
+    height: 100px;
+    top: 10%;
+    right: 30%;
+    animation-delay: -15s;
+}
+
+.shape-5 {
+    width: 140px;
+    height: 140px;
+    top: 70%;
+    right: 40%;
+    animation-delay: -8s;
+}
+
+.shape-6 {
+    width: 90px;
+    height: 90px;
+    top: 40%;
+    left: 5%;
+    animation-delay: -12s;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: translateY(-20px) rotate(180deg);
+        opacity: 0.8;
+    }
+}

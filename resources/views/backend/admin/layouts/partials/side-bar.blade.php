@@ -8,7 +8,7 @@
         'w-72 -translate-x-full': !desktop && !mobile_menu_open,
     }">
 
-    <div class="glass-card h-full custom-scrollbar rounded-xl overflow-y-auto">
+    <div class="sidebar-glass-card h-full custom-scrollbar rounded-xl overflow-y-auto">
         <!-- Sidebar Header -->
         <a href="{{ route('admin.dashboard') }}" class="p-3 border-b border-white/10 inline-block">
             <div class="flex items-center gap-4">
@@ -27,37 +27,17 @@
                 </div>
             </div>
         </a>
-        <!-- Quick Stats (Collapsed Sidebar) -->
-        {{-- <div x-show="desktop && !sidebar_expanded" x-transition:enter="transition-all duration-300 delay-100"
-            x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-            class="p-4 border-b border-white/10">
-            <div class="space-y-3">
-                <div class="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center relative "
-                    data-tooltip="Active Users">
-                    <i data-lucide="activity" class="w-4 h-4 text-green-400"></i>
-                    <div class="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full notification-badge">
-                    </div>
-                </div>
-                <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center "
-                    data-tooltip="Total Users">
-                    <i data-lucide="users" class="w-4 h-4 text-blue-400"></i>
-                </div>
-                <div class="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center "
-                    data-tooltip="Revenue">
-                    <i data-lucide="trending-up" class="w-4 h-4 text-purple-400"></i>
-                </div>
-            </div>
-        </div> --}}
-
         <!-- Navigation Menu -->
         <nav class="p-2 space-y-2">
             <!-- Dashboard -->
 
             {{-- 1. SINGLE NAVLINK (replaces your original single-navlink) --}}
             <x-admin.navlink type="single" icon="layout-dashboard" name="Dashboard" :route="route('admin.dashboard')"
-                active="admin-dashboard" :page_slug="$active" />
+                active="admin-dashboard" :page_slug="$active" permission="" />
 
-            {{-- 2. SIMPLE DROPDOWN (multiple items under one parent) --}}
+            <x-admin.navlink type="single" icon="layout-dashboard" name="Button UI" :route="route('button-ui')"
+                active="button-ui" :page_slug="$active" />
+
 
             <x-admin.navlink type="dropdown" icon="users" name="Admin Management" :page_slug="$active"
                 :items="[
@@ -66,177 +46,59 @@
                         'route' => route('am.admin.index'),
                         'icon' => 'user',
                         'active' => 'admin',
+                        'permission' => 'admin-list',
                     ],
                     [
                         'name' => 'Role',
                         'route' => route('am.role.index'),
                         'icon' => 'shield',
                         'active' => 'role',
+                        'permission' => 'role-list',
                     ],
                     [
                         'name' => 'Permission',
                         'route' => route('am.permission.index'),
                         'icon' => 'shield-check',
                         'active' => 'permission',
+                        'permission' => 'permission-list',
                     ],
                 ]" />
-            <x-admin.navlink type="dropdown" icon="users" name="Package Management" :page_slug="$active"
-                :items="[
-                    [
-                        'name' => 'Credit',
-                        'route' => route('pm.credit.index'),
-                        'icon' => 'user',
-                        'active' => 'credit',
-                    ],
-                ]" />
-
 
             <x-admin.navlink type="dropdown" icon="users" name="User Management" :page_slug="$active"
                 :items="[
                     [
                         'name' => 'All Users',
+                        'route' => route('um.user.index'),
+                        'icon' => 'user',
+                        'active' => 'admin-users',
+                        'permission' => 'user-list',
+                    ],
+                    [
+                        'name' => 'Top Reposters',
                         'route' => '#',
                         'icon' => 'user',
                         'active' => 'admin-users',
+                        'permission' => 'user-list',
                     ],
                     [
-                        'name' => 'Add User',
+                        'name' => 'Banned Users',
                         'route' => '#',
-                        'icon' => 'user-plus',
-                        'active' => 'admin-users-add',
-                    ],
-                    [
-                        'name' => 'User Roles',
-                        'route' => '#',
-                        'icon' => 'shield',
-                        'active' => 'admin-users-roles',
+                        'icon' => 'user',
+                        'active' => 'admin-users',
+                        'permission' => 'user-list',
                     ],
                 ]" />
 
-            {{-- 3. MIXED NAVIGATION (Single items + Dropdowns in one parent) --}}
-            <x-admin.navlink type="dropdown" icon="shopping-cart" name="E-commerce" :page_slug="$active"
+            <x-admin.navlink type="dropdown" icon="shopping-cart" name="Package Management" :page_slug="$active"
                 :items="[
                     [
-                        'type' => 'single',
-                        'name' => 'Dashboard',
-                        'route' => '#',
-                        'icon' => 'bar-chart-3',
-                        'active' => 'admin-ecommerce-dashboard',
-                    ],
-                    [
-                        'name' => 'Products',
-                        'icon' => 'package',
-                        'subitems' => [
-                            [
-                                'name' => 'All Products',
-                                'route' => '#',
-                                'icon' => 'list',
-                                'active' => 'admin-products-index',
-                            ],
-                            [
-                                'name' => 'Add Product',
-                                'route' => '#',
-                                'icon' => 'plus',
-                                'active' => 'admin-products-create',
-                            ],
-                            [
-                                'name' => 'Categories',
-                                'route' => '#',
-                                'icon' => 'tag',
-                                'active' => 'admin-products-categories',
-                            ],
-                        ],
-                    ],
-                    [
-                        'type' => 'single',
-                        'name' => 'Inventory',
-                        'route' => '#',
-                        'icon' => 'warehouse',
-                        'active' => 'admin-inventory-index',
-                    ],
-                    [
-                        'name' => 'Orders',
-                        'icon' => 'shopping-bag',
-                        'subitems' => [
-                            [
-                                'name' => 'All Orders',
-                                'route' => '#',
-                                'icon' => 'list',
-                                'active' => 'admin-orders-index',
-                            ],
-                            [
-                                'name' => 'Pending Orders',
-                                'route' => '#',
-                                'icon' => 'clock',
-                                'active' => 'admin-orders-pending',
-                            ],
-                        ],
-                    ],
-                    [
-                        'type' => 'single',
-                        'name' => 'Reports',
-                        'route' => '#',
-                        'icon' => 'file-text',
-                        'active' => 'admin-ecommerce-reports',
+                        'name' => 'Credit',
+                        'route' => route('pm.credit.index'),
+                        'icon' => 'credit-card',
+                        'active' => 'credit',
+                        'permission' => 'credit-list',
                     ],
                 ]" />
-
-            {{-- Mixed Dropdown (Single + Multi items in same dropdown) --}}
-            <x-admin.navlink icon="settings" name="Settings" :page_slug="$active" :items="[
-                [
-                    'name' => 'General Settings',
-                    'route' => '#',
-                    'icon' => 'sliders',
-                    'active' => 'admin-settings-general',
-                ],
-                [
-                    'name' => 'Email Settings',
-                    'icon' => 'mail',
-                    'subitems' => [
-                        [
-                            'name' => 'SMTP Config',
-                            'route' => '#',
-                            'icon' => 'server',
-                            'active' => 'admin-settings-email-smtp',
-                        ],
-                        [
-                            'name' => 'Email Templates',
-                            'route' => '#',
-                            'icon' => 'file-text',
-                            'active' => 'admin-settings-email-templates',
-                        ],
-                    ],
-                ],
-                [
-                    'name' => 'Security',
-                    'route' => '#',
-                    'icon' => 'lock',
-                    'active' => 'admin-settings-security',
-                ],
-            ]" />
-
-            {{-- Using with Boxicons instead of Lucide --}}
-            <x-admin.navlink icon="monitor-cog" name="System" :page_slug="$active" :items="[
-                [
-                    'name' => 'Cache Management',
-                    'route' => '#',
-                    'icon' => 'bx bx-data',
-                    'boxicon' => true,
-                    'active' => 'admin-system-cache',
-                ],
-                [
-                    'name' => 'Logs',
-                    'route' => '#',
-                    'icon' => 'bx bx-file',
-                    'boxicon' => true,
-                    'active' => 'admin-system-logs',
-                ],
-            ]" />
-
-            <x-admin.navlink type="single" icon="help-circle" name="Help &
-                    Support"
-                :page_slug="$active" />
-
         </nav>
     </div>
 </aside>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Admin\AdminManagement;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AdminManagement\PermissionRequest;
+use App\Http\Traits\AuditRelationTraits;
 use App\Services\Admin\AdminManagement\PermissionService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -13,6 +14,8 @@ use Illuminate\Routing\Controllers\Middleware;
 
 class PermissionController extends Controller implements HasMiddleware
 {
+
+    use AuditRelationTraits;
 
     protected function redirectIndex(): RedirectResponse
     {
@@ -37,14 +40,14 @@ class PermissionController extends Controller implements HasMiddleware
             'auth:admin', // Applies 'auth:admin' to all methods
 
             // Permission middlewares using the Middleware class
-            new Middleware('permission:permisison-list', only: ['index']),
-            new Middleware('permission:permisison-details', only: ['show']),
-            new Middleware('permission:permisison-create', only: ['create', 'store']),
-            new Middleware('permission:permisison-edit', only: ['edit', 'update']),
-            new Middleware('permission:permisison-delete', only: ['destroy']),
-            new Middleware('permission:permisison-trash', only: ['trash']),
-            new Middleware('permission:permisison-restore', only: ['restore']),
-            new Middleware('permission:permisison-permanent-delete', only: ['permanentDelete']),
+            new Middleware('permission:permission-list', only: ['index']),
+            new Middleware('permission:permission-details', only: ['show']),
+            new Middleware('permission:permission-create', only: ['create', 'store']),
+            new Middleware('permission:permission-edit', only: ['edit', 'update']),
+            new Middleware('permission:permission-delete', only: ['destroy']),
+            new Middleware('permission:permission-trash', only: ['trash']),
+            new Middleware('permission:permission-restore', only: ['restore']),
+            new Middleware('permission:permission-permanent-delete', only: ['permanentDelete']),
             //add more permissions if needed
         ];
     }
@@ -54,11 +57,17 @@ class PermissionController extends Controller implements HasMiddleware
         if ($request->ajax()) {
             $query = $this->permissionService->getPermissions();
             return DataTables::eloquent($query)
+                ->editColumn('created_by', function ($permission) {
+                    return $this->creater_name($permission);
+                })
+                ->editColumn('created_at', function ($permission) {
+                    return $permission->created_at_formatted;
+                })
                 ->editColumn('action', function ($permission) {
                     $menuItems = $this->menuItems($permission);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['created_by', 'created_at', 'action'])
                 ->make(true);
         }
         return view('backend.admin.admin-management.permission.index');
@@ -72,7 +81,7 @@ class PermissionController extends Controller implements HasMiddleware
                 'data-id' => encrypt($model->id),
                 'className' => 'view',
                 'label' => 'Details',
-                'permissions' => ['permission-list', 'permission-delete', 'permission-status']
+                'permissions' => ['permission-details']
             ],
             [
                 'routeName' => 'am.permission.edit',
@@ -122,6 +131,8 @@ class PermissionController extends Controller implements HasMiddleware
     public function show(Request $request, string $id)
     {
         $data = $this->permissionService->getPermission($id);
+        $data['creater_name'] = $this->creater_name($data);
+        $data['updater_name'] = $this->updater_name($data);
         return response()->json($data);
     }
 

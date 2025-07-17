@@ -15,13 +15,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('roles', function (Blueprint $table) {
-            $table->softDeletes();
+            $table->unsignedBigInteger('sort_order')->default(0);
             $this->addAdminAuditColumns($table);
+            $table->softDeletes();
         });
         Schema::table('permissions', function (Blueprint $table) {
+            $table->unsignedBigInteger('sort_order')->default(0);
             $table->string('prefix')->index()->after('guard_name');
-            $table->softDeletes();
             $this->addAdminAuditColumns($table);
+            $table->softDeletes();
         });
     }
 
@@ -31,11 +33,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('roles', function (Blueprint $table) {
-            $table->dropSoftDeletes();
+            $table->dropColumn('sort_order');
             $table->dropColumn(['created_by', 'updated_by', 'deleted_by']);
         });
         Schema::table('permissions', function (Blueprint $table) {
-            $table->dropSoftDeletes();
+            $table->dropColumn('sort_order');
             $table->dropColumn(['created_by', 'updated_by', 'deleted_by', 'prefix']);
         });
     }

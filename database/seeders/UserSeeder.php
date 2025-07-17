@@ -14,9 +14,31 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::create([
-            'name' => 'User',
-            'email' => 'user@dev.com',
-            'password' => 'user@dev.com',
+            'name' => 'Test User 1',
+            'soundcloud_id' => 1000000001,
+            'status' => User::STATUS_ACTIVE,
+            'last_synced_at' => now(),
+        ]);
+
+        User::create([
+            'name' => 'Test User 2',
+            'soundcloud_id' => 1000000002,
+            'status' => User::STATUS_ACTIVE,
+            'last_synced_at' => now(),
+        ]);
+
+        User::create([
+            'name' => 'Test User 3',
+            'soundcloud_id' => 1000000003,
+            'status' => User::STATUS_INACTIVE, // Example of different status
+            'last_synced_at' => now()->subDays(5), // Example of different sync time
+        ]);
+
+        User::create([
+            'name' => 'Test User 4',
+            'soundcloud_id' => 1000000004,
+            'status' => User::STATUS_ACTIVE,
+            'last_synced_at' => now(),
         ]);
     }
 }
