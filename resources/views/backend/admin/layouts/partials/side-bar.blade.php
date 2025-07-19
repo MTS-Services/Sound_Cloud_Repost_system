@@ -70,14 +70,14 @@
                         'name' => 'All Users',
                         'route' => route('um.user.index'),
                         'icon' => 'user',
-                        'active' => 'admin-users',
+                        'active' => 'user',
                         'permission' => 'user-list',
                     ],
                     [
                         'name' => 'Top Reposters',
                         'route' => '#',
                         'icon' => 'user',
-                        'active' => 'admin-users',
+                        'active' => 'user',
                         'permission' => 'user-list',
                     ],
                     [
