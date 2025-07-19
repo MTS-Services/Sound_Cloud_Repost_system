@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('tag_lsit')->nullable()->index();
             $table->boolean('streamable')->default(false)->index();
             $table->string('embeddable_by')->nullable()->comment('all')->index();
-            $table->text('purchase_url')->nullable()->index();
+            $table->text('purchase_url')->nullable();
             $table->string('purchase_title')->nullable()->index();
             $table->string('genre')->nullable()->index();
             $table->string('title')->nullable()->index();
@@ -42,7 +42,7 @@ return new class extends Migration
             $table->string('release_year')->nullable()->index();
             $table->string('release_month')->nullable()->index();
             $table->string('license')->nullable()->index();
-            $table->text('uri')->nullable()->index();
+            $table->text('uri')->nullable();
 
             $table->text('permalink_url')->nullable();
             $table->text('artwork_url')->nullable();
