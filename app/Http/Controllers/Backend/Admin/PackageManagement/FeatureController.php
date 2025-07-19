@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend\Admin\PackageManagement;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PackageManagement\FeatureRequest;
 use App\Http\Traits\AuditRelationTraits;
+use App\Models\Feature;
 use App\Services\Admin\PackageManagement\FeatureCategorySevice;
 use App\Services\Admin\PackageManagement\FeatureSevice;
 use GuzzleHttp\Middleware;
@@ -48,21 +49,29 @@ class FeatureController extends Controller
      */
     public function index(Request $request)
     {
-
         if ($request->ajax()) {
             $query = $this->featureService->getFeatures();
             return DataTables::eloquent($query)
-                ->editColumn('created_by', function ($credit) {
-                    return $this->creater_name($credit);
+                ->editColumn('key', function ($feature) {
+                    return $feature->key_name;
                 })
-                ->editColumn('created_at', function ($credit) {
-                    return $credit->created_at_formatted;
+                ->editColumn('type', function ($feature) {
+                    return $feature->type_name;
                 })
-                ->editColumn('action', function ($credit) {
-                    $menuItems = $this->menuItems($credit);
+                ->editColumn('feature_category_id', function ($feature) {
+                    return $feature->featureCategory->name;
+                })
+                ->editColumn('created_by', function ($feature) {
+                    return $this->creater_name($feature);
+                })
+                ->editColumn('created_at', function ($feature) {
+                    return $feature->created_at_formatted;
+                })
+                ->editColumn('action', function ($feature) {
+                    $menuItems = $this->menuItems($feature);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'feature_category_id', 'created_by', 'created_at'])
                 ->make(true);
         }
         return view('backend.admin.package_management.features.index');
@@ -93,17 +102,27 @@ class FeatureController extends Controller
      */
     public function create()
     {
-        $data['featureCategories'] = $this->featureCategoryService->getFeatureCategories()->select(['id', 'name'])->get();
+        $data['feature_categories'] = $this->featureCategoryService->getFeatureCategories()->select(['id', 'name'])->get();
         return view('backend.admin.package_management.features.create', $data);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(FeatureRequest $request)
+    public function store(Request $request)
     {
+        $validated = $request->validate(
+            [
+                'feature_category_id' => 'required|exists:feature_categories,id',
+                'name' => 'required|unique:features,name',
+                // 'key' => 'required|unique:features,key|in:' . Feature::getKeys(),
+                'key' => 'required|unique:features,key|in:' . implode(',', array_keys(Feature::getKeys())),
+                'type' => 'required|in:' . implode(',', array_keys(Feature::getTypes())),
+            ]
+        );
         try {
-            $validated = $request->validated();
+
+            // $validated = $request->validated();
             $this->featureService->createFeature($validated);
             session()->flash('success', 'Feature created successfully!');
         } catch (\Throwable $e) {
@@ -120,16 +139,24 @@ class FeatureController extends Controller
     public function edit(string $id)
     {
         $data['feature'] = $this->featureService->getFeature($id);
+        $data['feature_categories'] = $this->featureCategoryService->getFeatureCategories()->select(['id', 'name'])->get();
         return view('backend.admin.package_management.features.edit', $data);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(FeatureRequest $request, string $id)
+    public function update(Request $request, string $id)
     {
+        $validated = $request->validate(
+            [
+                'feature_category_id' => 'required|exists:feature_categories,id',
+                'name' => 'required|unique:features,name,' . decrypt($id),
+                'key' => 'required|unique:features,key,' . decrypt($id) . ',id|in:' . implode(',', array_keys(Feature::getKeys())),
+                'type' => 'required|in:' . implode(',', array_keys(Feature::getTypes())),
+            ]
+        );
         try {
-            $validated = $request->validated();
             $featrue = $this->featureService->getFeature($id);
             $this->featureService->updateFeature($validated, $featrue);
             session()->flash('success', 'Feature  updated successfully!');
