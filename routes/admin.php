@@ -8,6 +8,7 @@ use App\Http\Controllers\Backend\Admin\DashboardController as AdminDashboardCont
 use App\Http\Controllers\Backend\Admin\PackageManagement\CreditController;
 use App\Http\Controllers\Backend\Admin\PackageManagement\FeatureCategoryController;
 use App\Http\Controllers\Backend\Admin\PackageManagement\FeatureController;
+use App\Http\Controllers\Backend\Admin\PackageManagement\PlanController;
 use App\Http\Controllers\Backend\Admin\UserManagement\UserController;
 
 Route::group(['middleware' => ['auth:admin','admin'], 'prefix' => 'admin'], function () {
@@ -64,6 +65,7 @@ Route::group(['middleware' => ['auth:admin','admin'], 'prefix' => 'admin'], func
         Route::resource('feature', FeatureController::class);
         Route::controller(FeatureController::class)->name('feature.')->prefix('feature')->group(function () {
         });
+        Route::resource('plan', PlanController::class);
 
         // Credit Routes
         Route::resource('credit', CreditController::class);

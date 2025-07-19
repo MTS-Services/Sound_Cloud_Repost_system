@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             RoleHasPermissionSeeder::class,
             FeatureCategorySeeder::class,
             FeatureSeeder::class,
+            PlanSeeder::class
         ]);
     }
 }
