@@ -41,7 +41,7 @@ class Plan extends BaseModel
     public const TAG_MOST_POPULAR = 1;
     public const TAG_PRO = 2;
 
-    public static function getTagList(): array
+    public static function getTags(): array
     {
         return [
             self::TAG_MOST_POPULAR => 'Most popular',
@@ -50,7 +50,7 @@ class Plan extends BaseModel
     }
     public function getTagLabelAttribute()
     {
-        return self::getTagList()[$this->tag] ?? 'Null';
+        return self::getTags()[$this->tag] ?? 'Null';
     }
 
 

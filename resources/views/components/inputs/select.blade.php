@@ -5,6 +5,7 @@
     'selected' => null,
     'messages' => [],
     'placeholder' => null,
+    'disabled' => false,
 ])
 
 @if (!empty($label))
@@ -14,7 +15,7 @@
     class="input select select2 focus:outline-0 focus-within:outline-0 focus:ring-0 focus:border-border-active focus-within:border-border-active w-full"
     {{ $attributes->except(['class', 'name', 'label', 'options', 'selected', 'messages', 'placeholder']) }}>
     @if ($placeholder)
-        <option value="" disabled selected>{{ $placeholder }}</option>
+        <option value="" {{ $disabled ? 'disabled' : '' }} selected>{{ $placeholder }}</option>
     @endif
     @foreach ($options as $value => $text)
         @php

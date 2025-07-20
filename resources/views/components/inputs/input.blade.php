@@ -6,13 +6,14 @@
     'value' => null,
     'icon' => null,
     'messages' => [],
+    'disabled' => false,
 ])
 
 @if (!empty($label))
     <p class="label">{{ $label }}</p>
 @endif
 <label
-    class="input flex items-center gap-1 px-0 focus:outline-0 focus-within:outline-0 focus:ring-0 focus:border-border-active focus-within:border-border-active w-full"
+    class="input flex items-center gap-1 px-0 focus:outline-0 focus-within:outline-0 focus:ring-0 focus:border-border-active focus-within:border-border-active w-full {{ $disabled ? 'cursor-not-allowed outline outline-gray-200 dark:outline-gray-700' : '' }}"
     @if ($type === 'password' || $type === 'password_confirmation') x-data="{ showPassword: false }" @endif>
     @if ($icon)
         <i data-lucide="{{ $icon }}" class="h-[1em] opacity-50 ml-2 mr-1"></i>
@@ -25,7 +26,7 @@
             {{ $attributes->except(['class', 'type', 'name', 'value', 'placeholder', 'icon', 'label', 'messages']) }} />
     @else
         <input type="{{ $type }}" name="{{ $name }}" value="{{ old($name, $value) }}"
-            placeholder="{{ $placeholder ?? $label }}"
+            placeholder="{{ $placeholder ?? $label }}" {{ $disabled ? 'disabled' : '' }}
             class="flex-1 focus:outline-0 focus-within:outline-0 focus:ring-0 focus:border-border-active focus-within:border-border-active w-full"
             {{ $attributes->except(['class', 'type', 'name', 'value', 'placeholder', 'icon', 'label', 'messages']) }} />
     @endif

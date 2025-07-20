@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Backend\Admin\PackageManagement;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\PackageManagement\PlanRequest;
 use App\Http\Traits\AuditRelationTraits;
+use App\Models\Plan;
+use App\Services\Admin\PackageManagement\FeatureSevice;
 use App\Services\Admin\PackageManagement\PlanService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -27,10 +30,12 @@ class PlanController extends Controller implements HasMiddleware
     }
 
     protected PlanService $planService;
+    protected FeatureSevice $featureService;
 
-    public function __construct(planService $planService)
+    public function __construct(planService $planService, FeatureSevice $featureService)
     {
         $this->planService = $planService;
+        $this->featureService = $featureService;
     }
 
     public static function middleware(): array
@@ -113,25 +118,39 @@ class PlanController extends Controller implements HasMiddleware
      */
     public function create(): View
     {
-        //
-        return view('backend.admin.package_management.plans.create');
+        $data['features'] = $this->featureService->getFeatures()->take(3)->select(['id', 'name'])->get();
+        return view('backend.admin.package_management.plans.create' , $data);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    // public function store(Request $request)
+    // {
+    //     try {
+    //         // $validated = $request->validated();
+    //         //
+    //         session()->flash('success', "Service created successfully");
+    //     } catch (\Throwable $e) {
+    //         session()->flash('Service creation failed');
+    //         throw $e;
+    //     }
+    //     return $this->redirectIndex();
+    // }
+
+    public function store(PlanRequest $request)
     {
         try {
-            // $validated = $request->validated();
-            //
-            session()->flash('success', "Service created successfully");
+            $validated = $request->validated();
+            $this->planService->createPlan($validated);
+            session()->flash('success', "Plan created successfully");
         } catch (\Throwable $e) {
-            session()->flash('Service creation failed');
+            session()->flash('Plan creation failed');
             throw $e;
         }
         return $this->redirectIndex();
     }
+
 
     /**
      * Display the specified resource.
@@ -144,13 +163,15 @@ class PlanController extends Controller implements HasMiddleware
         return response()->json($data);
     }
 
-    // /**
-    //  * Show the form for editing the specified resource.
-    //  */
-    // public function edit(string $id): View
-    // {
-
-    // }
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id): View
+    {
+        $data['plan'] = $this->planService->getPlan($id);
+        $data['features'] = $this->featureService->getFeatures()->select(['id', 'name']);
+        return view('backend.admin.package_management.plans.edit', $data);
+    }
 
     // /**
     //  * Update the specified resource in storage.
@@ -168,20 +189,35 @@ class PlanController extends Controller implements HasMiddleware
     //     return $this->redirectIndex();
     // }
 
-    // /**
-    //  * Remove the specified resource from storage.
-    //  */
-    // public function destroy(string $id)
-    // {
-    //      try {
-    //         //
-    //         session()->flash('success', "Service deleted successfully");
-    //     } catch (\Throwable $e) {
-    //         session()->flash('Service delete failed');
-    //         throw $e;
-    //     }
-    //     return $this->redirectIndex();
-    // }
+    public function update(PlanRequest $request, $id)
+    {
+        try {
+            $validated = $request->validated();
+            $plan = $this->planService->getPlan($id);
+            $this->planService->updatePlan($validated, $plan);
+            session()->flash('success', 'Plan updated successfully!');
+        } catch (\Throwable $e) {
+            session()->flash('error', 'Plan update failed!');
+            throw $e;
+        }
+        return $this->redirectIndex();
+    }
+
+
+    /** 
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        try {
+            $this->planService->deletePlan($id);
+            session()->flash('success', "Service deleted successfully");
+        } catch (\Throwable $e) {
+            session()->flash('Service delete failed');
+            throw $e;
+        }
+        return $this->redirectIndex();
+    }
 
     // public function trash(Request $request)
     // {

@@ -18,6 +18,7 @@
     'dashed' => false,
     'shape' => '',
     'button' => false,
+    'isSubmit' => true,
 ])
 
 @php
@@ -93,7 +94,8 @@
 @if (!empty($permission))
     @if (Auth::user()->can($permission))
         @if ($button)
-            <button {{ $disabled ? 'disabled' : '' }} {{ $mergedAttributes }}>
+            <button {{ $disabled ? 'disabled' : '' }} {{ $mergedAttributes }}
+                type="{{ $isSubmit ? 'submit' : 'button' }}">
                 @if ($icon_position === 'left')
                     @if ($loading)
                         <span class="loading loading-spinner mr-1"></span>
@@ -133,7 +135,8 @@
     @endif
 @else
     @if ($button)
-        <button {{ $disabled ? 'disabled' : '' }} {{ $mergedAttributes }}>
+        <button {{ $disabled ? 'disabled' : '' }} {{ $mergedAttributes }}
+            type="{{ $isSubmit ? 'submit' : 'button' }}">
             @if ($icon_position === 'left')
                 @if ($loading)
                     <span class="loading loading-spinner mr-1"></span>
