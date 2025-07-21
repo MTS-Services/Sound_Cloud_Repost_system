@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class CreditService
 {
-    public function getCredits($orderBy = 'name', $order = 'asc')
+    public function getCredits($orderBy = 'sort_order', $order = 'asc')
     {
         return Credit::orderBy($orderBy, $order)->latest();
     }
