@@ -15,10 +15,10 @@
             <div class="dropdown dropdown-end">
                 <div tabindex="0" role="button" class="flex items-center space-x-2 avatar">
                     <div class="w-10 h-10 rounded-full">
-                        <img src="{{ auth()->user()->avatar }}" alt="{{ auth()->user()->name }}" />
+                        <img src="" alt="name" />
                     </div>
                     <div class="text-sm">
-                        <span class="font-semibold text-black">{{ auth()->user()->name }}</span>
+                        <span class="font-semibold text-black">name</span>
                         <div class="text-green-500 text-xs">● Online</div>
                     </div>
                 </div>
@@ -26,10 +26,10 @@
                     class="menu menu-sm dropdown-content bg-gray-50 rounded-box z-1 mt-3 w-52 shadow py-2">
                     <li>
                         <div class="flex items-center space-x-2 border-b border-gray-100 px-6 py-4 w-full">
-                            <img src="{{ auth()->user()->avatar }}" alt="{{ auth()->user()->name }}"
+                            <img src="" alt="name"
                                 class="w-8 h-8 rounded-full">
                             <div class="text-sm">
-                                <span class="font-semibold text-black">{{ auth()->user()->name }}</span>
+                                <span class="font-semibold text-black">name</span>
                                 <div class="text-green-500 text-xs">● Online</div>
                             </div>
                         </div>

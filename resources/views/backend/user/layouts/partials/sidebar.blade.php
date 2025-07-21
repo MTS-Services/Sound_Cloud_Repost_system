@@ -51,7 +51,7 @@
                  </a>
              </li>
              <li>
-                 <a href="{{ route('user.campains') }}"
+                 <a href="{{ route('cm.campaigns.index') }}"
                      class="@if ($page_slug == 'campains') active @endif sidebar-item flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700"
                      data-page="campaigns">
                      <i data-lucide="megaphone" class="w-5 h-5 mr-3"></i>
@@ -102,7 +102,7 @@
              <img src="{{ asset('frontend/user/user.jpg') }}" alt="Alex Rodriguez" class="w-8 h-8 rounded-full">
          </a>
          <div class="text-sm">
-             <span class="font-semibold text-black">{{ auth()->user()->name }}</span>
+             <span class="font-semibold text-black">{{ auth()->user()->name ?? ""}}</span>
              <div class="text-green-500 text-xs">● Online</div>
          </div>
      </div>

@@ -45,103 +45,110 @@
         <!-- Campaign Cards -->
         <div class="space-y-6">
             <!-- Summer Vibes Campaign -->
-            <div class="campaign-card bg-white rounded-lg shadow-sm border border-gray-200 p-6" data-status="active">
-                <div class="flex justify-center gap-5">
-                    <div class="w-48 h-32"> 
-                        <div class="w-full h-full rounded-lg overflow-hidden flex-shrink-0">
-                            <img src="{{ asset('frontend/user/image/music-notes.jpg') }}" alt="Summer Vibes Album Cover"
-                                class="w-full h-full object-cover bg-gradient-to-br from-yellow-400 via-red-500 to-pink-500">
+            @foreach ($campaigns as $campaign)
+                <div class="campaign-card bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+                    data-status="active">
+                    <div class="flex justify-center gap-5">
+                        <div class="w-48 h-32">
+                            <div class="w-full h-full rounded-lg overflow-hidden flex-shrink-0">
+                                <img src="{{ asset('frontend/user/image/music-notes.jpg') }}"
+                                    alt="Summer Vibes Album Cover"
+                                    class="w-full h-full object-cover bg-gradient-to-br from-yellow-400 via-red-500 to-pink-500">
+                            </div>
                         </div>
-                    </div>
-                    <div class="w-full">
-                        <div class="flex items-start justify-between mb-4">
-                            <div class="flex items-start gap-4">
-                                <div>
-                                    <div class="flex items-center gap-3 mb-2">
-                                        <h3 class="text-xl font-semibold text-gray-900">{{ __('Summer Vibes') }}</h3>
-                                        <span
-                                            class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">{{ __('Active') }}</span>
-                                    </div>
-                                    <div class="flex items-center gap-4 text-sm text-gray-500">
-                                        <div class="flex items-center gap-1">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                                </path>
-                                            </svg>
-                                            {{ __('Created 10/04/2025') }}
+                        <div class="w-full">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-start gap-4">
+                                    <div>
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <h3 class="text-xl font-semibold text-gray-900">{{ $campaign->title }}
+                                            </h3>
+                                            <span
+                                                class="badge {{ $campaign->status_color }} text-white text-xs font-medium px-2.5 py-0.5 rounded-full">{{ $campaign->status_label}}</span>
                                         </div>
-                                        <div class="flex items-center gap-1">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                            </svg>
-                                            {{ __('Expires 17/04/2025') }}
+                                        <div class="flex items-center gap-4 text-sm text-gray-500">
+                                            <div class="flex items-center gap-1">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                                    </path>
+                                                </svg>
+                                                {{ __('Created: ') }}{{ $campaign->start_date_formatted }}
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                </svg>
+                                                {{ __('Expires: ') }}{{ $campaign->end_date_formatted }}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-sm text-gray-600 mb-2">{{ __('Budget used: 14/20 credits') }}</p>
-                                <div class="w-32 bg-gray-200 rounded-full h-2">
-                                    <div class="bg-orange-500 h-2 rounded-full" style="width: 70%"></div>
+                                <div class="text-right">
+                                    <p class="text-sm text-gray-600 mb-2">{{ __('Budget used:')}}{{ $campaign->target_reposts }}/{{ $campaign->total_credits_budget }} {{ __('credits') }}</p>
+                                    <div class="w-32 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-orange-500 h-2 rounded-full" style="width: 70%"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Stats -->
-                        <div class="grid grid-cols-3 gap-6 mt-5">
-                            <div class="bg-white rounded-lg shadow-sm py-2 text-center">
-                                <div class="flex items-center justify-center mb-2">
-                                    <i data-lucide="refresh-ccw" class="w-5 h-5 text-pink-500"></i>
+                            <!-- Stats -->
+                            <div class="grid grid-cols-3 gap-6 mt-5">
+                                <div class="bg-white rounded-lg shadow-sm py-2 text-center">
+                                    <div class="flex items-center justify-center mb-2">
+                                        <i data-lucide="refresh-ccw" class="w-5 h-5 text-pink-500"></i>
+                                    </div>
+                                    <div class="text-2xl font-bold text-gray-900">24</div>
+                                    <div class="text-sm text-gray-500">{{ __('Reposts') }}</div>
                                 </div>
-                                <div class="text-2xl font-bold text-gray-900">24</div>
-                                <div class="text-sm text-gray-500">{{ __('Reposts') }}</div>
-                            </div>
-                            <div class="bg-white rounded-lg shadow-sm py-2 text-center">
-                                <div class="flex items-center justify-center mb-2">
-                                    <i data-lucide="eye" class="w-5 h-5 text-blue-500"></i>
+                                <div class="bg-white rounded-lg shadow-sm py-2 text-center">
+                                    <div class="flex items-center justify-center mb-2">
+                                        <i data-lucide="eye" class="w-5 h-5 text-blue-500"></i>
+                                    </div>
+                                    <div class="text-2xl font-bold text-gray-900">342</div>
+                                    <div class="text-sm text-gray-500">{{ __('Plays') }}</div>
                                 </div>
-                                <div class="text-2xl font-bold text-gray-900">342</div>
-                                <div class="text-sm text-gray-500">{{ __('Plays') }}</div>
-                            </div>
-                            <div class="bg-white rounded-lg shadow-sm py-2 text-center">
-                                <div class="flex items-center justify-center mb-2">
-                                    <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
-                                        </path>
-                                    </svg>
+                                <div class="bg-white rounded-lg shadow-sm py-2 text-center">
+                                    <div class="flex items-center justify-center mb-2">
+                                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div class="text-2xl font-bold text-gray-900">38</div>
+                                    <div class="text-sm text-gray-500">{{ __('Likes') }}</div>
                                 </div>
-                                <div class="text-2xl font-bold text-gray-900">38</div>
-                                <div class="text-sm text-gray-500">{{ __('Likes') }}</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="w-52 flex flex-col justify-end">
-                        <!-- Actions -->
-                        <div class="flex flex-col items-center gap-3">
-                            <a href="#"
-                                class="w-full bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm">
-                                <i data-lucide="chart-no-axes-column" class="w-4 h-4"></i>
-                                {{ __('View Details') }}
-                            </a>
-                            <a href="#"
-                                class="w-full text-gray-600 hover:text-gray-800 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors border border-gray-300 text-sm">
-                                <span class="">
-                                    <i data-lucide="plus"
-                                        class="w-5 h-5 inline-block border border-gray-300  text-center rounded-full p-1 tex-white"></i>
-                                </span>
-                                {{ __('Add Credits') }}
-                            </a>
+                        <div class="w-52 flex flex-col justify-end">
+                            <!-- Actions -->
+                            <div class="flex flex-col items-center gap-3">
+                                <a href="#"
+                                    class="w-full bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm">
+                                    <i data-lucide="chart-no-axes-column" class="w-4 h-4"></i>
+                                    {{ __('View Details') }}
+                                </a>
+                                <a href="#"
+                                    class="w-full text-gray-600 hover:text-gray-800 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors border border-gray-300 text-sm">
+                                    <span class="">
+                                        <i data-lucide="plus"
+                                            class="w-5 h-5 inline-block border border-gray-300  text-center rounded-full p-1 tex-white"></i>
+                                    </span>
+                                    {{ __('Add Credits') }}
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="campaign-card bg-white rounded-lg shadow-sm border border-gray-200 p-6" data-status="completed">
+            @endforeach
+            {{-- <div class="campaign-card bg-white rounded-lg shadow-sm border border-gray-200 p-6" data-status="completed">
                 <div class="flex justify-center gap-5">
                     <div class="w-48 h-32"> 
                         <div class="w-full h-full rounded-lg overflow-hidden flex-shrink-0">
@@ -233,7 +240,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
 

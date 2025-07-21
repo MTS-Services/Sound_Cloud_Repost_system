@@ -11,7 +11,7 @@
     {{-- Custom CSS --}}
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/custome.css') }}">
 
-    @vite(['resources/css/user-dashboard.css', 'resources/js/app.js'])
+    @vite(['resources/css/dashboard.css', 'resources/js/app.js'])
 </head>
 
 <body class="bg-gray-50 font-sans text-black">
