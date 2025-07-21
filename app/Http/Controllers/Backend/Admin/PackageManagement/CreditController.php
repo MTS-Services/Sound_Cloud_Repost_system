@@ -119,7 +119,7 @@ class CreditController extends Controller implements HasMiddleware
     {
         try {
             $validated = $request->validated();
-            $this->creditService->createCredit($validated);
+           $this->creditService->createCredit($validated);
             session()->flash('success', "Credit created successfully");
         } catch (\Throwable $e) {
             session()->flash('Credit creation failed');
@@ -185,11 +185,14 @@ class CreditController extends Controller implements HasMiddleware
         if ($request->ajax()) {
             $query = $this->creditService->getCredits()->onlyTrashed();
             return DataTables::eloquent($query)
+               ->editColumn('status', fn($credit) => "<span class='badge badge-soft {$credit->status_color}'>{$credit->status_label}</span>")
+                ->editColumn('deleted_by', fn($credit) => $this->deleter_name($credit))
+                ->editColumn('deleted_at', fn($credit) => $credit->deleted_at_formatted)
                 ->editColumn('action', function ($credit) {
                     $menuItems = $this->trashedMenuItems($credit);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'status', 'deleted_at', 'deleted_by'])
                 ->make(true);
         }
         return view('backend.admin.package_management.credit.trash');
