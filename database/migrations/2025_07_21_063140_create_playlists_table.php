@@ -61,7 +61,7 @@ return new class extends Migration
             $table->softDeletes();
             $this->addMorphedAuditColumns($table);
 
-             $table->foreign('user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
+             $table->foreign('user_urn')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 
