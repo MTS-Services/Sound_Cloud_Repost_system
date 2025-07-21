@@ -21,7 +21,8 @@ class DatabaseSeeder extends Seeder
             FeatureCategorySeeder::class,
             FeatureSeeder::class,
             PlanSeeder::class,
-            CampaignSeeder::class
+            CampaignSeeder::class,
+            PlaylistSeeder::class
         ]);
     }
 }
