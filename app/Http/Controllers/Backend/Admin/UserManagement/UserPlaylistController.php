@@ -62,7 +62,7 @@ class UserPlaylistController extends Controller implements HasMiddleware
             $query = $this->userPlaylistService->getUserPlaylists();
             return DataTables::eloquent($query)
                 ->editColumn('user_urn', function ($playlist) {
-                    return $playlist->user?->user_urn;
+                    return $playlist->user?->name;
                 })
                 ->editColumn('creater_id', fn($user) => $this->creater_name($user))
                 ->editColumn('created_at', fn($user) => $user->created_at_formatted)
