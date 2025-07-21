@@ -15,7 +15,7 @@ return new class extends Migration {
     {
         Schema::create('sound_cloud_profiles', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_urn');
             $table->string('soundcloud_url')->nullable();
             $table->text('description')->nullable();
             $table->string('country')->nullable();
@@ -27,7 +27,7 @@ return new class extends Migration {
             $table->softDeletes();
             $this->addMorphedAuditColumns($table);
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

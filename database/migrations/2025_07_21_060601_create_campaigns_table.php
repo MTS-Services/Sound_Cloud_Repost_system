@@ -1,0 +1,56 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use App\Http\Traits\AuditColumnsTrait;
+use App\Models\Campaign;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+return new class extends Migration
+{
+    use AuditColumnsTrait, SoftDeletes;
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('campaigns', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('sort_order')->default(0);
+            $table->unsignedBigInteger('user_urn')->index();
+            $table->unsignedBigInteger('music_id')->index();
+            $table->string('music_type');
+
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->unsignedBigInteger('target_reposts');
+            $table->unsignedBigInteger('completed_reposts')->default(0);
+            $table->decimal('credits_per_repost', 8, 2)->index();
+            $table->decimal('total_credits_budget', 10, 2);
+            $table->decimal('credits_spent', 10, 2)->default(0.00);
+            $table->unsignedBigInteger('min_followers_required')->index()->default(0);
+            $table->unsignedBigInteger('max_followers_limit')->nullable();
+
+            $table->tinyInteger('status')->index()->default(Campaign::STATUS_OPEN);
+            $table->timestamp('start_date')->index()->nullable();
+            $table->timestamp('end_date')->index()->nullable();
+            $table->boolean('auto_approve')->default(false);
+
+            $table->timestamps();
+            $table->softDeletes();
+            $this->addAdminAuditColumns($table);
+            
+            // Foreign key constraints
+            $table->foreign('user_urn')->references('urn')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('campaigns');
+    }
+};

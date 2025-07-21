@@ -10,7 +10,7 @@ class SoundcloudTrack extends BaseModel
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'user_urn',
         'soundcloud_track_id',
         'title',
         'description',
@@ -40,7 +40,7 @@ class SoundcloudTrack extends BaseModel
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_urn', 'urn');
     }
 
     public function getFormattedDurationAttribute(): string

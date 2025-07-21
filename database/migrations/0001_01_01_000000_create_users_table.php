@@ -29,6 +29,7 @@ return new class extends Migration {
             $table->text('token')->nullable();
             $table->string('refresh_token')->nullable();
             $table->bigInteger('expires_in')->nullable()->index();
+            $table->unsignedBigInteger('urn')->unique()->index();
 
             $table->timestamp('last_synced_at')->nullable()->index();
             $table->rememberToken();
