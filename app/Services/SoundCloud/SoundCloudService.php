@@ -37,7 +37,7 @@ class SoundCloudService
         try {
             $response = Http::withHeaders([
                 'Authorization' => 'OAuth ' . $user->token,
-            ])->get("{$this->baseUrl}/tracks", [
+            ])->get("{$this->baseUrl}/me/tracks", [
                 'limit' => min($limit, 200), // SoundCloud API limit for /tracks is typically 200
                 'offset' => $offset,
             ]);
