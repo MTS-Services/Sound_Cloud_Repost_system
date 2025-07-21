@@ -89,9 +89,9 @@
                     ],
                     [
                         'name' => 'User Playlists',
-                        'route' => 'um.playlist.index',
+                        'route' => route('um.playlist.index'),
                         'icon' => 'music',
-                        'active' => 'user_playlists',
+                        'active' => 'user-playlist',
                         'permission' => 'user-list',
                     ],
 

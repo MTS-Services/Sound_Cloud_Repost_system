@@ -1,7 +1,7 @@
 <x-admin::layout>
     <x-slot name="title">{{ __('User Playlist List') }}</x-slot>
     <x-slot name="breadcrumb">{{ __('User Playlist List') }}</x-slot>
-    <x-slot name="page_slug">user_playlist</x-slot>
+    <x-slot name="page_slug">user-playlist</x-slot>
 
     <section>
         <div class="glass-card rounded-2xl p-6 mb-6">
@@ -24,11 +24,10 @@
                     <tr>
                         <th>{{ __('SL') }}</th>
                         <th>{{ __('Title') }}</th>
-                        <th>{{ __('Genre') }}</th>
+                        <th>{{ __('User Urn') }}</th>
                         <th>{{ __('Tracks') }}</th>
                         <th>{{ __('Duration') }}</th>
                         <th>{{ __('Likes') }}</th>
-                        <th>{{ __('Created At') }}</th>
                         <th>{{ __('Action') }}</th>
                     </tr>
                 </thead>
@@ -47,11 +46,10 @@
             document.addEventListener('DOMContentLoaded', () => {
                 let table_columns = [{
                     ['title', true, true],
-                    ['genre', true, true],
+                    ['user_urn', true, true],
                     ['track_count', true, true],
                     ['duration', true, false],
                     ['likes_count', true, false],
-                    ['created_at', true, false],
                     ['action', false, false],
                 }];
 

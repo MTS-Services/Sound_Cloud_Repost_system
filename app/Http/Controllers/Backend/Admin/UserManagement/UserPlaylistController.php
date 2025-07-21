@@ -32,22 +32,22 @@ class UserPlaylistController extends Controller implements HasMiddleware
     {
         $this->userPlaylistService = $userPlaylistService;
     }
-    
+
     public static function middleware(): array
     {
-        
+
         return [
             'auth:admin', // Applies 'auth:admin' to all methods
 
             // Permission middlewares using the Middleware class
-            new Middleware('permission:permisison-list', only: ['index']),
-            new Middleware('permission:permisison-details', only: ['show']),
-            new Middleware('permission:permisison-create', only: ['create', 'store']),
-            new Middleware('permission:permisison-edit', only: ['edit', 'update']),
-            new Middleware('permission:permisison-delete', only: ['destroy']),
-            new Middleware('permission:permisison-trash', only: ['trash']),
-            new Middleware('permission:permisison-restore', only: ['restore']),
-            new Middleware('permission:permisison-permanent-delete', only: ['permanentDelete']),
+            new Middleware('permission:permission-list', only: ['index']),
+            new Middleware('permission:permission-details', only: ['show']),
+            new Middleware('permission:permission-create', only: ['create', 'store']),
+            new Middleware('permission:permission-edit', only: ['edit', 'update']),
+            new Middleware('permission:permission-delete', only: ['destroy']),
+            new Middleware('permission:permission-trash', only: ['trash']),
+            new Middleware('permission:permission-restore', only: ['restore']),
+            new Middleware('permission:permission-permanent-delete', only: ['permanentDelete']),
             //add more permissions if needed
         ];
     }
@@ -57,17 +57,20 @@ class UserPlaylistController extends Controller implements HasMiddleware
      */
     public function index(Request $request)
     {
+
         if ($request->ajax()) {
             $query = $this->userPlaylistService->getUserPlaylists();
             return DataTables::eloquent($query)
-               ->editColumn('user_urn', function ($playlist) {
-                   return $playlist->user?->user_urn;
-               })
+                ->editColumn('user_urn', function ($playlist) {
+                    return $playlist->user?->user_urn;
+                })
+                ->editColumn('creater_id', fn($user) => $this->creater_name($user))
+                ->editColumn('created_at', fn($user) => $user->created_at_formatted)
                 ->editColumn('action', function ($playlist) {
                     $menuItems = $this->menuItems($playlist);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns([ 'action', 'user_urn'])
+                ->rawColumns(['action', 'creater_id', 'created_at', 'user_urn'])
                 ->make(true);
         }
         return view('backend.admin.user-management.playlist.index');
@@ -84,14 +87,7 @@ class UserPlaylistController extends Controller implements HasMiddleware
                 'permissions' => ['permission-list', 'permission-delete', 'permission-status']
             ],
             [
-                'routeName' => '',
-                'params' => [encrypt($model->id)],
-                'label' => 'Edit',
-                'permissions' => ['permission-edit']
-            ],
-
-            [
-                'routeName' => '',
+                'routeName' => 'um.playlist.destroy',
                 'params' => [encrypt($model->id)],
                 'label' => 'Delete',
                 'delete' => true,
@@ -115,7 +111,7 @@ class UserPlaylistController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-         try {
+        try {
             // $validated = $request->validated();
             //
             session()->flash('success', "Service created successfully");
@@ -151,7 +147,7 @@ class UserPlaylistController extends Controller implements HasMiddleware
      */
     public function update(Request $request, string $id)
     {
-         try {
+        try {
             // $validated = $request->validated();
             //
             session()->flash('success', "Service updated successfully");
@@ -167,7 +163,7 @@ class UserPlaylistController extends Controller implements HasMiddleware
      */
     public function destroy(string $id)
     {
-         try {
+        try {
             //
             session()->flash('success', "Service deleted successfully");
         } catch (\Throwable $e) {
@@ -195,7 +191,7 @@ class UserPlaylistController extends Controller implements HasMiddleware
                 ->rawColumns(['deleted_by', 'deleted_at', 'action'])
                 ->make(true);
         }
-        return view('view blade file url...');
+        return view('backend.admin.user-management.playlist.trash');
     }
 
     protected function trashedMenuItems($model): array
@@ -218,7 +214,7 @@ class UserPlaylistController extends Controller implements HasMiddleware
         ];
     }
 
-     public function restore(string $id): RedirectResponse
+    public function restore(string $id): RedirectResponse
     {
         try {
             $this->userPlaylistService->restore($id);
