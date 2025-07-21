@@ -10,7 +10,7 @@ class SoundCloudProfile extends BaseModel
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'user_urn',
         'soundcloud_url',
         'description',
         'country',
@@ -35,6 +35,6 @@ class SoundCloudProfile extends BaseModel
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_urn', 'urn');
     }
 }

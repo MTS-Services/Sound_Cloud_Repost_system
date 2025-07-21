@@ -65,7 +65,7 @@ class SoundCloudController extends Controller
         } catch (\Exception $e) {
             Log::error('SoundCloud callback error', [
                 'error' => $e->getMessage(),
-                'user_id' => Auth::guard('web')->id(),
+                'user_urn' => Auth::guard('web')->id(),
             ]);
 
             return redirect()->route('login')
@@ -153,11 +153,12 @@ class SoundCloudController extends Controller
                         'refresh_token' => $soundCloudUser->refreshToken,
                         'expires_in' => $soundCloudUser->expiresIn,
                         'last_synced_at' => now(),
+                        'user_urn' => $soundCloudUser->user['urn']
                     ]
                 );
 
                 UserInformation::updateOrCreate(
-                    ['user_id' => $user->id],
+                    ['user_urn' => $user->urn],
                     [
                         'first_name' => $soundCloudUser->user['first_name'] ?? null,
                         'last_name' => $soundCloudUser->user['last_name'] ?? null,
@@ -237,7 +238,7 @@ class SoundCloudController extends Controller
 
                     // Create the user's subscription record
                     Subscription::create([
-                        'user_id' => $user->id,
+                        'user_urn' => $user->urn,
                         'product_id' => $product->id,
                     ]);
                 } else {
