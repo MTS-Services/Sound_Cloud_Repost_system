@@ -14,6 +14,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::create([
+            'urn' => 1,
             'name' => 'Test User 1',
             'soundcloud_id' => 1000000001,
             'status' => User::STATUS_ACTIVE,
@@ -21,6 +22,7 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
+            'urn' => 2,
             'name' => 'Test User 2',
             'soundcloud_id' => 1000000002,
             'status' => User::STATUS_ACTIVE,
@@ -28,6 +30,7 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
+            'urn' => 3,
             'name' => 'Test User 3',
             'soundcloud_id' => 1000000003,
             'status' => User::STATUS_INACTIVE, // Example of different status
@@ -35,6 +38,7 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
+            'urn' => 4,
             'name' => 'Test User 4',
             'soundcloud_id' => 1000000004,
             'status' => User::STATUS_ACTIVE,

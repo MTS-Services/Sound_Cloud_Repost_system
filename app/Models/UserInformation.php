@@ -9,7 +9,7 @@ class UserInformation extends BaseModel
     protected $fillable = [
         'sort_order',
 
-        'user_id',
+        'user_urn',
         'first_name',
         'last_name',
         'full_name',
@@ -56,7 +56,7 @@ class UserInformation extends BaseModel
     protected $casts = [
         'id' => 'integer',
         'sort_order' => 'integer',
-        'user_id' => 'integer',
+        'user_urn' => 'integer',
         'soundcloud_id' => 'integer',
         'soundcloud_created_at' => 'datetime',
         'soundcloud_last_modified' => 'datetime',
@@ -86,6 +86,6 @@ class UserInformation extends BaseModel
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_urn', 'urn');
     }
 }

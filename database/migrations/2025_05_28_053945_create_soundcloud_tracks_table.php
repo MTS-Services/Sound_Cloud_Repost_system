@@ -16,7 +16,7 @@ return new class extends Migration {
     {
         Schema::create('soundcloud_tracks', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_urn');
             $table->string('soundcloud_track_id');
             $table->string('title');
             $table->text('description')->nullable();
@@ -37,8 +37,8 @@ return new class extends Migration {
             $table->softDeletes();
             $this->addMorphedAuditColumns($table);
 
-            $table->unique(['user_id', 'soundcloud_track_id']);
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->unique(['user_urn', 'soundcloud_track_id']);
+            $table->foreign('user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

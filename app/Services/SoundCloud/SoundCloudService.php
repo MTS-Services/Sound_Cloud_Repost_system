@@ -47,14 +47,14 @@ class SoundCloudService
 
             // Log detailed error response body for debugging
             Log::error('SoundCloud API Error - Failed to fetch tracks', [
-                'user_id' => $user->id,
+                'user_urn' => $user->urn,
                 'status' => $response->status(),
                 'response_body' => $response->body(),
             ]);
             throw new \Exception('Failed to fetch tracks from SoundCloud API. Status: ' . $response->status());
         } catch (\Exception $e) {
             Log::error('SoundCloud API Error in getUserTracks', [
-                'user_id' => $user->id,
+                'user_urn' => $user->urn,
                 'error' => $e->getMessage(),
             ]);
             throw $e; // Re-throw the exception after logging
@@ -78,7 +78,7 @@ class SoundCloudService
                 // Determine if a new record was created or an existing one updated
                 $track = SoundcloudTrack::updateOrCreate(
                     [
-                        'user_id' => $user->id,
+                        'user_urn' => $user->urn,
                         'soundcloud_track_id' => $trackData['id'], // Unique identifier from SoundCloud
                     ],
                     [
@@ -146,11 +146,11 @@ class SoundCloudService
                 }
             }
 
-            Log::info("Successfully synced {$syncedCount} tracks for user {$user->id}.");
+            Log::info("Successfully synced {$syncedCount} tracks for user {$user->urn}.");
             return $syncedCount;
         } catch (\Exception $e) {
             Log::error('Error syncing user tracks in syncUserTracks', [
-                'user_id' => $user->id,
+                'user_urn' => $user->urn,
                 'error' => $e->getMessage(),
             ]);
             throw $e; // Re-throw the exception after logging
@@ -184,14 +184,14 @@ class SoundCloudService
             }
 
             Log::error('SoundCloud Profile API Error - Failed to fetch profile', [
-                'user_id' => $user->id,
+                'user_urn' => $user->urn,
                 'status' => $response->status(),
                 'response_body' => $response->body(),
             ]);
             throw new \Exception('Failed to fetch profile from SoundCloud API. Status: ' . $response->status());
         } catch (\Exception $e) {
             Log::error('SoundCloud Profile API Error in getUserProfile', [
-                'user_id' => $user->id,
+                'user_urn' => $user->urn,
                 'error' => $e->getMessage(),
             ]);
             throw $e;
@@ -220,7 +220,7 @@ class SoundCloudService
             ]);
 
             UserInformation::updateOrCreate(
-                ['user_id' => $user->id],
+                ['user_urn' => $user->urn],
                 [
                     'first_name' => $profile['first_name'] ?? null,
                     'last_name' => $profile['last_name'] ?? null,
@@ -256,7 +256,7 @@ class SoundCloudService
             return $user->fresh(); // Return the updated user instance
         } catch (\Exception $e) {
             Log::error('Error updating user profile in updateUserProfile', [
-                'user_id' => $user->id,
+                'user_urn' => $user->urn,
                 'error' => $e->getMessage(),
             ]);
             throw $e;
@@ -273,9 +273,9 @@ class SoundCloudService
     {
         if (!$user->refresh_token) {
             Log::warning('Attempted to refresh token without a refresh token available', [
-                'user_id' => $user->id,
+                'user_urn' => $user->urn,
             ]);
-            throw new \Exception('No refresh token available for user ' . $user->id);
+            throw new \Exception('No refresh token available for user ' . $user->urn);
         }
 
         try {
@@ -288,7 +288,7 @@ class SoundCloudService
 
             if (!$response->successful()) {
                 Log::error('Failed to refresh token from SoundCloud API', [
-                    'user_id' => $user->id,
+                    'user_urn' => $user->urn,
                     'status' => $response->status(),
                     'response_body' => $response->body(),
                 ]);
@@ -305,10 +305,10 @@ class SoundCloudService
                 'last_synced_at' => now(), // Also update this to mark a successful token refresh
             ]);
 
-            Log::info('SoundCloud access token refreshed successfully for user ' . $user->id);
+            Log::info('SoundCloud access token refreshed successfully for user ' . $user->urn);
         } catch (\Exception $e) {
             Log::error('Token refresh failed in refreshAccessToken', [
-                'user_id' => $user->id,
+                'user_urn' => $user->urn,
                 'error' => $e->getMessage(),
             ]);
             throw $e;

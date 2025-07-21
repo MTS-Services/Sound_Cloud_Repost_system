@@ -62,7 +62,7 @@ class SoundCloudController extends Controller
         } catch (\Exception $e) {
             Log::error('SoundCloud callback error', [
                 'error' => $e->getMessage(),
-                'user_id' => Auth::guard('web')->id(),
+                'user_urn' => Auth::guard('web')->id(),
             ]);
 
             return redirect()->route('login')
@@ -98,7 +98,7 @@ class SoundCloudController extends Controller
                 ->with('success', 'Successfully disconnected from SoundCloud.');
         } catch (\Exception $e) {
             Log::error('SoundCloud disconnect error', [
-                'user_id' => $user->id,
+                'user_urn' => $user->urn,
                 'error' => $e->getMessage(),
             ]);
 
@@ -124,7 +124,7 @@ class SoundCloudController extends Controller
                 ->with('success', "Successfully synced {$syncedCount} new tracks from SoundCloud.");
         } catch (\Exception $e) {
             Log::error('SoundCloud sync error', [
-                'user_id' => $user->id,
+                'user_urn' => $user->urn,
                 'error' => $e->getMessage(),
             ]);
 
@@ -152,7 +152,7 @@ class SoundCloudController extends Controller
                 );
 
                 UserInformation::updateOrCreate(
-                    ['user_id' => $user->id],
+                    ['user_urn' => $user->urn],
                     [
                         'first_name' => $soundCloudUser->user['first_name'] ?? null,
                         'last_name' => $soundCloudUser->user['last_name'] ?? null,
