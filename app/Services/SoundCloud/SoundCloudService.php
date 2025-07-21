@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\UserInformation;
 use App\Models\SoundcloudTrack; // Assuming you have this model for tracks
 use App\Models\Track;
+use App\Models\UserFollowers;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -328,4 +329,175 @@ class SoundCloudService
         if ($followers < 10000) return floor($followers / 100);
         return min(floor($followers / 100), 100);
     }
+
+
+    // USER FOLLOWERS
+ public function getUserFollowers(User $user): array
+    {
+        if (!$user->isSoundCloudConnected()) {
+            throw new \Exception('User is not connected to SoundCloud');
+        }
+
+        if ($user->needsTokenRefresh()) {
+            $this->refreshAccessToken($user);
+        }
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'OAuth ' . $user->token,
+            ])->get("{$this->baseUrl}/me/followings");
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            Log::error('SoundCloud User Followers API Error - Failed to fetch followers', [
+                'user_urn' => $user->urn,
+                'status' => $response->status(),
+                'response_body' => $response->body(),
+            ]);
+            throw new \Exception('Failed to fetch followers from SoundCloud API. Status: ' . $response->status());
+        } catch (\Exception $e) {
+            Log::error('SoundCloud User Followers API Error in getUserFollowers', [
+                'user_urn' => $user->urn,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
+     * Updates the user's main followers and UserInformation based on SoundCloud data.
+     *
+     * @param User $user The authenticated user model.
+     * @return User The updated user model.
+     */
+   public function syncUserFollowers(User $user): User
+{
+    try {
+        $followers = $this->getUserFollowers($user);
+
+        // Update User model fields
+        $user->update([
+            'nickname' => $followers['username'] ?? null,
+            'avatar' => $followers['avatar_url'] ?? null,
+            'last_synced_at' => now(), // Update general sync timestamp for the user
+            'soundcloud_followings_count' => $followers['followings_count'] ?? 0, // Add these here for User model
+            'soundcloud_followers_count' => $followers['followers_count'] ?? 0, // Add these here for User model
+            // Note: token, refresh_token, expires_in are updated in refreshAccessToken
+        ]);
+
+        UserInformation::updateOrCreate(
+            ['user_urn' => $user->urn],
+            [
+                'first_name' => $followers['first_name'] ?? null,
+                'last_name' => $followers['last_name'] ?? null,
+                'full_name' => $followers['full_name'] ?? null,
+                'username' => $followers['username'] ?? null,
+                'permalink' => $followers['permalink_url'] ?? null,
+                'avatar_urn' => $followers['avatar_url'] ?? null,
+                'soundcloud_id' => $followers['id'] ?? null,
+                'soundcloud_urn' => $followers['urn'] ?? null,
+                'soundcloud_kind' => $followers['kind'] ?? null,
+                'permalink_url' => $followers['url'] ?? null,
+                'uri' => $followers['uri'] ?? null,
+                'soundcloud_created_at' => $followers['created_at'] ?? null,
+                'soundcloud_last_modified' => $followers['last_modified'] ?? null,
+              
+                'country' => $followers['country'] ?? null,
+                'city' => $followers['city'] ?? null,
+                'track_count' => $followers['track_count'] ?? 0,
+                'followers_count' => $followers['followers_count'] ?? 0,
+                'following_count' => $followers['followings_count'] ?? 0,
+                'plan' => $followers['plan'] ?? 'Free',
+                'online' => $followers['online'] ?? false,
+                'comments_count' => $followers['comments_count'] ?? 0,
+                'like_count' => $followers['likes_count'] ?? 0,
+                'playlist_count' => $followers['playlist_count'] ?? 0,
+                'private_playlist_count' => $followers['private_playlists_count'] ?? 0,
+                'private_tracks_count' => $followers['private_tracks_count'] ?? 0,
+                'primary_email_confirmed' => $followers['primary_email_confirmed'] ?? false,
+                'local' => $followers['locale'] ?? null,
+                'upload_seconds_left' => $followers['upload_seconds_left'] ?? null,
+            ]
+        );
+
+        return $user->fresh(); // Return the updated user instance
+    } catch (\Exception $e) {
+        Log::error('Error updating user followers in updateUserFollowers', [
+            'user_urn' => $user->urn,
+            'error' => $e->getMessage(),
+        ]);
+        throw $e;
+    }
+}
+
+    /**
+     * Refreshes the user's SoundCloud access token using their refresh token.
+     *
+     * @param User $user The user model whose token needs refreshing.
+     * @throws \Exception If no refresh token is available or token refresh fails.
+     */
+    protected function refreshAccessUserFollowers(User $user): void
+    {
+        if (!$user->refresh_token) {
+            Log::warning('Attempted to refresh token without a refresh token available', [
+                'user_urn' => $user->urn,
+            ]);
+            throw new \Exception('No refresh token available for user ' . $user->urn);
+        }
+
+        try {
+            $response = Http::asForm()->post("{$this->baseUrl}//followers", [
+                'grant_type' => 'refresh_token',
+                'client_id' => config('services.soundcloud.client_id'),
+                'client_secret' => config('services.soundcloud.client_secret'),
+                'refresh_token' => $user->refresh_token,
+            ]);
+
+            if (!$response->successful()) {
+                Log::error('Failed to refresh token from SoundCloud API', [
+                    'user_urn' => $user->urn,
+                    'status' => $response->status(),
+                    'response_body' => $response->body(),
+                ]);
+                throw new \Exception('Failed to refresh token: ' . $response->body());
+            }
+
+            $data = $response->json();
+
+            // Update the user's token information
+            $user->update([
+                'token' => $data['access_token'],
+                'refresh_token' => $data['refresh_token'] ?? $user->refresh_token, // Refresh token might not change
+                'expires_in' => $data['expires_in'],
+                'last_synced_at' => now(), // Also update this to mark a successful token refresh
+            ]);
+
+            Log::info('SoundCloud access token refreshed successfully for user ' . $user->urn);
+        } catch (\Exception $e) {
+            Log::error('Token refresh failed in refreshAccessToken', [
+                'user_urn' => $user->urn,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
+     * Calculates credits based on followers count.
+     * This logic seems independent of SoundCloud API calls.
+     *
+     * @param int $followers The number of followers.
+     * @return int The calculated credits.
+     */
+    public function calculateCreditsUserFollowers(int $followers): int
+    {
+        if ($followers < 100) return 1;
+        if ($followers < 1000) return floor($followers / 100);
+        if ($followers < 10000) return floor($followers / 100);
+        return min(floor($followers / 100), 100);
+    }
+
+
 }
