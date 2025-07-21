@@ -21,7 +21,6 @@ class PlanRequest extends FormRequest
      */
     public function rules(): array
     {
-        dd($this->all());
         return [
             //
         ] + ($this->isMethod('POST') ? $this->store() : $this->update());

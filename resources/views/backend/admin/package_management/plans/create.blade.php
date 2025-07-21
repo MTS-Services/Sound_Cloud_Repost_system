@@ -53,28 +53,37 @@
                     <div class="space-y-2 sm:col-span-2" id="featureWrapper">
                         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 items-center mt-3 feature-group">
                             <div class="space-y-2">
-                                <x-inputs.select name="features[][feature]" label="{{ __('Features') }}" icon="shield"
+                                {{-- <label for="feature" class="label">{{ __('Features') }}</label>
+                                <select name="features[][feature]"
+                                    class="input select select2 focus:outline-0 focus-within:outline-0 focus:ring-0 focus:border-border-active focus-within:border-border-active w-full"
+                                    data-id="featureSelect">
+                                    <option value="" selected>Select fearutes</option>
+                                    @foreach ($features as $feature)
+                                        <option value="{{ $feature->id }}" data-type="{{ $feature->type }}">
+                                            {{ $feature->name }}</option>
+                                    @endforeach
+                                </select> --}}
+                                {{-- <x-inputs.select name="features[][feature]" label="{{ __('Features') }}" icon="shield"
                                     data-id="featureSelect" placeholder="{{ __('Select a Feature') }}"
-                                    :options="$features->pluck('name', 'id')->toArray()" :selected="old('feature')" :messages="$errors->get('tag')" />
+                                    :options="$features" attribute="type" :selected="old('feature')" :messages="$errors->get('tag')" /> --}}
                             </div>
-                            <div class="flex items-center gap-3 justify-between">
-                                @if ($features->first()->type === App\Models\Feature::TYPE_STRING)
-                                    <div class="space-y-2 w-full value-wrapper">
-                                        <x-inputs.input name="values[][value]" label="{{ __('Value') }}"
-                                            class="w-96" disabled placeholder="Enter value"
-                                            value="{{ old('value') }}" :messages="$errors->get('value')" />
-                                    </div>
-                                @else
-                                    <div class="space-y-2 w-full flex items-center gap-2 mt-8 value-wrapper">
-                                        <input name="values[][value]" type="checkbox" value="1"
-                                            class="!checkbox !checkbox-sm bg-transparent checkbox-accent my-5">
-                                        <label for="values[][value]"
-                                            class="label mb-2">{{ __('Please check the checkbox') }}</label>
-                                    </div>
-                                @endif
+                            {{-- <div class="flex items-center gap-3 justify-between">
+                                <div class="space-y-2 w-full value-wrapper string-input-wrapper"  style="display: none">
+                                    <x-inputs.input name="string[][value]" label="{{ __('Value') }}" class="w-96"
+                                        disabled placeholder="Enter value" value="{{ old('value') }}"
+                                        :messages="$errors->get('value')" />
+                                </div>
+                                <div class="space-y-2 w-full flex items-center gap-2 mt-8 value-wrapper boolean-input-wrapper" style="display: none">
+                                    <input type="checkbox" name="boolean[][value]" class="hidden" value="0">
+                                    <input name="boolean[][value]" type="checkbox" value="1"
+                                        class="!checkbox !checkbox-sm bg-transparent checkbox-accent my-5">
+                                    <label 
+                                        class="label mb-2">{{ __('Please check the checkbox') }}</label>
+                                </div>
                                 <x-button :button="true" :isSubmit="false" class="add-btn mt-6" data-id="addNewBtn"
                                     icon="">{{ __('Add new') }}</x-button>
-                            </div>
+                            </div> --}}
+
                         </div>
                     </div>
 
@@ -90,10 +99,94 @@
     </section>
 
     @push('js')
-        <script>
+        {{-- Final script --}}
+        {{-- <script>
             document.addEventListener('DOMContentLoaded', () => {
                 function updateFieldState(group) {
                     const select = group.find('[data-id="featureSelect"]');
+                    const featureType = select.find(':selected').data(
+                        'type'); // Retrieve feature type from select option
+
+                    // Hide both input fields initially
+                    group.find('.string-input-wrapper').hide();
+                    group.find('.boolean-input-wrapper').hide();
+
+                    // Show the appropriate input field based on feature type
+                    if (featureType == '0') {
+                        group.find('.string-input-wrapper').show();
+                    } else if (featureType =='1') {
+                        group.find('.boolean-input-wrapper').show();
+                    }
+
+                    // Enable/disable input based on feature selection
+                    const valueInput = group.find('input');
+                    if (select.val()) {
+                        valueInput.prop('disabled', false);
+                    } else {
+                        valueInput.prop('disabled', true).val(''); // Reset input value
+                        if (valueInput.attr('type') === 'checkbox') {
+                            valueInput.prop('checked', false); // Reset checkbox
+                        }
+                    }
+
+                    // Enable "Add New" button only if a feature is selected and a value is provided
+                    const button = group.find('[data-id="addNewBtn"]');
+                    if (select.val() && (featureType == '0' && group.find('.string-input-wrapper input').val()) ||
+                        (featureType == '1' && valueInput.prop('checked'))) {
+                        button.prop('disabled', false);
+                    } else {
+                        button.prop('disabled', true);
+                    }
+                }
+
+                // Initial state for all feature groups
+                $('.feature-group').each(function() {
+                    updateFieldState($(this));
+                });
+
+                // On change of select or input field (to update the UI state)
+                $(document).on('change input', 'select, input', function() {
+                    const group = $(this).closest('.feature-group');
+                    updateFieldState(group);
+                });
+
+                // Add a new feature group (cloning)
+                $(document).on('click', '.add-btn', function() {
+                    const parentGroup = $(this).closest('.feature-group');
+                    const newGroup = parentGroup.clone();
+
+                    // Reset the cloned group state
+                    newGroup.find('select').val('');
+                    newGroup.find('input').val('').prop('disabled', true).prop('checked', false);
+                    newGroup.find('.string-input-wrapper').hide();
+                    newGroup.find('.boolean-input-wrapper').hide();
+                    newGroup.find('[data-id="addNewBtn"]')
+                        .removeClass('remove-btn btn-secondary')
+                        .addClass('add-btn btn-primary')
+                        .prop('disabled', true)
+                        .text('Add new');
+
+                    $('#featureWrapper').append(newGroup);
+                    updateFieldState(newGroup);
+                });
+
+                // Remove a feature group (removing)
+                $(document).on('click', '.remove-btn', function() {
+                    $(this).closest('.feature-group').remove();
+                });
+            });
+        </script> --}}
+
+
+
+
+
+        {{-- <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                function updateFieldState(group) {
+                    const select = group.find('[data-id="featureSelect"]');
+                    const featureType = select.find(':selected').data(
+                        'type');
                     const valueInput = group.find('input');
                     const button = group.find('[data-id="addNewBtn"]');
 
@@ -111,6 +204,16 @@
                         button.prop('disabled', false);
                     } else {
                         button.prop('disabled', true);
+                    }
+                    // Hide both input fields initially
+                    group.find('.string-input-wrapper').hide();
+                    group.find('.boolean-input-wrapper').hide();
+
+                    // Show the appropriate input field based on feature type
+                    if (featureType == '0') {
+                        group.find('.string-input-wrapper').show();
+                    } else if (featureType =='1') {
+                        group.find('.boolean-input-wrapper').show();
                     }
                 }
 
@@ -178,7 +281,8 @@
                     refreshAllFeatureOptions();
                 });
             });
-        </script>
+        </script> --}}
+
 
 
         {{-- <script>

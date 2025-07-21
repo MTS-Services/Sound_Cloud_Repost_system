@@ -51,7 +51,12 @@
                             <x-inputs.textarea name="notes" label="{{ __('Note') }}" placeholder="Enter note"
                                 value="{{ $plan->notes }}" :messages="$errors->get('notes')" />
                         </div>
-
+                        <div class="space-y-2 w-full flex items-center gap-2 mt-8 value-wrapper boolean-input-wrapper">
+                            <input type="checkbox" name="boolean[][value]" class="hidden" value="0">
+                            <input name="boolean[][value]" type="checkbox" value="1"
+                                class="!checkbox !checkbox-sm bg-transparent checkbox-accent my-5">
+                            <label class="label mb-2">{{ __('Please check the checkbox') }}</label>
+                        </div>
                     </div>
 
                     <div class="flex justify-end mt-5">
