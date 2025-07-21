@@ -120,6 +120,16 @@
                         'permission' => 'credit-list',
                     ],
                 ]" />
+            <x-admin.navlink type="dropdown" icon="shopping-cart" name="Campaign Management" :page_slug="$active"
+                :items="[
+                    [
+                        'name' => 'Campaigns',
+                        'route' => route('cm.campaign.index'),
+                        'icon' => 'megaphone',
+                        'active' => 'campaign',
+                        'permission' => 'campaign-list',
+                    ],
+                ]" />
         </nav>
     </div>
 </aside>
