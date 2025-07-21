@@ -56,7 +56,7 @@ class SoundCloudController extends Controller
             $this->soundCloudService->updateUserPlaylists($user);
 
             // Sync user tracks
-            // $this->soundCloudService->syncUserTracks($user);
+            $this->soundCloudService->syncUserTracks($user);
 
             // $this->soundCloudService->updateUserProfile($user);
 
