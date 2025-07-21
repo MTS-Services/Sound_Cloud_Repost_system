@@ -5,6 +5,7 @@ namespace App\Services\SoundCloud;
 use App\Models\User;
 use App\Models\UserInformation;
 use App\Models\SoundcloudTrack; // Assuming you have this model for tracks
+use App\Models\Track;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -36,7 +37,7 @@ class SoundCloudService
         try {
             $response = Http::withHeaders([
                 'Authorization' => 'OAuth ' . $user->token,
-            ])->get("{$this->baseUrl}/tracks", [
+            ])->get("{$this->baseUrl}/me/tracks", [
                 'limit' => min($limit, 200), // SoundCloud API limit for /tracks is typically 200
                 'offset' => $offset,
             ]);
@@ -75,21 +76,19 @@ class SoundCloudService
             $syncedCount = 0;
 
             foreach ($tracks as $trackData) {
-                // Determine if a new record was created or an existing one updated
-                $track = SoundcloudTrack::updateOrCreate(
+                $track = Track::updateOrCreate(
                     [
-                        'user_urn' => $user->urn,
-                        'soundcloud_track_id' => $trackData['id'], // Unique identifier from SoundCloud
+                        'user_id' => $user->id,
+                        'soundcloud_track_id' => $trackData['id'],
                     ],
                     [
-                        // Map all relevant fields from the SoundCloud API response to your model's fillable fields
                         'kind' => $trackData['kind'] ?? null,
                         'urn' => $trackData['urn'] ?? null,
                         'duration' => $trackData['duration'] ?? 0,
                         'commentable' => $trackData['commentable'] ?? false,
                         'comment_count' => $trackData['comment_count'] ?? 0,
                         'sharing' => $trackData['sharing'] ?? null,
-                        'tag_list' => $trackData['tag_list'] ?? '', // Ensure empty string if null
+                        'tag_list' => $trackData['tag_list'] ?? '',
                         'streamable' => $trackData['streamable'] ?? false,
                         'embeddable_by' => $trackData['embeddable_by'] ?? null,
                         'purchase_url' => $trackData['purchase_url'] ?? null,
