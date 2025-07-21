@@ -50,11 +50,12 @@ class Playlist extends BaseModel
         'tracks_uri',
         'secret_token',
         'secret_uri',
+
         'creater_id',
-        'creater_type',
         'updater_id',
-        'updater_type',
         'deleter_id',
+        'creater_type',
+        'updater_type',
         'deleter_type',
     ];
 
