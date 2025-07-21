@@ -4,6 +4,8 @@ use App\Http\Controllers\Backend\User\AnalyticsController;
 use App\Http\Controllers\Backend\User\CampaignsController;
 use App\Http\Controllers\Backend\User\RepostFeedController;
 use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
+
+Route::post('/soundcloud/playlists', [SoundCloudController::class, 'storePlaylists'])->name('soundcloud.playlists.store');
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 
