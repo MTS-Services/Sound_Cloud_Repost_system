@@ -43,6 +43,14 @@
                  </a>
              </li>
              <li>
+                 <a href="{{ route('user.promote') }}"
+                     class="@if ($page_slug == 'promote') active @endif sidebar-item flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700"
+                     data-page="promote">
+                     <i data-lucide="radio-tower" class="w-5 h-5 mr-3"></i>
+                     <span>{{ __('Promote') }}</span>
+                 </a>
+             </li>
+             <li>
                  <a href="{{ route('user.repost-feed') }}"
                      class="@if ($page_slug == 'repost-feed') active @endif sidebar-item flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700"
                      data-page="repost-feed">

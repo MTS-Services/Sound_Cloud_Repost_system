@@ -18,6 +18,8 @@ class UserSeeder extends Seeder
             'name' => 'Test User 1',
             'soundcloud_id' => 1000000001,
             'status' => User::STATUS_ACTIVE,
+            'email' => 'user@dev.com',
+            'password' => bcrypt('user@dev.com'),
             'last_synced_at' => now(),
         ]);
 

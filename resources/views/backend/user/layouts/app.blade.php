@@ -19,7 +19,7 @@
     @include('backend.user.layouts.partials.sidebar')
 
     <!-- Main Content -->
-    <div class="lg:ml-64 min-h-screen">
+    <div class="lg:ml-64 min-h-screen " x-data>
         {{-- Header --}}
         @include('backend.user.layouts.partials.header')
 
