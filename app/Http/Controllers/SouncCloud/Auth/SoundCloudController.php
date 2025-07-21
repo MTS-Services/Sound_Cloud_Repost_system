@@ -101,7 +101,7 @@ class SoundCloudController extends Controller
                 ->with('success', 'Successfully disconnected from SoundCloud.');
         } catch (\Exception $e) {
             Log::error('SoundCloud disconnect error', [
-                'user_urn' => $user->urn,
+                'user_id' => $user->id,
                 'error' => $e->getMessage(),
             ]);
 
@@ -127,7 +127,7 @@ class SoundCloudController extends Controller
                 ->with('success', "Successfully synced {$syncedCount} new tracks from SoundCloud.");
         } catch (\Exception $e) {
             Log::error('SoundCloud sync error', [
-                'user_urn' => $user->urn,
+                'user_id' => $user->id,
                 'error' => $e->getMessage(),
             ]);
 
@@ -153,6 +153,7 @@ class SoundCloudController extends Controller
                         'refresh_token' => $soundCloudUser->refreshToken,
                         'expires_in' => $soundCloudUser->expiresIn,
                         'last_synced_at' => now(),
+                        'user_urn' => $soundCloudUser->user['urn']
                     ]
                 );
 
