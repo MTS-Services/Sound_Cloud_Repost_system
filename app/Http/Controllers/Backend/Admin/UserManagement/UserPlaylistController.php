@@ -12,18 +12,18 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Yajra\DataTables\Facades\DataTables;
 
-class UserPlaylist extends Controller implements HasMiddleware
+class UserPlaylistController extends Controller implements HasMiddleware
 {
     use AuditRelationTraits;
 
     protected function redirectIndex(): RedirectResponse
     {
-        return redirect()->route('index route');
+        return redirect()->route('um.playlist.index');
     }
 
     protected function redirectTrashed(): RedirectResponse
     {
-        return redirect()->route('trash route');
+        return redirect()->route('um.playlist.trash');
     }
 
     protected UserPlaylistService $userPlaylistService;
@@ -35,6 +35,7 @@ class UserPlaylist extends Controller implements HasMiddleware
     
     public static function middleware(): array
     {
+        
         return [
             'auth:admin', // Applies 'auth:admin' to all methods
 
