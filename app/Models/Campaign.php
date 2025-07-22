@@ -23,7 +23,11 @@ class Campaign extends BaseModel
         'status',
         'start_date',
         'end_date',
-        'auto_approve'
+        'auto_approve',
+
+        'created_by',
+        'updated_by',
+        'deleted_by',
     ];
 
     // Relations
@@ -87,7 +91,7 @@ class Campaign extends BaseModel
     public static function getStatusList(): array
     {
         return [
-            self::STATUS_OPEN => 'Open',
+            self::STATUS_OPEN => 'Active',
             self::STATUS_PAUSED => 'Paused',
             self::STATUS_COMPLETED => 'Completed',
             self::STATUS_CANCELLED => 'Cancelled',
@@ -131,5 +135,10 @@ class Campaign extends BaseModel
     public function getEndDateFormattedAttribute()
     {
         return timeFormat($this->end_date);
+    }
+    // active_completed scope 
+    public function scopeActive_completed()
+    {
+        return $this->where('status', '!=', self::STATUS_CANCELLED, )->where('status', '!=', self::STATUS_PAUSED, );
     }
 }

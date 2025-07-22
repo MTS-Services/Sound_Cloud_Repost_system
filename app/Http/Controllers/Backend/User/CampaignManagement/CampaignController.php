@@ -34,7 +34,7 @@ class CampaignController extends Controller
      */
     public function index(Request $request)
     {
-        $data['campaigns'] = $this->campaignService->getCampaigns()->get();
+        $data['campaigns'] = $this->campaignService->getCampaigns()->active_completed()->get();
         $data['tracks'] = $this->trackService->getTracks()->get();
         return view('backend.user.campaign_management.campaigns.campaigns', $data);
     }
@@ -42,10 +42,10 @@ class CampaignController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): View
+    public function create( Request $request, string $track_id): View
     {
-        //
-        return view('backend.user.campaign_management.campaigns.create');
+        $data['track'] = $this->trackService->getTrack($track_id);
+        return view('backend.user.campaign_management.campaigns.create', $data);
     }
 
     /**

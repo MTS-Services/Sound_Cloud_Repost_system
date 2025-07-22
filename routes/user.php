@@ -38,5 +38,7 @@ Route::group(['as' => 'user.'], function () {
 // Campaign Management
 Route::group(['as' => 'cm.', 'prefix' => 'Campaign-management'], function () {
     // Campaign Routes
-    Route::resource('campaigns', CampaignController::class);
+    Route::get('/campaigns', [CampaignController::class, 'index'])->name('campaigns.index');
+    Route::get('/campaigns/create/{track_id}', [CampaignController::class, 'create'])->name('campaigns.create');
+    Route::post('/campaigns', [CampaignController::class, 'store'])->name('campaigns.store');
 });

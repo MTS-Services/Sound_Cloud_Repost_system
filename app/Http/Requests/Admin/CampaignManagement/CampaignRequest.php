@@ -23,6 +23,8 @@ class CampaignRequest extends FormRequest
     {
         $data = $this->all();
         return [
+            'music_id'               => ['nullable', 'integer'],
+            'music_type'               => ['nullable', 'string'],
             'title'                  => ['required', 'string', 'max:255'],
             'description'            => ['nullable', 'string'],
             'target_reposts'         => ['required', 'integer',],

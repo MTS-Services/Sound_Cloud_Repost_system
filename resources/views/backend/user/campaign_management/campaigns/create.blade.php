@@ -20,6 +20,9 @@
                 <form action="{{ route('cm.campaigns.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                        {{-- hidden fields id --}}
+                        <input type="hidden" name="music_id" value="{{ $track->id }}">
+                        <input type="hidden" name="music_type" value="Track">
                         <div class="space-y-2">
                             <x-inputs.input name="title" label="Title" placeholder="Enter Campaign Title"
                                 value="{{ old('title') }}" :messages="$errors->get('title')" />
@@ -44,7 +47,7 @@
                         </div>
 
                         <div class="space-y-2">
-                            <x-inputs.input name="start_date" label="Start Date" value="{{ old('start_date') }}"
+                            <x-inputs.input type="date" name="start_date" label="Start Date" value="{{ old('start_date') }}"
                                 :messages="$errors->get('start_date')" />
                         </div>
 
@@ -66,36 +69,6 @@
                         <x-button type="accent" :button="true" icon="save">{{ __('Create') }}</x-button>
                     </div>
                 </form>
-
-                {{-- <form action="{{ route('cm.campaign.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                        <div class="space-y-2">
-                            <x-inputs.input name="title" label="{{ __('Title') }}" placeholder="Enter Campaign Title"
-                                value="{{ old('title') }}" :messages="$errors->get('title')" />
-                        </div>
-
-                        <div class="space-y-2">
-                            <x-inputs.input name="target_reposts" label="{{ __('Target Repost') }}"
-                                placeholder="Enter Target Repost" value="{{ old('target_reposts') }}"
-                                :messages="$errors->get('target_reposts')" />
-                        </div>
-
-                        <div class="space-y-2">
-                            <x-inputs.input name="compleated_reposts" label="{{ __('Compleated Repost') }}"
-                                placeholder="Enter Compleated Repost" value="{{ old('compleated_reposts') }}"
-                                :messages="$errors->get('compleated_reposts')" />
-                        </div>
-                        <div class="space-y-2 sm:col-span-2">
-                            <x-inputs.textarea name="description" label="{{ __('Description') }}"
-                                placeholder="Enter Description" value="{{ old('description') }}" :messages="$errors->get('description')" />
-                        </div>
-                    </div>
-
-                    <div class="flex justify-end mt-5">
-                        <x-button type="accent" :button="true" icon="save">{{ __('Create') }}</x-button>
-                    </div>
-                </form> --}}
             </div>
 
             {{-- documentation will be loded here and add md:col-span-2 class --}}

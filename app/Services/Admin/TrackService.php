@@ -17,4 +17,9 @@ class TrackService
     {
         return Track::orderBy($orderBy, $order)->latest();
     }
+    public function getTrack(string $encryptedId)
+    {
+        $track = Track::where('id', $encryptedId)->first();
+        return $track;
+    }
 }
