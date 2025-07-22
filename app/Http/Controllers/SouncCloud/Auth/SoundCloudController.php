@@ -55,7 +55,7 @@ class SoundCloudController extends Controller
             // Find or create user
             $user = $this->findOrCreateUser($soundCloudUser,);
 
-            SyncUserJob::dispatch($user, $soundCloudUser, $this->soundCloudService);
+            SyncUserJob::dispatch($user, $soundCloudUser);
 
             // $this->syncUser($user, $soundCloudUser);
 
@@ -117,7 +117,7 @@ class SoundCloudController extends Controller
     //         DB::transaction(function () use ($user, $soundCloudUser) {
     //             $this->soundCloudService->syncUserTracks($user);
     //             $this->soundCloudService->syncUserProductsAndSubscriptions($user, $soundCloudUser);
-    //             $this->soundCloudService->updateUserPlaylists($user);
+    //             $this->soundCloudService->syncUserPlaylists($user);
     //             $this->soundCloudService->syncUserInformation($user, $soundCloudUser);
     //         });
     //     } catch (Throwable $e) {
