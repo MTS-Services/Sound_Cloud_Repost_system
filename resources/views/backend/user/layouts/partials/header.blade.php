@@ -7,14 +7,14 @@
                     <i data-lucide="search" class="w-5 h-5 text-text-light-muted dark:text-text-dark-muted"></i>
                 </span>
                 <input type="search" placeholder="Search..."
-                    class="w-full pl-12 pr-4 py-3 rounded-lg bg-bg-light-primary dark:bg-bg-dark-tertiary border border-bg-light-muted dark:border-bg-dark-muted
-                   focus:border-[#EF4444] dark:focus:border-[#EF4444]
+                    class="w-full pl-12 pr-4 py-3 rounded-lg bg-bg-light-primary dark:bg-bg-dark-tertiary border-2 border-bg-light-muted dark:border-bg-dark-muted
+                   focus:border-[#EF4444]! dark:focus:border-[#EF4444]!
                    text-text-light-primary dark:text-text-dark-secondary
                    placeholder:text-text-light-muted dark:placeholder:text-text-dark-muted shadow-sm outline-none transition" />
             </div>
         </form>
 
-        
+
 
         <div class="flex items-center space-x-4 ml-8">
             <div class="text-sm text-text-light-primary dark:text-text-dark-secondary">
