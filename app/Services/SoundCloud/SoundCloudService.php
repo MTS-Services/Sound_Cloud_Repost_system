@@ -79,7 +79,7 @@ class SoundCloudService
             foreach ($tracks as $trackData) {
                 $track = Track::updateOrCreate(
                     [
-                        'user_id' => $user->id,
+                        'user_urn' => $user->urn,
                         'soundcloud_track_id' => $trackData['id'],
                     ],
                     [

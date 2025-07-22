@@ -73,7 +73,7 @@ class User extends AuthBaseModel
 
     public function tracks(): HasMany
     {
-        return $this->hasMany(Track::class);
+        return $this->hasMany(Track::class, 'user_urn', 'urn');
     }
 
     public function subscriptions(): HasMany
