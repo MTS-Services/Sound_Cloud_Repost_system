@@ -84,7 +84,7 @@ class Campaign extends BaseModel
     public const STATUS_COMPLETED = 3;
     public const STATUS_CANCELLED = 4;
 
-    public static function getStatuses(): array
+    public static function getStatusList(): array
     {
         return [
             self::STATUS_OPEN => 'Open',
@@ -96,7 +96,7 @@ class Campaign extends BaseModel
 
     public function getStatusLabelAttribute()
     {
-        return self::getStatuses()[$this->status];
+        return self::getStatusList()[$this->status];
     }
     // public function getStatusBtnLabelAttribute()
     // {

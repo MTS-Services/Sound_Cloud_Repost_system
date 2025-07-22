@@ -91,7 +91,7 @@
 @endphp
 
 @if (!empty($permission))
-    @if (Auth::user()->can($permission))
+    {{-- @if (Auth::user()->can($permission)) --}}
         @if ($button)
             <button {{ $disabled ? 'disabled' : '' }} {{ $mergedAttributes }}>
                 @if ($icon_position === 'left')
@@ -130,7 +130,7 @@
                 @endif
             </a>
         @endif
-    @endif
+    {{-- @endif --}}
 @else
     @if ($button)
         <button {{ $disabled ? 'disabled' : '' }} {{ $mergedAttributes }}>

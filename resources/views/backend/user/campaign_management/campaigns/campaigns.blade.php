@@ -3,13 +3,126 @@
     <x-slot name="page_slug">campains</x-slot>
 
     <div class="p-6">
+        <!-- You can open the modal using ID.showModal() method -->
+        {{-- <button class="btn" onclick="my_modal_3.showModal()">open modal</button> --}}
+        <dialog id="campaign_create_modal" class="modal">
+            <div class="modal-box top-1/4 left-1/2 -translate-x-1/2 min-h-[60vh]">
+                <form method="dialog">
+                    <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" id="close_campaign_modal">✕</button>
+                </form>
+                <!-- Modal Header -->
+                <h2 class="text-xl font-medium text-gray-900 text-center mb-6">Start a New Campaign</h2>
+                <div class="p-6 pb-4 flex justify-between items-center">
+                    <p class="text-md font-medium text-gray-900">Selected Track</p>
+                    <button onclick="campaigns_modal.showModal(), document.getElementById('close_campaign_modal').click()"
+                        class="text-red-500 font-medium text-md hover:text-red-600 transition-colors">
+                        Edit
+                    </button>
+                </div>
+                <!-- Track List -->
+                <div id="tracks-content" class="px-6 pb-6">
+                    <!-- Track 1 -->
+                    <a href="{{ route('cm.campaigns.create') }}">
+                        <div
+                            class="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors shadow-sm">
+                            <img src="{{ asset('frontend/user/image/music-notes.jpg') }}" alt="Album cover"
+                                class="w-12 h-12 rounded object-cover">
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-gray-500 truncate">Ambient + herman hedrick♡</p>
+                                <p class="text-sm font-medium text-gray-900 truncate">Ab To Forever</p>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="mt-6">
+                        {{-- Budget after info ludide icon right --}}
+                        <h6 class="text-md font-medium text-gray-900 mb-2 after:content-['\1F4B0'] after:ml-2 ">Set budget</h6>
+                        <p class="text-sm text-gray-300 text-center">You need 50 credits to get a campaign reach estimate</p>
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="text-gray-500"><i data-lucide="banknote" class="w-10 h-10 inline mr-2"></i></span>
+                            <span class="text-3xl font-medium text-gray-500">50</span>
+                        </div>
+                    </div>
+
+                    <!-- Load More Button -->
+                    <div class="text-center mt-6">
+                        <button
+                            class="w-full bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition-colors font-medium">
+                            Buy Credits
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Playlists Content (Hidden by default) -->
+                <div id="playlists-content" class="px-6 pb-6 hidden">
+                    <div class="text-center text-gray-500 py-8">
+                        <p>No playlists available</p>
+                    </div>
+                </div>
+            </div>
+        </dialog>
+        <dialog id="campaigns_modal" class="modal">
+            <div class="modal-box top-1/4 left-1/2 -translate-x-1/2 min-h-[60vh]">
+                <form method="dialog">
+                    <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" id="close_campaigns_modal">✕</button>
+                </form>
+                <!-- Modal Header -->
+                <div class="p-6 pb-4">
+                    <h2 class="text-xl font-medium text-gray-900 text-center mb-6">Choose a track or playlist</h2>
+
+                    <!-- Tabs -->
+                    <div class="flex border-b-2 border-gray-200 mb-6">
+                        <button onclick="switchTab('tracks')" id="tracks-tab"
+                            class="flex-1 py-2 px-1 text-center font-medium text-sm border-b-2 border-red-500 text-red-600">
+                            Tracks
+                        </button>
+                        <button onclick="switchTab('playlists')" id="playlists-tab"
+                            class="flex-1 py-2 px-1 text-center font-medium text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                            Playlists
+                        </button>
+                    </div>
+
+                    <!-- Promotional Message -->
+                    <div class="text-center text-sm text-gray-600 mb-6">
+                        <p>Want to promote a track from another account?</p>
+                        <p>Get the <span class="text-red-500 font-medium">Network Plan</span></p>
+                    </div>
+                </div>
+                <!-- Track List -->
+                <div id="tracks-content" class="px-6 pb-6">
+                    <!-- Track 1 -->
+                    <div onclick="campaign_create_modal.showModal(), document.getElementById('close_campaigns_modal').click()"
+                        class="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors shadow-sm">
+                        <img src="{{ asset('frontend/user/image/music-notes.jpg') }}" alt="Album cover"
+                            class="w-12 h-12 rounded object-cover">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm text-gray-500 truncate">Ambient + herman hedrick♡</p>
+                            <p class="text-sm font-medium text-gray-900 truncate">Ab To Forever</p>
+                        </div>
+                    </div>
+
+                    <!-- Load More Button -->
+                    <div class="text-center mt-6">
+                        <button class="text-red-500 font-medium text-sm hover:text-red-600 transition-colors">
+                            Load more
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Playlists Content (Hidden by default) -->
+                <div id="playlists-content" class="px-6 pb-6 hidden">
+                    <div class="text-center text-gray-500 py-8">
+                        <p>No playlists available</p>
+                    </div>
+                </div>
+            </div>
+        </dialog>
         <!-- Header -->
         <div class="flex justify-between items-start mb-8">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900 mb-2">{{ __('My Campaigns') }}</h1>
-                <p class="text-gray-600">Track the performance of your submitted tracks') }}</p>
+                <p class="text-gray-600">Track the performance of your submitted tracks</p>
             </div>
-            <button
+            <button onclick="campaigns_modal.showModal()"
                 class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -24,7 +137,7 @@
             <div class="border-b border-gray-200">
                 <nav class="-mb-px flex space-x-8">
                     <button
-                        class="tab-button active border-b-2 border-orange-500 py-2 px-1 text-sm font-medium text-orange-600"
+                        class="tab-button active border-b-2 border-orange-500 py-2 px-1 text-sm font-medium text-orange-600 translateY(-1px)"
                         data-tab="all">
                         {{ __('All Campaigns') }}
                     </button>
@@ -64,7 +177,7 @@
                                             <h3 class="text-xl font-semibold text-gray-900">{{ $campaign->title }}
                                             </h3>
                                             <span
-                                                class="badge {{ $campaign->status_color }} text-white text-xs font-medium px-2.5 py-0.5 rounded-full">{{ $campaign->status_label}}</span>
+                                                class="badge {{ $campaign->status_color }} text-white text-xs font-medium px-2.5 py-0.5 rounded-full">{{ $campaign->status_label }}</span>
                                         </div>
                                         <div class="flex items-center gap-4 text-sm text-gray-500">
                                             <div class="flex items-center gap-1">
@@ -90,7 +203,9 @@
                                     </div>
                                 </div>
                                 <div class="text-right">
-                                    <p class="text-sm text-gray-600 mb-2">{{ __('Budget used:')}}{{ $campaign->target_reposts }}/{{ $campaign->total_credits_budget }} {{ __('credits') }}</p>
+                                    <p class="text-sm text-gray-600 mb-2">
+                                        {{ __('Budget used:') }}{{ $campaign->target_reposts }}/{{ $campaign->total_credits_budget }}
+                                        {{ __('credits') }}</p>
                                     <div class="w-32 bg-gray-200 rounded-full h-2">
                                         <div class="bg-orange-500 h-2 rounded-full" style="width: 70%"></div>
                                     </div>
@@ -245,8 +360,33 @@
     </div>
 
     <script>
+        function switchTab(tab) {
+            const tracksTab = document.getElementById('tracks-tab');
+            const playlistsTab = document.getElementById('playlists-tab');
+            const tracksContent = document.getElementById('tracks-content');
+            const playlistsContent = document.getElementById('playlists-content');
+
+            if (tab === 'tracks') {
+                tracksTab.classList.add('border-red-500', 'text-red-600');
+                tracksTab.classList.remove('border-transparent', 'text-gray-500');
+                playlistsTab.classList.add('border-transparent', 'text-gray-500');
+                playlistsTab.classList.remove('border-red-500', 'text-red-600');
+                tracksContent.classList.remove('hidden');
+                playlistsContent.classList.add('hidden');
+            } else {
+                playlistsTab.classList.add('border-red-500', 'text-red-600');
+                playlistsTab.classList.remove('border-transparent', 'text-gray-500');
+                tracksTab.classList.add('border-transparent', 'text-gray-500');
+                tracksTab.classList.remove('border-red-500', 'text-red-600');
+                playlistsContent.classList.remove('hidden');
+                tracksContent.classList.add('hidden');
+            }
+        }
         // Tab functionality
         document.addEventListener('DOMContentLoaded', function() {
+            function closeModal() {
+                #('.close_modal').on('click', function() {});
+            }
             const tabButtons = document.querySelectorAll('.tab-button');
             const campaignCards = document.querySelectorAll('.campaign-card');
 
@@ -280,7 +420,8 @@
             });
 
             // Add hover effects to buttons
-            const buttons = document.querySelectorAll('button');
+            //  select data-button data-attribute
+            const buttons = document.querySelectorAll('.tab-button');
             buttons.forEach(button => {
                 button.addEventListener('mouseenter', function() {
                     this.style.transform = 'translateY(-1px)';

@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Backend\User\CampaignManagement;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\CampaignManagement\CampaignRequest;
 use App\Http\Traits\AuditRelationTraits;
 use App\Services\Admin\CampaignManagement\CampaignService;
+use App\Services\Admin\TrackService;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -14,14 +17,16 @@ class CampaignController extends Controller
 
     protected function redirectIndex(): RedirectResponse
     {
-        return redirect()->route('cm.campaign.index');
+        return redirect()->route('cm.campaigns.index');
     }
 
     protected CampaignService $campaignService;
+    protected TrackService $trackService;
 
-    public function __construct(CampaignService $campaignService)
+    public function __construct(CampaignService $campaignService, TrackService $trackService)
     {
         $this->campaignService = $campaignService;
+        $this->trackService = $trackService;
     }
 
     /**
@@ -30,33 +35,34 @@ class CampaignController extends Controller
     public function index(Request $request)
     {
         $data['campaigns'] = $this->campaignService->getCampaigns()->get();
-        return view('backend.user.campains', $data);
+        $data['tracks'] = $this->trackService->getTracks()->get();
+        return view('backend.user.campaign_management.campaigns.campaigns', $data);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    // public function create(): View
-    // {
-    //     //
-    //     return view('view file url ...');
-    // }
+    public function create(): View
+    {
+        //
+        return view('backend.user.campaign_management.campaigns.create');
+    }
 
     /**
      * Store a newly created resource in storage.
      */
-    // public function store(Request $request)
-    // {
-    //      try {
-    //         // $validated = $request->validated();
-    //         //
-    //         session()->flash('success', "Service created successfully");
-    //     } catch (\Throwable $e) {
-    //         session()->flash('Service creation failed');
-    //         throw $e;
-    //     }
-    //     return $this->redirectIndex();
-    // }
+    public function store(CampaignRequest $request)
+    {
+        try {
+            $validated = $request->validated();
+            $this->campaignService->createCampaign($validated);
+            session()->flash('success', "Campaign created successfully");
+        } catch (\Throwable $e) {
+            session()->flash('Campaign creation failed');
+            throw $e;
+        }
+        return $this->redirectIndex();
+    }
 
     /**
      * Display the specified resource.

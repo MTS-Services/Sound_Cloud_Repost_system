@@ -25,6 +25,14 @@ class CampaignService
         $campaign = Campaign::findOrFail(decrypt($encryptedId));
         return $campaign;
     }
+    public function createCampaign(array $data)
+    {   
+        $data['user_urn'] = user()->urn;
+        $data['music_id'];
+        $data['created_by'] = user()->id;
+        $campaign = Campaign::create($data);
+        return $campaign;
+    }
     public function restore(int $encryptedId)
     {
         $campaign = Campaign::withTrashed()->find(decrypt($encryptedId));
