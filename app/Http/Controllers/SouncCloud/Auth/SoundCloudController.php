@@ -163,9 +163,8 @@ class SoundCloudController extends Controller
                 );
 
                 UserInformation::updateOrCreate(
-                    ['user_id' => $user->id],
+                    ['user_urn' => $user->urn],
                     [
-                        'user_urn' => $soundCloudUser->user['urn'] ?? null,
                         'first_name' => $soundCloudUser->user['first_name'] ?? null,
                         'last_name' => $soundCloudUser->user['last_name'] ?? null,
                         'full_name' => $soundCloudUser->user['full_name'] ?? null,
