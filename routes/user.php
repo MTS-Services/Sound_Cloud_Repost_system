@@ -33,7 +33,7 @@ Route::group(['as' => 'user.'], function () {
         Route::get('/campains', [CampaignsController::class, 'campains'])->name('campains');
         Route::get('/repost-feed', [RepostFeedController::class, 'repostFeed'])->name('repost-feed');
         Route::get('/analytics',[AnalyticsController::class, 'analytics'])->name('analytics');
-        Route::get('/add-credits', [AnalyticsController::class, 'addCredits'])->name('add-credits');
+        Route::get('/add-credits', [AddCaeditsController::class, 'addCredits'])->name('add-credits');
         Route::get('/promote', [PromoteController::class, 'tracks'])->name('promote');
     });
 });

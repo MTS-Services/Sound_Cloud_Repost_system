@@ -16,13 +16,13 @@
         </span>
     </div>
 
-    <!-- Submit Track Button -->
+    <!-- Add Credits Button -->
     <div class="px-6 mb-6">
-        <button
+        <a href="{{ route('user.add-credits') }}"
             class="w-full bg-orange-600 dark:bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-700 dark:hover:bg-orange-600 transition-colors">
             <i data-lucide="plus" class="w-4 h-4 inline mr-2"></i>
-            {{ __('Submit Track') }}
-        </button>
+            {{ __('Add Credits') }}
+    </a>
     </div>
 
     <!-- Credits -->
