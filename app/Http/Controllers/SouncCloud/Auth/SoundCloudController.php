@@ -54,13 +54,7 @@ class SoundCloudController extends Controller
             // Find or create user
             $user = $this->findOrCreateUser($soundCloudUser);
 
-            // Sync user Datas
-            $this->soundCloudService->syncUserTracks($user);
-            $this->syncUserProductsAndSubscriptions($user, $soundCloudUser);
-            $this->soundCloudService->updateUserPlaylists($user);
-
-            // $this->soundCloudService->updateUserProfile($user);
-            $this->sync();
+            $this->sync($user, $soundCloudUser);
 
             // Login user
             Auth::guard('web')->login($user, true);
@@ -117,17 +111,16 @@ class SoundCloudController extends Controller
         }
     }
 
-    public function sync()
+    public function sync(User $user, $soundCloudUser = null)
     {
-        $user = Auth::guard('web')->user();
-
         try {
-            Log::info('SoundCloud sync started', [
-                'user_id' => $user->id,
-            ]);
+            $this->soundCloudService->syncUserTracks($user);
+            $this->syncUserProductsAndSubscriptions($user, $soundCloudUser);
+            $this->soundCloudService->updateUserPlaylists($user);
+            // $this->soundCloudService->updateUserProfile($user);
         } catch (Throwable $e) {
             Log::error('SoundCloud sync error', [
-                'user_id' => $user->id,
+                'user_id' => $user->id,                
                 'error' => $e->getMessage(),
             ]);
             throw $e;
