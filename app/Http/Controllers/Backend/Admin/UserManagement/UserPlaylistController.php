@@ -96,6 +96,42 @@ class UserPlaylistController extends Controller implements HasMiddleware
 
         ];
     }
+     public function trash(Request $request)
+     {
+         if ($request->ajax()) {
+            $query = $this->userPlaylistService->getUserPlaylists()->onlyTrashed();
+            return DataTables::eloquent($query)
+                 ->editColumn('user_urn', function ($playlist) {
+                    return $playlist->user?->name;
+                })
+                ->editColumn('deleter_id', fn($user) => $this->deleter_name($user))
+                ->editColumn('deleted_at', fn($user) => $user->deleted_at_formatted)
+                ->editColumn('action', fn($user) => view('components.action-buttons', ['menuItems' => $this->trashedMenuItems($user)])->render())
+                ->rawColumns(['action','deleted_at', 'deleter_id'])
+                ->make(true);
+        }
+        return view('backend.admin.user-management.playlist.trash');
+    }
+
+    protected function trashedMenuItems($model): array
+    {
+        return [
+            [
+                'routeName' => 'um.playlist.restore',
+                'params' => [encrypt($model->id)],
+                'label' => 'Restore',
+                'permissions' => ['permission-restore']
+            ],
+            [
+                'routeName' => 'um.playlist.permanent-delete',
+                'params' => [encrypt($model->id)],
+                'label' => 'Permanent Delete',
+                'p-delete' => true,
+                'permissions' => ['permission-permanent-delete']
+            ]
+
+        ];
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -128,6 +164,7 @@ class UserPlaylistController extends Controller implements HasMiddleware
     public function show(Request $request, string $id)
     {
         $data = $this->userPlaylistService->getUserPlaylist($id);
+        $data['user_urn'] = $data->user?->name;
         $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
         return response()->json($data);
@@ -164,54 +201,14 @@ class UserPlaylistController extends Controller implements HasMiddleware
     public function destroy(string $id)
     {
         try {
-            //
-            session()->flash('success', "Service deleted successfully");
+            $playlist = $this->userPlaylistService->getUserPlaylist($id);
+            $this->userPlaylistService->delete($playlist);
+            session()->flash('success', "Playlist deleted successfully");
         } catch (\Throwable $e) {
-            session()->flash('Service delete failed');
+            session()->flash('Playlist delete failed');
             throw $e;
         }
         return $this->redirectIndex();
-    }
-
-    public function trash(Request $request)
-    {
-        if ($request->ajax()) {
-            $query = $this->userPlaylistService->getUserPlaylists()->onlyTrashed();
-            return DataTables::eloquent($query)
-                ->editColumn('deleted_by', function ($admin) {
-                    return $this->deleter_name($admin);
-                })
-                ->editColumn('deleted_at', function ($admin) {
-                    return $admin->deleted_at_formatted;
-                })
-                ->editColumn('action', function ($permission) {
-                    $menuItems = $this->trashedMenuItems($permission);
-                    return view('components.action-buttons', compact('menuItems'))->render();
-                })
-                ->rawColumns(['deleted_by', 'deleted_at', 'action'])
-                ->make(true);
-        }
-        return view('backend.admin.user-management.playlist.trash');
-    }
-
-    protected function trashedMenuItems($model): array
-    {
-        return [
-            [
-                'routeName' => '',
-                'params' => [encrypt($model->id)],
-                'label' => 'Restore',
-                'permissions' => ['permission-restore']
-            ],
-            [
-                'routeName' => '',
-                'params' => [encrypt($model->id)],
-                'label' => 'Permanent Delete',
-                'p-delete' => true,
-                'permissions' => ['permission-permanent-delete']
-            ]
-
-        ];
     }
 
     public function restore(string $id): RedirectResponse

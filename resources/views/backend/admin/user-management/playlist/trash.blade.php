@@ -1,8 +1,7 @@
 <x-admin::layout>
     <x-slot name="title">{{ __('Trashed Playlist List') }}</x-slot>
     <x-slot name="breadcrumb">{{ __('Trashed Playlist List') }}</x-slot>
-    <x-slot name="page_slug">user_playlist</x-slot>
-
+    <x-slot name="page_slug">user-playlist</x-slot>
     <section>
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
@@ -23,7 +22,14 @@
                     <tr>
                         <th>{{ __('SL') }}</th>
                         <th>{{ __('Title') }}</th>
-                        <th>{{ __('Deleted At') }}</th>
+                        <th>{{ __('Tag List') }}</th>
+                        <th>{{ __('User Urn') }}</th>
+                        <th>{{ __('Soundcloud ID') }}</th>
+                        <th>{{ __('Soundcloud Kind') }}</th>
+                        <th>{{ __('Release Year') }}</th>
+                        <th>{{ __('Playlist Type') }}</th>
+                        <th>{{ __('Deleted By') }}</th>
+                        <th>{{ __('Deleted Date') }}</th>
                         <th>{{ __('Action') }}</th>
                     </tr>
                 </thead>
@@ -37,9 +43,16 @@
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 let table_columns = [
-                    { data: 'title', name: 'title', orderable: true, searchable: true },
-                    { data: 'deleted_at', name: 'deleted_at', orderable: true, searchable: false },
-                    { data: 'action', name: 'action', orderable: false, searchable: false },
+                    ['title', true, true],
+                    ['tag_list', true, true],
+                    ['user_urn', true, true],
+                    ['soundcloud_id', true, true],
+                    ['soundcloud_kind', true, true],
+                    ['release_year', true, true],
+                    ['playlist_type', true, true],
+                    ['deleter_id', true, true],
+                    ['deleted_at', true, true],
+                    ['action', false, false],
                 ];
 
                 const details = {

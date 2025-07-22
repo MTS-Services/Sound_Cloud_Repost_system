@@ -59,6 +59,7 @@ return new class extends Migration
 
             $table->timestamps();
             $table->softDeletes();
+            
             $this->addMorphedAuditColumns($table);
 
              $table->foreign('user_urn')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
