@@ -26,7 +26,7 @@ class TrackSeeder extends Seeder
                 'commentable' => true,
                 'comment_count' => rand(0, 500),
                 'sharing' => 'public',
-                'tag_lsit' => 'electronic,house',
+                'tag_list' => 'electronic,house',
                 'streamable' => true,
                 'embeddable_by' => 'all',
                 'purchase_url' => 'https://example.com/buy/' . $i,

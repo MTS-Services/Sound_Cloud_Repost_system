@@ -67,7 +67,7 @@
                     main_route: "{{ route('um.playlist.index') }}",
                     order_route: "{{ route('update.sort.order') }}",
                     export_columns: [0, 1, 2, 3, 4, 5, 6],
-                    model: 'User',
+                    model: 'Playlist',
                 };
                 // initializeDataTable(details);
 
