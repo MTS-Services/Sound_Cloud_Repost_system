@@ -17,7 +17,7 @@ class TrackSeeder extends Seeder
   {
         for ($i = 1; $i <= 2; $i++) {
             Track::create([
-                'user_urn' => rand(1, 1000),
+                'user_urn' => 1,
 
                 'kind' => 'track',
                 'soundcloud_track_id' => (string)Str::uuid(),

@@ -21,27 +21,28 @@
 
 
             <!-- Track List -->
-            <div class="grid grid-cols-1 gap-4">
-                @dd($tracks)
-                @foreach ($tracks as $track)
-          
-                    <div class="space-y-4" x-show="activeTab === 'tracks'">
-                        <!-- Track Item 1 -->
+            {{-- <div class="grid grid-cols-1 gap-4"> --}}
+                <div class="space-y-4" x-show="activeTab === 'tracks'">
+                    @foreach ($tracks as $track)
+                        <!-- Track Item -->
                         <div class="flex items-center bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-                            <img src="https://via.placeholder.com/64" alt="Album Cover" class="rounded-md mr-4" />
+                            <img src="{{ $track->artwork_url ?? 'https://via.placeholder.com/64' }}" alt="{{ $track->title }}"
+                                class="rounded-md mr-4" />
                             <div class="flex-1">
                                 <h2 class="text-lg font-semibold">{{ $track->title }}</h2>
-                                <p class="text-sm text-gray-600 mb-1">by <strong>{{ $track->artist->name }}</strong>
-                                    <span class="ml-1 text-xs">{{ $track->album->title }}</span>
+                                <p class="text-sm text-gray-600 mb-1">
+                                    by <strong>{{ $track->author_username }}</strong>
+                                    <span class="ml-1 text-xs">{{ $track->genre }}</span>
                                 </p>
                                 <span class="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">
-                                    {{ $track->genre->name }}
+                                    {{ $track->isrc }}
                                 </span>
                             </div>
                         </div>
-                    </div>
-                @endforeach
-            </div>
+                    @endforeach
+                </div>
+            {{-- </div> --}}
+
 
             <!-- Playlist List -->
             <div class="space-y-4" x-show="activeTab === 'playlists'">
@@ -66,7 +67,4 @@
             </div>
         </div>
     </section>
-    @push('js')
-        <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    @endpush
 </x-user::layout>

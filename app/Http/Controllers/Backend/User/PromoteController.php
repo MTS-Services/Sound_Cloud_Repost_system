@@ -10,7 +10,7 @@ class PromoteController extends Controller
 {
     public function tracks(){
 
-        $data['tracks']=Track::where('user_urn')->get();
+        $data['tracks']=Track::where('user_urn', user()->urn)->orderBy('sort_order','asc')->get();
         return view('backend.user.promote',$data);
     }
 
