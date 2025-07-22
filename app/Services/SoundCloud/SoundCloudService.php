@@ -315,24 +315,10 @@ class SoundCloudService
         }
     }
 
-    /**
-     * Calculates credits based on followers count.
-     * This logic seems independent of SoundCloud API calls.
-     *
-     * @param int $followers The number of followers.
-     * @return int The calculated credits.
-     */
-    public function calculateCreditsFromFollowers(int $followers): int
-    {
-        if ($followers < 100) return 1;
-        if ($followers < 1000) return floor($followers / 100);
-        if ($followers < 10000) return floor($followers / 100);
-        return min(floor($followers / 100), 100);
-    }
-
+  
 
     // USER FOLLOWERS
- public function getUserFollowers(User $user): array
+    public function getUserFollowers(User $user): array
     {
         if (!$user->isSoundCloudConnected()) {
             throw new \Exception('User is not connected to SoundCloud');
@@ -372,65 +358,65 @@ class SoundCloudService
      * @param User $user The authenticated user model.
      * @return User The updated user model.
      */
-   public function syncUserFollowers(User $user): User
-{
-    try {
-        $followers = $this->getUserFollowers($user);
+    public function syncUserFollowers(User $user): User
+    {
+        try {
+            $followers = $this->getUserFollowers($user);
 
-        // Update User model fields
-        $user->update([
-            'nickname' => $followers['username'] ?? null,
-            'avatar' => $followers['avatar_url'] ?? null,
-            'last_synced_at' => now(), // Update general sync timestamp for the user
-            'soundcloud_followings_count' => $followers['followings_count'] ?? 0, // Add these here for User model
-            'soundcloud_followers_count' => $followers['followers_count'] ?? 0, // Add these here for User model
-            // Note: token, refresh_token, expires_in are updated in refreshAccessToken
-        ]);
+            // Update User model fields
+            $user->update([
+                'nickname' => $followers['username'] ?? null,
+                'avatar' => $followers['avatar_url'] ?? null,
+                'last_synced_at' => now(), // Update general sync timestamp for the user
+                'soundcloud_followings_count' => $followers['followings_count'] ?? 0, // Add these here for User model
+                'soundcloud_followers_count' => $followers['followers_count'] ?? 0, // Add these here for User model
+                // Note: token, refresh_token, expires_in are updated in refreshAccessToken
+            ]);
 
-        UserInformation::updateOrCreate(
-            ['user_urn' => $user->urn],
-            [
-                'first_name' => $followers['first_name'] ?? null,
-                'last_name' => $followers['last_name'] ?? null,
-                'full_name' => $followers['full_name'] ?? null,
-                'username' => $followers['username'] ?? null,
-                'permalink' => $followers['permalink_url'] ?? null,
-                'avatar_urn' => $followers['avatar_url'] ?? null,
-                'soundcloud_id' => $followers['id'] ?? null,
-                'soundcloud_urn' => $followers['urn'] ?? null,
-                'soundcloud_kind' => $followers['kind'] ?? null,
-                'permalink_url' => $followers['url'] ?? null,
-                'uri' => $followers['uri'] ?? null,
-                'soundcloud_created_at' => $followers['created_at'] ?? null,
-                'soundcloud_last_modified' => $followers['last_modified'] ?? null,
-              
-                'country' => $followers['country'] ?? null,
-                'city' => $followers['city'] ?? null,
-                'track_count' => $followers['track_count'] ?? 0,
-                'followers_count' => $followers['followers_count'] ?? 0,
-                'following_count' => $followers['followings_count'] ?? 0,
-                'plan' => $followers['plan'] ?? 'Free',
-                'online' => $followers['online'] ?? false,
-                'comments_count' => $followers['comments_count'] ?? 0,
-                'like_count' => $followers['likes_count'] ?? 0,
-                'playlist_count' => $followers['playlist_count'] ?? 0,
-                'private_playlist_count' => $followers['private_playlists_count'] ?? 0,
-                'private_tracks_count' => $followers['private_tracks_count'] ?? 0,
-                'primary_email_confirmed' => $followers['primary_email_confirmed'] ?? false,
-                'local' => $followers['locale'] ?? null,
-                'upload_seconds_left' => $followers['upload_seconds_left'] ?? null,
-            ]
-        );
+            UserInformation::updateOrCreate(
+                ['user_urn' => $user->urn],
+                [
+                    'first_name' => $followers['first_name'] ?? null,
+                    'last_name' => $followers['last_name'] ?? null,
+                    'full_name' => $followers['full_name'] ?? null,
+                    'username' => $followers['username'] ?? null,
+                    'permalink' => $followers['permalink_url'] ?? null,
+                    'avatar_urn' => $followers['avatar_url'] ?? null,
+                    'soundcloud_id' => $followers['id'] ?? null,
+                    'soundcloud_urn' => $followers['urn'] ?? null,
+                    'soundcloud_kind' => $followers['kind'] ?? null,
+                    'permalink_url' => $followers['url'] ?? null,
+                    'uri' => $followers['uri'] ?? null,
+                    'soundcloud_created_at' => $followers['created_at'] ?? null,
+                    'soundcloud_last_modified' => $followers['last_modified'] ?? null,
 
-        return $user->fresh(); // Return the updated user instance
-    } catch (\Exception $e) {
-        Log::error('Error updating user followers in updateUserFollowers', [
-            'user_urn' => $user->urn,
-            'error' => $e->getMessage(),
-        ]);
-        throw $e;
+                    'country' => $followers['country'] ?? null,
+                    'city' => $followers['city'] ?? null,
+                    'track_count' => $followers['track_count'] ?? 0,
+                    'followers_count' => $followers['followers_count'] ?? 0,
+                    'following_count' => $followers['followings_count'] ?? 0,
+                    'plan' => $followers['plan'] ?? 'Free',
+                    'online' => $followers['online'] ?? false,
+                    'comments_count' => $followers['comments_count'] ?? 0,
+                    'like_count' => $followers['likes_count'] ?? 0,
+                    'playlist_count' => $followers['playlist_count'] ?? 0,
+                    'private_playlist_count' => $followers['private_playlists_count'] ?? 0,
+                    'private_tracks_count' => $followers['private_tracks_count'] ?? 0,
+                    'primary_email_confirmed' => $followers['primary_email_confirmed'] ?? false,
+                    'local' => $followers['locale'] ?? null,
+                    'upload_seconds_left' => $followers['upload_seconds_left'] ?? null,
+                ]
+            );
+
+            return $user->fresh(); // Return the updated user instance
+        } catch (\Exception $e) {
+            Log::error('Error updating user followers in updateUserFollowers', [
+                'user_urn' => $user->urn,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
     }
-}
 
     /**
      * Refreshes the user's SoundCloud access token using their refresh token.
@@ -498,6 +484,4 @@ class SoundCloudService
         if ($followers < 10000) return floor($followers / 100);
         return min(floor($followers / 100), 100);
     }
-
-
 }
