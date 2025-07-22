@@ -229,7 +229,7 @@ class SoundCloudController extends Controller
     {
         // Clear existing subscriptions for the user to sync fresh ones
         // This assumes you want to overwrite previous subscriptions with current data
-        $user->subscriptions()->delete();
+       Subscription::where('user_urn', $user->urn)->delete();
 
         if (isset($soundCloudUser->user['subscriptions']) && is_array($soundCloudUser->user['subscriptions'])) {
             foreach ($soundCloudUser->user['subscriptions'] as $subscriptionData) {

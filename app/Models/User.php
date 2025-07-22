@@ -78,7 +78,7 @@ class User extends AuthBaseModel
 
     public function subscriptions(): HasMany
     {
-        return $this->hasMany(Subscription::class);
+        return $this->hasMany(Subscription::class, 'user_urn', 'urn');
     }
 
     // Helper methods
