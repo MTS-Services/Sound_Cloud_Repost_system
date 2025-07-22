@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('sort_order')->default(0);
 
             $table->string('email')->unique()->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->unsignedBigInteger('soundcloud_id')->unique();
             $table->string('name')->index();
             $table->string('nickname')->nullable()->index();
@@ -30,6 +30,7 @@ return new class extends Migration {
             $table->text('token')->nullable();
             $table->string('refresh_token')->nullable();
             $table->bigInteger('expires_in')->nullable()->index();
+            $table->unsignedBigInteger('urn')->unique()->index();
 
             $table->timestamp('last_synced_at')->nullable()->index();
             $table->rememberToken();

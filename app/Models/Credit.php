@@ -22,37 +22,46 @@ class Credit extends BaseModel
 
 
 
-  // 👇 Add this line to auto-append status_text
-    protected $appends = ['status_text'];
-
-    // 👇 Hide raw status if needed (optional)
-    // protected $hidden = ['status'];
-
-    public function __construct(array $attributes = [])
+  public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
+        $this->appends = array_merge(parent::getAppends(), [
+
+            'status_label',
+            'status_color',
+            'status_btn_label',
+            'status_btn_color',
+
+        ]);
     }
 
-    public function scopeDeactive($query)
-    {
-        return $query->where('status', self::STATUS_DEACTIVE);
-    }
-
-    public function scopeActive($query)
-    {
-        return $query->where('status', self::STATUS_ACTIVE);
-    }
-
-    // ================= Status Constants =================
     public const STATUS_ACTIVE = 1;
-    public const STATUS_DEACTIVE = 0;
+    public const STATUS_INACTIVE = 0;
 
-    // ================= Appended Attribute =================
-    public function getStatusTextAttribute(): string
+    public static function statusList(): array
     {
-        return match ($this->status) {
-            self::STATUS_ACTIVE => 'Deactive',
-            self::STATUS_DEACTIVE => 'Active',
-        };
+        return [
+            self::STATUS_ACTIVE => 'Active',
+            self::STATUS_INACTIVE => 'Inactive',
+        ];
+    }
+    public function getStatusLabelAttribute()
+    {
+        return self::statusList()[$this->status];
+    }
+
+    public function getStatusColorAttribute()
+    {
+        return $this->status == self::STATUS_ACTIVE ? 'badge-success' : 'badge-error';
+    }
+
+    public function getStatusBtnLabelAttribute()
+    {
+        return $this->status == self::STATUS_ACTIVE ? self::statusList()[self::STATUS_INACTIVE] : self::statusList()[self::STATUS_ACTIVE];
+    }
+
+    public function getStatusBtnColorAttribute()
+    {
+        return $this->status == self::STATUS_ACTIVE ? 'btn-error' : 'btn-success';
     }
 }

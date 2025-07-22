@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -19,7 +18,13 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             AdminSeeder::class,
             RoleHasPermissionSeeder::class,
-            UserInformationSeeder::class
+            UserInformationSeeder::class,
+            FeatureCategorySeeder::class,
+            FeatureSeeder::class,
+            PlanSeeder::class,
+            CampaignSeeder::class,
+            PlaylistSeeder::class,
+            TrackSeeder::class
         ]);
     }
 }

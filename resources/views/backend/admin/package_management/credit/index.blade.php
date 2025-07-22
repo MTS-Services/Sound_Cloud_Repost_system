@@ -25,8 +25,8 @@
                         <th width="5%">{{ __('SL') }}</th>
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Price') }}</th>
-                        <th>{{ __('Status') }}</th>
                         <th>{{ __('Credits') }}</th>
+                        <th>{{ __('Status') }}</th>
                         <th>{{ __('Created By') }}</th>
                         <th>{{ __('Created Date') }}</th>
                         <th width="10%">{{ __('Action') }}</th>
@@ -50,8 +50,8 @@
                     //name and data, orderable, searchable
                     ['name', true, true],
                     ['price', true, true],
-                    ['status', true, true],
                     ['credits', true, true],
+                    ['status', true, true],
                     ['created_by', true, true],
                     ['created_at', true, true],
                     ['action', false, false],
@@ -95,10 +95,12 @@
                             label: '{{ __('Notes') }}',
                             key: 'notes',
                         },
-                        {
+                         {
                             label: '{{ __('Status') }}',
-                            key: 'status',
-                        },
+                            key: 'status_label',
+                            label_color: 'status_color',
+                            type: 'badge'
+                        }
                     ];
 
                     showDetailsModal(route, id, '{{ __('Credit Details') }}', details);

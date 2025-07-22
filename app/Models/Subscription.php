@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Subscription extends BaseModel
 {
     protected $fillable = [
-        'user_id',
+        'user_urn',
         'product_id',
 
         'creater_id',
@@ -20,7 +20,7 @@ class Subscription extends BaseModel
     ];
 
     protected $casts = [
-        'user_id' => 'integer',
+        'user_urn' => 'integer',
         'product_id' => 'integer',
 
         'creater_id' => 'integer',
@@ -38,7 +38,7 @@ class Subscription extends BaseModel
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_urn', 'urn');
     }
 
     public function product(): BelongsTo

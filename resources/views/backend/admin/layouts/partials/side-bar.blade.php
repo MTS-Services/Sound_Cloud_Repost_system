@@ -70,14 +70,14 @@
                         'name' => 'All Users',
                         'route' => route('um.user.index'),
                         'icon' => 'user',
-                        'active' => 'admin-users',
+                        'active' => 'user',
                         'permission' => 'user-list',
                     ],
                     [
                         'name' => 'Top Reposters',
                         'route' => '#',
                         'icon' => 'user',
-                        'active' => 'admin-users',
+                        'active' => 'user',
                         'permission' => 'user-list',
                     ],
                     [
@@ -87,10 +87,39 @@
                         'active' => 'admin-users',
                         'permission' => 'user-list',
                     ],
+                    [
+                        'name' => 'User Playlists',
+                        'route' => route('um.playlist.index'),
+                        'icon' => 'music',
+                        'active' => 'user-playlist',
+                        'permission' => 'user-list',
+                    ],
+
                 ]" />
 
             <x-admin.navlink type="dropdown" icon="shopping-cart" name="Package Management" :page_slug="$active"
                 :items="[
+                    [
+                        'name' => 'Feature Categories',
+                        'route' => route('pm.feature-category.index'),
+                        'icon' => 'megaphone',
+                        'active' => 'feature_category',
+                        'permission' => 'feature_categories-list',
+                    ],
+                    [
+                        'name' => 'Features',
+                        'route' => route('pm.feature.index'),
+                        'icon' => 'megaphone',
+                        'active' => 'feature',
+                        'permission' => 'features-list',
+                    ],
+                    // [
+                    //     'name' => 'Plans',
+                    //     'route' => route('pm.plan.index'),
+                    //     'icon' => 'megaphone',
+                    //     'active' => 'plan',
+                    //     'permission' => 'plan-list',
+                    // ],
                     [
                         'name' => 'Credit',
                         'route' => route('pm.credit.index'),

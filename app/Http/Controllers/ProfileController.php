@@ -14,7 +14,7 @@ class ProfileController extends Controller
 {
     public function profile()
     {
-        $data['user'] = UserInformation::where('user_id', user()->id)->first();
+        $data['user'] = UserInformation::where('user_urn', user()->urn)->first();
         return view('backend.user.profile.profile', $data);
     }
 

@@ -2,13 +2,12 @@
 
 use App\Http\Controllers\Backend\User\AnalyticsController;
 use App\Http\Controllers\Backend\User\CampaignsController;
+use App\Http\Controllers\Backend\User\PromoteController;
 use App\Http\Controllers\Backend\User\RepostFeedController;
 use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
-
-
-
 
 
 Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
@@ -33,5 +32,6 @@ Route::group(['as' => 'user.'], function () {
         Route::get('/campains', [CampaignsController::class, 'campains'])->name('campains');
         Route::get('/repost-feed', [RepostFeedController::class, 'repostFeed'])->name('repost-feed');
         Route::get('/analytics',[AnalyticsController::class, 'analytics'])->name('analytics');
+        Route::get('/promote', [PromoteController::class, 'tracks'])->name('promote');
     });
 });

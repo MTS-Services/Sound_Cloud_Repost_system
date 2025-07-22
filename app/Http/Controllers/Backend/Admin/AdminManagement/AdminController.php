@@ -64,22 +64,12 @@ class AdminController extends Controller implements HasMiddleware
         if ($request->ajax()) {
             $query = $this->adminService->getAdmins();
             return DataTables::eloquent($query)
-                ->editColumn('role_id', function ($admin) {
-                    return optional($admin->role)->name;
-                })
-                ->editColumn('email_verified_at', function ($admin) {
-                    return "<span class='badge badge-soft " . $admin->verify_color . "'>" . $admin->verify_label . "</span>";
-                })
-                ->editColumn('created_by', function ($admin) {
-                    return $this->creater_name($admin);
-                })
-                ->editColumn('created_at', function ($admin) {
-                    return $admin->created_at_formatted;
-                })
-                ->editColumn('action', function ($admin) {
-                    $menuItems = $this->menuItems($admin);
-                    return view('components.action-buttons', compact('menuItems'))->render();
-                })
+                ->editColumn('role_id', fn($admin) => optional($admin->role)->name)
+                ->editColumn('status', fn($admin) => "<span class='badge badge-soft {$admin->status_color}'>{$admin->status_label}</span>")
+                ->editColumn('email_verified_at', fn($admin) => "<span class='badge badge-soft " . $admin->verify_color . "'>" . $admin->verify_label . "</span>")
+                ->editColumn('created_by', fn($admin) => $this->creater_name($admin))
+                ->editColumn('created_at', fn($admin) => $admin->created_at_formatted)
+                ->editColumn('action', fn($admin) => view('components.action-buttons', ['menuItems' => $this->menuItems($admin)])->render())
                 ->rawColumns(['role_id', 'email_verified_at', 'created_by', 'created_at', 'action'])
                 ->make(true);
         }
