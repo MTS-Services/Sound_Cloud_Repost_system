@@ -53,12 +53,14 @@ class SoundCloudController extends Controller
 
             // Find or create user
             $user = $this->findOrCreateUser($soundCloudUser);
+
+            // Sync user Datas
+            $this->soundCloudService->syncUserTracks($user);
+            $this->syncUserProductsAndSubscriptions($user, $soundCloudUser);
             $this->soundCloudService->updateUserPlaylists($user);
 
-            // Sync user tracks
-            $this->soundCloudService->syncUserTracks($user);
-
             // $this->soundCloudService->updateUserProfile($user);
+            $this->sync();
 
             // Login user
             Auth::guard('web')->login($user, true);
@@ -115,29 +117,20 @@ class SoundCloudController extends Controller
         }
     }
 
-    public function sync(): RedirectResponse
+    public function sync()
     {
         $user = Auth::guard('web')->user();
 
-        if (!$user || !$user->isSoundCloudConnected()) {
-            return redirect()->route('profile')
-                ->with('error', 'Please connect to SoundCloud first.');
-        }
-
         try {
-            $syncedCount = $this->soundCloudService->syncUserTracks($user);
-            $this->soundCloudService->updateUserProfile($user);
-
-            return redirect()->route('user.dashboard')
-                ->with('success', "Successfully synced {$syncedCount} new tracks from SoundCloud.");
-        } catch (\Exception $e) {
+            Log::info('SoundCloud sync started', [
+                'user_id' => $user->id,
+            ]);
+        } catch (Throwable $e) {
             Log::error('SoundCloud sync error', [
                 'user_id' => $user->id,
                 'error' => $e->getMessage(),
             ]);
-
-            return redirect()->route('dashboard')
-                ->with('error', 'Failed to sync tracks from SoundCloud.');
+            throw $e;
         }
     }
 
@@ -208,10 +201,6 @@ class SoundCloudController extends Controller
                     ]
                 );
 
-                // Handle SoundCloud products and user subscriptions
-                $this->syncUserProductsAndSubscriptions($user, $soundCloudUser);
-
-
                 return $user;
             });
         } catch (Throwable $e) {
@@ -229,7 +218,7 @@ class SoundCloudController extends Controller
     {
         // Clear existing subscriptions for the user to sync fresh ones
         // This assumes you want to overwrite previous subscriptions with current data
-       Subscription::where('user_urn', $user->urn)->delete();
+        Subscription::where('user_urn', $user->urn)->delete();
 
         if (isset($soundCloudUser->user['subscriptions']) && is_array($soundCloudUser->user['subscriptions'])) {
             foreach ($soundCloudUser->user['subscriptions'] as $subscriptionData) {
@@ -259,6 +248,4 @@ class SoundCloudController extends Controller
             ]);
         }
     }
-
-   
 }

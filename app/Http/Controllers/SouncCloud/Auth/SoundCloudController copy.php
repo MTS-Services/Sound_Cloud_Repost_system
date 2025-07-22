@@ -4,17 +4,25 @@ namespace App\Http\Controllers\SouncCloud\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SoundCloud\SoundCloudAuthRequest;
+use App\Models\Playlist;
+use App\Models\Product;
+use App\Models\Subscription;
+use App\Models\Track;
 use App\Models\User;
 use App\Models\UserInformation;
 use App\Services\SoundCloud\SoundCloudService;
+use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 use Throwable;
 
-class SoundCloudController extends Controller
+class SoundCloudControllerCopy extends Controller
 {
     public function __construct(protected SoundCloudService $soundCloudService) {}
 
@@ -45,12 +53,12 @@ class SoundCloudController extends Controller
 
             // Find or create user
             $user = $this->findOrCreateUser($soundCloudUser);
+            $this->soundCloudService->updateUserPlaylists($user);
 
             // Sync user tracks
-            // $this->soundCloudService->syncUserTracks($user);
+            $this->soundCloudService->syncUserTracks($user);
 
-            // // Update user profile data
-            $this->soundCloudService->updateUserProfile($user);
+            // $this->soundCloudService->updateUserProfile($user);
 
             // Login user
             Auth::guard('web')->login($user, true);
@@ -62,7 +70,7 @@ class SoundCloudController extends Controller
         } catch (\Exception $e) {
             Log::error('SoundCloud callback error', [
                 'error' => $e->getMessage(),
-                'user_urn' => Auth::guard('web')->id(),
+                'user_id' => Auth::guard('web')->id(),
             ]);
 
             return redirect()->route('login')
@@ -98,7 +106,7 @@ class SoundCloudController extends Controller
                 ->with('success', 'Successfully disconnected from SoundCloud.');
         } catch (\Exception $e) {
             Log::error('SoundCloud disconnect error', [
-                'user_urn' => $user->urn,
+                'user_id' => $user->id,
                 'error' => $e->getMessage(),
             ]);
 
@@ -124,7 +132,7 @@ class SoundCloudController extends Controller
                 ->with('success', "Successfully synced {$syncedCount} new tracks from SoundCloud.");
         } catch (\Exception $e) {
             Log::error('SoundCloud sync error', [
-                'user_urn' => $user->urn,
+                'user_id' => $user->id,
                 'error' => $e->getMessage(),
             ]);
 
@@ -138,6 +146,8 @@ class SoundCloudController extends Controller
         try {
             return DB::transaction(function () use ($soundCloudUser) {
 
+
+
                 $user = User::updateOrCreate(
                     ['soundcloud_id' => $soundCloudUser->getId()],
                     [
@@ -148,6 +158,7 @@ class SoundCloudController extends Controller
                         'refresh_token' => $soundCloudUser->refreshToken,
                         'expires_in' => $soundCloudUser->expiresIn,
                         'last_synced_at' => now(),
+                        'urn' => $soundCloudUser->user['urn']
                     ]
                 );
 
@@ -197,6 +208,10 @@ class SoundCloudController extends Controller
                     ]
                 );
 
+                // Handle SoundCloud products and user subscriptions
+                $this->syncUserProductsAndSubscriptions($user, $soundCloudUser);
+
+
                 return $user;
             });
         } catch (Throwable $e) {
@@ -206,4 +221,44 @@ class SoundCloudController extends Controller
             throw $e;
         }
     }
+
+    /**
+     * Syncs products and user subscriptions based on SoundCloud user data.
+     */
+    protected function syncUserProductsAndSubscriptions(User $user, $soundCloudUser): void
+    {
+        // Clear existing subscriptions for the user to sync fresh ones
+        // This assumes you want to overwrite previous subscriptions with current data
+       Subscription::where('user_urn', $user->urn)->delete();
+
+        if (isset($soundCloudUser->user['subscriptions']) && is_array($soundCloudUser->user['subscriptions'])) {
+            foreach ($soundCloudUser->user['subscriptions'] as $subscriptionData) {
+                $productDetails = $subscriptionData['product'] ?? null;
+
+                if ($productDetails && isset($productDetails['id']) && isset($productDetails['name'])) {
+                    $product = Product::updateOrCreate(
+                        ['product_id' => $productDetails['id']],
+                        ['name' => $productDetails['name']]
+                    );
+
+                    // Create the user's subscription record
+                    Subscription::create([
+                        'user_urn' => $user->urn,
+                        'product_id' => $product->id,
+                    ]);
+                } else {
+                    Log::warning('SoundCloud subscription found without complete product data.', [
+                        'soundcloud_id' => $soundCloudUser->getId(),
+                        'subscription_data' => $subscriptionData,
+                    ]);
+                }
+            }
+        } else {
+            Log::info('SoundCloud user has no subscriptions array or it is not an array.', [
+                'soundcloud_id' => $soundCloudUser->getId(),
+            ]);
+        }
+    }
+
+   
 }
