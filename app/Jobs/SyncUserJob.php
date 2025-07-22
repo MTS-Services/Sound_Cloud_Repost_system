@@ -17,7 +17,7 @@ class SyncUserJob implements ShouldQueue
 
     protected $user;
     protected $soundCloudUser;
-    protected SoundCloudService $soundCloudService;
+    protected $soundCloudService;
 
     public function __construct(User $user, $soundCloudUser, SoundCloudService $soundCloudService)
     {
