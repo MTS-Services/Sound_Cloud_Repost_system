@@ -204,56 +204,54 @@ class SoundCloudService
      * @param User $user The authenticated user model.
      * @return User The updated user model.
      */
-    public function updateUserProfile(User $user): User
+    public function syncUserInformation(User $user, $soundCloudUser): UserInformation
     {
         try {
-            $profile = $this->getUserProfile($user);
-
-            // Update User model fields
-            $user->update([
-                'nickname' => $profile['username'] ?? null,
-                'avatar' => $profile['avatar_url'] ?? null,
-                'last_synced_at' => now(), // Update general sync timestamp for the user
-                'soundcloud_followings_count' => $profile['followings_count'] ?? 0, // Add these here for User model
-                'soundcloud_followers_count' => $profile['followers_count'] ?? 0, // Add these here for User model
-                // Note: token, refresh_token, expires_in are updated in refreshAccessToken
-            ]);
-
-            UserInformation::updateOrCreate(
+            return UserInformation::updateOrCreate(
                 ['user_urn' => $user->urn],
                 [
-                    'first_name' => $profile['first_name'] ?? null,
-                    'last_name' => $profile['last_name'] ?? null,
-                    'full_name' => $profile['full_name'] ?? null,
-                    'username' => $profile['username'] ?? null,
-                    'soundcloud_id' => $profile['id'] ?? null,
-                    'soundcloud_urn' => $profile['urn'] ?? null,
-                    'soundcloud_kind' => $profile['kind'] ?? null,
-                    'soundcloud_permalink_url' => $profile['permalink_url'] ?? null,
-                    'soundcloud_permalink' => $profile['permalink'] ?? null,
-                    'soundcloud_uri' => $profile['uri'] ?? null,
-                    'soundcloud_created_at' => $profile['created_at'] ?? null,
-                    'soundcloud_last_modified' => $profile['last_modified'] ?? null,
-                    'description' => $profile['description'] ?? null,
-                    'country' => $profile['country'] ?? null,
-                    'city' => $profile['city'] ?? null,
-                    'track_count' => $profile['track_count'] ?? 0,
-                    'followers_count' => $profile['followers_count'] ?? 0,
-                    'following_count' => $profile['followings_count'] ?? 0,
-                    'plan' => $profile['plan'] ?? 'Free',
-                    'online' => $profile['online'] ?? false,
-                    'comments_count' => $profile['comments_count'] ?? 0,
-                    'like_count' => $profile['likes_count'] ?? 0,
-                    'playlist_count' => $profile['playlist_count'] ?? 0,
-                    'private_playlist_count' => $profile['private_playlists_count'] ?? 0,
-                    'private_tracks_count' => $profile['private_tracks_count'] ?? 0,
-                    'primary_email_confirmed' => $profile['primary_email_confirmed'] ?? false,
-                    'local' => $profile['locale'] ?? null,
-                    'upload_seconds_left' => $profile['upload_seconds_left'] ?? null,
+                    'first_name' => $soundCloudUser->user['first_name'] ?? null,
+                    'last_name' => $soundCloudUser->user['last_name'] ?? null,
+                    'full_name' => $soundCloudUser->user['full_name'] ?? null,
+                    'username' => $soundCloudUser->user['username'] ?? null,
+
+                    'soundcloud_id' => $soundCloudUser->getId(),
+                    'soundcloud_urn' => $soundCloudUser->user['urn'] ?? null,
+                    'soundcloud_kind' => $soundCloudUser->user['kind'] ?? null,
+                    'soundcloud_permalink_url' => $soundCloudUser->user['permalink_url'] ?? null,
+                    'soundcloud_permalink' => $soundCloudUser->user['permalink'] ?? null,
+                    'soundcloud_uri' => $soundCloudUser->user['uri'] ?? null,
+                    'soundcloud_created_at' => $soundCloudUser->user['created_at'] ?? null,
+                    'soundcloud_last_modified' => $soundCloudUser->user['last_modified'] ?? null,
+
+                    'description' => $soundCloudUser->user['description'] ?? null,
+                    'country' => $soundCloudUser->user['country'] ?? null,
+                    'city' => $soundCloudUser->user['city'] ?? null,
+
+                    'track_count' => $soundCloudUser->user['track_count'] ?? 0,
+                    'public_favorites_count' => $soundCloudUser->user['public_favorites_count'] ?? 0,
+                    'reposts_count' => $soundCloudUser->user['reposts_count'] ?? 0,
+                    'followers_count' => $soundCloudUser->user['followers_count'] ?? 0,
+                    'following_count' => $soundCloudUser->user['followings_count'] ?? 0,
+
+                    'plan' => $soundCloudUser->user['plan'] ?? 'Free',
+                    'myspace_name' => $soundCloudUser->user['myspace_name'] ?? null,
+                    'discogs_name' => $soundCloudUser->user['discogs_name'] ?? null,
+                    'website_title' => $soundCloudUser->user['website_title'] ?? null,
+                    'website' => $soundCloudUser->user['website'] ?? null,
+
+                    'online' => $soundCloudUser->user['online'] ?? false,
+                    'comments_count' => $soundCloudUser->user['comments_count'] ?? 0,
+                    'like_count' => $soundCloudUser->user['likes_count'] ?? 0,
+                    'playlist_count' => $soundCloudUser->user['playlist_count'] ?? 0,
+                    'private_playlist_count' => $soundCloudUser->user['private_playlists_count'] ?? 0,
+                    'private_tracks_count' => $soundCloudUser->user['private_tracks_count'] ?? 0,
+
+                    'primary_email_confirmed' => $soundCloudUser->user['primary_email_confirmed'] ?? false,
+                    'local' => $soundCloudUser->user['locale'] ?? null,
+                    'upload_seconds_left' => $soundCloudUser->user['upload_seconds_left'] ?? null,
                 ]
             );
-
-            return $user->fresh(); // Return the updated user instance
         } catch (\Exception $e) {
             Log::error('Error updating user profile in updateUserProfile', [
                 'user_urn' => $user->urn,
@@ -331,7 +329,7 @@ class SoundCloudService
     }
 
 
-     public function getUserPlaylists(User $user, int $limit = 50, int $offset = 0): array
+    public function getUserPlaylists(User $user, int $limit = 50, int $offset = 0): array
     {
         if (!$user->isSoundCloudConnected()) {
             throw new \Exception('User is not connected to SoundCloud');

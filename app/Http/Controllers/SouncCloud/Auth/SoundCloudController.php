@@ -54,12 +54,9 @@ class SoundCloudController extends Controller
             // Find or create user
             $user = $this->findOrCreateUser($soundCloudUser);
 
-            $this->sync($user, $soundCloudUser);
+            $this->syncUser($user, $soundCloudUser);
 
-            // Login user
             Auth::guard('web')->login($user, true);
-
-            // dd(Auth::guard('web')->check());
 
             return redirect()->route('user.dashboard')
                 ->with('success', 'Successfully connected to SoundCloud!');
@@ -111,16 +108,18 @@ class SoundCloudController extends Controller
         }
     }
 
-    public function sync(User $user, $soundCloudUser = null)
+    public function syncUser(User $user, $soundCloudUser)
     {
         try {
-            $this->soundCloudService->syncUserTracks($user);
-            $this->syncUserProductsAndSubscriptions($user, $soundCloudUser);
-            $this->soundCloudService->updateUserPlaylists($user);
-            // $this->soundCloudService->updateUserProfile($user);
+            DB::transaction(function () use ($user, $soundCloudUser) {
+                $this->soundCloudService->syncUserTracks($user);
+                $this->syncUserProductsAndSubscriptions($user, $soundCloudUser);
+                $this->soundCloudService->updateUserPlaylists($user);
+                $this->soundCloudService->syncUserInformation($user, $soundCloudUser);
+            });
         } catch (Throwable $e) {
             Log::error('SoundCloud sync error', [
-                'user_id' => $user->id,                
+                'user_id' => $user->id,
                 'error' => $e->getMessage(),
             ]);
             throw $e;
@@ -130,74 +129,21 @@ class SoundCloudController extends Controller
     protected function findOrCreateUser($soundCloudUser): User
     {
         try {
-            return DB::transaction(function () use ($soundCloudUser) {
-
-
-
-                $user = User::updateOrCreate(
-                    ['soundcloud_id' => $soundCloudUser->getId()],
-                    [
-                        'name' => $soundCloudUser->getName(),
-                        'nickname' => $soundCloudUser->getNickname(),
-                        'avatar' => $soundCloudUser->getAvatar(),
-                        'token' => $soundCloudUser->token,
-                        'refresh_token' => $soundCloudUser->refreshToken,
-                        'expires_in' => $soundCloudUser->expiresIn,
-                        'last_synced_at' => now(),
-                        'urn' => $soundCloudUser->user['urn']
-                    ]
-                );
-
-                UserInformation::updateOrCreate(
-                    ['user_urn' => $user->urn],
-                    [
-                        'first_name' => $soundCloudUser->user['first_name'] ?? null,
-                        'last_name' => $soundCloudUser->user['last_name'] ?? null,
-                        'full_name' => $soundCloudUser->user['full_name'] ?? null,
-                        'username' => $soundCloudUser->user['username'] ?? null,
-
-                        'soundcloud_id' => $soundCloudUser->getId(),
-                        'soundcloud_urn' => $soundCloudUser->user['urn'] ?? null,
-                        'soundcloud_kind' => $soundCloudUser->user['kind'] ?? null,
-                        'soundcloud_permalink_url' => $soundCloudUser->user['permalink_url'] ?? null,
-                        'soundcloud_permalink' => $soundCloudUser->user['permalink'] ?? null,
-                        'soundcloud_uri' => $soundCloudUser->user['uri'] ?? null,
-                        'soundcloud_created_at' => $soundCloudUser->user['created_at'] ?? null,
-                        'soundcloud_last_modified' => $soundCloudUser->user['last_modified'] ?? null,
-
-                        'description' => $soundCloudUser->user['description'] ?? null,
-                        'country' => $soundCloudUser->user['country'] ?? null,
-                        'city' => $soundCloudUser->user['city'] ?? null,
-
-                        'track_count' => $soundCloudUser->user['track_count'] ?? 0,
-                        'public_favorites_count' => $soundCloudUser->user['public_favorites_count'] ?? 0,
-                        'reposts_count' => $soundCloudUser->user['reposts_count'] ?? 0,
-                        'followers_count' => $soundCloudUser->user['followers_count'] ?? 0,
-                        'following_count' => $soundCloudUser->user['followings_count'] ?? 0,
-
-                        'plan' => $soundCloudUser->user['plan'] ?? 'Free',
-                        'myspace_name' => $soundCloudUser->user['myspace_name'] ?? null,
-                        'discogs_name' => $soundCloudUser->user['discogs_name'] ?? null,
-                        'website_title' => $soundCloudUser->user['website_title'] ?? null,
-                        'website' => $soundCloudUser->user['website'] ?? null,
-
-                        'online' => $soundCloudUser->user['online'] ?? false,
-                        'comments_count' => $soundCloudUser->user['comments_count'] ?? 0,
-                        'like_count' => $soundCloudUser->user['likes_count'] ?? 0,
-                        'playlist_count' => $soundCloudUser->user['playlist_count'] ?? 0,
-                        'private_playlist_count' => $soundCloudUser->user['private_playlists_count'] ?? 0,
-                        'private_tracks_count' => $soundCloudUser->user['private_tracks_count'] ?? 0,
-
-                        'primary_email_confirmed' => $soundCloudUser->user['primary_email_confirmed'] ?? false,
-                        'local' => $soundCloudUser->user['locale'] ?? null,
-                        'upload_seconds_left' => $soundCloudUser->user['upload_seconds_left'] ?? null,
-                    ]
-                );
-
-                return $user;
-            });
+            return User::updateOrCreate(
+                ['soundcloud_id' => $soundCloudUser->getId()],
+                [
+                    'name' => $soundCloudUser->getName(),
+                    'nickname' => $soundCloudUser->getNickname(),
+                    'avatar' => $soundCloudUser->getAvatar(),
+                    'token' => $soundCloudUser->token,
+                    'refresh_token' => $soundCloudUser->refreshToken,
+                    'expires_in' => $soundCloudUser->expiresIn,
+                    'last_synced_at' => now(),
+                    'urn' => $soundCloudUser->user['urn']
+                ]
+            );
         } catch (Throwable $e) {
-            Log::error('SoundCloud findOrCreateUser error', [
+            Log::error('SoundCloud find or create user error', [
                 'error' => $e->getMessage(),
             ]);
             throw $e;
