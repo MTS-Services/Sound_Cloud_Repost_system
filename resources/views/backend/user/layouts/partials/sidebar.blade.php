@@ -125,3 +125,6 @@
 
 <!-- Overlay for mobile -->
 <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden lg:hidden"></div>
+
+
+@include('backend.user.campaign_management.includes.audio_player')

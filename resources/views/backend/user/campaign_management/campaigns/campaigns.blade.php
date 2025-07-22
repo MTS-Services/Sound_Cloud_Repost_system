@@ -22,8 +22,8 @@
                 <!-- Track List -->
                 <div id="tracks-content" class="px-6 pb-6">
                     <!-- Track 1 -->
-                    <a id="selected_track_id"
-                        data-url-template="{{ route('cm.campaigns.create', '__ID__') }}" href="#">
+                    <a id="selected_track_id" data-url-template="{{ route('cm.campaigns.create', '__ID__') }}"
+                        href="#">
                         {{-- <div
                             class="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors shadow-sm">
                             <img src="{{ asset('frontend/user/image/music-notes.jpg') }}" alt="Album cover"
@@ -187,10 +187,20 @@
                     data-status="{{ $campaign->status_label }}">
                     <div class="flex justify-center gap-5">
                         <div class="w-48 h-32">
-                            <div class="w-full h-full rounded-lg overflow-hidden flex-shrink-0">
+                            <div class="w-full h-full rounded-lg overflow-hidden flex-shrink-0 relative">
                                 <img src="{{ asset('frontend/user/image/music-notes.jpg') }}"
                                     alt="Summer Vibes Album Cover"
                                     class="w-full h-full object-cover bg-gradient-to-br from-yellow-400 via-red-500 to-pink-500">
+                                <button 
+                                    class="playPauseBtn absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white text-gray-800 rounded-full p-2 hover:bg-gray-200 transition-colors">
+                                    <svg  class="playIcon w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg>
+                                    <svg class="pauseIcon w-4 h-4 hidden" fill="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                         <div class="w-full">
@@ -198,7 +208,8 @@
                                 <div class="flex items-start gap-4">
                                     <div>
                                         <div class="flex items-center gap-3 mb-2">
-                                            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ $campaign->title }}
+                                            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                                                {{ $campaign->title }}
                                             </h3>
                                             <span
                                                 class="badge {{ $campaign->status_color }} text-white text-xs font-medium px-2.5 py-0.5 rounded-full">{{ $campaign->status_label }}</span>
@@ -289,6 +300,8 @@
             @endforeach
         </div>
     </div>
+    {{-- Audio player --}}
+    {{-- @include('backend.user.campaign_management.includes.audio_player') --}}
 
     <script>
         function selectTrack(el) {
@@ -389,5 +402,104 @@
                 });
             });
         });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const $audio = $('#audioPlayer');
+        const $playPauseBtn = $('.playPauseBtn');
+        const $playIcon = $('.playIcon');
+        const $pauseIcon = $('.pauseIcon');
+        const $progressBar = $('#progressBar');
+        const $progressContainer = $('#progressContainer');
+        const $progressHandle = $('#progressHandle');
+        const $currentTimeEl = $('#currentTime');
+        const $durationEl = $('#duration');
+        const $prevBtn = $('#prevBtn');
+        const $nextBtn = $('#nextBtn');
+
+        // Helper: Format time
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Play/Pause
+        $playPauseBtn.on('click', function () {
+            const audio = $audio[0];
+            if (audio.paused) {
+                audio.play();
+            } else {
+                audio.pause();
+            }
+        });
+
+        // Update play/pause icon
+        $audio.on('play', function () {
+            $playIcon.addClass('hidden');
+            $pauseIcon.removeClass('hidden');
+        });
+
+        $audio.on('pause', function () {
+            $playIcon.removeClass('hidden');
+            $pauseIcon.addClass('hidden');
+        });
+
+        // Update progress bar
+        $audio.on('timeupdate', function () {
+            const audio = this;
+            if (audio.duration) {
+                const progress = (audio.currentTime / audio.duration) * 100;
+                $progressBar.css('width', progress + '%');
+                $currentTimeEl.text(formatTime(audio.currentTime));
+            }
+        });
+
+        // Show duration when metadata loads
+        $audio.on('loadedmetadata', function () {
+            $durationEl.text(formatTime(this.duration));
+        });
+
+        // Seek functionality
+        $progressContainer.on('click', function (e) {
+            const audio = $audio[0];
+            const rect = this.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const width = rect.width;
+            const clickRatio = clickX / width;
+
+            if (audio.duration) {
+                audio.currentTime = clickRatio * audio.duration;
+            }
+        });
+
+        // Show/Hide progress handle on hover
+        $progressContainer.on('mouseenter', function () {
+            $progressHandle.removeClass('opacity-0');
+        });
+
+        $progressContainer.on('mouseleave', function () {
+            $progressHandle.addClass('opacity-0');
+        });
+
+        // Previous Button
+        $prevBtn.on('click', function () {
+            $audio[0].currentTime = 0;
+        });
+
+        // Next Button (placeholder)
+        $nextBtn.on('click', function () {
+            const audio = $audio[0];
+            audio.currentTime = audio.duration || 0;
+        });
+
+        // Audio ended
+        $audio.on('ended', function () {
+            $playIcon.removeClass('hidden');
+            $pauseIcon.addClass('hidden');
+            $progressBar.css('width', '0%');
+            this.currentTime = 0;
+        });
+    });
     </script>
 </x-user::layout>
