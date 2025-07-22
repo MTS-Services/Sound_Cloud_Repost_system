@@ -9,7 +9,7 @@ use App\Models\BaseModel;
 class Track extends BaseModel
 {
     protected $fillable = [
-        'user_id',
+        'user_urn',
         
         'kind',
         'soundcloud_track_id',
@@ -93,6 +93,6 @@ class Track extends BaseModel
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_urn', 'urn');
     }
 }

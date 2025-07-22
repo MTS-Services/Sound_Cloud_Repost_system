@@ -38,7 +38,7 @@ class SoundCloudServiceCopy2
             throw new \Exception('Failed to fetch tracks: ' . $response->body());
         } catch (\Exception $e) {
             Log::error('SoundCloud API Error', [
-                'user_id' => $user->id,
+                'user_urn' => $user->id,
                 'error' => $e->getMessage(),
             ]);
             throw $e;
@@ -53,7 +53,7 @@ class SoundCloudServiceCopy2
         foreach ($tracks as $trackData) {
             SoundcloudTrack::updateOrCreate(
                 [
-                    'user_id' => $user->id,
+                    'user_urn' => $user->id,
                     'soundcloud_track_id' => $trackData['id'],
                 ],
                 [
@@ -100,7 +100,7 @@ class SoundCloudServiceCopy2
             throw new \Exception('Failed to fetch profile: ' . $response->body());
         } catch (\Exception $e) {
             Log::error('SoundCloud Profile API Error', [
-                'user_id' => $user->id,
+                'user_urn' => $user->id,
                 'error' => $e->getMessage(),
             ]);
             throw $e;
@@ -118,7 +118,7 @@ class SoundCloudServiceCopy2
         ]);
 
         UserInformation::updateOrCreate(
-            ['user_id' => $user->id],
+            ['user_urn' => $user->id],
             [
                 'first_name' => $profile['first_name'] ?? null,
                 'last_name' => $profile['last_name'] ?? null,
@@ -182,7 +182,7 @@ class SoundCloudServiceCopy2
             ]);
         } catch (\Exception $e) {
             Log::error('Token refresh failed', [
-                'user_id' => $user->id,
+                'user_urn' => $user->id,
                 'error' => $e->getMessage(),
             ]);
             throw $e;

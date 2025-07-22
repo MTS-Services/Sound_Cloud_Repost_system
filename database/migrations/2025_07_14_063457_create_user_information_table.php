@@ -18,8 +18,8 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('sort_order')->default(0)->unsigned();
 
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedBigInteger('user_urn');
+            $table->foreign('user_urn')->references('urn')->on('users')->onDelete('cascade');
 
             $table->string('first_name');
             $table->string('last_name')->nullable();

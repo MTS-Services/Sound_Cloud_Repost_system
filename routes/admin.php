@@ -10,6 +10,7 @@ use App\Http\Controllers\Backend\Admin\PackageManagement\FeatureCategoryControll
 use App\Http\Controllers\Backend\Admin\PackageManagement\FeatureController;
 use App\Http\Controllers\Backend\Admin\PackageManagement\PlanController;
 use App\Http\Controllers\Backend\Admin\UserManagement\UserController;
+use App\Http\Controllers\Backend\Admin\UserManagement\UserPlaylistController;
 
 Route::group(['middleware' => ['auth:admin','admin'], 'prefix' => 'admin'], function () {
 
@@ -86,6 +87,14 @@ Route::group(['middleware' => ['auth:admin','admin'], 'prefix' => 'admin'], func
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{user}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{user}', 'permanentDelete')->name('permanent-delete');
+        });
+
+        Route::resource('playlist', UserPlaylistController::class);
+        Route::controller(UserPlaylistController::class)->name('playlist.')->prefix('playlist')->group(function () {
+            Route::post('/show/{playlist}', 'show')->name('show');
+            Route::get('/trash/bin', 'trash')->name('trash');
+            Route::get('/restore/{playlist}', 'restore')->name('restore');
+            Route::delete('/permanent-delete/{playlist}', 'permanentDelete')->name('permanent-delete');
         });
     });
 });
