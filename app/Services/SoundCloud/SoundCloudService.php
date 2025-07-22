@@ -383,7 +383,6 @@ class SoundCloudService
                 $playlist = Playlist::updateOrCreate(
                     [
                         'user_urn' => $user->urn,
-                        'soundcloud_track_id' => $playlistData['id'], // Unique identifier from SoundCloud
                     ],
                     [
                         'soundcloud_id' => $playlistData['id'] ?? null,
