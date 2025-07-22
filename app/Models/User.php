@@ -30,7 +30,7 @@ class User extends AuthBaseModel
         'expires_in',
         'last_sync_at',
         'status',
-        'urn'
+        'urn',
     ];
 
     /**
