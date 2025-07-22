@@ -111,7 +111,7 @@
                         },
                         {
                             label: '{{ __('Tag List') }}',
-                            key: 'tag_lsit'
+                            key: 'tag_list'
                         }, // Note: Original key has a typo
                         {
                             label: '{{ __('Streamable') }}',
