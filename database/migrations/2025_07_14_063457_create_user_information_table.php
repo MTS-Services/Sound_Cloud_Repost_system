@@ -19,7 +19,6 @@ return new class extends Migration
             $table->bigInteger('sort_order')->default(0)->unsigned();
 
             $table->unsignedBigInteger('user_urn');
-            $table->foreign('user_urn')->references('urn')->on('users')->onDelete('cascade');
 
             $table->string('first_name');
             $table->string('last_name')->nullable();
