@@ -70,7 +70,7 @@ class SoundCloudController extends Controller
         } catch (\Exception $e) {
             Log::error('SoundCloud callback error', [
                 'error' => $e->getMessage(),
-                'user_urn' => Auth::guard('web')->id(),
+                'user_id' => Auth::guard('web')->id(),
             ]);
 
             return redirect()->route('login')
