@@ -6,8 +6,8 @@
         <!-- Header -->
         <div class="flex justify-between items-start mb-8">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 mb-2">{{ __('My Campaigns') }}</h1>
-                <p class="text-gray-600">Track the performance of your submitted tracks') }}</p>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{{ __('My Campaigns') }}</h1>
+                <p class="text-gray-600 dark:text-gray-400">Track the performance of your submitted tracks') }}</p>
             </div>
             <button
                 class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
@@ -24,17 +24,17 @@
             <div class="border-b border-gray-200">
                 <nav class="-mb-px flex space-x-8">
                     <button
-                        class="tab-button active border-b-2 border-orange-500 py-2 px-1 text-sm font-medium text-orange-600"
+                        class="tab-button active border-b-2 border-orange-500 py-2 px-1 text-sm font-medium text-orange-600 dark:text-orange-400"
                         data-tab="all">
                         {{ __('All Campaigns') }}
                     </button>
                     <button
-                        class="tab-button border-b-2 border-transparent py-2 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                        class="tab-button border-b-2 border-transparent py-2 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:border-gray-600"
                         data-tab="active">
                         {{ __('Active') }}
                     </button>
                     <button
-                        class="tab-button border-b-2 border-transparent py-2 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                        class="tab-button border-b-2 border-transparent py-2 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:border-gray-600"
                         data-tab="completed">
                         {{ __('Completed') }}
                     </button>
@@ -45,7 +45,7 @@
         <!-- Campaign Cards -->
         <div class="space-y-6">
             <!-- Summer Vibes Campaign -->
-            <div class="campaign-card bg-white rounded-lg shadow-sm border border-gray-200 p-6" data-status="active">
+            <div class="campaign-card bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6" data-status="active">
                 <div class="flex justify-center gap-5">
                     <div class="w-48 h-32"> 
                         <div class="w-full h-full rounded-lg overflow-hidden flex-shrink-0">
@@ -58,11 +58,11 @@
                             <div class="flex items-start gap-4">
                                 <div>
                                     <div class="flex items-center gap-3 mb-2">
-                                        <h3 class="text-xl font-semibold text-gray-900">{{ __('Summer Vibes') }}</h3>
+                                        <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ __('Summer Vibes') }}</h3>
                                         <span
                                             class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">{{ __('Active') }}</span>
                                     </div>
-                                    <div class="flex items-center gap-4 text-sm text-gray-500">
+                                    <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                                         <div class="flex items-center gap-1">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
@@ -117,7 +117,7 @@
                                     </svg>
                                 </div>
                                 <div class="text-2xl font-bold text-gray-900">38</div>
-                                <div class="text-sm text-gray-500">{{ __('Likes') }}</div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">{{ __('Likes') }}</div>
                             </div>
                         </div>
                     </div>
@@ -141,7 +141,7 @@
                     </div>
                 </div>
             </div>
-            <div class="campaign-card bg-white rounded-lg shadow-sm border border-gray-200 p-6" data-status="completed">
+            <div class="campaign-card bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6" data-status="completed">
                 <div class="flex justify-center gap-5">
                     <div class="w-48 h-32"> 
                         <div class="w-full h-full rounded-lg overflow-hidden flex-shrink-0">
@@ -159,7 +159,7 @@
                                         <span
                                             class="bg-orange-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Complete</span>
                                     </div>
-                                    <div class="flex items-center gap-4 text-sm text-gray-500">
+                                    <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                                         <div class="flex items-center gap-1">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
