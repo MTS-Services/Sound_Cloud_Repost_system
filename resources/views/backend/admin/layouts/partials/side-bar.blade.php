@@ -87,6 +87,14 @@
                         'active' => 'admin-users',
                         'permission' => 'user-list',
                     ],
+                    [
+                        'name' => 'User Playlists',
+                        'route' => route('um.playlist.index'),
+                        'icon' => 'music',
+                        'active' => 'user-playlist',
+                        'permission' => 'user-list',
+                    ],
+
                 ]" />
 
             <x-admin.navlink type="dropdown" icon="shopping-cart" name="Package Management" :page_slug="$active"

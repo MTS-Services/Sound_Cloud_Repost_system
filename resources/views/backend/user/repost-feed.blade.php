@@ -2,24 +2,24 @@
     <x-slot name="page_slug">repost-feed</x-slot>
     <div class="flex justify-between">
         <div>
-            <h2 class="text-2xl font-bold text-gray-900 mb-2">{{ __('Repost Feed') }}</h2>
-            <p class="text-gray-600">{{ __('Repost tracks to earn credits') }}</p>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{{ __('Repost Feed') }}</h2>
+            <p class="text-gray-600 dark:text-gray-400">{{ __('Repost tracks to earn credits') }}</p>
         </div>
-        <div class="shadow-sm border border-gray-100 flex items-center gap-2 px-3 py-2 rounded-md w-24 h-10">
+        <div class="shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-2 px-3 py-2 rounded-md w-24 h-10 dark:bg-gray-800">
             <i data-lucide="filter" class="w-4 h-4"></i>
             <span>{{ __('Filter') }}</span>
         </div>
     </div>
-    <div class="p-3 my-6 shadow-md rounded-lg">
+    <div class="p-3 my-6 shadow-md rounded-lg dark:bg-gray-800">
         <div class="flex justify-between">
             <div class="flex justify-start gap-3">
                 <div class="w-56 h-36 rounded-md overflow-hidden">
                     <img src="{{ asset('frontend/user/image/music-1.jpg') }}" class="w-full h-full" alt="">
                 </div>
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-900">{{ __('Summer Hits') }}</h2>
-                    <p class="text-gray-600 text-sm">{{ __('WaveMaker') }}</p>
-                    <div class="flex items-center space-x-4 mt-2 text-sm text-gray-600">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ __('Summer Hits') }}</h2>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('WaveMaker') }}</p>
+                    <div class="flex items-center space-x-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
                         <div class="flex items-center">
                             <i data-lucide="timer" class="w-4 h-4 mr-1"></i>
                             4:45
@@ -47,7 +47,7 @@
                     <div class="w-32 bg-gray-200 rounded-full h-2">
                         <div class="bg-orange-500 h-2 rounded-full" style="width: 70%"></div>
                     </div>
-                    <p class="text-sm text-gray-600">90%</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">90%</p>
                 </div>
                 <div class="w-42 ms-auto flex items-center gap-2 mt-4 bg-orange-600 text-white py-2 px-4 rounded-md">
                     <i data-lucide="refresh cw" class="w-4 h-4"></i>
@@ -56,7 +56,7 @@
             </div>
         </div>
     </div>
-    <div class="p-3 my-6 shadow-md rounded-lg">
+    <div class="p-3 my-6 shadow-md rounded-lg dark:bg-gray-800">
         <div class="flex justify-between">
             <div class="flex justify-start gap-3">
                 <div class="w-56 h-36 rounded-md overflow-hidden">
@@ -65,9 +65,9 @@
                     </div>
                 </div>
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-900">{{ __('Summer Hits') }}</h2>
-                    <p class="text-gray-600 text-sm">{{ __('WaveMaker') }}</p>
-                    <div class="flex items-center space-x-4 mt-2 text-sm text-gray-600">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ __('Summer Hits') }}</h2>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('WaveMaker') }}</p>
+                    <div class="flex items-center space-x-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
                         <div class="flex items-center">
                             <i data-lucide="timer" class="w-4 h-4 mr-1"></i>
                             4:45
@@ -95,7 +95,7 @@
                     <div class="w-32 bg-gray-200 rounded-full h-2">
                         <div class="bg-orange-500 h-2 rounded-full" style="width: 70%"></div>
                     </div>
-                    <p class="text-sm text-gray-600">90%</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">90%</p>
                 </div>
                 <div class="w-42 ms-auto flex items-center gap-2 mt-4 bg-orange-600 text-white py-2 px-4 rounded-md">
                     <i data-lucide="refresh cw" class="w-4 h-4"></i>
@@ -104,16 +104,16 @@
             </div>
         </div>
     </div>
-    <div class="p-3 my-6 shadow-md rounded-lg">
+    <div class="p-3 my-6 shadow-md rounded-lg dark:bg-gray-800">
         <div class="flex justify-between">
             <div class="flex justify-start gap-3">
                 <div class="w-56 h-36 rounded-md overflow-hidden">
                     <img src="{{ asset('frontend/user/image/music-3.jpg') }}" class="w-full h-full" alt="">
                 </div>
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-900">{{ __('Summer Hits') }}</h2>
-                    <p class="text-gray-600 text-sm">{{ __('WaveMaker') }}</p>
-                    <div class="flex items-center space-x-4 mt-2 text-sm text-gray-600">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ __('Summer Hits') }}</h2>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('WaveMaker') }}</p>
+                    <div class="flex items-center space-x-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
                         <div class="flex items-center">
                             <i data-lucide="timer" class="w-4 h-4 mr-1"></i>
                             4:45
@@ -141,7 +141,7 @@
                     <div class="w-32 bg-gray-200 rounded-full h-2">
                         <div class="bg-orange-500 h-2 rounded-full" style="width: 70%"></div>
                     </div>
-                    <p class="text-sm text-gray-600">90%</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">90%</p>
                 </div>
                 <div class="w-42 ms-auto flex items-center gap-2 mt-4 bg-orange-600 text-white py-2 px-4 rounded-md">
                     <i data-lucide="refresh cw" class="w-4 h-4"></i>
@@ -150,16 +150,16 @@
             </div>
         </div>
     </div>
-    <div class="p-3 my-6 shadow-md rounded-lg">
+    <div class="p-3 my-6 shadow-md rounded-lg dark:bg-gray-800">
         <div class="flex justify-between">
             <div class="flex justify-start gap-3">
                 <div class="w-56 h-36 rounded-md overflow-hidden">
                     <img src="{{ asset('frontend/user/image/music-4.jpg') }}" class="w-full h-full" alt="">
                 </div>
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-900">{{ __('Summer Hits') }}</h2>
-                    <p class="text-gray-600 text-sm">{{ __('WaveMaker') }}</p>
-                    <div class="flex items-center space-x-4 mt-2 text-sm text-gray-600">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ __('Summer Hits') }}</h2>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('WaveMaker') }}</p>
+                    <div class="flex items-center space-x-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
                         <div class="flex items-center">
                             <i data-lucide="timer" class="w-4 h-4 mr-1"></i>
                             4:45
@@ -187,7 +187,7 @@
                     <div class="w-32 bg-gray-200 rounded-full h-2">
                         <div class="bg-orange-500 h-2 rounded-full" style="width: 70%"></div>
                     </div>
-                    <p class="text-sm text-gray-600">90%</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">90%</p>
                 </div>
                 <div class="w-42 ms-auto flex items-center gap-2 mt-4 bg-orange-600 text-white py-2 px-4 rounded-md">
                     <i data-lucide="refresh cw" class="w-4 h-4"></i>

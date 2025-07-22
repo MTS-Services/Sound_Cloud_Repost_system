@@ -8,13 +8,15 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source "../views";
 @source '../../**';
-/* @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *)); */
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 
 :root {
     --primary: #1CA577;
     --secondary: theme(colors.bg-light-primary);
 }
+
 
 @layer base {
     * {

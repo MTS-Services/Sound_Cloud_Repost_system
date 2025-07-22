@@ -11,9 +11,6 @@
                     <x-button href="{{ route('um.user.trash') }}" icon="trash-2" type='secondary' permission="admin-trash">
                         {{ __('Trash') }}
                     </x-button>
-                    <x-button href="{{ route('um.user.create') }}" icon="user-plus" permission="admin-create">
-                        {{ __('Add') }}
-                    </x-button>
                 </div>
             </div>
         </div>
