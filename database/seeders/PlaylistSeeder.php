@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Carbon\Carbon;
 use App\Models\Playlist;
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 
@@ -13,12 +14,12 @@ class PlaylistSeeder extends Seeder
      * Run the database seeds.
      */
     public function run(): void
-     {
-        // Create 10 sample playlists
+    {
+
         for ($i = 1; $i <= 5; $i++) {
             Playlist::create([
                 'sort_order' => $i,
-                'user_urn' => 1, // Make sure a user with ID 1 exists
+                'user_urn' => User::class::first()->urn,
                 'duration' => rand(1000, 5000),
                 'label_id' => null,
                 'genre' => 'Electronic',
