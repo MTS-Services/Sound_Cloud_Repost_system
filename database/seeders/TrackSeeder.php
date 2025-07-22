@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Track;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
@@ -17,7 +18,7 @@ class TrackSeeder extends Seeder
   {
         for ($i = 1; $i <= 2; $i++) {
             Track::create([
-                'user_urn' => 1,
+                'user_urn' => User::class::first()->urn,
 
                 'kind' => 'track',
                 'soundcloud_track_id' => (string)Str::uuid(),
