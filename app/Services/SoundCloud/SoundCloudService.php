@@ -382,7 +382,7 @@ class SoundCloudService
                 // Determine if a new record was created or an existing one updated
                 $playlist = Playlist::updateOrCreate(
                     [
-                        'user_id' => $user->id,
+                        'user_urn' => $user->urn,
                         'soundcloud_track_id' => $playlistData['id'], // Unique identifier from SoundCloud
                     ],
                     [
@@ -431,10 +431,10 @@ class SoundCloudService
                 }
             }
 
-            Log::info("Successfully synced {$syncedCount} tracks for user {$user->urn}.");
+            Log::info("Successfully synced {$syncedCount} playlists for user {$user->urn}.");
             return $syncedCount;
         } catch (\Exception $e) {
-            Log::error('Error syncing user tracks in syncUserTracks', [
+            Log::error('Error syncing user playlists in updateUserPlaylists', [
                 'user_urn' => $user->urn,
                 'error' => $e->getMessage(),
             ]);
