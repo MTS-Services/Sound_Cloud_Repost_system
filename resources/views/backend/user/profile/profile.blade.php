@@ -154,40 +154,40 @@
 
                 <!-- Achievements -->
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Achievements</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Achievements</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="shadow-sm rounded-lg p-4 hover:shadow-md transition-shadow dark:bg-gray-800">
+                        <div class="shadow-sm rounded-lg p-4 hover:shadow-md transition-shadow">
                             <div class="flex items-center mb-3">
                                 <div class="bg-orange-100 p-2 rounded-lg mr-3">
                                     <i data-lucide="star" class="w-5 h-5 text-orange-600"></i>
                                 </div>
                                 <div>
-                                    <div class="font-semibold text-gray-900 dark:text-gray-100">Rising Star</div>
-                                    <div class="text-sm text-gray-600 dark:text-gray-400">Completed 10 reposts</div>
+                                    <div class="font-semibold text-gray-900">Rising Star</div>
+                                    <div class="text-sm text-gray-600">Completed 10 reposts</div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="shadow-sm rounded-lg p-4 hover:shadow-md transition-shadow dark:bg-gray-800">
+                        <div class="shadow-sm rounded-lg p-4 hover:shadow-md transition-shadow">
                             <div class="flex items-center mb-3">
                                 <div class="bg-blue-100 p-2 rounded-lg mr-3">
                                     <i data-lucide="refresh-cw" class="w-5 h-5 text-blue-600"></i>
                                 </div>
                                 <div>
-                                    <div class="font-semibold text-gray-900 dark:text-gray-100">Repost Champion</div>
-                                    <div class="text-sm text-gray-600 dark:text-gray-400">Reposted 5 different genres</div>
+                                    <div class="font-semibold text-gray-900">Repost Champion</div>
+                                    <div class="text-sm text-gray-600">Reposted 5 different genres</div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="shadow-sm rounded-lg p-4 hover:shadow-md transition-shadow opacity-100 dark:bg-gray-800">
+                        <div class="shadow-sm rounded-lg p-4 hover:shadow-md transition-shadow opacity-100">
                             <div class="flex items-center mb-3">
                                 <div class="bg-gray-100 p-2 rounded-lg mr-3">
                                     <i data-lucide="music" class="w-5 h-5 text-gray-600"></i>
                                 </div>
                                 <div>
-                                    <div class="font-semibold text-gray-900 dark:text-gray-100">Track Master</div>
-                                    <div class="text-sm text-gray-600 dark:text-gray-400">Submit 5 tracks (2/5)</div>
+                                    <div class="font-semibold text-gray-900">Track Master</div>
+                                    <div class="text-sm text-gray-600">Submit 5 tracks (2/5)</div>
                                 </div>
                             </div>
                         </div>
@@ -197,17 +197,17 @@
 
             <div id="transactions" class="tab-pane p-6 hidden">
                 <div class="text-center py-12">
-                    <i data-lucide="credit-card" class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4"></i>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Credit Transactions</h3>
-                    <p class="text-gray-600 dark:text-gray-400">Your credit transaction history will appear here.</p>
+                    <i data-lucide="credit-card" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Credit Transactions</h3>
+                    <p class="text-gray-600">Your credit transaction history will appear here.</p>
                 </div>
             </div>
 
             <div id="history" class="tab-pane p-6 hidden">
                 <div class="text-center py-12">
-                    <i data-lucide="history" class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4"></i>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Repost History</h3>
-                    <p class="text-gray-600 dark:text-gray-400">Your repost history will appear here.</p>
+                    <i data-lucide="history" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Repost History</h3>
+                    <p class="text-gray-600">Your repost history will appear here.</p>
                 </div>
             </div>
         </div>

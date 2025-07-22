@@ -86,6 +86,6 @@ class UserInformation extends BaseModel
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_urn', 'urn', 'id');
+        return $this->belongsTo(User::class, 'user_urn', 'urn');
     }
 }

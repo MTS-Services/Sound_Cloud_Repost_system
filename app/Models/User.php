@@ -30,7 +30,6 @@ class User extends AuthBaseModel
         'expires_in',
         'last_sync_at',
         'status',
-        'urn',
     ];
 
     /**
@@ -73,12 +72,12 @@ class User extends AuthBaseModel
 
     public function tracks(): HasMany
     {
-        return $this->hasMany(Track::class, 'user_urn', 'urn');
+        return $this->hasMany(Track::class);
     }
 
     public function subscriptions(): HasMany
     {
-        return $this->hasMany(Subscription::class, 'user_urn', 'urn');
+        return $this->hasMany(Subscription::class);
     }
 
     // Helper methods

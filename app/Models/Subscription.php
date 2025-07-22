@@ -38,7 +38,7 @@ class Subscription extends BaseModel
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_urn', 'urn', 'id');
+        return $this->belongsTo(User::class, 'user_urn', 'urn');
     }
 
     public function product(): BelongsTo

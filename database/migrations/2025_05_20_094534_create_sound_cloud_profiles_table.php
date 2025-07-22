@@ -15,7 +15,7 @@ return new class extends Migration {
     {
         Schema::create('sound_cloud_profiles', function (Blueprint $table) {
             $table->id();
-            $table->string('user_urn');
+            $table->unsignedBigInteger('user_urn');
             $table->string('soundcloud_url')->nullable();
             $table->text('description')->nullable();
             $table->string('country')->nullable();

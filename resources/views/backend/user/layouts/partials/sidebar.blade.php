@@ -1,37 +1,35 @@
-<!-- Mobile menu button -->
-<div class="lg:hidden fixed top-4 left-4 z-35">
-    <button id="mobile-menu-btn"
-        class="p-2 rounded-md bg-white dark:bg-[#1A1C20] shadow-sm hover:text-black dark:hover:text-white">
-        <i data-lucide="menu" class="w-6 h-6 text-gray-500 dark:text-gray-300"></i>
-    </button>
-</div>
+ <!-- Mobile menu button -->
+ <div class="lg:hidden fixed top-4 left-4 z-35">
+     <button id="mobile-menu-btn" class="p-2 rounded-md bg-white shadow-sm hover:text-black">
+         <i data-lucide="menu" class="w-6 h-6 text-gray-500"></i>
+     </button>
+ </div>
 
-<!-- Sidebar -->
-<div id="sidebar"
-    class="fixed left-0 top-0 h-screen overflow-y-auto w-64 bg-white dark:bg-[#1A1C20] shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 justify-between">
-    <div class="p-6 flex justify-between">
-        <h1 class="text-xl font-bold text-orange-600 dark:text-orange-400">{{ __('RepostChain') }}</h1>
-        <span class="p-2 rounded-md bg-white dark:bg-[#1A1C20] shadow-sm lg:hidden" id="close_menu">
-            <i data-lucide="x" class="w-4 h-4 text-gray-500 dark:text-gray-300"></i>
-        </span>
-    </div>
+ <!-- Sidebar -->
+ <div id="sidebar"
+     class="fixed left-0 top-0 h-screen overflow-y-auto w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 justify-between">
+     <div class="p-6 flex justify-between">
+         <h1 class="text-xl font-bold text-orange-600">{{ __('RepostChain') }}</h1>
+         <span class="p-2 rounded-md bg-white shadow-sm lg:hidden" id="close_menu">
+             <i data-lucide="x" class="w-4 h-4 text-gray-500"></i>
+         </span>
+     </div>
 
-    <!-- Submit Track Button -->
-    <div class="px-6 mb-6">
-        <button
-            class="w-full bg-orange-600 dark:bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-700 dark:hover:bg-orange-600 transition-colors">
-            <i data-lucide="plus" class="w-4 h-4 inline mr-2"></i>
-            {{ __('Submit Track') }}
-        </button>
-    </div>
+     <!-- Submit Track Button -->
+     <div class="px-6 mb-6">
+         <button class="w-full bg-orange-600 text-white py-2 px-4 rounded-lg hover:bg-orange-700 transition-colors">
+             <i data-lucide="plus" class="w-4 h-4 inline mr-2"></i>
+             {{ __('Submit Track') }}
+         </button>
+     </div>
 
-    <!-- Credits -->
-    <div class="px-6 mb-6 border-y py-2 border-gray-100 dark:border-gray-800">
-        <div class="flex justify-between items-center text-sm">
-            <span class="text-gray-600 dark:text-gray-300">{{ __('Available Credits') }}</span>
-            <span class="font-bold text-orange-600 dark:text-orange-400">75</span>
-        </div>
-    </div>
+     <!-- Credits -->
+     <div class="px-6 mb-6 border-y py-2 border-gray-100">
+         <div class="flex justify-between items-center text-sm">
+             <span class="text-gray-600">{{ __('Available Credits') }}</span>
+             <span class="font-bold text-orange-600">75</span>
+         </div>
+     </div>
 
      <!-- Navigation -->
      <nav class="px-3">
@@ -110,18 +108,5 @@
      </div>
  </div>
 
-
-    <div
-        class="flex items-center space-x-2 border-t border-gray-100 dark:border-gray-800 px-6 py-4 bg-white dark:bg-[#1A1C20] fixed bottom-0 w-full">
-        <a href="{{ route('user.profile') }}">
-            <img src="{{ asset('frontend/user/user.jpg') }}" alt="Alex Rodriguez" class="w-8 h-8 rounded-full">
-        </a>
-        <div class="text-sm">
-            <span class="font-semibold text-black dark:text-white">{{ auth()->user()->name ?? "" }}</span>
-            <div class="text-green-500 dark:text-green-400 text-xs">● Online</div>
-        </div>
-    </div>
-</div>
-
-<!-- Overlay for mobile -->
-<div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden lg:hidden"></div>
+ <!-- Overlay for mobile -->
+ <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden lg:hidden"></div>

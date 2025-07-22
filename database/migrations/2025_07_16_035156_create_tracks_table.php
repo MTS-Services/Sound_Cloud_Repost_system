@@ -16,8 +16,7 @@ return new class extends Migration
     {
         Schema::create('tracks', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('sort_order')->default(0);
-            $table->string('user_urn')->index();
+            $table->unsignedBigInteger('user_urn')->index();
             $table->foreign('user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
 
             $table->string('kind')->nullable()->index();

@@ -4,17 +4,13 @@ namespace App\Http\Controllers\SouncCloud\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SoundCloud\SoundCloudAuthRequest;
-use App\Models\Playlist;
 use App\Models\Product;
 use App\Models\Subscription;
 use App\Models\Track;
 use App\Models\User;
 use App\Models\UserInformation;
 use App\Services\SoundCloud\SoundCloudService;
-use Carbon\Carbon;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -53,10 +49,9 @@ class SoundCloudController extends Controller
 
             // Find or create user
             $user = $this->findOrCreateUser($soundCloudUser);
-            $this->soundCloudService->updateUserPlaylists($user);
 
             // Sync user tracks
-            $this->soundCloudService->syncUserTracks($user);
+            // $this->soundCloudService->syncUserTracks($user);
 
             // $this->soundCloudService->updateUserProfile($user);
 
@@ -70,7 +65,7 @@ class SoundCloudController extends Controller
         } catch (\Exception $e) {
             Log::error('SoundCloud callback error', [
                 'error' => $e->getMessage(),
-                'user_id' => Auth::guard('web')->id(),
+                'user_urn' => Auth::guard('web')->id(),
             ]);
 
             return redirect()->route('login')
@@ -158,7 +153,7 @@ class SoundCloudController extends Controller
                         'refresh_token' => $soundCloudUser->refreshToken,
                         'expires_in' => $soundCloudUser->expiresIn,
                         'last_synced_at' => now(),
-                        'urn' => $soundCloudUser->user['urn']
+                        'user_urn' => $soundCloudUser->user['urn']
                     ]
                 );
 
@@ -229,7 +224,7 @@ class SoundCloudController extends Controller
     {
         // Clear existing subscriptions for the user to sync fresh ones
         // This assumes you want to overwrite previous subscriptions with current data
-       Subscription::where('user_urn', $user->urn)->delete();
+        $user->subscriptions()->delete();
 
         if (isset($soundCloudUser->user['subscriptions']) && is_array($soundCloudUser->user['subscriptions'])) {
             foreach ($soundCloudUser->user['subscriptions'] as $subscriptionData) {
@@ -259,6 +254,4 @@ class SoundCloudController extends Controller
             ]);
         }
     }
-
-   
 }
