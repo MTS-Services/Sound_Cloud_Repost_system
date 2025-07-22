@@ -12,6 +12,17 @@
                 <span
                     class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">1</span>
             </div>
+              <!-- Theme Toggle Button (Only Light/Dark) -->
+                <button @click="$store.theme.toggleTheme()"
+                    class="p-2 rounded-xl hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+                    data-tooltip="Toggle theme"
+                    :title="$store.theme.current.charAt(0).toUpperCase() + $store.theme.current.slice(1) + ' mode'">
+                    <i data-lucide="sun" x-show="!$store.theme.darkMode"
+                        class="w-5 h-5 text-text-light-primary dark:text-text-white"></i>
+                    <i data-lucide="moon" x-show="$store.theme.darkMode"
+                        class="w-5 h-5 text-text-light-primary dark:text-text-white"></i>
+                </button>
+
             <div class="dropdown dropdown-end">
                 <div tabindex="0" role="button" class="flex items-center space-x-2 avatar">
                     <div class="w-10 h-10 rounded-full">
