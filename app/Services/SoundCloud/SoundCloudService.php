@@ -72,7 +72,6 @@ class SoundCloudService
      */
     public function syncUserTracks(User $user, int $limit = 200): int
     {
-        dd($user);
         try {
             $tracks = $this->getUserTracks($user, $limit);
             $syncedCount = 0;
