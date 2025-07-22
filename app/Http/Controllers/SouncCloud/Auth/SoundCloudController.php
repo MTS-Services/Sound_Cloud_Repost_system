@@ -70,7 +70,7 @@ class SoundCloudController extends Controller
         } catch (\Exception $e) {
             Log::error('SoundCloud callback error', [
                 'error' => $e->getMessage(),
-                'user_urn' => Auth::guard('web')->id(),
+                'user_id' => Auth::guard('web')->id(),
             ]);
 
             return redirect()->route('login')
@@ -158,7 +158,7 @@ class SoundCloudController extends Controller
                         'refresh_token' => $soundCloudUser->refreshToken,
                         'expires_in' => $soundCloudUser->expiresIn,
                         'last_synced_at' => now(),
-                        'user_urn' => $soundCloudUser->user['urn']
+                        'urn' => $soundCloudUser->user['urn']
                     ]
                 );
 
@@ -229,7 +229,7 @@ class SoundCloudController extends Controller
     {
         // Clear existing subscriptions for the user to sync fresh ones
         // This assumes you want to overwrite previous subscriptions with current data
-        $user->subscriptions()->delete();
+       Subscription::where('user_urn', $user->urn)->delete();
 
         if (isset($soundCloudUser->user['subscriptions']) && is_array($soundCloudUser->user['subscriptions'])) {
             foreach ($soundCloudUser->user['subscriptions'] as $subscriptionData) {

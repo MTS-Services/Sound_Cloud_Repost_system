@@ -17,7 +17,7 @@ return new class extends Migration
         Schema::create('playlists', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('sort_order')->default(0);
-            $table->unsignedBigInteger('user_urn');
+            $table->string('user_urn')->index();
             $table->unsignedBigInteger('duration')->nullable();
             $table->unsignedBigInteger('label_id')->nullable();
             $table->string('genre')->nullable();
@@ -62,7 +62,7 @@ return new class extends Migration
             
             $this->addMorphedAuditColumns($table);
 
-             $table->foreign('user_urn')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+             $table->foreign('user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

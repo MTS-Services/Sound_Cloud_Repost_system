@@ -72,6 +72,7 @@ class SoundCloudService
      */
     public function syncUserTracks(User $user, int $limit = 200): int
     {
+        dd($user);
         try {
             $tracks = $this->getUserTracks($user, $limit);
             $syncedCount = 0;
@@ -79,7 +80,7 @@ class SoundCloudService
             foreach ($tracks as $trackData) {
                 $track = Track::updateOrCreate(
                     [
-                        'user_id' => $user->id,
+                        'user_urn' => $user->urn,
                         'soundcloud_track_id' => $trackData['id'],
                     ],
                     [
