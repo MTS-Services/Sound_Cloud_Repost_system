@@ -3,8 +3,6 @@
     <x-slot name="page_slug">campains</x-slot>
 
     <div class="p-6">
-        <!-- You can open the modal using ID.showModal() method -->
-        {{-- <button class="btn" onclick="my_modal_3.showModal()">open modal</button> --}}
         <dialog id="campaign_create_modal" class="modal">
             <div class="modal-box top-1/4 left-1/2 -translate-x-1/2 min-h-[60vh]">
                 <form method="dialog">
@@ -106,23 +104,6 @@
                 <div id="tracks-content" class="px-6 pb-6">
 
                     @foreach ($tracks as $track)
-                        <!-- Track Item -->
-                        {{-- <div onclick="campaign_create_modal.showModal(), document.getElementById('close_campaigns_modal').click()"
-                            class="flex items-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm mt-4">
-                            <img src="{{ asset('frontend/user/image/pexels-photo-1540338.jpeg') }}"
-                                alt="{{ $track->title }}" class="rounded-md w-36 h-32" />
-                            <div class="flex-1 p-4 ">
-                                <h2 class="text-lg font-semibold dark:text-gray-100">{{ $track->title }}</h2>
-                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                                    by <strong>{{ $track->author_username }}</strong>
-                                    <span class="ml-1 text-xs">{{ $track->genre }}</span>
-                                </p>
-                                <span
-                                    class="inline-block bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs px-2 py-1 rounded-full">
-                                    {{ $track->isrc }}
-                                </span>
-                            </div>
-                        </div> --}}
                         <div onclick="selectTrack(this)" data-id="{{ $track->id }}" data-title="{{ $track->title }}"
                             data-author="{{ $track->author_username }}" data-genre="{{ $track->genre }}"
                             data-isrc="{{ $track->isrc }}"
@@ -162,8 +143,8 @@
         <!-- Header -->
         <div class="flex justify-between items-start mb-8">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 mb-2">{{ __('My Campaigns') }}</h1>
-                <p class="text-gray-600">Track the performance of your submitted tracks</p>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">{{ __('My Campaigns') }}</h1>
+                <p class="text-gray-600 dark:text-gray-400">Track the performance of your submitted tracks</p>
             </div>
             <button onclick="campaigns_modal.showModal()"
                 class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
@@ -177,7 +158,7 @@
 
         <!-- Tabs -->
         <div class="mb-8">
-            <div class="border-b border-gray-200">
+            <div class="border-b border-gray-200 dark:border-gray-700">
                 <nav class="-mb-px flex space-x-8">
                     <button
                         class="tab-button active border-b-2 border-orange-500 py-2 px-1 text-sm font-medium text-orange-600 translateY(-1px)"
@@ -202,7 +183,7 @@
         <div class="space-y-6">
             <!-- Summer Vibes Campaign -->
             @foreach ($campaigns as $campaign)
-                <div class="campaign-card bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+                <div class="campaign-card bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6"
                     data-status="{{ $campaign->status_label }}">
                     <div class="flex justify-center gap-5">
                         <div class="w-48 h-32">
@@ -217,12 +198,12 @@
                                 <div class="flex items-start gap-4">
                                     <div>
                                         <div class="flex items-center gap-3 mb-2">
-                                            <h3 class="text-xl font-semibold text-gray-900">{{ $campaign->title }}
+                                            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ $campaign->title }}
                                             </h3>
                                             <span
                                                 class="badge {{ $campaign->status_color }} text-white text-xs font-medium px-2.5 py-0.5 rounded-full">{{ $campaign->status_label }}</span>
                                         </div>
-                                        <div class="flex items-center gap-4 text-sm text-gray-500">
+                                        <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                                             <div class="flex items-center gap-1">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
@@ -257,21 +238,21 @@
 
                             <!-- Stats -->
                             <div class="grid grid-cols-3 gap-6 mt-5">
-                                <div class="bg-white rounded-lg shadow-sm py-2 text-center">
+                                <div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm py-2 text-center">
                                     <div class="flex items-center justify-center mb-2">
                                         <i data-lucide="refresh-ccw" class="w-5 h-5 text-pink-500"></i>
                                     </div>
-                                    <div class="text-2xl font-bold text-gray-900">24</div>
-                                    <div class="text-sm text-gray-500">{{ __('Reposts') }}</div>
+                                    <div class="text-2xl font-bold text-gray-900 dark:text-white">24</div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-300">{{ __('Reposts') }}</div>
                                 </div>
-                                <div class="bg-white rounded-lg shadow-sm py-2 text-center">
+                                <div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm py-2 text-center">
                                     <div class="flex items-center justify-center mb-2">
                                         <i data-lucide="eye" class="w-5 h-5 text-blue-500"></i>
                                     </div>
-                                    <div class="text-2xl font-bold text-gray-900">342</div>
-                                    <div class="text-sm text-gray-500">{{ __('Plays') }}</div>
+                                    <div class="text-2xl font-bold text-gray-900 dark:text-white">342</div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-300">{{ __('Plays') }}</div>
                                 </div>
-                                <div class="bg-white rounded-lg shadow-sm py-2 text-center">
+                                <div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm py-2 text-center">
                                     <div class="flex items-center justify-center mb-2">
                                         <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
@@ -280,8 +261,8 @@
                                             </path>
                                         </svg>
                                     </div>
-                                    <div class="text-2xl font-bold text-gray-900">38</div>
-                                    <div class="text-sm text-gray-500">{{ __('Likes') }}</div>
+                                    <div class="text-2xl font-bold text-gray-900 dark:text-white">38</div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-300">{{ __('Likes') }}</div>
                                 </div>
                             </div>
                         </div>
