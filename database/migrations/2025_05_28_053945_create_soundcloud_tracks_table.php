@@ -16,7 +16,7 @@ return new class extends Migration {
     {
         Schema::create('soundcloud_tracks', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_urn');
+            $table->string('user_urn');
             $table->string('soundcloud_track_id');
             $table->string('title');
             $table->text('description')->nullable();

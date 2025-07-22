@@ -8,6 +8,22 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Sound Cloud') }}</title>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+        {{-- Theme selector && Theme store --}}
+    <script>
+        (function() {
+            let theme = localStorage.getItem('theme') || 'system';
+
+            if (theme === 'system') {
+                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.classList.toggle('dark', systemPrefersDark);
+                document.documentElement.setAttribute('data-theme', systemPrefersDark ? 'dark' : 'light');
+            } else {
+                document.documentElement.classList.toggle('dark', theme === 'dark');
+                document.documentElement.setAttribute('data-theme', theme);
+            }
+        })();
+    </script>
+    <script src="{{ asset('assets/js/toggle-theme.js') }}"></script>
     {{-- Custom CSS --}}
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/custome.css') }}">
 
@@ -33,12 +49,12 @@
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
 </head>
 
-<body class="bg-gray-50 font-sans text-black">
+<body class="bg-gray-50 dark:bg-gray-900 font-sans text-black" x-data>
     {{-- Sidebar --}}
     @include('backend.user.layouts.partials.sidebar')
 
     <!-- Main Content -->
-    <div class="lg:ml-64 min-h-screen">
+    <div class="lg:ml-64 min-h-screen " >
         {{-- Header --}}
         @include('backend.user.layouts.partials.header')
 
@@ -49,6 +65,7 @@
     </div>
     {{-- Custom JS --}}
     <script src="{{ asset('assets/frontend/js/custome.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     @stack('js')
 </body>
 

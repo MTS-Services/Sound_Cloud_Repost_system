@@ -2,9 +2,11 @@
 
 namespace App\Services\SoundCloud;
 
+use App\Models\Playlist;
 use App\Models\User;
 use App\Models\UserInformation;
 use App\Models\SoundcloudTrack; // Assuming you have this model for tracks
+use App\Models\Track;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -36,7 +38,7 @@ class SoundCloudService
         try {
             $response = Http::withHeaders([
                 'Authorization' => 'OAuth ' . $user->token,
-            ])->get("{$this->baseUrl}/tracks", [
+            ])->get("{$this->baseUrl}/me/tracks", [
                 'limit' => min($limit, 200), // SoundCloud API limit for /tracks is typically 200
                 'offset' => $offset,
             ]);
@@ -75,21 +77,19 @@ class SoundCloudService
             $syncedCount = 0;
 
             foreach ($tracks as $trackData) {
-                // Determine if a new record was created or an existing one updated
-                $track = SoundcloudTrack::updateOrCreate(
+                $track = Track::updateOrCreate(
                     [
                         'user_urn' => $user->urn,
-                        'soundcloud_track_id' => $trackData['id'], // Unique identifier from SoundCloud
+                        'soundcloud_track_id' => $trackData['id'],
                     ],
                     [
-                        // Map all relevant fields from the SoundCloud API response to your model's fillable fields
                         'kind' => $trackData['kind'] ?? null,
                         'urn' => $trackData['urn'] ?? null,
                         'duration' => $trackData['duration'] ?? 0,
                         'commentable' => $trackData['commentable'] ?? false,
                         'comment_count' => $trackData['comment_count'] ?? 0,
                         'sharing' => $trackData['sharing'] ?? null,
-                        'tag_list' => $trackData['tag_list'] ?? '', // Ensure empty string if null
+                        'tag_list' => $trackData['tag_list'] ?? '',
                         'streamable' => $trackData['streamable'] ?? false,
                         'embeddable_by' => $trackData['embeddable_by'] ?? null,
                         'purchase_url' => $trackData['purchase_url'] ?? null,
@@ -328,5 +328,115 @@ class SoundCloudService
         if ($followers < 1000) return floor($followers / 100);
         if ($followers < 10000) return floor($followers / 100);
         return min(floor($followers / 100), 100);
+    }
+
+
+     public function getUserPlaylists(User $user, int $limit = 50, int $offset = 0): array
+    {
+        if (!$user->isSoundCloudConnected()) {
+            throw new \Exception('User is not connected to SoundCloud');
+        }
+
+        // Check if token needs refreshing before making API call
+        if ($user->needsTokenRefresh()) {
+            $this->refreshAccessToken($user);
+        }
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'OAuth ' . $user->token,
+            ])->get("{$this->baseUrl}/me/playlists", [
+                'limit' => min($limit, 200), // SoundCloud API limit for /playlists is typically 200
+                'offset' => $offset,
+            ]);
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            // Log detailed error response body for debugging
+            Log::error('SoundCloud API Error - Failed to fetch playlists', [
+                'user_urn' => $user->urn,
+                'status' => $response->status(),
+                'response_body' => $response->body(),
+            ]);
+            throw new \Exception('Failed to fetch playlists from SoundCloud API. Status: ' . $response->status());
+        } catch (\Exception $e) {
+            Log::error('SoundCloud API Error in getUserPlaylists', [
+                'user_urn' => $user->urn,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e; // Re-throw the exception after logging
+        }
+    }
+
+
+    public function updateUserPlaylists(User $user, int $limit = 200): int
+    {
+        try {
+            $playlists = $this->getUserPlaylists($user, $limit);
+            $syncedCount = 0;
+
+            foreach ($playlists as $playlistData) {
+                // Determine if a new record was created or an existing one updated
+                $playlist = Playlist::updateOrCreate(
+                    [
+                        'user_urn' => $user->urn,
+                    ],
+                    [
+                        'soundcloud_id' => $playlistData['id'] ?? null,
+                        'soundcloud_urn' => $playlistData['urn'] ?? null,
+                        'soundcloud_kind' => $playlistData['kind'] ?? null,
+                        'title' => $playlistData['title'] ?? null,
+                        'duration' => $playlistData['duration'] ?? 0,
+                        'description' => $playlistData['description'] ?? null,
+                        'permalink' => $playlistData['permalink'] ?? null,
+                        'permalink_url' => $playlistData['permalink_url'] ?? null,
+                        'sharing' => $playlistData['sharing'] ?? null,
+                        'tag_list' => $playlistData['tag_list'] ?? '',
+                        'tags' => $playlistData['tag_list'] ?? '',
+                        'genre' => $playlistData['genre'] ?? null,
+                        'release' => $playlistData['release'] ?? null,
+                        'release_day' => $playlistData['release_day'] ?? null,
+                        'release_month' => $playlistData['release_month'] ?? null,
+                        'release_year' => $playlistData['release_year'] ?? null,
+                        'label_name' => $playlistData['label_name'] ?? null,
+                        'label' => $playlistData['label'] ?? null,
+                        'label_id' => $playlistData['label_id'] ?? null,
+                        'track_count' => $playlistData['track_count'] ?? null,
+                        'likes_count' => $playlistData['likes_count'] ?? 0,
+                        'streamable' => $playlistData['streamable'] ?? true,
+                        'downloadable' => $playlistData['downloadable'] ?? false,
+                        'purchase_title' => $playlistData['purchase_title'] ?? null,
+                        'purchase_url' => $playlistData['purchase_url'] ?? null,
+                        'artwork_url' => $playlistData['artwork_url'] ?? null,
+                        'embeddable_by' => $playlistData['embeddable_by'] ?? null,
+                        'uri' => $playlistData['uri'] ?? null,
+                        'secret_uri' => $playlistData['secret_uri'] ?? null,
+                        'secret_token' => $playlistData['secret_token'] ?? null,
+                        'tracks_uri' => $playlistData['tracks_uri'] ?? null,
+                        'playlist_type' => $playlistData['playlist_type'] ?? null,
+                        'type' => $playlistData['type'] ?? null,
+                        'soundcloud_created_at' => isset($playlistData['created_at']) ? Carbon::parse($playlistData['created_at'])->toDateTimeString() : null,
+                        'last_modified' => isset($playlistData['last_modified']) ? Carbon::parse($playlistData['last_modified'])->toDateTimeString() : null,
+
+                    ]
+
+                );
+
+                if ($playlist->wasRecentlyCreated) {
+                    $syncedCount++;
+                }
+            }
+
+            Log::info("Successfully synced {$syncedCount} playlists for user {$user->urn}.");
+            return $syncedCount;
+        } catch (\Exception $e) {
+            Log::error('Error syncing user playlists in updateUserPlaylists', [
+                'user_urn' => $user->urn,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e; // Re-throw the exception after logging
+        }
     }
 }
