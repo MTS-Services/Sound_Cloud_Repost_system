@@ -45,7 +45,7 @@ class TrackSeeder extends Seeder
                 'uri' => 'soundcloud://sounds/' . rand(1000000, 9999999),
 
                 'permalink_url' => 'https://soundcloud.com/user/sample-track-' . $i,
-                'artwork_url' => 'https://via.placeholder.com/300x300.png?text=Track+' . $i,
+                'artwork_url' => 'https://via.placeholder.com/200x200.png?text=Track+' . $i,
                 'stream_url' => 'https://api.soundcloud.com/stream/' . $i,
                 'download_url' => 'https://api.soundcloud.com/download/' . $i,
                 'waveform_url' => 'https://waveform.example.com/' . $i,

@@ -25,10 +25,10 @@
                 <div class="space-y-4" x-show="activeTab === 'tracks'">
                     @foreach ($tracks as $track)
                         <!-- Track Item -->
-                        <div class="flex items-center bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                        <div class="flex items-center bg-white border border-gray-200 rounded-lg shadow-sm">
                             <img src="{{ $track->artwork_url ?? 'https://via.placeholder.com/64' }}" alt="{{ $track->title }}"
-                                class="rounded-md mr-4" />
-                            <div class="flex-1">
+                                class="rounded-md" width="150" height="100" />
+                            <div class="flex-1 p-4 ">
                                 <h2 class="text-lg font-semibold">{{ $track->title }}</h2>
                                 <p class="text-sm text-gray-600 mb-1">
                                     by <strong>{{ $track->author_username }}</strong>
