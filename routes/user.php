@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Backend\User\AddCaeditsController;
 use App\Http\Controllers\Backend\User\AnalyticsController;
 use App\Http\Controllers\Backend\User\CampaignsController;
 use App\Http\Controllers\Backend\User\RepostFeedController;
@@ -33,5 +34,6 @@ Route::group(['as' => 'user.'], function () {
         Route::get('/campains', [CampaignsController::class, 'campains'])->name('campains');
         Route::get('/repost-feed', [RepostFeedController::class, 'repostFeed'])->name('repost-feed');
         Route::get('/analytics',[AnalyticsController::class, 'analytics'])->name('analytics');
+        Route::get('/add-credits', [AnalyticsController::class, 'addCredits'])->name('add-credits');
     });
 });
