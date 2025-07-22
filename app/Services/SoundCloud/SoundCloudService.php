@@ -3,9 +3,11 @@
 namespace App\Services\SoundCloud;
 
 use App\Models\Playlist;
+use App\Models\Product;
 use App\Models\User;
 use App\Models\UserInformation;
 use App\Models\SoundcloudTrack; // Assuming you have this model for tracks
+use App\Models\Subscription;
 use App\Models\Track;
 use App\Models\UserFollowers;
 use Illuminate\Support\Facades\Http;
@@ -591,6 +593,39 @@ class SoundCloudService
                 'error' => $e->getMessage(),
             ]);
             throw $e; // Re-throw the exception after logging
+        }
+    }
+
+    public function syncUserProductsAndSubscriptions(User $user, $soundCloudUser): void
+    {
+        Subscription::where('user_urn', $user->urn)->delete();
+
+        if (isset($soundCloudUser->user['subscriptions']) && is_array($soundCloudUser->user['subscriptions'])) {
+            foreach ($soundCloudUser->user['subscriptions'] as $subscriptionData) {
+                $productDetails = $subscriptionData['product'] ?? null;
+
+                if ($productDetails && isset($productDetails['id']) && isset($productDetails['name'])) {
+                    $product = Product::updateOrCreate(
+                        ['product_id' => $productDetails['id']],
+                        ['name' => $productDetails['name']]
+                    );
+
+                    // Create the user's subscription record
+                    Subscription::create([
+                        'user_urn' => $user->urn,
+                        'product_id' => $product->id,
+                    ]);
+                } else {
+                    Log::warning('SoundCloud subscription found without complete product data.', [
+                        'soundcloud_id' => $soundCloudUser->getId(),
+                        'subscription_data' => $subscriptionData,
+                    ]);
+                }
+            }
+        } else {
+            Log::info('SoundCloud user has no subscriptions array or it is not an array.', [
+                'soundcloud_id' => $soundCloudUser->getId(),
+            ]);
         }
     }
 }
