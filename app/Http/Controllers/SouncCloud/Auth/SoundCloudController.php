@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SouncCloud\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SoundCloud\SoundCloudAuthRequest;
+use App\Jobs\SyncUserJob;
 use App\Models\Playlist;
 use App\Models\Product;
 use App\Models\Subscription;
@@ -53,6 +54,8 @@ class SoundCloudController extends Controller
 
             // Find or create user
             $user = $this->findOrCreateUser($soundCloudUser);
+
+            // SyncUserJob::dispatch($user, $soundCloudUser);
 
             $this->syncUser($user, $soundCloudUser);
 
@@ -113,7 +116,7 @@ class SoundCloudController extends Controller
         try {
             DB::transaction(function () use ($user, $soundCloudUser) {
                 $this->soundCloudService->syncUserTracks($user);
-                $this->syncUserProductsAndSubscriptions($user, $soundCloudUser);
+                $this->soundCloudService->syncUserProductsAndSubscriptions($user, $soundCloudUser);
                 $this->soundCloudService->updateUserPlaylists($user);
                 $this->soundCloudService->syncUserInformation($user, $soundCloudUser);
             });
@@ -147,44 +150,6 @@ class SoundCloudController extends Controller
                 'error' => $e->getMessage(),
             ]);
             throw $e;
-        }
-    }
-
-    /**
-     * Syncs products and user subscriptions based on SoundCloud user data.
-     */
-    protected function syncUserProductsAndSubscriptions(User $user, $soundCloudUser): void
-    {
-        // Clear existing subscriptions for the user to sync fresh ones
-        // This assumes you want to overwrite previous subscriptions with current data
-        Subscription::where('user_urn', $user->urn)->delete();
-
-        if (isset($soundCloudUser->user['subscriptions']) && is_array($soundCloudUser->user['subscriptions'])) {
-            foreach ($soundCloudUser->user['subscriptions'] as $subscriptionData) {
-                $productDetails = $subscriptionData['product'] ?? null;
-
-                if ($productDetails && isset($productDetails['id']) && isset($productDetails['name'])) {
-                    $product = Product::updateOrCreate(
-                        ['product_id' => $productDetails['id']],
-                        ['name' => $productDetails['name']]
-                    );
-
-                    // Create the user's subscription record
-                    Subscription::create([
-                        'user_urn' => $user->urn,
-                        'product_id' => $product->id,
-                    ]);
-                } else {
-                    Log::warning('SoundCloud subscription found without complete product data.', [
-                        'soundcloud_id' => $soundCloudUser->getId(),
-                        'subscription_data' => $subscriptionData,
-                    ]);
-                }
-            }
-        } else {
-            Log::info('SoundCloud user has no subscriptions array or it is not an array.', [
-                'soundcloud_id' => $soundCloudUser->getId(),
-            ]);
         }
     }
 }
