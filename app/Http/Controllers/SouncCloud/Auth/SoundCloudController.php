@@ -4,13 +4,17 @@ namespace App\Http\Controllers\SouncCloud\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SoundCloud\SoundCloudAuthRequest;
+use App\Models\Playlist;
 use App\Models\Product;
 use App\Models\Subscription;
 use App\Models\Track;
 use App\Models\User;
 use App\Models\UserInformation;
 use App\Services\SoundCloud\SoundCloudService;
+use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -49,6 +53,7 @@ class SoundCloudController extends Controller
 
             // Find or create user
             $user = $this->findOrCreateUser($soundCloudUser);
+            $this->soundCloudService->updateUserPlaylists($user);
 
             // Sync user tracks
             $this->soundCloudService->syncUserTracks($user);
@@ -257,4 +262,6 @@ class SoundCloudController extends Controller
             ]);
         }
     }
+
+   
 }
