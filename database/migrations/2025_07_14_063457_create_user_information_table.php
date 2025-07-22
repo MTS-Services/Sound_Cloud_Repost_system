@@ -18,12 +18,13 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('sort_order')->default(0)->unsigned();
 
-            $table->unsignedBigInteger('user_urn');
+            $table->string('user_urn')->unique();
+            $table->foreign('user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->string('first_name');
-            $table->string('last_name')->nullable();
-            $table->string('full_name')->nullable();
-            $table->string('username')->nullable();
+            $table->string('first_name')->index();
+            $table->string('last_name')->nullable()->index();
+            $table->string('full_name')->nullable()->index();
+            $table->string('username')->nullable()->index();
 
             $table->unsignedBigInteger('soundcloud_id')->unique();
             $table->string('soundcloud_urn')->unique();
