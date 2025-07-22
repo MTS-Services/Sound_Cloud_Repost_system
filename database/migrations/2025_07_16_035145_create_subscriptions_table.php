@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id();
             
             $table->unsignedBigInteger('sort_order')->default(0);
-            $table->unsignedBigInteger('user_urn');
+            $table->string('user_urn');
             $table->foreign('user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade')->onUpdate('cascade');
