@@ -95,4 +95,14 @@ class Track extends BaseModel
     {
         return $this->belongsTo(User::class, 'user_urn', 'urn');
     }
+
+    public function playlist(): BelongsTo
+    {
+        return $this->belongsTo(Playlist::class, 'playlist_urn', 'urn');
+    }
+
+    public function music(): BelongsTo
+    {
+        return $this->belongsTo(Campaign::class, 'music_urn', 'urn');
+    }
 }

@@ -17,9 +17,8 @@ class RepostFeedController extends Controller
     }
     public function repostFeed()
     {
-        $capaigns = Campaign::all();
-        $tracks = $capaigns->load('tracks');
-        dd($tracks);
+        $capaigns = Campaign::with('music')->get();
+        dd($capaigns);
         return view('backend.user.repost-feed', $data);
     }
 }
