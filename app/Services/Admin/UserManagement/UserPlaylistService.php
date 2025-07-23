@@ -19,7 +19,7 @@ class UserPlaylistService
     {
         return Playlist::findOrFail(decrypt($encryptedId));
     }
-    public function getDeletedUser(string $encryptedId): Playlist | Collection
+    public function getDeletedUserPlaylist(string $encryptedId): Playlist | Collection
     {
         return Playlist::onlyTrashed()->findOrFail(decrypt($encryptedId));
     }
@@ -53,7 +53,7 @@ class UserPlaylistService
 
     public function restore(string $encryptedId): void
     {
-        $user = $this->getDeletedUser($encryptedId);
+        $user = $this->getDeletedUserPlaylist($encryptedId);
         $user->update(['updater_id' => admin()->id],
             ['updater_type' => get_class(admin())]);
         $user->restore();
@@ -61,7 +61,7 @@ class UserPlaylistService
 
     public function permanentDelete(string $encryptedId): void
     {
-        $user = $this->getDeletedUser($encryptedId);
+        $user = $this->getDeletedUserPlaylist($encryptedId);
         $user->forceDelete();
     }
 

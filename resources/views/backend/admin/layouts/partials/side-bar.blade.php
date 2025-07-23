@@ -77,7 +77,7 @@
                         'name' => 'Top Reposters',
                         'route' => '#',
                         'icon' => 'user',
-                        'active' => 'user',
+                        'active' => '',
                         'permission' => 'user-list',
                     ],
                     [
@@ -92,6 +92,13 @@
                         'route' => route('um.playlist.index'),
                         'icon' => 'music',
                         'active' => 'user-playlist',
+                        'permission' => 'user-list',
+                    ],
+                    [
+                        'name' => 'User Tracklists',
+                        'route' => route('um.tracklist.index'),
+                        'icon' => 'music',
+                        'active' => 'user-tracklist',
                         'permission' => 'user-list',
                     ],
 
