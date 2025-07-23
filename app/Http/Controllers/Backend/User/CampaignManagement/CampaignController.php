@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Backend\User\CampaignManagement;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CampaignManagement\CampaignRequest;
 use App\Http\Traits\AuditRelationTraits;
+use App\Models\Campaign;
+use App\Models\Track;
 use App\Services\Admin\CampaignManagement\CampaignService;
 use App\Services\Admin\TrackService;
 use Illuminate\Contracts\View\View;
@@ -17,7 +19,7 @@ class CampaignController extends Controller
 
     protected function redirectIndex(): RedirectResponse
     {
-        return redirect()->route('cm.campaigns.index');
+        return redirect()->route('user.cm.campaigns.index');
     }
 
     protected CampaignService $campaignService;
@@ -34,8 +36,9 @@ class CampaignController extends Controller
      */
     public function index(Request $request)
     {
-        $data['campaigns'] = $this->campaignService->getCampaigns()->active_completed()->get();
-        $data['tracks'] = $this->trackService->getTracks()->get();
+        // $data['campaigns'] = $this->campaignService->getCampaigns()->active_completed()->get();
+        $data['campaigns'] = Campaign::where('user_urn', user()->urn)->get();
+        $data['tracks'] = Track::where('user_urn', user()->urn)->get();
         return view('backend.user.campaign_management.campaigns.campaigns', $data);
     }
 

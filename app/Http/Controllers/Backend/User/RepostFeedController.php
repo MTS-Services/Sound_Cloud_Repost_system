@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Campaign;
 use App\Services\Admin\TrackService;
 use Illuminate\Http\Request;
 
@@ -14,8 +15,11 @@ class RepostFeedController extends Controller
     {
         $this->trackService = $trackService;
     }
-    public function repostFeed(){
-        $data['tracks'] = $this->trackService->getTracks()->get();
+    public function repostFeed()
+    {
+        $capaigns = Campaign::all();
+        $tracks = $capaigns->load('tracks');
+        dd($tracks);
         return view('backend.user.repost-feed', $data);
     }
 }
