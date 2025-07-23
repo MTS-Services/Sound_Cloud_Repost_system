@@ -18,7 +18,7 @@ Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
 });
 
 // Dashboard and other routes
-Route::middleware('auth')->name('user.')->group(function () {
+Route::group(['middleware' => ['auth:web'], 'as' => 'user.'],function () {
     Route::get('/dashboard', function () {
 
         return view('backend.user.dashboard');
