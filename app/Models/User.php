@@ -68,6 +68,11 @@ class User extends AuthBaseModel
         return $this->hasOne(UserInformation::class, 'user_urn', 'urn');
     }
 
+    public function soundcloudTracks(): HasMany
+    {
+        return $this->hasMany(SoundcloudTrack::class);
+    }
+
     public function tracks(): HasMany
     {
         return $this->hasMany(Track::class, 'user_urn', 'urn');

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Backend\Admin\UserManagement;
 
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
+use App\Models\User;
+use App\Models\UserInformation;
 use App\Services\Admin\UserManagement\UserService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -24,6 +26,8 @@ class UserController extends Controller implements HasMiddleware
     {
         return redirect()->route('um.user.trash');
     }
+
+
 
     protected UserService $userService;
 
@@ -48,6 +52,13 @@ class UserController extends Controller implements HasMiddleware
             //add more permissions if needed
         ];
     }
+    public function detail($id)
+    {
+        $data['user'] = User::with('userInfo')->findOrFail(decrypt($id));
+      
+
+        return view('backend.admin.user-management.user.detail', $data);
+    }
 
     /**
      * Display a listing of the resource.
@@ -71,12 +82,13 @@ class UserController extends Controller implements HasMiddleware
     {
         return [
             [
-                'routeName' => 'javascript:void(0)',
-                'data-id' => encrypt($model->id),
-                'className' => 'view',
-                'label' => 'Details',
-                'permissions' => ['permission-list', 'permission-delete', 'permission-status']
+                'routeName' => 'um.user.detail',
+                'params' => [encrypt($model->id)],
+                'label' => 'Detail',
+                'className' => $model->detail_btn_color,
+                'permissions' => ['permission-status']
             ],
+
             [
                 'routeName' => 'um.user.status',
                 'params' => [encrypt($model->id)],
@@ -104,8 +116,9 @@ class UserController extends Controller implements HasMiddleware
     public function show(Request $request, string $id)
     {
         $data = $this->userService->getUser($id)->load(['userInfo']);
-         $data['creater_name'] = $this->creater_name($data);
+        $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
+        $data['detail'] = $this->menuItems($data);
         return response()->json($data);
     }
 
