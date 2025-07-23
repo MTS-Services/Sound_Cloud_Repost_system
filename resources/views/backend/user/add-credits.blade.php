@@ -46,7 +46,7 @@
 
                         <div class="text-2xl font-bold text-gray-800">${{ number_format($credit->price, 2) }}</div>
 
-                        <a href="#"
+                        <a href="{{route('paypal.paymentLink')}}"
                            class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold text-sm py-2 px-4 rounded-md transition duration-200 whitespace-nowrap"
                            style="background-color: #fb3802;">
                             Buy Now
