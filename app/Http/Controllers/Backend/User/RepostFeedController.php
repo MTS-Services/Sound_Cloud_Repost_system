@@ -15,7 +15,8 @@ class RepostFeedController extends Controller
         $this->trackService = $trackService;
     }
     public function repostFeed(){
-        $data['tracks'] = $this->trackService->getTracks()->get();
+        $data['tracks'] = $this->trackService->getTracks();
+        dd($data);
         return view('backend.user.repost-feed', $data);
     }
 }
