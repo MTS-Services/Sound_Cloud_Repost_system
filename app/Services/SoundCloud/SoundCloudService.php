@@ -131,6 +131,7 @@ class SoundCloudService
     {
         $this->ensureSoundCloudConnection($user);
         $this->refreshUserTokenIfNeeded($user);
+        
 
         return $this->makeSoundCloudApiRequest(
             $user,

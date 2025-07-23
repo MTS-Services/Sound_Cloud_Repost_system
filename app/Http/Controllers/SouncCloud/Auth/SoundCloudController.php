@@ -135,7 +135,7 @@ class SoundCloudController extends Controller
     {
     
        try {
-    // DB::beginTransaction();
+   
 
     $user = User::where('soundcloud_id', $soundCloudUser->getId())->first();
 
@@ -163,13 +163,13 @@ class SoundCloudController extends Controller
         ]);
 
         UserCredits::create([
-        'user_id' => $user->id,
+        'user_urn' => $user->urn,
         'amount' => 30,
         'type' => 'bonus', 
         'source' => 'soundcloud_sync', 
     ]);
     }
-    // DB::commit();
+ 
 
     return $user;
             // return User::updateOrCreate(
