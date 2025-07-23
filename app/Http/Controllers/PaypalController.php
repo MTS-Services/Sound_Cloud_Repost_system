@@ -82,8 +82,11 @@ class PaypalController extends Controller
                         $payer = $order['payer'] ?? null;
                         $name = $payer['name']['given_name'] . ' ' . $payer['name']['surname'] ?? null;
                         $email = $payer['email_address'] ?? null;
-                        $address = $payer['address']['address_line_1'] ?? null;
-                        $postalCode = $payer['address']['postal_code'] ?? null;
+
+                        // user address from the purchase unit
+                        $userAddress = $purchaseUnit['shipping']['address'] ?? null;
+                        $address = $userAddress['address_line_1'] ?? null;
+                        $postalCode = $userAddress['postal_code'] ?? null;
 
                         // Store the payment in the database
                         $payment = Payment::create([
@@ -133,6 +136,7 @@ class PaypalController extends Controller
             return redirect(route('user.add-credits'));
         }
     }
+
 
 
 
