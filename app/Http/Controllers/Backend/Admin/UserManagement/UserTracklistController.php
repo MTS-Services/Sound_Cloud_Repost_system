@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Backend\Admin\UserManagement;
 
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
-use App\Services\Admin\Usermanagement\UserPlaylistService;
+use App\Services\Admin\UserManagement\UserTracklistService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -12,25 +12,25 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Yajra\DataTables\Facades\DataTables;
 
-class UserPlaylistController extends Controller implements HasMiddleware
+class UserTracklistController extends Controller implements HasMiddleware
 {
     use AuditRelationTraits;
 
     protected function redirectIndex(): RedirectResponse
     {
-        return redirect()->route('um.playlist.index');
+        return redirect()->route('um.tracklist.index');
     }
 
     protected function redirectTrashed(): RedirectResponse
     {
-        return redirect()->route('um.playlist.trash');
+        return redirect()->route('um.tracklist.trash');
     }
 
-    protected UserPlaylistService $userPlaylistService;
+    protected UserTracklistService $userTracklistService;
 
-    public function __construct(UserPlaylistService $userPlaylistService)
+    public function __construct(UserTracklistService $userTracklistService)
     {
-        $this->userPlaylistService = $userPlaylistService;
+        $this->userTracklistService = $userTracklistService;
     }
 
     public static function middleware(): array
@@ -59,21 +59,21 @@ class UserPlaylistController extends Controller implements HasMiddleware
     {
 
         if ($request->ajax()) {
-            $query = $this->userPlaylistService->getUserPlaylists();
+            $query = $this->userTracklistService->getUserTracklists();
             return DataTables::eloquent($query)
-                ->editColumn('user_urn', function ($playlist) {
-                    return $playlist->user?->name;
+                ->editColumn('user_urn', function ($tracklist) {
+                    return $tracklist->user?->name;
                 })
                 ->editColumn('creater_id', fn($user) => $this->creater_name($user))
                 ->editColumn('created_at', fn($user) => $user->created_at_formatted)
-                ->editColumn('action', function ($playlist) {
-                    $menuItems = $this->menuItems($playlist);
+                ->editColumn('action', function ($tracklist) {
+                    $menuItems = $this->menuItems($tracklist);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
                 ->rawColumns(['action', 'creater_id', 'created_at', 'user_urn'])
                 ->make(true);
         }
-        return view('backend.admin.user-management.playlist.index');
+        return view('backend.admin.user-management.tracklist.index');
     }
 
     protected function menuItems($model): array
@@ -87,7 +87,7 @@ class UserPlaylistController extends Controller implements HasMiddleware
                 'permissions' => ['permission-list', 'permission-delete', 'permission-status']
             ],
             [
-                'routeName' => 'um.playlist.destroy',
+                'routeName' => 'um.tracklist.destroy',
                 'params' => [encrypt($model->id)],
                 'label' => 'Delete',
                 'delete' => true,
@@ -99,10 +99,10 @@ class UserPlaylistController extends Controller implements HasMiddleware
      public function trash(Request $request)
      {
          if ($request->ajax()) {
-            $query = $this->userPlaylistService->getUserPlaylists()->onlyTrashed();
+            $query = $this->userTracklistService->getUserTracklists()->onlyTrashed();
             return DataTables::eloquent($query)
-                 ->editColumn('user_urn', function ($playlist) {
-                    return $playlist->user?->name;
+                 ->editColumn('user_urn', function ($tracklist) {
+                    return $tracklist->user?->name;
                 })
                 ->editColumn('deleter_id', fn($user) => $this->deleter_name($user))
                 ->editColumn('deleted_at', fn($user) => $user->deleted_at_formatted)
@@ -110,20 +110,20 @@ class UserPlaylistController extends Controller implements HasMiddleware
                 ->rawColumns(['action','deleted_at', 'deleter_id'])
                 ->make(true);
         }
-        return view('backend.admin.user-management.playlist.trash');
+        return view('backend.admin.user-management.tracklist.trash');
     }
 
     protected function trashedMenuItems($model): array
     {
         return [
             [
-                'routeName' => 'um.playlist.restore',
+                'routeName' => 'um.tracklist.restore',
                 'params' => [encrypt($model->id)],
                 'label' => 'Restore',
                 'permissions' => ['permission-restore']
             ],
             [
-                'routeName' => 'um.playlist.permanent-delete',
+                'routeName' => 'um.tracklist.permanent-delete',
                 'params' => [encrypt($model->id)],
                 'label' => 'Permanent Delete',
                 'p-delete' => true,
@@ -133,76 +133,26 @@ class UserPlaylistController extends Controller implements HasMiddleware
         ];
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(): View
-    {
-        //
-        return view('view file url ...');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        try {
-            // $validated = $request->validated();
-            //
-            session()->flash('success', "Service created successfully");
-        } catch (\Throwable $e) {
-            session()->flash('Service creation failed');
-            throw $e;
-        }
-        return $this->redirectIndex();
-    }
 
     /**
      * Display the specified resource.
      */
     public function show(Request $request, string $id)
     {
-        $data = $this->userPlaylistService->getUserPlaylist($id);
+        $data = $this->userTracklistService->getUserTracklist($id);
         $data['user_urn'] = $data->user?->name;
         $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
         return response()->json($data);
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id): View
-    {
-        $data['service'] = $this->userPlaylistService->getUserPlaylist($id);
-        return view('view file url...', $data);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        try {
-            // $validated = $request->validated();
-            //
-            session()->flash('success', "Service updated successfully");
-        } catch (\Throwable $e) {
-            session()->flash('Service update failed');
-            throw $e;
-        }
-        return $this->redirectIndex();
-    }
-
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
         try {
-            $playlist = $this->userPlaylistService->getUserPlaylist($id);
-            $this->userPlaylistService->delete($playlist);
+            $tracklist = $this->userTracklistService->getUserTracklist($id);
+            $this->userTracklistService->delete($tracklist);
             session()->flash('success', "Playlist deleted successfully");
         } catch (\Throwable $e) {
             session()->flash('Playlist delete failed');
@@ -214,7 +164,7 @@ class UserPlaylistController extends Controller implements HasMiddleware
     public function restore(string $id): RedirectResponse
     {
         try {
-            $this->userPlaylistService->restore($id);
+            $this->userTracklistService->restore($id);
             session()->flash('success', "Service restored successfully");
         } catch (\Throwable $e) {
             session()->flash('Service restore failed');
@@ -226,7 +176,7 @@ class UserPlaylistController extends Controller implements HasMiddleware
     public function permanentDelete(string $id): RedirectResponse
     {
         try {
-            $this->userPlaylistService->permanentDelete($id);
+            $this->userTracklistService->permanentDelete($id);
             session()->flash('success', "Service permanently deleted successfully");
         } catch (\Throwable $e) {
             session()->flash('Service permanent delete failed');

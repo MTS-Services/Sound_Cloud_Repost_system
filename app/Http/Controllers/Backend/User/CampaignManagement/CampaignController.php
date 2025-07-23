@@ -58,7 +58,7 @@ class CampaignController extends Controller
     {
         try {
             $validated = $request->validated();
-            $this->campaignService->createCampaign($validated);
+            $this->campaignService->createTrackCampaign($validated);
             session()->flash('success', "Campaign created successfully");
         } catch (\Throwable $e) {
             session()->flash('Campaign creation failed');
