@@ -8,9 +8,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Sound Cloud') }}</title>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
-
-    {{-- Theme selector && Theme store --}}
+        {{-- Theme selector && Theme store --}}
     <script>
         (function() {
             let theme = localStorage.getItem('theme') || 'system';
@@ -30,34 +28,27 @@
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/custome.css') }}">
     {{-- @vite(['resources/css/dashboard.css', 'resources/js/app.js']) --}}
     @vite(['resources/css/user-dashboard.css', 'resources/js/app.js'])
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
 </head>
 
-<body class="bg-gray-50 dark:bg-gray-900 font-sans text-black" x-data="{}">
-
+<body class="bg-gray-50 dark:bg-gray-900 font-sans text-black" x-data>
     {{-- Sidebar --}}
     @include('backend.user.layouts.partials.sidebar')
 
     <!-- Main Content -->
-    <div class="lg:ml-64 min-h-screen ">
+    <div class="lg:ml-64 min-h-screen " >
         {{-- Header --}}
         @include('backend.user.layouts.partials.header')
 
         {{-- Main Content --}}
         <div class="p-6">
-            <div x-data>
-                <button x-on:click='alert("hello")'>Click to alert</button>
-            </div>
             {{ $slot }}
         </div>
     </div>
     {{-- Custom JS --}}
     <script src="{{ asset('assets/frontend/js/custome.js') }}"></script>
-    {{-- <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script> --}}
-
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     @stack('js')
 </body>
 
