@@ -57,7 +57,7 @@
                         <div class="space-y-3">
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center py-2 border-b border-gray-100">
                                 <span class="text-gray-600 dark:text-white font-medium">User Name</span>
-                                <span class="text-gray-800 dark:text-white">Johnny</span>
+                                <span class="text-gray-800 dark:text-white">{{$user->userInfo?->user_name}}</span>
                             </div>
                              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center py-2 border-b border-gray-100">
                                 <span class="text-gray-600 dark:text-white font-medium">User Nickname</span>
