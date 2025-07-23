@@ -211,6 +211,11 @@
                             When I'm not in the studio, you can find me exploring new places or enjoying a good book.
                         </p>
                     </div>
+
+
+
+
+                    
                 </div>
 
                 <div class="mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
