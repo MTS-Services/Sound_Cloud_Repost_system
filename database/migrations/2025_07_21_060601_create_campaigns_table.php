@@ -18,7 +18,7 @@ return new class extends Migration
         Schema::create('campaigns', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('sort_order')->default(0);
-            $table->unsignedBigInteger('user_urn')->index();
+            $table->string('user_urn')->index();
             $table->unsignedBigInteger('music_id')->index();
             $table->string('music_type');
 
@@ -35,7 +35,7 @@ return new class extends Migration
             $table->tinyInteger('status')->index()->default(Campaign::STATUS_OPEN);
             $table->timestamp('start_date')->index()->nullable();
             $table->timestamp('end_date')->index()->nullable();
-            $table->boolean('auto_approve')->default(false);
+            $table->boolean('auto_approve')->default(Campaign::AUTO_APPROVE_NO);
 
             $table->timestamps();
             $table->softDeletes();

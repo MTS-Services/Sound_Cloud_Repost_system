@@ -4,8 +4,8 @@
     <div id="content-dashboard" class="page-content ">
         <div class="p-6 flex justify-between items-center">
             <div class="">
-                <h2 class="text-2xl text-black dark:text-white font-semibold  mb-2">Dashboard</h2>
-                <p class="text-gray-600 dark:text-gray-400">Welcome back, {{ auth()->user()->name }}</p>
+                <h2 class="text-2xl text-black font-semibold  mb-2">Dashboard</h2>
+                <p class="text-gray-600">Welcome back, {{ auth()->user()->name ?? '' }}</p>
             </div>
             <div class="flex items-center gap-2 mt-4 bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700">
                 <span class=""><i data-lucide="plus"

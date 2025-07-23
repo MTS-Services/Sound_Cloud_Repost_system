@@ -79,6 +79,7 @@
     --color-bg-white: #ffffff;
     --color-bg-black: #000000;
     --color-bg-active: #E2F0ED;
+    --color-bg-orange-custom: #ff4500;
 
     --color-bg-dark-primary: #1A1C20;
     --color-bg-dark-secondary: #17181C;
@@ -96,6 +97,7 @@
     --color-text-white: #ffffff;
     --color-text-black: #000000;
     --color-text-active: #1CA577;
+    --color-text-orange-custom: #ff4500;
 
     --color-text-dark-primary: #7A8783;
     --color-text-dark-secondary: #FDFAF6;

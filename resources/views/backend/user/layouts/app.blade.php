@@ -26,27 +26,10 @@
     <script src="{{ asset('assets/js/toggle-theme.js') }}"></script>
     {{-- Custom CSS --}}
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/custome.css') }}">
-
+    {{-- @vite(['resources/css/dashboard.css', 'resources/js/app.js']) --}}
     @vite(['resources/css/user-dashboard.css', 'resources/js/app.js'])
-
-       <script>
-        const content_image_upload_url = '{{ route('file.ci_upload') }}';
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            @if (session('success'))
-                showAlert('success', "{!! session('success') !!}");
-            @endif
-
-            @if (session('error'))
-                showAlert('error', "{!! session('error') !!}");
-            @endif
-
-            @if (session('warning'))
-                showAlert('warning', "{!! session('warning') !!}");
-            @endif
-        });
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-black" x-data>
@@ -60,7 +43,7 @@
 
         {{-- Main Content --}}
         <div class="p-6">
-             {{ $slot }}
+            {{ $slot }}
         </div>
     </div>
     {{-- Custom JS --}}
