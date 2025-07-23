@@ -36,7 +36,7 @@
                     class="menu menu-sm dropdown-content bg-bg-light-tertiary dark:bg-bg-dark-tertiary rounded-box z-1 mt-3 w-52 shadow py-2">
                     <li>
                         <div class="flex items-center space-x-2 border-b border-gray-100 px-6 py-4 w-full">
-                            <img src="" alt="name"
+                            <img src="{{ user()->avatar }}" alt="{{ user()->name ?? 'name' }}"
                                 class="w-8 h-8 rounded-full">
                             <div class="text-sm">
                                 <span class="font-semibold text-black">{{ user()->name ?? 'name' }}</span>
