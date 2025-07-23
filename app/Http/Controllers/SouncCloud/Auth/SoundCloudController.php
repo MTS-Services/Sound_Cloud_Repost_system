@@ -63,9 +63,9 @@ class SoundCloudController extends Controller
                 'soundcloud_id' => json_encode($soundCloudUser),
             ]);
 
-            SyncUserJob::dispatch($user, $soundCloudUser);
+            // SyncUserJob::dispatch($user, $soundCloudUser);
 
-            // $this->syncUser($user, $soundCloudUser);
+            $this->syncUser($user, $soundCloudUser);
 
             Auth::guard('web')->login($user, true);
 
@@ -119,23 +119,23 @@ class SoundCloudController extends Controller
         }
     }
 
-    // public function syncUser(User $user, $soundCloudUser)
-    // {
-    //     try {
-    //         DB::transaction(function () use ($user, $soundCloudUser) {
-    //             $this->soundCloudService->syncUserTracks($user);
-    //             $this->soundCloudService->syncUserProductsAndSubscriptions($user, $soundCloudUser);
-    //             $this->soundCloudService->syncUserPlaylists($user);
-    //             $this->soundCloudService->syncUserInformation($user, $soundCloudUser);
-    //         });
-    //     } catch (Throwable $e) {
-    //         Log::error('SoundCloud sync error', [
-    //             'user_id' => $user->id,
-    //             'error' => $e->getMessage(),
-    //         ]);
-    //         throw $e;
-    //     }
-    // }
+    public function syncUser(User $user, $soundCloudUser)
+    {
+        try {
+            DB::transaction(function () use ($user, $soundCloudUser) {
+                $this->soundCloudService->syncUserTracks($user);
+                $this->soundCloudService->syncUserProductsAndSubscriptions($user, $soundCloudUser);
+                $this->soundCloudService->syncUserPlaylists($user);
+                $this->soundCloudService->syncUserInformation($user, $soundCloudUser);
+            });
+        } catch (Throwable $e) {
+            Log::error('SoundCloud sync error', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
 
     protected function findOrCreateUser($soundCloudUser): User
     {
