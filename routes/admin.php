@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Backend\Admin\AdminManagement\RoleController;
 use App\Http\Controllers\Backend\Admin\AdminManagement\AdminController;
 use App\Http\Controllers\Backend\Admin\AdminManagement\PermissionController;
+use App\Http\Controllers\Backend\Admin\CampaignManagement\CampaignController;
 use App\Http\Controllers\Backend\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Backend\Admin\PackageManagement\CreditController;
 use App\Http\Controllers\Backend\Admin\PackageManagement\FeatureCategoryController;
@@ -103,6 +104,19 @@ Route::group(['middleware' => ['auth:admin','admin'], 'prefix' => 'admin'], func
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{tracklist}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{tracklist}', 'permanentDelete')->name('permanent-delete');
+        });
+    });
+
+    // Campaign Management
+    Route::group(['as' => 'cm.', 'prefix' => 'Campaign-management'], function () {
+        // Campaign Routes
+        Route::resource('campaign', CampaignController::class);
+        Route::controller(CampaignController::class)->name('campaign.')->prefix('campaign')->group(function () {
+            Route::get('/status/{campaign}', 'status')->name('status');
+            Route::post('/show/{campaign}', 'show')->name('show');
+            Route::get('/trash/bin', 'trash')->name('trash');
+            Route::get('/restore/{campaign}', 'restore')->name('restore');
+            Route::delete('/permanent-delete/{campaign}', 'permanentDelete')->name('permanent-delete');
         });
     });
 });

@@ -35,7 +35,7 @@
             <div class="dropdown dropdown-end">
                 <div tabindex="0" role="button" class="flex items-center space-x-2 avatar">
                     <div class="w-10 h-10 rounded-full">
-                        <img src="{{ auth()->user()->avatar }}" alt="{{ auth()->user()->name }}" />
+                        <img src="" alt="name" />
                     </div>
                     <div class="text-sm">
                         <span

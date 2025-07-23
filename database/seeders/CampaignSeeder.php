@@ -6,7 +6,6 @@ use App\Models\Campaign;
 use App\Models\Track;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class CampaignSeeder extends Seeder
@@ -17,15 +16,14 @@ class CampaignSeeder extends Seeder
     public function run(): void
     {
         $user = User::first();
-        $track = Track::first();
 
-        if (!$user || !$track) {
-            return;
+        if (!$user) {
+            $user = User::factory()->create();
         }
-
+        
         Campaign::create([
             'user_urn' => $user->urn,
-            'music_id' => $track->id,
+            'music_id' => rand(1, 10),
             'music_type' => 'track',
             'title' => 'Boost Track Campaign',
             'description' => 'A campaign to promote this track.',
@@ -36,7 +34,6 @@ class CampaignSeeder extends Seeder
             'credits_spent' => 50.00,
             'min_followers_required' => 100,
             'max_followers_limit' => 5000,
-            'status' => 'open',
             'start_date' => Carbon::now(),
             'end_date' => Carbon::now()->addDays(30),
             'auto_approve' => true,
