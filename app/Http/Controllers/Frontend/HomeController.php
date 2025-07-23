@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\TestJob;
 use Illuminate\Contracts\View\View;
 
 class HomeController extends Controller
 {
     public function landing(): View
     {
+        TestJob::dispatch();
         return view('frontend.pages.landing-page.landing');
     }
 }
