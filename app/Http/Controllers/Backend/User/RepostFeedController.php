@@ -13,6 +13,9 @@ class RepostFeedController extends Controller
 {
     protected TrackService $trackService;
 
+
+     protected string $baseUrl = 'https://api.soundcloud.com';
+
     public function __construct(TrackService $trackService)
     {
         $this->trackService = $trackService;
@@ -25,10 +28,20 @@ class RepostFeedController extends Controller
         return view('backend.user.repost-feed', $data);
     }
 
-    public function repost(Track $track)
+    public function repost(string $id)
     {
-        $data['track'] = $track;
-        dd($data);
-        Http::post('https://api.soundcloud.com/reposts/tracks/');
+
+        $track = Track::findOrFail(decrypt($id));
+        dd($track);
+        $response = Http::withHeaders([
+            'Authorization' => 'OAuth ' . user()->token,
+        ])->post("{$this->baseUrl}/reposts/tracks/{$track->urn}");
+        if ($response->successful()) {
+            dd('success', $response->json());
+            return redirect()->back()->with('success', 'Track reposted successfully.');
+        } else {
+            dd( 'error', $response->json());
+            return redirect()->back()->with('error', 'Failed to repost track.');
+        }
     }
 }

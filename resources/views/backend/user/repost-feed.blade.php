@@ -57,7 +57,7 @@
                         <a href="javascript:void(0);" class="text-sm"
                             onclick="event.preventDefault(); document.getElementById('repost_track_{{ $track->id }}').submit();">{{ __('Submit Track') }}</a>
                         <form action="{{ route('user.repost.store', encrypt($track->id)) }}" method="post"
-                            class="hidden" id="repost_track_{{ $track->id }}"></form>
+                            class="hidden" id="repost_track_{{ $track->id }}"> @csrf </form>
                     </div>
                 </div>
             </div>
