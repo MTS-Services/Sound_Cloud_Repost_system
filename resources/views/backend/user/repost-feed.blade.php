@@ -54,7 +54,10 @@
                     <div
                         class="w-42 ms-auto flex items-center gap-2 mt-4 bg-orange-600 text-white py-2 px-4 rounded-md">
                         <i data-lucide="refresh cw" class="w-4 h-4"></i>
-                        <a href="#" class="text-sm">{{ __('Submit Track') }}</a>
+                        <a href="javascript:void(0);" class="text-sm"
+                            onclick="event.preventDefault(); document.getElementById('repost_track_{{ $track->id }}').submit();">{{ __('Submit Track') }}</a>
+                        <form action="{{ route('user.repost.store', encrypt($track->id)) }}" method="post"
+                            class="hidden" id="repost_track_{{ $track->id }}"> @csrf </form>
                     </div>
                 </div>
             </div>

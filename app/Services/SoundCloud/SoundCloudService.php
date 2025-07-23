@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\UserInformation;
 use App\Models\Subscription;
 use App\Models\Track;
+use App\Models\UserFollowers;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -130,13 +131,17 @@ class SoundCloudService
     {
         $this->ensureSoundCloudConnection($user);
         $this->refreshUserTokenIfNeeded($user);
+        
 
-        return $this->makeSoundCloudApiRequest(
+        $tracksData = $this->makeSoundCloudApiRequest(
             $user,
             "/me/tracks",
             ['limit' => min($limit, 200), 'offset' => $offset],
             'Failed to fetch tracks from SoundCloud API.'
         );
+
+        Log::info('Fetched tracks from SoundCloud API for user ' . $user->urn . 'tracks' . json_encode($tracksData));
+        return $tracksData;    
     }
 
     public function syncUserTracks(User $user, int $limit = 200): int

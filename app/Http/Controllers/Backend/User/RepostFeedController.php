@@ -3,19 +3,45 @@
 namespace App\Http\Controllers\Backend\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Campaign;
+use App\Models\Track;
 use App\Services\Admin\TrackService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class RepostFeedController extends Controller
 {
     protected TrackService $trackService;
 
+
+     protected string $baseUrl = 'https://api.soundcloud.com';
+
     public function __construct(TrackService $trackService)
     {
         $this->trackService = $trackService;
     }
-    public function repostFeed(){
-        $data['tracks'] = $this->trackService->getTracks()->get();
+    public function repostFeed()
+    {
+        $data['tracks'] = Track::with(['user', 'campaign'])
+            ->whereHas('campaign')
+            ->get();
         return view('backend.user.repost-feed', $data);
+    }
+
+    public function repost(string $id)
+    {
+
+        $track = Track::findOrFail(decrypt($id));
+        dd($track);
+        $response = Http::withHeaders([
+            'Authorization' => 'OAuth ' . user()->token,
+        ])->post("{$this->baseUrl}/reposts/tracks/{$track->urn}");
+        if ($response->successful()) {
+            dd('success', $response->json());
+            return redirect()->back()->with('success', 'Track reposted successfully.');
+        } else {
+            dd( 'error', $response->json());
+            return redirect()->back()->with('error', 'Failed to repost track.');
+        }
     }
 }

@@ -24,7 +24,7 @@ class CampaignSeeder extends Seeder
         Campaign::create([
             'user_urn' => $user->urn,
             'music_id' => rand(1, 10),
-            'music_type' => 'track',
+            'music_type' => 'App\Models\Track',
             'title' => 'Boost Track Campaign',
             'description' => 'A campaign to promote this track.',
             'target_reposts' => 1000,
