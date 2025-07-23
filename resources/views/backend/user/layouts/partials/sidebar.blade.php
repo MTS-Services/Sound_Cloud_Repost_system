@@ -61,7 +61,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('cm.campaigns.index') }}"
+                <a href="{{ route('user.cm.campaigns.index') }}"
                     class="@if ($page_slug == 'campains') active @endif sidebar-item dark:hover:text-gray-800  flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700 dark:text-gray-200"
                     data-page="campaigns">
                     <i data-lucide="megaphone" class="w-5 h-5 mr-3"></i>

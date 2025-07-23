@@ -22,7 +22,7 @@
                 <!-- Track List -->
                 <div id="tracks-content" class="px-6 pb-6">
                     <!-- Track 1 -->
-                    <a id="selected_track_id" data-url-template="{{ route('cm.campaigns.create', '__ID__') }}"
+                    <a id="selected_track_id" data-url-template="{{ route('user.cm.campaigns.create', '__ID__') }}"
                         href="#">
                         {{-- <div
                             class="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors shadow-sm">
