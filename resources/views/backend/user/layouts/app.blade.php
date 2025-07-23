@@ -7,7 +7,7 @@
     {{-- csrf --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Sound Cloud') }}</title>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    {{-- <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script> --}}
         {{-- Theme selector && Theme store --}}
     <script>
         (function() {
@@ -48,6 +48,7 @@
     </div>
     {{-- Custom JS --}}
     <script src="{{ asset('assets/frontend/js/custome.js') }}"></script>
+     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     @stack('js')
 </body>

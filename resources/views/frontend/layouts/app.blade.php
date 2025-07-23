@@ -52,7 +52,7 @@
             @endif
         });
 
-        const content_image_upload_url = '{{ route('file.ci_upload') }}';
+        // const content_image_upload_url = '{{ route('file.ci_upload') }}';
     </script>
 
     @stack('css')
