@@ -32,7 +32,7 @@
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-black" x-data>
-    asdfsdfsdf
+    
     {{-- Sidebar --}}
     @include('backend.user.layouts.partials.sidebar')
 
@@ -43,6 +43,7 @@
 
         {{-- Main Content --}}
         <div class="p-6">
+            asdfsdfsdf
             {{ $slot }}
         </div>
     </div>
