@@ -40,6 +40,7 @@ class SoundCloudController extends Controller
 
             return redirect()->route('login')
                 ->with('error', 'Unable to connect to SoundCloud. Please try again.');
+                
         }
     }
 
