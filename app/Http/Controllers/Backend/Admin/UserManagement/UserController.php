@@ -54,10 +54,13 @@ class UserController extends Controller implements HasMiddleware
     }
     public function detail($id)
     {
-        $data['user'] = User::with('userInfo')->findOrFail(decrypt($id));
-      
+        $user= User::with('userInfo')->findOrFail(decrypt($id));
+        // dd($user);
+        $userinfo = UserInformation::with('user')->where('user_urn', $user->urn)->first();
+       dd($userinfo);
 
-        return view('backend.admin.user-management.user.detail', $data);
+
+        return view('backend.admin.user-management.user.detail', $user);
     }
 
     /**

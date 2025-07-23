@@ -65,12 +65,7 @@ class User extends AuthBaseModel
 
     public function userInfo(): HasOne
     {
-        return $this->hasOne(UserInformation::class, 'user_urn', 'urn');
-    }
-
-    public function soundcloudTracks(): HasMany
-    {
-        return $this->hasMany(SoundcloudTrack::class);
+        return $this->hasOne(UserInformation::class, 'user_urn');
     }
 
     public function tracks(): HasMany

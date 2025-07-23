@@ -5,18 +5,18 @@
 
     <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden mt-8">
-            <div class="bg-gradient-to-r from-soundcloud dark:bg-gray-800 p-6 text-white">
+            <div class="bg-gradient-to-r from-soundcloud dark:bg-gray-800 p-6 text-black">
                 <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
                     <div class="relative">
-                        <img src="/placeholder.svg?height=80&width=80"
-                             alt="User Avatar"
+                          <img src="{{ asset($user->avatar)}}"
+                           alt="{{ $user->name }}"
                              class="w-20 h-20 rounded-full border-4 border-white shadow-lg">
                         <div class="absolute -bottom-1 -right-1 bg-green-500 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center">
                             <div class="w-2 h-2 bg-white rounded-full"></div>
                         </div>
                     </div>
 
-                    {{-- @dd($user->userInfo?->avatar) --}}
+                    {{-- @dd($user->userInfo?->first_name) --}}
                     <div class="flex-1 text-center sm:text-left">
                         <h1 class="text-3xl font-bold text-black dark:text-white mt-2 sm:mt-0">{{ $user->name }}</h1>
                         <p class="text-lg text-black dark:text-white">@johndoe</p>
@@ -31,24 +31,26 @@
             <div class="bg-gray-50 dark:bg-gray-800 px-6 py-4">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div class="text-center">
-                        <div class="text-2xl font-bold text-gray-800 dark:text-white">150</div>
+                        <div class="text-2xl font-bold text-gray-800 dark:text-white">{{ $user->userInfo?->track_count  }}</div>
                         <div class="text-sm text-gray-600 dark:text-white">Tracks</div>
                     </div>
                     <div class="text-center">
-                        <div class="text-2xl font-bold text-gray-800 dark:text-white">10K</div>
+                        <div class="text-2xl font-bold text-gray-800 dark:text-white">{{ $user->userInfo?->followers_count  }}</div>
                         <div class="text-sm text-gray-600 dark:text-white">Followers</div>
                     </div>
                     <div class="text-center">
-                        <div class="text-2xl font-bold text-gray-800 dark:text-white">8K</div>
+                        <div class="text-2xl font-bold text-gray-800 dark:text-white">{{ $user->userInfo?->like_count  }}</div>
                         <div class="text-sm text-gray-600 dark:text-white">Likes</div>
                     </div>
                     <div class="text-center">
-                        <div class="text-2xl font-bold text-gray-800 dark:text-white">25</div>
+                        <div class="text-2xl font-bold text-gray-800 dark:text-white">{{ $user->userInfo?->playlist_count  }}</div>
                         <div class="text-sm text-gray-600 dark:text-white">Playlists</div>
                     </div>
                 </div>
             </div>
 
+      
+             
             <div class="p-6">
                 <div class="grid md:grid-cols-2 gap-6">
                     <div class="space-y-4">
@@ -65,7 +67,7 @@
                             </div>
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center py-2 border-b border-gray-100">
                                 <span class="text-gray-600 dark:text-white font-medium">First Name</span>
-                                <span class="text-gray-800 dark:text-white">khan</span>
+                                <span class="text-gray-800 dark:text-white">{{$user->userInfo?->first_name}}</span>
                             </div>
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center py-2 border-b border-gray-100">
                                 <span class="text-gray-600 dark:text-white font-medium">Last Name</span>
@@ -85,7 +87,7 @@
                             </div>
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center py-2 border-b border-gray-100">
                                 <span class="text-gray-600 dark:text-white font-medium">avatar</span>
-                                <span class="text-gray-800 dark:text-white"> Null</span>
+                                <span class="text-gray-800 dark:text-white"> {{$user->avatar}}</span>
                             </div>
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center py-2 border-b border-gray-100">
                                 <span class="text-gray-600 dark:text-white font-medium">Email </span>
@@ -139,7 +141,7 @@
                             </div>
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center py-2 border-b border-gray-100">
                                 <span class="text-gray-600 dark:text-white font-medium">Expires In </span>
-                                <span class="text-gray-800 dark:text-white"> gtr</span>
+                                <span class="text-gray-800 dark:text-white">{{$user->expires_in }}</span>
                             </div>
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center py-2 border-b border-gray-100">
                                 <span class="text-gray-600 dark:text-white font-medium">SoundCloud URI</span>
