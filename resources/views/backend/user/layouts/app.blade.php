@@ -7,7 +7,6 @@
     {{-- csrf --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Sound Cloud') }}</title>
-    {{-- <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script> --}}
         {{-- Theme selector && Theme store --}}
     <script>
         (function() {
