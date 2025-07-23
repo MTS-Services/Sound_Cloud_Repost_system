@@ -38,7 +38,7 @@
          <ul class="space-y-1">
              <li>
                  <a href="{{ route('user.dashboard') }}"
-                     class="@if ($page_slug == 'dashboard') active @endif sidebar-item flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700"
+                     class="@if ($page_slug == 'dashboard') active @endif sidebar-item dark:hover:text-gray-800 flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700 dark:text-gray-200"
                      data-page="dashboard">
                      <i data-lucide="home" class="w-5 h-5 mr-3"></i>
                      <span>{{ __('Dashboard') }}</span>
@@ -46,7 +46,7 @@
              </li>
              <li>
                  <a href="{{ route('user.repost-feed') }}"
-                     class="@if ($page_slug == 'repost-feed') active @endif sidebar-item flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700"
+                     class="@if ($page_slug == 'repost-feed') active @endif sidebar-item dark:hover:text-gray-800  flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700 dark:text-gray-200"
                      data-page="repost-feed">
                      <i data-lucide="repeat" class="w-5 h-5 mr-3"></i>
                      <span>{{ __('Repost Feed') }}</span>
@@ -54,7 +54,7 @@
              </li>
              <li>
                  <a href="{{ route('cm.campaigns.index') }}"
-                     class="@if ($page_slug == 'campains') active @endif sidebar-item flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700"
+                     class="@if ($page_slug == 'campains') active @endif sidebar-item dark:hover:text-gray-800  flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700 dark:text-gray-200"
                      data-page="campaigns">
                      <i data-lucide="megaphone" class="w-5 h-5 mr-3"></i>
                      <span>{{ __('My Campaigns') }}</span>
@@ -62,7 +62,7 @@
              </li>
              <li>
                  <a href="{{ route('user.analytics') }}"
-                     class="@if ($page_slug == 'analytics') active @endif sidebar-item flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700"
+                     class="@if ($page_slug == 'analytics') active @endif sidebar-item dark:hover:text-gray-800  flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700 dark:text-gray-200"
                      data-page="analytics">
                      <i data-lucide="bar-chart-3" class="w-5 h-5 mr-3"></i>
                      <span>{{ __('Analytics') }}</span>
@@ -70,7 +70,7 @@
              </li>
              <li>
                  <a href="{{ route('user.profile') }}"
-                     class="@if ($page_slug == 'profile') active @endif sidebar-item  flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700"
+                     class="@if ($page_slug == 'profile') active @endif sidebar-item dark:hover:text-gray-800   flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700 dark:text-gray-200"
                      data-page="profile">
                      <i data-lucide="user" class="w-5 h-5 mr-3"></i>
                      <span>{{ __('Profile') }}</span>
@@ -79,11 +79,11 @@
          </ul>
 
          <!-- Support Section -->
-         <div class="text-xs text-gray-500 uppercase tracking-wide px-3 mb-3 mt-8">{{ __('Support') }}</div>
+         <div class="text-xs text-gray-500 dark:text-gray-300 uppercase tracking-wide px-3 mb-3 mt-8">{{ __('Support') }}</div>
          <ul class="space-y-1">
              <li>
                  <a href="#"
-                     class="sidebar-item flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700"
+                     class="sidebar-item dark:hover:text-gray-800  flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700 dark:text-gray-200"
                      data-page="settings">
                      <i data-lucide="settings" class="w-5 h-5 mr-3"></i>
                      <span>{{ __('Settings') }}</span>
@@ -91,7 +91,7 @@
              </li>
              <li>
                  <a href="#"
-                     class="sidebar-item flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700"
+                     class="sidebar-item dark:hover:text-gray-800  flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700 dark:text-gray-200"
                      data-page="help">
                      <i data-lucide="help-circle" class="w-5 h-5 mr-3"></i>
                      <span>{{ __('Help & Support') }}</span>
