@@ -18,7 +18,10 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('sort_order')->default(0);
-
+            $table->string('name')->nullable();
+            $table->string('email_address')->nullable();
+            $table->string('address')->nullable();
+            $table->string('postal_code')->nullable();
             $table->unsignedBigInteger('user_urn');
             $table->unsignedBigInteger('credit_transaction_id')->nullable();
 
@@ -27,8 +30,8 @@ return new class extends Migration
             $table->string('payment_provider_id')->index();
             $table->decimal('amount', 10, 2);
             $table->string('currency', 3)->default('USD');
-            $table->decimal('credits_purchased', 10, 2);
-            $table->decimal('exchange_rate', 10, 6);
+            $table->decimal('credits_purchased', 10, 2)->nullable();
+            $table->decimal('exchange_rate', 10, 6)->nullable();
             $table->enum('status', [
                 'requires_payment_method',
                 'requires_confirmation',
