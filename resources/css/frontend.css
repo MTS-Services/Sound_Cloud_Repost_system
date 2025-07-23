@@ -50,14 +50,14 @@
 
     /* Langding start colors  */
      /* Text */
-    --color-text-primary: '#FF5500' !important;
-    --color-text-primary-hover': '#FF7730'!important;
-    --color-secondary: '#333333'!important;
-    --color-dark-bg: '#121212'!important;
-    --color-dark-darker': '#0A0A0A'!important;
-    --color-dark-card: '#1E1E1E'!important;
-    --color-dark-lighter: '#1E1E1E'!important;
-    --color-dark-border: '#2A2A2A'!important;
+    --color-text-primary: '#FF5500' ;
+    --color-text-primary-hover: '#FF7730';
+    --color-secondary: '#333333';
+    --color-dark-bg: '#121212';
+    --color-dark-darker: '#0A0A0A';
+    --color-dark-card: '#1E1E1E';
+    --color-dark-lighter: '#1E1E1E';
+    --color-dark-border: '#2A2A2A';
 
     --color-primary-light: #FF7730;
     --color-bg-primary: #121212;
