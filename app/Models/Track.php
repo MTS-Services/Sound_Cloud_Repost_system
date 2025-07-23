@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Track extends BaseModel
 {
@@ -101,8 +102,9 @@ class Track extends BaseModel
         return $this->belongsTo(Playlist::class, 'playlist_urn', 'urn');
     }
 
-    public function music(): BelongsTo
+    
+    public function campaign(): MorphMany
     {
-        return $this->belongsTo(Campaign::class, 'music_urn', 'urn');
+        return $this->morphMany(Campaign::class, 'music');
     }
 }
