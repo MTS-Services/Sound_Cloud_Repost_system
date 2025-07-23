@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Backend\User\AddCaeditsController;
 use App\Http\Controllers\Backend\User\AnalyticsController;
 use App\Http\Controllers\Backend\User\CampaignManagement\CampaignController;
 use App\Http\Controllers\Backend\User\PromoteController;
@@ -24,13 +25,16 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
         return view('backend.user.dashboard');
     })->name('dashboard');
 
-    Route::get('/user-profile', [ProfileController::class, 'profile'])->name('profile');
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/repost-feed', [RepostFeedController::class, 'repostFeed'])->name('repost-feed');
-    Route::get('/analytics', [AnalyticsController::class, 'analytics'])->name('analytics');
-    Route::get('/promote', [PromoteController::class, 'tracks'])->name('promote');
+    Route::middleware('auth')->group(function () {
+        Route::get('/user-profile', [ProfileController::class, 'profile'])->name('profile');
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+        Route::get('/repost-feed', [RepostFeedController::class, 'repostFeed'])->name('repost-feed');
+        Route::get('/analytics',[AnalyticsController::class, 'analytics'])->name('analytics');
+        Route::get('/add-credits', [AddCaeditsController::class, 'addCredits'])->name('add-credits');
+        Route::get('/promote', [PromoteController::class, 'tracks'])->name('promote');
+    });
 
 
     // Campaign Management

@@ -18,7 +18,9 @@ class RepostFeedController extends Controller
     }
     public function repostFeed()
     {
-        $data['tracks'] = Track::all();
+        $data['tracks'] = Track::with(['user', 'campaign'])
+            ->whereHas('campaign')
+            ->get();
         return view('backend.user.repost-feed', $data);
     }
 }
