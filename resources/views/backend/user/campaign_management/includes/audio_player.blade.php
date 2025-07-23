@@ -1,8 +1,8 @@
-<div
+{{-- <div
     class="bg-gray-800 text-white p-4 flex items-center justify-between w-full min-h-[80px] fixed bottom-0 z-50">
     <!-- Hidden Audio Element -->
     <audio id="audioPlayer" preload="metadata">
-        {{-- <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav" type="audio/wav"> --}}
+        <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav" type="audio/wav">
         <source src="{{ asset('assets/audios/MAIN_WOH_CHAAND.mp3') }}" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
@@ -80,4 +80,4 @@
             </svg>
         </button>
     </div>
-</div>
+</div> --}}
