@@ -27,11 +27,12 @@
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/custome.css') }}">
     {{-- @vite(['resources/css/dashboard.css', 'resources/js/app.js']) --}}
     @vite(['resources/css/user-dashboard.css', 'resources/js/app.js'])
-    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script> --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-black" x-data>
+    asdfsdfsdf
     {{-- Sidebar --}}
     @include('backend.user.layouts.partials.sidebar')
 
