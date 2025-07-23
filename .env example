@@ -67,3 +67,8 @@ VITE_APP_NAME="${APP_NAME}"
 SOUNDCLOUD_CLIENT_ID=your_client_id_here
 SOUNDCLOUD_CLIENT_SECRET=your_client_secret_here
 SOUNDCLOUD_REDIRECT_URI=https://yourdomain.com/auth/soundcloud/callback
+
+
+# STRIPE KEYS
+STRIPE_KEY=pk_test_your_publishable_key_here
+STRIPE_SECRET=sk_test_your_secret_key_here
