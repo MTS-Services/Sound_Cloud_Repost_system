@@ -13,14 +13,15 @@
                     placeholder:text-text-light-muted dark:placeholder:text-text-dark-muted shadow-sm outline-none transition" />
             </div>
         </form>
-        
+
         <div class="flex items-center space-x-4 ml-8">
             <div class="text-sm text-text-light-primary dark:text-text-dark-secondary">
                 <span class="font-semibold">75</span> {{ __('Credits') }}
             </div>
             <div class="relative">
                 <i data-lucide="bell" class="w-6 h-6 text-text-light-primary dark:text-text-dark-muted"></i>
-                <span class="absolute -top-2 -right-1 bg-red-500  text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">1</span>
+                <span
+                    class="absolute -top-2 -right-1 bg-red-500  text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">1</span>
             </div>
             <!-- Theme Toggle Button (Only Light/Dark) -->
             <button @click="$store.theme.toggleTheme()"
