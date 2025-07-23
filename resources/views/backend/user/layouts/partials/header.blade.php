@@ -25,10 +25,10 @@
             <div class="dropdown dropdown-end">
                 <div tabindex="0" role="button" class="flex items-center space-x-2 avatar">
                     <div class="w-10 h-10 rounded-full">
-                        <img src="" alt="name" />
+                        <img src="{{ user()->avatar }}" alt="{{ user()->name ?? 'name' }}" />
                     </div>
                     <div class="text-sm">
-                        <span class="font-semibold text-black">name</span>
+                        <span class="font-semibold text-black">{{ user()->name ?? 'name' }}</span>
                         <div class="text-green-500 text-xs">● Online</div>
                     </div>
                 </div>
@@ -39,7 +39,7 @@
                             <img src="" alt="name"
                                 class="w-8 h-8 rounded-full">
                             <div class="text-sm">
-                                <span class="font-semibold text-black">name</span>
+                                <span class="font-semibold text-black">{{ user()->name ?? 'name' }}</span>
                                 <div class="text-green-500 text-xs">● Online</div>
                             </div>
                         </div>
