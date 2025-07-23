@@ -43,7 +43,6 @@
 
         {{-- Main Content --}}
         <div class="p-6">
-            asdfsdfsdf
             {{ $slot }}
         </div>
     </div>
