@@ -19,7 +19,7 @@ class CampaignController extends Controller
 
     protected function redirectIndex(): RedirectResponse
     {
-        return redirect()->route('cm.campaigns.index');
+        return redirect()->route('user.cm.campaigns.index');
     }
 
     protected CampaignService $campaignService;
