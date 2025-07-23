@@ -3,6 +3,7 @@
 namespace App\Services\Admin\CampaignManagement;
 
 use App\Models\Campaign;
+use App\Models\Track;
 use Illuminate\Database\Eloquent\Collection;
 
 class CampaignService
@@ -25,10 +26,11 @@ class CampaignService
         $campaign = Campaign::findOrFail(decrypt($encryptedId));
         return $campaign;
     }
-    public function createCampaign(array $data)
+    public function createTrackCampaign(array $data)
     {   
         $data['user_urn'] = user()->urn;
         $data['created_by'] = user()->id;
+        $data['music_type'] = Track::class;
         $campaign = Campaign::create($data);
         return $campaign;
     }
