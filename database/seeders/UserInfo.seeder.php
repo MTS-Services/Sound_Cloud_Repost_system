@@ -31,6 +31,7 @@ class UserInfoSeeder extends Seeder
                 'streamable' => true,
                 'embeddable_by' => 'all',
                 'purchase_url' => 'https://example.com/buy/' . $i,
+                'purchase_title' => 'Buy Track #' . $i,
                 'genre' => 'Electronic',
                 'title' => 'Sample Track ' . $i,
                 'description' => 'This is a sample track description for track #' . $i,
