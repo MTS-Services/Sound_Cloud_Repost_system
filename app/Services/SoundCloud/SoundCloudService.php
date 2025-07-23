@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\UserInformation;
 use App\Models\Subscription;
 use App\Models\Track;
+use App\Models\UserFollowers;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -130,6 +131,7 @@ class SoundCloudService
     {
         $this->ensureSoundCloudConnection($user);
         $this->refreshUserTokenIfNeeded($user);
+        
 
         $tracksData = $this->makeSoundCloudApiRequest(
             $user,
