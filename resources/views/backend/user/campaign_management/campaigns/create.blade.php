@@ -17,7 +17,7 @@
             class="grid grid-cols-1 gap-4 sm:grid-cols-1  {{ isset($documentation) && $documentation ? 'md:grid-cols-7' : '' }}">
             <!-- Form Section -->
             <div class="glass-card rounded-2xl p-6 md:col-span-5">
-                <form action="{{ route('cm.campaigns.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('user.cm.campaigns.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
                         {{-- hidden fields id --}}
