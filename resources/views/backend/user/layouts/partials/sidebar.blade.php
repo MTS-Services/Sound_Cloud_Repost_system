@@ -61,7 +61,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('cm.campaigns.index') }}"
+                <a href="{{ route('user.cm.campaigns.index') }}"
                     class="@if ($page_slug == 'campains') active @endif sidebar-item dark:hover:text-gray-800  flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700 dark:text-gray-200"
                     data-page="campaigns">
                     <i data-lucide="megaphone" class="w-5 h-5 mr-3"></i>
@@ -110,10 +110,10 @@
     </nav>
     <div class="flex items-center space-x-2 border-t border-gray-100 px-6 py-4 bg-white fixed bottom-0 w-full">
         <a href="{{ route('user.profile') }}">
-            <img src="{{ asset('frontend/user/user.jpg') }}" alt="Alex Rodriguez" class="w-8 h-8 rounded-full">
+            <img src="{{ user()->avatar }}" alt="{{ user()->name ?? 'Name' }}" class="w-8 h-8 rounded-full">
         </a>
         <div class="text-sm">
-            <span class="font-semibold text-black">{{ auth()->user()->name ?? '' }}</span>
+            <span class="font-semibold text-black">{{ user()->name ?? 'Name' }}</span>
             <div class="text-green-500 text-xs">● Online</div>
         </div>
     </div>
@@ -123,10 +123,10 @@
 <div
     class="flex items-center space-x-2 border-t border-gray-100 dark:border-gray-800 px-6 py-4 bg-white dark:bg-[#1A1C20] fixed bottom-0 w-full">
     <a href="{{ route('user.profile') }}">
-        <img src="{{ asset('frontend/user/user.jpg') }}" alt="Alex Rodriguez" class="w-8 h-8 rounded-full">
+        <img src="{{ user()->avatar }}" alt="{{ user()->name ?? 'Name' }}" class="w-8 h-8 rounded-full">
     </a>
     <div class="text-sm">
-        <span class="font-semibold text-black dark:text-white">{{ auth()->user()->name ?? '' }}</span>
+        <span class="font-semibold text-black dark:text-white">{{ user()->name ?? 'Name' }}</span>
         <div class="text-green-500 dark:text-green-400 text-xs">● Online</div>
     </div>
 </div>

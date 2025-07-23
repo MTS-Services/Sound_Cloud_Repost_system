@@ -18,27 +18,26 @@ Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
 });
 
 // Dashboard and other routes
-Route::group(['as' => 'user.'], function () {
+Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     Route::get('/dashboard', function () {
 
         return view('backend.user.dashboard');
     })->name('dashboard');
 
-    Route::middleware('auth')->group(function () {
-        Route::get('/user-profile', [ProfileController::class, 'profile'])->name('profile');
-        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-        Route::get('/repost-feed', [RepostFeedController::class, 'repostFeed'])->name('repost-feed');
-        Route::get('/analytics',[AnalyticsController::class, 'analytics'])->name('analytics');
-        Route::get('/promote', [PromoteController::class, 'tracks'])->name('promote');
-    });
-});
+    Route::get('/user-profile', [ProfileController::class, 'profile'])->name('profile');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/repost-feed', [RepostFeedController::class, 'repostFeed'])->name('repost-feed');
+    Route::get('/analytics', [AnalyticsController::class, 'analytics'])->name('analytics');
+    Route::get('/promote', [PromoteController::class, 'tracks'])->name('promote');
 
-// Campaign Management
-Route::group(['as' => 'cm.', 'prefix' => 'Campaign-management'], function () {
-    // Campaign Routes
-    Route::get('/campaigns', [CampaignController::class, 'index'])->name('campaigns.index');
-    Route::get('/campaigns/create/{track_id}', [CampaignController::class, 'create'])->name('campaigns.create');
-    Route::post('/campaigns', [CampaignController::class, 'store'])->name('campaigns.store');
+
+    // Campaign Management
+    Route::group(['as' => 'cm.', 'prefix' => 'campaign-management'], function () {
+        // Campaign Routes
+        Route::get('/campaigns', [CampaignController::class, 'index'])->name('campaigns.index');
+        Route::get('/campaigns/create/{track_id}', [CampaignController::class, 'create'])->name('campaigns.create');
+        Route::post('/campaigns', [CampaignController::class, 'store'])->name('campaigns.store');
+    });
 });

@@ -36,25 +36,22 @@
             <div class="dropdown dropdown-end">
                 <div tabindex="0" role="button" class="flex items-center space-x-2 avatar">
                     <div class="w-10 h-10 rounded-full">
-                        <img src="" alt="name" />
+                        <img src="{{ user()->avatar }}" alt="{{ user()->name ?? 'name' }}" />
                     </div>
                     <div class="text-sm">
-                        <span
-                            class="font-semibold text-text-light-secondary dark:text-text-dark-secondary">{{ auth()->user()->name }}</span>
-                        <div class="text-[#1CA577] dark:text-text-dark-active text-xs">● Online</div>
+                        <span class="font-semibold text-black">{{ user()->name ?? 'name' }}</span>
+                        <div class="text-green-500 text-xs">● Online</div>
                     </div>
                 </div>
                 <ul tabindex="0"
                     class="menu menu-sm dropdown-content bg-bg-light-tertiary dark:bg-bg-dark-tertiary rounded-box z-1 mt-3 w-52 shadow py-2">
                     <li>
-                        <div
-                            class="flex items-center space-x-2 border-b border-bg-light-muted dark:border-bg-dark-muted px-6 py-4 w-full">
-                            <img src="{{ auth()->user()->avatar }}" alt="{{ auth()->user()->name }} "
+                        <div class="flex items-center space-x-2 border-b border-gray-100 px-6 py-4 w-full">
+                            <img src="{{ user()->avatar }}" alt="{{ user()->name ?? 'name' }}"
                                 class="w-8 h-8 rounded-full">
                             <div class="text-sm">
-                                <span
-                                    class="font-semibold text-text-light-secondary dark:text-text-dark-secondary">{{ auth()->user()->name }}</span>
-                                <div class="text-[#1CA577] dark:text-text-dark-active text-xs">● Online</div>
+                                <span class="font-semibold text-black">{{ user()->name ?? 'name' }}</span>
+                                <div class="text-green-500 text-xs">● Online</div>
                             </div>
                         </div>
                     </li>

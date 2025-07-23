@@ -25,7 +25,9 @@ use Throwable;
 
 class SoundCloudController extends Controller
 {
-    public function __construct(protected SoundCloudService $soundCloudService) {}
+    public function __construct(protected SoundCloudService $soundCloudService)
+    {
+    }
 
     public function redirect(): RedirectResponse
     {
@@ -38,7 +40,7 @@ class SoundCloudController extends Controller
 
             return redirect()->route('login')
                 ->with('error', 'Unable to connect to SoundCloud. Please try again.');
-                
+
         }
     }
 
@@ -54,7 +56,12 @@ class SoundCloudController extends Controller
             $soundCloudUser = Socialite::driver('soundcloud')->user();
 
             // Find or create user
-            $user = $this->findOrCreateUser($soundCloudUser,);
+            $user = $this->findOrCreateUser($soundCloudUser);
+
+            Log::info('SoundCloud user found or created', [
+                'user_id' => json_encode($user),
+                'soundcloud_id' => json_encode($soundCloudUser),
+            ]);
 
             SyncUserJob::dispatch($user, $soundCloudUser);
 

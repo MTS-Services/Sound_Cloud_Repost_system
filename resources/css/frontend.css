@@ -46,32 +46,32 @@
 
     /* Colors  */
     /* Bacground */
-  
+
 
     /* Langding start colors  */
-     /* Text */
-    --color-text-primary: '#FF5500' ;
-    --color-text-primary-hover: '#FF7730';
-    --color-secondary: '#333333';
-    --color-dark-bg: '#121212';
-    --color-dark-darker: '#0A0A0A';
-    --color-dark-card: '#1E1E1E';
-    --color-dark-lighter: '#1E1E1E';
-    --color-dark-border: '#2A2A2A';
+    /* Text */
+    --color-text-primary: #FF5500;
+    --color-text-primary-hover: #FF7730;
+    --color-secondary: #333333;
+    --color-dark-bg: #121212;
+    --color-dark-darker: #0A0A0A;
+    --color-dark-card: #1E1E1E;
+    --color-dark-lighter: #1E1E1E;
+    --color-dark-border: #2A2A2A;
 
     --color-primary-light: #FF7730;
     --color-bg-primary: #121212;
     --color-text-white: #ffffff;
 
-    
+
     /* Fonts */
     --font-sans: ['Inter', 'sans-serif'];
     /* End Landing Colors */
 
-   
-  
+
+
     /* Border */
-  
+
 }
 
 @utility container {
@@ -83,6 +83,7 @@
         max-width: 100%;
     }
 }
+
 .floating-shapes {
     position: absolute;
     top: 0;

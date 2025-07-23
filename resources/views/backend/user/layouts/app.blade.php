@@ -28,23 +28,7 @@
     <script src="{{ asset('assets/js/toggle-theme.js') }}"></script>
     {{-- Custom CSS --}}
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/custome.css') }}">
-
-    {{-- Theme selector && Theme store --}}
-    <script>
-        (function() {
-            let theme = localStorage.getItem('theme') || 'system';
-
-            if (theme === 'system') {
-                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                document.documentElement.classList.toggle('dark', systemPrefersDark);
-                document.documentElement.setAttribute('data-theme', systemPrefersDark ? 'dark' : 'light');
-            } else {
-                document.documentElement.classList.toggle('dark', theme === 'dark');
-                document.documentElement.setAttribute('data-theme', theme);
-            }
-        })();
-    </script>
-
+    {{-- @vite(['resources/css/dashboard.css', 'resources/js/app.js']) --}}
     @vite(['resources/css/user-dashboard.css', 'resources/js/app.js'])
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>

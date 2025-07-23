@@ -59,16 +59,13 @@ class User extends AuthBaseModel
         ];
     }
 
-    /* %%%%%%%%% ######## ******** ======== RELATIONSHIPS  ======== ******** ######## %%%%%%%%% */
+    /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
+                Start of RELATIONSHIPS
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
     public function userInfo(): HasOne
     {
-        return $this->hasOne(UserInformation::class);
-    }
-
-    public function soundcloudTracks(): HasMany
-    {
-        return $this->hasMany(SoundcloudTrack::class);
+        return $this->hasOne(UserInformation::class, 'user_urn', 'urn');
     }
 
     public function tracks(): HasMany
@@ -80,6 +77,23 @@ class User extends AuthBaseModel
     {
         return $this->hasMany(Subscription::class, 'user_urn', 'urn');
     }
+
+    public function features(): HasMany
+    {
+        return $this->hasMany(Feature::class, 'user_urn', 'urn');
+    }
+
+    public function playlists(): HasMany
+    {
+        return $this->hasMany(Playlist::class, 'user_urn', 'urn');
+    }
+
+    public function campaigns(): HasMany
+    {
+        return $this->hasMany(Campaign::class, 'user_urn', 'urn');
+    }
+
+    /* %%%%%%%%% ######## ******** ======== End of RELATIONSHIPS  ======== ******** ######## %%%%%%%%% */
 
     // Helper methods
     public function isSoundCloudConnected(): bool
