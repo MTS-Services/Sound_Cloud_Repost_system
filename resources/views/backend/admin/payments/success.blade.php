@@ -3,114 +3,112 @@
     <x-slot name="breadcrumb">{{ __('Payment Success') }}</x-slot>
     <x-slot name="page_slug">payment</x-slot>
 
-    <div
-        class="relative max-w-[500px] w-full bg-white rounded-[20px] shadow-[0_20px_40px_rgba(0,0,0,0.1)] mx-auto p-10 text-center overflow-hidden">
-
-        <!-- Top Gradient Bar -->
-        <div class="absolute top-0 left-0 right-0 h-[5px] bg-gradient-to-r from-teal-500 to-teal-500"></div>
-
-        <!-- Confetti -->
-        @for ($i = 1; $i <= 9; $i++)
-            <div class="confetti absolute w-[10px] h-[10px] bg-teal-500 animate-[confetti-fall_3s_linear_infinite]"
-                style="left: {{ 10 * $i }}%; animation-delay: {{ ($i * 0.3) % 2 }}s; background: {{ ['#00d4aa', '#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#a29bfe', '#fd79a8', '#00b894'][$i - 1] }}">
-            </div>
-        @endfor
-
-        <!-- Success Icon -->
+    <div class="flex items-center justify-center h-screen">
         <div
-            class="w-20 h-20 bg-gradient-to-br from-teal-500 to-teal-400 rounded-full flex items-center justify-center mx-auto mb-8 animate-pulse">
-            <i class="fas fa-check text-white text-[35px]"></i>
-        </div>
+            class="relative max-w-[500px] w-full bg-white rounded-[20px] shadow-[0_20px_40px_rgba(0,0,0,0.1)] mx-auto p-10 text-center overflow-hidden">
 
-        <!-- Title -->
-        <h1 class="text-2xl font-bold text-gray-800 mb-4">Payment Successful!</h1>
-        <p class="text-base text-gray-500 mb-8 leading-relaxed">
-            Thank you for your payment. Your transaction has been completed successfully.
-        </p>
+            <!-- Top Gradient Bar -->
+            <div class="absolute top-0 left-0 right-0 h-[5px] bg-gradient-to-r from-teal-500 to-teal-500"></div>
 
-        <!-- Payment Details -->
-        @if (isset($payment))
-            <div class="bg-gray-100 border-l-4 border-teal-500 rounded-xl p-6 mb-8">
-                <h3 class="text-lg text-gray-800 font-semibold mb-5 flex items-center gap-2">
-                    <i class="fas fa-receipt"></i> Payment Details
-                </h3>
-
-                <div class="flex justify-between items-center py-3 border-b border-gray-200">
-                    <span class="font-semibold text-gray-600 flex items-center gap-2">
-                        <i class="fas fa-dollar-sign"></i> Amount
-                    </span>
-                    <span class="font-bold text-teal-500 text-lg">
-                        ${{ number_format($payment->amount, 2) }}
-                    </span>
+            <!-- Confetti -->
+            @for ($i = 1; $i <= 9; $i++)
+                <div class="confetti absolute w-[10px] h-[10px] bg-teal-500 animate-[confetti-fall_3s_linear_infinite]"
+                    style="left: {{ 10 * $i }}%; animation-delay: {{ ($i * 0.3) % 2 }}s; background: {{ ['#00d4aa', '#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#a29bfe', '#fd79a8', '#00b894'][$i - 1] }}">
                 </div>
+            @endfor
 
-                <div class="flex justify-between items-center py-3 border-b border-gray-200">
-                    <span class="font-semibold text-gray-600 flex items-center gap-2">
-                        <i class="fas fa-coins"></i> Currency
-                    </span>
-                    <span class="font-bold text-gray-800">
-                        {{ strtoupper($payment->currency) }}
-                    </span>
-                </div>
-
-                <div class="flex justify-between items-center py-3 border-b border-gray-200">
-                    <span class="font-semibold text-gray-600 flex items-center gap-2">
-                        <i class="fas fa-info-circle"></i> Status
-                    </span>
-                    <span class="uppercase bg-teal-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
-                        {{ ucfirst($payment->status) }}
-                    </span>
-                </div>
-
-                <div class="flex justify-between items-center py-3 border-b border-gray-200">
-                    <span class="font-semibold text-gray-600 flex items-center gap-2">
-                        <i class="fas fa-hashtag"></i> Transaction ID
-                    </span>
-                    <span class="font-bold text-gray-800 text-xs font-mono">
-                        {{ substr($payment->payment_intent_id, 0, 20) }}...
-                    </span>
-                </div>
-
-                <div class="flex justify-between items-start py-3">
-                    <span class="font-semibold text-gray-600 flex items-center gap-2">
-                        <i class="fas fa-calendar-alt"></i> Date & Time
-                    </span>
-                    <span class="text-right text-gray-800 font-bold">
-                        {{ $payment->processed_at ? $payment->processed_at->format('M d, Y') : 'N/A' }}
-                        <br>
-                        <small class="text-sm text-gray-500">
-                            {{ $payment->processed_at ? $payment->processed_at->format('h:i A') : '' }}
-                        </small>
-                    </span>
-                </div>
+            <!-- Success Icon -->
+            <div
+                class="w-20 h-20 bg-gradient-to-br from-teal-500 to-teal-400 rounded-full flex items-center justify-center mx-auto mb-8 animate-pulse">
+                <i class="fas fa-check text-white text-[35px]"></i>
             </div>
-        @endif
 
-        <!-- Email Notice -->
-        <div class="bg-blue-100 border border-blue-200 rounded-lg p-4 mb-6 flex items-center gap-3">
-            <i class="fas fa-envelope text-blue-600"></i>
-            <p class="text-sm text-blue-800 m-0">
-                A confirmation email has been sent to your registered email address with the payment receipt.
+            <!-- Title -->
+            <h1 class="text-2xl font-bold text-gray-800 mb-4">Payment Successful!</h1>
+            <p class="text-base text-gray-500 mb-8 leading-relaxed">
+                Thank you for your payment. Your transaction has been completed successfully.
             </p>
-        </div>
 
-        <!-- Action Buttons -->
-        <div class="flex flex-wrap gap-4 mt-6 justify-center">
-            <a href="{{ route('f.payment.form') }}"
-                class="flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-200 rounded-lg text-gray-700 font-semibold bg-gray-100 hover:bg-gray-200 transition-all duration-300 min-w-[140px]">
-                <i class="fas fa-plus"></i> New Payment
-            </a>
+            <!-- Payment Details -->
+            @if (isset($payment))
+                <div class="bg-gray-100 border-l-4 border-teal-500 rounded-xl p-6 mb-8">
+                    <h3 class="text-lg text-gray-800 font-semibold mb-5 flex items-center gap-2">
+                        <i class="fas fa-receipt"></i> Payment Details
+                    </h3>
 
-            <a href="/"
-                class="flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-white font-semibold bg-gradient-to-br from-indigo-400 to-purple-600 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 min-w-[140px]">
-                <i class="fas fa-home"></i> Back to Home
-            </a>
+                    <div class="flex justify-between items-center py-3 border-b border-gray-200">
+                        <span class="font-semibold text-gray-600 flex items-center gap-2">
+                            <i class="fas fa-dollar-sign"></i> Amount
+                        </span>
+                        <span class="font-bold text-teal-500 text-lg">
+                            ${{ number_format($payment->amount, 2) }}
+                        </span>
+                    </div>
+
+                    <div class="flex justify-between items-center py-3 border-b border-gray-200">
+                        <span class="font-semibold text-gray-600 flex items-center gap-2">
+                            <i class="fas fa-coins"></i> Currency
+                        </span>
+                        <span class="font-bold text-gray-800">
+                            {{ strtoupper($payment->currency) }}
+                        </span>
+                    </div>
+
+                    <div class="flex justify-between items-center py-3 border-b border-gray-200">
+                        <span class="font-semibold text-gray-600 flex items-center gap-2">
+                            <i class="fas fa-info-circle"></i> Status
+                        </span>
+                        <span class="uppercase bg-teal-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                            {{ ucfirst($payment->status) }}
+                        </span>
+                    </div>
+
+                    <div class="flex justify-between items-center py-3 border-b border-gray-200">
+                        <span class="font-semibold text-gray-600 flex items-center gap-2">
+                            <i class="fas fa-hashtag"></i> Transaction ID
+                        </span>
+                        <span class="font-bold text-gray-800 text-xs font-mono">
+                            {{ substr($payment->payment_intent_id, 0, 20) }}...
+                        </span>
+                    </div>
+
+                    <div class="flex justify-between items-start py-3">
+                        <span class="font-semibold text-gray-600 flex items-center gap-2">
+                            <i class="fas fa-calendar-alt"></i> Date & Time
+                        </span>
+                        <span class="text-right text-gray-800 font-bold">
+                            {{ $payment->processed_at ? $payment->processed_at->format('M d, Y') : 'N/A' }}
+                            <br>
+                            <small class="text-sm text-gray-500">
+                                {{ $payment->processed_at ? $payment->processed_at->format('h:i A') : '' }}
+                            </small>
+                        </span>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Email Notice -->
+            <div class="bg-blue-100 border border-blue-200 rounded-lg p-4 mb-6 flex items-center gap-3">
+                <i class="fas fa-envelope text-blue-600"></i>
+                <p class="text-sm text-blue-800 m-0">
+                    A confirmation email has been sent to your registered email address with the payment receipt.
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap gap-4 mt-6 justify-center">
+                <a href="{{ route('f.payment.form') }}"
+                    class="flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-200 rounded-lg text-gray-700 font-semibold bg-gray-100 hover:bg-gray-200 transition-all duration-300 min-w-[140px]">
+                    <i class="fas fa-plus"></i> New Payment
+                </a>
+
+                <a href="/"
+                    class="flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-white font-semibold bg-gradient-to-br from-indigo-400 to-purple-600 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 min-w-[140px]">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+            </div>
         </div>
     </div>
-
-
-
-
 
     @push('js')
         <script>
