@@ -56,10 +56,10 @@
 
     <!-- Main Content -->
     @include('backend.user.layouts.partials.header')
-    <div class="flex-1 flex overflow-hidden max-h-screen">
+    <div class="flex-1 flex overflow-hidden ">
         @include('backend.user.layouts.partials.sidebar')
 
-        <div class="p-3 w-full">
+        <div class="p-3 w-full ml-63 h-[90vh]">
             {{ $slot }}
         </div>
     </div>

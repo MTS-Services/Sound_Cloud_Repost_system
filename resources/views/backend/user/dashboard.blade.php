@@ -1,11 +1,11 @@
 <x-user::layout>
     <x-slot name="page_slug">dashboard</x-slot>
     <!-- Dashboard Content (Default) -->
-    <div id="content-dashboard" class="page-content ">
-        <div class="p-6 flex justify-between items-center">
+    <div id="content-dashboard" class="page-content py-2 px-2">
+        <div class="px-2  flex justify-between items-center">
             <div class="">
-                <h2 class="text-2xl text-black font-semibold  mb-2">Dashboard</h2>
-                <p class="text-gray-600">Welcome back, {{ auth()->user()->name ?? '' }}</p>
+                <h2 class="text-2xl text-black dark:text-white font-semibold  mb-2">Dashboard</h2>
+                <p class="dark:text-slate-300 text-gray-600">Welcome back!  <span class="font-semibold">{{ auth()->user()->name ?? '' }}</span> . Here's an overview of your RepostChain activity.</p>
             </div>
             <div class="flex gap-2">
                 <div
@@ -27,7 +27,7 @@
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 py-6">
             <div
-                class="bg-slate-800 dark:bg-slate-800 rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
+                class="bg-white  dark:bg-slate-800 rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-slate-400 text-sm font-medium">Available Credits</h3>
                     <div class="p-2 rounded-lg bg-yellow-500/20 text-yellow-500"><svg xmlns="http://www.w3.org/2000/svg"
@@ -38,13 +38,13 @@
                         </svg></div>
                 </div>
                 <div class="space-y-2">
-                    <p class="text-2xl font-bold text-white">117</p>
+                    <p class="text-2xl  font-bold text-slate-700 dark:text-white">117</p>
                     <p class="text-sm flex items-center space-x-1 text-green-400"><span>+12% from last week</span></p>
                 </div>
             </div>
 
             <div
-                class="bg-slate-800 dark:bg-slate-800 rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
+                class="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-slate-400 text-sm font-medium">Active Campaigns</h3>
                     <div class="p-2 rounded-lg bg-blue-500/20 text-blue-500"><svg xmlns="http://www.w3.org/2000/svg"
@@ -57,13 +57,13 @@
                     </div>
                 </div>
                 <div class="space-y-2">
-                    <p class="text-2xl font-bold text-white">1</p>
+                    <p class="text-2xl  font-bold text-slate-700 dark:text-white">1</p>
                     <p class="text-sm flex items-center space-x-1 text-green-400"><span>+0% from last week</span></p>
                 </div>
             </div>
 
             <div
-                class="bg-slate-800 dark:bg-slate-800 rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
+                class="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-slate-400 text-sm font-medium">Reposts Received</h3>
                     <div class="p-2 rounded-lg bg-green-500/20 text-green-500"><svg xmlns="http://www.w3.org/2000/svg"
@@ -77,13 +77,13 @@
                         </svg></div>
                 </div>
                 <div class="space-y-2">
-                    <p class="text-2xl font-bold text-white">152</p>
+                    <p class="text-2xl  font-bold text-slate-700 dark:text-white">152</p>
                     <p class="text-sm flex items-center space-x-1 text-green-400"><span>+8.5% from last week</span></p>
                 </div>
             </div>
 
             <div
-                class="bg-slate-800 dark:bg-slate-800 rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
+                class="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-slate-400 text-sm font-medium">Credibility Score</h3>
                     <div class="p-2 rounded-lg bg-purple-500/20 text-purple-500"><svg xmlns="http://www.w3.org/2000/svg"
@@ -95,7 +95,7 @@
                         </svg></div>
                 </div>
                 <div class="space-y-2">
-                    <p class="text-2xl font-bold text-white">82%</p>
+                    <p class="text-2xl  font-bold text-slate-700 dark:text-white">82%</p>
                     <p class="text-sm flex items-center space-x-1 text-green-400"><span>+3% from last week</span></p>
                 </div>
             </div>
