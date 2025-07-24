@@ -38,7 +38,8 @@ class CampaignController extends Controller
     {
         // $data['campaigns'] = $this->campaignService->getCampaigns()->active_completed()->get();
         $data['campaigns'] = $this->campaignService->getCampaigns()->whereNull('user_urn')->get();
-        $data['tracks'] = $this->trackService->getTracks()->where('user_urn')->get();
+        // $data['tracks'] = $this->trackService->getTracks()->where('user_urn')->get();
+        $data['tracks'] = $this->trackService->getTracks()->get();
 
         return view('backend.user.campaign_management.campaigns.campaigns', $data);
     }
