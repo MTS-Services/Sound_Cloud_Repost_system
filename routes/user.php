@@ -3,8 +3,8 @@
 use App\Http\Controllers\Backend\User\AddCaeditsController;
 use App\Http\Controllers\Backend\User\AnalyticsController;
 use App\Http\Controllers\Backend\User\CampaignManagement\CampaignController;
+use App\Http\Controllers\Backend\User\CampaignManagement\MyCampaignController;
 use App\Http\Controllers\Backend\User\PromoteController;
-use App\Http\Controllers\Backend\User\RepostFeedController;
 use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
 
 use Illuminate\Support\Facades\Route;
@@ -30,7 +30,7 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-        Route::get('/repost-feed', [RepostFeedController::class, 'repostFeed'])->name('repost-feed');
+        Route::get('/repost-feed', [CampaignController::class, 'repostFeed'])->name('campaing-feed');
         Route::get('/analytics',[AnalyticsController::class, 'analytics'])->name('analytics');
         Route::get('/add-credits', [AddCaeditsController::class, 'addCredits'])->name('add-credits');
         Route::get('/promote', [PromoteController::class, 'tracks'])->name('promote');
@@ -40,10 +40,10 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     // Campaign Management
     Route::group(['as' => 'cm.', 'prefix' => 'campaign-management'], function () {
         // Campaign Routes
-        Route::get('/campaigns', [CampaignController::class, 'index'])->name('campaigns.index');
-        Route::get('/campaigns/create/{track_id}', [CampaignController::class, 'create'])->name('campaigns.create');
-        Route::post('/campaigns', [CampaignController::class, 'store'])->name('campaigns.store');
+        Route::get('/campaigns', [MyCampaignController::class, 'index'])->name('campaigns.index');
+        Route::get('/campaigns/create/{track_id}', [MyCampaignController::class, 'create'])->name('campaigns.create');
+        Route::post('/campaigns', [MyCampaignController::class, 'store'])->name('campaigns.store');
     });
     // Repost Campaign tracks
-    Route::post('/repost/{repost}', [RepostFeedController::class, 'repost'])->name('repost.store');
+    Route::post('/repost/{repost}', [CampaignController::class, 'repost'])->name('campaing.store');
 });
