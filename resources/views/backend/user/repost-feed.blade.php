@@ -16,7 +16,7 @@
             <div class="flex justify-between">
                 <div class="flex justify-start gap-3">
                     <div class="w-56 h-36 rounded-md overflow-hidden">
-                        <img src="{{ asset('frontend/user/image/music-1.jpg') }}" class="w-full h-full" alt="">
+                        <img src="{{ $track->artwork_url }}" class="w-full h-full" alt="{{$track->title}}">
                     </div>
                     <div>
                         <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ $track->title }}</h2>
