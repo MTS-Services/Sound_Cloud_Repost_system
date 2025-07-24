@@ -20,7 +20,10 @@ return new class extends Migration
 
             $table->string('receiver_id')->index(); 
             $table->string('sender_id')->index()->nullable();
-
+            $table->tinyInteger('calculation_type')->comment(
+                CreditTransaction::CALCULATION_TYPE_ADDITION .': Addition',
+                CreditTransaction::CALCULATION_TYPE_SUBTRACTION .': Subtraction'
+            );
             $table->unsignedBigInteger('campaign_id')->index()->nullable();
             $table->unsignedBigInteger('repost_request_id')->index()->nullable();
 

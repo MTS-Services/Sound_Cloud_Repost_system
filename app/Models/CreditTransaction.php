@@ -32,6 +32,10 @@ class CreditTransaction extends BaseModel
         'metadata' => 'array',
     ];
 
+    /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
+                    Start of RELATIONSHIPS
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
+
     public function receiver()
     {
         return $this->belongsTo(User::class, 'receiver_id', 'urn');
@@ -52,6 +56,25 @@ class CreditTransaction extends BaseModel
     //     return $this->belongsTo(RepostRequest::class);
     // }
 
+    /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
+                    End of RELATIONSHIPS
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
+
+
+    public const CALCULATION_TYPE_ADDITION = 0;
+    public const CALCULATION_TYPE_SUBTRACTION = 1;
+
+    public static function getCalculationTypes()
+    {
+        return [
+            self::CALCULATION_TYPE_ADDITION => 'Addition',
+            self::CALCULATION_TYPE_SUBTRACTION => 'Subtraction',
+        ];
+    }
+    public function getCalculationTypeNameAttribute(): string
+    {
+        return self::getCalculationTypes()[$this->calculation_type];
+    }
 
 
     public const TYPE_EARN = 0;

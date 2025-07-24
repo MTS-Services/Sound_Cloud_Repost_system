@@ -31,16 +31,12 @@ class CampaignController extends Controller
     {
         $campaign = Campaign::findOrFail(decrypt($id));
         $campaign->load(['music.user']);
-        // dd($campaign);
-        // $track = Track::findOrFail(decrypt($id));
-        // $track->load('campaigns');
-        // dd($track);
         $response = Http::withHeaders([
             'Authorization' => 'OAuth ' . user()->token,
         ])->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
         if ($response->successful()) {
             DB::transaction(function () use ($campaign, $response) {
-                Repost::create([
+                $repost = Repost::create([
                     'campaign_id' => $campaign->id,
                     'reposter_urn' => user()->urn,
                     'track_owner_urn' => $campaign->music?->user?->urn ?? $campaign->user_urn,
@@ -50,6 +46,14 @@ class CampaignController extends Controller
                     'credits_earned' => $campaign->credits_per_repost,
                     'net_credits' => $campaign->credits_per_repost,
                 ]);
+
+                $campaign->update([
+                    'completed_reposts' => $campaign->completed_reposts + 1,
+                    'credits_spent' => $campaign->credits_spent + $campaign->credits_per_repost
+                ]);
+
+                
+
             });
             return redirect()->back()->with('success', 'Track reposted successfully.');
         } else {            
