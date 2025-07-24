@@ -49,25 +49,24 @@
     </script>
 </head>
 
-<body class="bg-gray-50 dark:bg-gray-900 font-sans text-black" x-data>
+<body class="bg-gray-50 dark:bg-gray-900 font-sans text-black relative" x-data>
 
     {{-- Sidebar --}}
-    @include('backend.user.layouts.partials.sidebar')
+
 
     <!-- Main Content -->
-    <div class="lg:ml-64 min-h-screen ">
-        {{-- Header --}}
-        @include('backend.user.layouts.partials.header')
+    @include('backend.user.layouts.partials.header')
+    <div class="flex-1 flex overflow-hidden max-h-screen">
+        @include('backend.user.layouts.partials.sidebar')
 
-        {{-- Main Content --}}
-        <div class="p-6">
+        <div class="p-3 w-full">
             {{ $slot }}
         </div>
     </div>
     {{-- Custom JS --}}
     <script src="{{ asset('assets/frontend/js/custome.js') }}"></script>
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @stack('js')
 </body>
 
