@@ -33,8 +33,8 @@ return new class extends Migration
                 CreditTransaction::TYPE_BONUS .': Bonus');
             $table->decimal('amount', 15, 2);
             $table->decimal('credits', 15, 2);
-            $table->decimal('balance_before', 10, 2);
-            $table->decimal('balance_after', 10, 2);
+            $table->decimal('balance_before', 10, 2)->nullable();
+            $table->decimal('balance_after', 10, 2)->nullable();
 
             $table->text('description')->nullable();
             $table->json('metadata')->nullable();
@@ -47,7 +47,7 @@ return new class extends Migration
             $table->foreign('receiver_id')->references('urn')->on('users')->cascadeOnDelete();
             $table->foreign('sender_id')->references('urn')->on('users')->nullOnDelete();
             $table->foreign('campaign_id')->references('id')->on('campaigns')->nullOnDelete();
-            // $table->foreign('repost_request_id')->references('id')->on('repost_requests')->nullOnDelete();
+            $table->foreign('repost_request_id')->references('id')->on('repost_requests')->nullOnDelete();
         });
     }
 

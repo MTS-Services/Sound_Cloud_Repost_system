@@ -5,7 +5,7 @@
 
     <div class="flex items-center justify-center h-screen">
         <div
-            class="relative max-w-[500px] w-full bg-white rounded-[20px] shadow-[0_20px_40px_rgba(0,0,0,0.1)] mx-auto p-10 text-center overflow-hidden">
+            class="relative max-w-[500px] w-full bg-white rounded-[20px] shadow-[0_20px_40px_rgba(0,0,0,0.1)] mx-auto p-10 text-center overflow-hidden" style="padding: 20px;">
 
             <!-- Top Gradient Bar -->
             <div class="absolute top-0 left-0 right-0 h-[5px] bg-gradient-to-r from-teal-500 to-teal-500"></div>

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Backend\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CreditTransaction;
 use App\Models\Payment;
+use App\Models\UserCredit;
 use App\Services\Payments\StripeService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
@@ -45,18 +48,35 @@ class PaymentController extends Controller
                     'customer_email' => $request->customer_email ?? null,
                 ],
             ]);
-            // Store payment record
-            Payment::create([
-                'user_urn' => user()->urn,
-                'payment_gateway' => \App\Models\Payment::PAYMENT_METHOD_STRIPE,
-                'credits_purchased' => $request->amount,
-                'exchange_rate' => 1,
-                'payment_provider_id' => $paymentIntent->id,
-                'payment_intent_id' => $paymentIntent->id,
-                'amount' => $request->amount,
-                'currency' => $request->currency ?? 'usd',
-                'status' => $paymentIntent->status,
-                'metadata' => $paymentIntent->metadata->toArray(),
+            DB::commit([
+                $creditTransaction = CreditTransaction::create([
+                    'receiver_id' => user()->urn,
+                    'transaction_type' => CreditTransaction::TYPE_PURCHASE,
+                    'amount' => $request->amount,
+                    'credits' => $request->amount,
+                    'metadata' => $paymentIntent->metadata->toArray(),
+                ]),
+                // Store payment record
+                Payment::create([
+                    'user_urn' => user()->urn,
+                    'payment_gateway' => \App\Models\Payment::PAYMENT_METHOD_STRIPE,
+                    'credits_purchased' => $request->amount,
+                    'credit_transaction_id' => $creditTransaction->id,
+                    'exchange_rate' => 1,
+                    'payment_provider_id' => $paymentIntent->id,
+                    'payment_intent_id' => $paymentIntent->id,
+                    'amount' => $request->amount,
+                    'currency' => $request->currency ?? 'usd',
+                    'status' => $paymentIntent->status,
+                    'metadata' => $paymentIntent->metadata->toArray(),
+                ]),
+
+                UserCredit::create([
+                    'user_urn' => user()->urn,
+                    'transaction_id' => $creditTransaction->id,
+                    'status' => UserCredit::STATUS_PENDING,
+                    'amount' => $request->amount,
+                ]),
             ]);
 
             return response()->json([
@@ -89,6 +109,12 @@ class PaymentController extends Controller
                     'status' => $paymentIntent->status,
                     'payment_method' => $paymentIntent->payment_method ?? null,
                     'processed_at' => $paymentIntent->status === 'succeeded' ? now() : null,
+                ]);
+            }
+            $userCredit = UserCredit::where('transaction_id', $payment->credit_transaction_id)->first();
+            if ($userCredit) {
+                $userCredit->update([
+                    'status' => $paymentIntent->status === 'succeeded' ? UserCredit::STATUS_APPROVED : UserCredit::STATUS_REJECTED,
                 ]);
             }
             return view('backend.admin.payments.success', compact('payment', 'paymentIntent'));
