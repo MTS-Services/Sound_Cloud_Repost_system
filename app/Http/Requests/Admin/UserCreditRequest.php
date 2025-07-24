@@ -22,7 +22,12 @@ class UserCreditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'sort_order' => 'nullable|integer|min:0',
+            'user_urn' => 'required|exists:users,urn',
+            'transaction_id' => 'required|exists:credit_transactions,id',
+            'status' => 'required|in:0,1,2',
+            'amount' => 'required|numeric|min:0',
+            'credits' => 'required|numeric|min:0',
         ] + ($this->isMethod('POST') ? $this->store() : $this->update());
     }
 
