@@ -44,6 +44,6 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     // Repost Campaign tracks
     Route::controller(CampaignController::class)->name('campaign.')->prefix('campaign')->group(function () {
         Route::get('/feed', 'campaignFeed')->name('feed');
-        Route::post('/{repost}', 'store')->name('store');
+        Route::post('/{repost}', 'repost')->name('repost');
     });
 });
