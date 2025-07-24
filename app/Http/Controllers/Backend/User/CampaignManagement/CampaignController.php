@@ -37,15 +37,16 @@ class CampaignController extends Controller
     public function index(Request $request)
     {
         // $data['campaigns'] = $this->campaignService->getCampaigns()->active_completed()->get();
-        $data['campaigns'] = $this->campaignService->getCampaigns()->where('user_urn', user()->urn)->get();
-        $data['tracks'] = $this->trackService->getTracks()->where('user_urn', user()->urn)->get();
+        $data['campaigns'] = $this->campaignService->getCampaigns()->whereNull('user_urn')->get();
+        $data['tracks'] = $this->trackService->getTracks()->where('user_urn')->get();
+
         return view('backend.user.campaign_management.campaigns.campaigns', $data);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create( Request $request, string $track_id): View
+    public function create(Request $request, string $track_id): View
     {
         $data['track'] = $this->trackService->getTrack($track_id);
         return view('backend.user.campaign_management.campaigns.create', $data);

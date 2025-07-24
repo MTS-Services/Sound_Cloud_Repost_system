@@ -93,7 +93,19 @@ class User extends AuthBaseModel
         return $this->hasMany(Campaign::class, 'user_urn', 'urn');
     }
 
-    /* %%%%%%%%% ######## ******** ======== End of RELATIONSHIPS  ======== ******** ######## %%%%%%%%% */
+    public function requests(): HasMany
+    {
+        return $this->hasMany(RepostRequest::class, 'requester_urn', 'urn');
+    }
+
+    public function responses(): HasMany
+    {
+        return $this->hasMany(RepostRequest::class, 'target_user_urn', 'urn');
+    }
+
+    /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
+                End of RELATIONSHIPS
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
     // Helper methods
     public function isSoundCloudConnected(): bool
