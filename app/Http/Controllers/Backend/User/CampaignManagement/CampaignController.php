@@ -43,8 +43,7 @@ class CampaignController extends Controller
 
             // Check if the user has already reposted this specific campaign
             if (Repost::where('reposter_urn', $currentUserUrn)
-                ->where('source_id', $campaignId)
-                ->where('source_type', Campaign::class)
+                ->where('campaign_id', $campaignId)
                 ->exists()
             ) {
                 return redirect()->back()->with('error', 'You have already reposted this campaign.');
