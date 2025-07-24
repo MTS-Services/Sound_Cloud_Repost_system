@@ -19,11 +19,11 @@
             <div class="flex justify-between">
                 <div class="flex justify-start gap-3">
                     <div class="w-56 h-36 rounded-md overflow-hidden">
-                        <img src="{{ $campaign->artwork_url }}" class="w-full h-full" alt="{{$campaign->title}}">
+                        <img src="{{ $campaign->music?->artwork_url }}" class="w-full h-full" alt="{{$campaign->music?->title}}">
                     </div>
                     <div>
-                        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ $campaign->title }}</h2>
-                        <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('WaveMaker') }}</p>
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ $campaign->music?->title ?? 'Null' }}</h2>
+                        <a href="{{ $campaign->music?->permalink_url }}" class="text-gray-600 underline hover:text-red-400 z-40 dark:text-gray-400 text-sm">{{ $campaign->music?->author_username ?? 'N/A' }}</a>
                         <div class="flex items-center space-x-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
                             <div class="flex items-center">
                                 <i data-lucide="timer" class="w-4 h-4 mr-1"></i>
@@ -31,11 +31,12 @@
                             </div>
                             <div class="flex items-center">
                                 <i data-lucide="volume-2" class="w-4 h-4 mr-1"></i>
-                                {{ __('2,458 plays') }}
+                               {{$campaign->music?->playback_count}}{{ __( 'plays') }}
                             </div>
                             <div class="flex items-center">
                                 <i data-lucide="heart" class="w-4 h-4 mr-1"></i>
-                                {{ __('458 likes') }}
+                                
+                               {{$campaign->music?->like_count}} {{ __('458 likes') }}
                             </div>
                         </div>
                         <div class="flex space-x-2 mt-4">
