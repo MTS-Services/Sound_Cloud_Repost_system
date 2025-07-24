@@ -7,8 +7,8 @@ use App\Models\BaseModel;
 class CreditTransaction extends BaseModel
 {
     protected $fillable = [
-        'receiver_id',
-        'sender_id',
+        '',
+        'sender_urn',
         'campaign_id',
         'repost_request_id',
         'transaction_type',
@@ -38,12 +38,12 @@ class CreditTransaction extends BaseModel
 
     public function receiver()
     {
-        return $this->belongsTo(User::class, 'receiver_id', 'urn');
+        return $this->belongsTo(User::class, 'receiver_urn', 'urn');
     }
 
     public function sender()
     {
-        return $this->belongsTo(User::class, 'sender_id', 'urn');
+        return $this->belongsTo(User::class, 'sender_urn', 'urn');
     }
 
     public function campaign()
