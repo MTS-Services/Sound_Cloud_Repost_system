@@ -1,15 +1,20 @@
 <header class="bg-white dark:bg-slate-800 z-41 border-b border-gray-100 dark:border-slate-700 px-6 py-1 sticky top-0">
-    <div class="flex items-center justify-evenly">
-        <a class="flex items-center space-x-2" href="/" data-discover="true">
-            <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                <span class="text-slate-800 dark:text-white font-bold text-lg">R</span>
-            </div>
-            <span class="text-slate-800 dark:text-white font-bold text-xl">
-                REPOST<span class="text-orange-500">CHAIN</span>
-            </span>
-        </a>
-        <form class="flex-1 flex justify-center ">
-            <div class="relative w-full max-w-md items-center">
+    <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+            <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden p-2 rounded-md text-gray-900 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+            <a class="flex items-center space-x-2" href="/" data-discover="true">
+                <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                    <span class="text-slate-800 dark:text-white font-bold text-lg">R</span>
+                </div>
+                <span class="text-slate-800 dark:text-white font-bold text-xl hidden sm:block">
+                    REPOST<span class="text-orange-500">CHAIN</span>
+                </span>
+            </a>
+        </div>
+        <div class="flex-1 flex justify-center px-4 lg:px-0">
+            <form class="relative w-full max-w-md items-center hidden sm:flex">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-4">
                     <i data-lucide="search" class="w-5 h-5 text-slate-800 dark:text-slate-300"></i>
                 </span>
@@ -18,10 +23,10 @@
                     focus:border-[#F54A00] dark:focus:border-[#F54A00]
                     text-gray-900 dark:text-gray-200 placeholder:text-slate-800 dark:placeholder:text-slate-300
                     dark:shadow-sm outline-none transition" />
-            </div>
-        </form>
-        <div class="flex items-center space-x-4 ml-8">
-            <nav class="flex items-center space-x-6 text-sm">
+            </form>
+        </div>
+        <div class="flex items-center space-x-4">
+            <nav class="hidden lg:flex items-center space-x-6 text-sm">
                 <a class="text-orange-500 hover:text-orange-400 font-medium" href="/upgrade"
                     data-discover="true">Upgrade My Plan</a>
                 <a class="text-slate-800 hover:text-gray-900 dark:text-slate-300 " href="/charts"
@@ -29,7 +34,7 @@
                 <a class="text-slate-800 hover:text-gray-900 dark:text-slate-300 " href="/blog"
                     data-discover="true">Blog</a>
             </nav>
-            <div class="text-sm text-gray-900 dark:text-slate-300">
+            <div class="hidden sm:block text-sm text-gray-900 dark:text-slate-300">
                 <span class="font-semibold">75</span> Credits
             </div>
             <div class="relative">
@@ -52,7 +57,7 @@
                     <div class="w-10 h-10 rounded-full">
                         <img src="{{ user()->avatar }}" alt="{{ user()->name ?? 'name' }}" />
                     </div>
-                    <div class="text-sm">
+                    <div class="text-sm hidden sm:block">
                         <span class="font-semibold text-gray-900 dark:text-gray-200">{{ user()->name ?? 'name' }}</span>
                         <div class="text-green-500 text-xs">● Online</div>
                     </div>

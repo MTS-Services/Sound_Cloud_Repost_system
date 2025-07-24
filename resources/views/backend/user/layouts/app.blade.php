@@ -49,24 +49,43 @@
     </script>
 </head>
 
-<body class="bg-gray-50 dark:bg-gray-900 font-sans text-black relative" x-data>
+<body class="bg-gray-50 dark:bg-gray-900 font-sans text-black" x-data="{ sidebarOpen: false }">
 
-    {{-- Sidebar --}}
-
+    @include('backend.user.layouts.partials.header')
+    @include('backend.user.layouts.partials.sidebar')
 
     <!-- Main Content -->
-    @include('backend.user.layouts.partials.header')
-    <div class="flex-1 flex overflow-hidden ">
-        @include('backend.user.layouts.partials.sidebar')
-
-        <div class="p-3 w-full ml-63 h-[90vh]">
+    <div class="lg:ml-64">
+        <div class="p-6 lg:h-[90vh]">
             {{ $slot }}
         </div>
     </div>
-    {{-- Custom JS --}}
+
+    <!-- Scripts -->
+    <script src="{{ asset('assets/js/toggle-theme.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="{{ asset('assets/frontend/js/custome.js') }}"></script>
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+    <script>
+        const content_image_upload_url = '{{ route('file.ci_upload') }}';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (session('success'))
+                showAlert('success', "{!! session('success') !!}");
+            @endif
+
+            @if (session('error'))
+                showAlert('error', "{!! session('error') !!}");
+            @endif
+
+            @if (session('warning'))
+                showAlert('warning', "{!! session('warning') !!}");
+            @endif
+        });
+    </script>
+
     @stack('js')
 </body>
 

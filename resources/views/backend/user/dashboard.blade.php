@@ -1,7 +1,7 @@
 <x-user::layout>
     <x-slot name="page_slug">dashboard</x-slot>
     <!-- Dashboard Content (Default) -->
-    <div id="content-dashboard" class="page-content py-2 px-2">
+    <div id="content-dashboard" class="page-content py-2 px-2 ">
         <div class="px-2  flex justify-between items-center">
             <div class="">
                 <h2 class="text-2xl text-black dark:text-white font-semibold  mb-2">Dashboard</h2>
