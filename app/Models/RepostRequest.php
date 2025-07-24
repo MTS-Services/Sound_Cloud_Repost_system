@@ -4,10 +4,12 @@ namespace App\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RepostRequest extends BaseModel
 {
     protected $fillable = [
+        'sort_order',
         'requester_urn',
         'target_user_urn',
         'campaign_id',
@@ -50,6 +52,11 @@ class RepostRequest extends BaseModel
     public function track(): BelongsTo
     {
         return $this->belongsTo(Track::class, 'track_urn', 'urn');
+    }
+
+    public function reposts(): HasMany
+    {
+        return $this->hasMany(Repost::class);
     }
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
