@@ -17,7 +17,8 @@ return new class extends Migration
         Schema::create('reposts', function (Blueprint $table) {
             $table->id();
 
-
+            
+            
             $table->timestamps();
             $table->softDeletes();
             $this->addAdminAuditColumns($table);

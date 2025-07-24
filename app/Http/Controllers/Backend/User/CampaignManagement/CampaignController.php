@@ -18,17 +18,16 @@ class CampaignController extends Controller
     {
         $this->trackService = $trackService;
     }
-    public function campaingFeed()
+    public function campaignFeed()
     {
         $data['tracks'] = Track::with(['user', 'campaign'])
             ->whereHas('campaign')
             ->get();
-        return view('backend.user.campaingt-feed', $data);
+        return view('backend.user.campaign-feed', $data);
     }
 
-    public function campaing(string $id)
+    public function repost(string $id)
     {
-
         $track = Track::findOrFail(decrypt($id));
         dd($track);
         $response = Http::withHeaders([
@@ -41,6 +40,7 @@ class CampaignController extends Controller
             dd( 'error', $response->json());
             return redirect()->back()->with('error', 'Failed to repost track.');
         }
+        
     }
 
 }
