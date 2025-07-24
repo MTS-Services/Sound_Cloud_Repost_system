@@ -16,7 +16,7 @@ class CampaignService
     }
     public function getCampaign(string $encryptedId)
     {
-        return Campaign::findOrFail(decrypt($encryptedId));
+        return Campaign::findOrFail($encryptedId);
     }
 
     public function syncReposts($campaign, $currentUserUrn, $soundcloudRepostId)
