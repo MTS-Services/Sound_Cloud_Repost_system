@@ -39,6 +39,11 @@ class Payment extends BaseModel
         'failure_reason',
         'metadata',
         'processed_at',
+        'name',
+        'email_address',
+        'address',
+        'postal_code',
+        'reference',
     ];
 
     protected $casts = [

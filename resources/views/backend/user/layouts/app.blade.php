@@ -7,7 +7,7 @@
     {{-- csrf --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Sound Cloud') }}</title>
-        {{-- Theme selector && Theme store --}}
+    {{-- Theme selector && Theme store --}}
     <script>
         (function() {
             let theme = localStorage.getItem('theme') || 'system';
@@ -29,15 +29,33 @@
     @vite(['resources/css/user-dashboard.css', 'resources/js/app.js'])
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+    <script>
+        const content_image_upload_url = '{{ route('file.ci_upload') }}';
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (session('success'))
+                showAlert('success', "{!! session('success') !!}");
+            @endif
+
+            @if (session('error'))
+                showAlert('error', "{!! session('error') !!}");
+            @endif
+
+            @if (session('warning'))
+                showAlert('warning', "{!! session('warning') !!}");
+            @endif
+        });
+    </script>
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-black" x-data>
-    
+
     {{-- Sidebar --}}
     @include('backend.user.layouts.partials.sidebar')
 
     <!-- Main Content -->
-    <div class="lg:ml-64 min-h-screen " >
+    <div class="lg:ml-64 min-h-screen ">
         {{-- Header --}}
         @include('backend.user.layouts.partials.header')
 
@@ -48,7 +66,7 @@
     </div>
     {{-- Custom JS --}}
     <script src="{{ asset('assets/frontend/js/custome.js') }}"></script>
-     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
+    <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     @stack('js')
 </body>
