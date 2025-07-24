@@ -13,7 +13,7 @@
             <span>{{ __('Filter') }}</span>
         </div>
     </div>
-    {{-- @dd($campaigns) --}}
+    @dd($campaigns)
     @foreach ($campaigns as $campaign)
         <div class="p-3 my-6 shadow-md rounded-lg dark:bg-gray-800">
             <div class="flex justify-between">
