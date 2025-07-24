@@ -103,6 +103,17 @@ class User extends AuthBaseModel
         return $this->hasMany(RepostRequest::class, 'target_user_urn', 'urn');
     }
 
+    public function reposts(): HasMany
+    {
+        return $this->hasMany(Repost::class, 'reposter_urn', 'urn');
+    }
+
+    public function trackOwners(): HasMany
+    {
+        return $this->hasMany(Repost::class, 'track_owner_urn', 'urn');
+    }
+
+
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
