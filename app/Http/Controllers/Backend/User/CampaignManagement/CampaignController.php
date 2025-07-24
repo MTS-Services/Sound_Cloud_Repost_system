@@ -27,6 +27,9 @@ class CampaignController extends Controller
 
     public function repost(string $id)
     {
+        $campaign = Campaign::findOrFail(decrypt($id));
+        $campaign->load('music');
+        dd($campaign);
         $track = Track::findOrFail(decrypt($id));
         $track->load('campaigns');
         dd($track);
