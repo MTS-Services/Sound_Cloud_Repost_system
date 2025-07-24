@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend\User\CampaignManagement;
 
 use App\Http\Controllers\Controller;
+use App\Models\Campaign;
 use App\Models\Track;
 use App\Services\Admin\TrackService;
 use Illuminate\Support\Facades\Http;
@@ -20,9 +21,7 @@ class CampaignController extends Controller
     }
     public function campaignFeed()
     {
-        $data['tracks'] = Track::with(['user', 'campaign'])
-            ->whereHas('campaign')
-            ->get();
+        $data['campaigns'] = Campaign::with(['music'])->get();
         return view('backend.user.campaign-feed', $data);
     }
 

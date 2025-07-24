@@ -1,4 +1,8 @@
-<x-user::layout>
+@extends('layouts.app')
+
+@section('content')
+
+@endsection<x-user::layout>
     <x-slot name="page_slug">repost-feed</x-slot>
     <div class="flex justify-between">
         <div>
@@ -11,7 +15,8 @@
             <span>{{ __('Filter') }}</span>
         </div>
     </div>
-    @foreach ($tracks as $track)
+    @dd($campaigns)
+    @foreach ($campaigns as $track)
         <div class="p-3 my-6 shadow-md rounded-lg dark:bg-gray-800">
             <div class="flex justify-between">
                 <div class="flex justify-start gap-3">
