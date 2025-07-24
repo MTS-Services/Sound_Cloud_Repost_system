@@ -22,20 +22,20 @@
         <ul class="space-y-1">
             <li>
                 <a href="{{ route('user.dashboard') }}" class="sidebar-item flex items-center px-3 py-2.5 rounded-lg font-medium transition-colors
-                    text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-orange-600 dark:hover:bg-slate-700 @if($page_slug == 'dashboard') active @endif">
+                    text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if($page_slug == 'dashboard') active @endif">
                     <i data-lucide="home" class="w-5 h-5 mr-3"></i>
                     <span class="text-sm">{{ __('Home') }}</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('user.promote') }}" class="sidebar-item flex items-center px-3 py-2.5 rounded-lg font-medium transition-colors text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-orange-600 dark:hover:bg-slate-700 @if($page_slug == 'promote') active @endif">
+                <a href="{{ route('user.promote') }}" class="sidebar-item flex items-center px-3 py-2.5 rounded-lg font-medium transition-colors text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if($page_slug == 'promote') active @endif">
                     <i data-lucide="radio-tower" class="w-5 h-5 mr-3"></i>
                     <span class="text-sm">{{ __('Promote') }}</span>
                 </a>
             </li>
             <li>
                 <a href="{{ route('user.campaign.feed') }}" class="sidebar-item flex items-center px-3 py-2.5 rounded-lg font-medium transition-colors
-                    text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-orange-600 dark:hover:bg-slate-700 @if($page_slug == 'campaign-feed') active @endif">
+                    text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if($page_slug == 'campaign-feed') active @endif">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="8" cy="18" r="4"></circle>
@@ -46,14 +46,14 @@
             </li>
             <li>
                 <a href="{{ route('user.cm.campaigns.index') }}" class="sidebar-item flex items-center px-3 py-2.5 rounded-lg font-medium transition-colors
-                    text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-orange-600 dark:hover:bg-slate-700 @if($page_slug == 'campains') active @endif">
+                    text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if($page_slug == 'campains') active @endif">
                     <i data-lucide="megaphone" class="w-5 h-5 mr-3"></i>
                     <span class="text-sm">{{ __('My Campaigns') }}</span>
                 </a>
             </li>
             <li>
                 <a href="{{ route('user.profile') }}" class="sidebar-item flex items-center px-3 py-2.5 rounded-lg font-medium transition-colors
-                    text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-orange-600 dark:hover:bg-slate-700 @if($page_slug == 'profile') active @endif">
+                    text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if($page_slug == 'profile') active @endif">
                     <i data-lucide="user" class="w-5 h-5 mr-3"></i>
                     <span class="text-sm">{{ __('Profile') }}</span>
                 </a>
@@ -64,7 +64,7 @@
         <div class="space-y-1">
             <h4 class="text-slate-400 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-3">My Account</h4>
             <a href="{{ route('user.cm.campaigns.index') }}" class="sidebar-item flex items-center px-3 py-2.5 rounded-lg font-medium transition-colors
-                text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-orange-600 dark:hover:bg-slate-700 @if($page_slug == 'campains') active @endif">
+                text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if($page_slug == 'campains') active @endif">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="8" cy="18" r="4"></circle>
@@ -73,7 +73,7 @@
                 <span class="text-sm">{{ __('My Campaigns') }}</span>
             </a>
             <a href="{{ route('user.analytics') }}" class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors
-                text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-orange-600 dark:hover:bg-slate-700">
+                text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3" fill="none" stroke="currentColor"
                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 3v18h18"></path>
@@ -84,7 +84,7 @@
                 <span class="text-sm">Analytics</span>
             </a>
             <a href="{{ route('user.profile') }}" class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors
-                text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-orange-600 dark:hover:bg-slate-700">
+                text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3" fill="none" stroke="currentColor"
                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
@@ -93,7 +93,7 @@
                 <span class="text-sm">My Account</span>
             </a>
             <a href="#" class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors
-                text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-orange-600 dark:hover:bg-slate-700">
+                text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3" fill="none" stroke="currentColor"
                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15-.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
@@ -102,7 +102,7 @@
                 <span class="text-sm">Settings</span>
             </a>
             <a href="#" class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors
-                text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-orange-600 dark:hover:bg-slate-700">
+                text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3" fill="none" stroke="currentColor"
                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
