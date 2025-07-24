@@ -17,6 +17,7 @@ return new class extends Migration
     {
         Schema::create('repost_requests', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('sort_order')->default(0);
 
             $table->string('requester_urn')->index();
             $table->string('target_user_urn')->index();
