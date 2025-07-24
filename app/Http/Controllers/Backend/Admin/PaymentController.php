@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Backend\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\CreditTransaction;
 use App\Models\Payment;
-use App\Models\UserCredit;
+use App\Services\Admin\OrderManagement\OrderService;
 use App\Services\Payments\StripeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,18 +14,27 @@ use Illuminate\Support\Facades\Log;
 class PaymentController extends Controller
 {
     protected StripeService $stripeService;
+    protected OrderService $orderService;
 
-    public function __construct(StripeService $stripeService)
+    public function __construct(StripeService $stripeService, OrderService $orderService)
     {
         $this->stripeService = $stripeService;
+        $this->orderService = $orderService;
+    }
+
+    public function paymentMethod( string $credit_id)
+    {
+        $data['order'] = $this->orderService->getOrder($credit_id);
+        return view('frontend.pages.payment_method', $data);
     }
 
     /**
      * Show the payment form
      */
-    public function showPaymentForm()
+    public function showPaymentForm(Request $request, string $order_id)
     {
-        return view('backend.admin.payments.form');
+        $data['order'] = $this->orderService->getOrder($order_id);
+        return view('backend.admin.payments.form', $data);
     }
 
     /**
@@ -35,6 +44,7 @@ class PaymentController extends Controller
     {
         $request->validate([
             'amount' => 'required|numeric|min:0.50',
+            'credits' => 'required|numeric|min:0.50',
             'currency' => 'sometimes|string|size:3',
             'customer_email' => 'sometimes|email',
         ]);
@@ -50,11 +60,14 @@ class PaymentController extends Controller
             ]);
             DB::commit([
                 $creditTransaction = CreditTransaction::create([
-                    'receiver_id' => user()->urn,
+                    'receiver_urn' => user()->urn,
                     'transaction_type' => CreditTransaction::TYPE_PURCHASE,
+                    'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
                     'amount' => $request->amount,
-                    'credits' => $request->amount,
+                    'credits' => $request->credits,
                     'metadata' => $paymentIntent->metadata->toArray(),
+                    'source_type' => 'test',
+                    'source_id' => 000
                 ]),
                 // Store payment record
                 Payment::create([
@@ -69,14 +82,7 @@ class PaymentController extends Controller
                     'currency' => $request->currency ?? 'usd',
                     'status' => $paymentIntent->status,
                     'metadata' => $paymentIntent->metadata->toArray(),
-                ]),
-
-                UserCredit::create([
-                    'user_urn' => user()->urn,
-                    'transaction_id' => $creditTransaction->id,
-                    'status' => UserCredit::STATUS_PENDING,
-                    'amount' => $request->amount,
-                ]),
+                ])
             ]);
 
             return response()->json([
@@ -109,12 +115,6 @@ class PaymentController extends Controller
                     'status' => $paymentIntent->status,
                     'payment_method' => $paymentIntent->payment_method ?? null,
                     'processed_at' => $paymentIntent->status === 'succeeded' ? now() : null,
-                ]);
-            }
-            $userCredit = UserCredit::where('transaction_id', $payment->credit_transaction_id)->first();
-            if ($userCredit) {
-                $userCredit->update([
-                    'status' => $paymentIntent->status === 'succeeded' ? UserCredit::STATUS_APPROVED : UserCredit::STATUS_REJECTED,
                 ]);
             }
             return view('backend.admin.payments.success', compact('payment', 'paymentIntent'));

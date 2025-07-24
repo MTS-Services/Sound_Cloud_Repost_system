@@ -37,7 +37,7 @@
                         </div>
 
                         <div>
-                            <h2 class="text-3xl font-bold">{{ $credit->amount }}</h2>
+                            <h2 class="text-3xl font-bold">{{ $credit->credits }}</h2>
                             <p class="text-gray-600 text-sm">Credits</p>
                             @if ($credit->bonus_value_text)
                                 <p class="text-gray-400 text-xs mt-1">{{ $credit->bonus_value_text }}</p>
@@ -45,13 +45,21 @@
                         </div>
 
                         <div class="text-2xl font-bold text-gray-800">${{ number_format($credit->price, 2) }}</div>
-
-                        <a href="{{route('paypal.paymentLink')}}"
+                        <form action="{{ route('user.order.store') }}" method="POST" class="w-full">
+                            @csrf
+                            <input type="hidden" name="credits" value="{{ $credit->credits }}">
+                            <input type="hidden" name="amount" value="{{ $credit->price }}">
+                            <button type="submit"
+                                    class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold text-sm py-2 px-4 rounded-md transition duration-200 whitespace-nowrap"
+                                    style="background-color: #fb3802;">
+                                Buy Now
+                            </button>
+                        </form>
+                        {{-- <a href="{{route('paypal.paymentLink')}}"
                            class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold text-sm py-2 px-4 rounded-md transition duration-200 whitespace-nowrap"
                            style="background-color: #fb3802;">
                             Buy Now
-                        </a>
-
+                        </a> --}}
                         @if ($credit->plan_value)
                             <div class="border-t pt-4 w-full text-sm text-gray-800">
                                 <p class="text-red-500 font-semibold mb-1 text-center">Also includes</p>

@@ -79,12 +79,24 @@
                     <!-- Amount Section -->
                     <div class="mb-4">
                         <label class="block text-gray-700 text-sm font-semibold mb-2" for="amount">
+                            <i class="fas fa-dollar-sign mr-1"></i> Credits
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-3 flex items-center font-bold text-gray-600">$</span>
+                            <input type="credits" id="credits" name="credits" step="0.01" min="0.50" 
+                                value="{{ old('credits', $order->credits) }}" placeholder="0.00"
+                                class="w-full pl-8 pr-4 py-2 font-semibold text-lg border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                        </div>
+                    </div>
+                    <!-- Amount Section -->
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-semibold mb-2" for="amount">
                             <i class="fas fa-dollar-sign mr-1"></i> Payment Amount
                         </label>
                         <div class="relative">
                             <span class="absolute inset-y-0 left-3 flex items-center font-bold text-gray-600">$</span>
-                            <input type="number" id="amount" name="amount" step="0.01" min="0.50"
-                                value="10.00" placeholder="0.00"
+                            <input type="text" id="amount" name="amount" step="0.01" min="0.50"
+                                value="{{ old('amount', $order->amount) }}" placeholder="0.00"
                                 class="w-full pl-8 pr-4 py-2 font-semibold text-lg border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-300">
                         </div>
                     </div>
@@ -234,6 +246,7 @@
                     },
                     body: JSON.stringify({
                         amount: parseFloat(formData.get('amount')),
+                        credits: formData.get('credits'),
                         currency: formData.get('currency'),
                         customer_name: formData.get('customer_name'),
                         customer_email: formData.get('customer_email'),
