@@ -16,7 +16,7 @@
             <div class="flex justify-between">
                 <div class="flex justify-start gap-3">
                     <div class="w-56 h-36 rounded-md overflow-hidden">
-                        <img src="{{ asset('frontend/user/image/music-1.jpg') }}" class="w-full h-full" alt="">
+                        <img src="{{ $track->artwork_url }}" class="w-full h-full" alt="{{$track->title}}">
                     </div>
                     <div>
                         <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ $track->title }}</h2>
@@ -55,9 +55,9 @@
                         class="w-42 ms-auto flex items-center gap-2 mt-4 bg-orange-600 text-white py-2 px-4 rounded-md">
                         <i data-lucide="refresh cw" class="w-4 h-4"></i>
                         <a href="javascript:void(0);" class="text-sm"
-                            onclick="event.preventDefault(); document.getElementById('repost_track_{{ $track->id }}').submit();">{{ __('Submit Track') }}</a>
+                            onclick="event.preventDefault(); document.getElementById('repost_track_{{ $track->id }}').submit();">{{ __('Repost Track') }}</a>
                         <form action="{{ route('user.repost.store', encrypt($track->id)) }}" method="post"
-                            class="hidden" id="repost_track_{{ $track->id }}"></form>
+                            class="hidden" id="repost_track_{{ $track->id }}"> @csrf </form>
                     </div>
                 </div>
             </div>

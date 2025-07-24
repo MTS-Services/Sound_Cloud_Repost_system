@@ -23,7 +23,8 @@ class DatabaseSeeder extends Seeder
             PlanSeeder::class,
             CampaignSeeder::class,
             PlaylistSeeder::class,
-            TrackSeeder::class
+            TrackSeeder::class,
+            CreditSeeder::class
         ]);
     }
 }
