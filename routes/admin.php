@@ -5,6 +5,7 @@ use App\Http\Controllers\Backend\Admin\AdminManagement\RoleController;
 use App\Http\Controllers\Backend\Admin\AdminManagement\AdminController;
 use App\Http\Controllers\Backend\Admin\AdminManagement\PermissionController;
 use App\Http\Controllers\Backend\Admin\CampaignManagement\CampaignController;
+use App\Http\Controllers\Backend\Admin\CreditTransactionController;
 use App\Http\Controllers\Backend\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Backend\Admin\PackageManagement\CreditController;
 use App\Http\Controllers\Backend\Admin\PackageManagement\FeatureCategoryController;
@@ -118,5 +119,11 @@ Route::group(['middleware' => ['auth:admin','admin'], 'prefix' => 'admin'], func
             Route::get('/restore/{campaign}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{campaign}', 'permanentDelete')->name('permanent-delete');
         });
+    });
+
+    // Credit Transaction Routes
+    Route::controller(CreditTransactionController::class)->name('credit-transaction.')->prefix('credit-transaction')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/store', 'store')->name('store');
     });
 });

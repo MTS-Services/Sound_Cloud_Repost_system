@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Http\Traits\AuditColumnsTrait;
+use App\Models\Order;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 return new class extends Migration
@@ -14,19 +15,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_credits', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('sort_order')->default(0);
-            $table->string('user_urn')->index();
-            $table->decimal( 10, 2)->default(0);
 
+            $table->string('user_urn')->index();
+            $table->decimal('credits', 10, 2)->default(0.00);
+            $table->decimal('amount', 10, 2)->default(0.00);
+            $table->tinyInteger('status')->index()->default(Order::STATUS_PENDING);
 
             $table->timestamps();
             $table->softDeletes();
-            $this->addAdminAuditColumns($table);
-
-            $table->foreign('user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->unique(['user_urn']);
+            $this->addMorphedAuditColumns($table);
         });
     }
 
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_credits');
+        Schema::dropIfExists('orders');
     }
 };

@@ -49,6 +49,11 @@ class Campaign extends BaseModel
         return $this->hasMany(RepostRequest::class, 'campaign_id', 'id');
     }
 
+    public function reposts()
+    {
+        return $this->hasMany(Repost::class, 'campaign_id', 'id');
+    }
+
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */

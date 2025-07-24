@@ -3,189 +3,138 @@
 namespace App\Http\Controllers\Backend\User\CampaignManagement;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\CampaignManagement\CampaignRequest;
-use App\Http\Traits\AuditRelationTraits;
 use App\Models\Campaign;
+use App\Models\CreditTransaction;
+use App\Models\Playlist;
+use App\Models\Repost;
 use App\Models\Track;
-use App\Services\Admin\CampaignManagement\CampaignService;
-use App\Services\Admin\TrackService;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class CampaignController extends Controller
 {
-    use AuditRelationTraits;
 
-    protected function redirectIndex(): RedirectResponse
+    protected string $baseUrl = 'https://api.soundcloud.com';
+
+    public function __construct()
     {
-        return redirect()->route('user.cm.campaigns.index');
+        //
     }
 
-    protected CampaignService $campaignService;
-    protected TrackService $trackService;
-
-    public function __construct(CampaignService $campaignService, TrackService $trackService)
+    public function campaignFeed()
     {
-        $this->campaignService = $campaignService;
-        $this->trackService = $trackService;
+        $data['campaigns'] = Campaign::with(['music'])->get();
+        return view('backend.user.campaign-feed', $data);
     }
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request)
-    {
-        // $data['campaigns'] = $this->campaignService->getCampaigns()->active_completed()->get();
-        $data['campaigns'] = $this->campaignService->getCampaigns()->whereNull('user_urn')->get();
-        // $data['tracks'] = $this->trackService->getTracks()->where('user_urn')->get();
-        $data['tracks'] = $this->trackService->getTracks()->get();
 
-        return view('backend.user.campaign_management.campaigns.campaigns', $data);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(Request $request, string $track_id): View
+    public function repost(string $id)
     {
-        $data['track'] = $this->trackService->getTrack($track_id);
-        return view('backend.user.campaign_management.campaigns.create', $data);
-    }
+        try {            
+            $campaignId = decrypt($id);
+            $currentUserUrn = user()->urn;
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(CampaignRequest $request)
-    {
-        try {
-            $validated = $request->validated();
-            $this->campaignService->createTrackCampaign($validated);
-            session()->flash('success', "Campaign created successfully");
-        } catch (\Throwable $e) {
-            session()->flash('Campaign creation failed');
-            throw $e;
+            // Check if the current user owns the campaign
+            if (Campaign::where('id', $campaignId)->where('user_urn', $currentUserUrn)->exists()) {
+                return redirect()->back()->with('error', 'You cannot repost your own campaign.');
+            }
+
+            // Check if the user has already reposted this specific campaign
+            if (Repost::where('reposter_urn', $currentUserUrn)
+                ->where('campaign_id', $campaignId)
+                ->exists()
+            ) {
+                return redirect()->back()->with('error', 'You have already reposted this campaign.');
+            }
+
+            // Find the campaign and eager load its music and the music's user
+            $campaign = Campaign::with('music.user')->findOrFail($campaignId);
+
+            // Ensure music is associated with the campaign
+            if (!$campaign->music) {
+                return redirect()->back()->with('error', 'Track or Playlist not found for this campaign.');
+            }
+
+            $soundcloudRepostId = null;
+
+            // Prepare HTTP client with authorization header
+            $httpClient = Http::withHeaders([
+                'Authorization' => 'OAuth ' . user()->token,
+            ]);
+
+            // Determine the SoundCloud API endpoint based on music type
+            if ($campaign->music_type == Track::class) {
+                $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
+            } elseif ($campaign->music_type == Playlist::class) {
+                $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$campaign->music->urn}");
+            } else {
+                return redirect()->back()->with('error', 'Invalid music type specified for the campaign.');
+            }
+
+            
+            if ($response->successful()) {
+                // If SoundCloud returns a repost ID, capture it (example, adjust based on actual SoundCloud API response)
+                // $soundcloudRepostId = $response->json('id');
+
+                DB::transaction(function () use ($campaign, $currentUserUrn, $soundcloudRepostId) {
+                    
+                    $trackOwnerUrn = $campaign->music->user?->urn ?? $campaign->user_urn;
+                    $trackOwnerName = $campaign->music->user?->name; 
+                    $creditsPerRepost = $campaign->credits_per_repost;
+
+                    // Create the Repost record
+                    $repost = Repost::create([
+                        'reposter_urn' => $currentUserUrn,
+                        'track_owner_urn' => $trackOwnerUrn,
+                        'campaign_id' => $campaign->id,
+                        'soundcloud_repost_id' => $soundcloudRepostId,
+                        'reposted_at' => now(),
+                        'credits_earned' => $creditsPerRepost,
+                    ]);
+
+                    // Update the Campaign record using atomic increments
+                    $campaign->increment('completed_reposts');
+                    $campaign->increment('credits_spent', $creditsPerRepost);
+
+                    // Create the CreditTransaction record
+                    CreditTransaction::create([
+                        'receiver_urn' => $currentUserUrn,
+                        'sender_urn' => $trackOwnerUrn,
+                        'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
+                        'source_id' => $campaign->id,
+                        'source_type' => Campaign::class,
+                        'transaction_type' => CreditTransaction::TYPE_EARN,
+                        'amount' => 0,
+                        'credits' => $creditsPerRepost,
+                        'description' => "Repost of campaign '{$campaign->title}' by {$trackOwnerName}. " .
+                            "Reposted by {$currentUserUrn} with Repost ID: {$repost->id}.",
+                        'metadata' => [
+                            'repost_id' => $repost->id,
+                            'campaign_id' => $campaign->id,
+                            'soundcloud_repost_id' => $soundcloudRepostId,
+                        ]
+                    ]);
+                });
+
+                return redirect()->back()->with('success', 'Campaign music reposted successfully.');
+            } else {
+                // Log the error response from SoundCloud for debugging
+                Log::error("SoundCloud Repost Failed: " . $response->body(), [
+                    'campaign_id' => $campaignId,
+                    'user_urn' => $currentUserUrn,
+                    'status' => $response->status(),
+                ]);
+                return redirect()->back()->with('error', 'Failed to repost campaign music to SoundCloud. Please try again.');
+            }
+        } catch (Throwable $e) {           
+            Log::error("Error in repost method: " . $e->getMessage(), [
+                'exception' => $e,
+                'campaign_id_input' => $id,
+                'user_urn' => user()->urn ?? 'N/A',
+            ]);
+            return redirect()->back()->with('error', 'An unexpected error occurred. Please try again later.');
         }
-        return $this->redirectIndex();
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Request $request, string $id)
-    {
-        $data = $this->campaignService->getCampaign($id);
-        $data['user_urn'] = $data->user->name;
-        $data['auto_approve_label'] = $data->auto_approve_label;
-        $data['start_date'] = $data->start_date_formatted;
-        $data['end_date'] = $data->end_date_formatted;
-        $data['creater_name'] = $this->creater_name($data);
-        $data['updater_name'] = $this->updater_name($data);
-        return response()->json($data);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    // public function edit(string $id): View
-    // {
-    //     $data['campaign'] = $this->campaignService->getCampaign($id);
-    //     return view('backend.admin.campaign_management.campaigns.edit', $data);
-    // }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    // public function update(Request $request, string $id)
-    // {
-    //      try {
-    //         // $validated = $request->validated();
-    //         //
-    //         session()->flash('success', "Service updated successfully");
-    //     } catch (\Throwable $e) {
-    //         session()->flash('Service update failed');
-    //         throw $e;
-    //     }
-    //     return $this->redirectIndex();
-    // }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    // public function destroy(string $id)
-    // {
-    //      try {
-    //         //
-    //         session()->flash('success', "Service deleted successfully");
-    //     } catch (\Throwable $e) {
-    //         session()->flash('Service delete failed');
-    //         throw $e;
-    //     }
-    //     return $this->redirectIndex();
-    // }
-
-    // public function trash(Request $request)
-    // {
-    //     if ($request->ajax()) {
-    //         $query = $this->campaignService->getCampaigns()->onlyTrashed();
-    //         return DataTables::eloquent($query)
-    //             ->editColumn('deleted_by', function ($campaign) {
-    //                 return $this->deleter_name($campaign);
-    //             })
-    //             ->editColumn('deleted_at', function ($campaign) {
-    //                 return $campaign->deleted_at_formatted;
-    //             })
-    //             ->editColumn('action', function ($permission) {
-    //                 $menuItems = $this->trashedMenuItems($permission);
-    //                 return view('components.action-buttons', compact('menuItems'))->render();
-    //             })
-    //             ->rawColumns(['deleted_by', 'deleted_at', 'action'])
-    //             ->make(true);
-    //     }
-    //     return view('backend.admin.campaign_management.campaign.trash');
-    // }
-
-    // protected function trashedMenuItems($model): array
-    // {
-    //     return [
-    //         [
-    //             'routeName' => '',
-    //             'params' => [encrypt($model->id)],
-    //             'label' => 'Restore',
-    //             'permissions' => ['permission-restore']
-    //         ],
-    //         [
-    //             'routeName' => '',
-    //             'params' => [encrypt($model->id)],
-    //             'label' => 'Permanent Delete',
-    //             'p-delete' => true,
-    //             'permissions' => ['permission-permanent-delete']
-    //         ]
-
-    //     ];
-    // }
-
-    //  public function restore(string $id): RedirectResponse
-    // {
-    //     try {
-    //         $this->campaignService->restore($id);
-    //         session()->flash('success', "Service restored successfully");
-    //     } catch (\Throwable $e) {
-    //         session()->flash('Service restore failed');
-    //         throw $e;
-    //     }
-    //     return $this->redirectTrashed();
-    // }
-
-    // public function permanentDelete(string $id): RedirectResponse
-    // {
-    //     try {
-    //         $this->campaignService->permanentDelete($id);
-    //         session()->flash('success', "Service permanently deleted successfully");
-    //     } catch (\Throwable $e) {
-    //         session()->flash('Service permanent delete failed');
-    //         throw $e;
-    //     }
-    //     return $this->redirectTrashed();
-    // }
 }

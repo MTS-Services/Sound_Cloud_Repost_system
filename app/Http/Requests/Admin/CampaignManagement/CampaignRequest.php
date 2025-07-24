@@ -23,11 +23,11 @@ class CampaignRequest extends FormRequest
     {
         $data = $this->all();
         return [
-            'music_id'               => ['nullable', 'integer'],
+            'music_id'               => ['nullable', 'numeric'],
             'music_type'               => ['nullable', 'string'],
             'title'                  => ['required', 'string', 'max:255'],
             'description'            => ['nullable', 'string'],
-            'target_reposts'         => ['required', 'integer',],
+            'target_reposts'         => ['required', 'numeric',],
             'credits_per_repost'     => ['required', 'numeric',],
             'total_credits_budget'   => ['required', 'numeric', function ($attribute, $value, $fail) use ($data) {
                 $minRequiredBudget = $data['target_reposts'] * $data['credits_per_repost'];
@@ -58,7 +58,7 @@ class CampaignRequest extends FormRequest
 // use Illuminate\Support\Facades\Validator;
 
 // $validator = Validator::make($data, [
-//     'target_reposts'         => ['required', 'integer'],
+//     'target_reposts'         => ['required', 'numeric'],
 //     'credits_per_repost'     => ['required', 'numeric'],
 //     'total_credits_budget'   => ['required', 'numeric', function ($attribute, $value, $fail) use ($data) {
 //         $minRequiredBudget = $data['target_reposts'] * $data['credits_per_repost'];
