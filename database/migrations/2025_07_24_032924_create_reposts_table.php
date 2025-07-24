@@ -19,7 +19,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('sort_order')->default(0);
 
-            $table->unsignedBigInteger('repost_request_id')->index();
+            $table->unsignedBigInteger('repost_request_id')->index()->nullable();
             $table->string('reposter_urn')->index();
             $table->string('track_owner_urn')->index();
             $table->unsignedBigInteger('campaign_id ')->index();
