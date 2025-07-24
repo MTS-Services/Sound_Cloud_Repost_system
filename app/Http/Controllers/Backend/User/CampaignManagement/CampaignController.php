@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Backend\User\CampaignManagement;
 
 use App\Http\Controllers\Controller;
 use App\Models\Campaign;
+use App\Models\Repost;
 use App\Models\Track;
 use App\Services\Admin\TrackService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 class CampaignController extends Controller
@@ -28,17 +30,29 @@ class CampaignController extends Controller
     public function repost(string $id)
     {
         $campaign = Campaign::findOrFail(decrypt($id));
-        $campaign->load('music');
+        $campaign->load(['music.user']);
         dd($campaign);
-        $track = Track::findOrFail(decrypt($id));
-        $track->load('campaigns');
-        dd($track);
+        // $track = Track::findOrFail(decrypt($id));
+        // $track->load('campaigns');
+        // dd($track);
         $response = Http::withHeaders([
             'Authorization' => 'OAuth ' . user()->token,
-        ])->post("{$this->baseUrl}/reposts/tracks/{$track->urn}");
+        ])->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
         if ($response->successful()) {
-            dd('success', $response->json());
-            return redirect()->back()->with('success', 'Track reposted successfully.');
+            DB::transaction(function () use ($campaign, $response) {
+                Repost::create([
+                    'campaign_id' => $campaign->id,
+                    'reposter_urn' => user()->urn,
+                    'track_owner_urn' => $campaign->music->user->urn,
+                    'soundcloud_repost_id' => $response->json()->id,
+                    'is_verified' => Repost::IS_VERIFIED_NO,
+                    'reposted_at' => $response->json()->created_at,
+                    'credits_earned' => $campaign->credits_per_repost,
+                    'service_fee' => $campaign->service_fee,
+                    'net_credits' => $campaign->net_credits,
+                ]);
+                return redirect()->back()->with('success', 'Track reposted successfully.');
+            });
         } else {
             dd('error', $response->json());
             return redirect()->back()->with('error', 'Failed to repost track.');
