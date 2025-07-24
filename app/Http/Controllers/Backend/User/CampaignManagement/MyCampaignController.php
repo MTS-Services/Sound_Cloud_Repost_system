@@ -5,10 +5,8 @@ namespace App\Http\Controllers\Backend\User\CampaignManagement;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CampaignManagement\CampaignRequest;
 use App\Http\Traits\AuditRelationTraits;
-use App\Models\Campaign;
-use App\Models\Track;
-use App\Services\Admin\CampaignManagement\CampaignService;
 use App\Services\Admin\TrackService;
+use App\Services\User\CampaignManagement\MyCampaignService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,10 +20,10 @@ class MyCampaignController extends Controller
         return redirect()->route('user.cm.campaigns.index');
     }
 
-    protected CampaignService $campaignService;
+    protected MyCampaignService $campaignService;
     protected TrackService $trackService;
 
-    public function __construct(CampaignService $campaignService, TrackService $trackService)
+    public function __construct(MyCampaignService $campaignService, TrackService $trackService)
     {
         $this->campaignService = $campaignService;
         $this->trackService = $trackService;
