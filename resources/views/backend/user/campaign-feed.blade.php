@@ -1,8 +1,6 @@
-@extends('layouts.app')
 
-@section('content')
 
-@endsection<x-user::layout>
+<x-user::layout>
     <x-slot name="page_slug">repost-feed</x-slot>
     <div class="flex justify-between">
         <div>
@@ -15,16 +13,16 @@
             <span>{{ __('Filter') }}</span>
         </div>
     </div>
-    @dd($campaigns)
-    @foreach ($campaigns as $track)
+    {{-- @dd($campaigns) --}}
+    @foreach ($campaigns as $campaign)
         <div class="p-3 my-6 shadow-md rounded-lg dark:bg-gray-800">
             <div class="flex justify-between">
                 <div class="flex justify-start gap-3">
                     <div class="w-56 h-36 rounded-md overflow-hidden">
-                        <img src="{{ $track->artwork_url }}" class="w-full h-full" alt="{{$track->title}}">
+                        <img src="{{ $campaign->artwork_url }}" class="w-full h-full" alt="{{$campaign->title}}">
                     </div>
                     <div>
-                        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ $track->title }}</h2>
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ $campaign->title }}</h2>
                         <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('WaveMaker') }}</p>
                         <div class="flex items-center space-x-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
                             <div class="flex items-center">
@@ -60,9 +58,9 @@
                         class="w-42 ms-auto flex items-center gap-2 mt-4 bg-orange-600 text-white py-2 px-4 rounded-md">
                         <i data-lucide="refresh cw" class="w-4 h-4"></i>
                         <a href="javascript:void(0);" class="text-sm"
-                            onclick="event.preventDefault(); document.getElementById('repost_track_{{ $track->id }}').submit();">{{ __('Repost Track') }}</a>
-                        <form action="{{ route('user.repost.store', encrypt($track->id)) }}" method="post"
-                            class="hidden" id="repost_track_{{ $track->id }}"> @csrf </form>
+                            onclick="event.preventDefault(); document.getElementById('repost_track_{{ $campaign->id }}').submit();">{{ __('Repost Track') }}</a>
+                        <form action="{{ route('user.campaign.store', encrypt($campaign->id)) }}" method="post"
+                            class="hidden" id="repost_track_{{ $campaign->id }}"> @csrf </form>
                     </div>
                 </div>
             </div>
