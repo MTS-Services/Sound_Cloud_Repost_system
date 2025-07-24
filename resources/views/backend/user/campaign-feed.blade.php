@@ -1,7 +1,7 @@
 
 
 <x-user::layout>
-    <x-slot name="page_slug">repost-feed</x-slot>
+    <x-slot name="page_slug">campaign-feed</x-slot>
     <div class="flex justify-between">
         <div>
             <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{{ __('Repost Feed') }}</h2>
@@ -19,7 +19,7 @@
             <div class="flex justify-between">
                 <div class="flex justify-start gap-3">
                     <div class="w-56 h-36 rounded-md overflow-hidden">
-                        <img src="{{ $campaign->music?->artwork_url }}" class="w-full h-full" alt="{{$campaign->music?->title}}">
+                        <img src="{{ $campaign->music?->artwork_url }}" class="w-full h-full" alt="{{$campaign->music?->title ?? 'Image Not Found'}}">
                     </div>
                     <div>
                         <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ $campaign->music?->title ?? 'Null' }}</h2>
@@ -31,7 +31,7 @@
                             </div>
                             <div class="flex items-center">
                                 <i data-lucide="volume-2" class="w-4 h-4 mr-1"></i>
-                               {{$campaign->music?->playback_count}}{{ __( 'plays') }}
+                               {{$campaign->music?->playback_count}}{{ __( ' plays') }}
                             </div>
                             <div class="flex items-center">
                                 <i data-lucide="heart" class="w-4 h-4 mr-1"></i>
