@@ -95,15 +95,15 @@
                     </div>
 
                     <!-- Promotional Message -->
-                    <div class="text-center text-sm text-gray-600 mb-6">
+                    {{-- <div class="text-center text-sm text-gray-600 mb-6">
                         <p>Want to promote a track from another account?</p>
                         <p>Get the <span class="text-red-500 font-medium">Network Plan</span></p>
-                    </div>
+                    </div> --}}
                 </div>
                 <!-- Track List -->
                 <div id="tracks-content" class="px-6 pb-6">
 
-                    @foreach ($tracks as $track)
+                    @forelse ($tracks as $track)
                         <div onclick="selectTrack(this)" data-id="{{ $track->id }}" data-title="{{ $track->title }}"
                             data-author="{{ $track->author_username }}" data-genre="{{ $track->genre }}"
                             data-isrc="{{ $track->isrc }}"
@@ -122,15 +122,28 @@
                                 </span>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <div class="flex flex-col items-center justify-center py-14 text-center">
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
+                                {{ __('No tracks available') }}
+                            </h3>
+                            <p class="text-gray-500 mb-2">
+                                {{ __("You haven't uploaded any tracks yet, or none are available for campaign.") }}
+                            </p>
+                        </div>
+                    @endforelse
 
-                    <!-- Load More Button -->
-                    <div class="text-center mt-6">
-                        <button class="text-red-500 font-medium text-sm hover:text-red-600 transition-colors">
-                            Load more
-                        </button>
-                    </div>
+                    @if ($tracks->count())
+                        <!-- Load More Button -->
+                        <div class="text-center mt-6">
+                            <button class="text-red-500 font-medium text-sm hover:text-red-600 transition-colors">
+                                Load more
+                            </button>
+                        </div>
+                    @endif
+
                 </div>
+
 
                 <!-- Playlists Content (Hidden by default) -->
                 <div id="playlists-content" class="px-6 pb-6 hidden">
@@ -180,9 +193,9 @@
         </div>
 
         <!-- Campaign Cards -->
+        <!-- Campaign Cards -->
         <div class="space-y-6">
-            <!-- Summer Vibes Campaign -->
-            @foreach ($campaigns as $campaign)
+            @forelse ($campaigns as $campaign)
                 <div class="campaign-card bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6"
                     data-status="{{ $campaign->status_label }}">
                     <div class="flex justify-center gap-5">
@@ -191,13 +204,12 @@
                                 <img src="{{ asset('frontend/user/image/music-notes.jpg') }}"
                                     alt="Summer Vibes Album Cover"
                                     class="w-full h-full object-cover bg-gradient-to-br from-yellow-400 via-red-500 to-pink-500">
-                                <button 
+                                <button
                                     class="playPauseBtn absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white text-gray-800 rounded-full p-2 hover:bg-gray-200 transition-colors">
-                                    <svg  class="playIcon w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <svg class="playIcon w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M8 5v14l11-7z" />
                                     </svg>
-                                    <svg class="pauseIcon w-4 h-4 hidden" fill="currentColor"
-                                        viewBox="0 0 24 24">
+                                    <svg class="pauseIcon w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
                                     </svg>
                                 </button>
@@ -246,7 +258,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <!-- Stats -->
                             <div class="grid grid-cols-3 gap-6 mt-5">
                                 <div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm py-2 text-center">
@@ -297,8 +308,18 @@
                         </div>
                     </div>
                 </div>
-            @endforeach
+            @empty
+                <div class="flex flex-col items-center justify-center py-20 text-center">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
+                        {{ __('No campaigns found') }}
+                    </h3>
+                    <p class="text-gray-500 mb-4">
+                        {{ __("You haven't started any campaigns yet. Click the 'New Campaign' button to create your first one!") }}
+                    </p>
+                </div>
+            @endforelse
         </div>
+
     </div>
     {{-- Audio player --}}
     {{-- @include('backend.user.campaign_management.includes.audio_player') --}}
@@ -405,101 +426,101 @@
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-        const $audio = $('#audioPlayer');
-        const $playPauseBtn = $('.playPauseBtn');
-        const $playIcon = $('.playIcon');
-        const $pauseIcon = $('.pauseIcon');
-        const $progressBar = $('#progressBar');
-        const $progressContainer = $('#progressContainer');
-        const $progressHandle = $('#progressHandle');
-        const $currentTimeEl = $('#currentTime');
-        const $durationEl = $('#duration');
-        const $prevBtn = $('#prevBtn');
-        const $nextBtn = $('#nextBtn');
+            const $audio = $('#audioPlayer');
+            const $playPauseBtn = $('.playPauseBtn');
+            const $playIcon = $('.playIcon');
+            const $pauseIcon = $('.pauseIcon');
+            const $progressBar = $('#progressBar');
+            const $progressContainer = $('#progressContainer');
+            const $progressHandle = $('#progressHandle');
+            const $currentTimeEl = $('#currentTime');
+            const $durationEl = $('#duration');
+            const $prevBtn = $('#prevBtn');
+            const $nextBtn = $('#nextBtn');
 
-        // Helper: Format time
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        // Play/Pause
-        $playPauseBtn.on('click', function () {
-            const audio = $audio[0];
-            if (audio.paused) {
-                audio.play();
-            } else {
-                audio.pause();
+            // Helper: Format time
+            function formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
             }
-        });
 
-        // Update play/pause icon
-        $audio.on('play', function () {
-            $playIcon.addClass('hidden');
-            $pauseIcon.removeClass('hidden');
-        });
+            // Play/Pause
+            $playPauseBtn.on('click', function() {
+                const audio = $audio[0];
+                if (audio.paused) {
+                    audio.play();
+                } else {
+                    audio.pause();
+                }
+            });
 
-        $audio.on('pause', function () {
-            $playIcon.removeClass('hidden');
-            $pauseIcon.addClass('hidden');
-        });
+            // Update play/pause icon
+            $audio.on('play', function() {
+                $playIcon.addClass('hidden');
+                $pauseIcon.removeClass('hidden');
+            });
 
-        // Update progress bar
-        $audio.on('timeupdate', function () {
-            const audio = this;
-            if (audio.duration) {
-                const progress = (audio.currentTime / audio.duration) * 100;
-                $progressBar.css('width', progress + '%');
-                $currentTimeEl.text(formatTime(audio.currentTime));
-            }
-        });
+            $audio.on('pause', function() {
+                $playIcon.removeClass('hidden');
+                $pauseIcon.addClass('hidden');
+            });
 
-        // Show duration when metadata loads
-        $audio.on('loadedmetadata', function () {
-            $durationEl.text(formatTime(this.duration));
-        });
+            // Update progress bar
+            $audio.on('timeupdate', function() {
+                const audio = this;
+                if (audio.duration) {
+                    const progress = (audio.currentTime / audio.duration) * 100;
+                    $progressBar.css('width', progress + '%');
+                    $currentTimeEl.text(formatTime(audio.currentTime));
+                }
+            });
 
-        // Seek functionality
-        $progressContainer.on('click', function (e) {
-            const audio = $audio[0];
-            const rect = this.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            const width = rect.width;
-            const clickRatio = clickX / width;
+            // Show duration when metadata loads
+            $audio.on('loadedmetadata', function() {
+                $durationEl.text(formatTime(this.duration));
+            });
 
-            if (audio.duration) {
-                audio.currentTime = clickRatio * audio.duration;
-            }
-        });
+            // Seek functionality
+            $progressContainer.on('click', function(e) {
+                const audio = $audio[0];
+                const rect = this.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const width = rect.width;
+                const clickRatio = clickX / width;
 
-        // Show/Hide progress handle on hover
-        $progressContainer.on('mouseenter', function () {
-            $progressHandle.removeClass('opacity-0');
-        });
+                if (audio.duration) {
+                    audio.currentTime = clickRatio * audio.duration;
+                }
+            });
 
-        $progressContainer.on('mouseleave', function () {
-            $progressHandle.addClass('opacity-0');
-        });
+            // Show/Hide progress handle on hover
+            $progressContainer.on('mouseenter', function() {
+                $progressHandle.removeClass('opacity-0');
+            });
 
-        // Previous Button
-        $prevBtn.on('click', function () {
-            $audio[0].currentTime = 0;
-        });
+            $progressContainer.on('mouseleave', function() {
+                $progressHandle.addClass('opacity-0');
+            });
 
-        // Next Button (placeholder)
-        $nextBtn.on('click', function () {
-            const audio = $audio[0];
-            audio.currentTime = audio.duration || 0;
-        });
+            // Previous Button
+            $prevBtn.on('click', function() {
+                $audio[0].currentTime = 0;
+            });
 
-        // Audio ended
-        $audio.on('ended', function () {
-            $playIcon.removeClass('hidden');
-            $pauseIcon.addClass('hidden');
-            $progressBar.css('width', '0%');
-            this.currentTime = 0;
+            // Next Button (placeholder)
+            $nextBtn.on('click', function() {
+                const audio = $audio[0];
+                audio.currentTime = audio.duration || 0;
+            });
+
+            // Audio ended
+            $audio.on('ended', function() {
+                $playIcon.removeClass('hidden');
+                $pauseIcon.addClass('hidden');
+                $progressBar.css('width', '0%');
+                this.currentTime = 0;
+            });
         });
-    });
     </script>
 </x-user::layout>
