@@ -28,7 +28,7 @@ return new class extends Migration
 
             $table->unsignedBigInteger('soundcloud_id')->unique();
             $table->string('soundcloud_urn')->unique();
-            $table->string('soundcloud_kind')->unique();
+            $table->string('soundcloud_kind');
             $table->string('soundcloud_permalink_url')->unique();
             $table->string('soundcloud_permalink')->unique();
             $table->string('soundcloud_uri')->unique();
