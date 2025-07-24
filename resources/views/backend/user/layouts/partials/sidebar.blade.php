@@ -68,6 +68,14 @@
                     <span>{{ __('My Campaigns') }}</span>
                 </a>
             </li>
+             <li>
+                <a href="{{ route('user.mm.mambers.index') }}"
+                    class="@if ($page_slug == 'mamber') active @endif sidebar-item dark:hover:text-gray-800  flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700 dark:text-gray-200"
+                    data-page="mambers">
+                    <i data-lucide="users" class="w-5 h-5 mr-3"></i>
+                    <span>{{ __('Mamber') }}</span>
+                </a>
+            </li>
             <li>
                 <a href="{{ route('user.analytics') }}"
                     class="@if ($page_slug == 'analytics') active @endif sidebar-item dark:hover:text-gray-800  flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700 dark:text-gray-200"
