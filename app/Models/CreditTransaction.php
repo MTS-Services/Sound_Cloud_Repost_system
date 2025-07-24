@@ -7,7 +7,7 @@ use App\Models\BaseModel;
 class CreditTransaction extends BaseModel
 {
     protected $fillable = [
-        '',
+        'receiver_urn',
         'sender_urn',
         'campaign_id',
         'repost_request_id',
