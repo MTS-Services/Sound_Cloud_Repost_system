@@ -14,8 +14,6 @@ class CreditTransaction extends BaseModel
         'transaction_type',
         'amount',
         'credits',
-        'balance_before',
-        'balance_after',
         'description',
         'metadata',
 

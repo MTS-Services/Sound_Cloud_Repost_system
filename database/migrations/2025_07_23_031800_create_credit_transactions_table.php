@@ -38,8 +38,6 @@ return new class extends Migration
             );
             $table->decimal('amount', 15, 2);
             $table->decimal('credits', 15, 2);
-            $table->decimal('balance_before', 10, 2)->nullable();
-            $table->decimal('balance_after', 10, 2)->nullable();
 
             $table->text('description')->nullable();
             $table->json('metadata')->nullable();

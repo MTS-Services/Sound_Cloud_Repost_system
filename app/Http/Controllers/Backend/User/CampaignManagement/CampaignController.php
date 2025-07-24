@@ -37,32 +37,43 @@ class CampaignController extends Controller
         ])->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
         if ($response->successful()) {
             DB::transaction(function () use ($campaign, $response) {
+
+                $trackOwnerUrn = $campaign->music?->user?->urn ?? $campaign->user_urn;
+                $trackOwnerName = $campaign->music?->user?->name;
+                $reposterUrn = user()->urn;
+                $creditsPerRepost = $campaign->credits_per_repost;
+
+                // Create the Repost record
                 $repost = Repost::create([
                     'campaign_id' => $campaign->id,
-                    'reposter_urn' => user()->urn,
-                    'track_owner_urn' => $campaign->music?->user?->urn ?? $campaign->user_urn,
+                    'reposter_urn' => $reposterUrn,
+                    'track_owner_urn' => $trackOwnerUrn,
                     'soundcloud_repost_id' => null,
                     'is_verified' => Repost::IS_VERIFIED_NO,
                     'reposted_at' => now(),
-                    'credits_earned' => $campaign->credits_per_repost,
-                    'net_credits' => $campaign->credits_per_repost,
+                    'credits_earned' => $creditsPerRepost,
+                    'net_credits' => $creditsPerRepost,
                 ]);
 
-                $campaign->update([
-                    'completed_reposts' => $campaign->completed_reposts + 1,
-                    'credits_spent' => $campaign->credits_spent + $campaign->credits_per_repost
-                ]);
+                // Update the Campaign record
+                $campaign->increment('completed_reposts');
+                $campaign->increment('credits_spent', $creditsPerRepost);
 
+                // Create the CreditTransaction record
                 CreditTransaction::create([
-                    'receiver_urn' => user()->urn,
-                    'sender_urn' => $campaign->music?->user?->urn ?? $campaign->user_urn,
-                    'calculation_type' => CreditTransaction::CALCULATION_TYPE_ADDITION,
-                    'campaign_id' => $campaign->id,
+                    'receiver_urn' => $reposterUrn,
+                    'sender_urn' => $trackOwnerUrn,
+                    'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
+                    'source_id' => $campaign->id,
+                    'source_type' => Campaign::class,
                     'transaction_type' => CreditTransaction::TYPE_EARN,
                     'amount' => 0,
-                    'credits' => $campaign->credits_per_repost,
-                    'balance_before' => user()->credits,
-                    'balance_after' => user()->credits + $campaign->credits_per_repost,
+                    'credits' => $creditsPerRepost,
+                    'description' => "Repost of campaign '{$campaign->title}' by {$trackOwnerName}. " .
+                        "Reposted by {$reposterUrn} with Repost ID: {$repost->id}.",
+                    'metadata' => [
+                        'repost_id' => $repost->id,
+                    ]
                 ]);
             });
             return redirect()->back()->with('success', 'Track reposted successfully.');
