@@ -109,6 +109,10 @@ class Track extends BaseModel
     {
         return $this->morphMany(Campaign::class, 'music');
     }
+    public function campaigns(): MorphMany
+    {
+        return $this->morphMany(Campaign::class, 'music');
+    }
 
     public function requests(): MorphMany
     {

@@ -13,7 +13,7 @@ class CampaignController extends Controller
     protected TrackService $trackService;
 
 
-     protected string $baseUrl = 'https://api.soundcloud.com';
+    protected string $baseUrl = 'https://api.soundcloud.com';
 
     public function __construct(TrackService $trackService)
     {
@@ -28,6 +28,7 @@ class CampaignController extends Controller
     public function repost(string $id)
     {
         $track = Track::findOrFail(decrypt($id));
+        $track->load('campaigns');
         dd($track);
         $response = Http::withHeaders([
             'Authorization' => 'OAuth ' . user()->token,
@@ -36,10 +37,8 @@ class CampaignController extends Controller
             dd('success', $response->json());
             return redirect()->back()->with('success', 'Track reposted successfully.');
         } else {
-            dd( 'error', $response->json());
+            dd('error', $response->json());
             return redirect()->back()->with('error', 'Failed to repost track.');
         }
-        
     }
-
 }
