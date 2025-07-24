@@ -3,18 +3,18 @@
     <x-slot name="page_slug">add-credits</x-slot>
           <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-10">
-      <h2 class="text-2xl font-extrabold">Top up credits</h2>
-      <p class="mt-2 text-sm text-gray-600">Get your music in front of more people</p>
-      <button class="mt-2 text-sm text-gray-600 "> <span class="font-bold border border-gray-600 rounded px-2">+</span> Apply a coupon</button>
+      <h2 class="text-2xl font-extrabold text-black dark:text-white">Top up credits</h2>
+      <p class="mt-2 text-sm text-gray-600 dark:text-white">Get your music in front of more people</p>
+      <button class="mt-2 text-sm text-gray-600 dark:text-white "> <span class="font-bold border border-gray-600 rounded px-2">+</span> Apply a coupon</button>
     </div>
 
     <div class="grid grid-cols-2 gap-x-4 gap-y-6 justify-center md:grid-cols-3 lg:grid-cols-5 gap-6 items-stretch ">
    @foreach ($credits as $credit) 
    
       <!-- 2500 Credits -->
-      <div class="bg-white rounded border overflow-hidden flex flex-col mb-4 lg:mb-112">
+      <div class="bg-white dark:bg-gray-600 rounded border overflow-hidden flex flex-col mb-4 lg:mb-112">
         <div class="relative">
-            <div class="absolute   w-full text-white text-xs font-bold text-center   flex">
+            <div class="absolute   w-full text-white dark:text-white text-xs font-bold text-center   flex">
             <div class="bg-black flex-grow h-6" style="flex-basis: 67%;"></div> 
             <div class="bg-red-600 flex-none h-6 flex items-center justify-end pr-2" style="background-color: #fb3802; flex-basis: 42%;">+42%</div>
             </div>
@@ -27,11 +27,11 @@
             </svg>
           </div>
           <div>
-            <h2 class="text-3xl font-bold">{{ $credit->credits }}</h2>
-            <p class="text-gray-600 text-sm">Credits</p>
-            <p class="text-gray-400 text-xs mt-1">for the price of 1750</p>
+            <h2 class="text-3xl font-bold text-black dark:text-white">{{ $credit->credits }}</h2>
+            <p class="text-gray-600 dark:text-white text-sm">Credits</p>
+            <p class="text-gray-400 dark:text-white text-xs mt-1">for the price of 1750</p>
           </div>
-          <div class="text-2xl font-bold text-gray-800">${{ number_format($credit->price, 2) }}</div>
+          <div class="text-2xl font-bold text-gray-800 dark:text-white">${{ number_format($credit->price, 2) }}</div>
          <a href="#"
             class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold text-sm py-2 px-4 rounded-md transition duration-200 whitespace-nowrap"
             style="background-color: #fb3802;">
