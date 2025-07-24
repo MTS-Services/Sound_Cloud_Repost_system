@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->string('postal_code')->nullable();
             $table->string('reference')->unique()->nullable();
-            $table->unsignedBigInteger('user_urn');
+            $table->string('user_urn');
             $table->unsignedBigInteger('credit_transaction_id')->nullable();
 
             $table->string('payment_method')->nullable();
@@ -49,8 +49,8 @@ return new class extends Migration
 
             $table->timestamp('processed_at')->index()->nullable();
 
-            // Optionally, add foreign key constraint if applicable:
-            // $table->foreign('user_urn')->references('urn')->on('users')->cascadeOnDelete();
+            $table->foreign('credit_transaction_id')->references('id')->on('credit_transactions')->cascadeOnDelete();
+            $table->foreign('user_urn')->references('urn')->on('users')->cascadeOnDelete();
 
 
             $table->timestamps();

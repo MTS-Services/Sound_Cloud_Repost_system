@@ -13,156 +13,154 @@
 </head>
 
 <body>
-    <div class="max-w-lg w-full mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
-        <!-- Header -->
-        <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-center p-8 relative">
-            <h1 class="text-xl font-semibold flex items-center justify-center gap-2 relative z-10">
-                <i class="fas fa-credit-card"></i> Secure Payment
-            </h1>
-            <p class="opacity-90 relative z-10">Complete your transaction safely and securely</p>
-            <div class="flex items-center justify-center gap-2 mt-4 relative z-10 text-teal-300 text-sm">
-                <i class="fas fa-shield-alt"></i>
-                <span>256-bit SSL Encrypted</span>
+    <div class="flex items-center justify-center min-h-screen bg-gray-100">
+        <div class="max-w-xl w-full mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+            <!-- Header -->
+            <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-center p-8 relative">
+                <h1 class="text-xl font-semibold flex items-center justify-center gap-2 relative z-10">
+                    <i class="fas fa-credit-card"></i> Secure Payment
+                </h1>
+                <p class="opacity-90 relative z-10">Complete your transaction safely and securely</p>
+                <!-- Background Pattern -->
+                <div class="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml,...')] bg-cover"></div>
             </div>
-            <!-- Background Pattern -->
-            <div class="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml,...')] bg-cover"></div>
-        </div>
 
-        <!-- Payment Form -->
-        <div class="p-8">
-            <!-- Error/Success Messages -->
-            @if (session('error'))
-                <div
-                    class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded-lg flex items-center gap-2 text-sm">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    {{ session('error') }}
-                </div>
-            @endif
+            <!-- Payment Form -->
+            <div class="p-8">
+                <!-- Error/Success Messages -->
+                @if (session('error'))
+                    <div
+                        class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded-lg flex items-center gap-2 text-sm">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        {{ session('error') }}
+                    </div>
+                @endif
 
-            @if (session('success'))
-                <div
-                    class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-lg flex items-center gap-2 text-sm">
-                    <i class="fas fa-check-circle"></i>
-                    {{ session('success') }}
-                </div>
-            @endif
+                @if (session('success'))
+                    <div
+                        class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-lg flex items-center gap-2 text-sm">
+                        <i class="fas fa-check-circle"></i>
+                        {{ session('success') }}
+                    </div>
+                @endif
 
-            <form id="payment-form">
-                <!-- Customer Information -->
-                <div class="flex flex-col sm:flex-row gap-4 mb-6">
-                    <div class="w-full">
-                        <label class="block text-gray-700 text-sm font-semibold mb-2" for="customer_name">
-                            <i class="fas fa-user mr-1"></i> Full Name
+                <form id="payment-form">
+                    <!-- Customer Information -->
+                    <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                        <div class="w-full">
+                            <label class="block text-gray-700 text-sm font-semibold mb-2" for="customer_name">
+                                <i class="fas fa-user mr-1"></i> Full Name
+                            </label>
+                            <input type="text" id="customer_name" name="customer_name" required
+                                placeholder="Enter your full name"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                        <div class="w-full">
+                            <label class="block text-gray-700 text-sm font-semibold mb-2" for="customer_email">
+                                <i class="fas fa-envelope mr-1"></i> Email Address
+                            </label>
+                            <input type="email" id="customer_email" name="customer_email" required
+                                placeholder="your@email.com"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                        </div>
+                        <div class="w-full">
+                            <label class="block text-gray-700 text-sm font-semibold mb-2" for="customer_phone">
+                                <i class="fas fa-phone mr-1"></i> Phone (Optional)
+                            </label>
+                            <input type="tel" id="customer_phone" name="customer_phone"
+                                placeholder="+1 (555) 123-4567"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                        </div>
+                    </div>
+
+                    <!-- Amount Section -->
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-semibold mb-2" for="amount">
+                            <i class="fas fa-dollar-sign mr-1"></i> Payment Amount
                         </label>
-                        <input type="text" id="customer_name" name="customer_name" required
-                            placeholder="Enter your full name"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-3 flex items-center font-bold text-gray-600">$</span>
+                            <input type="number" id="amount" name="amount" step="0.01" min="0.50"
+                                value="10.00" placeholder="0.00"
+                                class="w-full pl-8 pr-4 py-2 font-semibold text-lg border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                        </div>
                     </div>
-                </div>
 
-                <div class="flex flex-col sm:flex-row gap-4 mb-6">
-                    <div class="w-full">
-                        <label class="block text-gray-700 text-sm font-semibold mb-2" for="customer_email">
-                            <i class="fas fa-envelope mr-1"></i> Email Address
+                    <!-- Currency Selection -->
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-semibold mb-2" for="currency">
+                            <i class="fas fa-coins mr-1"></i> Currency
                         </label>
-                        <input type="email" id="customer_email" name="customer_email" required
-                            placeholder="your@email.com"
+                        <select id="currency" name="currency"
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                            <option value="usd">USD - US Dollar</option>
+                            <option value="eur">EUR - Euro</option>
+                            <option value="gbp">GBP - British Pound</option>
+                            <option value="cad">CAD - Canadian Dollar</option>
+                            <option value="aud">AUD - Australian Dollar</option>
+                        </select>
                     </div>
-                    <div class="w-full">
-                        <label class="block text-gray-700 text-sm font-semibold mb-2" for="customer_phone">
-                            <i class="fas fa-phone mr-1"></i> Phone (Optional)
+
+                    <!-- Card Information -->
+                    <div
+                        class="mb-4 bg-gray-100 border border-gray-300 rounded-lg p-4 focus-within:border-indigo-500 focus-within:bg-white">
+                        <h3 class="text-gray-700 mb-4 flex items-center gap-2">
+                            <i class="fas fa-credit-card text-indigo-600"></i> Payment Information
+                        </h3>
+                        <div id="card-element" class="p-3 border border-gray-300 rounded-lg bg-white"></div>
+                        <div id="card-errors" role="alert" class="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        </div>
+                    </div>
+
+                    <!-- Save Payment Method -->
+                    <div
+                        class="mb-4 flex items-center gap-2 p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 text-sm">
+                        <input type="checkbox" id="save_payment_method" name="save_payment_method" class="w-4 h-4">
+                        <label for="save_payment_method" class="cursor-pointer">
+                            <i class="fas fa-bookmark mr-1"></i> Save this payment method for future purchases
                         </label>
-                        <input type="tel" id="customer_phone" name="customer_phone" placeholder="+1 (555) 123-4567"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-300">
                     </div>
-                </div>
 
-                <!-- Amount Section -->
-                <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-semibold mb-2" for="amount">
-                        <i class="fas fa-dollar-sign mr-1"></i> Payment Amount
-                    </label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-3 flex items-center font-bold text-gray-600">$</span>
-                        <input type="number" id="amount" name="amount" step="0.01" min="0.50" value="10.00"
-                            placeholder="0.00"
-                            class="w-full pl-8 pr-4 py-3 font-semibold text-lg border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-300">
-                    </div>
-                </div>
-
-                <!-- Currency Selection -->
-                <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-semibold mb-2" for="currency">
-                        <i class="fas fa-coins mr-1"></i> Currency
-                    </label>
-                    <select id="currency" name="currency"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-300">
-                        <option value="usd">USD - US Dollar</option>
-                        <option value="eur">EUR - Euro</option>
-                        <option value="gbp">GBP - British Pound</option>
-                        <option value="cad">CAD - Canadian Dollar</option>
-                        <option value="aud">AUD - Australian Dollar</option>
-                    </select>
-                </div>
-
-                <!-- Card Information -->
-                <div
-                    class="mb-6 bg-gray-100 border border-gray-300 rounded-lg p-6 focus-within:border-indigo-500 focus-within:bg-white">
-                    <h3 class="text-gray-700 mb-4 flex items-center gap-2">
-                        <i class="fas fa-credit-card text-indigo-600"></i> Payment Information
-                    </h3>
-                    <div id="card-element" class="p-3 border border-gray-300 rounded-lg bg-white"></div>
-                    <div id="card-errors" role="alert" class="mt-2 text-sm text-red-600 flex items-center gap-1">
-                    </div>
-                </div>
-
-                <!-- Save Payment Method -->
-                <div
-                    class="mb-6 flex items-center gap-2 p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 text-sm">
-                    <input type="checkbox" id="save_payment_method" name="save_payment_method" class="w-4 h-4">
-                    <label for="save_payment_method" class="cursor-pointer">
-                        <i class="fas fa-bookmark mr-1"></i> Save this payment method for future purchases
-                    </label>
-                </div>
-
-                <!-- Order Notes -->
-                <div class="mb-6">
+                    <!-- Order Notes -->
+                    {{-- <div class="mb-4">
                     <label for="order_notes" class="block text-gray-700 text-sm font-semibold mb-2">
                         <i class="fas fa-sticky-note mr-1"></i> Order Notes (Optional)
                     </label>
                     <input type="text" id="order_notes" name="order_notes"
                         placeholder="Any special instructions..."
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-300">
-                </div>
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                </div> --}}
 
-                <!-- Submit Button -->
-                <button type="submit" id="submit-button"
-                    class="w-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-semibold py-4 rounded-xl hover:shadow-lg transition-all flex items-center justify-center gap-2">
-                    <div id="loading-spinner"
-                        class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin">
+                    <!-- Submit Button -->
+                    <button type="submit" id="submit-button"
+                        class="w-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                        <div id="loading-spinner"
+                            class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin">
+                        </div>
+                        <span id="button-text"><i class="fas fa-lock mr-1"></i> Complete Secure Payment</span>
+                    </button>
+
+                    <!-- Payment Methods -->
+                    <div class="flex justify-center gap-4 mt-6 opacity-70">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa"
+                            class="h-8 grayscale hover:grayscale-0 transition">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg"
+                            alt="Mastercard" class="h-8 grayscale hover:grayscale-0 transition">
                     </div>
-                    <span id="button-text"><i class="fas fa-lock mr-1"></i> Complete Secure Payment</span>
-                </button>
 
-                <!-- Payment Methods -->
-                <div class="flex justify-center gap-4 mt-6 opacity-70">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa"
-                        class="h-8 grayscale hover:grayscale-0 transition">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg"
-                        alt="Mastercard" class="h-8 grayscale hover:grayscale-0 transition">
-                </div>
-
-                <!-- Security Info -->
-                <div
-                    class="mt-6 text-center text-sm bg-green-50 border border-green-300 text-green-700 p-4 rounded-lg">
-                    <p><i class="fas fa-shield-alt mr-1"></i> Your payment information is encrypted and secure. We
-                        never store your card details.</p>
-                </div>
-            </form>
+                    <!-- Security Info -->
+                    <div
+                        class="mt-6 text-center text-sm bg-green-50 border border-green-300 text-green-700 p-4 rounded-lg">
+                        <p><i class="fas fa-shield-alt mr-1"></i> Your payment information is encrypted and secure. We
+                            never store your card details.</p>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-
 
     <script>
         // Initialize Stripe
@@ -241,7 +239,7 @@
                         customer_email: formData.get('customer_email'),
                         customer_phone: formData.get('customer_phone'),
                         save_payment_method: formData.get('save_payment_method') === 'on',
-                        order_notes: formData.get('order_notes')
+                        // order_notes: formData.get('order_notes')
                     })
                 });
 
