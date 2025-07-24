@@ -18,22 +18,23 @@ return new class extends Migration
         Schema::create('credit_transactions', function (Blueprint $table) {
             $table->id();
 
-            $table->string('receiver_id')->index(); 
-            $table->string('sender_id')->index()->nullable();
+            $table->string('receiver_urn')->index();
+            $table->string('sender_urn')->index()->nullable();
             $table->tinyInteger('calculation_type')->comment(
-                CreditTransaction::CALCULATION_TYPE_ADDITION .': Addition',
-                CreditTransaction::CALCULATION_TYPE_SUBTRACTION .': Subtraction'
+                CreditTransaction::CALCULATION_TYPE_ADDITION . ': Addition',
+                CreditTransaction::CALCULATION_TYPE_SUBTRACTION . ': Subtraction'
             );
             $table->unsignedBigInteger('campaign_id')->index()->nullable();
             $table->unsignedBigInteger('repost_request_id')->index()->nullable();
 
             $table->tinyInteger('transaction_type')->comment(
-                CreditTransaction::TYPE_EARN .': Earn',
-                CreditTransaction::TYPE_SPEND .': Spend',
-                CreditTransaction::TYPE_REFUND .': Refund',
-                CreditTransaction::TYPE_PURCHASE .': Purchase',
-                CreditTransaction::TYPE_PENALTY .': Penalty',
-                CreditTransaction::TYPE_BONUS .': Bonus');
+                CreditTransaction::TYPE_EARN . ': Earn',
+                CreditTransaction::TYPE_SPEND . ': Spend',
+                CreditTransaction::TYPE_REFUND . ': Refund',
+                CreditTransaction::TYPE_PURCHASE . ': Purchase',
+                CreditTransaction::TYPE_PENALTY . ': Penalty',
+                CreditTransaction::TYPE_BONUS . ': Bonus'
+            );
             $table->decimal('amount', 15, 2);
             $table->decimal('credits', 15, 2);
             $table->decimal('balance_before', 10, 2)->nullable();
@@ -47,10 +48,10 @@ return new class extends Migration
             $this->addMorphedAuditColumns($table);
 
             // Foreign key constraints (optional)
-            $table->foreign('receiver_id')->references('urn')->on('users')->cascadeOnDelete();
-            $table->foreign('sender_id')->references('urn')->on('users')->nullOnDelete();
-            $table->foreign('campaign_id')->references('id')->on('campaigns')->nullOnDelete();
-            $table->foreign('repost_request_id')->references('id')->on('repost_requests')->nullOnDelete();
+            $table->foreign('receiver_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('sender_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('campaign_id')->references('id')->on('campaigns')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('repost_request_id')->references('id')->on('repost_requests')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

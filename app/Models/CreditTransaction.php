@@ -71,6 +71,18 @@ class CreditTransaction extends BaseModel
             self::CALCULATION_TYPE_SUBTRACTION => 'Subtraction',
         ];
     }
+
+    // Scope 
+    public function scopeAddition()
+    {
+        return $this->where('calculation_type', '=', self::CALCULATION_TYPE_ADDITION);
+    }
+
+    public function scopeSubtraction()
+    {
+        return $this->where('calculation_type', '=', self::CALCULATION_TYPE_SUBTRACTION);
+    }
+
     public function getCalculationTypeNameAttribute(): string
     {
         return self::getCalculationTypes()[$this->calculation_type];

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\User\CampaignManagement;
 
 use App\Http\Controllers\Controller;
 use App\Models\Campaign;
+use App\Models\CreditTransaction;
 use App\Models\Repost;
 use App\Models\Track;
 use App\Services\Admin\TrackService;
@@ -52,7 +53,14 @@ class CampaignController extends Controller
                     'credits_spent' => $campaign->credits_spent + $campaign->credits_per_repost
                 ]);
 
-                
+                CreditTransaction::create([
+                    'receiver_id' => user()->urn,
+                    'transaction_type' => CreditTransaction::TYPE_EARN,
+                    'amount' => $campaign->credits_per_repost,
+                    'credits' => $campaign->credits_per_repost,
+                    'balance_before' => user()->credits,
+                    'balance_after' => user()->credits + $campaign->credits_per_repost,
+                ]);
 
             });
             return redirect()->back()->with('success', 'Track reposted successfully.');
