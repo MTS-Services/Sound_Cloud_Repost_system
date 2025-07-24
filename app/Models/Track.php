@@ -11,7 +11,7 @@ class Track extends BaseModel
 {
     protected $fillable = [
         'user_urn',
-        
+
         'kind',
         'soundcloud_track_id',
         'urn',
@@ -90,7 +90,9 @@ class Track extends BaseModel
         'last_sync_at' => 'datetime',
     ];
 
-    /* %%%%%%%%% ######## ******** ======== RELATIONSHIPS  ======== ******** ######## %%%%%%%%% */
+    /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
+                Start of RELATIONSHIPS
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
     public function user(): BelongsTo
     {
@@ -102,9 +104,18 @@ class Track extends BaseModel
         return $this->belongsTo(Playlist::class, 'playlist_urn', 'urn');
     }
 
-    
+
     public function campaign(): MorphMany
     {
         return $this->morphMany(Campaign::class, 'music');
     }
+
+    public function requests(): MorphMany
+    {
+        return $this->morphMany(RepostRequest::class, 'track_urn', 'urn');
+    }
+
+    /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
+                End of RELATIONSHIPS
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 }
