@@ -43,6 +43,7 @@ class Payment extends BaseModel
         'email_address',
         'address',
         'postal_code',
+        'reference',
     ];
 
     protected $casts = [
