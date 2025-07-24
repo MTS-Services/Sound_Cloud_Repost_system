@@ -7,24 +7,22 @@ use App\Models\BaseModel;
 class CreditTransaction extends BaseModel
 {
     protected $fillable = [
-        'receiver_id',
-        'sender_id',
-        'campaign_id',
-        'repost_request_id',
+        'receiver_urn',
+        'sender_urn',
+        'calculation_type',
+        'source_id',
+        'source_type',
         'transaction_type',
         'amount',
         'credits',
-        'balance_before',
-        'balance_after',
         'description',
         'metadata',
 
-        
         'creater_id',
-        'creater_type',
         'updater_id',
-        'updater_type',
         'deleter_id',
+        'creater_type',
+        'updater_type',
         'deleter_type',
     ];
 
@@ -32,14 +30,18 @@ class CreditTransaction extends BaseModel
         'metadata' => 'array',
     ];
 
+    /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
+                    Start of RELATIONSHIPS
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
+
     public function receiver()
     {
-        return $this->belongsTo(User::class, 'receiver_id', 'urn');
+        return $this->belongsTo(User::class, 'receiver_urn', 'urn');
     }
 
     public function sender()
     {
-        return $this->belongsTo(User::class, 'sender_id', 'urn');
+        return $this->belongsTo(User::class, 'sender_urn', 'urn');
     }
 
     public function campaign()
@@ -52,6 +54,41 @@ class CreditTransaction extends BaseModel
     //     return $this->belongsTo(RepostRequest::class);
     // }
 
+    public function source()
+    {
+        return $this->morphTo();
+    }
+    /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
+                    End of RELATIONSHIPS
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
+
+
+    public const CALCULATION_TYPE_DEBIT = 0; // ADDITION
+    public const CALCULATION_TYPE_CREDIT = 1; // SUBTRACTION
+
+    public static function getCalculationTypes()
+    {
+        return [
+            self::CALCULATION_TYPE_DEBIT => 'Debit / Addition',
+            self::CALCULATION_TYPE_CREDIT => 'Credit / Subtraction',
+        ];
+    }
+
+    // Scope 
+    public function scopeAddition()
+    {
+        return $this->where('calculation_type', '=', self::CALCULATION_TYPE_DEBIT);
+    }
+
+    public function scopeSubtraction()
+    {
+        return $this->where('calculation_type', '=', self::CALCULATION_TYPE_CREDIT);
+    }
+
+    public function getCalculationTypeNameAttribute(): string
+    {
+        return self::getCalculationTypes()[$this->calculation_type];
+    }
 
 
     public const TYPE_EARN = 0;
