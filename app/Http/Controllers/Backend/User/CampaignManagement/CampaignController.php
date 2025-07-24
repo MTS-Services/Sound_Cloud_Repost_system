@@ -31,7 +31,7 @@ class CampaignController extends Controller
     {
         $campaign = Campaign::findOrFail(decrypt($id));
         $campaign->load(['music.user']);
-        dd($campaign);
+        // dd($campaign);
         // $track = Track::findOrFail(decrypt($id));
         // $track->load('campaigns');
         // dd($track);
@@ -43,18 +43,16 @@ class CampaignController extends Controller
                 Repost::create([
                     'campaign_id' => $campaign->id,
                     'reposter_urn' => user()->urn,
-                    'track_owner_urn' => $campaign->music->user->urn,
+                    'track_owner_urn' => $campaign->music?->user?->urn ?? $campaign->user_urn,
                     'soundcloud_repost_id' => $response->json()->id,
                     'is_verified' => Repost::IS_VERIFIED_NO,
-                    'reposted_at' => $response->json()->created_at,
+                    'reposted_at' => now(),
                     'credits_earned' => $campaign->credits_per_repost,
-                    'service_fee' => $campaign->service_fee,
-                    'net_credits' => $campaign->net_credits,
+                    'net_credits' => $campaign->credits_per_repost,
                 ]);
-                return redirect()->back()->with('success', 'Track reposted successfully.');
             });
-        } else {
-            dd('error', $response->json());
+            return redirect()->back()->with('success', 'Track reposted successfully.');
+        } else {            
             return redirect()->back()->with('error', 'Failed to repost track.');
         }
     }
