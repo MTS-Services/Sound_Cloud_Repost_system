@@ -28,7 +28,6 @@ class CampaignController extends Controller
 
     public function repost(string $id)
     {
-
         $track = Track::findOrFail(decrypt($id));
         dd($track);
         $response = Http::withHeaders([
@@ -41,5 +40,6 @@ class CampaignController extends Controller
             dd( 'error', $response->json());
             return redirect()->back()->with('error', 'Failed to repost track.');
         }
+        
     }
 }

@@ -25,17 +25,13 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
         return view('backend.user.dashboard');
     })->name('dashboard');
 
-    Route::middleware('auth')->group(function () {
-        Route::get('/user-profile', [ProfileController::class, 'profile'])->name('profile');
-        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-        Route::get('/repost-feed', [CampaignController::class, 'repostFeed'])->name('campaing-feed');
-        Route::get('/analytics',[AnalyticsController::class, 'analytics'])->name('analytics');
-        Route::get('/add-credits', [AddCaeditsController::class, 'addCredits'])->name('add-credits');
-        Route::get('/promote', [PromoteController::class, 'tracks'])->name('promote');
-    });
-
+    Route::get('/user-profile', [ProfileController::class, 'profile'])->name('profile');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/analytics', [AnalyticsController::class, 'analytics'])->name('analytics');
+    Route::get('/add-credits', [AddCaeditsController::class, 'addCredits'])->name('add-credits');
+    Route::get('/promote', [PromoteController::class, 'tracks'])->name('promote');
 
     // Campaign Management
     Route::group(['as' => 'cm.', 'prefix' => 'campaign-management'], function () {
@@ -44,6 +40,10 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
         Route::get('/campaigns/create/{track_id}', [MyCampaignController::class, 'create'])->name('campaigns.create');
         Route::post('/campaigns', [MyCampaignController::class, 'store'])->name('campaigns.store');
     });
+
     // Repost Campaign tracks
-    Route::post('/repost/{repost}', [CampaignController::class, 'repost'])->name('campaing.store');
+    Route::controller(CampaignController::class)->name('campaign.')->prefix('campaign')->group(function () {
+        Route::get('/feed', 'campaignFeed')->name('feed');
+        Route::post('/{repost}', 'store')->name('store');
+    });
 });
