@@ -41,7 +41,7 @@
                         </div>
                         <div class="flex space-x-2 mt-4">
                             <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs">
-                                {{ __('Electronic') }}</span>
+                                {{ $campaign->music?->genre ?? 'null' }}</span>
                             <span
                                 class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs">{{ __('Child') }}</span>
                         </div>
