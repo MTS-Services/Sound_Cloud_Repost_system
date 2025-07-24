@@ -44,7 +44,7 @@ class CampaignController extends Controller
                     'campaign_id' => $campaign->id,
                     'reposter_urn' => user()->urn,
                     'track_owner_urn' => $campaign->music?->user?->urn ?? $campaign->user_urn,
-                    'soundcloud_repost_id' => $response->json()->id,
+                    'soundcloud_repost_id' => null,
                     'is_verified' => Repost::IS_VERIFIED_NO,
                     'reposted_at' => now(),
                     'credits_earned' => $campaign->credits_per_repost,
