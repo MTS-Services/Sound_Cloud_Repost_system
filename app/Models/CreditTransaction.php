@@ -54,6 +54,10 @@ class CreditTransaction extends BaseModel
     //     return $this->belongsTo(RepostRequest::class);
     // }
 
+    public function source()
+    {
+        return $this->morphTo();
+    }
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                     End of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
