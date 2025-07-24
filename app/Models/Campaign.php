@@ -30,7 +30,10 @@ class Campaign extends BaseModel
         'deleted_by',
     ];
 
-    // Relations
+    /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
+                Start of RELATIONSHIPS
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_urn', 'urn');
@@ -41,11 +44,17 @@ class Campaign extends BaseModel
         return $this->morphTo();
     }
 
-    /**
-     * Set the appends property for the model.
-     *
-     * @param  array  $attributes
-     */
+    public function requests()
+    {
+        return $this->hasMany(RepostRequest::class, 'campaign_id', 'id');
+    }
+
+    /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
+                End of RELATIONSHIPS
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
+
+
+
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
@@ -139,6 +148,6 @@ class Campaign extends BaseModel
     // active_completed scope 
     public function scopeActive_completed()
     {
-        return $this->where('status', '!=', self::STATUS_CANCELLED, )->where('status', '!=', self::STATUS_PAUSED, );
+        return $this->where('status', '!=', self::STATUS_CANCELLED,)->where('status', '!=', self::STATUS_PAUSED,);
     }
 }

@@ -1,14 +1,11 @@
 <?php
 
-namespace {{ namespace }};
+namespace App\Models;
 
-{{ factoryImport }}
 use App\Models\BaseModel;
 
-class {{ class }} extends BaseModel
+class Repost extends BaseModel
 {
-    {{ factory }}
-
     protected $fillable = [];
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
