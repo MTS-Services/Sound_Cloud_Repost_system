@@ -54,17 +54,19 @@ class CampaignController extends Controller
                 ]);
 
                 CreditTransaction::create([
-                    'receiver_id' => user()->urn,
+                    'receiver_urn' => user()->urn,
+                    'sender_urn' => $campaign->music?->user?->urn ?? $campaign->user_urn,
+                    'calculation_type' => CreditTransaction::CALCULATION_TYPE_ADDITION,
+                    'campaign_id' => $campaign->id,
                     'transaction_type' => CreditTransaction::TYPE_EARN,
-                    'amount' => $campaign->credits_per_repost,
+                    'amount' => 0,
                     'credits' => $campaign->credits_per_repost,
                     'balance_before' => user()->credits,
                     'balance_after' => user()->credits + $campaign->credits_per_repost,
                 ]);
-
             });
             return redirect()->back()->with('success', 'Track reposted successfully.');
-        } else {            
+        } else {
             return redirect()->back()->with('error', 'Failed to repost track.');
         }
     }

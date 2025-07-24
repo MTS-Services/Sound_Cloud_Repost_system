@@ -19,7 +19,7 @@ class CreditTransaction extends BaseModel
         'description',
         'metadata',
 
-        
+
         'creater_id',
         'creater_type',
         'updater_id',
@@ -61,26 +61,26 @@ class CreditTransaction extends BaseModel
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
 
-    public const CALCULATION_TYPE_ADDITION = 0;
-    public const CALCULATION_TYPE_SUBTRACTION = 1;
+    public const CALCULATION_TYPE_DEBIT = 0; // ADDITION
+    public const CALCULATION_TYPE_CREDIT = 1; // SUBTRACTION
 
     public static function getCalculationTypes()
     {
         return [
-            self::CALCULATION_TYPE_ADDITION => 'Addition',
-            self::CALCULATION_TYPE_SUBTRACTION => 'Subtraction',
+            self::CALCULATION_TYPE_DEBIT => 'Debit / Addition',
+            self::CALCULATION_TYPE_CREDIT => 'Credit / Subtraction',
         ];
     }
 
     // Scope 
     public function scopeAddition()
     {
-        return $this->where('calculation_type', '=', self::CALCULATION_TYPE_ADDITION);
+        return $this->where('calculation_type', '=', self::CALCULATION_TYPE_DEBIT);
     }
 
     public function scopeSubtraction()
     {
-        return $this->where('calculation_type', '=', self::CALCULATION_TYPE_SUBTRACTION);
+        return $this->where('calculation_type', '=', self::CALCULATION_TYPE_CREDIT);
     }
 
     public function getCalculationTypeNameAttribute(): string

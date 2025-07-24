@@ -21,11 +21,12 @@ return new class extends Migration
             $table->string('receiver_urn')->index();
             $table->string('sender_urn')->index()->nullable();
             $table->tinyInteger('calculation_type')->comment(
-                CreditTransaction::CALCULATION_TYPE_ADDITION . ': Addition',
-                CreditTransaction::CALCULATION_TYPE_SUBTRACTION . ': Subtraction'
+                CreditTransaction::CALCULATION_TYPE_DEBIT . ': Debit / Addition',
+                CreditTransaction::CALCULATION_TYPE_CREDIT . ': Credit / Subtraction'
             );
-            $table->unsignedBigInteger('campaign_id')->index()->nullable();
-            $table->unsignedBigInteger('repost_request_id')->index()->nullable();
+
+            $table->unsignedBigInteger('source_id')->index();
+            $table->string('source_type')->index();
 
             $table->tinyInteger('transaction_type')->comment(
                 CreditTransaction::TYPE_EARN . ': Earn',
@@ -50,8 +51,6 @@ return new class extends Migration
             // Foreign key constraints (optional)
             $table->foreign('receiver_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('sender_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('campaign_id')->references('id')->on('campaigns')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('repost_request_id')->references('id')->on('repost_requests')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 
