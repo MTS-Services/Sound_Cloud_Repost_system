@@ -1,4 +1,4 @@
-<header class="bg-white dark:bg-slate-800 z-41 border-b border-gray-100 dark:border-slate-700 px-6 py-2 sticky top-0">
+<header class="bg-white dark:bg-slate-800 z-41 border-b border-gray-100 dark:border-slate-700 px-6 py-1 sticky top-0">
     <div class="flex items-center justify-evenly">
         <a class="flex items-center space-x-2" href="/" data-discover="true">
             <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
