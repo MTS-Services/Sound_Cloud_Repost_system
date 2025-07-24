@@ -9,20 +9,20 @@ class CreditTransaction extends BaseModel
     protected $fillable = [
         'receiver_urn',
         'sender_urn',
-        'campaign_id',
-        'repost_request_id',
+        'calculation_type',
+        'source_id',
+        'source_type',
         'transaction_type',
         'amount',
         'credits',
         'description',
         'metadata',
 
-
         'creater_id',
-        'creater_type',
         'updater_id',
-        'updater_type',
         'deleter_id',
+        'creater_type',
+        'updater_type',
         'deleter_type',
     ];
 
