@@ -92,7 +92,7 @@ class PaymentController extends Controller
 
             return response()->json([
                 'client_secret' => $paymentIntent->client_secret,
-                // 'payment_intent_id' => Crypt::encryptString($paymentIntent->id),
+                'payment_intent_id' => Crypt::encryptString($paymentIntent->id),
             ]);
         } catch (\Exception $e) {
             Log::error('Payment intent creation failed: ' . $e->getMessage());
