@@ -8,6 +8,7 @@ use App\Models\Payment;
 use App\Services\Admin\OrderManagement\OrderService;
 use App\Services\Payments\StripeService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -22,7 +23,7 @@ class PaymentController extends Controller
         $this->orderService = $orderService;
     }
 
-    public function paymentMethod( string $credit_id)
+    public function paymentMethod(string $credit_id)
     {
         $data['order'] = $this->orderService->getOrder($credit_id);
         return view('frontend.pages.payment_method', $data);
@@ -43,6 +44,8 @@ class PaymentController extends Controller
     public function createPaymentIntent(Request $request)
     {
         $request->validate([
+            'name' => 'required|string',
+            'email_address' => 'required|email',
             'amount' => 'required|numeric|min:0.50',
             'credits' => 'required|numeric|min:0.50',
             'currency' => 'sometimes|string|size:3',
@@ -58,7 +61,7 @@ class PaymentController extends Controller
                     'customer_email' => $request->customer_email ?? null,
                 ],
             ]);
-            DB::commit([
+            DB::transaction(function () use ($request, $paymentIntent) {
                 $creditTransaction = CreditTransaction::create([
                     'receiver_urn' => user()->urn,
                     'transaction_type' => CreditTransaction::TYPE_PURCHASE,
@@ -68,11 +71,13 @@ class PaymentController extends Controller
                     'metadata' => $paymentIntent->metadata->toArray(),
                     'source_type' => 'test',
                     'source_id' => 000
-                ]),
-                // Store payment record
+                ]);
+
                 Payment::create([
                     'user_urn' => user()->urn,
-                    'payment_gateway' => \App\Models\Payment::PAYMENT_METHOD_STRIPE,
+                    'name' => $request->name,
+                    'email_address' => $request->email_address,
+                    'payment_gateway' => Payment::PAYMENT_METHOD_STRIPE,
                     'credits_purchased' => $request->amount,
                     'credit_transaction_id' => $creditTransaction->id,
                     'exchange_rate' => 1,
@@ -82,12 +87,12 @@ class PaymentController extends Controller
                     'currency' => $request->currency ?? 'usd',
                     'status' => $paymentIntent->status,
                     'metadata' => $paymentIntent->metadata->toArray(),
-                ])
-            ]);
+                ]);
+            });
 
             return response()->json([
                 'client_secret' => $paymentIntent->client_secret,
-                'payment_intent_id' => $paymentIntent->id,
+                // 'payment_intent_id' => Crypt::encryptString($paymentIntent->id),
             ]);
         } catch (\Exception $e) {
             Log::error('Payment intent creation failed: ' . $e->getMessage());
@@ -104,10 +109,11 @@ class PaymentController extends Controller
     public function paymentSuccess(Request $request)
     {
         $request->validate([
-            'payment_intent_id' => 'required|string',
+            'pid' => 'required|string',
         ]);
         try {
-            $paymentIntent = $this->stripeService->retrievePaymentIntent($request->payment_intent_id);
+            $decryptedId = Crypt::decryptString($request->pid);
+            $paymentIntent = $this->stripeService->retrievePaymentIntent($decryptedId);
             // Update payment record
             $payment = Payment::where('payment_intent_id', $paymentIntent->id)->first();
             if ($payment) {
@@ -135,65 +141,65 @@ class PaymentController extends Controller
     /**
      * Handle Stripe webhooks
      */
-    public function handleWebhook(Request $request)
-    {
-        $payload = $request->getContent();
-        $sig_header = $request->header('Stripe-Signature');
-        $endpoint_secret = config('services.stripe.webhook.secret');
+    // public function handleWebhook(Request $request)
+    // {
+    //     $payload = $request->getContent();
+    //     $sig_header = $request->header('Stripe-Signature');
+    //     $endpoint_secret = config('services.stripe.webhook.secret');
 
-        try {
-            $event = \Stripe\Webhook::constructEvent($payload, $sig_header, $endpoint_secret);
-        } catch (\UnexpectedValueException $e) {
-            Log::error('Invalid payload: ' . $e->getMessage());
-            return response('Invalid payload', 400);
-        } catch (\Stripe\Exception\SignatureVerificationException $e) {
-            Log::error('Invalid signature: ' . $e->getMessage());
-            return response('Invalid signature', 400);
-        }
+    //     try {
+    //         $event = \Stripe\Webhook::constructEvent($payload, $sig_header, $endpoint_secret);
+    //     } catch (\UnexpectedValueException $e) {
+    //         Log::error('Invalid payload: ' . $e->getMessage());
+    //         return response('Invalid payload', 400);
+    //     } catch (\Stripe\Exception\SignatureVerificationException $e) {
+    //         Log::error('Invalid signature: ' . $e->getMessage());
+    //         return response('Invalid signature', 400);
+    //     }
 
-        // Handle the event
-        switch ($event['type']) {
-            case 'payment_intent.succeeded':
-                $paymentIntent = $event['data']['object'];
-                $this->handlePaymentIntentSucceeded($paymentIntent);
-                break;
+    //     // Handle the event
+    //     switch ($event['type']) {
+    //         case 'payment_intent.succeeded':
+    //             $paymentIntent = $event['data']['object'];
+    //             $this->handlePaymentIntentSucceeded($paymentIntent);
+    //             break;
 
-            case 'payment_intent.payment_failed':
-                $paymentIntent = $event['data']['object'];
-                $this->handlePaymentIntentFailed($paymentIntent);
-                break;
+    //         case 'payment_intent.payment_failed':
+    //             $paymentIntent = $event['data']['object'];
+    //             $this->handlePaymentIntentFailed($paymentIntent);
+    //             break;
 
-            default:
-                Log::info('Received unknown event type: ' . $event['type']);
-        }
+    //         default:
+    //             Log::info('Received unknown event type: ' . $event['type']);
+    //     }
 
-        return response('Webhook handled', 200);
-    }
+    //     return response('Webhook handled', 200);
+    // }
 
-    private function handlePaymentIntentSucceeded($paymentIntent)
-    {
-        $payment = Payment::where('payment_intent_id', $paymentIntent['id'])->first();
+    // private function handlePaymentIntentSucceeded($paymentIntent)
+    // {
+    //     $payment = Payment::where('payment_intent_id', $paymentIntent['id'])->first();
 
-        if ($payment) {
-            $payment->update([
-                'status' => 'succeeded',
-                'paid_at' => now(),
-            ]);
+    //     if ($payment) {
+    //         $payment->update([
+    //             'status' => 'succeeded',
+    //             'paid_at' => now(),
+    //         ]);
 
-            Log::info('Payment succeeded: ' . $paymentIntent['id']);
-        }
-    }
+    //         Log::info('Payment succeeded: ' . $paymentIntent['id']);
+    //     }
+    // }
 
-    private function handlePaymentIntentFailed($paymentIntent)
-    {
-        $payment = Payment::where('payment_intent_id', $paymentIntent['id'])->first();
+    // private function handlePaymentIntentFailed($paymentIntent)
+    // {
+    //     $payment = Payment::where('payment_intent_id', $paymentIntent['id'])->first();
 
-        if ($payment) {
-            $payment->update([
-                'status' => 'failed',
-            ]);
+    //     if ($payment) {
+    //         $payment->update([
+    //             'status' => 'failed',
+    //         ]);
 
-            Log::info('Payment failed: ' . $paymentIntent['id']);
-        }
-    }
+    //         Log::info('Payment failed: ' . $paymentIntent['id']);
+    //     }
+    // }
 }

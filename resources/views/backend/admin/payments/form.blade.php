@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Secure Payment - Stripe Gateway</title>
-    <script src="https://js.stripe.com/basil/stripe.js"></script>
+    <script src="https://js.stripe.com/v3/" async="async"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     {{-- tailwind cdn  --}}
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -48,10 +48,10 @@
                     <!-- Customer Information -->
                     <div class="flex flex-col sm:flex-row gap-4 mb-4">
                         <div class="w-full">
-                            <label class="block text-gray-700 text-sm font-semibold mb-2" for="customer_name">
+                            <label class="block text-gray-700 text-sm font-semibold mb-2" for="name">
                                 <i class="fas fa-user mr-1"></i> Full Name
                             </label>
-                            <input type="text" id="customer_name" name="customer_name" required
+                            <input type="text" id="name" name="name" required
                                 placeholder="Enter your full name"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-300">
                         </div>
@@ -59,10 +59,10 @@
 
                     <div class="flex flex-col sm:flex-row gap-4 mb-4">
                         <div class="w-full">
-                            <label class="block text-gray-700 text-sm font-semibold mb-2" for="customer_email">
+                            <label class="block text-gray-700 text-sm font-semibold mb-2" for="email_address">
                                 <i class="fas fa-envelope mr-1"></i> Email Address
                             </label>
-                            <input type="email" id="customer_email" name="customer_email" required
+                            <input type="email" id="email_address" name="email_address" required
                                 placeholder="your@email.com"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-300">
                         </div>
@@ -248,8 +248,8 @@
                         amount: parseFloat(formData.get('amount')),
                         credits: formData.get('credits'),
                         currency: formData.get('currency'),
-                        customer_name: formData.get('customer_name'),
-                        customer_email: formData.get('customer_email'),
+                        name: formData.get('name'),
+                        email_address: formData.get('email_address'),
                         customer_phone: formData.get('customer_phone'),
                         save_payment_method: formData.get('save_payment_method') === 'on',
                         // order_notes: formData.get('order_notes')
@@ -270,8 +270,8 @@
                     payment_method: {
                         card: cardElement,
                         billing_details: {
-                            name: formData.get('customer_name'),
-                            email: formData.get('customer_email'),
+                            name: formData.get('name'),
+                            email: formData.get('email_address'),
                             phone: formData.get('customer_phone')
                         }
                     }
@@ -282,8 +282,8 @@
                     showError(error.message);
                 } else {
                     // Payment succeeded, redirect to success page
-                    window.location.href = '{{ route('f.payment.success') }}?payment_intent_id=' + data
-                        .payment_intent_id;
+                    window.location.href = '{{ route('f.payment.success') }}?pid=' + data.payment_intent_id;
+
                 }
             } catch (error) {
                 showError(error.message);
@@ -305,7 +305,7 @@
         }
 
         function validateForm(formData) {
-            const requiredFields = ['customer_name', 'customer_email', 'amount'];
+            const requiredFields = ['name', 'email_address', 'amount'];
 
             for (let field of requiredFields) {
                 if (!formData.get(field) || formData.get(field).trim() === '') {
@@ -320,7 +320,7 @@
                 return false;
             }
 
-            const email = formData.get('customer_email');
+            const email = formData.get('email_address');
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 showError('Please enter a valid email address.');
@@ -361,7 +361,7 @@
         });
 
         // Real-time email validation
-        document.getElementById('customer_email').addEventListener('blur', function(e) {
+        document.getElementById('email_address').addEventListener('blur', function(e) {
             const email = e.target.value;
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
