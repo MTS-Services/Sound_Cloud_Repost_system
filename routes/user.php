@@ -5,6 +5,7 @@ use App\Http\Controllers\Backend\User\AddCaeditsController;
 use App\Http\Controllers\Backend\User\AnalyticsController;
 use App\Http\Controllers\Backend\User\CampaignManagement\CampaignController;
 use App\Http\Controllers\Backend\User\CampaignManagement\MyCampaignController;
+use App\Http\Controllers\Backend\User\Mamber\MamberController;
 use App\Http\Controllers\Backend\User\PromoteController;
 use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
 
@@ -40,6 +41,12 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
         Route::get('/campaigns', [MyCampaignController::class, 'index'])->name('campaigns.index');
         Route::get('/campaigns/create/{track_id}', [MyCampaignController::class, 'create'])->name('campaigns.create');
         Route::post('/campaigns', [MyCampaignController::class, 'store'])->name('campaigns.store');
+    });
+        // Mamber Management
+    Route::group(['as' => 'mm.', 'prefix' => 'mamber-management'], function () {
+        // Mamber Routes
+        Route::get('/mambers', [MamberController::class, 'index'])->name('mambers.index');
+     
     });
 
     // Repost Campaign tracks
