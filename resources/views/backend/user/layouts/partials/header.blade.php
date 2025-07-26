@@ -35,7 +35,7 @@
                     data-discover="true">Blog</a>
             </nav>
             <div class="hidden sm:block text-sm text-gray-900 dark:text-slate-300">
-                <span class="font-semibold">75</span> Credits
+                <span class="font-semibold">{{ $totalCredits }}</span> Credits
             </div>
             <div class="relative">
                 <i data-lucide="bell" class="w-6 h-6 text-gray-800 dark:text-slate-300"></i>
