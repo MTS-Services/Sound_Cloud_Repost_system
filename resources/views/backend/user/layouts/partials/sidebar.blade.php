@@ -8,7 +8,7 @@
             <img src="{{ user()->avatar }}" alt="{{ user()->name ?? 'name' }}" class="w-8 h-8 md:w-10 md:h-10 rounded-full">
             <div>
                 <h3 class="text-slate-800 dark:text-white text-xs md:text-sm">{{ user()->name ?? 'name' }}</h3>
-                <p class="text-slate-400 text-[10px] md:text-xs">117 Credits</p>
+                <p class="text-slate-400 text-[10px] md:text-xs">{{ $totalCredits }} Credits</p>
             </div>
         </div>
         <a href="{{ route('user.add-credits') }}" wire:navigate

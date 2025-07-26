@@ -46,7 +46,7 @@ class AppServiceProvider extends ServiceProvider
             return $admin->hasRole('Super Admin') ? true : null;
         });
 
-        View::composer('backend.user.layouts.partials.header', function ($view) {
+        View::composer('backend.user.layouts.app', function ($view) {
             $totalCredits = 0;
 
             if (Auth::check()) {
