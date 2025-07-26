@@ -4,10 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {{-- csrf --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Sound Cloud') }}</title>
-    {{-- Theme selector && Theme store --}}
+    
     <script>
         (function() {
             let theme = localStorage.getItem('theme') || 'system';
@@ -22,16 +21,21 @@
             }
         })();
     </script>
-    <script src="{{ asset('assets/js/toggle-theme.js') }}"></script>
-    {{-- Custom CSS --}}
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/custome.css') }}">
-    {{-- @vite(['resources/css/dashboard.css', 'resources/js/app.js']) --}}
-    @vite(['resources/css/user-dashboard.css', 'resources/js/app.js'])
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <!-- Scripts -->
+    <script src="{{ asset('assets/js/toggle-theme.js') }}"></script>
+    {{-- <script src="{{ asset('assets/frontend/js/custome.js') }}"></script> --}}
+    <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
+
+    @vite(['resources/css/user-dashboard.css', 'resources/js/user-dashboard.js'])
+    
+
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+    
     <script>
         const content_image_upload_url = '{{ route('file.ci_upload') }}';
     </script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             @if (session('success'))
@@ -47,28 +51,26 @@
             @endif
         });
     </script>
+
+    @stack('cs')
+    @livewireStyles()
 </head>
 
-<body class="bg-gray-50 dark:bg-gray-900 font-sans text-black" x-data>
+<body class="bg-gray-50 dark:bg-gray-900 font-sans text-black overflow-x-hidden!" x-data="{ sidebarOpen: false, mobileSearchOpen: false }">
 
-    {{-- Sidebar --}}
+    @include('backend.user.layouts.partials.header')
     @include('backend.user.layouts.partials.sidebar')
 
     <!-- Main Content -->
-    <div class="lg:ml-64 min-h-screen ">
-        {{-- Header --}}
-        @include('backend.user.layouts.partials.header')
-
-        {{-- Main Content --}}
-        <div class="p-6">
+    <div class="ml-auto lg:w-[calc(100%-15%)] w-full">
+        <div class="p-4 md:p-6 h-[calc(100vh-9vh)]  overflow-y-auto">
             {{ $slot }}
         </div>
     </div>
-    {{-- Custom JS --}}
+
     <script src="{{ asset('assets/frontend/js/custome.js') }}"></script>
-    <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     @stack('js')
+    @livewireScripts()
 </body>
 
 </html>

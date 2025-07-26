@@ -15,8 +15,9 @@
         "laravel/socialite": "^5.21",
         "laravel/tinker": "^2.10.1",
         "league/csv": "9.23.0",
-        "srmklive/paypal": "^3.0",
+        "livewire/livewire": "^3.6",
         "spatie/laravel-permission": "^6.20",
+        "srmklive/paypal": "^3.0",
         "stripe/stripe-php": "^17.4",
         "yajra/laravel-datatables": "12.0"
     },

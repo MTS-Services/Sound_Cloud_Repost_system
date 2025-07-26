@@ -2,14 +2,14 @@ import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
-    server: {
-        host: '0.0.0.0',
-        port: 3333,
-        strictPort: true,
-        hmr: {
-            host: '192.168.10.59',
-        }
-    },
+    // server: {
+    //     host: '0.0.0.0',
+    //     port: 3333,
+    //     strictPort: true,
+    //     hmr: {
+    //         host: '192.168.10.59',
+    //     }
+    // },
     plugins: [
         tailwindcss(),
         laravel({
@@ -19,6 +19,7 @@ export default defineConfig({
                 'resources/css/user-dashboard.css',
                 'resources/css/frontend.css',
                 'resources/js/app.js',
+                'resources/js/user-dashboard.js',
             ],
             refresh: true,
         }),

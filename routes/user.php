@@ -4,6 +4,7 @@ use App\Http\Controllers\Backend\User\AddCaeditsController;
 use App\Http\Controllers\Backend\User\AnalyticsController;
 use App\Http\Controllers\Backend\User\CampaignManagement\CampaignController;
 use App\Http\Controllers\Backend\User\CampaignManagement\MyCampaignController;
+use App\Livewire\Backend\User\CampaignManagement\MyCampaign;
 use App\Http\Controllers\Backend\User\Mamber\MamberController;
 use App\Http\Controllers\Backend\User\PromoteController;
 use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
@@ -18,7 +19,7 @@ Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
     Route::post('disconnect', [SoundCloudController::class, 'disconnect'])->name('disconnect')->middleware('auth:web');
     Route::post('sync', [SoundCloudController::class, 'sync'])->name('sync')->middleware('auth:web');
 });
-
+Route::view('soundcloud', 'backend.user.my-account')->name('myAccount');
 // Dashboard and other routes
 Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     Route::get('/dashboard', function () {
@@ -37,11 +38,17 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     // Campaign Management
     Route::group(['as' => 'cm.', 'prefix' => 'campaign-management'], function () {
         // Campaign Routes
-        Route::get('/campaigns', [MyCampaignController::class, 'index'])->name('campaigns.index');
-        Route::get('/campaigns/create/{track_id}', [MyCampaignController::class, 'create'])->name('campaigns.create');
-        Route::post('/campaigns', [MyCampaignController::class, 'store'])->name('campaigns.store');
+        Route::controller(MyCampaignController::class)->name('campaigns.')->prefix('campaigns')->group(function () {
+            Route::get('/', 'index')->name('index');
+
+            Route::post('/tracks', 'getTracks')->name('tracks');
+            Route::post('/playlists', 'getPlaylists')->name('playlists');
+            Route::post('/playlist-tracks/{playlistId}', 'getPlaylistTracks')->name('playlist.tracks');
+            Route::post('/store', 'storeCampaign')->name('store');
+        });
+        Route::get('/my-campaigns', MyCampaign::class)->name('my-campaigns');
     });
-        // Mamber Management
+    // Mamber Management
     Route::group(['as' => 'mm.', 'prefix' => 'mamber-management'], function () {
         // Mamber Routes
         Route::get('/mambers', [MamberController::class, 'index'])->name('mambers.index');
