@@ -21,7 +21,7 @@ class MyCampaignService
     public function createTrackCampaign(array $data)
     {
         $data['user_urn'] = user()->urn;
-        $data['created_by'] = user()->id;
+        $data['created_id'] = user()->id;
         $data['music_type'] = Track::class;
         $campaign = Campaign::create($data);
         return $campaign;

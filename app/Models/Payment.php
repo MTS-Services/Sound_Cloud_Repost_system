@@ -6,23 +6,6 @@ use App\Models\BaseModel;
 
 class Payment extends BaseModel
 {
-    
-    // protected $fillable = [
-    //     'payment_intent_id',
-    //     'stripe_customer_id',
-    //     'amount',
-    //     'currency',
-    //     'status',
-    //     'payment_method',
-    //     'metadata',
-    //     'paid_at',
-    // ];
-
-    // protected $casts = [
-    //     'metadata' => 'array',
-    //     'paid_at' => 'datetime',
-    //     'amount' => 'decimal:2',
-    // ];
      protected $fillable = [
         'user_urn',
         'credit_transaction_id',
@@ -63,4 +46,9 @@ class Payment extends BaseModel
     public const PAYMENT_METHOD_PAYPAL = 1;
     public const PAYMENT_METHOD_RAZORPAY = 2;
     public const PAYMENT_METHOD_BANK_TRANSFER = 3;
+
+    public function creditTransaction()
+    {
+        return $this->belongsTo(CreditTransaction::class, 'credit_transaction_id', 'id')->withDefault();
+    }
 }

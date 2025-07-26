@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Backend\Admin\OrderManagement\OrderController;
 use App\Http\Controllers\Backend\User\AddCaeditsController;
 use App\Http\Controllers\Backend\User\AnalyticsController;
 use App\Http\Controllers\Backend\User\CampaignManagement\CampaignController;
@@ -52,5 +53,13 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     Route::controller(CampaignController::class)->name('campaign.')->prefix('campaign')->group(function () {
         Route::get('/feed', 'campaignFeed')->name('feed');
         Route::post('/{repost}', 'repost')->name('repost');
+    });
+
+    // Order Manaagement Routes
+    Route::controller(OrderController::class)->name('order.')->prefix('order')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/store', 'store')->name('store');
+        Route::get('/status/{order}', 'status')->name('status');
+        Route::post('/show/{order}', 'show')->name('show');
     });
 });

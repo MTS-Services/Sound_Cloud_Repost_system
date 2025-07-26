@@ -29,12 +29,16 @@ class CampaignRequest extends FormRequest
             'description'            => ['nullable', 'string'],
             'target_reposts'         => ['required', 'numeric',],
             'credits_per_repost'     => ['required', 'numeric',],
-            'total_credits_budget'   => ['required', 'numeric', function ($attribute, $value, $fail) use ($data) {
-                $minRequiredBudget = $data['target_reposts'] * $data['credits_per_repost'];
-                if ($value < $minRequiredBudget) {
-                    $fail("The total credits budget must be at least $minRequiredBudget.");
-                }
-            }],
+            'total_credits_budget' => [
+                'required',
+                'numeric',
+                function ($attribute, $value, $fail) use ($data) {
+                    $minRequiredBudget = (float) $data['target_reposts'] * (float) $data['credits_per_repost'];
+                    if ($value < $minRequiredBudget) {
+                        $fail("The total credits budget must be at least $minRequiredBudget.");
+                    }
+                },
+            ],
             'start_date'             => ['nullable', 'date'],
             'auto_approve'           => ['required', 'boolean'],
         ] + ($this->isMethod('POST') ? $this->store() : $this->update());
