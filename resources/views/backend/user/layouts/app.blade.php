@@ -22,7 +22,7 @@
             }
         })();
     </script>
-<!-- Scripts -->
+    <!-- Scripts -->
     <script src="{{ asset('assets/js/toggle-theme.js') }}"></script>
     <script src="{{ asset('assets/frontend/js/custome.js') }}"></script>
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
@@ -51,6 +51,7 @@
     </script>
 
     @stack('cs')
+    @livewireStyles()
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-black" x-data="{ sidebarOpen: false }">
@@ -60,12 +61,12 @@
 
     <!-- Main Content -->
     <div class="lg:ml-64 overflow-x-hidden">
-        <div class="p-6 lg:h-[90vh]">
+        <div class="p-6 lg:h-[90vh] relative">
             {{ $slot }}
         </div>
     </div>
-
     @stack('js')
+    @livewireScripts()
 </body>
 
 </html>
