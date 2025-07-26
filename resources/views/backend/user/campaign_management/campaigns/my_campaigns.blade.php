@@ -188,25 +188,37 @@
                 <button x-on:click="showCampaignsModal = false"
                     class="btn btn-sm btn-circle bg-orange-500 hover:bg-orange-600 text-white hover:text-gray-200"
                     id="close_campaigns_modal">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="lucide lucide-x-icon lucide-x">
+                        <path d="M18 6 6 18" />
+                        <path d="m6 6 12 12" />
+                    </svg>
                 </button>
             </div>
 
             @if ($showCampaignsModal)
                 <div class="flex mb-6">
                     <button wire:click="selectModalTab('tracks')"
-                        class="flex-1 py-3 px-1 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:text-orange-700 focus:outline-none {{ $this->activeModalTab === 'tracks' ? 'border-b-orange-500 text-orange-600' : 'border-transparent text-gray-600' }}">
+                        class="flex-1 py-3 px-1 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:text-orange-700 focus:outline-none {{ $activeModalTab === 'tracks' ? 'border-b-orange-500 text-orange-600' : 'border-transparent text-gray-600' }}">
                         Tracks
                     </button>
                     <button wire:click="selectModalTab('playlists')"
-                        class="flex-1 py-3 px-1 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:text-orange-700 focus:outline-none {{ $this->activeModalTab === 'playlists' ? 'border-b-orange-500 text-orange-600' : 'border-transparent text-gray-600' }}">
+                        class="flex-1 py-3 px-1 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:text-orange-700 focus:outline-none {{ $activeModalTab === 'playlists' ? 'border-b-orange-500 text-orange-600' : 'border-transparent text-gray-600' }}">
                         Playlists
                     </button>
                 </div>
 
-                <div class="flex-grow overflow-y-auto pr-2 -mr-2">
+                <div>
+                    @if ($isLoading)
+                        <p>Loading...</p>
+                    @else
+                        <p>No tracks or playlists found.</p>
+                    @endif
+                </div>
 
-                    @if ($this->activeModalTab === 'tracks')
+                <div class="flex-grow overflow-y-auto pr-2 -mr-2">
+                    @if ($activeModalTab === 'tracks')
                         <div>
                             @forelse ($tracks as $track)
                                 {{-- @dd($track) --}}
@@ -230,10 +242,17 @@
                                     </div>
                                 </div>
                             @empty
-                                <div>No tracks found</div>
+                                <div class="text-center py-10 text-gray-500 dark:text-gray-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-10 w-10 text-orange-400"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 17v-2a4 4 0 00-4-4H5m14 0h-1a4 4 0 00-4 4v2M12 7h.01M12 12h.01M12 17h.01" />
+                                    </svg>
+                                    <p class="mt-3">No tracks found. Try uploading one first.</p>
+                                </div>
                             @endforelse
                         </div>
-                    @elseif($this->activeModalTab === 'playlists')
+                    @elseif($activeModalTab === 'playlists')
                         <div>
 
                             @forelse ($playlists as $playlist)
@@ -253,7 +272,14 @@
                                     </div>
                                 </div>
                             @empty
-                                <div>No playlists found</div>
+                                <div class="text-center py-10 text-gray-500 dark:text-gray-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-10 w-10 text-orange-400"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                                    </svg>
+                                    <p class="mt-3">No playlists found. Add one to get started.</p>
+                                </div>
                             @endforelse
 
                         </div>
