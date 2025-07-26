@@ -19,6 +19,7 @@ export default defineConfig({
                 'resources/css/user-dashboard.css',
                 'resources/css/frontend.css',
                 'resources/js/app.js',
+                'resources/js/user-dashboard.js',
             ],
             refresh: true,
         }),
