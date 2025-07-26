@@ -51,7 +51,7 @@ class MyCampaignController extends Controller
     }
     public function getPlaylists(Request $request)
     {
-        $playlists = Playlist::all();
+        $playlists = Playlist::where('user_urn', user()->urn)->get();
         return response()->json([
             'message' => 'success',
             'playlists' => $playlists
@@ -63,7 +63,7 @@ class MyCampaignController extends Controller
         // Ensure the playlist belongs to the authenticated user for security
         $playlist = Playlist::with('tracks')
             ->where('id', $playlistId)
-            ->where('user_urn', user()->urn) // Crucial for security
+            ->where('user_urn', user()->urn)
             ->first();
 
         if (!$playlist) {
