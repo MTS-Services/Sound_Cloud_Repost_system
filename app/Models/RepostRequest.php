@@ -59,6 +59,16 @@ class RepostRequest extends BaseModel
         return $this->hasMany(Repost::class);
     }
 
+    public function responses(): HasMany
+    {
+        return $this->hasMany(RepostRequest::class, 'target_user_urn', 'urn');
+    }
+
+    public function creditTransactions(): HasMany
+    {
+        return $this->hasMany(CreditTransaction::class);
+    }
+
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */

@@ -57,9 +57,14 @@ class Campaign extends BaseModel
         return $this->hasMany(Repost::class, 'campaign_id', 'id');
     }
 
+    public function creditTransactions()
+    {
+        return $this->hasMany(CreditTransaction::class, 'campaign_id', 'id');
+    }
+
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
-     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */ 
 
 
 

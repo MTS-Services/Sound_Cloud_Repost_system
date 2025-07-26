@@ -25,10 +25,7 @@ return new class extends Migration
             $table->unsignedBigInteger('campaign_id')->index();
             $table->string('soundcloud_repost_id')->index()->nullable();
             $table->decimal('credits_earned', 10, 2)->default(0.00);
-            $table->decimal('service_fee', 10, 2)->default(0.00);
-            $table->decimal('net_credits', 10, 2)->default(0.00);
             $table->timestamp('reposted_at')->index();
-            $table->boolean('is_verified')->default(Repost::IS_VERIFIED_NO);
 
             $table->foreign('repost_request_id')->references('id')->on('repost_requests')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('reposter_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');

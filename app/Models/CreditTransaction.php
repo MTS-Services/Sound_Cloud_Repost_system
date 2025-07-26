@@ -9,25 +9,23 @@ class CreditTransaction extends BaseModel
     protected $fillable = [
         'receiver_urn',
         'sender_urn',
-        'campaign_id',
-        'repost_request_id',
+        'calculation_type',
+        'source_id',
+        'source_type',
         'transaction_type',
         'calculation_type',
         'source_id',
         'source_type',
         'amount',
         'credits',
-        'balance_before',
-        'balance_after',
         'description',
         'metadata',
 
-
         'creater_id',
-        'creater_type',
         'updater_id',
-        'updater_type',
         'deleter_id',
+        'creater_type',
+        'updater_type',
         'deleter_type',
     ];
 
@@ -59,6 +57,10 @@ class CreditTransaction extends BaseModel
     //     return $this->belongsTo(RepostRequest::class);
     // }
 
+    public function source()
+    {
+        return $this->morphTo();
+    }
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                     End of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */

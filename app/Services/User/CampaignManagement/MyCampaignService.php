@@ -1,21 +1,13 @@
 <?php
 
-namespace App\Services\Admin\CampaignManagement;
+namespace App\Services\User\CampaignManagement;
 
 use App\Models\Campaign;
 use App\Models\Track;
 use Illuminate\Database\Eloquent\Collection;
 
-class CampaignService
+class MyCampaignService
 {
-    /**
-     * Create a new class instance.
-     */
-    public function __construct()
-    {
-        //
-    }
-
     public function getCampaigns($orderBy = 'sort_order', $order = 'asc')
     {
         $campaigns = Campaign::orderBy($orderBy, $order)->latest();
@@ -27,7 +19,7 @@ class CampaignService
         return $campaign;
     }
     public function createTrackCampaign(array $data)
-    {   
+    {
         $data['user_urn'] = user()->urn;
         $data['created_id'] = user()->id;
         $data['music_type'] = Track::class;
@@ -44,5 +36,4 @@ class CampaignService
         $campaign = Campaign::find(decrypt($encryptedId));
         $campaign->forceDelete();
     }
-
 }
