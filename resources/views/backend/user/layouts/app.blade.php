@@ -60,7 +60,7 @@
 
     <!-- Main Content -->
     <div class="lg:ml-64 overflow-x-hidden">
-        <div class="p-6 lg:h-[90vh]">
+        <div class="p-6 lg:h-[90vh] ">
             {{ $slot }}
         </div>
     </div>
