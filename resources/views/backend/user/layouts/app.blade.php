@@ -48,7 +48,8 @@
         });
     </script>
 
-    @stack('cs')
+    @stack('css')
+    @livewireStyles
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-black" x-data="{ sidebarOpen: false }">
@@ -64,6 +65,7 @@
     </div>
  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     @stack('js')
+    @livewireScripts
 </body>
 
 </html>
