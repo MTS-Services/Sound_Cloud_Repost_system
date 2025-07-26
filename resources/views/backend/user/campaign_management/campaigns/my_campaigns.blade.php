@@ -215,7 +215,7 @@
                             @forelse ($tracks as $track)
                                 {{-- @dd($track) --}}
                                 <div
-                                    class="py-3 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg px-2 -mx-2 transition-colors duration-200">
+                                    class="py-3 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg px-2 transition-colors duration-200">
                                     <div class="flex-shrink-0">
                                         <img class="h-12 w-12 rounded-lg object-cover"
                                             src="{{ $track->artwork_url }}" alt="{{ $track->title }}" />
@@ -249,7 +249,7 @@
 
                             @forelse ($playlists as $playlist)
                                 <div
-                                    class="py-3 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg px-2 -mx-2 transition-colors duration-200">
+                                    class="py-3 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg px-2  transition-colors duration-200">
                                     <div class="flex-shrink-0">
                                         <img class="h-12 w-12 rounded-lg object-cover"
                                             src="{{ $playlist->artwork_url }}" alt="{{ $playlist->title }}" />
