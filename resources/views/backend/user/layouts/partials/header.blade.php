@@ -6,7 +6,7 @@
                 class="lg:hidden p-1 md:p-2 rounded-md text-gray-900 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700">
                 <i data-lucide="menu" class="w-5 h-5 md:w-6 md:h-6"></i>
             </button>
-            <a class="flex items-center space-x-2" href="/" data-discover="true">
+            <a class="flex items-center space-x-2" href="/dashboard" data-discover="true" wire:navigate>
                 <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
                     <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
                 </div>
@@ -32,14 +32,14 @@
         <div class="flex items-center space-x-1 md:space-x-2">
             <!-- Navigation items - hide on mobile -->
             <nav class="hidden lg:flex items-center space-x-2 md:space-x-4 text-sm">
-                <a class="text-orange-500 hover:text-orange-400 font-medium" href="/upgrade"
+                <a class="text-orange-500 hover:text-orange-400 font-medium" href="/upgrade"wire:navigate
                     data-discover="true">Upgrade My Plan</a>
-                <a class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50 "
+                <a class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50 "wire:navigate
                     href="/charts" data-discover="true">Charts</a>
-                <a class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
+                <a class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"wire:navigate
                     href="/blog" data-discover="true">Blog</a>
                 <button
-                    class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50 flex items-center space-x-1">
+                    class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50 flex items-center space-x-1" >
                     <span>Help</span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -107,7 +107,7 @@
 
                     <!-- View Profile -->
                     <li>
-                        <a href="{{ route('user.profile') }}"
+                        <a href="{{ route('user.profile') }}"wire:navigate
                             class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -125,7 +125,7 @@
                         </div>
                         <div class="text-sm flex justify-between items-center">
                             <span class="font-semibold text-slate-800 dark:text-white">Free Plan</span>
-                            <a href="#" class="text-orange-500 text-xs hover:underline">View All Plans</a>
+                            <a href="#" class="text-orange-500 text-xs hover:underline" wire:navigate>View All Plans</a>
                         </div>
                     </li>
 
@@ -139,7 +139,7 @@
 
                     <!-- Purchase History -->
                     <li>
-                        <a href="#"
+                        <a href="#" wire:navigate
                             class="px-2 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 " fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
