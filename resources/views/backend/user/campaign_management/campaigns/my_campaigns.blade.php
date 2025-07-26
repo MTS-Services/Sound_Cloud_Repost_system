@@ -209,14 +209,6 @@
                     </button>
                 </div>
 
-                <div>
-                    @if ($isLoading)
-                        <p>Loading...</p>
-                    @else
-                        <p>No tracks or playlists found.</p>
-                    @endif
-                </div>
-
                 <div class="flex-grow overflow-y-auto pr-2 -mr-2">
                     @if ($activeModalTab === 'tracks')
                         <div>
