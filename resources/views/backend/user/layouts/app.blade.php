@@ -58,7 +58,7 @@
 
     <!-- Main Content -->
     <div class="lg:ml-64">
-        <div class="p-6 lg:h-[87vh]">
+        <div class="p-6 lg:h-[90vh]">
             {{ $slot }}
         </div>
     </div>

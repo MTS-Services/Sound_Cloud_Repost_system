@@ -3,7 +3,7 @@
 <div :class="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }"
     class="fixed left-0 lg:top-20 top-0 w-64 h-full lg:h-[90vh] bg-white dark:bg-slate-800 border-r border-gray-100 dark:border-slate-700 flex flex-col z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0">
     <!-- Profile Section -->
-    <div class="p-4 border-b border-gray-100 dark:border-slate-700">
+    <div class="p-4 pt-11 border-b border-gray-100 dark:border-slate-700">
         <div class="flex items-center space-x-3 mb-4">
             <img src="{{ user()->avatar }}" alt="{{ user()->name ?? 'name' }}" class="w-10 h-10 rounded-full">
 
@@ -50,17 +50,16 @@
                         <circle cx="8" cy="18" r="4"></circle>
                         <path d="M12 18V2l7 4"></path>
                     </svg>
-                    <span class="text-sm">{{ __('Campaign Feed') }}</span>
+                    <span class="text-sm">{{ __('Campaigns') }}</span>
                 </a>
             </li>
-            <li>
-                <a href="{{ route('user.cm.campaigns.index') }}"
-                    class="sidebar-item flex items-center px-3 py-2.5 rounded-lg  transition-colors
-                    text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'campains') active @endif">
+            {{-- <li>
+                <a href="{{ route('user.cm.campaigns.index') }}" class="sidebar-item flex items-center px-3 py-2.5 rounded-lg font-medium transition-colors
+                    text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if($page_slug == 'campains') active @endif">
                     <i data-lucide="megaphone" class="w-5 h-5 mr-3"></i>
                     <span class="text-sm">{{ __('My Campaigns') }}</span>
                 </a>
-            </li>
+            </li> --}}
             <li>
                 <a href="{{ route('user.profile') }}"
                     class="sidebar-item flex items-center px-3 py-2.5 rounded-lg  transition-colors
