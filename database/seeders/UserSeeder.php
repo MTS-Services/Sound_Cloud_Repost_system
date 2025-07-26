@@ -15,7 +15,8 @@ class UserSeeder extends Seeder
     {
         User::create([
             'name' => 'Test User 1',
-            'soundcloud_id' => 1001,
+            'avatar' => 'https://i.pravatar.cc/150?u=1000000001',
+            'soundcloud_id' => 1000000001,
             'status' => User::STATUS_ACTIVE,
             'email' => 'user@dev.com',
             'password' => Hash::make('user@dev.com'),
