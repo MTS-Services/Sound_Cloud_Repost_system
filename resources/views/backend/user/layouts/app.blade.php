@@ -47,6 +47,8 @@
             @endif
         });
     </script>
+
+    @stack('cs')
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-black" x-data="{ sidebarOpen: false }">

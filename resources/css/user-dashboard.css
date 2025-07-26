@@ -15,12 +15,13 @@
 :root {
     --primary: #1CA577;
     --secondary: theme(colors.bg-light-primary);
+
 }
 
 
 @layer base {
     * {
-        @apply font-poppins transition-all duration-200 ease-linear;
+        @apply font-rubik transition-all duration-200 ease-linear;
     }
 
     /* For Firefox  */
@@ -70,6 +71,7 @@
     /* Font Family */
     --font-poppins: 'Poppins', sans-serif;
     --font-rubik: 'Rubik', sans-serif;
+    --font-monospace:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
     /* ===================================  Colors =================================== */
 
