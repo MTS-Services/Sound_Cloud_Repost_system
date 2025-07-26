@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Backend\User\CampaignManagement;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CampaignManagement\CampaignRequest;
 use App\Http\Traits\AuditRelationTraits;
+use App\Models\Campaign;
+use App\Models\Playlist;
+use App\Models\Track;
 use App\Services\Admin\TrackService;
 use App\Services\User\CampaignManagement\MyCampaignService;
 use Illuminate\Contracts\View\View;
@@ -34,53 +37,127 @@ class MyCampaignController extends Controller
      */
     public function index(Request $request)
     {
-        // $data['campaigns'] = $this->campaignService->getCampaigns()->active_completed()->get();
-        $data['campaigns'] = $this->campaignService->getCampaigns()->where('user_urn', user()->urn)->get();
-        $data['tracks'] = $this->trackService->getTracks()->where('user_urn', user()->urn)->get();
-
-
+        $data['campaigns'] = Campaign::with(['music'])->where('user_urn', user()->urn)->get();
         return view('backend.user.campaign_management.campaigns.campaigns', $data);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(Request $request, string $track_id): View
+    public function getTracks(Request $request)
     {
-        $data['track'] = $this->trackService->getTrack($track_id);
-        return view('backend.user.campaign_management.campaigns.create', $data);
+        $tracks = Track::where('user_urn', user()->urn)->get();
+        return response()->json([
+            'message' => 'success',
+            'tracks' => $tracks
+        ]);
+    }
+    public function getPlaylists(Request $request)
+    {
+        $playlists = Playlist::where('user_urn', user()->urn)->get();
+        return response()->json([
+            'message' => 'success',
+            'playlists' => $playlists
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(CampaignRequest $request)
+    public function getPlaylistTracks(Request $request, $playlistId)
     {
-        try {
-            $validated = $request->validated();
-            $this->campaignService->createTrackCampaign($validated);
-            session()->flash('success', "Campaign created successfully");
-        } catch (\Throwable $e) {
-            session()->flash('Campaign creation failed');
-            throw $e;
+        // Ensure the playlist belongs to the authenticated user for security
+        $playlist = Playlist::with('tracks')
+            ->where('id', $playlistId)
+            ->where('user_urn', user()->urn)
+            ->first();
+
+        if (!$playlist) {
+            return response()->json([
+                'message' => 'Playlist not found or you do not have access to it.',
+                'tracks' => []
+            ], 404);
         }
-        return $this->redirectIndex();
+
+        $tracks = $playlist->tracks; // Assuming a 'tracks' relationship on Playlist model
+
+        return response()->json([
+            'message' => 'success',
+            'tracks' => $tracks
+        ]);
     }
 
     /**
-     * Display the specified resource.
+     * Stores a new campaign.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Request $request, string $id)
+    public function storeCampaign(Request $request)
     {
-        $data = $this->campaignService->getCampaign($id);
-        $data['user_urn'] = $data->user->name;
-        $data['auto_approve_label'] = $data->auto_approve_label;
-        $data['start_date'] = $data->start_date_formatted;
-        $data['end_date'] = $data->end_date_formatted;
-        $data['creater_name'] = $this->creater_name($data);
-        $data['updater_name'] = $this->updater_name($data);
-        return response()->json($data);
+        // Validate the request data
+        $request->validate([
+            'campaign_title' => 'required|string|max:255',
+            'target_type' => 'required|in:track,playlist', // 'track' or 'playlist'
+            'target_id' => 'required|integer', // ID of the selected track or playlist
+            'total_budget' => 'required|numeric|min:0',
+            'target_repost_count' => 'required|integer|min:1',
+            'description' => 'nullable|string',
+            'expiration_date' => 'required|date|after_or_equal:today',
+        ]);
+
+        try {
+            $campaign = new Campaign();
+            $campaign->user_urn = user()->urn; 
+            $campaign->title = $request->input('campaign_title');
+            $campaign->target_type = $request->input('target_type');
+            $campaign->target_id = $request->input('target_id');
+            $campaign->total_credits_budget = $request->input('total_budget');
+            $campaign->target_repost_count = $request->input('target_repost_count');
+            $campaign->description = $request->input('description');
+            $campaign->expiration_date = $request->input('expiration_date');
+            $campaign->status = 'pending'; // Set an initial status
+
+            $campaign->save();
+
+            return response()->json([
+                'message' => 'Campaign created successfully!',
+                'campaign' => $campaign
+            ], 201); // 201 Created
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error creating campaign.',
+                'error' => $e->getMessage()
+            ], 500); // 500 Internal Server Error
+        }
     }
+
+
+    // public function create(Request $request, string $track_id): View
+    // {
+    //     $data['track'] = $this->trackService->getTrack($track_id);
+    //     return view('backend.user.campaign_management.campaigns.create', $data);
+    // }
+
+    // public function store(CampaignRequest $request)
+    // {
+    //     try {
+    //         $validated = $request->validated();
+    //         $this->campaignService->createTrackCampaign($validated);
+    //         session()->flash('success', "Campaign created successfully");
+    //     } catch (\Throwable $e) {
+    //         session()->flash('Campaign creation failed');
+    //         throw $e;
+    //     }
+    //     return $this->redirectIndex();
+    // }
+
+    // public function show(Request $request, string $id)
+    // {
+    //     $data = $this->campaignService->getCampaign($id);
+    //     $data['user_urn'] = $data->user->name;
+    //     $data['auto_approve_label'] = $data->auto_approve_label;
+    //     $data['start_date'] = $data->start_date_formatted;
+    //     $data['end_date'] = $data->end_date_formatted;
+    //     $data['creater_name'] = $this->creater_name($data);
+    //     $data['updater_name'] = $this->updater_name($data);
+    //     return response()->json($data);
+    // }
+
 
     /**
      * Show the form for editing the specified resource.
