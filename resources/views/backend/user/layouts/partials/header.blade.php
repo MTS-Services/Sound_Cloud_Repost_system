@@ -1,7 +1,8 @@
-<header class="bg-white dark:bg-slate-800 z-41 border-b border-gray-100 dark:border-slate-700 px-6 py-1 sticky top-0">
+<header class="bg-white dark:bg-slate-800 z-41 border-b border-gray-100 dark:border-slate-700 px-6 py-5 sticky top-0">
     <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2">
-            <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden p-2 rounded-md text-gray-900 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700">
+            <button @click="sidebarOpen = !sidebarOpen"
+                class="lg:hidden p-2 rounded-md text-gray-900 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700">
                 <i data-lucide="menu" class="w-6 h-6"></i>
             </button>
             <a class="flex items-center space-x-2" href="/" data-discover="true">
@@ -19,9 +20,9 @@
                     <i data-lucide="search" class="w-5 h-5 text-slate-800 dark:text-slate-300"></i>
                 </span>
                 <input type="search" placeholder="Search..."
-                    class="w-full pl-12 pr-4 py-2 rounded-lg bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-600
+                    class="w-full pl-12  placeholder-slate-400 pr-4 py-2 rounded-lg bg-white dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600
                     focus:border-[#F54A00] dark:focus:border-[#F54A00]
-                    text-gray-900 dark:text-gray-200 placeholder:text-slate-800 dark:placeholder:text-slate-300
+                    text-gray-900 dark:text-gray-200  dark:placeholder:text-slate-300
                     dark:shadow-sm outline-none transition" />
             </form>
         </div>
@@ -53,40 +54,90 @@
                     class="w-5 h-5 text-text-light-primary dark:text-text-white"></i>
             </button>
             <div class="dropdown dropdown-end">
-                <div tabindex="0" role="button" class="flex items-center space-x-2 avatar">
-                    <div class="w-10 h-10 rounded-full">
-                        <img src="{{ user()->avatar }}" alt="{{ user()->name ?? 'name' }}" />
-                    </div>
-                    <div class="text-sm hidden sm:block pt-5">
+                <div tabindex="0" role="button" class="flex items-center space-x-2 ">
+                    {{-- <div class="w-10 h-10 rounded-full">
+                       
+                    </div> --}}
+                    <img src="{{ user()->avatar }}" alt="{{ user()->name ?? 'name' }}" class="w-8 h-8 rounded-full">
+
+                    <span class="text-sm font-medium dark:text-slate-300">{{ user()->name ?? 'name' }}</span>
+                    <svg class="dark:text-slate-300" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="lucide lucide-chevron-down w-4 h-4">
+                        <path d="m6 9 6 6 6-6"></path>
+                    </svg>
+
+                    {{-- <div class="text-sm hidden sm:block items-center">
                         <span class="font-semibold text-gray-900 dark:text-gray-200">{{ user()->name ?? 'name' }}</span>
-                        <div class="text-green-500 text-xs">● Online</div>
-                    </div>
+                    </div> --}}
+                </div>
+                <div class="relative"><button class="flex items-center space-x-2 text-slate-300 hover:text-white">
+
+                    </button>
                 </div>
                 <ul tabindex="0"
-                    class="menu menu-sm dropdown-content bg-white dark:bg-slate-800 rounded-box z-1 mt-3 w-52 shadow py-2">
+                    class="menu menu-sm dropdown-content bg-slate-800 text-white rounded-lg z-10 mt-3 w-64 shadow-lg py-2 space-y-2">
+
+                    <!-- View Profile -->
                     <li>
-                        <div
-                            class="flex items-center space-x-2 border-b border-gray-100 dark:border-slate-700 px-6 py-4 w-full">
-                            <img src="{{ user()->avatar }}" alt="{{ user()->name ?? 'name' }}"
-                                class="w-8 h-8 rounded-full">
-                            <div class="text-sm">
-                                <span
-                                    class="font-semibold text-gray-900 dark:text-gray-200">{{ user()->name ?? 'name' }}</span>
-                                <div class="text-green-500 text-xs">● Online</div>
-                            </div>
+                        <a href="#" class="flex items-center px-4 py-2 hover:bg-slate-700 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5.121 17.804A4 4 0 017 16h10a4 4 0 011.879.496M15 11a3 3 0 10-6 0 3 3 0 006 0z" />
+                            </svg>
+                            View Profile
+                        </a>
+                    </li>
+
+                    <!-- Current Plan -->
+                    <li class="px-4 py-2 border-t border-slate-700">
+                        <div class="text-xs flex justify-between items-center">
+                            <span class="text-gray-300">Current Plan</span>
+
+                        </div>
+                        <div class="text-xs flex justify-between items-center">
+                            <span class="font-semibold">Free Plan</span>
+                            <a href="#" class="text-orange-400 hover:underline text-xs">View All Plans</a>
                         </div>
                     </li>
+
+                    <!-- Settings & Preferences -->
                     <li>
-                        <!-- Authentication -->
+                        <a href="#" class="px-4 py-2 hover:bg-slate-700 rounded-md block">
+                            Settings & Preferences
+                        </a>
+                    </li>
+
+                    <!-- Purchase History -->
+                    <li>
+                        <a href="#" class="px-4 py-2 hover:bg-slate-700 rounded-md block flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1 2h13m-6 4a1 1 0 100-2 1 1 0 000 2zm-6 0a1 1 0 100-2 1 1 0 000 2z" />
+                            </svg>
+                            Purchase History
+                        </a>
+                    </li>
+
+                    <!-- Logout -->
+                    <li class="border-t border-slate-700">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <x-responsive-nav-link :href="route('logout')"
-                                onclick="event.preventDefault(); this.closest('form').submit();">
+                            <button type="submit"
+                                class="w-full text-left px-4 py-2 hover:bg-slate-700 rounded-md flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-9V4m-4 12H7a4 4 0 01-4-4V7a4 4 0 014-4h4" />
+                                </svg>
                                 Log Out
-                            </x-responsive-nav-link>
+                            </button>
                         </form>
                     </li>
                 </ul>
+
             </div>
         </div>
     </div>
