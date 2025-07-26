@@ -57,7 +57,7 @@
                     <div class="w-10 h-10 rounded-full">
                         <img src="{{ user()->avatar }}" alt="{{ user()->name ?? 'name' }}" />
                     </div>
-                    <div class="text-sm hidden sm:block">
+                    <div class="text-sm hidden sm:block pt-5">
                         <span class="font-semibold text-gray-900 dark:text-gray-200">{{ user()->name ?? 'name' }}</span>
                         <div class="text-green-500 text-xs">● Online</div>
                     </div>
