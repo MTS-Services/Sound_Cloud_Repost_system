@@ -4,10 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {{-- csrf --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Sound Cloud') }}</title>
-    {{-- Theme selector && Theme store --}}
+    
     <script>
         (function() {
             let theme = localStorage.getItem('theme') || 'system';
@@ -22,6 +21,7 @@
             }
         })();
     </script>
+    
     <!-- Scripts -->
     <script src="{{ asset('assets/js/toggle-theme.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/custome.css') }}">
@@ -30,9 +30,11 @@
     @vite(['resources/css/user-dashboard.css', 'resources/js/app.js'])
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+    
     <script>
         const content_image_upload_url = '{{ route('file.ci_upload') }}';
     </script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             @if (session('success'))
@@ -53,18 +55,19 @@
     @livewireStyles()
 </head>
 
-<body class="bg-gray-50 dark:bg-gray-900 font-sans text-black overflow-x-hidden!" x-data="{ sidebarOpen: false }">
+<body class="bg-gray-50 dark:bg-gray-900 font-sans text-black overflow-x-hidden!" x-data="{ sidebarOpen: false, mobileSearchOpen: false }">
 
     @include('backend.user.layouts.partials.header')
     @include('backend.user.layouts.partials.sidebar')
 
     <!-- Main Content -->
-    <div class="ml-auto w-[calc(100%-15%)]">
-        <div class="p-6 h-[88vh]">
+    <div class="ml-auto lg:w-[calc(100%-15%)] w-full">
+        <div class="p-4 md:p-6 h-[calc(100vh-8%)] md:h-[88vh] overflow-y-auto">
             {{ $slot }}
         </div>
     </div>
- <script src="{{ asset('assets/frontend/js/custome.js') }}"></script>
+
+    <script src="{{ asset('assets/frontend/js/custome.js') }}"></script>
     @stack('js')
     @livewireScripts()
 </body>
