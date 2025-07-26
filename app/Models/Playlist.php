@@ -6,7 +6,7 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Playlist extends BaseModel
+class  Playlist extends BaseModel
 {
     use HasFactory, SoftDeletes;
 

@@ -5,6 +5,8 @@ namespace App\Livewire\Backend\User\CampaignManagement;
 use App\Models\Campaign;
 use App\Models\Track;
 use App\Models\Playlist;
+use Illuminate\Support\Facades\Http;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class MyCampaign extends Component
@@ -18,6 +20,12 @@ class MyCampaign extends Component
     public $tracks = [];
     public $playlists = [];
 
+    // #[Locked]
+    public $playlistId = null;
+    public $playlistTracks = [];
+
+    public bool $showSubmitModal = false;
+
     public function toggleCampaignsModal()
     {
         $this->showCampaignsModal = !$this->showCampaignsModal;
@@ -25,7 +33,7 @@ class MyCampaign extends Component
         $this->selectModalTab($this->activeModalTab);
     }
 
-    public function selectModalTab($tab)
+    public function selectModalTab($tab = 'tracks')
     {
         $this->activeModalTab = $tab;
         if ($tab == 'tracks') {
@@ -44,6 +52,38 @@ class MyCampaign extends Component
     {
         $this->playlists = Playlist::where('user_urn', user()->urn)->latest()->get();
     }
+
+    public function fetchPlaylistTracks()
+    {
+        $playlist = Playlist::findorFail($this->playlistId);
+        $response = Http::withHeaders([
+            'Authorization' => 'OAuth ' . user()->token,
+        ])->get('https://api.soundcloud.com/playlists/' . $playlist->soundcloud_urn . '/tracks');
+        if ($response->successful()) {
+            $this->playlistTracks = $response->json();
+            dd('success', $response->json());
+        } else {
+            $this->playlistTracks = [];
+            dd('error', $response->json());
+        }
+    }
+
+    public function toggleSubmitModal($type, $id)
+    {
+        $this->showCampaignsModal = false;
+        $this->showSubmitModal = true;
+
+        if ($type === 'track') {
+            dd('track');
+        }
+
+        if ($type === 'playlist') {
+            $this->playlistId = $id;
+            $this->playlistTracks = $this->fetchPlaylistTracks();
+            dd('playlist', $this->playlistTracks);
+        }
+    }
+
 
     public function mount()
     {

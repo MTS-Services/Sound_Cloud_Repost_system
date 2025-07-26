@@ -1,4 +1,4 @@
-<section x-data="{ showCampaignsModal: false }">
+<section x-data="{ showCampaignsModal: false, showSubmitModal: false }">
 
     <x-slot name="page_slug">campains</x-slot>
 
@@ -214,7 +214,7 @@
                         <div>
                             @forelse ($tracks as $track)
                                 {{-- @dd($track) --}}
-                                <div
+                                <div wire:click="toggleSubmitModal('track', {{ $track->id }})"
                                     class="py-3 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg px-2 transition-colors duration-200">
                                     <div class="flex-shrink-0">
                                         <img class="h-12 w-12 rounded-lg object-cover"
@@ -248,7 +248,7 @@
                         <div>
 
                             @forelse ($playlists as $playlist)
-                                <div
+                                <div wire:click="toggleSubmitModal('playlist', {{ $playlist->id }})"
                                     class="py-3 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg px-2  transition-colors duration-200">
                                     <div class="flex-shrink-0">
                                         <img class="h-12 w-12 rounded-lg object-cover"
@@ -279,6 +279,34 @@
                 </div>
             @endif
         </div>
-    </div>
+
+
+        <div x-data="{ showSubmitModal: @entangle('showSubmitModal').live }" x-show="showSubmitModal" x-cloak
+            x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-90"
+            x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90"
+            class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+
+            <div
+                class="w-full max-w-2xl mx-auto rounded-lg shadow-xl bg-white dark:bg-slate-800 p-6 flex flex-col max-h-[70vh]">
+                <div class="flex justify-between items-center mb-5">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white text-center flex-grow">
+                        Submit Modal
+                    </h2>
+                    <button x-on:click="showSubmitModal = false"
+                        class="btn btn-sm btn-circle bg-orange-500 hover:bg-orange-600 text-white hover:text-gray-200"
+                        id="close_campaigns_modal">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" class="lucide lucide-x-icon lucide-x">
+                            <path d="M18 6 6 18" />
+                            <path d="m6 6 12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+
+            </div>
+        </div>
 
 </section>
