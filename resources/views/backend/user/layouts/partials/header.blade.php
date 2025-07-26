@@ -1,4 +1,4 @@
-<header class="bg-white h-[8%] dark:bg-slate-800 z-41 border-b border-gray-100 dark:border-slate-700 px-4 md:px-6 py-3 md:py-5 sticky top-0">
+<header class="bg-white h-[8vh] dark:bg-slate-800 z-41 border-b border-gray-100 dark:border-slate-700 px-4 md:px-6 py-3 md:py-5 sticky top-0">
     <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2">
             <button @click="sidebarOpen = !sidebarOpen"

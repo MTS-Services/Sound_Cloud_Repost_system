@@ -21,7 +21,7 @@
 
 @layer base {
     * {
-        @apply font-rubik transition-all duration-200 ease-linear;
+        @apply font-poppins transition-all duration-200 ease-linear;
     }
 
     /* For Firefox  */
