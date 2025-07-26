@@ -25,9 +25,12 @@ class Campaign extends BaseModel
         'end_date',
         'auto_approve',
 
-        'created_by',
-        'updated_by',
-        'deleted_by',
+        'creater_id',
+        'creater_type',
+        'updater_id',
+        'updater_type',
+        'deleter_id',
+        'deleter_type',
     ];
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
