@@ -49,6 +49,7 @@
     </script>
 
     @stack('css')
+    @livewireStyles
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-black" x-data="{ sidebarOpen: false }">
@@ -89,6 +90,7 @@
     </script>
 
     @stack('js')
+    @livewireScripts
 </body>
 
 </html>
