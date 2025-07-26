@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
             'token' => 'test-token-1',
             'refresh_token' => 'test-refresh-token-1',
             'expires_in' => 3600,
-            'urn' => 'urn:sc:users:1000000001',
+            'urn' => 'urn:sc:users:1001',
         ]);
     }
 }
