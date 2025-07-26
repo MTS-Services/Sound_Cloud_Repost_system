@@ -1,4 +1,4 @@
-<section>
+<section x-data="{ showCampaignsModal: false }">
 
     <x-slot name="page_slug">campains</x-slot>
 
@@ -8,16 +8,11 @@
                 <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">{{ __('My Campaigns') }}</h1>
                 <p class="text-gray-600 dark:text-gray-400">Track the performance of your submitted tracks</p>
             </div>
-            <button onclick="campaigns_modal.showModal()"
+            <button wire:click="toggleCampaignsModal" x-on:click="showCampaignsModal = true"
                 class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                </svg>
+                <i data-lucide="plus" class="w-5 h-5"></i>
                 {{ __('New Campaign') }}
             </button>
-
-             <button class="text-red-500/90">dsklfjkl</button>
         </div>
 
         <div class="mb-8">
@@ -176,444 +171,96 @@
 
     </div>
 
-   
+    {{-- ================================ Modals ================================ --}}
 
-    {{-- <div class="absolute inset-0 bg-black/50">
-        <div class="flex flex-col items-center justify-center h-full">
-            <div class="w-11/12 max-w-2xl mx-auto rounded-lg shadow-xl p-0 relative min-h-[60vh] bg-red-500/50">
-                dsfl;''
-            </div>
-        </div>
-    </div> --}}
+    <div x-data="{ showCampaignsModal: @entangle('showCampaignsModal').live }" x-show="showCampaignsModal" x-cloak
+        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-90"
+        x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90"
+        class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
 
-    {{-- <dialog id="campaigns_modal" class="modal">
         <div
-            class="modal-box w-11/12 max-w-2xl mx-auto rounded-lg shadow-xl p-0 relative min-h-[60vh] md:min-h-0 md:top-1/4 md:left-1/2 md:-translate-x-1/2">
-            <form method="dialog">
-                <button
-                    class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 z-10 text-gray-500 hover:text-gray-700"
-                    id="close_campaigns_modal">✕</button>
-            </form>
+            class="w-full max-w-2xl mx-auto rounded-lg shadow-xl bg-white dark:bg-slate-800 p-6 flex flex-col max-h-[70vh]">
+            <div class="flex justify-between items-center mb-5">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white text-center flex-grow">
+                    Choose a track or playlist
+                </h2>
+                <button x-on:click="showCampaignsModal = false"
+                    class="btn btn-sm btn-circle bg-orange-500 hover:bg-orange-600 text-white hover:text-gray-200"
+                    id="close_campaigns_modal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
 
-            <div class="p-6 pb-4">
-                <h2 class="text-2xl font-bold text-gray-900 text-center mb-6">Choose a track or playlist</h2>
-
-                <div class="flex border-b border-gray-200 mb-6">
-                    <button id="tab-tracks"
-                        class="modal-tab-button flex-1 py-3 px-1 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 border-transparent text-gray-600 hover:text-red-600 focus:outline-none"
-                        data-tab="tracks">
+            @if ($showCampaignsModal)
+                <div class="flex mb-6">
+                    <button wire:click="selectModalTab('tracks')"
+                        class="flex-1 py-3 px-1 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:text-orange-700 focus:outline-none {{ $this->activeModalTab === 'tracks' ? 'border-b-orange-500 text-orange-600' : 'border-transparent text-gray-600' }}">
                         Tracks
                     </button>
-                    <button id="tab-playlist"
-                        class="modal-tab-button flex-1 py-3 px-1 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 border-transparent text-gray-600 hover:text-red-600 focus:outline-none"
-                        data-tab="playlist">
-                        Playlist
+                    <button wire:click="selectModalTab('playlists')"
+                        class="flex-1 py-3 px-1 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:text-orange-700 focus:outline-none {{ $this->activeModalTab === 'playlists' ? 'border-b-orange-500 text-orange-600' : 'border-transparent text-gray-600' }}">
+                        Playlists
                     </button>
                 </div>
 
-                <div id="tab-content-tracks" class="tab-content p-2">
-                    <div class="flex items-center justify-center h-48 bg-gray-50 rounded-md"
-                        id="tracks-loading-spinner">
-                        <span class="text-gray-400">Loading tracks...</span>
-                    </div>
-                    <div id="tracks-list-container">
-                    </div>
-                    <div class="hidden text-center text-gray-500 mt-4" id="tracks-not-found">
-                        No tracks found.
-                    </div>
+                <div class="flex-grow overflow-y-auto pr-2 -mr-2">
+
+                    @if ($this->activeModalTab === 'tracks')
+                        <div>
+                            @forelse ($tracks as $track)
+                                {{-- @dd($track) --}}
+                                <div
+                                    class="py-3 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg px-2 -mx-2 transition-colors duration-200">
+                                    <div class="flex-shrink-0">
+                                        <img class="h-12 w-12 rounded-lg object-cover"
+                                            src="{{ $track->artwork_url }}" alt="{{ $track->title }}" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                            {{ $track->title }}
+                                        </p>
+                                        <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                                            by
+                                            <strong class="text-orange-600">{{ $track->author_username }}</strong>
+                                            <span class="ml-1 text-xs text-gray-400">{{ $track->genre }}</span>
+                                        </p>
+                                        <span
+                                            class="inline-block bg-gray-200 dark:bg-slate-700 text-xs px-2 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-1">{{ $track->isrc }}</span>
+                                    </div>
+                                </div>
+                            @empty
+                                <div>No tracks found</div>
+                            @endforelse
+                        </div>
+                    @elseif($this->activeModalTab === 'playlists')
+                        <div>
+
+                            @forelse ($playlists as $playlist)
+                                <div
+                                    class="py-3 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg px-2 -mx-2 transition-colors duration-200">
+                                    <div class="flex-shrink-0">
+                                        <img class="h-12 w-12 rounded-lg object-cover"
+                                            src="{{ $playlist->artwork_url }}" alt="{{ $playlist->title }}" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                            {{ $playlist->title }}
+                                        </p>
+                                        <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                                            {{ $playlist->track_count }} tracks
+                                        </p>
+                                    </div>
+                                </div>
+                            @empty
+                                <div>No playlists found</div>
+                            @endforelse
+
+                        </div>
+                    @endif
                 </div>
-
-                <div id="tab-content-playlist" class="tab-content hidden p-2">
-                    <div class="flex items-center justify-center h-48 bg-gray-50 rounded-md"
-                        id="playlists-loading-spinner">
-                        <span class="text-gray-400">Loading playlists...</span>
-                    </div>
-                    <div id="playlists-list-container">
-                    </div>
-                    <div class="hidden text-center text-gray-500 mt-4" id="playlists-not-found">
-                        No playlists found.
-                    </div>
-                </div>
-            </div>
+            @endif
         </div>
-    </dialog> --}}
-
-    {{-- New Campaign Submission Modal --}}
-    <dialog id="campaign_submit_modal" class="modal">
-        <div class="modal-box w-11/12 max-w-2xl mx-auto rounded-lg shadow-xl p-0 relative">
-            <form method="dialog">
-                <button
-                    class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 z-10 text-gray-500 hover:text-gray-700"
-                    id="close_campaign_submit_modal">✕</button>
-            </form>
-
-            <div class="p-6">
-                <h2 class="text-2xl font-bold text-gray-900 text-center mb-6">{{ __('Create New Campaign') }}</h2>
-
-                <form id="campaign-create-form" class="space-y-6">
-                    @csrf {{-- Laravel CSRF token --}}
-
-                    <div class="mb-4">
-                        <label for="selected_media_info"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Selected:') }}</label>
-                        <p id="selected_media_info"
-                            class="mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white">
-                            No track/playlist selected.
-                        </p>
-                        <input type="hidden" name="target_type" id="campaign_target_type">
-                        <input type="hidden" name="target_id" id="campaign_target_id">
-                    </div>
-
-                    <div>
-                        <label for="campaign_title"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Campaign Title') }}
-                            <span class="text-red-500">*</span></label>
-                        <input type="text" id="campaign_title" name="campaign_title" required
-                            class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-orange-500 focus:border-orange-500">
-                    </div>
-
-                    <div>
-                        <label for="total_budget"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Total Budget (Credits)') }}
-                            <span class="text-red-500">*</span></label>
-                        <input type="number" id="total_budget" name="total_budget" required min="0"
-                            step="1"
-                            class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-orange-500 focus:border-orange-500">
-                    </div>
-
-                    <div>
-                        <label for="target_repost_count"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Target Repost Count') }}
-                            <span class="text-red-500">*</span></label>
-                        <input type="number" id="target_repost_count" name="target_repost_count" required
-                            min="1" step="1"
-                            class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-orange-500 focus:border-orange-500">
-                    </div>
-
-                    <div>
-                        <label for="description"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Description (Optional)') }}</label>
-                        <textarea id="description" name="description" rows="3"
-                            class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-orange-500 focus:border-orange-500"></textarea>
-                    </div>
-
-                    <div>
-                        <label for="expiration_date"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Expiration Date') }}
-                            <span class="text-red-500">*</span></label>
-                        <input type="date" id="expiration_date" name="expiration_date" required
-                            class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-orange-500 focus:border-orange-500">
-                    </div>
-
-                    <div class="flex justify-end pt-4">
-                        <button type="submit"
-                            class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-semibold transition-colors">
-                            {{ __('Create Campaign') }}
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </dialog>
-
-    @push('js')
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const campaignsModal = document.getElementById('campaigns_modal');
-                const campaignSubmitModal = document.getElementById('campaign_submit_modal');
-                const modalTabButtons = document.querySelectorAll('#campaigns_modal .modal-tab-button');
-                const modalTabContents = document.querySelectorAll('#campaigns_modal .tab-content');
-
-                const tracksListContainer = document.getElementById('tracks-list-container');
-                const tracksLoadingSpinner = document.getElementById('tracks-loading-spinner');
-                const tracksNotFoundMessage = document.getElementById('tracks-not-found');
-
-                const playlistsListContainer = document.getElementById('playlists-list-container');
-                const playlistsLoadingSpinner = document.getElementById('playlists-loading-spinner');
-                const playlistsNotFoundMessage = document.getElementById('playlists-not-found');
-
-                const mainTabButtons = document.querySelectorAll('nav.-mb-px .tab-button');
-                const allCampaignCards = document.querySelectorAll('.campaign-card');
-
-                // Form elements for the submission modal
-                const selectedMediaInfo = document.getElementById('selected_media_info');
-                const campaignTargetTypeInput = document.getElementById('campaign_target_type');
-                const campaignTargetIdInput = document.getElementById('campaign_target_id');
-                const campaignCreateForm = document.getElementById('campaign-create-form');
-
-                const tracksRoute = "{{ route('user.cm.campaigns.tracks') }}";
-                const playlistsRoute = "{{ route('user.cm.campaigns.playlists') }}";
-                // Note the placeholder in the base route for playlist tracks
-                const playlistTracksRouteBase =
-                    "{{ route('user.cm.campaigns.playlist.tracks', ['playlistId' => ':playlistId']) }}";
-                const storeCampaignRoute = "{{ route('user.cm.campaigns.store') }}";
-
-                let currentActiveModalTab = 'tracks';
-
-                // Function to set the active tab and trigger data fetch for the modal
-                function setActiveModalTab(tabId) {
-                    currentActiveModalTab = tabId.replace('tab-', '');
-
-                    modalTabButtons.forEach(button => {
-                        button.classList.remove('border-red-500', 'text-red-600');
-                        button.classList.add('border-transparent', 'text-gray-600');
-                    });
-                    modalTabContents.forEach(content => {
-                        content.classList.add('hidden');
-                    });
-
-                    const activeTabButton = document.getElementById(tabId);
-                    activeTabButton.classList.remove('border-transparent', 'text-gray-600');
-                    activeTabButton.classList.add('border-red-500', 'text-red-600');
-
-                    const activeContentId = `tab-content-${currentActiveModalTab}`;
-                    document.getElementById(activeContentId).classList.remove('hidden');
-
-                    if (currentActiveModalTab === 'tracks') {
-                        fetchTracks();
-                    } else if (currentActiveModalTab === 'playlist') {
-                        fetchPlaylists();
-                    }
-                }
-
-                // Add click event listeners to tabs within the modal
-                modalTabButtons.forEach(button => {
-                    button.addEventListener('click', () => {
-                        setActiveModalTab(button.id);
-                    });
-                });
-
-                // Function to handle fetching and displaying tracks
-                function fetchTracks() {
-                    tracksLoadingSpinner.classList.remove('hidden');
-                    tracksListContainer.innerHTML = ''; // Clear previous content
-                    tracksNotFoundMessage.classList.add('hidden');
-
-                    axios.post(tracksRoute)
-                        .then(response => {
-                            tracksLoadingSpinner.classList.add('hidden');
-                            const tracks = response.data.tracks; // Access the 'tracks' key from the response
-                            console.log('Fetched tracks:', tracks);
-
-                            if (tracks && tracks.length > 0) {
-                                let htmlContent = '<ul class="divide-y divide-gray-200 dark:divide-gray-700">';
-                                tracks.forEach(track => {
-                                    htmlContent += `
-                                        <li class="py-3 flex items-center space-x-4">
-                                            <div class="flex-shrink-0">
-                                                <img class="h-12 w-12 rounded-lg object-cover" src="${track.artwork_url}" alt="${track.title || 'Track Image'}">
-                                            </div>
-                                            <div class="flex-1 min-w-0">
-                                                <p class="text-sm font-medium text-gray-900 truncate dark:text-white">${track.title || 'Untitled Track'}</p>
-                                                <p class="text-sm text-gray-500 truncate dark:text-gray-400">by <strong>${track.author_username || 'Unknown Artist'}</strong> <span class="ml-1 text-xs">${track.genre || ''}</span></p>
-                                                <span class="inline-block bg-gray-200 text-xs px-2 py-1 rounded-full">${track.isrc || 'N/A'}</span>
-                                            </div>
-                                            <div>
-                                                <button class="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-full select-track-btn" data-id="${track.id}" data-title="${track.title}" data-type="track">Select</button>
-                                            </div>
-                                        </li>
-                                    `;
-                                });
-                                htmlContent += '</ul>';
-                                tracksListContainer.innerHTML = htmlContent;
-                            } else {
-                                tracksNotFoundMessage.classList.remove('hidden');
-                            }
-                        })
-                        .catch(error => {
-                            tracksLoadingSpinner.classList.add('hidden');
-                            console.error('Error fetching tracks:', error);
-                            tracksNotFoundMessage.classList.remove('hidden');
-                            tracksListContainer.innerHTML =
-                                `<p class="text-red-500 text-center mt-4">Error loading tracks. Please try again.</p>`;
-                        });
-                }
-
-                // Function to handle fetching and displaying playlists
-                function fetchPlaylists() {
-                    playlistsLoadingSpinner.classList.remove('hidden');
-                    playlistsListContainer.innerHTML = ''; // Clear previous content
-                    playlistsNotFoundMessage.classList.add('hidden');
-
-                    axios.post(playlistsRoute)
-                        .then(response => {
-                            playlistsLoadingSpinner.classList.add('hidden');
-                            const playlists = response.data
-                                .playlists; // Access the 'playlists' key from the response
-                            console.log('Fetched playlists:', playlists);
-
-                            if (playlists && playlists.length > 0) {
-                                let htmlContent = '<ul class="divide-y divide-gray-200 dark:divide-gray-700">';
-                                playlists.forEach(playlist => {
-                                    htmlContent += `
-                                        <li class="py-3 flex items-center space-x-4">
-                                            <div class="flex-shrink-0">
-                                                <img class="h-12 w-12 rounded-lg object-cover" src="${playlist.artwork_url || '{{ asset('frontend/user/image/music-notes.jpg') }}'}" alt="${playlist.title || 'Playlist Image'}">
-                                            </div>
-                                            <div class="flex-1 min-w-0">
-                                                <p class="text-sm font-medium text-gray-900 truncate dark:text-white">${playlist.title || 'Untitled Playlist'}</p>
-                                                <p class="text-sm text-gray-500 truncate dark:text-gray-400">${playlist.track_count || 0} tracks</p>
-                                            </div>
-                                            <div>
-                                                <button class="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-full select-playlist-btn" data-id="${playlist.id}" data-title="${playlist.title}" data-type="playlist">Select</button>
-                                            </div>
-                                        </li>
-                                    `;
-                                });
-                                htmlContent += '</ul>';
-                                playlistsListContainer.innerHTML = htmlContent;
-                            } else {
-                                playlistsNotFoundMessage.classList.remove('hidden');
-                            }
-                        })
-                        .catch(error => {
-                            playlistsLoadingSpinner.classList.add('hidden');
-                            console.error('Error fetching playlists:', error);
-                            playlistsNotFoundMessage.classList.remove('hidden');
-                            playlistsListContainer.innerHTML =
-                                `<p class="text-red-500 text-center mt-4">Error loading playlists. Please try again.</p>`;
-                        });
-                }
-
-                // New function to fetch and display tracks for a selected playlist
-                function fetchPlaylistTracks(playlistId, playlistTitle) {
-                    const url = playlistTracksRouteBase.replace(':playlistId', playlistId);
-                    campaignsModal.close(); // Close the initial selection modal
-
-                    // Open the submit modal and show loading state or direct user
-                    campaignSubmitModal.showModal();
-                    selectedMediaInfo.textContent = `Loading tracks for playlist: ${playlistTitle}...`;
-                    campaignTargetTypeInput.value = 'playlist'; // Set the type in the form
-                    campaignTargetIdInput.value = playlistId; // Set the ID in the form
-
-                    axios.post(url)
-                        .then(response => {
-                            const tracks = response.data.tracks;
-                            console.log('Fetched playlist tracks:', tracks);
-                            if (tracks && tracks.length > 0) {
-                                let trackListHtml =
-                                    `<p class="text-gray-700 dark:text-gray-300 mb-2">Tracks in "${playlistTitle}":</p><ul class="list-disc list-inside text-gray-600 dark:text-gray-400">`;
-                                tracks.forEach(track => {
-                                    trackListHtml +=
-                                        `<li>${track.title || 'Untitled Track'} by ${track.author_username || 'Unknown Artist'}</li>`;
-                                });
-                                trackListHtml += '</ul>';
-                                selectedMediaInfo.innerHTML =
-                                    `Selected Playlist: <strong>${playlistTitle}</strong><br>` + trackListHtml;
-                            } else {
-                                selectedMediaInfo.innerHTML =
-                                    `Selected Playlist: <strong>${playlistTitle}</strong><br><span class="text-red-500">No tracks found in this playlist.</span>`;
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error fetching playlist tracks:', error);
-                            selectedMediaInfo.innerHTML =
-                                `Selected Playlist: <strong>${playlistTitle}</strong><br><span class="text-red-500">Error loading playlist tracks.</span>`;
-                        });
-                }
-
-
-                // Add an event listener to the "New Campaign" button to initialize the modal content
-                document.querySelector('button[onclick="campaigns_modal.showModal()"]').addEventListener('click',
-                    () => {
-                        setActiveModalTab('tab-tracks'); // Default to tracks when modal opens
-                    });
-
-                // --- Main Page Tabs Filtering ---
-                mainTabButtons.forEach(button => {
-                    button.addEventListener('click', function() {
-                        // Remove 'active' class and styles from all main tabs
-                        mainTabButtons.forEach(btn => {
-                            btn.classList.remove('active', 'border-orange-500',
-                                'text-orange-600', 'translateY(-1px)');
-                            btn.classList.add('border-transparent', 'text-gray-500',
-                                'hover:text-gray-700', 'hover:border-gray-300');
-                        });
-
-                        // Add 'active' class and styles to the clicked tab
-                        this.classList.add('active', 'border-orange-500', 'text-orange-600',
-                            'translateY(-1px)');
-                        this.classList.remove('border-transparent', 'text-gray-500',
-                            'hover:text-gray-700', 'hover:border-gray-300');
-
-                        const filterStatus = this.dataset.tab; // 'all', 'Active', 'Completed'
-
-                        allCampaignCards.forEach(card => {
-                            const campaignStatus = card.dataset.status;
-                            if (filterStatus === 'all' || campaignStatus === filterStatus) {
-                                card.classList.remove('hidden');
-                            } else {
-                                card.classList.add('hidden');
-                            }
-                        });
-                    });
-                });
-
-                // Event delegation for select buttons in the initial modal (as they are added dynamically)
-                campaignsModal.addEventListener('click', (event) => {
-                    if (event.target.classList.contains('select-track-btn')) {
-                        const trackId = event.target.dataset.id;
-                        const trackTitle = event.target.dataset.title;
-                        const targetType = event.target.dataset.type; // 'track'
-
-                        campaignsModal.close(); // Close the first modal
-                        campaignSubmitModal.showModal(); // Open the submission modal
-
-                        selectedMediaInfo.textContent = `Selected Track: ${trackTitle}`;
-                        campaignTargetTypeInput.value = targetType;
-                        campaignTargetIdInput.value = trackId;
-
-                    } else if (event.target.classList.contains('select-playlist-btn')) {
-                        const playlistId = event.target.dataset.id;
-                        const playlistTitle = event.target.dataset.title;
-                        const targetType = event.target.dataset.type; // 'playlist'
-
-                        // Instead of directly showing the submit modal, fetch playlist tracks first
-                        fetchPlaylistTracks(playlistId, playlistTitle);
-                    }
-                });
-
-                // Handle Campaign Submission
-                campaignCreateForm.addEventListener('submit', function(event) {
-                    event.preventDefault(); // Prevent default form submission
-
-                    const formData = new FormData(this); // Get form data
-                    const submitButton = this.querySelector('button[type="submit"]');
-                    submitButton.disabled = true;
-                    submitButton.textContent = 'Creating...';
-
-                    axios.post(storeCampaignRoute, formData)
-                        .then(response => {
-                            console.log('Campaign created successfully:', response.data);
-                            alert('Campaign created successfully!');
-                            campaignSubmitModal.close();
-                            // Optionally, refresh the page or update the campaigns list
-                            window.location.reload();
-                        })
-                        .catch(error => {
-                            console.error('Error creating campaign:', error.response ? error.response.data :
-                                error.message);
-                            const errorMessage = error.response && error.response.data && error.response
-                                .data.message ?
-                                error.response.data.message : 'An unexpected error occurred.';
-                            alert('Error creating campaign: ' + errorMessage);
-
-                            // Display validation errors if available
-                            if (error.response && error.response.data && error.response.data.errors) {
-                                let errors = '';
-                                for (const key in error.response.data.errors) {
-                                    errors += error.response.data.errors[key].join('\n') + '\n';
-                                }
-                                alert('Validation Errors:\n' + errors);
-                            }
-                        })
-                        .finally(() => {
-                            submitButton.disabled = false;
-                            submitButton.textContent = 'Create Campaign';
-                        });
-                });
-            });
-        </script>
-    @endpush
+    </div>
 
 </section>

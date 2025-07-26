@@ -6,26 +6,44 @@ use App\Models\Campaign;
 use App\Models\Track;
 use App\Models\Playlist;
 use Livewire\Component;
-use Illuminate\Support\Facades\Auth; // Import Auth facade for user authentication check
 
 class MyCampaign extends Component
 {
-    // Properties to hold campaign data and control UI state
     public $campaigns;
     public $activeMainTab = 'all';
 
-    public $showCampaignsModal = false;
-    public $showCampaignSubmitModal = false;
-    public $showCampaignDetailsModal = false;
-    public $campaignDetails = null;
-
-    public $activeModalTab = 'tracks';
+    public bool $showCampaignsModal = false;
+    public string $activeModalTab = 'tracks';
 
     public $tracks = [];
     public $playlists = [];
-    public $tracksNotFound = false;
-    public $playlistsNotFound = false;
 
+    public function toggleCampaignsModal()
+    {
+        $this->showCampaignsModal = !$this->showCampaignsModal;
+        $this->activeModalTab = 'tracks';
+        $this->selectModalTab($this->activeModalTab);
+    }
+
+    public function selectModalTab($tab)
+    {
+        $this->activeModalTab = $tab;
+        if ($tab == 'tracks') {
+            $this->fetchTracks();
+        } else if ($tab == 'playlists') {
+            $this->fetchPlaylists();
+        }
+    }
+
+    public function fetchTracks()
+    {
+        $this->tracks = Track::where('user_urn', user()->urn)->latest()->get();
+    }
+
+    public function fetchPlaylists()
+    {
+        $this->playlists = Playlist::where('user_urn', user()->urn)->latest()->get();
+    }
 
     public function mount()
     {
