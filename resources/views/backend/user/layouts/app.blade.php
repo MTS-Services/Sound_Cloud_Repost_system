@@ -21,7 +21,7 @@
             }
         })();
     </script>
-    
+    <link rel="stylesheet" href="{{ asset('assets/frontend/css/custome.css') }}">
     <!-- Scripts -->
     <script src="{{ asset('assets/js/toggle-theme.js') }}"></script>
     {{-- <script src="{{ asset('assets/frontend/js/custome.js') }}"></script> --}}
