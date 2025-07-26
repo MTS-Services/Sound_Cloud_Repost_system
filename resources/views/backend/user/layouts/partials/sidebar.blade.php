@@ -76,6 +76,14 @@
                     <span>{{ __('Mamber') }}</span>
                 </a>
             </li>
+             <li>
+                <a href="{{ route('user.mm.mambers.request') }}"
+                    class="@if ($page_slug == 'request') active @endif sidebar-item dark:hover:text-gray-800  flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700 dark:text-gray-200"
+                    data-page="request">
+                    <i data-lucide="mail" class="w-5 h-5 mr-3"></i>
+                    <span>{{ __('Request') }}</span>
+                </a>
+            </li>
             <li>
                 <a href="{{ route('user.analytics') }}"
                     class="@if ($page_slug == 'analytics') active @endif sidebar-item dark:hover:text-gray-800  flex items-center px-3 py-3 rounded-lg cursor-pointer text-gray-700 dark:text-gray-200"

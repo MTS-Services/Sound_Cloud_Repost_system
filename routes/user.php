@@ -45,6 +45,9 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     Route::group(['as' => 'mm.', 'prefix' => 'mamber-management'], function () {
         // Mamber Routes
         Route::get('/mambers', [MamberController::class, 'index'])->name('mambers.index');
+        Route::get('/mambers/request', [MamberController::class, 'request'])->name('mambers.request');
+        Route::post('/confirm/repost/{id}', [MamberController::class, 'confirmRepost'])->name('repost.confirm');
+
      
     });
 

@@ -29,7 +29,7 @@
           <div>
             <h2 class="text-3xl font-bold text-black dark:text-white">{{ $credit->credits }}</h2>
             <p class="text-gray-600 dark:text-white text-sm">Credits</p>
-            <p class="text-gray-400 dark:text-white text-xs mt-1">for the price of 1750</p>
+            <p class="text-gray-400 dark:text-white text-xs mt-1 mb-6">for the price of 1750</p>
           </div>
           <div class="text-2xl font-bold text-gray-800 dark:text-white">${{ number_format($credit->price, 2) }}</div>
          <a href="#"
