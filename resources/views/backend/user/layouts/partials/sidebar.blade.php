@@ -25,7 +25,7 @@
 
     <!-- Nav Section -->
     <nav class="flex-1 overflow-y-auto px-3 py-4">
-        <ul class="">
+        <ul class="space-y-1">
             <li>
                 <a href="{{ route('user.dashboard') }}"
                     class="sidebar-item flex items-center px-3 py-2.5 rounded-lg  transition-colors
