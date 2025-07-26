@@ -22,17 +22,19 @@
             }
         })();
     </script>
-
+<!-- Scripts -->
     <script src="{{ asset('assets/js/toggle-theme.js') }}"></script>
     <script src="{{ asset('assets/frontend/js/custome.js') }}"></script>
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
-   
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     {{-- @vite(['resources/css/dashboard.css', 'resources/js/app.js']) --}}
     @vite(['resources/css/user-dashboard.css', 'resources/js/app.js'])
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-   
+    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
     <script>
         const content_image_upload_url = '{{ route('file.ci_upload') }}';
+    </script>
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             @if (session('success'))
                 showAlert('success', "{!! session('success') !!}");
@@ -48,8 +50,7 @@
         });
     </script>
 
-    @stack('css')
-    @livewireStyles
+    @stack('cs')
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-black" x-data="{ sidebarOpen: false }">
@@ -63,9 +64,8 @@
             {{ $slot }}
         </div>
     </div>
- <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
     @stack('js')
-    @livewireScripts
 </body>
 
 </html>
