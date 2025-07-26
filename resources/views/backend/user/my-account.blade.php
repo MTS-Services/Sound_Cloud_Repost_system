@@ -4,38 +4,43 @@
         <div class="min-h-screen bg-white dark:bg-slate-900">
             <!-- Header Section -->
             <div class="bg-gradient-to-r from-gray-100 to-gray-200 dark:from-slate-800 dark:to-slate-700 relative">
-                <div class="absolute inset-0 dark:bg-black   bg-opacity-10 dark:bg-opacity-30"></div>
-                <div class="relative p-6">
+                <div class="absolute inset-0 dark:bg-black bg-opacity-10 dark:bg-opacity-30"></div>
+                <div class="relative p-4 sm:p-6">
+                    <div class="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-6">
+                        <!-- Avatar -->
+                        <div class="flex-shrink-0 mx-auto sm:mx-0">
+                            <img src="{{ user()->avatar }}" alt="{{ user()->name ?? 'name' }}"
+                                class="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white dark:border-gray-300 shadow-lg">
+                        </div>
 
-
-                    <div class="flex items-start space-x-6">
-                        <img src="{{ user()->avatar }}" alt="{{ user()->name ?? 'name' }}"
-                            class="w-32 h-32 rounded-full border-4 border-white dark:border-gray-300 shadow-lg">
-                        <div class="flex-1 pt-4">
-                            <div class="flex items-center space-x-4 mb-2">
-                                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ user()->name ?? 'name' }}</h1>
+                        <!-- User Info -->
+                        <div class="flex-1 text-center w-full sm:text-left ml-0 sm:ml-4">
+                            <div
+                                class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 mb-2">
+                                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                                    {{ user()->name ?? 'name' }}</h1>
                                 <span
-                                    class="px-3 py-1 bg-orange-500 dark:bg-orange-400 text-white dark:text-gray-900 text-sm font-medium rounded-full">
+                                    class="px-3 py-1 bg-orange-500 dark:bg-orange-400 text-white dark:text-gray-900 text-sm font-medium rounded-full self-center">
                                     NETWORK RANK
                                 </span>
                             </div>
-                            <p class="text-xl text-gray-600 dark:text-slate-200 mb-4">7,004 Followers</p>
-                            <div class="flex items-center space-x-6 text-gray-500 dark:text-slate-300 text-sm">
+                            <p class="text-lg sm:text-xl text-gray-600 dark:text-slate-200 mb-4">7,004 Followers</p>
+                            <div
+                                class="flex flex-col xs:flex-row items-center space-y-2 xs:space-y-0 xs:space-x-4 sm:space-x-6 text-gray-500 dark:text-slate-300 text-xs sm:text-sm">
                                 <div class="flex items-center space-x-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
-                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="w-4 h-4">
-                                        <path d="M8 2v4"></path>
-                                        <path d="M16 2v4"></path>
-                                        <rect width="18" height="18" x="3" y="4" rx="2"></rect>
-                                        <path d="M3 10h18"></path>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                        stroke="#5c6b80   " stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <rect x="3" y="5" width="18" height="16" rx="2" />
+                                        <path d="M16 3v4M8 3v4M3 9h18" />
                                     </svg>
+
                                     <span>MEMBER SINCE JAN 2022</span>
                                 </div>
                                 <div class="flex items-center space-x-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="w-4 h-4">
+                                        stroke-linejoin="round" class="w-3 h-3 sm:w-4 sm:h-4">
                                         <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
                                         <circle cx="12" cy="10" r="3"></circle>
                                     </svg>
@@ -43,12 +48,15 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="flex items-center space-x-3">
+
+                        <!-- Buttons -->
+                        <div
+                            class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
                             <button
-                                class="bg-gray-300 hover:bg-gray-400 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-900 dark:text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+                                class="bg-gray-300 hover:bg-gray-400 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-900 dark:text-white px-3 py-1 sm:px-4 sm:py-2 rounded-lg transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="w-4 h-4">
+                                    stroke-linejoin="round" class="w-3 h-3 sm:w-4 sm:h-4">
                                     <path d="M15 3h6v6"></path>
                                     <path d="M10 14 21 3"></path>
                                     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -56,10 +64,10 @@
                                 <span>Visit on SoundCloud</span>
                             </button>
                             <button
-                                class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+                                class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 sm:px-4 sm:py-2 rounded-lg transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="w-4 h-4">
+                                    stroke-linejoin="round" class="w-3 h-3 sm:w-4 sm:h-4">
                                     <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                     <path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"></path>
                                 </svg>
@@ -70,56 +78,56 @@
                 </div>
             </div>
 
-            <div class="p-6">
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div class="p-4 sm:p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
                     <!-- Sidebar -->
-                    <div class="lg:col-span-1 space-y-6">
+                    <div class="lg:col-span-1 space-y-4 sm:space-y-6">
                         <div
-                            class="bg-gray-100 dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
-                            <h3 class="text-gray-900 dark:text-white font-semibold mb-4">About</h3>
-                            <p class="text-gray-600 dark:text-slate-300 text-sm mb-4">
+                            class="bg-gray-100 dark:bg-slate-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-slate-700">
+                            <h3 class="text-gray-900 dark:text-white font-semibold mb-3 sm:mb-4">About</h3>
+                            <p class="text-gray-600 dark:text-slate-300 text-xs sm:text-sm mb-3 sm:mb-4">
                                 I'm a Pop Producer...I make instrumental beats, mostly for rappers or singers. And
                                 Supporting Artists & Band Career Development. I hope you enjoy my music. Visit
                                 my website - https://www.grooveentertainments.com
                             </p>
-                            <p class="text-gray-500 dark:text-slate-400 text-sm">Bio from <span
+                            <p class="text-gray-500 dark:text-slate-400 text-xs">Bio from <span
                                     class="text-orange-500 dark:text-orange-400">SOUNDCLOUD</span></p>
                         </div>
 
                         <div
-                            class="bg-gray-100 dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
-                            <h3 class="text-gray-900 dark:text-white font-semibold mb-4">Genres</h3>
-                            <div class="space-y-2">
+                            class="bg-gray-100 dark:bg-slate-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-slate-700">
+                            <h3 class="text-gray-900 dark:text-white font-semibold mb-3 sm:mb-4">Genres</h3>
+                            <div class="grid grid-cols-2 sm:grid-cols-1 gap-2">
                                 <div class="bg-gray-200 dark:bg-slate-700 px-3 py-2 rounded-lg">
-                                    <span class="text-gray-600 dark:text-slate-300 text-sm">Hip-Hop</span>
+                                    <span class="text-gray-600 dark:text-slate-300 text-xs sm:text-sm">Hip-Hop</span>
                                 </div>
                                 <div class="bg-gray-200 dark:bg-slate-700 px-3 py-2 rounded-lg">
-                                    <span class="text-gray-600 dark:text-slate-300 text-sm">Pop</span>
+                                    <span class="text-gray-600 dark:text-slate-300 text-xs sm:text-sm">Pop</span>
                                 </div>
                                 <div class="bg-gray-200 dark:bg-slate-700 px-3 py-2 rounded-lg">
-                                    <span class="text-gray-600 dark:text-slate-300 text-sm">Electronic</span>
+                                    <span class="text-gray-600 dark:text-slate-300 text-xs sm:text-sm">Electronic</span>
                                 </div>
                             </div>
                         </div>
 
                         <div
-                            class="bg-gray-100 dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
-                            <h3 class="text-gray-900 dark:text-white font-semibold mb-4">Badges Awarded</h3>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div class="bg-gray-200 dark:bg-slate-700 rounded-lg p-4 text-center">
-                                    <div class="text-2xl mb-2">👥</div>
+                            class="bg-gray-100 dark:bg-slate-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-slate-700">
+                            <h3 class="text-gray-900 dark:text-white font-semibold mb-3 sm:mb-4">Badges Awarded</h3>
+                            <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                                <div class="bg-gray-200 dark:bg-slate-700 rounded-lg p-3 sm:p-4 text-center">
+                                    <div class="text-xl sm:text-2xl mb-1 sm:mb-2">👥</div>
                                     <h4 class="text-gray-900 dark:text-white font-medium text-xs">Quality Followers</h4>
                                 </div>
-                                <div class="bg-gray-200 dark:bg-slate-700 rounded-lg p-4 text-center">
-                                    <div class="text-2xl mb-2">⭐</div>
+                                <div class="bg-gray-200 dark:bg-slate-700 rounded-lg p-3 sm:p-4 text-center">
+                                    <div class="text-xl sm:text-2xl mb-1 sm:mb-2">⭐</div>
                                     <h4 class="text-gray-900 dark:text-white font-medium text-xs">Top Follower</h4>
                                 </div>
-                                <div class="bg-gray-200 dark:bg-slate-700 rounded-lg p-4 text-center">
-                                    <div class="text-2xl mb-2">📅</div>
+                                <div class="bg-gray-200 dark:bg-slate-700 rounded-lg p-3 sm:p-4 text-center">
+                                    <div class="text-xl sm:text-2xl mb-1 sm:mb-2">📅</div>
                                     <h4 class="text-gray-900 dark:text-white font-medium text-xs">Be Da Regular</h4>
                                 </div>
-                                <div class="bg-gray-200 dark:bg-slate-700 rounded-lg p-4 text-center">
-                                    <div class="text-2xl mb-2">⚡</div>
+                                <div class="bg-gray-200 dark:bg-slate-700 rounded-lg p-3 sm:p-4 text-center">
+                                    <div class="text-xl sm:text-2xl mb-1 sm:mb-2">⚡</div>
                                     <h4 class="text-gray-900 dark:text-white font-medium text-xs">Power User</h4>
                                 </div>
                             </div>
@@ -127,26 +135,27 @@
                     </div>
 
                     <!-- Main Content -->
-                    <div class="lg:col-span-3 space-y-6">
+                    <div class="lg:col-span-3 space-y-4 sm:space-y-6">
                         <!-- Tab Navigation -->
-                        <div class="flex space-x-8 border-b border-gray-200 dark:border-slate-700" id="tabNav">
+                        <div class="flex overflow-x-auto pb-1 sm:pb-0 space-x-4 sm:space-x-8 border-b border-gray-200 dark:border-slate-700"
+                            id="tabNav">
                             <button type="button"
-                                class="tab-btn pb-4 px-1 text-sm font-medium border-b-2 transition-colors text-orange-500 dark:text-orange-400 border-orange-500 dark:border-orange-400"
+                                class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium border-b-2 transition-colors text-orange-500 dark:text-orange-400 border-orange-500 dark:border-orange-400 whitespace-nowrap"
                                 data-tab="tracks">
                                 Tracks
                             </button>
                             <button type="button"
-                                class="tab-btn pb-4 px-1 text-sm font-medium border-b-2 transition-colors text-gray-500 dark:text-slate-400 border-transparent hover:text-gray-900 dark:hover:text-white"
+                                class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium border-b-2 transition-colors text-gray-500 dark:text-slate-400 border-transparent hover:text-gray-900 dark:hover:text-white whitespace-nowrap"
                                 data-tab="playlists">
                                 Playlists
                             </button>
                             <button type="button"
-                                class="tab-btn pb-4 px-1 text-sm font-medium border-b-2 transition-colors text-gray-500 dark:text-slate-400 border-transparent hover:text-gray-900 dark:hover:text-white"
+                                class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium border-b-2 transition-colors text-gray-500 dark:text-slate-400 border-transparent hover:text-gray-900 dark:hover:text-white whitespace-nowrap"
                                 data-tab="reposts">
                                 Recent reposts
                             </button>
                             <button type="button"
-                                class="tab-btn pb-4 px-1 text-sm font-medium border-b-2 transition-colors text-gray-500 dark:text-slate-400 border-transparent hover:text-gray-900 dark:hover:text-white"
+                                class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium border-b-2 transition-colors text-gray-500 dark:text-slate-400 border-transparent hover:text-gray-900 dark:hover:text-white whitespace-nowrap"
                                 data-tab="starred">
                                 Starred members
                             </button>
@@ -156,28 +165,24 @@
                         <div id="tabContent">
                             <!-- Tracks Tab -->
                             <div class="tab-panel" id="tracks">
-                                <div class="flex items-center justify-between mb-6">
-                                    <h2 class="text-gray-900 dark:text-white text-xl font-semibold">New & popular
-                                        tracks from Bhathiya Udara</h2>
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6">
+                                    <h2
+                                        class="text-gray-900 dark:text-white text-lg sm:text-xl font-semibold mb-2 sm:mb-0">
+                                        New & popular tracks from Bhathiya Udara</h2>
                                     <a href="#"
-                                        class="text-orange-500 dark:text-orange-400 hover:text-orange-400 dark:hover:text-orange-500 text-sm flex items-center space-x-1">
+                                        class="text-orange-500 dark:text-orange-400 hover:text-orange-400/90 dark:hover:text-orange-300 text-xs sm:text-sm flex items-center space-x-1">
                                         <span>Show all tracks on Soundcloud</span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                            fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
-                                            <path d="M15 3h6v6"></path>
-                                            <path d="M10 14 21 3"></path>
-                                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        </svg>
+                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link w-4 h-4"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>
                                     </a>
                                 </div>
 
-                                <div class="space-y-4">
+                                <div class="space-y-3 sm:space-y-4">
                                     <!-- Track Card 1 -->
                                     <div
-                                        class="bg-gray-100 dark:bg-slate-800 rounded-lg p-4 border border-gray-200 dark:border-slate-700">
-                                        <div class="flex items-center space-x-4">
-                                            <div class="relative">
+                                        class="bg-gray-100 dark:bg-slate-800 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-slate-700">
+                                        <div
+                                            class="flex flex-col xs:flex-row xs:items-center space-y-3 xs:space-y-0 xs:space-x-3 sm:space-x-4">
+                                            <div class="relative flex-shrink-0 mx-auto xs:mx-0">
                                                 <img src="https://images.pexels.com/photos/1540338/pexels-photo-1540338.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop"
                                                     alt="Sexy - Fashion - Promo" class="w-16 h-16 rounded-lg">
                                                 <button
@@ -191,42 +196,44 @@
                                                     </svg>
                                                 </button>
                                             </div>
-                                            <div class="flex-1">
-                                                <h4 class="text-gray-900 dark:text-white font-medium mb-1">Sexy -
-                                                    Fashion - Promo</h4>
-                                                <p class="text-gray-500 dark:text-slate-400 text-sm mb-2">Bhathiya
-                                                    Udara</p>
-                                                <div class="flex items-center space-x-1 h-8 mb-2">
+                                            <div class="flex-1 min-w-0 ml-0 sm:ml-4">
+                                                <h4 class="text-gray-900 dark:text-white font-medium mb-1 truncate">
+                                                    Sexy - Fashion - Promo</h4>
+                                                <p class="text-gray-500 dark:text-slate-400 text-xs sm:text-sm mb-2">
+                                                    Bhathiya Udara</p>
+                                                <div class="flex items-center space-x-1 h-6 sm:h-8 mb-2">
+                                                    <div class="bg-gray-300 dark:bg-slate-600 flex-1"
+                                                        style="height: 16px; border-radius: 1px;"></div>
                                                     <div class="bg-gray-300 dark:bg-slate-600 flex-1"
                                                         style="height: 21px; border-radius: 1px;"></div>
                                                     <div class="bg-gray-300 dark:bg-slate-600 flex-1"
-                                                        style="height: 26px; border-radius: 1px;"></div>
+                                                        style="height: 10px; border-radius: 1px;"></div>
                                                     <div class="bg-gray-300 dark:bg-slate-600 flex-1"
-                                                        style="height: 13px; border-radius: 1px;"></div>
-                                                    <div class="bg-gray-300 dark:bg-slate-600 flex-1"
-                                                        style="height: 12px; border-radius: 1px;"></div>
+                                                        style="height: 9px; border-radius: 1px;"></div>
                                                 </div>
                                             </div>
-                                            <div class="flex items-center space-x-4">
+                                            <div
+                                                class="flex items-center justify-between xs:justify-end space-x-2 sm:space-x-4">
                                                 <button
                                                     class="text-gray-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
-                                                    <span class="text-sm">♡ 187</span>
+                                                    <span class="text-xs sm:text-sm">♡ 187</span>
                                                 </button>
                                                 <button
                                                     class="text-gray-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
-                                                    <span class="text-sm">🔄 68</span>
+                                                    <span class="text-xs sm:text-sm">🔄 68</span>
                                                 </button>
                                                 <button
-                                                    class="text-orange-500 dark:text-orange-400 hover:text-orange-400 dark:hover:text-orange-500 text-sm">Share</button>
+                                                    class="text-orange-500 dark:text-orange-400 hover:text-orange-400 dark:hover:text-orange-500 text-xs sm:text-sm whitespace-nowrap">Share</button>
                                             </div>
                                         </div>
                                     </div>
 
                                     <!-- Track Card 2 -->
                                     <div
-                                        class="bg-gray-100 dark:bg-slate-800 rounded-lg p-4 border border-gray-200 dark:border-slate-700">
-                                        <div class="flex items-center space-x-4">
-                                            <div class="relative">
+                                        class="bg-gray-100 dark:bg-slate-800 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-slate-700">
+                                        <div
+                                            class="flex flex-col xs:flex-row xs:items-center space-y-3 xs:space-y-0 xs:space-x-3 sm:space-x-4">
+                                            <div class="relative flex-shrink-0 mx-auto xs:mx-0">
                                                 <img src="https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop"
                                                     alt="Drop - To - Me" class="w-16 h-16 rounded-lg">
                                                 <button
@@ -240,33 +247,34 @@
                                                     </svg>
                                                 </button>
                                             </div>
-                                            <div class="flex-1">
-                                                <h4 class="text-gray-900 dark:text-white font-medium mb-1">Drop - To -
-                                                    Me</h4>
-                                                <p class="text-gray-500 dark:text-slate-400 text-sm mb-2">Bhathiya
-                                                    Udara</p>
-                                                <div class="flex items-center space-x-1 h-8 mb-2">
+                                            <div class="flex-1 min-w-0 ml-0 sm:ml-4">
+                                                <h4 class="text-gray-900 dark:text-white font-medium mb-1 truncate">
+                                                    Drop - To - Me</h4>
+                                                <p class="text-gray-500 dark:text-slate-400 text-xs sm:text-sm mb-2">
+                                                    Bhathiya Udara</p>
+                                                <div class="flex items-center space-x-1 h-6 sm:h-8 mb-2">
+                                                    <div class="bg-gray-300 dark:bg-slate-600 flex-1"
+                                                        style="height: 16px; border-radius: 1px;"></div>
                                                     <div class="bg-gray-300 dark:bg-slate-600 flex-1"
                                                         style="height: 21px; border-radius: 1px;"></div>
                                                     <div class="bg-gray-300 dark:bg-slate-600 flex-1"
-                                                        style="height: 26px; border-radius: 1px;"></div>
+                                                        style="height: 10px; border-radius: 1px;"></div>
                                                     <div class="bg-gray-300 dark:bg-slate-600 flex-1"
-                                                        style="height: 13px; border-radius: 1px;"></div>
-                                                    <div class="bg-gray-300 dark:bg-slate-600 flex-1"
-                                                        style="height: 12px; border-radius: 1px;"></div>
+                                                        style="height: 9px; border-radius: 1px;"></div>
                                                 </div>
                                             </div>
-                                            <div class="flex items-center space-x-4">
+                                            <div
+                                                class="flex items-center justify-between xs:justify-end space-x-2 sm:space-x-4">
                                                 <button
                                                     class="text-gray-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
-                                                    <span class="text-sm">♡ 187</span>
+                                                    <span class="text-xs sm:text-sm">♡ 187</span>
                                                 </button>
                                                 <button
                                                     class="text-gray-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
-                                                    <span class="text-sm">🔄 68</span>
+                                                    <span class="text-xs sm:text-sm">🔄 68</span>
                                                 </button>
                                                 <button
-                                                    class="text-orange-500 dark:text-orange-400 hover:text-orange-400 dark:hover:text-orange-500 text-sm">Share</button>
+                                                    class="text-orange-500 dark:text-orange-400 hover:text-orange-400 dark:hover:text-orange-500 text-xs sm:text-sm whitespace-nowrap">Share</button>
                                             </div>
                                         </div>
                                     </div>
@@ -275,138 +283,171 @@
 
                             <!-- Other Tab Panels -->
                             <div class="tab-panel hidden" id="playlists">
-                                <div class="text-gray-900 dark:text-white py-6 text-center text-lg">No playlists
-                                    available yet.</div>
+                                <div
+                                    class="text-gray-900 dark:text-white py-4 sm:py-6 text-center text-base sm:text-lg">
+                                    No playlists available yet.</div>
                             </div>
                             <div class="tab-panel hidden" id="reposts">
-                                <div class="text-gray-900 dark:text-white py-6 text-center text-lg">No recent reposts
-                                    available yet.</div>
+                                <div
+                                    class="text-gray-900 dark:text-white py-4 sm:py-6 text-center text-base sm:text-lg">
+                                    No recent reposts available yet.</div>
                             </div>
                             <div class="tab-panel hidden" id="starred">
-                                <div class="text-gray-900 dark:text-white py-6 text-center text-lg">No starred members
-                                    found.</div>
+                                <div
+                                    class="text-gray-900 dark:text-white py-4 sm:py-6 text-center text-base sm:text-lg">
+                                    No starred members found.</div>
                             </div>
                         </div>
 
                         <!-- Credibility Insights -->
                         <div
-                            class="bg-gray-100 dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
-                            <div class="flex items-center justify-between mb-6">
-                                <h3 class="text-gray-900 dark:text-white text-lg font-semibold">Credibility Insights
-                                </h3>
+                            class="bg-gray-100 dark:bg-slate-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-slate-700">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6">
+                                <h3
+                                    class="text-gray-900 dark:text-white text-base sm:text-lg font-semibold mb-2 sm:mb-0">
+                                    Credibility Insights</h3>
                                 <div class="flex items-center space-x-2">
-                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                                    <span class="text-green-600 dark:text-green-400 text-sm font-medium">92% Real
-                                        Followers</span>
+                                    <div class="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
+                                    <span class="text-green-600 dark:text-green-400 text-xs sm:text-sm font-medium">92%
+                                        Real Followers</span>
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                                 <div>
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-gray-600 dark:text-slate-300 text-sm">Follower Growth</span>
-                                        <span class="text-gray-900 dark:text-white font-semibold">78%</span>
+                                    <div class="flex items-center justify-between mb-1 sm:mb-2">
+                                        <span class="text-gray-600 dark:text-slate-300 text-xs sm:text-sm">Follower
+                                            Growth</span>
+                                        <span
+                                            class="text-gray-900 dark:text-white font-semibold text-xs sm:text-sm">78%</span>
                                     </div>
-                                    <div class="w-full bg-gray-300 dark:bg-slate-700 rounded-full h-2">
-                                        <div class="bg-orange-500 h-2 rounded-full transition-all duration-300"
+                                    <div class="w-full bg-gray-300 dark:bg-slate-700 rounded-full h-1 sm:h-2">
+                                        <div class="bg-orange-500 h-1 sm:h-2 rounded-full transition-all duration-300"
                                             style="width: 78%;"></div>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-gray-600 dark:text-slate-300 text-sm">Repost
+                                    <div class="flex items-center justify-between mb-1 sm:mb-2">
+                                        <span class="text-gray-600 dark:text-slate-300 text-xs sm:text-sm">Repost
                                             Efficiency</span>
-                                        <span class="text-gray-900 dark:text-white font-semibold">78%</span>
+                                        <span
+                                            class="text-gray-900 dark:text-white font-semibold text-xs sm:text-sm">78%</span>
                                     </div>
-                                    <div class="w-full bg-gray-300 dark:bg-slate-700 rounded-full h-2">
-                                        <div class="bg-green-500 h-2 rounded-full transition-all duration-300"
+                                    <div class="w-full bg-gray-300 dark:bg-slate-700 rounded-full h-1 sm:h-2">
+                                        <div class="bg-green-500 h-1 sm:h-2 rounded-full transition-all duration-300"
                                             style="width: 78%;"></div>
                                     </div>
-                                    <p class="text-gray-500 dark:text-slate-400 text-xs mt-1">Above average for your
-                                        followers range</p>
+                                    <p class="text-gray-500 dark:text-slate-400 text-xxs sm:text-xs mt-1">Above average
+                                        for your followers range</p>
                                 </div>
 
                                 <div>
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-gray-600 dark:text-slate-300 text-sm">Activity Score</span>
-                                        <span class="text-gray-900 dark:text-white font-semibold">85%</span>
+                                    <div class="flex items-center justify-between mb-1 sm:mb-2">
+                                        <span class="text-gray-600 dark:text-slate-300 text-xs sm:text-sm">Activity
+                                            Score</span>
+                                        <span
+                                            class="text-gray-900 dark:text-white font-semibold text-xs sm:text-sm">85%</span>
                                     </div>
-                                    <div class="w-full bg-gray-300 dark:bg-slate-700 rounded-full h-2">
-                                        <div class="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                                    <div class="w-full bg-gray-300 dark:bg-slate-700 rounded-full h-1 sm:h-2">
+                                        <div class="bg-blue-500 h-1 sm:h-2 rounded-full transition-all duration-300"
                                             style="width: 85%;"></div>
                                     </div>
                                 </div>
 
-                                <div class="md:col-span-3 mt-4">
-                                    <h4 class="text-gray-900 dark:text-white font-medium mb-3">Activity Score</h4>
+                                <div class="md:col-span-3 mt-3 sm:mt-4">
+                                    <h4
+                                        class="text-gray-900 dark:text-white font-medium mb-2 sm:mb-3 text-sm sm:text-base">
+                                        Activity Score</h4>
                                     <div class="grid grid-cols-10 gap-1">
-                                        <div class="w-3 h-3 rounded-sm bg-orange-500"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-500"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-600"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-500"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-600"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-600"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-600"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-500"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                        </div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                        </div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500"></div>
                                         <!-- More activity dots... -->
-                                        <div class="w-3 h-3 rounded-sm bg-orange-600"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-600"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-600"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-600"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-600"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-600"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                        </div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                        </div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                        </div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                        </div>
                                         <!-- Continue with remaining dots -->
-                                        <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-500"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-500"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-600"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                        </div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                        </div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                        </div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                        </div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                        </div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                        </div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                        </div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600"></div>
                                         <!-- Final row -->
-                                        <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-600"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-600"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-500"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-600"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-500"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-500"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-500"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                        </div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                        </div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                        </div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500"></div>
                                         <!-- Last 10 -->
-                                        <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-600"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-500"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-600"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-600"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-600"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-orange-600"></div>
-                                        <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                        </div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                        </div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                        </div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600"></div>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                        </div>
                                     </div>
                                     <div
-                                        class="flex items-center justify-between text-xs text-gray-500 dark:text-slate-400 mt-2">
+                                        class="flex items-center justify-between text-xxs sm:text-xs text-gray-500 dark:text-slate-400 mt-1 sm:mt-2">
                                         <span>Last 5 weeks</span>
-                                        <div class="flex items-center space-x-2">
+                                        <div class="flex items-center space-x-1 sm:space-x-2">
                                             <span>Now</span>
                                             <div class="flex items-center space-x-1">
-                                                <span>Low</span>
-                                                <div class="w-2 h-2 bg-gray-300 dark:bg-slate-700 rounded-sm"></div>
-                                                <div class="w-2 h-2 bg-orange-600 rounded-sm"></div>
-                                                <div class="w-2 h-2 bg-orange-500 rounded-sm"></div>
-                                                <span>High</span>
+                                                <span class="hidden sm:inline">Low</span>
+                                                <div
+                                                    class="w-1 h-1 sm:w-2 sm:h-2 bg-gray-300 dark:bg-slate-700 rounded-sm">
+                                                </div>
+                                                <div class="w-1 h-1 sm:w-2 sm:h-2 bg-orange-600 rounded-sm"></div>
+                                                <div class="w-1 h-1 sm:w-2 sm:h-2 bg-orange-500 rounded-sm"></div>
+                                                <span class="hidden sm:inline">High</span>
                                             </div>
                                         </div>
                                     </div>
@@ -430,14 +471,18 @@
                     tab.addEventListener('click', function() {
                         // Remove all active states
                         tabs.forEach(t => {
-                            t.classList.remove('text-orange-500', 'border-orange-500');
-                            t.classList.add('text-slate-400', 'border-transparent');
+                            t.classList.remove('text-orange-500', 'border-orange-500',
+                                'dark:text-orange-400', 'dark:border-orange-400');
+                            t.classList.add('text-gray-500', 'border-transparent',
+                                'dark:text-slate-400');
                         });
                         panels.forEach(panel => panel.classList.add('hidden'));
 
                         // Add active state to clicked
-                        this.classList.add('text-orange-500', 'border-orange-500');
-                        this.classList.remove('text-slate-400', 'border-transparent');
+                        this.classList.add('text-orange-500', 'border-orange-500',
+                            'dark:text-orange-400', 'dark:border-orange-400');
+                        this.classList.remove('text-gray-500', 'border-transparent',
+                            'dark:text-slate-400');
                         const panelId = this.getAttribute('data-tab');
                         document.getElementById(panelId).classList.remove('hidden');
                     });
@@ -445,5 +490,4 @@
             });
         </script>
     @endpush
-
 </x-user::layout>

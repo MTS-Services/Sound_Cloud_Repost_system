@@ -53,14 +53,14 @@
     @livewireStyles()
 </head>
 
-<body class="bg-gray-50 dark:bg-gray-900 font-sans text-black" x-data="{ sidebarOpen: false }">
+<body class="bg-gray-50 dark:bg-gray-900 font-sans text-black overflow-x-hidden!" x-data="{ sidebarOpen: false }">
 
     @include('backend.user.layouts.partials.header')
     @include('backend.user.layouts.partials.sidebar')
 
     <!-- Main Content -->
-    <div class="lg:ml-64 overflow-x-hidden">
-        <div class="p-6 lg:h-[1030px] ">
+    <div class="ml-auto w-[calc(100%-15%)]">
+        <div class="p-6 h-[88vh]">
             {{ $slot }}
         </div>
     </div>

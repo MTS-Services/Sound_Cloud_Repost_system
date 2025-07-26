@@ -1,7 +1,7 @@
 <div x-show="sidebarOpen" @click.away="sidebarOpen = false" class="fixed inset-0  bg-opacity-50 z-30 lg:hidden"
     x-cloak></div>
 <div :class="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }"
-    class="fixed left-0 lg:top-20 top-20 w-64 h-full lg:h-[90vh] bg-white dark:bg-slate-800 border-r border-gray-100 dark:border-slate-700 flex flex-col z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0">
+    class="fixed left-0 lg:top-20 top-20 w-[15%] h-full lg:h-[calc(100%-8%)] bg-white dark:bg-slate-800 border-r border-gray-100 dark:border-slate-700 flex flex-col z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0">
     <!-- Profile Section -->
     <div class="p-4  border-b border-gray-100 dark:border-slate-700">
         <div class="flex items-center space-x-3 mb-4">
@@ -76,7 +76,7 @@
         </ul>
         <!-- Divider -->
         <div class="border-t border-gray-100 dark:border-slate-700 my-4"></div>
-        <div class="space-y-1">
+        <div class="space-y-1 ">
             <h4 class="text-slate-400 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-3">My
                 Account</h4>
             <a href="{{ route('user.cm.my-campaigns') }}"
@@ -149,7 +149,7 @@
                 </svg>
                 <span class="font-semibold text-base">Premium Plan</span>
             </div>
-            <p class="text-xs text-orange-100 mb-3">Get your music in front of more people</p>
+            <p class="text-sm text-orange-100 mb-3">Get your music in front of more people</p>
             <button
                 class="w-full bg-white text-orange-600 text-base font-semibold py-2 px-4 rounded-lg hover:bg-orange-50 transition-colors">Upgrade</button>
         </div>
