@@ -1,4 +1,5 @@
-<header class="bg-white h-[8vh] dark:bg-slate-800 z-41 border-b border-gray-100 dark:border-slate-700 px-4 md:px-6 py-3 md:py-5 sticky top-0">
+<header
+    class="bg-white h-[9vh] dark:bg-slate-800 z-41 border-b border-gray-100 dark:border-slate-700 px-4 md:px-6 py-3 md:py-5 sticky top-0">
     <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2">
             <button @click="sidebarOpen = !sidebarOpen"
@@ -14,7 +15,7 @@
                 </span>
             </a>
         </div>
-        
+
         <div class="flex-1 flex justify-center px-2 md:px-4 lg:px-0 lg:ml-8">
             <form class="relative w-full max-w-md items-center hidden sm:flex">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-4">
@@ -27,7 +28,7 @@
                     dark:shadow-sm outline-none transition" />
             </form>
         </div>
-        
+
         <div class="flex items-center space-x-1 md:space-x-2">
             <!-- Navigation items - hide on mobile -->
             <nav class="hidden lg:flex items-center space-x-2 md:space-x-4 text-sm">
@@ -37,7 +38,8 @@
                     href="/charts" data-discover="true">Charts</a>
                 <a class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
                     href="/blog" data-discover="true">Blog</a>
-                <button class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50 flex items-center space-x-1">
+                <button
+                    class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50 flex items-center space-x-1">
                     <span>Help</span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -48,12 +50,14 @@
             </nav>
 
             <!-- Mobile search button -->
-            <button @click="mobileSearchOpen = !mobileSearchOpen" class="lg:hidden p-1 md:p-2 rounded-md text-gray-900 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700">
+            <button @click="mobileSearchOpen = !mobileSearchOpen"
+                class="lg:hidden p-1 md:p-2 rounded-md text-gray-900 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700">
                 <i data-lucide="search" class="w-5 h-5"></i>
             </button>
 
             <!-- Mobile search overlay -->
-            <div x-show="mobileSearchOpen" @click.away="mobileSearchOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-50 lg:hidden" x-cloak>
+            <div x-show="mobileSearchOpen" @click.away="mobileSearchOpen = false"
+                class="fixed inset-0 bg-black bg-opacity-50 z-50 lg:hidden" x-cloak>
                 <div class="bg-white dark:bg-slate-800 p-4">
                     <form class="relative w-full">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -71,24 +75,30 @@
             <!-- Notification -->
             <div class="relative ml-1 md:ml-1.5">
                 <i data-lucide="bell" class="w-5 h-5 text-gray-800 dark:text-slate-300"></i>
-                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] md:text-xs rounded-full w-3 h-3 md:w-4 md:h-4 flex items-center justify-center">1</span>
+                <span
+                    class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] md:text-xs rounded-full w-3 h-3 md:w-4 md:h-4 flex items-center justify-center">1</span>
             </div>
 
             <!-- Theme toggle -->
             <button @click="$store.theme.toggleTheme()"
-                class="p-1 md:p-2 rounded-xl hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+                class="p-2 rounded-xl hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
                 data-tooltip="Toggle theme"
                 :title="$store.theme.current.charAt(0).toUpperCase() + $store.theme.current.slice(1) + ' mode'">
-                <i data-lucide="sun" x-show="!$store.theme.darkMode" class="w-5 h-5"></i>
-                <i data-lucide="moon" x-show="$store.theme.darkMode" class="w-5 h-5"></i>
+                <i data-lucide="sun" x-show="!$store.theme.darkMode"
+                    class="w-5 h-5 text-text-light-primary dark:text-text-white"></i>
+                <i data-lucide="moon" x-show="$store.theme.darkMode"
+                    class="w-5 h-5 text-text-light-primary dark:text-text-white"></i>
             </button>
-
             <!-- User dropdown -->
             <div class="dropdown dropdown-end">
                 <div tabindex="0" role="button" class="flex items-center space-x-1 md:space-x-2">
-                    <img src="{{ user()->avatar }}" alt="{{ user()->name ?? 'name' }}" class="w-7 h-7 md:w-8 md:h-8 rounded-full">
-                    <span class="text-xs md:text-sm font-medium dark:text-slate-300 hidden sm:block">{{ user()->name ?? 'name' }}</span>
-                    <svg class="dark:text-slate-300 w-3 h-3 md:w-4 md:h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <img src="{{ user()->avatar }}" alt="{{ user()->name ?? 'name' }}"
+                        class="w-7 h-7 md:w-8 md:h-8 rounded-full">
+                    <span
+                        class="text-xs md:text-sm font-medium dark:text-slate-300 hidden sm:block">{{ user()->name ?? 'name' }}</span>
+                    <svg class="dark:text-slate-300 w-3 h-3 md:w-4 md:h-4" xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
                         <path d="m6 9 6 6 6-6"></path>
                     </svg>
                 </div>
@@ -99,8 +109,8 @@
                     <li>
                         <a href="{{ route('user.profile') }}"
                             class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M5.121 17.804A4 4 0 017 16h10a4 4 0 011.879.496M15 11a3 3 0 10-6 0 3 3 0 006 0z" />
                             </svg>

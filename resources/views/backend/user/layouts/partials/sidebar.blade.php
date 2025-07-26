@@ -1,6 +1,6 @@
 <div x-show="sidebarOpen" @click.away="sidebarOpen = false" class="fixed z-30 lg:hidden" x-cloak></div>
 <div :class="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }"
-    class="fixed left-0 lg:top-20 top-13 w-64 lg:w-[15%]  h-[92vh] lg:h-[calc(100vh-8vh)] bg-white dark:bg-slate-800 border-r border-gray-100 dark:border-slate-700 flex flex-col z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0">
+    class="fixed left-0 lg:top-20 top-17 w-64 lg:w-[15%]  h-[92vh] lg:h-[calc(100vh-9vh)] bg-white dark:bg-slate-800 border-r border-gray-100 dark:border-slate-700 flex flex-col z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0">
     
     <!-- Profile Section -->
     <div class="p-3 md:p-4 border-b border-gray-100 dark:border-slate-700">
@@ -11,7 +11,7 @@
                 <p class="text-slate-400 text-[10px] md:text-xs">117 Credits</p>
             </div>
         </div>
-        <a href="{{ route('user.add-credits') }}"
+        <a href="{{ route('user.add-credits') }}" wire:navigate
             class="w-full bg-orange-500 hover:bg-orange-600 text-white text-sm md:text-base py-1.5 md:py-2 px-3 md:px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus w-4 h-4 md:w-5 md:h-5">
@@ -26,21 +26,21 @@
     <nav class="flex-1 overflow-y-auto px-2 md:px-3 py-2 md:py-4">
         <ul class="space-y-0.5 md:space-y-1">
             <li>
-                <a href="{{ route('user.dashboard') }}"
+                <a href="{{ route('user.dashboard') }}" wire:navigate
                     class="sidebar-item flex items-center px-2 py-1.5 md:px-3 md:py-2.5 rounded-lg transition-colors text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'dashboard') active @endif">
                     <i data-lucide="home" class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3"></i>
                     <span class="text-xs md:text-sm">{{ __('Home') }}</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('user.promote') }}"
+                <a href="{{ route('user.promote') }}" wire:navigate
                     class="sidebar-item flex items-center px-2 py-1.5 md:px-3 md:py-2.5 rounded-lg transition-colors text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'promote') active @endif">
                     <i data-lucide="radio-tower" class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3"></i>
                     <span class="text-xs md:text-sm">{{ __('Promote') }}</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('user.campaign.feed') }}"
+                <a href="{{ route('user.campaign.feed') }}" wire:navigate
                     class="sidebar-item flex items-center px-2 py-1.5 md:px-3 md:py-2.5 rounded-lg transition-colors
                     text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'campaign-feed') active @endif">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" viewBox="0 0 24 24" fill="none"
@@ -52,7 +52,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('user.profile') }}"
+                <a href="{{ route('user.profile') }}" wire:navigate
                     class="sidebar-item flex items-center px-2 py-1.5 md:px-3 md:py-2.5 rounded-lg transition-colors
                     text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'profile') active @endif">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" viewBox="0 0 24 24" fill="none"
@@ -83,7 +83,7 @@
                 <span class="text-xs md:text-sm">{{ __('My Campaigns') }}</span>
             </a>
             
-            <a href="{{ route('user.analytics') }}"
+            <a href="{{ route('user.analytics') }}"wire:navigate
                 class="flex items-center px-2 py-1.5 md:px-3 md:py-2 rounded-lg transition-colors
                 text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" fill="none" stroke="currentColor"
@@ -96,7 +96,7 @@
                 <span class="text-xs md:text-sm">Analytics</span>
             </a>
             
-            <a href="{{ route('myAccount') }}"
+            <a href="{{ route('myAccount') }}"wire:navigate
                 class="sidebar-item flex items-center px-2 py-1.5 md:px-3 md:py-2.5 rounded-lg transition-colors
                 text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'my-account') active @endif">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" fill="none" stroke="currentColor"
@@ -107,7 +107,7 @@
                 <span class="text-xs md:text-sm">My Account</span>
             </a>
             
-            <a href="#"
+            <a href="#" wire:navigate
                 class="flex items-center px-2 py-1.5 md:px-3 md:py-2 rounded-lg transition-colors
                 text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" fill="none" stroke="currentColor"
@@ -120,7 +120,7 @@
                 <span class="text-xs md:text-sm">Settings</span>
             </a>
             
-            <a href="#"
+            <a href="#" wire:navigate
                 class="flex items-center px-2 py-1.5 md:px-3 md:py-2 rounded-lg transition-colors
                 text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" fill="none" stroke="currentColor"

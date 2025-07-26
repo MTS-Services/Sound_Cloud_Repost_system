@@ -63,7 +63,7 @@
 
     <!-- Main Content -->
     <div class="ml-auto lg:w-[calc(100%-15%)] w-full">
-        <div class="p-4 md:p-6 h-[calc(100vh-8vh)]!  overflow-y-auto">
+        <div class="p-4 md:p-6 h-[calc(100vh-9vh)]  overflow-y-auto">
             {{ $slot }}
         </div>
     </div>
