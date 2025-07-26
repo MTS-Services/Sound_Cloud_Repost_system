@@ -24,7 +24,7 @@
     </script>
 <!-- Scripts -->
     <script src="{{ asset('assets/js/toggle-theme.js') }}"></script>
-    <script src="{{ asset('assets/frontend/js/custome.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('assets/frontend/css/custome.css') }}">
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     {{-- @vite(['resources/css/dashboard.css', 'resources/js/app.js']) --}}
@@ -60,11 +60,11 @@
 
     <!-- Main Content -->
     <div class="lg:ml-64 overflow-x-hidden">
-        <div class="p-6 lg:h-[90vh] ">
+        <div class="p-6 lg:h-[1030px] ">
             {{ $slot }}
         </div>
     </div>
-
+ <script src="{{ asset('assets/frontend/js/custome.js') }}"></script>
     @stack('js')
 </body>
 

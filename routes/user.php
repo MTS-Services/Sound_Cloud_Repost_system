@@ -18,7 +18,7 @@ Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
     Route::post('disconnect', [SoundCloudController::class, 'disconnect'])->name('disconnect')->middleware('auth:web');
     Route::post('sync', [SoundCloudController::class, 'sync'])->name('sync')->middleware('auth:web');
 });
-
+Route::view('soundcloud', 'backend.user.my-account')->name('myAccount');
 // Dashboard and other routes
 Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     Route::get('/dashboard', function () {

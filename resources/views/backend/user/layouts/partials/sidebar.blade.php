@@ -101,9 +101,9 @@
                 </svg>
                 <span class="text-sm">Analytics</span>
             </a>
-            <a href="#"
-                class="flex items-center px-3 py-2 rounded-lg  transition-colors
-                text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700">
+            <a href="{{ route('myAccount') }}"
+                class="sidebar-item flex items-center px-3 py-2.5 rounded-lg  transition-colors
+                text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'my-account') active @endif">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3" fill="none" stroke="currentColor"
                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
