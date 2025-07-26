@@ -4,6 +4,7 @@ use App\Http\Controllers\Backend\User\AddCaeditsController;
 use App\Http\Controllers\Backend\User\AnalyticsController;
 use App\Http\Controllers\Backend\User\CampaignManagement\CampaignController;
 use App\Http\Controllers\Backend\User\CampaignManagement\MyCampaignController;
+use App\Livewire\Backend\User\CampaignManagement\MyCampaign;
 use App\Http\Controllers\Backend\User\Mamber\MamberController;
 use App\Http\Controllers\Backend\User\PromoteController;
 use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
@@ -45,6 +46,7 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
             Route::post('/playlist-tracks/{playlistId}', 'getPlaylistTracks')->name('playlist.tracks');
             Route::post('/store', 'storeCampaign')->name('store');
         });
+        Route::get('/my-campaigns', MyCampaign::class)->name('my-campaigns');
     });
     // Mamber Management
     Route::group(['as' => 'mm.', 'prefix' => 'mamber-management'], function () {

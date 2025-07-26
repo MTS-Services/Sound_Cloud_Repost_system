@@ -55,7 +55,7 @@
             </li>
             {{-- <li>
                 <a href="{{ route('user.cm.campaigns.index') }}" class="sidebar-item flex items-center px-3 py-2.5 rounded-lg font-medium transition-colors
-                    text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if($page_slug == 'campains') active @endif">
+                    text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'campains') active @endif">
                     <i data-lucide="megaphone" class="w-5 h-5 mr-3"></i>
                     <span class="text-sm">{{ __('My Campaigns') }}</span>
                 </a>
@@ -64,9 +64,9 @@
                 <a href="{{ route('user.profile') }}"
                     class="sidebar-item flex items-center px-3 py-2.5 rounded-lg  transition-colors
                     text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'profile') active @endif">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="lucide lucide-trending-up w-5 h-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-trending-up w-5 h-5">
                         <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
                         <polyline points="16 7 22 7 22 13"></polyline>
                     </svg>
@@ -79,7 +79,7 @@
         <div class="space-y-1">
             <h4 class="text-slate-400 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-3">My
                 Account</h4>
-            <a href="{{ route('user.cm.campaigns.index') }}"
+            <a href="{{ route('user.cm.my-campaigns') }}"
                 class="sidebar-item flex items-center px-3 py-2.5 rounded-lg  transition-colors
                 text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'campains') active @endif">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="none"
