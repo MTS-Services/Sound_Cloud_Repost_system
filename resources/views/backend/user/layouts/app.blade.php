@@ -48,7 +48,7 @@
         });
     </script>
 
-    @stack('cs')
+    @stack('css')
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-black" x-data="{ sidebarOpen: false }">
