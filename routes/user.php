@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Backend\User\DashboardController;
 use App\Http\Controllers\Backend\Admin\OrderManagement\OrderController;
 use App\Http\Controllers\Backend\User\AddCaeditsController;
 use App\Http\Controllers\Backend\User\AnalyticsController;
@@ -22,10 +23,7 @@ Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
 
 // Dashboard and other routes
 Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
-    Route::get('/dashboard', function () {
-
-        return view('backend.user.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard',[DashboardController::class, 'dashboard'])->name('dashboard');
 
     Route::get('/user-profile', [ProfileController::class, 'profile'])->name('profile');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

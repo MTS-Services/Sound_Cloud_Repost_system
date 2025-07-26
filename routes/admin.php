@@ -125,5 +125,6 @@ Route::group(['middleware' => ['auth:admin','admin'], 'prefix' => 'admin'], func
     Route::controller(CreditTransactionController::class)->name('credit-transaction.')->prefix('credit-transaction')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/store', 'store')->name('store');
+        Route::get('/purchase', 'purchase')->name('purchase');
     });
 });

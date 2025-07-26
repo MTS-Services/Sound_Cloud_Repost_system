@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CreditTransaction extends BaseModel
 {
@@ -115,5 +116,29 @@ class CreditTransaction extends BaseModel
     public function getTypeNameAttribute(): string
     {
         return self::getTypes()[$this->transaction_type];
+    }
+
+
+    #####################################
+    ########### Type Scopes #############
+    #####################################
+    public function scopeEarn()
+    {
+        return $this->where('transaction_type', '=', self::TYPE_EARN);
+    }
+
+    public function scopeSpend()
+    {
+        return $this->where('transaction_type', '=', self::TYPE_SPEND);
+    }
+
+    public function scopeRefund()
+    {
+        return $this->where('transaction_type', '=', self::TYPE_REFUND);
+    }
+
+    public function scopePurchase()
+    {
+        return $this->where('transaction_type', '=', self::TYPE_PURCHASE);
     }
 }
