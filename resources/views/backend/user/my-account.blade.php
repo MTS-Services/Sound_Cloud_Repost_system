@@ -1,31 +1,29 @@
-
-
-    <x-user::layout>
-        <x-slot name="page_slug">my-account</x-slot>
-  <section class="flex-1 overflow-auto">
+<x-user::layout>
+    <x-slot name="page_slug">my-account</x-slot>
+    <section class="flex-1 overflow-auto">
         <div class="min-h-screen bg-white dark:bg-slate-900">
             <!-- Header Section -->
             <div class="bg-gradient-to-r from-gray-100 to-gray-200 dark:from-slate-800 dark:to-slate-700 relative">
                 <div class="absolute inset-0 dark:bg-black   bg-opacity-10 dark:bg-opacity-30"></div>
                 <div class="relative p-6">
-                
-                    
+
+
                     <div class="flex items-start space-x-6">
-                        <img src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop"
-                            alt="Bhathiya Udara"
+                        <img src="{{ user()->avatar }}" alt="{{ user()->name ?? 'name' }}"
                             class="w-32 h-32 rounded-full border-4 border-white dark:border-gray-300 shadow-lg">
                         <div class="flex-1 pt-4">
                             <div class="flex items-center space-x-4 mb-2">
-                                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Bhathiya Udara</h1>
-                                <span class="px-3 py-1 bg-orange-500 dark:bg-orange-400 text-white dark:text-gray-900 text-sm font-medium rounded-full">
+                                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ user()->name ?? 'name' }}</h1>
+                                <span
+                                    class="px-3 py-1 bg-orange-500 dark:bg-orange-400 text-white dark:text-gray-900 text-sm font-medium rounded-full">
                                     NETWORK RANK
                                 </span>
                             </div>
                             <p class="text-xl text-gray-600 dark:text-slate-200 mb-4">7,004 Followers</p>
                             <div class="flex items-center space-x-6 text-gray-500 dark:text-slate-300 text-sm">
                                 <div class="flex items-center space-x-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                         stroke-linejoin="round" class="w-4 h-4">
                                         <path d="M8 2v4"></path>
                                         <path d="M16 2v4"></path>
@@ -35,8 +33,8 @@
                                     <span>MEMBER SINCE JAN 2022</span>
                                 </div>
                                 <div class="flex items-center space-x-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                         stroke-linejoin="round" class="w-4 h-4">
                                         <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
                                         <circle cx="12" cy="10" r="3"></circle>
@@ -46,7 +44,8 @@
                             </div>
                         </div>
                         <div class="flex items-center space-x-3">
-                            <button class="bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-900 dark:text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+                            <button
+                                class="bg-gray-300 hover:bg-gray-400 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-900 dark:text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round" class="w-4 h-4">
@@ -56,7 +55,8 @@
                                 </svg>
                                 <span>Visit on SoundCloud</span>
                             </button>
-                            <button class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+                            <button
+                                class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round" class="w-4 h-4">
@@ -69,12 +69,13 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="p-6">
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
                     <!-- Sidebar -->
                     <div class="lg:col-span-1 space-y-6">
-                        <div class="bg-gray-100 dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+                        <div
+                            class="bg-gray-100 dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
                             <h3 class="text-gray-900 dark:text-white font-semibold mb-4">About</h3>
                             <p class="text-gray-600 dark:text-slate-300 text-sm mb-4">
                                 I'm a Pop Producer...I make instrumental beats, mostly for rappers or singers. And
@@ -84,8 +85,9 @@
                             <p class="text-gray-500 dark:text-slate-400 text-sm">Bio from <span
                                     class="text-orange-500 dark:text-orange-400">SOUNDCLOUD</span></p>
                         </div>
-                        
-                        <div class="bg-gray-100 dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+
+                        <div
+                            class="bg-gray-100 dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
                             <h3 class="text-gray-900 dark:text-white font-semibold mb-4">Genres</h3>
                             <div class="space-y-2">
                                 <div class="bg-gray-200 dark:bg-slate-700 px-3 py-2 rounded-lg">
@@ -99,8 +101,9 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="bg-gray-100 dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+
+                        <div
+                            class="bg-gray-100 dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
                             <h3 class="text-gray-900 dark:text-white font-semibold mb-4">Badges Awarded</h3>
                             <div class="grid grid-cols-2 gap-3">
                                 <div class="bg-gray-200 dark:bg-slate-700 rounded-lg p-4 text-center">
@@ -122,7 +125,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Main Content -->
                     <div class="lg:col-span-3 space-y-6">
                         <!-- Tab Navigation -->
@@ -148,13 +151,14 @@
                                 Starred members
                             </button>
                         </div>
-                        
+
                         <!-- Tab Panels -->
                         <div id="tabContent">
                             <!-- Tracks Tab -->
                             <div class="tab-panel" id="tracks">
                                 <div class="flex items-center justify-between mb-6">
-                                    <h2 class="text-gray-900 dark:text-white text-xl font-semibold">New & popular tracks from Bhathiya Udara</h2>
+                                    <h2 class="text-gray-900 dark:text-white text-xl font-semibold">New & popular
+                                        tracks from Bhathiya Udara</h2>
                                     <a href="#"
                                         class="text-orange-500 dark:text-orange-400 hover:text-orange-400 dark:hover:text-orange-500 text-sm flex items-center space-x-1">
                                         <span>Show all tracks on Soundcloud</span>
@@ -167,15 +171,17 @@
                                         </svg>
                                     </a>
                                 </div>
-                                
+
                                 <div class="space-y-4">
                                     <!-- Track Card 1 -->
-                                    <div class="bg-gray-100 dark:bg-slate-800 rounded-lg p-4 border border-gray-200 dark:border-slate-700">
+                                    <div
+                                        class="bg-gray-100 dark:bg-slate-800 rounded-lg p-4 border border-gray-200 dark:border-slate-700">
                                         <div class="flex items-center space-x-4">
                                             <div class="relative">
                                                 <img src="https://images.pexels.com/photos/1540338/pexels-photo-1540338.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop"
                                                     alt="Sexy - Fashion - Promo" class="w-16 h-16 rounded-lg">
-                                                <button class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg opacity-0 hover:opacity-100 transition-opacity">
+                                                <button
+                                                    class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg opacity-0 hover:opacity-100 transition-opacity">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                         height="24" fill="currentColor" stroke="currentColor"
                                                         stroke-width="2" stroke-linecap="round"
@@ -186,34 +192,45 @@
                                                 </button>
                                             </div>
                                             <div class="flex-1">
-                                                <h4 class="text-gray-900 dark:text-white font-medium mb-1">Sexy - Fashion - Promo</h4>
-                                                <p class="text-gray-500 dark:text-slate-400 text-sm mb-2">Bhathiya Udara</p>
+                                                <h4 class="text-gray-900 dark:text-white font-medium mb-1">Sexy -
+                                                    Fashion - Promo</h4>
+                                                <p class="text-gray-500 dark:text-slate-400 text-sm mb-2">Bhathiya
+                                                    Udara</p>
                                                 <div class="flex items-center space-x-1 h-8 mb-2">
-                                                    <div class="bg-gray-300 dark:bg-slate-600 flex-1" style="height: 21px; border-radius: 1px;"></div>
-                                                    <div class="bg-gray-300 dark:bg-slate-600 flex-1" style="height: 26px; border-radius: 1px;"></div>
-                                                    <div class="bg-gray-300 dark:bg-slate-600 flex-1" style="height: 13px; border-radius: 1px;"></div>
-                                                    <div class="bg-gray-300 dark:bg-slate-600 flex-1" style="height: 12px; border-radius: 1px;"></div>
+                                                    <div class="bg-gray-300 dark:bg-slate-600 flex-1"
+                                                        style="height: 21px; border-radius: 1px;"></div>
+                                                    <div class="bg-gray-300 dark:bg-slate-600 flex-1"
+                                                        style="height: 26px; border-radius: 1px;"></div>
+                                                    <div class="bg-gray-300 dark:bg-slate-600 flex-1"
+                                                        style="height: 13px; border-radius: 1px;"></div>
+                                                    <div class="bg-gray-300 dark:bg-slate-600 flex-1"
+                                                        style="height: 12px; border-radius: 1px;"></div>
                                                 </div>
                                             </div>
                                             <div class="flex items-center space-x-4">
-                                                <button class="text-gray-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
+                                                <button
+                                                    class="text-gray-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
                                                     <span class="text-sm">♡ 187</span>
                                                 </button>
-                                                <button class="text-gray-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
+                                                <button
+                                                    class="text-gray-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
                                                     <span class="text-sm">🔄 68</span>
                                                 </button>
-                                                <button class="text-orange-500 dark:text-orange-400 hover:text-orange-400 dark:hover:text-orange-500 text-sm">Share</button>
+                                                <button
+                                                    class="text-orange-500 dark:text-orange-400 hover:text-orange-400 dark:hover:text-orange-500 text-sm">Share</button>
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Track Card 2 -->
-                                    <div class="bg-gray-100 dark:bg-slate-800 rounded-lg p-4 border border-gray-200 dark:border-slate-700">
+                                    <div
+                                        class="bg-gray-100 dark:bg-slate-800 rounded-lg p-4 border border-gray-200 dark:border-slate-700">
                                         <div class="flex items-center space-x-4">
                                             <div class="relative">
                                                 <img src="https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop"
                                                     alt="Drop - To - Me" class="w-16 h-16 rounded-lg">
-                                                <button class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg opacity-0 hover:opacity-100 transition-opacity">
+                                                <button
+                                                    class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg opacity-0 hover:opacity-100 transition-opacity">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                         height="24" fill="currentColor" stroke="currentColor"
                                                         stroke-width="2" stroke-linecap="round"
@@ -224,51 +241,66 @@
                                                 </button>
                                             </div>
                                             <div class="flex-1">
-                                                <h4 class="text-gray-900 dark:text-white font-medium mb-1">Drop - To - Me</h4>
-                                                <p class="text-gray-500 dark:text-slate-400 text-sm mb-2">Bhathiya Udara</p>
+                                                <h4 class="text-gray-900 dark:text-white font-medium mb-1">Drop - To -
+                                                    Me</h4>
+                                                <p class="text-gray-500 dark:text-slate-400 text-sm mb-2">Bhathiya
+                                                    Udara</p>
                                                 <div class="flex items-center space-x-1 h-8 mb-2">
-                                                    <div class="bg-gray-300 dark:bg-slate-600 flex-1" style="height: 21px; border-radius: 1px;"></div>
-                                                    <div class="bg-gray-300 dark:bg-slate-600 flex-1" style="height: 26px; border-radius: 1px;"></div>
-                                                    <div class="bg-gray-300 dark:bg-slate-600 flex-1" style="height: 13px; border-radius: 1px;"></div>
-                                                    <div class="bg-gray-300 dark:bg-slate-600 flex-1" style="height: 12px; border-radius: 1px;"></div>
+                                                    <div class="bg-gray-300 dark:bg-slate-600 flex-1"
+                                                        style="height: 21px; border-radius: 1px;"></div>
+                                                    <div class="bg-gray-300 dark:bg-slate-600 flex-1"
+                                                        style="height: 26px; border-radius: 1px;"></div>
+                                                    <div class="bg-gray-300 dark:bg-slate-600 flex-1"
+                                                        style="height: 13px; border-radius: 1px;"></div>
+                                                    <div class="bg-gray-300 dark:bg-slate-600 flex-1"
+                                                        style="height: 12px; border-radius: 1px;"></div>
                                                 </div>
                                             </div>
                                             <div class="flex items-center space-x-4">
-                                                <button class="text-gray-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
+                                                <button
+                                                    class="text-gray-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
                                                     <span class="text-sm">♡ 187</span>
                                                 </button>
-                                                <button class="text-gray-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
+                                                <button
+                                                    class="text-gray-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
                                                     <span class="text-sm">🔄 68</span>
                                                 </button>
-                                                <button class="text-orange-500 dark:text-orange-400 hover:text-orange-400 dark:hover:text-orange-500 text-sm">Share</button>
+                                                <button
+                                                    class="text-orange-500 dark:text-orange-400 hover:text-orange-400 dark:hover:text-orange-500 text-sm">Share</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Other Tab Panels -->
                             <div class="tab-panel hidden" id="playlists">
-                                <div class="text-gray-900 dark:text-white py-6 text-center text-lg">No playlists available yet.</div>
+                                <div class="text-gray-900 dark:text-white py-6 text-center text-lg">No playlists
+                                    available yet.</div>
                             </div>
                             <div class="tab-panel hidden" id="reposts">
-                                <div class="text-gray-900 dark:text-white py-6 text-center text-lg">No recent reposts available yet.</div>
+                                <div class="text-gray-900 dark:text-white py-6 text-center text-lg">No recent reposts
+                                    available yet.</div>
                             </div>
                             <div class="tab-panel hidden" id="starred">
-                                <div class="text-gray-900 dark:text-white py-6 text-center text-lg">No starred members found.</div>
+                                <div class="text-gray-900 dark:text-white py-6 text-center text-lg">No starred members
+                                    found.</div>
                             </div>
                         </div>
-                        
+
                         <!-- Credibility Insights -->
-                        <div class="bg-gray-100 dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+                        <div
+                            class="bg-gray-100 dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
                             <div class="flex items-center justify-between mb-6">
-                                <h3 class="text-gray-900 dark:text-white text-lg font-semibold">Credibility Insights</h3>
+                                <h3 class="text-gray-900 dark:text-white text-lg font-semibold">Credibility Insights
+                                </h3>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                                    <span class="text-green-600 dark:text-green-400 text-sm font-medium">92% Real Followers</span>
+                                    <span class="text-green-600 dark:text-green-400 text-sm font-medium">92% Real
+                                        Followers</span>
                                 </div>
                             </div>
-                            
+
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
                                     <div class="flex items-center justify-between mb-2">
@@ -276,31 +308,36 @@
                                         <span class="text-gray-900 dark:text-white font-semibold">78%</span>
                                     </div>
                                     <div class="w-full bg-gray-300 dark:bg-slate-700 rounded-full h-2">
-                                        <div class="bg-orange-500 h-2 rounded-full transition-all duration-300" style="width: 78%;"></div>
+                                        <div class="bg-orange-500 h-2 rounded-full transition-all duration-300"
+                                            style="width: 78%;"></div>
                                     </div>
                                 </div>
-                                
+
                                 <div>
                                     <div class="flex items-center justify-between mb-2">
-                                        <span class="text-gray-600 dark:text-slate-300 text-sm">Repost Efficiency</span>
+                                        <span class="text-gray-600 dark:text-slate-300 text-sm">Repost
+                                            Efficiency</span>
                                         <span class="text-gray-900 dark:text-white font-semibold">78%</span>
                                     </div>
                                     <div class="w-full bg-gray-300 dark:bg-slate-700 rounded-full h-2">
-                                        <div class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width: 78%;"></div>
+                                        <div class="bg-green-500 h-2 rounded-full transition-all duration-300"
+                                            style="width: 78%;"></div>
                                     </div>
-                                    <p class="text-gray-500 dark:text-slate-400 text-xs mt-1">Above average for your followers range</p>
+                                    <p class="text-gray-500 dark:text-slate-400 text-xs mt-1">Above average for your
+                                        followers range</p>
                                 </div>
-                                
+
                                 <div>
                                     <div class="flex items-center justify-between mb-2">
                                         <span class="text-gray-600 dark:text-slate-300 text-sm">Activity Score</span>
                                         <span class="text-gray-900 dark:text-white font-semibold">85%</span>
                                     </div>
                                     <div class="w-full bg-gray-300 dark:bg-slate-700 rounded-full h-2">
-                                        <div class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: 85%;"></div>
+                                        <div class="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                                            style="width: 85%;"></div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="md:col-span-3 mt-4">
                                     <h4 class="text-gray-900 dark:text-white font-medium mb-3">Activity Score</h4>
                                     <div class="grid grid-cols-10 gap-1">
@@ -359,7 +396,8 @@
                                         <div class="w-3 h-3 rounded-sm bg-orange-600"></div>
                                         <div class="w-3 h-3 rounded-sm bg-gray-300 dark:bg-slate-700"></div>
                                     </div>
-                                    <div class="flex items-center justify-between text-xs text-gray-500 dark:text-slate-400 mt-2">
+                                    <div
+                                        class="flex items-center justify-between text-xs text-gray-500 dark:text-slate-400 mt-2">
                                         <span>Last 5 weeks</span>
                                         <div class="flex items-center space-x-2">
                                             <span>Now</span>
@@ -381,31 +419,31 @@
         </div>
     </section>
 
-        {{-- TAB FUNCTIONALITY --}}
-        @push('js')
-            <script>
-                document.addEventListener("DOMContentLoaded", function() {
-                    const tabs = document.querySelectorAll('.tab-btn');
-                    const panels = document.querySelectorAll('.tab-panel');
+    {{-- TAB FUNCTIONALITY --}}
+    @push('js')
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const tabs = document.querySelectorAll('.tab-btn');
+                const panels = document.querySelectorAll('.tab-panel');
 
-                    tabs.forEach(tab => {
-                        tab.addEventListener('click', function() {
-                            // Remove all active states
-                            tabs.forEach(t => {
-                                t.classList.remove('text-orange-500', 'border-orange-500');
-                                t.classList.add('text-slate-400', 'border-transparent');
-                            });
-                            panels.forEach(panel => panel.classList.add('hidden'));
-
-                            // Add active state to clicked
-                            this.classList.add('text-orange-500', 'border-orange-500');
-                            this.classList.remove('text-slate-400', 'border-transparent');
-                            const panelId = this.getAttribute('data-tab');
-                            document.getElementById(panelId).classList.remove('hidden');
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        // Remove all active states
+                        tabs.forEach(t => {
+                            t.classList.remove('text-orange-500', 'border-orange-500');
+                            t.classList.add('text-slate-400', 'border-transparent');
                         });
+                        panels.forEach(panel => panel.classList.add('hidden'));
+
+                        // Add active state to clicked
+                        this.classList.add('text-orange-500', 'border-orange-500');
+                        this.classList.remove('text-slate-400', 'border-transparent');
+                        const panelId = this.getAttribute('data-tab');
+                        document.getElementById(panelId).classList.remove('hidden');
                     });
                 });
-            </script>
-        @endpush
+            });
+        </script>
+    @endpush
 
-    </x-user::layout>
+</x-user::layout>
