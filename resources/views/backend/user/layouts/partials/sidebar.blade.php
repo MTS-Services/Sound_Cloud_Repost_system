@@ -3,7 +3,7 @@
 <div :class="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }"
     class="fixed left-0 lg:top-20 top-0 w-64 h-full lg:h-[90vh] bg-white dark:bg-slate-800 border-r border-gray-100 dark:border-slate-700 flex flex-col z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0">
     <!-- Profile Section -->
-    <div class="p-4 pt-11 border-b border-gray-100 dark:border-slate-700">
+    <div class="p-4  border-b border-gray-100 dark:border-slate-700">
         <div class="flex items-center space-x-3 mb-4">
             <img src="{{ user()->avatar }}" alt="{{ user()->name ?? 'name' }}" class="w-10 h-10 rounded-full">
 
