@@ -1,114 +1,137 @@
 <x-user::layout>
     @push('css')
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <style>
-            /* Your existing CSS for #bottom-player and its children */
-            #bottom-player {
+           #bottom-player {
                 position: fixed;
                 bottom: 0;
                 left: 0;
                 width: 100%;
-                background-color: #222;
-                color: #ccc;
-                padding: 10px 20px;
-                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+                background-color: #1a1a1a;
+                color: #fff;
+                padding: 12px 20px;
+                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
                 z-index: 1000;
                 display: flex;
                 align-items: center;
-                justify-content: space-between;
+                transition: transform 0.3s ease;
             }
 
-            #bottom-player .controls button {
+            #bottom-player.hidden {
+                transform: translateY(100%);
+            }
+
+            /* Update progress bar styles */
+            .progress-bar {
+                height: 4px;
+                background-color: #333;
+                border-radius: 2px;
+                cursor: pointer;
+                transition: height 0.2s;
+            }
+
+            .progress-bar:hover {
+                height: 6px;
+            }
+
+            .progress {
+                height: 100%;
+                background-color: #ff5500;
+                border-radius: 2px;
+                transition: width 0.1s linear;
+            }
+
+            /* Update controls */
+            .controls button {
                 background: none;
                 border: none;
-                color: #eee;
-                font-size: 1.5rem;
-                margin: 0 10px;
+                color: #ccc;
+                font-size: 1.2rem;
+                margin: 0 8px;
                 cursor: pointer;
                 transition: color 0.2s;
-            }
-
-            #bottom-player .controls button:hover {
-                color: #ff5500;
-            }
-
-            #bottom-player .track-info {
-                display: flex;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                display: inline-flex;
                 align-items: center;
-                flex-grow: 1;
+                justify-content: center;
+            }
+
+            .controls button:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: #fff;
+            }
+
+            #play-pause-button {
+                background-color: #ff5500;
+                color: white;
+                width: 40px;
+                height: 40px;
+            }
+
+            #play-pause-button:hover {
+                background-color: #e04a00;
+            }
+
+            /* Track info */
+            .track-info {
+                min-width: 200px;
+                max-width: 250px;
+                margin-right: 20px;
+            }
+
+            .track-info img {
+                width: 50px;
+                height: 50px;
+                border-radius: 4px;
+                object-fit: cover;
+            }
+
+            /* Volume control */
+            .volume-control {
+                margin-left: 20px;
+                min-width: 120px;
+            }
+
+            .volume-slider {
+                height: 4px;
+                background-color: #333;
+                border-radius: 2px;
+                cursor: pointer;
+                margin-left: 8px;
+            }
+
+            .volume {
+                height: 100%;
+                background-color: #ff5500;
+                border-radius: 2px;
+                width: 100%;
+            }
+
+            /* Action buttons */
+            .action-buttons {
                 margin-left: 20px;
             }
 
-            #bottom-player .track-info img {
-                width: 50px;
-                height: 50px;
-                border-radius: 5px;
-                margin-right: 15px;
-            }
-
-            #bottom-player .progress-bar-container {
-                flex-grow: 2;
-                margin: 0 20px;
-                display: flex;
-                align-items: center;
-            }
-
-            #bottom-player .progress-bar {
-                width: 100%;
-                height: 5px;
-                background-color: #555;
-                border-radius: 2.5px;
+            .action-buttons button {
+                background: rgba(255, 255, 255, 0.1);
+                border: none;
+                color: #fff;
+                padding: 6px 12px;
+                border-radius: 4px;
+                margin-left: 8px;
                 cursor: pointer;
-                position: relative;
-            }
-
-            #bottom-player .progress {
-                height: 100%;
-                background-color: #ff5500;
-                width: 0%;
-                border-radius: 2.5px;
-            }
-
-            #bottom-player .time {
                 font-size: 0.8rem;
-                margin: 0 10px;
-            }
-
-            #bottom-player .volume-control {
-                display: flex;
-                align-items: center;
-            }
-
-            #bottom-player .volume-slider {
-                width: 80px;
-                height: 5px;
-                background-color: #555;
-                border-radius: 2.5px;
-                cursor: pointer;
-                margin-left: 10px;
-            }
-
-            #bottom-player .volume {
-                height: 100%;
-                background-color: #ff5500;
-                width: 100%;
-                border-radius: 2.5px;
-            }
-
-            #bottom-player .action-buttons button {
-                background-color: #ff5500;
-                color: white;
-                padding: 5px 15px;
-                border-radius: 5px;
-                font-size: 0.9rem;
-                margin-left: 15px;
-                cursor: pointer;
                 transition: background-color 0.2s;
             }
 
-            #bottom-player .action-buttons button:hover {
-                background-color: #e04a00;
+            .action-buttons button:hover {
+                background: rgba(255, 255, 255, 0.2);
             }
         </style>
+
+
     @endpush
 
 
@@ -191,41 +214,40 @@
 
     {{-- The Sticky Bottom Player --}}
     <div id="bottom-player" class="hidden">
-        <div class="track-info">
-            <img id="player-artwork" src="https://placehold.co/50x50/333/fff?text=No+Track" alt="Track Artwork">
-            <div>
-                <div id="player-title" class="font-bold text-sm">No Track Loaded</div>
-                <div id="player-artist" class="text-xs text-gray-400"></div>
-            </div>
-        </div>
-
-        <div class="controls flex items-center">
-            <button id="prev-button"><i class="fas fa-backward"></i></button>
-            <button id="play-pause-button"><i class="fas fa-play"></i></button>
-            <button id="next-button"><i class="fas fa-forward"></i></button>
-        </div>
-
-        <div class="progress-bar-container">
-            <span id="current-time" class="time">0:00</span>
-            <div id="progress-bar" class="progress-bar">
-                <div id="progress" class="progress"></div>
-            </div>
-            <span id="total-time" class="time">0:00</span>
-        </div>
-
-        <div class="volume-control flex items-center">
-            <i class="fas fa-volume-up"></i>
-            <div id="volume-bar" class="volume-slider">
-                <div id="volume" class="volume"></div>
-            </div>
-        </div>
-
-        <div class="action-buttons">
-            <button>Repost</button>
-            <button>Share</button>
+    <div class="track-info">
+        <img id="player-artwork" src="https://placehold.co/50x50/333/fff?text=No+Track" alt="Track Artwork">
+        <div class="track-details">
+            <div id="player-title" class="track-title">No Track Loaded</div>
+            <div id="player-artist" class="artist-name"></div>
         </div>
     </div>
 
+    <div class="controls">
+        <button id="prev-button" title="Previous"><i class="fas fa-step-backward"></i></button>
+        <button id="play-pause-button" title="Play/Pause"><i class="fas fa-play"></i></button>
+        <button id="next-button" title="Next"><i class="fas fa-step-forward"></i></button>
+    </div>
+
+    <div class="progress-container">
+        <div class="time" id="current-time">0:00</div>
+        <div class="progress-bar" id="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        <div class="time" id="total-time">0:00</div>
+    </div>
+
+    <div class="volume-control">
+        <i class="fas fa-volume-up"></i>
+        <div class="volume-slider" id="volume-bar">
+            <div class="volume" id="volume"></div>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <button id="like-button" title="Like"><i class="far fa-heart"></i></button>
+        <button id="share-button" title="Share"><i class="fas fa-share-alt"></i></button>
+    </div>
+</div>
 
     @push('js')
         <script>
@@ -331,22 +353,23 @@
                         this.playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
                         this.isPlaying = false;
                     }
+
+                    this.currentIframeWidget = sourceIframeId ? window.SC.Widget(document.getElementById(sourceIframeId)) : null;
+                }
+
+                syncWithIframe(play = true) {
+                    if (this.currentIframeWidget) {
+                        play ? this.currentIframeWidget.play() : this.currentIframeWidget.pause();
+                    }
                 }
 
                 playTrack() {
                     this.audio.play().then(() => {
                         this.isPlaying = true;
                         this.playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
-                        // If we know which iframe started it, pause it.
-                        // This creates a "transfer" of playback to the bottom player.
-                        if (this.currentPlayingIframeId && window.SC && window.SC.Widget) {
-                            const iframe = document.getElementById(this.currentPlayingIframeId);
-                            if (iframe) {
-                                window.SC.Widget(iframe).pause();
-                            }
-                        }
+                        this.syncWithIframe(true); // Sync with iframe
                     }).catch(error => {
-                        console.error("Autoplay was prevented or error playing audio in bottom player:", error);
+                        console.error("Error playing audio:", error);
                         this.isPlaying = false;
                         this.playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
                     });
@@ -356,6 +379,7 @@
                     this.audio.pause();
                     this.isPlaying = false;
                     this.playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
+                    this.syncWithIframe(false); // Sync with iframe
                 }
 
                 togglePlayPause() {
@@ -403,23 +427,33 @@
 
                 // Listen for messages from iframes (your SoundCloud embeds)
                 window.addEventListener('message', (event) => {
-                    // Ensure the message is from a trusted origin (your own domain)
-                    if (event.origin !== window.location.origin) {
-                        // console.warn('Received message from untrusted origin:', event.origin);
-                        return;
-                    }
-
+                    if (event.origin !== window.location.origin) return;
+                    
                     const data = event.data;
+                    if (!data || !data.track) return;
 
-                    if (data.type === 'soundcloud-play' && data.track) {
-                        console.log('Received play event from iframe:', data.iframeId, data.track.title);
-                        // Load the track into the bottom player and auto-play it
-                        bottomPlayerInstance.loadTrack(data.track, true, data.iframeId);
+                    console.log('Received message:', data.type, data.track.title);
+
+                    switch (data.type) {
+                        case 'soundcloud-play':
+                            bottomPlayerInstance.loadTrack(data.track, true, data.iframeId);
+                            break;
+                            
+                        case 'soundcloud-pause':
+                            if (bottomPlayerInstance.currentTrack && 
+                                bottomPlayerInstance.currentTrack.id === data.track.id) {
+                                bottomPlayerInstance.pauseTrack();
+                            }
+                            break;
+                            
+                        case 'soundcloud-finish':
+                            if (bottomPlayerInstance.currentTrack && 
+                                bottomPlayerInstance.currentTrack.id === data.track.id) {
+                                // Auto-play next track if available
+                                bottomPlayerInstance.playNextTrack();
+                            }
+                            break;
                     }
-                    // You could also handle 'soundcloud-pause' if you want the bottom player to pause when an iframe pauses
-                    // if (data.type === 'soundcloud-pause' && data.track && bottomPlayerInstance.currentTrack && bottomPlayerInstance.currentTrack.id === data.track.id) {
-                    //     bottomPlayerInstance.pauseTrack();
-                    // }
                 });
 
                 // Optional: If you want to initially load a track into the bottom player on page load
