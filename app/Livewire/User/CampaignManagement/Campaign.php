@@ -14,23 +14,22 @@ class Campaign extends Component
     public function mount(CampaignService $campaignService)
     {
         $this->campaignService = $campaignService;
+        $followers_count = user()->userInfo()->followers_count;
+        $allowed_target_credits = ceil($followers_count / 100);
         $this->featuredCampaigns = $this->campaignService->getCampaigns()
-            // ->featured()
-            // ->withoutSelf()
-            ->with(['music.user'])
+            ->where('cost_per_repost', $allowed_target_credits)
+            ->featured()
+            ->withoutSelf()
+            ->with(['music.user.userInfo'])
             ->get();
 
         $this->campaigns = $this->campaignService->getCampaigns()
-            // ->notFeatured()
-            // ->withoutSelf()
-            ->with(['music.user'])
+            ->where('cost_per_repost', $allowed_target_credits)
+            ->notFeatured()
+            ->withoutSelf()
+            ->with(['music.user.userInfo'])
             ->get();
     }
-
-
-
-
-
 
     public function render()
     {
