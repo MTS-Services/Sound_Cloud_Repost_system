@@ -14,7 +14,6 @@ use Livewire\Component;
 class MyCampaign extends Component
 {
     public $campaigns;
-    public $activeMainTab = 'all';
 
     public bool $showCampaignsModal = false;
     public bool $showSubmitModal = false;
@@ -265,7 +264,7 @@ class MyCampaign extends Component
     public function submitCampaign()
     {
         // dd('here');
-        // $this->validate();
+        $this->validate();
 
         try {
             // Ensure we have a valid track URN
@@ -340,9 +339,12 @@ class MyCampaign extends Component
         }
     }
 
-    public function updatedActiveMainTab($tab)
+    public $activeMainTab = 'all';
+
+    public function setActiveTab($tab)
     {
         $this->activeMainTab = $tab;
+        $this->refreshCampaigns();
     }
 
     public function refreshCampaigns()
@@ -356,13 +358,13 @@ class MyCampaign extends Component
             } elseif ($this->activeMainTab == 'active') {
                 $this->campaigns = Campaign::with(['music'])
                     ->where('user_urn', user()->urn)
-                    ->where('status', Campaign::STATUS_OPEN)
+                    ->Open()
                     ->latest()
                     ->get();
             } elseif ($this->activeMainTab == 'completed') {
                 $this->campaigns = Campaign::with(['music'])
                     ->where('user_urn', user()->urn)
-                    ->where('status', Campaign::STATUS_COMPLETED)
+                    ->Completed()
                     ->latest()
                     ->get();
             }
@@ -374,11 +376,6 @@ class MyCampaign extends Component
 
     public function mount()
     {
-        if ($this->activeMainTab == 'active') {
-            dd('active');
-        } elseif ($this->activeMainTab == 'completed') {
-            dd('completed');
-        }
         $this->refreshCampaigns();
     }
 
