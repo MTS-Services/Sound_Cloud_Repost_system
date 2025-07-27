@@ -4,16 +4,19 @@
     <!-- Header Section -->
     <div class=" w-full  mt-6">
         <!-- Header Tabs & Button -->
-        <div class="flex items-center justify-between px-4 pt-3 border-b border-b-gray-200">
-            {{-- <div class="flex items-center space-x-6">
-                <div class="relative text-black border-b-2 font-medium border-orange-500 ">Recommended Pro <sup
-                        class="text-red-500 text-xs">55</sup></div>
-                <div class=" text-gray-500 pb-1">Recommended <sup class="text-red-500 text-xs">136</sup></div>
-                <div class="text-gray-500">All <sup class="text-red-500 text-xs">855</sup></div>
-            </div> --}}
-            <div x-data="{ showInput: false }" class="flex items-center space-x-2 text-gray-600">
+        <div
+            class="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-4 pt-3 border-b border-b-gray-200 gap-2 sm:gap-0">
+            {{-- <div class="flex items-center space-x-2 sm:space-x-6 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+        <div class="relative text-black border-b-2 font-medium border-orange-500 whitespace-nowrap">Recommended Pro <sup
+                class="text-red-500 text-xs">55</sup></div>
+        <div class="text-gray-500 pb-1 whitespace-nowrap">Recommended <sup class="text-red-500 text-xs">136</sup></div>
+        <div class="text-gray-500 whitespace-nowrap">All <sup class="text-red-500 text-xs">855</sup></div>
+    </div> --}}
+
+            <div x-data="{ showInput: false }"
+                class="flex items-center w-full sm:w-auto justify-between sm:justify-start space-x-2 text-gray-600">
                 <div @click="showInput = !showInput"
-                    :class="!showInput ? 'flex items-center space-x-2 cursor-pointer' : 'hidden'">
+                    :class="!showInput ? 'flex items-center space-x-2 px-2 sm:px-7 cursor-pointer whitespace-nowrap' : 'hidden'">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -21,9 +24,9 @@
                     <span>Search by tag</span>
                 </div>
 
-                <div x-show="showInput" class="relative ">
-                    <input type="text" placeholder="Search by tag "
-                        class="border py-2 border-red-500 pl-7 pr-2  rounded focus:outline-none focus:ring-1 focus:ring-red-400"
+                <div x-show="showInput" class="relative w-full sm:w-auto">
+                    <input type="text" placeholder="Search by tag"
+                        class="border py-2 border-red-500 pl-7 pr-2 rounded focus:outline-none focus:ring-1 focus:ring-red-400 w-full"
                         @click.outside="showInput = false" autofocus />
                     <svg class="w-4 h-4 absolute left-2 top-3 text-gray-500" fill="none" stroke="currentColor"
                         stroke-width="2" viewBox="0 0 24 24">
@@ -32,7 +35,9 @@
                     </svg>
                 </div>
             </div>
-            <button class="bg-orange-600 text-white px-5 py-2 mb-2 rounded hover:bg-orange-700 transition">
+
+            <button
+                class="bg-orange-600 text-white px-3 sm:px-5 py-2 mb-2 rounded hover:bg-orange-700 transition w-full sm:w-auto text-center">
                 Start a new campaign
             </button>
         </div>
@@ -81,8 +86,7 @@
         @if (count($featuredCampaigns) > 0)
             <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Featured campaigns</h2>
 
-            <div
-                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm ">
+            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm ">
                 @foreach ($featuredCampaigns as $campaign)
                     <div class="flex flex-col lg:flex-row">
                         <!-- Left Column - Track Info -->
@@ -116,20 +120,22 @@
                                 <!-- Avatar + Title + Icon -->
                                 <div
                                     class="flex flex-col sm:flex-row relative items-start sm:items-center justify-between gap-4 mb-4">
-                                   <div class="flex items-center gap-3">
+                                    <div class="flex items-center gap-3">
                                         <img class="w-14 h-14 rounded-full object-cover"
-                                            src="{{ auth_storage_url($campaign?->music?->user?->avatar) }}" alt="Audio Cure avatar">
+                                            src="{{ auth_storage_url($campaign?->music?->user?->avatar) }}"
+                                            alt="Audio Cure avatar">
                                         <div x-data="{ open: false }" class=" inline-block text-left">
                                             <!-- Trigger -->
                                             <div @click="open = !open" class="flex items-center gap-1 cursor-pointer">
-                                                <span class="text-slate-700 dark:text-gray-300 font-medium">{{ $campaign?->music?->user?->name }}</span>
+                                                <span
+                                                    class="text-slate-700 dark:text-gray-300 font-medium">{{ $campaign?->music?->user?->name }}</span>
                                                 <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none"
                                                     viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                                 </svg>
                                             </div>
-                                             <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 mt-1" fill="none"
+                                            <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 mt-1" fill="none"
                                                 viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                                     d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z">
@@ -204,8 +210,7 @@
         @if (count($campaigns) > 0)
             <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 my-4">Recommended Campaigns</h2>
 
-            <div
-                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm ">
+            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm ">
                 @foreach ($campaigns as $campaign)
                     <div class="flex flex-col lg:flex-row">
                         <!-- Left Column - Track Info -->
@@ -235,51 +240,69 @@
                             <div class="flex flex-col h-full justify-between">
                                 <!-- Avatar + Title + Icon -->
                                 <div
-                                class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 relative">
-                                <div class="flex items-center gap-3">
-                                    <img class="w-14 h-14 rounded-full object-cover"
-                                        src="{{ asset('default_img/other.png') }}" alt="Audio Cure avatar">
-                                    <div x-data="{ open: false }" class=" inline-block text-left">
-                                        <!-- Trigger -->
-                                        <div @click="open = !open" class="flex items-center gap-1 cursor-pointer">
-                                            <span class="text-slate-700 dark:text-gray-300 font-medium">Audio
-                                                Cure</span>
-                                            <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none"
+                                    class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 relative">
+                                    <div class="flex items-center gap-3">
+                                        <img class="w-14 h-14 rounded-full object-cover"
+                                            src="{{ asset('default_img/other.png') }}" alt="Audio Cure avatar">
+                                        <div x-data="{ open: false }" class=" inline-block text-left">
+                                            <!-- Trigger -->
+                                            <div @click="open = !open" class="flex items-center gap-1 cursor-pointer">
+                                                <span class="text-slate-700 dark:text-gray-300 font-medium">Audio
+                                                    Cure</span>
+                                                <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                                </svg>
+                                            </div>
+                                            <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 mt-1" fill="none"
                                                 viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M19 9l-7 7-7-7"></path>
-                                            </svg>
-                                        </div>
-                                         <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 mt-1" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="1.5"
                                                     d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z">
                                                 </path>
                                             </svg>
 
-                                        <!-- Dropdown Menu -->
-                                        <div x-show="open" @click.outside="open = false" x-transition
-                                            class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 gr text-white text-sm p-2 space-y-2">
-                                            <a href="#" class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
-                                                SoundCloud Profile</a>
-                                            <a href="#" class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
-                                                RepostExchange Profile</a>
-                                            <button
-                                                class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
-                                                all content from this member</button>
-                                            <button
-                                                class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
-                                                this track</button>
+                                            <!-- Dropdown Menu -->
+                                            <div x-show="open" @click.outside="open = false" x-transition
+                                                class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 gr text-white text-sm p-2 space-y-2">
+                                                <a href="#"
+                                                    class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
+                                                    SoundCloud Profile</a>
+                                                <a href="#"
+                                                    class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
+                                                    RepostExchange Profile</a>
+                                                <button
+                                                    class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
+                                                    all content from this member</button>
+                                                <button
+                                                    class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
+                                                    this track</button>
+                                            </div>
                                         </div>
+
                                     </div>
 
-                                </div>
+                                    <!-- Stats and Repost Button -->
+                                    <div class="flex items-center gap-4 sm:gap-8">
+                                        <div
+                                            class="flex flex-col items-center sm:items-start text-gray-600 dark:text-gray-400">
+                                            <div class="flex items-center gap-1.5">
+                                                <svg width="26" height="18" viewBox="0 0 26 18"
+                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <rect x="1" y="1" width="24" height="16" rx="3"
+                                                        fill="none" stroke="currentColor" stroke-width="2" />
+                                                    <circle cx="8" cy="9" r="3" fill="none"
+                                                        stroke="currentColor" stroke-width="2" />
+                                                </svg>
+                                                <span class="text-sm sm:text-base">103</span>
+                                            </div>
+                                            <span
+                                                class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
+                                        </div>
 
-                                <!-- Stats and Repost Button -->
-                                <div class="flex items-center gap-4 sm:gap-8">
-                                    <div
-                                        class="flex flex-col items-center sm:items-start text-gray-600 dark:text-gray-400">
-                                        <div class="flex items-center gap-1.5">
+                                        <button
+                                            class="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 py-2 px-3 sm:px-5 sm:pl-8 rounded-md shadow-sm text-sm sm:text-base transition-colors">
                                             <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                 <rect x="1" y="1" width="24" height="16" rx="3"
@@ -287,24 +310,10 @@
                                                 <circle cx="8" cy="9" r="3" fill="none"
                                                     stroke="currentColor" stroke-width="2" />
                                             </svg>
-                                            <span class="text-sm sm:text-base">103</span>
-                                        </div>
-                                        <span class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
+                                            <span>1 Repost</span>
+                                        </button>
                                     </div>
-
-                                    <button
-                                        class="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 py-2 px-3 sm:px-5 sm:pl-8 rounded-md shadow-sm text-sm sm:text-base transition-colors">
-                                        <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <rect x="1" y="1" width="24" height="16" rx="3"
-                                                fill="none" stroke="currentColor" stroke-width="2" />
-                                            <circle cx="8" cy="9" r="3" fill="none"
-                                                stroke="currentColor" stroke-width="2" />
-                                        </svg>
-                                        <span>1 Repost</span>
-                                    </button>
                                 </div>
-                            </div>
 
 
                                 <!-- Genre Badge -->
