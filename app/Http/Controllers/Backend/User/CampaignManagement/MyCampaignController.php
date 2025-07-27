@@ -42,6 +42,12 @@ class MyCampaignController extends Controller
         return view('backend.user.campaign_management.campaigns.campaigns', $data);
     }
 
+    public function myCampaign()
+    {
+
+        return view('backend.user.campaigns222');
+    }
+
     /**
      * Show the form for creating a new resource.
      */

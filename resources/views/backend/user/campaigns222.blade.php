@@ -76,16 +76,12 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="flex flex-col lg:flex-row sm:items-center sm:space-x-2 gap-2">
+                                <div class="flex flex-col lg:flex-column sm:items-center sm:space-x-2 gap-2">
+
                                     <button
-                                        class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-eye w-4 h-4">
-                                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-                                            <circle cx="12" cy="12" r="3"></circle>
-                                        </svg><span>View Details</span></button><button
+                                        class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">Add
+                                        Credits</button>
+                                    <button
                                         class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-lg transition-colors"><svg
                                             xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -94,9 +90,19 @@
                                             <circle cx="12" cy="12" r="1"></circle>
                                             <circle cx="19" cy="12" r="1"></circle>
                                             <circle cx="5" cy="12" r="1"></circle>
-                                        </svg></button><button
-                                        class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">Add
-                                        Credits</button>
+                                        </svg>
+                                    </button>
+                                    <button
+                                        class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-eye w-4 h-4">
+                                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg><span>View Details</span>
+                                    </button>
+
                                 </div>
                             </div>
                             <div class="grid grid-cols-3 gap-6 mt-6 pt-6 border-t border-slate-700">
@@ -190,15 +196,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="flex flex-col lg:flex-row sm:items-center sm:space-x-2 gap-2"><button
-                                        class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-eye w-4 h-4">
-                                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-                                            <circle cx="12" cy="12" r="3"></circle>
-                                        </svg><span>View Details</span></button><button
+                                <div class="flex flex-col lg:flex-column sm:items-center sm:space-x-2 gap-2">
+
+                                    <button
                                         class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-lg transition-colors"><svg
                                             xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -207,7 +207,19 @@
                                             <circle cx="12" cy="12" r="1"></circle>
                                             <circle cx="19" cy="12" r="1"></circle>
                                             <circle cx="5" cy="12" r="1"></circle>
-                                        </svg></button></div>
+                                        </svg>
+                                    </button>
+                                    <button
+                                        class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-eye w-4 h-4">
+                                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg><span>View Details</span>
+                                    </button>
+                                </div>
                             </div>
                             <div class="grid grid-cols-3 gap-6 mt-6 pt-6 border-t border-slate-700">
                                 <div class="text-center">
@@ -307,15 +319,12 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="flex flex-col lg:flex-row sm:items-center sm:space-x-2 gap-2"><button
-                                        class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-eye w-4 h-4">
-                                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-                                            <circle cx="12" cy="12" r="3"></circle>
-                                        </svg><span>View Details</span></button><button
+                                <div class="flex flex-col lg:flex-column sm:items-center sm:space-x-2 gap-2">
+
+                                    <button
+                                        class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">Add
+                                        Credits</button>
+                                    <button
                                         class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-lg transition-colors flex justify-center"><svg
                                             xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -324,9 +333,20 @@
                                             <circle cx="12" cy="12" r="1"></circle>
                                             <circle cx="19" cy="12" r="1"></circle>
                                             <circle cx="5" cy="12" r="1"></circle>
-                                        </svg></button><button
-                                        class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">Add
-                                        Credits</button></div>
+                                        </svg>
+                                    </button>
+                                    <button
+                                        class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-eye w-4 h-4">
+                                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg><span>View Details</span>
+                                    </button>
+
+                                </div>
                             </div>
                             <div class="grid grid-cols-3 gap-6 mt-6 pt-6 border-t border-slate-700">
                                 <div class="text-center">
@@ -424,15 +444,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="flex flex-col lg:flex-row sm:items-center sm:space-x-2 gap-2"><button
-                                        class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-eye w-4 h-4">
-                                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-                                            <circle cx="12" cy="12" r="3"></circle>
-                                        </svg><span>View Details</span></button><button
+                                <div class="flex flex-col lg:flex-column sm:items-center sm:space-x-2 gap-2">
+
+                                    <button
                                         class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-lg transition-colors flex justify-center"><svg
                                             xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -441,7 +455,19 @@
                                             <circle cx="12" cy="12" r="1"></circle>
                                             <circle cx="19" cy="12" r="1"></circle>
                                             <circle cx="5" cy="12" r="1"></circle>
-                                        </svg></button></div>
+                                        </svg>
+                                    </button>
+                                    <button
+                                        class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-eye w-4 h-4">
+                                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg><span>View Details</span>
+                                    </button>
+                                </div>
                             </div>
                             <div class="grid grid-cols-3 gap-6 mt-6 pt-6 border-t border-slate-700">
                                 <div class="text-center">
