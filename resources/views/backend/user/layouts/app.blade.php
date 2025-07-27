@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Sound Cloud') }}</title>
-    
+
     <script>
         (function() {
             let theme = localStorage.getItem('theme') || 'system';
@@ -24,18 +24,16 @@
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/custome.css') }}">
     <!-- Scripts -->
     <script src="{{ asset('assets/js/toggle-theme.js') }}"></script>
-    {{-- <script src="{{ asset('assets/frontend/js/custome.js') }}"></script> --}}
-    <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
 
     @vite(['resources/css/user-dashboard.css', 'resources/js/user-dashboard.js'])
-    
+
 
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
-    
+
     <script>
         const content_image_upload_url = '{{ route('file.ci_upload') }}';
     </script>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             @if (session('success'))
@@ -68,7 +66,14 @@
         </div>
     </div>
 
-    <script src="{{ asset('assets/frontend/js/custome.js') }}"></script>
+    <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
+    {{-- <script src="{{ asset('assets/frontend/js/custome.js') }}"></script> --}}
+    <script>
+        document.addEventListener('alpine:init', () => {
+            console.log('Alpine has initialized');
+            lucide.createIcons();
+        })
+    </script>
     @stack('js')
     @livewireScripts()
 </body>
