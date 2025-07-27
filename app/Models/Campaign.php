@@ -21,7 +21,7 @@ class Campaign extends BaseModel
         'credits_spent',
         'min_followers',
         'max_followers',
-
+        'is_featured',
         'start_date',
         'end_date',
 
@@ -176,14 +176,14 @@ class Campaign extends BaseModel
         return $this->where('status', '!=', self::STATUS_CANCELLED,)->where('status', '!=', self::STATUS_PAUSED);
     }
 
-    public const FEATURE_TRUE = 1;
-    public const FEATURE_FALSE = 0;
+    public const FEATURED = 1;
+    public const NOT_FEATURED = 0;
 
     public static function getFeatureList(): array
     {
         return [
-            self::FEATURE_TRUE => 'Yes',
-            self::FEATURE_FALSE => 'No',
+            self::FEATURED => 'Yes',
+            self::NOT_FEATURED => 'No',
         ];
     }
     public function getFeatureLabelAttribute()
