@@ -115,11 +115,11 @@
                             <div class="flex flex-col h-full justify-between">
                                 <!-- Avatar + Title + Icon -->
                                 <div
-                                    class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+                                    class="flex flex-col sm:flex-row relative items-start sm:items-center justify-between gap-4 mb-4">
                                    <div class="flex items-center gap-3">
                                         <img class="w-14 h-14 rounded-full object-cover"
                                             src="{{ auth_storage_url($campaign?->music?->user?->avatar) }}" alt="Audio Cure avatar">
-                                        <div x-data="{ open: false }" class="relative inline-block text-left">
+                                        <div x-data="{ open: false }" class=" inline-block text-left">
                                             <!-- Trigger -->
                                             <div @click="open = !open" class="flex items-center gap-1 cursor-pointer">
                                                 <span class="text-slate-700 dark:text-gray-300 font-medium">{{ $campaign?->music?->user?->name }}</span>
@@ -138,7 +138,7 @@
 
                                             <!-- Dropdown Menu -->
                                             <div x-show="open" @click.outside="open = false" x-transition
-                                                class="absolute -right-13 mt-2 w-56 z-50 shadow-lg bg-gray-900 gr text-white text-sm p-2 space-y-2">
+                                                class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 gr text-white text-sm p-2 space-y-2">
                                                 <a href="#"
                                                     class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                     SoundCloud Profile</a>
@@ -235,11 +235,11 @@
                             <div class="flex flex-col h-full justify-between">
                                 <!-- Avatar + Title + Icon -->
                                 <div
-                                class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+                                class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 relative">
                                 <div class="flex items-center gap-3">
                                     <img class="w-14 h-14 rounded-full object-cover"
                                         src="{{ asset('default_img/other.png') }}" alt="Audio Cure avatar">
-                                    <div x-data="{ open: false }" class="relative inline-block text-left">
+                                    <div x-data="{ open: false }" class=" inline-block text-left">
                                         <!-- Trigger -->
                                         <div @click="open = !open" class="flex items-center gap-1 cursor-pointer">
                                             <span class="text-slate-700 dark:text-gray-300 font-medium">Audio
@@ -259,7 +259,7 @@
 
                                         <!-- Dropdown Menu -->
                                         <div x-show="open" @click.outside="open = false" x-transition
-                                            class="absolute -right-13 mt-2 w-56 z-50 shadow-lg bg-gray-900 gr text-white text-sm p-2 space-y-2">
+                                            class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 gr text-white text-sm p-2 space-y-2">
                                             <a href="#" class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                 SoundCloud Profile</a>
                                             <a href="#" class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
