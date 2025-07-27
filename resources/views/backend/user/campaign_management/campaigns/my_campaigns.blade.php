@@ -42,7 +42,7 @@
         <!-- Campaigns List -->
         <div class="space-y-6" id="campaigns-list">
             @forelse ($campaigns->where('status_label', $activeMainTab === 'all' ? true : $activeMainTab) as $campaign)
-                <div class="campaign-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl transition-all duration-300"
+                {{-- <div class="campaign-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl transition-all duration-300"
                     data-status="{{ $campaign->status_label }}">
                     <div class="flex justify-center gap-6">
                         <!-- Album Cover -->
@@ -171,6 +171,125 @@
                                     <i data-lucide="plus" class="w-4 h-4"></i>
                                     {{ __('Add Credits') }}
                                 </a>
+                            </div>
+                        </div>
+                    </div>
+                </div> --}}
+
+                <div class=" rounded-lg border border-slate-700 overflow-hidden">
+                    <div class="p-6 sm:p-8">
+                        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                            <div class="flex flex-col sm:flex-row sm:items-start gap-4"><img
+                                    src="https://images.pexels.com/photos/1540338/pexels-photo-1540338.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=300&amp;h=300&amp;fit=crop"
+                                    alt="Sexy - Fashion - Promo" class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
+                                <div class="flex-1">
+                                    <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-3 mb-2">
+                                        <h3 class=" text-black dark:text-gray-100 font-semibold text-lg text-center sm:text-left">
+                                            {{ $campaign->title }}
+                                        </h3>
+                                        <span
+                                            class="px-2 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-400 text-center sm:text-left">Active</span>
+                                    </div>
+                                    <div
+                                        class="flex flex-col sm:flex-row sm:items-center sm:space-x-6 text-sm text-slate-400 mb-4 space-y-2 sm:space-y-0">
+                                        <div class="flex items-center space-x-1 justify-center sm:justify-start">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-calendar w-4 h-4">
+                                                <path d="M8 2v4"></path>
+                                                <path d="M16 2v4"></path>
+                                                <rect width="18" height="18" x="3" y="4" rx="2">
+                                                </rect>
+                                                <path d="M3 10h18"></path>
+                                            </svg><span>Created Apr 10, 2025</span>
+                                        </div>
+                                        <div class="flex items-center space-x-1 justify-center sm:justify-start">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-clock w-4 h-4">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <polyline points="12 6 12 12 16 14"></polyline>
+                                            </svg><span>Expires Apr 17, 2025</span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <div class="flex items-center justify-between text-sm mb-2"><span
+                                                class="text-slate-400">Budget used: 14/20 credits</span><span
+                                                class="text-orange-500 font-medium">70%</span></div>
+                                        <div class="w-full bg-slate-700 rounded-full h-2">
+                                            <div class="bg-gradient-to-r from-orange-500 to-orange-600 h-2 rounded-full transition-all duration-300"
+                                                style="width: 70%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col lg:flex-column sm:items-center sm:space-x-2 gap-2">
+
+                                <button
+                                    class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">Add
+                                    Credits</button>
+                                <button
+                                    class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-lg transition-colors"><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="lucide lucide-more-horizontal w-4 h-4">
+                                        <circle cx="12" cy="12" r="1"></circle>
+                                        <circle cx="19" cy="12" r="1"></circle>
+                                        <circle cx="5" cy="12" r="1"></circle>
+                                    </svg>
+                                </button>
+                                <button
+                                    class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="lucide lucide-eye w-4 h-4">
+                                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg><span>View Details</span>
+                                </button>
+
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-6 mt-6 pt-6 border-t border-slate-700">
+                            <div class="text-center">
+                                <div class="flex items-center justify-center mb-2"><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="lucide  lucide-trending-up w-5 h-5 text-orange-500 mr-2">
+                                        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                                        <polyline points="16 7 22 7 22 13"></polyline>
+                                    </svg><span class="text-2xl font-bold   text-black dark:text-gray-100">24</span>
+                                </div>
+                                <p class="text-slate-400 text-sm">Reposts</p>
+                            </div>
+                            <div class="text-center">
+                                <div class="flex items-center justify-center mb-2"><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="lucide lucide-eye w-5 h-5 text-blue-500 mr-2">
+                                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg><span class="text-2xl font-bold text-black dark:text-gray-100">342</span>
+                                </div>
+                                <p class="text-slate-400 text-sm">Plays</p>
+                            </div>
+                            <div class="text-center">
+                                <div class="flex items-center justify-center mb-2"><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="lucide lucide-trending-up w-5 h-5 text-green-500 mr-2">
+                                        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                                        <polyline points="16 7 22 7 22 13"></polyline>
+                                    </svg><span class="text-2xl font-bold text-black dark:text-gray-100">38</span>
+                                </div>
+                                <p class="text-slate-400 text-sm">Likes</p>
                             </div>
                         </div>
                     </div>

@@ -19,7 +19,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('sort_order')->default(0);
             $table->string('user_urn')->index();
-            $table->string('track_urn')->index();
+            $table->unsignedBigInteger('music_id')->index();
+            $table->string('music_type')->index();
 
             $table->string('title');
             $table->text('description')->nullable();
@@ -41,7 +42,6 @@ return new class extends Migration
             $table->softDeletes();
             $this->addMorphedAuditColumns($table);
 
-            $table->foreign('track_urn')->references('urn')->on('tracks')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreign('user_urn')->references('urn')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }

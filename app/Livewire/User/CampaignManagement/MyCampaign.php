@@ -261,7 +261,8 @@ class MyCampaign extends Component
 
     public function submitCampaign()
     {
-        $this->validate();
+        // dd('here');
+        // $this->validate();
 
         try {
             // Ensure we have a valid track URN
@@ -295,6 +296,7 @@ class MyCampaign extends Component
                 'max_followers' => $this->maxFollowers,
             ]);
 
+
             session()->flash('message', 'Campaign created successfully!');
             $this->dispatch('campaignCreated');
 
@@ -318,6 +320,7 @@ class MyCampaign extends Component
                 'maxFollowers'
             ]);
 
+
             $this->resetValidation();
             $this->resetErrorBag();
         } catch (\Exception $e) {
@@ -336,7 +339,7 @@ class MyCampaign extends Component
     public function refreshCampaigns()
     {
         try {
-            $this->campaigns = Campaign::with(['track'])
+            $this->campaigns = Campaign::with(['music'])
                 ->where('user_urn', user()->urn)
                 ->latest()
                 ->get();
