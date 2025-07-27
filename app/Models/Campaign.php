@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\F;
 
 class Campaign extends BaseModel
@@ -10,7 +13,9 @@ class Campaign extends BaseModel
 
     protected $fillable = [
         'user_urn',
-        'track_urn',
+        'music_id',
+        'music_type',
+        'status',
         'title',
         'description',
 
@@ -49,27 +54,27 @@ class Campaign extends BaseModel
                 Start of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_urn', 'urn');
     }
 
-    public function track()
+    public function music(): MorphTo
     {
-        return $this->belongsTo(Track::class, 'track_urn', 'urn');
+        return $this->morphTo();
     }
 
-    public function requests()
+    public function requests(): HasMany
     {
         return $this->hasMany(RepostRequest::class, 'campaign_id', 'id');
     }
 
-    public function reposts()
+    public function reposts(): HasMany
     {
         return $this->hasMany(Repost::class, 'campaign_id', 'id');
     }
 
-    public function creditTransactions()
+    public function creditTransactions(): HasMany
     {
         return $this->hasMany(CreditTransaction::class, 'campaign_id', 'id');
     }

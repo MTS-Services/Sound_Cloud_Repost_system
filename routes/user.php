@@ -13,7 +13,7 @@ use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
-
+use App\Livewire\User\ProfileManagement\MyAccount;
 
 Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
     Route::get('redirect', [SoundCloudController::class, 'redirect'])->name('redirect');
@@ -21,7 +21,8 @@ Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
     Route::post('disconnect', [SoundCloudController::class, 'disconnect'])->name('disconnect')->middleware('auth:web');
     Route::post('sync', [SoundCloudController::class, 'sync'])->name('sync')->middleware('auth:web');
 });
-Route::view('soundcloud', 'backend.user.my-account')->name('myAccount');
+Route::view('my-account
+', 'backend.user.profile-management.my-account')->name('myAccount');
 // Dashboard and other routes
 Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     Route::get('/dashboard',[DashboardController::class, 'dashboard'])->name('dashboard');
@@ -68,4 +69,8 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
         Route::post('/store', 'store')->name('store');
     });
     
+    Route::group(['as' => 'pm.', 'prefix' => 'profile-management'], function () {
+
+        Route::get('/my-account', MyAccount::class)->name('my-account');
+    });
 });

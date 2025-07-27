@@ -142,15 +142,10 @@ function storage_url($urlOrArray)
     }
 }
 
-function auth_storage_url($url, $gender = false)
+function auth_storage_url($url)
 {
     $image = asset('default_img/other.png');
-    if ($gender == 1) {
-        $image = asset('default_img/male.jpeg');
-    } elseif ($gender == 2) {
-        $image = asset('default_img/female.jpg');
-    }
-    return $url ? asset('storage/' . $url) : $image;
+    return $url ?  $url : $image;
 }
 
 function getSubmitterType($className)
