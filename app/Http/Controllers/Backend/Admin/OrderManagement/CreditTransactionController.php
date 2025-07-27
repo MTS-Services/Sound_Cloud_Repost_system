@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Backend\Admin;
+namespace App\Http\Controllers\Backend\Admin\OrderManagement;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CreditTransactionRequest;
@@ -50,7 +50,7 @@ class CreditTransactionController extends Controller
                 ->rawColumns(['action', 'name', 'created_at'])
                 ->make(true);
         }
-        return view('backend.admin.credit-management.purchases');
+        return view('backend.admin.order-management.transactions.purchases');
     }
     protected function menuItems($model): array
     {

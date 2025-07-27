@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Backend\User\DashboardController;
-use App\Http\Controllers\Backend\Admin\OrderManagement\OrderController;
+use App\Http\Controllers\Backend\Admin\OrderManagement\OrderController as UserOrderController;
 use App\Http\Controllers\Backend\User\AddCaeditsController;
 use App\Http\Controllers\Backend\User\AnalyticsController;
 use App\Http\Controllers\Backend\User\CampaignManagement\CampaignController;
@@ -64,10 +64,7 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     });
 
     // Order Manaagement Routes
-    Route::controller(OrderController::class)->name('order.')->prefix('order')->group(function () {
-        Route::get('/', 'index')->name('index');
+    Route::controller(UserOrderController::class)->name('order.')->prefix('order')->group(function () {
         Route::post('/store', 'store')->name('store');
-        Route::get('/status/{order}', 'status')->name('status');
-        Route::post('/show/{order}', 'show')->name('show');
     });
 });

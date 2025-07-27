@@ -1,21 +1,22 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Backend\Admin\UserManagement\UserController;
 use App\Http\Controllers\Backend\Admin\AdminManagement\RoleController;
 use App\Http\Controllers\Backend\Admin\AdminManagement\AdminController;
+use App\Http\Controllers\Backend\Admin\OrderManagement\OrderController;
+use App\Http\Controllers\Backend\Admin\PackageManagement\PlanController;
+use App\Http\Controllers\Backend\Admin\PackageManagement\CreditController;
+use App\Http\Controllers\Backend\Admin\PackageManagement\FeatureController;
 use App\Http\Controllers\Backend\Admin\AdminManagement\PermissionController;
 use App\Http\Controllers\Backend\Admin\CampaignManagement\CampaignController;
-use App\Http\Controllers\Backend\Admin\CreditTransactionController;
-use App\Http\Controllers\Backend\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Backend\Admin\PackageManagement\CreditController;
-use App\Http\Controllers\Backend\Admin\PackageManagement\FeatureCategoryController;
-use App\Http\Controllers\Backend\Admin\PackageManagement\FeatureController;
-use App\Http\Controllers\Backend\Admin\PackageManagement\PlanController;
-use App\Http\Controllers\Backend\Admin\UserManagement\UserController;
 use App\Http\Controllers\Backend\Admin\UserManagement\UserPlaylistController;
 use App\Http\Controllers\Backend\Admin\UserManagement\UserTracklistController;
+use App\Http\Controllers\Backend\Admin\OrderManagement\CreditTransactionController;
+use App\Http\Controllers\Backend\Admin\PackageManagement\FeatureCategoryController;
+use App\Http\Controllers\Backend\Admin\DashboardController as AdminDashboardController;
 
-Route::group(['middleware' => ['auth:admin','admin'], 'prefix' => 'admin'], function () {
+Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], function () {
 
     // Button UI Route 
     Route::get('/button-ui', function () {
@@ -63,12 +64,10 @@ Route::group(['middleware' => ['auth:admin','admin'], 'prefix' => 'admin'], func
     Route::group(['as' => 'pm.', 'prefix' => 'package-management'], function () {
         // Feature Category Routes
         Route::resource('feature-category', FeatureCategoryController::class);
-        Route::controller(FeatureCategoryController::class)->name('feature-category.')->prefix('feature-category')->group(function () {
-        });
+        Route::controller(FeatureCategoryController::class)->name('feature-category.')->prefix('feature-category')->group(function () {});
         // Feature Routes
         Route::resource('feature', FeatureController::class);
-        Route::controller(FeatureController::class)->name('feature.')->prefix('feature')->group(function () {
-        });
+        Route::controller(FeatureController::class)->name('feature.')->prefix('feature')->group(function () {});
         Route::resource('plan', PlanController::class);
 
         // Credit Routes
@@ -121,10 +120,24 @@ Route::group(['middleware' => ['auth:admin','admin'], 'prefix' => 'admin'], func
         });
     });
 
-    // Credit Transaction Routes
-    Route::controller(CreditTransactionController::class)->name('credit-transaction.')->prefix('credit-transaction')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::post('/store', 'store')->name('store');
-        Route::get('/purchase', 'purchase')->name('purchase');
+
+    // Order Management Routes
+    Route::group(['as' => 'om.', 'prefix' => 'order-management'], function () {
+        // Order Routes
+        Route::resource('order', OrderController::class);
+        Route::controller(OrderController::class)->name('order.')->prefix('order')->group(function () {
+            Route::get('/status/{order}', 'status')->name('status');
+            Route::post('/show/{order}', 'show')->name('show');
+            Route::get('/trash/bin', 'trash')->name('trash');
+            Route::get('/restore/{order}', 'restore')->name('restore');
+            Route::delete('/permanent-delete/{order}', 'permanentDelete')->name('permanent-delete');
+        });
+
+        // Credit Transaction Routes
+        Route::controller(CreditTransactionController::class)->name('credit-transaction.')->prefix('credit-transaction')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/store', 'store')->name('store');
+            Route::get('/purchase', 'purchase')->name('purchase');
+        });
     });
 });

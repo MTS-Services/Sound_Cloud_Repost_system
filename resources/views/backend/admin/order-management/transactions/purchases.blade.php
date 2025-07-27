@@ -49,7 +49,7 @@
                     table_columns: table_columns,
                     main_class: '.datatable',
                     displayLength: 10,
-                    main_route: "{{ route('credit-transaction.purchase') }}",
+                    main_route: "{{ route('om.credit-transaction.purchase') }}",
                     order_route: "{{ route('update.sort.order') }}",
                     export_columns: [0, 1],
                     model: 'CreditTransaction',
