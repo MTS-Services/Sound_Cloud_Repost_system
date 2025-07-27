@@ -216,7 +216,7 @@ class MyCampaign extends Component
             'totalBudget'
         ]);
 
-        $userCredits = 100;
+        $userCredits = 10;
         if ($userCredits < 50) {
             $this->showLowCreditWarningModal = true;
             $this->showSubmitModal = false;

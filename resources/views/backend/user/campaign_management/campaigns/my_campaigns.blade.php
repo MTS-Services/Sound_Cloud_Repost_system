@@ -382,7 +382,7 @@
                 <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
                     {{ __('Please add more credits to your account to proceed with campaign creation.') }}
                 </p>
-                <a href="{{ route('user.add-credits') }}"
+                <a href="{{ route('user.add-credits') }}" wire:navigate
                     class="inline-flex items-center justify-center w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                     <i data-lucide="plus" class="w-5 h-5 inline mr-2"></i>
                     {{ __('Buy Credits Now') }}
