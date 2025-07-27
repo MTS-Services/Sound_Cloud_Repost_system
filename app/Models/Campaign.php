@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -168,12 +169,12 @@ class Campaign extends BaseModel
 
     public function getStartDateFormattedAttribute()
     {
-        return timeFormat($this->start_date);
+        return Carbon::parse($this->start_date)->format('d M Y');
     }
 
     public function getEndDateFormattedAttribute()
     {
-        return timeFormat($this->end_date);
+        return Carbon::parse($this->end_date)->format('d M Y');
     }
     // active_completed scope 
     public function scopeActive_completed()

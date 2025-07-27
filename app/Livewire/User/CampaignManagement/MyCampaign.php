@@ -14,7 +14,7 @@ use Livewire\Component;
 class MyCampaign extends Component
 {
     public $campaigns;
-    public $activeMainTab = 'all'; // Default active tab for campaign list
+    public $activeMainTab = 'all';
 
     public bool $showCampaignsModal = false;
     public bool $showSubmitModal = false;
@@ -28,12 +28,13 @@ class MyCampaign extends Component
     public $playlistTracks = [];
 
     #[Locked]
-    public $minFollowers = 0;
+    public int $minFollowers = 0;
     #[Locked]
-    public $maxFollowers = 0;
+    public int $maxFollowers = 0;
 
     // Input fields for campaign creation
-    public $trackUrn = null;
+    public $musicId = null;
+    public $musicType = null;
     public $title = null;
     public $description = null;
     public $endDate = null;
@@ -53,7 +54,7 @@ class MyCampaign extends Component
             'endDate' => 'required|date|after_or_equal:today',
             'targetReposts' => 'required|integer|min:1',
             'totalBudget' => 'required|integer|min:1',
-            'trackUrn' => 'required|string',
+            'musicId' => 'required|integer',
         ];
 
         return $rules;
@@ -65,7 +66,7 @@ class MyCampaign extends Component
     protected function messages()
     {
         return [
-            'trackUrn.required' => 'Please select a track for your campaign.',
+            'musicId.required' => 'Please select a track for your campaign.',
             'title.required' => 'Campaign name is required.',
             'title.max' => 'Campaign name cannot exceed 255 characters.',
             'description.required' => 'Campaign description is required.',
@@ -88,7 +89,7 @@ class MyCampaign extends Component
             'playlists',
             'playlistId',
             'playlistTracks',
-            'trackUrn',
+            'musicId',
             'title',
             'description',
             'endDate',
@@ -227,7 +228,8 @@ class MyCampaign extends Component
                     throw new \Exception('Track data is incomplete');
                 }
 
-                $this->trackUrn = $track->urn;
+                $this->musicId = $track->id;
+                $this->musicType = Track::class;
                 $this->title = $track->title . ' Campaign';
             } elseif ($type === 'playlist') {
                 $playlist = Playlist::findOrFail($id);
@@ -239,12 +241,13 @@ class MyCampaign extends Component
 
                 $this->playlistId = $id;
                 $this->title = $playlist->title . ' Campaign';
+                $this->musicType = Playlist::class;
 
                 // Fetch playlist tracks with error handling
                 $this->fetchPlaylistTracks();
 
                 // Reset trackUrn when switching to playlist mode
-                $this->trackUrn = null;
+                $this->musicId = null;
             }
         } catch (\Exception $e) {
             session()->flash('error', 'Failed to load content: ' . $e->getMessage());
@@ -266,7 +269,7 @@ class MyCampaign extends Component
 
         try {
             // Ensure we have a valid track URN
-            if (!$this->trackUrn) {
+            if (!$this->musicId) {
                 throw new \Exception('Please select a track for your campaign.');
             }
 
@@ -283,7 +286,8 @@ class MyCampaign extends Component
             }
 
             Campaign::create([
-                'track_urn' => $this->trackUrn,
+                'music_id' => $this->musicId,
+                'music_type' => $this->musicType,
                 'title' => $this->title,
                 'description' => $this->description,
                 'target_reposts' => $this->targetReposts,
@@ -305,7 +309,7 @@ class MyCampaign extends Component
 
             // Complete reset of all form and modal state
             $this->reset([
-                'trackUrn',
+                'musicId',
                 'title',
                 'description',
                 'endDate',
@@ -327,7 +331,7 @@ class MyCampaign extends Component
             session()->flash('error', 'Failed to create campaign: ' . $e->getMessage());
 
             Log::error('Campaign creation error: ' . $e->getMessage(), [
-                'track_urn' => $this->trackUrn,
+                'music_id' => $this->musicId,
                 'user_urn' => user()->urn ?? 'unknown',
                 'title' => $this->title,
                 'total_budget' => $this->totalBudget,
@@ -339,10 +343,24 @@ class MyCampaign extends Component
     public function refreshCampaigns()
     {
         try {
-            $this->campaigns = Campaign::with(['music'])
-                ->where('user_urn', user()->urn)
-                ->latest()
-                ->get();
+            if ($this->activeMainTab == 'all') {
+                $this->campaigns = Campaign::with(['music'])
+                    ->where('user_urn', user()->urn)
+                    ->latest()
+                    ->get();
+            } elseif ($this->activeMainTab == 'active') {
+                $this->campaigns = Campaign::with(['music'])
+                    ->where('user_urn', user()->urn)
+                    ->where('status', Campaign::STATUS_OPEN)
+                    ->latest()
+                    ->get();
+            } elseif ($this->activeMainTab == 'completed') {
+                $this->campaigns = Campaign::with(['music'])
+                    ->where('user_urn', user()->urn)
+                    ->where('status', Campaign::STATUS_COMPLETED)
+                    ->latest()
+                    ->get();
+            }
         } catch (\Exception $e) {
             $this->campaigns = collect();
             session()->flash('error', 'Failed to refresh campaigns: ' . $e->getMessage());

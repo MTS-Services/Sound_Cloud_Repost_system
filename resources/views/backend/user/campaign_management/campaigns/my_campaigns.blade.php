@@ -20,19 +20,19 @@
         <div class="mb-8">
             <div class="border-b border-gray-200 dark:border-gray-700">
                 <nav class="-mb-px flex space-x-8">
-                    <button id="main-tab-all"
+                    <button
                         class="tab-button @if ($activeMainTab === 'all') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
                         wire:click="$set('activeMainTab', 'all')">
                         {{ __('All Campaigns') }}
                     </button>
-                    <button id="main-tab-active"
-                        class="tab-button @if ($activeMainTab === 'Active') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                        wire:click="$set('activeMainTab', 'Active')">
+                    <button
+                        class="tab-button @if ($activeMainTab === 'active') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
+                        wire:click="$set('activeMainTab', 'active')">
                         {{ __('Active') }}
                     </button>
-                    <button id="main-tab-completed"
-                        class="tab-button @if ($activeMainTab === 'Completed') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                        wire:click="$set('activeMainTab', 'Completed')">
+                    <button
+                        class="tab-button @if ($activeMainTab === 'completed') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
+                        wire:click="$set('activeMainTab', 'completed')">
                         {{ __('Completed') }}
                     </button>
                 </nav>
@@ -176,7 +176,7 @@
                     </div>
                 </div> --}}
 
-                <div class=" rounded-lg border border-slate-700 overflow-hidden">
+                <div class=" rounded-lg border border-orange-600 overflow-hidden">
                     <div class="p-6 sm:p-8">
                         <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                             <div class="flex flex-col sm:flex-row sm:items-start gap-4"><img
@@ -184,7 +184,8 @@
                                     alt="Sexy - Fashion - Promo" class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
                                 <div class="flex-1">
                                     <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-3 mb-2">
-                                        <h3 class=" text-black dark:text-gray-100 font-semibold text-lg text-center sm:text-left">
+                                        <h3
+                                            class=" text-black dark:text-gray-100 font-semibold text-lg text-center sm:text-left">
                                             {{ $campaign->title }}
                                         </h3>
                                         <span
@@ -202,7 +203,7 @@
                                                 <rect width="18" height="18" x="3" y="4" rx="2">
                                                 </rect>
                                                 <path d="M3 10h18"></path>
-                                            </svg><span>Created Apr 10, 2025</span>
+                                            </svg><span>Created {{ $campaign->start_date_formatted }}</span>
                                         </div>
                                         <div class="flex items-center space-x-1 justify-center sm:justify-start">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -211,7 +212,7 @@
                                                 class="lucide lucide-clock w-4 h-4">
                                                 <circle cx="12" cy="12" r="10"></circle>
                                                 <polyline points="12 6 12 12 16 14"></polyline>
-                                            </svg><span>Expires Apr 17, 2025</span>
+                                            </svg><span>Expires {{ $campaign->end_date_formatted }}</span>
                                         </div>
                                     </div>
                                     <div class="mb-4">
