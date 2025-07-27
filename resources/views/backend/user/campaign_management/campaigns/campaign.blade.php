@@ -190,7 +190,7 @@
                                                     stroke="currentColor" stroke-width="2" />
                                             </svg>
 
-                                            <span>{{ round(user()?->userInfo?->followers_count / 100) }} Repost</span>
+                                            <span>{{ ceil(user()?->userInfo?->followers_count / 100) }} Repost</span>
                                         </button>
                                     </div>
                                 </div>
@@ -199,7 +199,7 @@
                                 <div class="mt-auto">
                                     <span
                                         class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
-                                        Dance & EDM
+                                        {{ $campaign->genre ?? 'Unknown Genre' }}
                                     </span>
                                 </div>
                             </div>
@@ -249,8 +249,8 @@
                                         <div x-data="{ open: false }" class=" inline-block text-left">
                                             <!-- Trigger -->
                                             <div @click="open = !open" class="flex items-center gap-1 cursor-pointer">
-                                                <span class="text-slate-700 dark:text-gray-300 font-medium">Audio
-                                                    Cure</span>
+                                                <span
+                                                    class="text-slate-700 dark:text-gray-300 font-medium">{{ $campaign?->music?->user?->name }}</span>
                                                 <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none"
                                                     viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -268,12 +268,12 @@
                                             <!-- Dropdown Menu -->
                                             <div x-show="open" @click.outside="open = false" x-transition
                                                 class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 gr text-white text-sm p-2 space-y-2">
-                                                <a href="#"
+                                                <a href="{{ $campaign?->music?->user?->userInfo?->soundcloud_permalink }}"
                                                     class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                     SoundCloud Profile</a>
                                                 <a href="#"
                                                     class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
-                                                    RepostExchange Profile</a>
+                                                    RepostChain Profile</a>
                                                 <button
                                                     class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
                                                     all content from this member</button>
@@ -297,7 +297,8 @@
                                                     <circle cx="8" cy="9" r="3" fill="none"
                                                         stroke="currentColor" stroke-width="2" />
                                                 </svg>
-                                                <span class="text-sm sm:text-base">103</span>
+                                                <span
+                                                    class="text-sm sm:text-base">{{ $campaign->budget_credits - $campaign->credits_spent }}</span>
                                             </div>
                                             <span
                                                 class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
@@ -312,7 +313,8 @@
                                                 <circle cx="8" cy="9" r="3" fill="none"
                                                     stroke="currentColor" stroke-width="2" />
                                             </svg>
-                                            <span>1 Repost</span>
+                                            <span>{{ ceil($campaign?->music?->user?->userInfo?->followers_count / 100) }}
+                                                Repost</span>
                                         </button>
                                     </div>
                                 </div>
@@ -322,7 +324,7 @@
                                 <div class="mt-auto">
                                     <span
                                         class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
-                                        Dance & EDM
+                                        {{ $campaign->genre ?? 'Unknown Genre' }}
                                     </span>
                                 </div>
                             </div>
