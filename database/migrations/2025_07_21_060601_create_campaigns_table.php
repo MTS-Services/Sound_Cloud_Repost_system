@@ -35,7 +35,7 @@ return new class extends Migration
             $table->timestamp('start_date')->index()->default(now());
             $table->timestamp('end_date')->index();
 
-            $table->boolean('is_featured')->default(false);
+            $table->boolean('is_featured')->default(Campaign::NOT_FEATURED);
 
             $table->timestamps();
             $table->softDeletes();
