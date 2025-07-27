@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\BaseModel;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -176,10 +177,10 @@ class Campaign extends BaseModel
     {
         return Carbon::parse($this->end_date)->format('d M Y');
     }
-    // active_completed scope 
+    // active_completed scope
     public function scopeActive_completed()
     {
-        return $this->where('status', '!=', self::STATUS_CANCELLED,)->where('status', '!=', self::STATUS_PAUSED);
+        return $this->where('status', '!=', self::STATUS_CANCELLED, )->where('status', '!=', self::STATUS_PAUSED);
     }
 
     public const FEATURED = 1;
@@ -196,4 +197,44 @@ class Campaign extends BaseModel
     {
         return self::getFeatureList()[$this->is_featured];
     }
+
+    public function scopeSelf(Builder $query): Builder
+    {
+        return $query->where('user_urn', user()->urn);
+    }
+    public function scopeWithoutSelf(Builder $query): Builder
+    {
+        return $query->where('user_urn', '!=', user()->urn);
+    }
+
+    public function scopeFeatured(Builder $query): Builder
+    {
+        return $query->where('is_featured', self::FEATURED);
+    }
+    public function scopeNotFeatured(Builder $query): Builder
+    {
+        return $query->where('is_featured', self::NOT_FEATURED);
+    }
+
+    public function scopeOpen(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_OPEN);
+    }
+
+    public function scopePaused(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_PAUSED);
+    }
+    public function scopeCompleted(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_COMPLETED);
+    }
+
+    public function scopeCancelled(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_CANCELLED);
+    }
+
+
+
 }
