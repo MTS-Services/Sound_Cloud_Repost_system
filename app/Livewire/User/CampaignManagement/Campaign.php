@@ -141,6 +141,7 @@ class Campaign extends Component
      */
     public function startPlaying($campaignId)
     {
+        $this->campaignService->getCampaign(encrypt($campaignId))->increment('playback_count');
         $this->handleAudioPlay($campaignId);
     }
 
