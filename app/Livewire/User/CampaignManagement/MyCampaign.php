@@ -216,16 +216,15 @@ class MyCampaign extends Component
             'totalBudget'
         ]);
 
-        $userCredits = 10;
+        $userCredits = 100;
         if ($userCredits < 50) {
             $this->showLowCreditWarningModal = true;
-            $this->showSubmitModal = true;
+            $this->showSubmitModal = false;
             return;
         } else {
             $this->showLowCreditWarningModal = false;
         }
 
-        $this->showCampaignsModal = false;
         $this->showSubmitModal = true;
 
         try {
@@ -312,6 +311,7 @@ class MyCampaign extends Component
             $this->dispatch('campaignCreated');
 
             // Close modal and reset everything
+            $this->showCampaignsModal = false;
             $this->showSubmitModal = false;
 
             // Complete reset of all form and modal state
