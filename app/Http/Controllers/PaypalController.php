@@ -128,8 +128,6 @@ class PaypalController extends Controller
                     'status'    => 'succeeded',
                 ]);
 
-                dd($creditTransaction);
-
                 $payment->update([
                     'payment_provider_id' => $paymentProviderId,
                     'status'              => 'succeeded',
