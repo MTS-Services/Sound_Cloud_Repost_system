@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Order;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -24,7 +26,8 @@ class DatabaseSeeder extends Seeder
             // CampaignSeeder::class,
             PlaylistSeeder::class,
             TrackSeeder::class,
-            CreditSeeder::class
+            CreditSeeder::class,
+            OrderSeeder::class
         ]);
     }
 }
