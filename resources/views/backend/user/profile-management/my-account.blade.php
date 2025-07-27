@@ -24,7 +24,7 @@
                                     NETWORK RANK
                                 </span>
                             </div>
-                            {{-- <p class="text-lg sm:text-xl text-gray-600 dark:text-slate-200 mb-4">{{ $user->userInfo->followers_count}} Followers</p> --}}
+                            <p class="text-lg sm:text-xl text-gray-600 dark:text-slate-200 mb-4">{{ $user->userInfo->followers_count ?? '150'}} Followers</p>
                             <div
                                 class="flex flex-col xs:flex-row items-center space-y-2 xs:space-y-0 xs:space-x-4 sm:space-x-6 text-gray-500 dark:text-slate-300 text-xs sm:text-sm">
                                 <div class="flex items-center space-x-1">
@@ -35,7 +35,7 @@
                                         <path d="M16 3v4M8 3v4M3 9h18" />
                                     </svg>
 
-                                    <span>MEMBER SINCE JAN 2022</span>
+                                    <span>MEMBER SINCE {{$user->created_at->diffForHumans()}}</span>
                                 </div>
                                 <div class="flex items-center space-x-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
@@ -44,7 +44,7 @@
                                         <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
                                         <circle cx="12" cy="10" r="3"></circle>
                                     </svg>
-                                    <span>LOS ANGELES</span>
+                                    <span>{{ $user->userInfo->city ?? 'City' }}, {{ $user->userInfo->country ?? 'Country' }}</span>
                                 </div>
                             </div>
                         </div>
@@ -52,7 +52,7 @@
                         <!-- Buttons -->
                         <div
                             class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
-                            <button
+                            <a href="{{$user->userInfo->soundcloud_permalink_url ?? '#'}}"
                                 class="bg-gray-300 hover:bg-gray-400 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-900 dark:text-white px-3 py-1 sm:px-4 sm:py-2 rounded-lg transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -62,7 +62,7 @@
                                     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                                 </svg>
                                 <span>Visit on SoundCloud</span>
-                            </button>
+                            </a>
                             <button
                                 class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 sm:px-4 sm:py-2 rounded-lg transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
@@ -86,9 +86,7 @@
                             class="bg-gray-100 dark:bg-slate-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-slate-700">
                             <h3 class="text-gray-900 dark:text-white font-semibold mb-3 sm:mb-4">About</h3>
                             <p class="text-gray-600 dark:text-slate-300 text-xs sm:text-sm mb-3 sm:mb-4">
-                                I'm a Pop Producer...I make instrumental beats, mostly for rappers or singers. And
-                                Supporting Artists & Band Career Development. I hope you enjoy my music. Visit
-                                my website - https://www.grooveentertainments.com
+                               {{$user->userInfo->description ?? 'description'}}
                             </p>
                             <p class="text-gray-500 dark:text-slate-400 text-xs">Bio from <span
                                     class="text-orange-500 dark:text-orange-400">SOUNDCLOUD</span></p>
