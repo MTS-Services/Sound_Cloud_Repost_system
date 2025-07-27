@@ -3,6 +3,11 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\F;
 
 class Campaign extends BaseModel
@@ -10,7 +15,9 @@ class Campaign extends BaseModel
 
     protected $fillable = [
         'user_urn',
-        'track_urn',
+        'music_id',
+        'music_type',
+        'status',
         'title',
         'description',
 
@@ -49,27 +56,27 @@ class Campaign extends BaseModel
                 Start of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_urn', 'urn');
     }
 
-    public function track()
+    public function music(): MorphTo
     {
-        return $this->belongsTo(Track::class, 'track_urn', 'urn');
+        return $this->morphTo();
     }
 
-    public function requests()
+    public function requests(): HasMany
     {
         return $this->hasMany(RepostRequest::class, 'campaign_id', 'id');
     }
 
-    public function reposts()
+    public function reposts(): HasMany
     {
         return $this->hasMany(Repost::class, 'campaign_id', 'id');
     }
 
-    public function creditTransactions()
+    public function creditTransactions(): HasMany
     {
         return $this->hasMany(CreditTransaction::class, 'campaign_id', 'id');
     }
@@ -163,17 +170,17 @@ class Campaign extends BaseModel
 
     public function getStartDateFormattedAttribute()
     {
-        return timeFormat($this->start_date);
+        return Carbon::parse($this->start_date)->format('d M Y');
     }
 
     public function getEndDateFormattedAttribute()
     {
-        return timeFormat($this->end_date);
+        return Carbon::parse($this->end_date)->format('d M Y');
     }
-    // active_completed scope 
+    // active_completed scope
     public function scopeActive_completed()
     {
-        return $this->where('status', '!=', self::STATUS_CANCELLED,)->where('status', '!=', self::STATUS_PAUSED);
+        return $this->where('status', '!=', self::STATUS_CANCELLED, )->where('status', '!=', self::STATUS_PAUSED);
     }
 
     public const FEATURED = 1;
@@ -190,4 +197,44 @@ class Campaign extends BaseModel
     {
         return self::getFeatureList()[$this->is_featured];
     }
+
+    public function scopeSelf(Builder $query): Builder
+    {
+        return $query->where('user_urn', user()->urn);
+    }
+    public function scopeWithoutSelf(Builder $query): Builder
+    {
+        return $query->where('user_urn', '!=', user()->urn);
+    }
+
+    public function scopeFeatured(Builder $query): Builder
+    {
+        return $query->where('is_featured', self::FEATURED);
+    }
+    public function scopeNotFeatured(Builder $query): Builder
+    {
+        return $query->where('is_featured', self::NOT_FEATURED);
+    }
+
+    public function scopeOpen(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_OPEN);
+    }
+
+    public function scopePaused(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_PAUSED);
+    }
+    public function scopeCompleted(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_COMPLETED);
+    }
+
+    public function scopeCancelled(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_CANCELLED);
+    }
+
+
+
 }
