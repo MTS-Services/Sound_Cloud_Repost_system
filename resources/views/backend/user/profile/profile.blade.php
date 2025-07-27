@@ -19,7 +19,7 @@
             <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between">
                 <div class="flex items-center space-x-4 mb-4 lg:mb-0">
                     <div class="relative">
-                        <img src="{{ user()->avatar }}" alt="{{ user()->name }}" class="w-20 h-20 rounded-full">
+                        <img src="{{ auth_storage_url(user()->avatar)  }}" alt="{{ user()->name }}" class="w-20 h-20 rounded-full">
                         <div class="absolute bottom-0 right-0 w-6 h-6 bg-green-500 rounded-full border-2 border-white">
                         </div>
                     </div>
