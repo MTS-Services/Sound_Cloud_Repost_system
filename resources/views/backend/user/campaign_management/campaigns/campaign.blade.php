@@ -143,7 +143,7 @@
                                         <!-- Repost Button -->
                                         <button wire:click="repost('{{ $campaign->id }}')" @class([
                                             'flex items-center gap-2 py-2 px-3 sm:px-5 sm:pl-8 rounded-md shadow-sm text-sm sm:text-base transition-colors',
-                                            'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-gray-700 dark:text-gray-300 cursor-pointer' => $this->canRepost(
+                                            'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white dark:text-gray-300 cursor-pointer' => $this->canRepost(
                                                 $campaign->id),
                                             'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
                                                 $campaign->id),
@@ -309,7 +309,7 @@
                                         <button wire:click="repost('{{ $campaign->id }}')"
                                             @class([
                                                 'flex items-center gap-2 py-2 px-3 sm:px-5 sm:pl-8 rounded-md shadow-sm text-sm sm:text-base transition-colors',
-                                                'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-gray-700 dark:text-gray-300 cursor-pointer' => $this->canRepost(
+                                                'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white dark:text-gray-300 cursor-pointer' => $this->canRepost(
                                                     $campaign->id),
                                                 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
                                                     $campaign->id),
