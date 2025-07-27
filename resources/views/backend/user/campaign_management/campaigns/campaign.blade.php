@@ -5,19 +5,40 @@
     <div class=" w-full  mt-6">
         <!-- Header Tabs & Button -->
         <div class="flex items-center justify-between px-4 pt-3 border-b border-b-gray-200">
-            <div class="flex items-center space-x-6">
+            {{-- <div class="flex items-center space-x-6">
                 <div class="relative text-black border-b-2 font-medium border-orange-500 ">Recommended Pro <sup
                         class="text-red-500 text-xs">55</sup></div>
                 <div class=" text-gray-500 pb-1">Recommended <sup class="text-red-500 text-xs">136</sup></div>
                 <div class="text-gray-500">All <sup class="text-red-500 text-xs">855</sup></div>
-            </div>
+            </div> --}}
+             <div x-data="{ showInput: false }" class="flex items-center space-x-2 text-gray-600">
+                    <div @click="showInput = !showInput"
+                        :class="!showInput ? 'flex items-center space-x-2 cursor-pointer' : 'hidden'">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <span>Search by tag</span>
+                    </div>
+
+                    <div x-show="showInput" class="relative ">
+                        <input type="text" placeholder="Search by tag "
+                            class="border py-2 border-red-500 pl-7 pr-2  rounded focus:outline-none focus:ring-1 focus:ring-red-400"
+                            @click.outside="showInput = false" autofocus />
+                        <svg class="w-4 h-4 absolute left-2 top-3 text-gray-500" fill="none" stroke="currentColor"
+                            stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                </div>
             <button class="bg-orange-600 text-white px-5 py-2 mb-2 rounded hover:bg-orange-700 transition">
                 Start a new campaign
             </button>
         </div>
 
         <!-- Filter & Search Bar -->
-        <div class="flex flex-wrap items-center px-4 py-3 gap-3">
+        {{-- <div class="flex flex-wrap items-center px-4 py-3 gap-3">
             <div
                 class="bg-red-100 text-orange-600 px-3 py-2 rounded flex items-center space-x-1 cursor-pointer hover:bg-red-100">
                 <span>Filter by track type /all</span>
@@ -51,7 +72,7 @@
                 <input x-show="showInput" type="text" placeholder="Enter tag..."
                     class="border px-2 py-1 text-sm rounded focus:outline-none" @click.stop>
             </div>
-        </div>
+        </div> --}}
     </div>
     <div class="container mx-auto px-4 py-6">
 
