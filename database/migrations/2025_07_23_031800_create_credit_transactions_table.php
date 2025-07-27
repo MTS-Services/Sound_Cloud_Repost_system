@@ -36,6 +36,11 @@ return new class extends Migration
                 CreditTransaction::TYPE_PENALTY . ': Penalty',
                 CreditTransaction::TYPE_BONUS . ': Bonus'
             );
+            $table->enum('status', [
+                'processing',
+                'succeeded',
+                'canceled'
+            ])->default('processing');
             $table->decimal('amount', 15, 2);
             $table->decimal('credits', 15, 2);
 

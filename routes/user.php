@@ -13,6 +13,7 @@ use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Livewire\User\MemberManagement\Member;
 use App\Livewire\User\ProfileManagement\MyAccount;
 
 Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
@@ -51,6 +52,7 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
 
 
     });
+    Route::get('members', Member::class)->name('members');
 
 
     // Order Manaagement Routes

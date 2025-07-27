@@ -21,6 +21,7 @@ class CreditTransaction extends BaseModel
         'credits',
         'description',
         'metadata',
+        'status',
 
         'creater_id',
         'updater_id',
@@ -29,6 +30,13 @@ class CreditTransaction extends BaseModel
         'updater_type',
         'deleter_type',
     ];
+
+    public const STATUS_PENDING = 0;
+    public const STATUS_COMPLETED = 1;
+    public const STATUS_FAILED = 2;
+    public const STATUS_REFUNDED = 3;
+    public const STATUS_DISPUTED = 4;
+
 
     protected $casts = [
         'metadata' => 'array',

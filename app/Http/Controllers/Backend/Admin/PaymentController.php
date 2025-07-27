@@ -26,6 +26,7 @@ class PaymentController extends Controller
     public function paymentMethod(string $credit_id)
     {
         $data['order'] = $this->orderService->getOrder($credit_id);
+        
         return view('frontend.pages.payment_method', $data);
     }
 

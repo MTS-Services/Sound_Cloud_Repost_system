@@ -18,6 +18,6 @@ Route::group(['as' => 'f.'], function () {
         Route::get('/cancel', 'paymentCancel')->name('cancel');
     });
 });
-Route::get('/products/payment', [PaypalController::class, 'paypalPaymentLink'])->name('paypal.paymentLink');
-Route::get('/products/payment/success/', [PaypalController::class, 'paypalPaymentSuccess'])->name('paypal.paymentSuccess');
-Route::get('/products/payment/cancel', [PaypalController::class, 'paypalPaymentCancel'])->name('paypal.paymentCancel');
+Route::get('/paypal/paymentLink/{encryptedOrderId}', [PaypalController::class, 'paypalPaymentLink'])->name('paypal.paymentLink');
+Route::get('/paypal/payment/success/', [PaypalController::class, 'paypalPaymentSuccess'])->name('paypal.paymentSuccess');
+Route::get('/paypal/payment/cancel', [PaypalController::class, 'paypalPaymentCancel'])->name('paypal.paymentCancel');
