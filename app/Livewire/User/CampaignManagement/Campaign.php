@@ -14,7 +14,7 @@ class Campaign extends Component
     public function mount(CampaignService $campaignService)
     {
         $this->campaignService = $campaignService;
-        $followers_count = user()->userInfo()->followers_count;
+        $followers_count = user()->userInfo->followers_count;
         $allowed_target_credits = ceil($followers_count / 100);
         $this->featuredCampaigns = $this->campaignService->getCampaigns()
             ->where('cost_per_repost', $allowed_target_credits)
