@@ -171,10 +171,9 @@
         }
 
         /* Backdrop blur support */
-        @supports (backdrop-filter: blur(4px)) {
-            .backdrop-blur-sm {
-                backdrop-filter: blur(4px);
-            }
+
+        .backdrop-blur-sm {
+            backdrop-filter: blur(4px);
         }
     </style>
 @endpush

@@ -3,31 +3,46 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\F;
 
 class Campaign extends BaseModel
 {
 
     protected $fillable = [
         'user_urn',
-        'music_id',
-        'music_type',
+        'track_urn',
         'title',
         'description',
+
         'target_reposts',
         'completed_reposts',
-        'credits_per_repost',
-        'total_credits_budget',
+        'cost_per_repost',
+        'budget_credits',
         'credits_spent',
-        'min_followers_required',
-        'max_followers_limit',
-        'status',
+        'min_followers',
+        'max_followers',
+        'is_featured',
         'start_date',
         'end_date',
-        'auto_approve',
 
-        'created_by',
-        'updated_by',
-        'deleted_by',
+        'creater_id',
+        'updater_id',
+        'deleter_id',
+        'creater_type',
+        'updater_type',
+        'deleter_type',
+    ];
+
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+        'target_reposts' => 'integer',
+        'completed_reposts' => 'integer',
+        'cost_per_repost' => 'decimal',
+        'budget_credits' => 'decimal',
+        'credits_spent' => 'decimal',
+        'min_followers' => 'integer',
+        'max_followers' => 'integer',
     ];
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
@@ -39,9 +54,9 @@ class Campaign extends BaseModel
         return $this->belongsTo(User::class, 'user_urn', 'urn');
     }
 
-    public function music()
+    public function track()
     {
-        return $this->morphTo();
+        return $this->belongsTo(Track::class, 'track_urn', 'urn');
     }
 
     public function requests()
@@ -61,7 +76,7 @@ class Campaign extends BaseModel
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
-     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */ 
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
 
 
@@ -158,6 +173,21 @@ class Campaign extends BaseModel
     // active_completed scope 
     public function scopeActive_completed()
     {
-        return $this->where('status', '!=', self::STATUS_CANCELLED,)->where('status', '!=', self::STATUS_PAUSED,);
+        return $this->where('status', '!=', self::STATUS_CANCELLED,)->where('status', '!=', self::STATUS_PAUSED);
+    }
+
+    public const FEATURED = 1;
+    public const NOT_FEATURED = 0;
+
+    public static function getFeatureList(): array
+    {
+        return [
+            self::FEATURED => 'Yes',
+            self::NOT_FEATURED => 'No',
+        ];
+    }
+    public function getFeatureLabelAttribute()
+    {
+        return self::getFeatureList()[$this->is_featured];
     }
 }

@@ -19,29 +19,29 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('sort_order')->default(0);
             $table->string('user_urn')->index();
-            $table->unsignedBigInteger('music_id')->index();
-            $table->string('music_type');
+            $table->string('track_urn')->index();
 
             $table->string('title');
             $table->text('description')->nullable();
-            $table->unsignedBigInteger('target_reposts');
+            $table->unsignedBigInteger('target_reposts')->default(0);
             $table->unsignedBigInteger('completed_reposts')->default(0);
-            $table->decimal('credits_per_repost', 8, 2)->index();
-            $table->decimal('total_credits_budget', 10, 2);
+            $table->decimal('cost_per_repost', 8, 2)->index();
+            $table->decimal('budget_credits', 10, 2);
             $table->decimal('credits_spent', 10, 2)->default(0.00);
-            $table->unsignedBigInteger('min_followers_required')->index()->default(0);
-            $table->unsignedBigInteger('max_followers_limit')->nullable();
+            $table->unsignedBigInteger('min_followers')->index()->default(0);
+            $table->unsignedBigInteger('max_followers')->index()->default(0);
 
             $table->tinyInteger('status')->index()->default(Campaign::STATUS_OPEN);
-            $table->timestamp('start_date')->index()->nullable();
-            $table->timestamp('end_date')->index()->nullable();
-            $table->boolean('auto_approve')->default(Campaign::AUTO_APPROVE_NO);
+            $table->timestamp('start_date')->index()->default(now());
+            $table->timestamp('end_date')->index();
+
+            $table->boolean('is_featured')->default(Campaign::NOT_FEATURED);
 
             $table->timestamps();
             $table->softDeletes();
-            $this->addAdminAuditColumns($table);
-            
-            // Foreign key constraints
+            $this->addMorphedAuditColumns($table);
+
+            $table->foreign('track_urn')->references('urn')->on('tracks')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreign('user_urn')->references('urn')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
