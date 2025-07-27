@@ -16,6 +16,7 @@ class Campaign extends Component
         $this->campaignService = $campaignService;
         $followers_count = user()->userInfo->followers_count;
         $allowed_target_credits = ceil($followers_count / 100);
+        dd($allowed_target_credits);
         $this->featuredCampaigns = $this->campaignService->getCampaigns()
             ->where('cost_per_repost', $allowed_target_credits)
             ->featured()
