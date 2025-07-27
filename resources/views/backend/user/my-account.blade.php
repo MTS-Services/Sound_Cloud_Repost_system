@@ -159,6 +159,11 @@
                                 data-tab="starred">
                                 Starred members
                             </button>
+                            <button type="button"
+                                class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium border-b-2 transition-colors text-gray-500 dark:text-slate-400 border-transparent hover:text-gray-900 dark:hover:text-white whitespace-nowrap"
+                                data-tab="tandresion">
+                                Tandresion
+                            </button>
                         </div>
 
                         <!-- Tab Panels -->
@@ -476,7 +481,7 @@
                             t.classList.add('text-gray-500', 'border-transparent',
                                 'dark:text-slate-400');
                         });
-                        panels.forEach(panel => panel.classList.add('hidden'));
+                        panels.for Each(panel => panel.classList.add('hidden'));
 
                         // Add active state to clicked
                         this.classList.add('text-orange-500', 'border-orange-500',
