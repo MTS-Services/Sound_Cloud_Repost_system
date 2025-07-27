@@ -69,7 +69,7 @@ SOUNDCLOUD_CLIENT_SECRET=your_client_secret_here
 SOUNDCLOUD_REDIRECT_URI=https://yourdomain.com/auth/soundcloud/callback
 
 
-# STRIPE KEYS
+
 STRIPE_KEY="pk_test_51RpQw7ISIl8QzoFfXw1fwhUTinGRkt0zak7gkeNkOLlcr8MUPKKGh7mK7yJVideMMfVXSOSqfT5pZCrWlYOjE5dh008ykGM5Yx"
 STRIPE_SECRET="sk_test_51RpQw7ISIl8QzoFf8r7wCZtb1Oauyo05c4kf7eLfoET3edbVwHVoBH4UeViPTii9V5GfosbnlYInMS1CArx77fMS00zK935gJx"
 
