@@ -217,7 +217,7 @@
                                 </div>
 
                                 <!-- Livewire Control Buttons (for testing) -->
-                                <div class="mt-2 flex gap-2">
+                                {{-- <div class="mt-2 flex gap-2">
                                     @if ($this->isPlaying($campaign->id))
                                         <button wire:click="stopPlaying('{{ $campaign->id }}')"
                                             class="text-xs bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded">
@@ -240,7 +240,7 @@
                                     <span class="text-xs text-gray-600 dark:text-gray-400 px-2 py-1">
                                         {{ $this->getPlayTime($campaign->id) }}s / 5s
                                     </span>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>
@@ -253,7 +253,8 @@
                                 class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 relative">
                                 <div class="flex items-center gap-3">
                                     <img class="w-14 h-14 rounded-full object-cover"
-                                        src="{{ asset('default_img/other.png') }}" alt="Audio Cure avatar">
+                                        src="{{ auth_storage_url($campaign?->music?->user?->avatar) }}"
+                                        alt="Audio Cure avatar">
                                     <div class="inline-block text-left">
                                         <!-- Trigger -->
                                         <div class="flex items-center gap-1">
@@ -308,7 +309,7 @@
                                         <button wire:click="repost('{{ $campaign->id }}')"
                                             @class([
                                                 'flex items-center gap-2 py-2 px-3 sm:px-5 sm:pl-8 rounded-md shadow-sm text-sm sm:text-base transition-colors',
-                                                'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 cursor-pointer' => $this->canRepost(
+                                                'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-gray-700 dark:text-gray-300 cursor-pointer' => $this->canRepost(
                                                     $campaign->id),
                                                 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
                                                     $campaign->id),
@@ -325,7 +326,7 @@
                                         </button>
 
                                         <!-- Timer Display -->
-                                        @if (!$this->canRepost($campaign->id) && !in_array($campaign->id, $this->playedCampaigns))
+                                        {{-- @if (!$this->canRepost($campaign->id) && !in_array($campaign->id, $this->playedCampaigns))
                                             <div
                                                 class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-orange-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
                                                 @if ($this->getPlayTime($campaign->id) > 0)
@@ -334,7 +335,7 @@
                                                     Listen for 5 seconds to enable repost
                                                 @endif
                                             </div>
-                                        @endif
+                                        @endif --}}
 
                                         @if (in_array($campaign->id, $this->repostedCampaigns))
                                             <div
