@@ -1,4 +1,4 @@
-{{-- @if ($track && $track->permalink_url)
+@if ($track && $track->permalink_url)
     <div class="soundcloud-embed-container">
         <iframe width="100%" height="{{ $height }}" scrolling="no" frameborder="no" allow="autoplay"
             src="{{ $getEmbedSrc() }}">
@@ -22,12 +22,12 @@
     </div>
 @else
     <p>SoundCloud track data not available.</p>
-@endif --}}
+@endif
 
 
-@if ($track && $track->permalink_url && $track->id) {{-- Ensure track->id exists --}}
+{{-- @if ($track && $track->permalink_url && $track->id)
     <div class="soundcloud-embed-container" data-track-id="{{ $track->id }}">
-        <iframe id="sc-player-{{ $track->id }}" {{-- Unique ID for each iframe --}} width="100%" height="{{ $height }}"
+        <iframe id="sc-player-{{ $track->id }}" //-- Unique ID for each iframe --// width="100%" height="{{ $height }}"
             scrolling="no" frameborder="no" allow="autoplay" src="{{ $getEmbedSrc() }}">
         </iframe>
         <div
@@ -48,7 +48,7 @@
         </div>
     </div>
 
-    {{-- Script to initialize SoundCloud Widget API and send messages --}}
+    //-- Script to initialize SoundCloud Widget API and send messages --//
     @push('js')
         <script>
             (function() {
@@ -104,8 +104,8 @@
             })();
         </script>
 
-        
+
     @endpush
 @else
     <p>SoundCloud track data not available for embed.</p>
-@endif
+@endif --}}
