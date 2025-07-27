@@ -22,7 +22,6 @@ class Campaign extends Component
             ->withoutSelf()
             ->with(['music.user.userInfo'])
             ->get();
-
         $this->campaigns = $this->campaignService->getCampaigns()
             ->where('cost_per_repost', $allowed_target_credits)
             ->notFeatured()

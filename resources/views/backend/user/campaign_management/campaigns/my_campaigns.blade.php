@@ -3,7 +3,6 @@
     <x-slot name="page_slug">campaigns</x-slot>
 
     <div class="p-6">
-        <!-- Header Section -->
         <div class="flex justify-between items-start mb-5">
             <div>
                 <h1 class="text-xl text-black dark:text-gray-100 font-bold">My Campaigns</h1>
@@ -15,7 +14,6 @@
             </button>
         </div>
 
-        <!-- Tabs Section -->
         <div class="mb-8">
             <div class="border-b border-gray-200 dark:border-gray-700">
                 <nav class="-mb-px flex space-x-8">
@@ -39,7 +37,6 @@
         </div>
 
 
-        <!-- Campaigns List -->
         <div class="space-y-6" id="campaigns-list">
 
             @forelse ($campaigns as $campaign)
@@ -104,7 +101,6 @@
                                     Credits</button>
                                 <div x-data="{ open: false }"
                                     class="relative   text-left bg-slate-700 hover:bg-slate-600 text-white   rounded-lg transition-colors flex justify-center">
-                                    <!-- Trigger Button -->
                                     <button @click="open = !open"
                                         class="p-2 hover:bg-slate-600 text-white px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none  focus:ring-offset-2   bg-slate-700 dark:bg-gray-700 ">
                                         <svg xmlns="http://www.w3.org/2000/svg"
@@ -117,7 +113,6 @@
                                     </button>
 
 
-                                    <!-- Dropdown Menu -->
                                     <div x-show="open" @click.outside="open = false" x-transition
                                         class="absolute right-0 mt-2 w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
                                         <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
@@ -222,7 +217,6 @@
 
     {{-- ================================ Enhanced Modals ================================ --}}
 
-    <!-- Track/Playlist Selection Modal -->
     <div x-data="{ showCampaignsModal: @entangle('showCampaignsModal').live }" x-show="showCampaignsModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
@@ -232,7 +226,6 @@
         <div
             class="w-full max-w-3xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col max-h-[80vh] overflow-hidden">
 
-            <!-- Modal Header -->
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
@@ -250,7 +243,6 @@
             </div>
 
             @if ($showCampaignsModal)
-                <!-- Modal Tabs -->
                 <div class="flex border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
                     <button wire:click="selectModalTab('tracks')"
                         class="flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeModalTab === 'tracks' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
@@ -268,7 +260,6 @@
                     </button>
                 </div>
 
-                <!-- Modal Content -->
                 <div class="flex-grow overflow-y-auto p-6">
                     @if ($activeModalTab === 'tracks')
                         <div class="space-y-3">
@@ -362,17 +353,16 @@
         class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
 
         <div
-            class="w-full max-w-4xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col max-h-[85vh] overflow-hidden">
+            class="w-full max-w-md mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col">
 
-            <!-- Modal Header -->
             <div
-                class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
+                class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                        <i data-lucide="audio-lines" class="w-5 h-5 text-white"></i>
+                    <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center">
+                        <i data-lucide="triangle-alert" class="w-5 h-5 text-white"></i>
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                        {{ __('Create a campaign') }}
+                        {{ __('Low Credit Warning') }}
                     </h2>
                 </div>
                 <button x-on:click="showLowCreditWarningModal = false"
@@ -381,23 +371,27 @@
                 </button>
             </div>
 
-            <!-- Modal Content -->
-            <div class="flex-grow overflow-y-auto p-6">
-                You Need minimum 50 credits to create a campaign.
-
-                <div class="mt-4">
-                    <a href="{{ route('user.add-credits') }}"
-                        class="w-full bg-orange-600 dark:bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-700 dark:hover:bg-orange-600 transition-colors">
-                        <i data-lucide="plus" class="w-4 h-4 inline mr-2"></i>
-                        {{ __('Buy Credits') }}
-                    </a>
+            <div class="p-6 text-center">
+                <div
+                    class="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i data-lucide="wallet" class="w-10 h-10 text-red-600 dark:text-red-400"></i>
                 </div>
+                <p class="text-lg text-gray-700 dark:text-gray-300 mb-4">
+                    {{ __('You need a minimum of 50 credits to create a campaign.') }}
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                    {{ __('Please add more credits to your account to proceed with campaign creation.') }}
+                </p>
+                <a href="{{ route('user.add-credits') }}" wire:navigate
+                    class="inline-flex items-center justify-center w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                    <i data-lucide="plus" class="w-5 h-5 inline mr-2"></i>
+                    {{ __('Buy Credits Now') }}
+                </a>
             </div>
         </div>
     </div>
 
 
-    <!-- Campaign Creation Modal -->
     <div x-data="{ showSubmitModal: @entangle('showSubmitModal').live }" x-show="showSubmitModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
@@ -407,7 +401,6 @@
         <div
             class="w-full max-w-4xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col max-h-[85vh] overflow-hidden">
 
-            <!-- Modal Header -->
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
@@ -424,12 +417,10 @@
                 </button>
             </div>
 
-            <!-- Modal Content -->
             <div class="flex-grow overflow-y-auto p-6">
                 <form wire:submit.prevent="submitCampaign" class="space-y-6">
 
                     @if ($activeModalTab === 'playlists')
-                        <!-- Playlist Track Selection -->
                         <div
                             class="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
                             <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
@@ -490,9 +481,7 @@
                         </div>
                     @endif
 
-                    <!-- Campaign Details Form -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- Campaign Name -->
                         <div class="space-y-2">
                             <label for="campaign_title"
                                 class="block text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
@@ -510,7 +499,6 @@
                             @enderror
                         </div>
 
-                        <!-- Expiration Date -->
                         <div class="space-y-2">
                             <label for="campaign_end_date"
                                 class="block text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
@@ -528,7 +516,6 @@
                         </div>
                     </div>
 
-                    <!-- Campaign Description -->
                     <div class="space-y-2">
                         <label for="campaign_description"
                             class="block text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
@@ -546,9 +533,7 @@
                         @enderror
                     </div>
 
-                    <!-- Budget and Target -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- Total Budget -->
                         <div class="space-y-2">
                             <label for="campaign_total_budget"
                                 class="block text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
@@ -567,7 +552,6 @@
                             @enderror
                         </div>
 
-                        <!-- Target Reposts -->
                         <div class="space-y-2">
                             <label for="campaign_target_reposts"
                                 class="block text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
@@ -587,7 +571,6 @@
                         </div>
                     </div>
 
-                    <!-- Cost per Repost Display -->
                     @if ($totalBudget && $targetReposts && $totalBudget > 0 && $targetReposts > 0)
                         <div
                             class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
@@ -604,7 +587,6 @@
                         </div>
                     @endif
 
-                    <!-- Submit Button -->
                     <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
                         <button type="submit"
                             class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
