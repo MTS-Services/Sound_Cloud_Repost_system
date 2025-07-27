@@ -35,7 +35,8 @@
                                 <i data-lucide="users" class="w-4 h-4 mr-1"></i>
                                 {{ $user->followers_count }} {{ __('Followers') }}
                             </div>
-                            <a href="{{ $user->soundcloud_permalink_url}}" target="_blank" class="text-orange-600 hover:underline">SoundCloud Profile</a>
+                            <a href="{{ $user->soundcloud_permalink_url }}" target="_blank"
+                                class="text-orange-600 hover:underline">SoundCloud Profile</a>
                         </div>
                         <div class="flex space-x-2 mt-4">
                             <span class="bg-orange-600 text-white px-3 py-1 rounded-full text-xs">Top
@@ -175,12 +176,14 @@
                                 </div>
                                 <div>
                                     <div class="font-semibold text-gray-900 dark:text-gray-100">Repost Champion</div>
-                                    <div class="text-sm text-gray-600 dark:text-gray-400">Reposted 5 different genres</div>
+                                    <div class="text-sm text-gray-600 dark:text-gray-400">Reposted 5 different genres
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="shadow-sm rounded-lg p-4 hover:shadow-md transition-shadow opacity-100 dark:bg-gray-800">
+                        <div
+                            class="shadow-sm rounded-lg p-4 hover:shadow-md transition-shadow opacity-100 dark:bg-gray-800">
                             <div class="flex items-center mb-3">
                                 <div class="bg-gray-100 p-2 rounded-lg mr-3">
                                     <i data-lucide="music" class="w-5 h-5 text-gray-600"></i>
