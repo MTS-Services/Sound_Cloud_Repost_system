@@ -4,13 +4,12 @@
 
     <div class="p-6">
         <!-- Header Section -->
-        <div class="flex justify-between items-start mb-8">
+        <div class="flex justify-between items-start mb-5">
             <div>
-                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-3">{{ __('My Campaigns') }}</h1>
-                <p class="text-gray-600 dark:text-gray-400 text-lg">Track the performance of your submitted tracks</p>
+                <h1 class="text-xl text-black dark:text-gray-100 font-bold">My Campaigns</h1>
             </div>
             <button wire:click="toggleCampaignsModal" x-on:click="showCampaignsModal = true"
-                class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-xl flex items-center gap-3 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 rounded-xl flex items-center gap-3 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                 <i data-lucide="plus" class="w-5 h-5"></i>
                 {{ __('New Campaign') }}
             </button>
@@ -22,26 +21,28 @@
                 <nav class="-mb-px flex space-x-8">
                     <button
                         class="tab-button @if ($activeMainTab === 'all') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                        wire:click="$set('activeMainTab', 'all')">
+                        wire:click="setActiveTab('all')">
                         {{ __('All Campaigns') }}
                     </button>
                     <button
                         class="tab-button @if ($activeMainTab === 'active') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                        wire:click="$set('activeMainTab', 'active')">
+                        wire:click="setActiveTab('active')">
                         {{ __('Active') }}
                     </button>
                     <button
                         class="tab-button @if ($activeMainTab === 'completed') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                        wire:click="$set('activeMainTab', 'completed')">
+                        wire:click="setActiveTab('completed')">
                         {{ __('Completed') }}
                     </button>
                 </nav>
             </div>
         </div>
 
+
         <!-- Campaigns List -->
         <div class="space-y-6" id="campaigns-list">
-            @forelse ($campaigns->where('status_label', $activeMainTab === 'all' ? true : $activeMainTab) as $campaign)
+
+            @forelse ($campaigns as $campaign)
                 {{-- <div class="campaign-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl transition-all duration-300"
                     data-status="{{ $campaign->status_label }}">
                     <div class="flex justify-center gap-6">
@@ -176,12 +177,14 @@
                     </div>
                 </div> --}}
 
+                {{-- @dd($campaign) --}}
+
                 <div class=" rounded-lg border border-orange-600 overflow-hidden">
                     <div class="p-6 sm:p-8">
                         <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                             <div class="flex flex-col sm:flex-row sm:items-start gap-4"><img
-                                    src="https://images.pexels.com/photos/1540338/pexels-photo-1540338.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=300&amp;h=300&amp;fit=crop"
-                                    alt="Sexy - Fashion - Promo" class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
+                                    src="{{ soundcloud_image($campaign->music?->artwork_url) }}"
+                                    alt="{{ $campaign->music?->title }}" class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
                                 <div class="flex-1">
                                     <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-3 mb-2">
                                         <h3
@@ -189,7 +192,7 @@
                                             {{ $campaign->title }}
                                         </h3>
                                         <span
-                                            class="px-2 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-400 text-center sm:text-left">Active</span>
+                                            class="badge badge-soft {{ $campaign->status_color }} rounded-full">{{ $campaign->status_label }}</span>
                                     </div>
                                     <div
                                         class="flex flex-col sm:flex-row sm:items-center sm:space-x-6 text-sm text-slate-400 mb-4 space-y-2 sm:space-y-0">
@@ -217,11 +220,15 @@
                                     </div>
                                     <div class="mb-4">
                                         <div class="flex items-center justify-between text-sm mb-2"><span
-                                                class="text-slate-400">Budget used: 14/20 credits</span><span
-                                                class="text-orange-500 font-medium">70%</span></div>
-                                        <div class="w-full bg-slate-700 rounded-full h-2">
+                                                class="text-slate-400">Budget used: {{ $campaign->credits_spent }} /
+                                                {{ $campaign->budget_credits }}
+                                                credits</span><span class="text-orange-500 font-medium">
+                                                {{ $campaign->budget_credits > 0 ? ($campaign->credits_spent / $campaign->budget_credits) * 100 : 0 }}%</span>
+                                        </div>
+                                        <div class="w-full bg-orange-600/20 rounded-full h-2">
                                             <div class="bg-gradient-to-r from-orange-500 to-orange-600 h-2 rounded-full transition-all duration-300"
-                                                style="width: 70%;"></div>
+                                                style="width: {{ $campaign->budget_credits > 0 ? ($campaign->credits_spent / $campaign->budget_credits) * 100 : 0 }}%;">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -231,17 +238,44 @@
                                 <button
                                     class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">Add
                                     Credits</button>
-                                <button
-                                    class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-lg transition-colors"><svg
-                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="lucide lucide-more-horizontal w-4 h-4">
-                                        <circle cx="12" cy="12" r="1"></circle>
-                                        <circle cx="19" cy="12" r="1"></circle>
-                                        <circle cx="5" cy="12" r="1"></circle>
-                                    </svg>
-                                </button>
+                                <div x-data="{ open: false }"
+                                    class="relative   text-left bg-slate-700 hover:bg-slate-600 text-white   rounded-lg transition-colors flex justify-center">
+                                    <!-- Trigger Button -->
+                                    <button @click="open = !open"
+                                        class="p-2 hover:bg-slate-600 text-white px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none  focus:ring-offset-2   bg-slate-700 dark:bg-gray-700 ">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            class="lucide lucide-more-horizontal text-white w-5 h-5 text-gray-700 dark:text-gray-200"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <circle cx="12" cy="12" r="1"></circle>
+                                            <circle cx="19" cy="12" r="1"></circle>
+                                            <circle cx="5" cy="12" r="1"></circle>
+                                        </svg>
+                                    </button>
+
+
+                                    <!-- Dropdown Menu -->
+                                    <div x-show="open" @click.outside="open = false" x-transition
+                                        class="absolute right-0 mt-2 w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
+                                        <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
+                                            <li>
+                                                <a href="#"
+                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Details</a>
+                                            </li>
+                                            <li>
+                                                <a href="#"
+                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Edit</a>
+                                            </li>
+                                            <li>
+                                                <a href="#"
+                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Duplicate</a>
+                                            </li>
+                                            <li>
+                                                <a href="#"
+                                                    class="block px-4 py-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-800 dark:hover:text-white">Delete</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
                                 <button
                                     class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"><svg
                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -255,7 +289,8 @@
 
                             </div>
                         </div>
-                        <div class="grid grid-cols-3 gap-6 mt-6 pt-6 border-t border-slate-700">
+                        <div class="divider bg-orange-600/30 h-auto"></div>
+                        <div class="grid grid-cols-3 gap-6">
                             <div class="text-center">
                                 <div class="flex items-center justify-center mb-2"><svg
                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -264,7 +299,8 @@
                                         class="lucide  lucide-trending-up w-5 h-5 text-orange-500 mr-2">
                                         <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
                                         <polyline points="16 7 22 7 22 13"></polyline>
-                                    </svg><span class="text-2xl font-bold   text-black dark:text-gray-100">24</span>
+                                    </svg><span
+                                        class="text-2xl font-bold   text-black dark:text-gray-100">{{ $campaign->music?->reposts_count ?? 0 }}</span>
                                 </div>
                                 <p class="text-slate-400 text-sm">Reposts</p>
                             </div>
@@ -276,7 +312,8 @@
                                         class="lucide lucide-eye w-5 h-5 text-blue-500 mr-2">
                                         <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
                                         <circle cx="12" cy="12" r="3"></circle>
-                                    </svg><span class="text-2xl font-bold text-black dark:text-gray-100">342</span>
+                                    </svg><span
+                                        class="text-2xl font-bold text-black dark:text-gray-100">{{ $campaign->music?->playback_count ?? 0 }}</span>
                                 </div>
                                 <p class="text-slate-400 text-sm">Plays</p>
                             </div>
@@ -288,7 +325,8 @@
                                         class="lucide lucide-trending-up w-5 h-5 text-green-500 mr-2">
                                         <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
                                         <polyline points="16 7 22 7 22 13"></polyline>
-                                    </svg><span class="text-2xl font-bold text-black dark:text-gray-100">38</span>
+                                    </svg><span
+                                        class="text-2xl font-bold text-black dark:text-gray-100">{{ $campaign->music?->likes_count ?? 0 }}</span>
                                 </div>
                                 <p class="text-slate-400 text-sm">Likes</p>
                             </div>

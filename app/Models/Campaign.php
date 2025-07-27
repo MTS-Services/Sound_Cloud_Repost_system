@@ -43,13 +43,15 @@ class Campaign extends BaseModel
     protected $casts = [
         'start_date' => 'datetime',
         'end_date' => 'datetime',
+        'budget_credits' => 'decimal:2',
+        'cost_per_repost' => 'decimal:2',
+        'credits_spent' => 'decimal:2',
         'target_reposts' => 'integer',
         'completed_reposts' => 'integer',
-        'cost_per_repost' => 'decimal',
-        'budget_credits' => 'decimal',
-        'credits_spent' => 'decimal',
         'min_followers' => 'integer',
         'max_followers' => 'integer',
+        'is_featured' => 'boolean',
+        'status' => 'integer',
     ];
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
@@ -97,31 +99,8 @@ class Campaign extends BaseModel
             'status_btn_color',
             'start_date_formatted',
             'end_date_formatted',
-            'auto_approve_label',
-            'auto_approve_color',
 
         ]);
-    }
-    public const AUTO_APPROVE_NO = 0;
-    public const AUTO_APPROVE_YES = 1;
-
-    public static function getAutoApproveList(): array
-    {
-        return [
-            self::AUTO_APPROVE_NO => 'No',
-            self::AUTO_APPROVE_YES => 'Yes',
-        ];
-    }
-    public function getAutoApproveLabelAttribute()
-    {
-        return self::getAutoApproveList()[$this->auto_approve];
-    }
-    public function getAutoApproveColorAttribute()
-    {
-        return [
-            self::AUTO_APPROVE_NO => 'badge-error',
-            self::AUTO_APPROVE_YES => 'badge-success',
-        ][$this->auto_approve];
     }
 
     public const STATUS_OPEN = 1;
@@ -132,7 +111,7 @@ class Campaign extends BaseModel
     public static function getStatusList(): array
     {
         return [
-            self::STATUS_OPEN => 'Active',
+            self::STATUS_OPEN => 'Open',
             self::STATUS_PAUSED => 'Paused',
             self::STATUS_COMPLETED => 'Completed',
             self::STATUS_CANCELLED => 'Cancelled',
@@ -141,7 +120,7 @@ class Campaign extends BaseModel
 
     public function getStatusLabelAttribute()
     {
-        return self::getStatusList()[$this->status];
+        return self::getStatusList()[$this->status] ?? 'Unknown';
     }
     // public function getStatusBtnLabelAttribute()
     // {
@@ -155,7 +134,7 @@ class Campaign extends BaseModel
             self::STATUS_PAUSED => 'badge-warning',
             self::STATUS_COMPLETED => 'badge-info',
             self::STATUS_CANCELLED => 'badge-error',
-        ][$this->status];
+        ][$this->status] ?? 'badge-secondary';
     }
 
     public function getStatusBtnColorAttribute()
@@ -165,7 +144,7 @@ class Campaign extends BaseModel
             self::STATUS_PAUSED => 'btn-warning',
             self::STATUS_COMPLETED => 'btn-info',
             self::STATUS_CANCELLED => 'btn-error',
-        ][$this->status];
+        ][$this->status] ?? 'btn-secondary';
     }
 
     public function getStartDateFormattedAttribute()
@@ -180,7 +159,7 @@ class Campaign extends BaseModel
     // active_completed scope
     public function scopeActive_completed()
     {
-        return $this->where('status', '!=', self::STATUS_CANCELLED, )->where('status', '!=', self::STATUS_PAUSED);
+        return $this->where('status', '!=', self::STATUS_CANCELLED,)->where('status', '!=', self::STATUS_PAUSED);
     }
 
     public const FEATURED = 1;
@@ -195,7 +174,7 @@ class Campaign extends BaseModel
     }
     public function getFeatureLabelAttribute()
     {
-        return self::getFeatureList()[$this->is_featured];
+        return self::getFeatureList()[$this->is_featured] ?? 'Unknown';
     }
 
     public function scopeSelf(Builder $query): Builder
@@ -206,6 +185,7 @@ class Campaign extends BaseModel
     {
         return $query->where('user_urn', '!=', user()->urn);
     }
+
 
     public function scopeFeatured(Builder $query): Builder
     {
@@ -234,7 +214,4 @@ class Campaign extends BaseModel
     {
         return $query->where('status', self::STATUS_CANCELLED);
     }
-
-
-
 }

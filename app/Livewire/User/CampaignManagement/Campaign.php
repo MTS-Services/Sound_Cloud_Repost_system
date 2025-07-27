@@ -14,16 +14,16 @@ class Campaign extends Component
     public function mount(CampaignService $campaignService)
     {
         $this->campaignService = $campaignService;
-        // $this->featuredCampaigns = $this->campaignService->getCampaigns()
-        //     ->featured()
-        //     ->withoutSelf()
-        //     ->with(['music'])
-        //     ->get();
+        $this->featuredCampaigns = $this->campaignService->getCampaigns()
+            // ->featured()
+            // ->withoutSelf()
+            ->with(['music.user'])
+            ->get();
 
         $this->campaigns = $this->campaignService->getCampaigns()
-            ->notFeatured()
+            // ->notFeatured()
             // ->withoutSelf()
-            ->with(['music'])
+            ->with(['music.user'])
             ->get();
     }
 
