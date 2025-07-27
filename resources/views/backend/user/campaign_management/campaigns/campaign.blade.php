@@ -174,7 +174,8 @@
                                                     <circle cx="8" cy="9" r="3" fill="none"
                                                         stroke="currentColor" stroke-width="2" />
                                                 </svg>
-                                                <span class="text-sm sm:text-base">103</span>
+                                                <span
+                                                    class="text-sm sm:text-base">{{ $campaign->budget_credits - $campaign->credits_spent }}</span>
                                             </div>
                                             <span class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
                                         </div>
@@ -188,7 +189,8 @@
                                                 <circle cx="8" cy="9" r="3" fill="none"
                                                     stroke="currentColor" stroke-width="2" />
                                             </svg>
-                                            <span>1 Repost</span>
+
+                                            <span>{{ round(user()?->userInfo?->followers_count / 100) }} Repost</span>
                                         </button>
                                     </div>
                                 </div>
