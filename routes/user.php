@@ -6,7 +6,7 @@ use App\Http\Controllers\Backend\User\AddCaeditsController;
 use App\Http\Controllers\Backend\User\AnalyticsController;
 use App\Http\Controllers\Backend\User\CampaignManagement\CampaignController;
 use App\Http\Controllers\Backend\User\CampaignManagement\MyCampaignController;
-use App\Livewire\Backend\User\CampaignManagement\MyCampaign;
+use App\Livewire\User\CampaignManagement\MyCampaign;
 use App\Http\Controllers\Backend\User\Mamber\MamberController;
 use App\Http\Controllers\Backend\User\PromoteController;
 use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;

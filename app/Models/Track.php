@@ -104,14 +104,9 @@ class Track extends BaseModel
         return $this->belongsTo(Playlist::class, 'playlist_urn', 'urn');
     }
 
-
-    public function campaign(): MorphMany
+    public function campaigns()
     {
-        return $this->morphMany(Campaign::class, 'music');
-    }
-    public function campaigns(): MorphMany
-    {
-        return $this->morphMany(Campaign::class, 'music');
+        return $this->hasMany(Campaign::class, 'track_urn', 'urn');
     }
 
     public function requests(): MorphMany
