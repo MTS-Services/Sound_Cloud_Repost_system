@@ -7,7 +7,7 @@ use App\Http\Controllers\Backend\User\AnalyticsController;
 use App\Http\Controllers\Backend\User\CampaignManagement\CampaignController;
 use App\Http\Controllers\Backend\User\CampaignManagement\MyCampaignController;
 use App\Livewire\User\CampaignManagement\MyCampaign;
-use App\Http\Controllers\Backend\User\Mamber\MamberController;
+use App\Http\Controllers\Backend\User\Members\MemberController;
 use App\Http\Controllers\Backend\User\PromoteController;
 use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
 
@@ -47,12 +47,12 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
         });
         Route::get('/my-campaigns', MyCampaign::class)->name('my-campaigns');
     });
-    // Mamber Management
-    Route::group(['as' => 'mm.', 'prefix' => 'mamber-management'], function () {
-        // Mamber Routes
-        Route::get('/mambers', [MamberController::class, 'index'])->name('mambers.index');
-        Route::get('/mambers/request', [MamberController::class, 'request'])->name('mambers.request');
-        Route::post('/confirm/repost/{id}', [MamberController::class, 'confirmRepost'])->name('repost.confirm');
+    // Member Management
+    Route::group(['as' => 'mm.', 'prefix' => 'member-management'], function () {
+        // Member Routes
+        Route::get('/members', [MemberController::class, 'index'])->name('members.index');
+        Route::get('/members/request', [MemberController::class, 'request'])->name('members.request');
+        Route::post('/confirm/repost/{id}', [MemberController::class, 'confirmRepost'])->name('repost.confirm');
 
      
     });
@@ -68,8 +68,4 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
         Route::post('/store', 'store')->name('store');
     });
     
-    // Member Management
-    Route::controller(MamberController::class)->name('mamber.')->prefix('mamber')->group(function () {
-        Route::get('/', 'index')->name('index');
-    });
 });
