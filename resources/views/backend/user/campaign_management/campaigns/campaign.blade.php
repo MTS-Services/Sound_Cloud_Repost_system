@@ -78,7 +78,7 @@
 
                             <!-- Track Details -->
                             <div class="flex-1 flex flex-col justify-between p-2">
-                                <x-sound-cloud.sound-cloud-player :track="$campaign->music" height="166" visual="true" />
+                                <x-sound-cloud.sound-cloud-player :track="$campaign->music" height="166" visual="false" />
                             </div>
                         </div>
                     </div>
