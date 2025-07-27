@@ -1,4 +1,4 @@
-<section x-data="{ showCampaignsModal: false, showSubmitModal: false }">
+<section x-data="{ showCampaignsModal: false, showSubmitModal: false, showLowCreditWarningModal: false }">
 
     <x-slot name="page_slug">campaigns</x-slot>
 
@@ -353,6 +353,50 @@
         </div>
     </div>
 
+    {{-- Buy Credits Warning Modal --}}
+
+    <div x-data="{ showLowCreditWarningModal: @entangle('showLowCreditWarningModal').live }" x-show="showLowCreditWarningModal" x-cloak
+        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+
+        <div
+            class="w-full max-w-4xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col max-h-[85vh] overflow-hidden">
+
+            <!-- Modal Header -->
+            <div
+                class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
+                        <i data-lucide="audio-lines" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                        {{ __('Create a campaign') }}
+                    </h2>
+                </div>
+                <button x-on:click="showLowCreditWarningModal = false"
+                    class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="flex-grow overflow-y-auto p-6">
+                You Need minimum 50 credits to create a campaign.
+
+                <div class="mt-4">
+                    <a href="{{ route('user.add-credits') }}"
+                        class="w-full bg-orange-600 dark:bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-700 dark:hover:bg-orange-600 transition-colors">
+                        <i data-lucide="plus" class="w-4 h-4 inline mr-2"></i>
+                        {{ __('Buy Credits') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <!-- Campaign Creation Modal -->
     <div x-data="{ showSubmitModal: @entangle('showSubmitModal').live }" x-show="showSubmitModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
@@ -368,7 +412,7 @@
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                        <i data-lucide="megaphone" class="w-5 h-5 text-white"></i>
+                        <i data-lucide="audio-lines" class="w-5 h-5 text-white"></i>
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                         {{ __('Create a campaign') }}
@@ -586,4 +630,10 @@
             </div>
         </div>
     </div>
+
+    @push('js')
+        <script>
+            lucide.createIcons();
+        </script>
+    @endpush
 </section>

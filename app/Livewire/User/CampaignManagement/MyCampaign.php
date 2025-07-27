@@ -17,6 +17,7 @@ class MyCampaign extends Component
 
     public bool $showCampaignsModal = false;
     public bool $showSubmitModal = false;
+    public bool $showLowCreditWarningModal = false;
     public string $activeModalTab = 'tracks';
 
     public $tracks = [];
@@ -215,6 +216,15 @@ class MyCampaign extends Component
             'totalBudget'
         ]);
 
+        $userCredits = 10;
+        if ($userCredits < 50) {
+            $this->showLowCreditWarningModal = true;
+            $this->showSubmitModal = true;
+            return;
+        } else {
+            $this->showLowCreditWarningModal = false;
+        }
+
         $this->showCampaignsModal = false;
         $this->showSubmitModal = true;
 
@@ -263,11 +273,9 @@ class MyCampaign extends Component
 
     public function submitCampaign()
     {
-        // dd('here');
         $this->validate();
 
         try {
-            // Ensure we have a valid track URN
             if (!$this->musicId) {
                 throw new \Exception('Please select a track for your campaign.');
             }
