@@ -92,7 +92,7 @@
             <!-- User dropdown -->
             <div class="dropdown dropdown-end">
                 <div tabindex="0" role="button" class="flex items-center space-x-1 md:space-x-2">
-                    <img src="{{ user()->avatar ?? asset('default_img/male.jpeg') }}" alt="{{ user()->name ?? 'name' }}"
+                    <img src="{{ auth_storage_url(user()->avatar) }}" alt="{{ user()->name ?? 'name' }}"
                         class="w-7 h-7 md:w-8 md:h-8 rounded-full">
                     <span
                         class="text-xs md:text-sm font-medium dark:text-slate-300 hidden sm:block">{{ user()->name ?? 'name' }}</span>
