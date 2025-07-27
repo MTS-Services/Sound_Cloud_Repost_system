@@ -1,6 +1,6 @@
 <section x-data="{ showCampaignsModal: false, showSubmitModal: false }">
 
-    <x-slot name="page_slug">campains</x-slot>
+    <x-slot name="page_slug">campaigns</x-slot>
 
     <div class="p-6">
         <div class="flex justify-between items-start mb-8">
@@ -19,18 +19,18 @@
             <div class="border-b border-gray-200 dark:border-gray-700">
                 <nav class="-mb-px flex space-x-8">
                     <button id="main-tab-all"
-                        class="tab-button active border-b-2 border-orange-500 py-2 px-1 text-sm font-medium text-orange-600 translateY(-1px)"
-                        data-tab="all">
+                        class="tab-button @if ($activeMainTab === 'all') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-2 px-1 text-sm font-medium translateY(-1px)"
+                        wire:click="$set('activeMainTab', 'all')">
                         {{ __('All Campaigns') }}
                     </button>
                     <button id="main-tab-active"
-                        class="tab-button border-b-2 border-transparent py-2 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                        data-tab="Active">
+                        class="tab-button @if ($activeMainTab === 'Active') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-2 px-1 text-sm font-medium"
+                        wire:click="$set('activeMainTab', 'Active')">
                         {{ __('Active') }}
                     </button>
                     <button id="main-tab-completed"
-                        class="tab-button border-b-2 border-transparent py-2 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                        data-tab="Completed">
+                        class="tab-button @if ($activeMainTab === 'Completed') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-2 px-1 text-sm font-medium"
+                        wire:click="$set('activeMainTab', 'Completed')">
                         {{ __('Completed') }}
                     </button>
                 </nav>
@@ -38,13 +38,12 @@
         </div>
 
         <div class="space-y-6" id="campaigns-list">
-            @forelse ($campaigns as $campaign)
+            @forelse ($campaigns->where('status_label', $activeMainTab === 'all' ? true : $activeMainTab) as $campaign)
                 <div class="campaign-card bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6"
                     data-status="{{ $campaign->status_label }}">
                     <div class="flex justify-center gap-5">
                         <div class="w-48 h-32">
                             <div class="w-full h-full rounded-lg overflow-hidden flex-shrink-0 relative">
-                                {{-- Assuming artwork_url is available or a fallback --}}
                                 <img src="{{ $campaign->artwork_url ?? asset('frontend/user/image/music-notes.jpg') }}"
                                     alt="{{ $campaign->title ?? 'Campaign Album Cover' }}"
                                     class="w-full h-full object-cover bg-gradient-to-br from-yellow-400 via-red-500 to-pink-500">
@@ -213,7 +212,6 @@
                     @if ($activeModalTab === 'tracks')
                         <div>
                             @forelse ($tracks as $track)
-                                {{-- @dd($track) --}}
                                 <div wire:click="toggleSubmitModal('track', {{ $track->id }})"
                                     class="py-3 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg px-2 transition-colors duration-200">
                                     <div class="flex-shrink-0">
@@ -246,7 +244,6 @@
                         </div>
                     @elseif($activeModalTab === 'playlists')
                         <div>
-
                             @forelse ($playlists as $playlist)
                                 <div wire:click="toggleSubmitModal('playlist', {{ $playlist->id }})"
                                     class="py-3 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg px-2  transition-colors duration-200">
@@ -273,40 +270,166 @@
                                     <p class="mt-3">No playlists found. Add one to get started.</p>
                                 </div>
                             @endforelse
-
                         </div>
                     @endif
                 </div>
             @endif
         </div>
+    </div>
 
 
-        <div x-data="{ showSubmitModal: @entangle('showSubmitModal').live }" x-show="showSubmitModal" x-cloak
-            x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-90"
-            x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
-            x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90"
-            class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+    {{-- Submit Form Modal --}}
+    <div x-data="{ showSubmitModal: @entangle('showSubmitModal').live }" x-show="showSubmitModal" x-cloak
+        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-90"
+        x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90"
+        class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
 
-            <div
-                class="w-full max-w-2xl mx-auto rounded-lg shadow-xl bg-white dark:bg-slate-800 p-6 flex flex-col max-h-[70vh]">
-                <div class="flex justify-between items-center mb-5">
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white text-center flex-grow">
-                        Submit Modal
-                    </h2>
-                    <button x-on:click="showSubmitModal = false"
-                        class="btn btn-sm btn-circle bg-orange-500 hover:bg-orange-600 text-white hover:text-gray-200"
-                        id="close_campaigns_modal">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" class="lucide lucide-x-icon lucide-x">
-                            <path d="M18 6 6 18" />
-                            <path d="m6 6 12 12" />
-                        </svg>
-                    </button>
-                </div>
-
-
+        <div
+            class="w-full max-w-2xl mx-auto rounded-lg shadow-xl bg-white dark:bg-slate-800 p-6 flex flex-col max-h-[70vh]">
+            <div class="flex justify-between items-center mb-5">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white text-center flex-grow">
+                    Create a campaign
+                </h2>
+                <button x-on:click="showSubmitModal = false"
+                    class="btn btn-sm btn-circle bg-orange-500 hover:bg-orange-600 text-white hover:text-gray-200"
+                    id="close_submit_modal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="lucide lucide-x-icon lucide-x">
+                        <path d="M18 6 6 18" />
+                        <path d="m6 6 12 12" />
+                    </svg>
+                </button>
             </div>
-        </div>
 
+            <div class="flex-grow overflow-y-auto pr-2 -mr-2">
+                <form wire:submit.prevent="submitCampaign" class="space-y-4">
+                    @if ($activeModalTab === 'playlists')
+                        <div class="mb-4">
+                            <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Select a track from
+                                your playlist</h4>
+                            <div
+                                class="max-h-[20vh] overflow-y-scroll border border-gray-300 dark:border-gray-600 p-3 rounded-lg">
+                                @forelse ($playlistTracks as $track)
+                                    <div wire:click="$set('trackUrn', '{{ $track['urn'] }}')"
+                                        class="flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg px-2 py-2 transition-colors duration-200 @if ($trackUrn == $track['urn']) bg-orange-100 dark:bg-orange-900/50 border border-orange-400 @endif">
+                                        <div class="flex-shrink-0">
+                                            <img class="h-12 w-12 rounded-lg object-cover"
+                                                src="{{ $track['artwork_url'] }}" alt="{{ $track['title'] }}" />
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                {{ $track['title'] }}
+                                            </p>
+                                            <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                                                by
+                                                <strong
+                                                    class="text-orange-600">{{ $track['user']['username'] }}</strong>
+                                                <span class="ml-1 text-xs text-gray-400">{{ $track['genre'] }}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="text-center py-10 text-gray-500 dark:text-gray-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            class="mx-auto h-10 w-10 text-orange-400" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 17v-2a4 4 0 00-4-4H5m14 0h-1a4 4 0 00-4 4v2M12 7h.01M12 12h.01M12 17h.01" />
+                                        </svg>
+                                        <p class="mt-3">No tracks found in this playlist.</p>
+                                    </div>
+                                @endforelse
+                            </div>
+                            @error('trackUrn')
+                                <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    @endif
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="campaign_title"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Campaign name
+                            </label>
+                            <input type="text" id="campaign_title" wire:model.live="title"
+                                class="mt-1 block w-full rounded-lg border border-gray-300 dark:border-gray-600 shadow-sm p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-orange-500 focus:border-orange-500">
+                            @error('title')
+                                <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="campaign_end_date"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Campaign expiration date
+                            </label>
+                            <input type="date" id="campaign_end_date" wire:model.live="endDate"
+                                class="mt-1 block w-full rounded-lg border border-gray-300 dark:border-gray-600 shadow-sm p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-orange-500 focus:border-orange-500">
+                            @error('endDate')
+                                <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="campaign_description"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Campaign description
+                        </label>
+                        <textarea id="campaign_description" wire:model.live="description" rows="3"
+                            class="mt-1 block w-full rounded-lg border border-gray-300 dark:border-gray-600 shadow-sm p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-orange-500 focus:border-orange-500"></textarea>
+                        @error('description')
+                            <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="campaign_total_budget"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Campaign total budget (credits)
+                            </label>
+                            <input type="number" id="campaign_total_budget" wire:model.live="totalBudget"
+                                class="mt-1 block w-full rounded-lg border border-gray-300 dark:border-gray-600 shadow-sm p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-orange-500 focus:border-orange-500">
+                            @error('totalBudget')
+                                <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="campaign_target_reposts"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Campaign target repost count
+                            </label>
+                            <input type="number" id="campaign_target_reposts" wire:model.live="targetReposts"
+                                class="mt-1 block w-full rounded-lg border border-gray-300 dark:border-gray-600 shadow-sm p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-orange-500 focus:border-orange-500">
+                            @error('targetReposts')
+                                <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2">
+                        <span wire:loading.remove wire:target="submitCampaign">{{ __('Create Campaign') }}</span>
+                        <span wire:loading wire:target="submitCampaign">
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                    stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                            {{ __('Creating...') }}
+                        </span>
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
 </section>
