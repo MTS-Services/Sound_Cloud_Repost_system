@@ -37,7 +37,7 @@
         </div>
     </div>
 
-    <div class="container mx-auto px-4 py-6" x-data="campaignManager()">
+    <div class="container mx-auto px-4 py-6" x-data="campaignManager()" x-init="init()">
         <!-- Featured Campaign Section -->
         @if (count($featuredCampaigns) > 0)
             <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Featured campaigns</h2>
@@ -51,11 +51,11 @@
                             <div class="flex flex-col md:flex-row gap-4">
                                 <!-- Track Details -->
                                 <div class="flex-1 flex flex-col justify-between p-2 relative">
-                                    <x-sound-cloud.sound-cloud-player :track="$campaign->music" :height="166"
-                                        :visual="false"
-                                        @play="$dispatch('track-play', { campaignId: '{{ $campaign->id }}' })"
-                                        @pause="$dispatch('track-pause', { campaignId: '{{ $campaign->id }}' })"
-                                        @timeupdate="$dispatch('track-timeupdate', { campaignId: '{{ $campaign->id }}', currentTime: $event.detail?.currentTime || 0 })" />
+                                    <div id="soundcloud-player-{{ $campaign->id }}"
+                                        data-campaign-id="{{ $campaign->id }}">
+                                        <x-sound-cloud.sound-cloud-player :track="$campaign->music" :height="166"
+                                            :visual="false" />
+                                    </div>
                                     <div
                                         class="absolute top-2 left-2 bg-cyan-600 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
                                         FEATURED
@@ -184,11 +184,11 @@
                             <div class="flex flex-col md:flex-row gap-4">
                                 <!-- Track Details -->
                                 <div class="flex-1 flex flex-col justify-between p-2">
-                                    <x-sound-cloud.sound-cloud-player :track="$campaign->music" :height="166"
-                                        :visual="false"
-                                        @play="$dispatch('track-play', { campaignId: '{{ $campaign->id }}' })"
-                                        @pause="$dispatch('track-pause', { campaignId: '{{ $campaign->id }}' })"
-                                        @timeupdate="$dispatch('track-timeupdate', { campaignId: '{{ $campaign->id }}', currentTime: $event.detail?.currentTime || 0 })" />
+                                    <div id="soundcloud-player-{{ $campaign->id }}"
+                                        data-campaign-id="{{ $campaign->id }}">
+                                        <x-sound-cloud.sound-cloud-player :track="$campaign->music" :height="166"
+                                            :visual="false" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -309,183 +309,224 @@
         @endif
     </div>
 
+    @push('js')
+        <script>
+            function campaignManager() {
+                return {
+                    // Object to store state for each campaign
+                    campaigns: {},
+                    widgets: {},
 
-</section>
-
-@push('js')
-    <script>
-        function campaignManager() {
-            return {
-                // Object to store state for each campaign
-                campaigns: {},
-
-                // Initialize campaign state
-                initCampaign(campaignId) {
-                    if (!this.campaigns[campaignId]) {
-                        this.campaigns[campaignId] = {
-                            isPlaying: false,
-                            playTime: 0,
-                            canRepost: false,
-                            playTimer: null,
-                            hasReposted: false
-                        };
-                    }
-                    return this.campaigns[campaignId];
-                },
-
-                // Event listeners
-                init() {
-                    // Listen for track play events
-                    this.$el.addEventListener('track-play', (event) => {
-                        const {
-                            campaignId
-                        } = event.detail;
-                        this.handlePlay(campaignId);
-                    });
-
-                    // Listen for track pause events
-                    this.$el.addEventListener('track-pause', (event) => {
-                        const {
-                            campaignId
-                        } = event.detail;
-                        this.handlePause(campaignId);
-                    });
-
-                    // Listen for track time update events
-                    this.$el.addEventListener('track-timeupdate', (event) => {
-                        const {
-                            campaignId,
-                            currentTime
-                        } = event.detail;
-                        this.handleTimeUpdate(campaignId, currentTime);
-                    });
-                },
-
-                // Play handler
-                handlePlay(campaignId) {
-                    const campaign = this.initCampaign(campaignId);
-                    campaign.isPlaying = true;
-                    this.startTimer(campaignId);
-                },
-
-                // Pause handler
-                handlePause(campaignId) {
-                    const campaign = this.initCampaign(campaignId);
-                    campaign.isPlaying = false;
-                    this.stopTimer(campaignId);
-                },
-
-                // Time update handler
-                handleTimeUpdate(campaignId, currentTime) {
-                    const campaign = this.initCampaign(campaignId);
-                    if (currentTime && currentTime > 0) {
-                        campaign.playTime = currentTime;
-                        if (campaign.playTime >= 5) {
-                            campaign.canRepost = true;
-                            this.stopTimer(campaignId);
+                    // Initialize campaign state
+                    initCampaign(campaignId) {
+                        if (!this.campaigns[campaignId]) {
+                            this.campaigns[campaignId] = {
+                                isPlaying: false,
+                                playTime: 0,
+                                canRepost: false,
+                                playTimer: null,
+                                hasReposted: false,
+                                widget: null
+                            };
                         }
-                    }
-                },
+                        return this.campaigns[campaignId];
+                    },
 
-                // Start timer for a campaign
-                startTimer(campaignId) {
-                    const campaign = this.initCampaign(campaignId);
+                    // Initialize SoundCloud widgets
+                    init() {
+                        // Wait for SoundCloud Widget API to be ready
+                        this.initializeSoundCloudWidgets();
+                    },
 
-                    // Clear existing timer if any
-                    this.stopTimer(campaignId);
+                    initializeSoundCloudWidgets() {
+                        // Check if SC is available
+                        if (typeof SC === 'undefined') {
+                            console.log('SoundCloud Widget API not loaded yet, retrying...');
+                            setTimeout(() => this.initializeSoundCloudWidgets(), 500);
+                            return;
+                        }
 
-                    campaign.playTimer = setInterval(() => {
-                        if (campaign.isPlaying) {
-                            campaign.playTime += 0.1;
-                            if (campaign.playTime >= 5 && !campaign.canRepost) {
+                        console.log('Initializing SoundCloud widgets...');
+
+                        // Find all SoundCloud player containers
+                        const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+
+                        playerContainers.forEach(container => {
+                            const campaignId = container.dataset.campaignId;
+                            const iframe = container.querySelector('iframe');
+
+                            if (iframe && campaignId) {
+                                console.log(`Setting up widget for campaign: ${campaignId}`);
+
+                                // Create widget instance
+                                const widget = SC.Widget(iframe);
+                                this.widgets[campaignId] = widget;
+
+                                // Initialize campaign
+                                const campaign = this.initCampaign(campaignId);
+                                campaign.widget = widget;
+
+                                // Bind events
+                                widget.bind(SC.Widget.Events.PLAY, () => {
+                                    console.log(`Play event for campaign: ${campaignId}`);
+                                    this.handlePlay(campaignId);
+                                });
+
+                                widget.bind(SC.Widget.Events.PAUSE, () => {
+                                    console.log(`Pause event for campaign: ${campaignId}`);
+                                    this.handlePause(campaignId);
+                                });
+
+                                widget.bind(SC.Widget.Events.FINISH, () => {
+                                    console.log(`Finish event for campaign: ${campaignId}`);
+                                    this.handlePause(campaignId);
+                                });
+
+                                // Set up position tracking
+                                widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+                                    const currentTime = data.currentPosition / 1000; // Convert to seconds
+                                    this.handleTimeUpdate(campaignId, currentTime);
+                                });
+                            }
+                        });
+                    },
+
+                    // Play handler
+                    handlePlay(campaignId) {
+                        const campaign = this.initCampaign(campaignId);
+                        campaign.isPlaying = true;
+                        this.startTimer(campaignId);
+                    },
+
+                    // Pause handler
+                    handlePause(campaignId) {
+                        const campaign = this.initCampaign(campaignId);
+                        campaign.isPlaying = false;
+                        this.stopTimer(campaignId);
+                    },
+
+                    // Time update handler
+                    handleTimeUpdate(campaignId, currentTime) {
+                        const campaign = this.initCampaign(campaignId);
+                        if (currentTime && currentTime > 0) {
+                            campaign.playTime = currentTime;
+                            if (campaign.playTime >= 5) {
                                 campaign.canRepost = true;
                                 this.stopTimer(campaignId);
                             }
                         }
-                    }, 100);
-                },
+                    },
 
-                // Stop timer for a campaign
-                stopTimer(campaignId) {
-                    const campaign = this.campaigns[campaignId];
-                    if (campaign && campaign.playTimer) {
-                        clearInterval(campaign.playTimer);
-                        campaign.playTimer = null;
-                    }
-                },
+                    // Start timer for a campaign
+                    startTimer(campaignId) {
+                        const campaign = this.initCampaign(campaignId);
 
-                // Helper methods for template
-                canRepost(campaignId) {
-                    const campaign = this.campaigns[campaignId];
-                    return campaign ? campaign.canRepost && !campaign.hasReposted : false;
-                },
+                        // Clear existing timer if any
+                        this.stopTimer(campaignId);
 
-                isPlaying(campaignId) {
-                    const campaign = this.campaigns[campaignId];
-                    return campaign ? campaign.isPlaying : false;
-                },
-
-                getPlayTime(campaignId) {
-                    const campaign = this.campaigns[campaignId];
-                    return campaign ? campaign.playTime : 0;
-                },
-
-                // Repost function
-                repost(campaignId) {
-                    const campaign = this.initCampaign(campaignId);
-
-                    if (!campaign.canRepost || campaign.hasReposted) {
-                        return;
-                    }
-
-                    // Mark as reposted to prevent multiple reposts
-                    campaign.hasReposted = true;
-
-                    // Make API call to your Laravel backend
-                    fetch(`/repost/${campaignId}`, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute(
-                                    'content') || '',
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                campaign_id: campaignId
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                // Show success message
-                                this.showNotification('Track reposted successfully!', 'success');
-                            } else {
-                                // Reset hasReposted on failure
-                                campaign.hasReposted = false;
-                                this.showNotification(data.message || 'Failed to repost track', 'error');
+                        campaign.playTimer = setInterval(() => {
+                            if (campaign.isPlaying) {
+                                campaign.playTime += 0.1;
+                                if (campaign.playTime >= 5 && !campaign.canRepost) {
+                                    campaign.canRepost = true;
+                                    this.stopTimer(campaignId);
+                                    console.log(`Repost enabled for campaign: ${campaignId}`);
+                                }
                             }
-                        })
-                        .catch(error => {
-                            console.error('Repost failed:', error);
-                            // Reset hasReposted on error
-                            campaign.hasReposted = false;
-                            this.showNotification('Failed to repost track. Please try again.', 'error');
-                        });
-                },
+                        }, 100);
+                    },
 
-                // Simple notification system
-                showNotification(message, type = 'info') {
-                    // You can implement your own notification system here
-                    // For now, using a simple alert
-                    if (type === 'success') {
-                        alert('✅ ' + message);
-                    } else if (type === 'error') {
-                        alert('❌ ' + message);
-                    } else {
-                        alert(message);
+                    // Stop timer for a campaign
+                    stopTimer(campaignId) {
+                        const campaign = this.campaigns[campaignId];
+                        if (campaign && campaign.playTimer) {
+                            clearInterval(campaign.playTimer);
+                            campaign.playTimer = null;
+                        }
+                    },
+
+                    // Helper methods for template
+                    canRepost(campaignId) {
+                        const campaign = this.campaigns[campaignId];
+                        return campaign ? campaign.canRepost && !campaign.hasReposted : false;
+                    },
+
+                    isPlaying(campaignId) {
+                        const campaign = this.campaigns[campaignId];
+                        return campaign ? campaign.isPlaying : false;
+                    },
+
+                    getPlayTime(campaignId) {
+                        const campaign = this.campaigns[campaignId];
+                        return campaign ? campaign.playTime : 0;
+                    },
+
+                    // Repost function
+                    repost(campaignId) {
+                        const campaign = this.initCampaign(campaignId);
+
+                        if (!campaign.canRepost || campaign.hasReposted) {
+                            console.log(`Repost not allowed for campaign: ${campaignId}`, {
+                                canRepost: campaign.canRepost,
+                                hasReposted: campaign.hasReposted
+                            });
+                            return;
+                        }
+
+                        console.log(`Attempting repost for campaign: ${campaignId}`);
+
+                        // Mark as reposted to prevent multiple reposts
+                        campaign.hasReposted = true;
+
+                        // Make API call to your Laravel backend
+                        fetch(`/repost/${campaignId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute(
+                                        'content') || '',
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    campaign_id: campaignId
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log('Repost response:', data);
+                                if (data.success) {
+                                    this.showNotification('Track reposted successfully!', 'success');
+                                } else {
+                                    // Reset hasReposted on failure
+                                    campaign.hasReposted = false;
+                                    this.showNotification(data.message || 'Failed to repost track', 'error');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Repost failed:', error);
+                                // Reset hasReposted on error
+                                campaign.hasReposted = false;
+                                this.showNotification('Failed to repost track. Please try again.', 'error');
+                            });
+                    },
+
+                    // Simple notification system
+                    showNotification(message, type = 'info') {
+                        if (type === 'success') {
+                            alert('✅ ' + message);
+                        } else if (type === 'error') {
+                            alert('❌ ' + message);
+                        } else {
+                            alert(message);
+                        }
                     }
                 }
             }
-        }
-    </script>
-@endpush
+
+            // Initialize when DOM is ready
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('DOM loaded, waiting for SoundCloud API...');
+            });
+        </script>
+    @endpush
+</section>
