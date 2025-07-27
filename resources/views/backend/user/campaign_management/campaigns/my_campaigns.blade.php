@@ -484,7 +484,7 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div class="space-y-2">
                             <label for="campaign_title"
-                                class="block text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                                class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                                 <i data-lucide="type" class="w-4 h-4 text-orange-500"></i>
                                 {{ __('Campaign name') }}
                             </label>
@@ -501,7 +501,7 @@
 
                         <div class="space-y-2">
                             <label for="campaign_end_date"
-                                class="block text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                                class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                                 <i data-lucide="calendar" class="w-4 h-4 text-orange-500"></i>
                                 {{ __('Campaign expiration date') }}
                             </label>
@@ -518,7 +518,7 @@
 
                     <div class="space-y-2">
                         <label for="campaign_description"
-                            class="block text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                            class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                             <i data-lucide="file-text" class="w-4 h-4 text-orange-500"></i>
                             {{ __('Campaign description') }}
                         </label>
@@ -536,15 +536,15 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div class="space-y-2">
                             <label for="campaign_total_budget"
-                                class="block text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                                class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                                 <i data-lucide="coins" class="w-4 h-4 text-orange-500"></i>
-                                {{ __('Campaign total budget (credits)') }}
+                                {{ __('Cost per repost (credits)') }}
                             </label>
-                            <input type="number" id="campaign_total_budget" wire:model.live="totalBudget"
+                            <input type="number" id="campaign_total_budget" wire:model.live="costPerRepost"
                                 min="1"
                                 class="w-full rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200"
                                 placeholder="Enter budget amount">
-                            @error('totalBudget')
+                            @error('costPerRepost')
                                 <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
                                     <i data-lucide="alert-circle" class="w-4 h-4"></i>
                                     <span>{{ $message }}</span>
@@ -554,7 +554,7 @@
 
                         <div class="space-y-2">
                             <label for="campaign_target_reposts"
-                                class="block text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                                class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                                 <i data-lucide="target" class="w-4 h-4 text-orange-500"></i>
                                 {{ __('Campaign target repost count') }}
                             </label>
@@ -571,16 +571,17 @@
                         </div>
                     </div>
 
-                    @if ($totalBudget && $targetReposts && $totalBudget > 0 && $targetReposts > 0)
+                    @if ($costPerRepost && $targetReposts && $costPerRepost > 0 && $targetReposts > 0)
                         <div
                             class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
                             <div class="flex items-center gap-3">
                                 <i data-lucide="calculator" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
                                 <div>
-                                    <p class="text-sm font-semibold text-blue-900 dark:text-blue-100">Cost per repost
+                                    <p class="text-sm font-semibold text-blue-900 dark:text-blue-100">
+                                        {{ __('Estimated campaign cost') }}
                                     </p>
                                     <p class="text-lg font-bold text-blue-600 dark:text-blue-400">
-                                        {{ number_format($totalBudget / $targetReposts, 2) }} credits
+                                        {{ number_format($costPerRepost * $targetReposts) }} credits
                                     </p>
                                 </div>
                             </div>
