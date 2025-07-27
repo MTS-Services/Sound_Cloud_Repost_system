@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('sort_order')->default(0)->unsigned();
 
-            $table->string('user_urn')->unique();
+            $table->string('user_urn')->unique();   
             $table->foreign('user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
 
             $table->string('first_name')->index();

@@ -340,6 +340,11 @@ class MyCampaign extends Component
         }
     }
 
+    public function updatedActiveMainTab($tab)
+    {
+        $this->activeMainTab = $tab;
+    }
+
     public function refreshCampaigns()
     {
         try {
@@ -369,6 +374,11 @@ class MyCampaign extends Component
 
     public function mount()
     {
+        if ($this->activeMainTab == 'active') {
+            dd('active');
+        } elseif ($this->activeMainTab == 'completed') {
+            dd('completed');
+        }
         $this->refreshCampaigns();
     }
 

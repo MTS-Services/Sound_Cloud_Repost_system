@@ -43,13 +43,15 @@ class Campaign extends BaseModel
     protected $casts = [
         'start_date' => 'datetime',
         'end_date' => 'datetime',
+        'budget_credits' => 'decimal:2',
+        'cost_per_repost' => 'decimal:2',
+        'credits_spent' => 'decimal:2',
         'target_reposts' => 'integer',
         'completed_reposts' => 'integer',
-        'cost_per_repost' => 'decimal',
-        'budget_credits' => 'decimal',
-        'credits_spent' => 'decimal',
         'min_followers' => 'integer',
         'max_followers' => 'integer',
+        'is_featured' => 'boolean',
+        'status' => 'integer',
     ];
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
@@ -132,7 +134,7 @@ class Campaign extends BaseModel
     public static function getStatusList(): array
     {
         return [
-            self::STATUS_OPEN => 'Active',
+            self::STATUS_OPEN => 'Open',
             self::STATUS_PAUSED => 'Paused',
             self::STATUS_COMPLETED => 'Completed',
             self::STATUS_CANCELLED => 'Cancelled',
@@ -180,7 +182,7 @@ class Campaign extends BaseModel
     // active_completed scope
     public function scopeActive_completed()
     {
-        return $this->where('status', '!=', self::STATUS_CANCELLED, )->where('status', '!=', self::STATUS_PAUSED);
+        return $this->where('status', '!=', self::STATUS_CANCELLED,)->where('status', '!=', self::STATUS_PAUSED);
     }
 
     public const FEATURED = 1;
@@ -234,7 +236,4 @@ class Campaign extends BaseModel
     {
         return $query->where('status', self::STATUS_CANCELLED);
     }
-
-
-
 }
