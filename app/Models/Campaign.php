@@ -20,7 +20,7 @@ class Campaign extends BaseModel
         'status',
         'title',
         'description',
-
+        'playback_count',
         'target_reposts',
         'completed_reposts',
         'cost_per_repost',
@@ -52,6 +52,7 @@ class Campaign extends BaseModel
         'max_followers' => 'integer',
         'is_featured' => 'boolean',
         'status' => 'integer',
+        'playback_count' => 'integer',
     ];
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
