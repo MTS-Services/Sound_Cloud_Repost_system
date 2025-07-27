@@ -122,7 +122,8 @@
                                             alt="Audio Cure avatar">
                                         <div>
                                             <div class="flex items-center gap-1">
-                                                <span class="text-slate-700 dark:text-gray-300 font-medium">{{ $campaign?->music?->user?->name }}</span>
+                                                <span
+                                                    class="text-slate-700 dark:text-gray-300 font-medium">{{ $campaign?->music?->user?->name }}</span>
                                                 <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none"
                                                     viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -150,7 +151,8 @@
                                                     <circle cx="8" cy="9" r="3" fill="none"
                                                         stroke="currentColor" stroke-width="2" />
                                                 </svg>
-                                                <span class="text-sm sm:text-base">103</span>
+                                                <span
+                                                    class="text-sm sm:text-base">{{ $campaign->budget_credits - $campaign->credits_spent }}</span>
                                             </div>
                                             <span class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
                                         </div>
@@ -164,7 +166,8 @@
                                                 <circle cx="8" cy="9" r="3" fill="none"
                                                     stroke="currentColor" stroke-width="2" />
                                             </svg>
-                                            <span>1 Repost</span>
+
+                                            <span>{{ round(user()?->userInfo?->followers_count / 100) }} Repost</span>
                                         </button>
                                     </div>
                                 </div>

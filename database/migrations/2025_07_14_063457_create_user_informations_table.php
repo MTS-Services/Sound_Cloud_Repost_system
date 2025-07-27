@@ -6,19 +6,18 @@ use Illuminate\Support\Facades\Schema;
 use App\Http\Traits\AuditColumnsTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-return new class extends Migration
-{
+return new class extends Migration {
     use AuditColumnsTrait, SoftDeletes;
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('user_information', function (Blueprint $table) {
+        Schema::create('user_informations', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('sort_order')->default(0)->unsigned();
 
-            $table->string('user_urn')->unique();   
+            $table->string('user_urn')->unique();
             $table->foreign('user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
 
             $table->string('first_name')->index();
@@ -65,7 +64,7 @@ return new class extends Migration
 
             $table->timestamps();
             $table->softDeletes();
-            $this->addMorphedAuditColumns($table);           
+            $this->addMorphedAuditColumns($table);
 
 
             $table->index(['followers_count']);
@@ -82,6 +81,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_information');
+        Schema::dropIfExists('user_informations');
     }
 };
