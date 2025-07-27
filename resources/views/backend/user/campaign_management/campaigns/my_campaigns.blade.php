@@ -21,17 +21,17 @@
                 <nav class="-mb-px flex space-x-8">
                     <button
                         class="tab-button @if ($activeMainTab === 'all') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                        wire:click="$set('activeMainTab', 'all')">
+                        wire:click="setActiveTab('all')">
                         {{ __('All Campaigns') }}
                     </button>
                     <button
                         class="tab-button @if ($activeMainTab === 'active') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                        wire:click="$set('activeMainTab', 'active')">
+                        wire:click="setActiveTab('active')">
                         {{ __('Active') }}
                     </button>
                     <button
                         class="tab-button @if ($activeMainTab === 'completed') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                        wire:click="updatedActiveMainTab('completed')">
+                        wire:click="setActiveTab('completed')">
                         {{ __('Completed') }}
                     </button>
                 </nav>
