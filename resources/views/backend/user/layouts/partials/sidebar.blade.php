@@ -5,7 +5,7 @@
     <!-- Profile Section -->
     <div class="p-3 md:p-4 border-b border-gray-100 dark:border-slate-700">
         <div class="flex items-center space-x-3 mb-3 md:mb-4">
-            <img src="{{ user()->avatar }}" alt="{{ user()->name ?? 'name' }}" class="w-8 h-8 md:w-10 md:h-10 rounded-full">
+            <img src="{{ auth_storage_url(user()->avatar)  }}" alt="{{ user()->name ?? 'name' }}" class="w-8 h-8 md:w-10 md:h-10 rounded-full">
             <div>
                 <h3 class="text-slate-800 dark:text-white text-xs md:text-sm">{{ user()->name ?? 'name' }}</h3>
                 <p class="text-slate-400 text-[10px] md:text-xs">{{ $totalCredits }} Credits</p>

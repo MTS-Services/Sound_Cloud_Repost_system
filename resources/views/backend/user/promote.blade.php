@@ -25,7 +25,7 @@
             <div class="space-y-4" x-show="activeTab === 'tracks'">
                 @foreach ($tracks as $track)
                     <!-- Track Item -->
-                    <div
+                    {{-- <div
                         class="flex items-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
                         <img src="{{ $track->artwork_url ?? 'https://via.placeholder.com/64' }}"
                             alt="{{ $track->title }}" class="rounded-md" width="150" height="100" />
@@ -40,7 +40,9 @@
                                 {{ $track->isrc }}
                             </span>
                         </div>
-                    </div>
+                    </div> --}}
+
+                    <x-sound-cloud.sound-cloud-player :track="$track" :height="166" :visual="false" />
                 @endforeach
             </div>
 
