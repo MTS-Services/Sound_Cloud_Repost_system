@@ -11,12 +11,13 @@ Route::group(['as' => 'f.'], function () {
     
     // Stripe Payments Routes
     Route::controller(PaymentController::class)->name('payment.')->prefix('payment')->group(function () {
-        Route::get('/', 'showPaymentForm')->name('form');
+        Route::get('/method/{credit_id}', 'paymentMethod')->name('method');
+        Route::get('/{order_id}', 'showPaymentForm')->name('form');
         Route::post('/create-intent', 'createPaymentIntent')->name('create-intent');
-        Route::get('/success', 'paymentSuccess')->name('success');
+        Route::get('/success/page', 'paymentSuccess')->name('success');
         Route::get('/cancel', 'paymentCancel')->name('cancel');
     });
 });
 Route::get('/products/payment', [PaypalController::class, 'paypalPaymentLink'])->name('paypal.paymentLink');
-Route::get('/products/payment/success', [PaypalController::class, 'paypalPaymentSuccess'])->name('paypal.paymentSuccess');
+Route::get('/products/payment/success/', [PaypalController::class, 'paypalPaymentSuccess'])->name('paypal.paymentSuccess');
 Route::get('/products/payment/cancel', [PaypalController::class, 'paypalPaymentCancel'])->name('paypal.paymentCancel');

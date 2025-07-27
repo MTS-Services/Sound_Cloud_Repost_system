@@ -145,6 +145,23 @@
                         'permission' => 'campaign-list',
                     ],
                 ]" />
+            <x-admin.navlink type="dropdown" icon="credit-card" name="Order Management" :page_slug="$active"
+                :items="[
+                    [
+                        'name' => 'Orders',
+                        'route' => route('om.credit-transaction.purchase'),
+                        'icon' => 'megaphone',
+                        'active' => 'order',
+                        'permission' => 'order-list',
+                    ],
+                    [
+                        'name' => 'Purchase History',
+                        'route' => route('om.credit-transaction.purchase'),
+                        'icon' => 'megaphone',
+                        'active' => 'purchase',
+                        'permission' => 'purchase-list',
+                    ],
+                ]" />
         </nav>
     </div>
 </aside>

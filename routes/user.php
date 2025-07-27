@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Backend\User\DashboardController;
+use App\Http\Controllers\Backend\Admin\OrderManagement\OrderController as UserOrderController;
 use App\Http\Controllers\Backend\User\AddCaeditsController;
 use App\Http\Controllers\Backend\User\AnalyticsController;
 use App\Http\Controllers\Backend\User\CampaignManagement\CampaignController;
@@ -22,10 +24,7 @@ Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
 Route::view('soundcloud', 'backend.user.my-account')->name('myAccount');
 // Dashboard and other routes
 Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
-    Route::get('/dashboard', function () {
-
-        return view('backend.user.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard',[DashboardController::class, 'dashboard'])->name('dashboard');
 
     Route::get('/user-profile', [ProfileController::class, 'profile'])->name('profile');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -62,5 +61,10 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     Route::controller(CampaignController::class)->name('campaign.')->prefix('campaign')->group(function () {
         Route::get('/feed', 'campaignFeed')->name('feed');
         Route::post('/{repost}', 'repost')->name('repost');
+    });
+
+    // Order Manaagement Routes
+    Route::controller(UserOrderController::class)->name('order.')->prefix('order')->group(function () {
+        Route::post('/store', 'store')->name('store');
     });
 });

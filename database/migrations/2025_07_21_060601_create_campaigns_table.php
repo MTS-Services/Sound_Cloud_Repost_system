@@ -39,7 +39,7 @@ return new class extends Migration
 
             $table->timestamps();
             $table->softDeletes();
-            $this->addAdminAuditColumns($table);
+            $this->addMorphedAuditColumns($table);
             
             // Foreign key constraints
             $table->foreign('user_urn')->references('urn')->on('users')->cascadeOnDelete()->cascadeOnUpdate();

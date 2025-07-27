@@ -38,6 +38,14 @@
 
                     <div class="flex justify-between items-center py-3 border-b border-gray-200">
                         <span class="font-semibold text-gray-600 flex items-center gap-2">
+                            <i class="fas fa-dollar-sign"></i> Credits
+                        </span>
+                        <span class="font-bold text-teal-500 text-lg">
+                            ${{ number_format($payment->creditTransaction?->credits, 2) }}
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center py-3 border-b border-gray-200">
+                        <span class="font-semibold text-gray-600 flex items-center gap-2">
                             <i class="fas fa-dollar-sign"></i> Amount
                         </span>
                         <span class="font-bold text-teal-500 text-lg">
@@ -97,14 +105,9 @@
 
             <!-- Action Buttons -->
             <div class="flex flex-wrap gap-4 mt-6 justify-center">
-                <a href="{{ route('f.payment.form') }}"
-                    class="flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-200 rounded-lg text-gray-700 font-semibold bg-gray-100 hover:bg-gray-200 transition-all duration-300 min-w-[140px]">
-                    <i class="fas fa-plus"></i> New Payment
-                </a>
-
-                <a href="/"
+                <a href="{{ route('user.dashboard') }}"
                     class="flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-white font-semibold bg-gradient-to-br from-indigo-400 to-purple-600 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 min-w-[140px]">
-                    <i class="fas fa-home"></i> Back to Home
+                    <i class="fas fa-home"></i> Back to Dashboard
                 </a>
             </div>
         </div>
