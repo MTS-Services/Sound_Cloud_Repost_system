@@ -396,13 +396,13 @@
                                 class="max-h-60 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800">
                                 @forelse ($playlistTracks as $track)
                                     @if (is_array($track) &&
-                                            isset($track['urn']) &&
+                                            isset($track['id']) &&
                                             isset($track['title']) &&
                                             isset($track['user']) &&
                                             is_array($track['user']) &&
                                             isset($track['user']['username']))
-                                        <div wire:click="$set('trackUrn', '{{ $track['urn'] }}')"
-                                            class="flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 p-4 transition-all duration-200 border-b border-gray-100 dark:border-gray-700 last:border-b-0 @if ($trackUrn == $track['urn']) bg-orange-50 dark:bg-orange-900/30 border-l-4 border-l-orange-500 @endif">
+                                        <div wire:click="$set('musicId', '{{ $track['id'] }}')"
+                                            class="flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 p-4 transition-all duration-200 border-b border-gray-100 dark:border-gray-700 last:border-b-0 @if ($musicId == $track['id']) bg-orange-50 dark:bg-orange-900/30 border-l-4 border-l-orange-500 @endif">
                                             <div class="flex-shrink-0">
                                                 <img class="h-12 w-12 rounded-lg object-cover shadow-sm"
                                                     src="{{ $track['artwork_url'] ?? asset('frontend/user/image/music-notes.jpg') }}"
@@ -423,7 +423,7 @@
                                                     @endif
                                                 </p>
                                             </div>
-                                            @if ($trackUrn == $track['urn'])
+                                            @if ($musicId == $track['id'])
                                                 <div class="flex-shrink-0">
                                                     <i data-lucide="check-circle" class="w-5 h-5 text-orange-500"></i>
                                                 </div>
@@ -437,7 +437,7 @@
                                     </div>
                                 @endforelse
                             </div>
-                            @error('trackUrn')
+                            @error('musicId')
                                 <div class="mt-2 flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
                                     <i data-lucide="alert-circle" class="w-4 h-4"></i>
                                     <span>{{ $message }}</span>
