@@ -67,4 +67,9 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     Route::controller(UserOrderController::class)->name('order.')->prefix('order')->group(function () {
         Route::post('/store', 'store')->name('store');
     });
+    
+    // Member Management
+    Route::controller(MamberController::class)->name('mamber.')->prefix('mamber')->group(function () {
+        Route::get('/', 'index')->name('index');
+    });
 });
