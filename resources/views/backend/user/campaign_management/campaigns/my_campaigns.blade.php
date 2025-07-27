@@ -42,8 +42,7 @@
         <!-- Campaigns List -->
         <div class="space-y-6" id="campaigns-list">
 
-            @forelse ($campaigns as $campaign)             
-            @dd($campaign)
+            @forelse ($campaigns as $campaign)
                 <div class=" rounded-lg border border-orange-600 overflow-hidden">
                     <div class="p-6 sm:p-8">
                         <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
