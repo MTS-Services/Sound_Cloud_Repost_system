@@ -13,6 +13,7 @@ use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Livewire\User\MemberManagement\Member;
 use App\Livewire\User\ProfileManagement\MyAccount;
 
 Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
@@ -25,7 +26,7 @@ Route::view('my-account
 ', 'backend.user.profile-management.my-account')->name('myAccount');
 // Dashboard and other routes
 Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
-    Route::get('/dashboard',[DashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
     Route::get('/user-profile', [ProfileController::class, 'profile'])->name('profile');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -54,9 +55,8 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
         Route::get('/members', [MemberController::class, 'index'])->name('members.index');
         Route::get('/members/request', [MemberController::class, 'request'])->name('members.request');
         Route::post('/confirm/repost/{id}', [MemberController::class, 'confirmRepost'])->name('repost.confirm');
-
-     
     });
+    Route::get('members', Member::class)->name('members');
 
     // Repost Campaign tracks
     Route::controller(CampaignController::class)->name('campaign.')->prefix('campaign')->group(function () {
@@ -68,7 +68,7 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     Route::controller(UserOrderController::class)->name('order.')->prefix('order')->group(function () {
         Route::post('/store', 'store')->name('store');
     });
-    
+
     Route::group(['as' => 'pm.', 'prefix' => 'profile-management'], function () {
 
         Route::get('/my-account', MyAccount::class)->name('my-account');

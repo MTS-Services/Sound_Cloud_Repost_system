@@ -1,0 +1,235 @@
+<div>
+    {{-- @dd($this->all()); --}}
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-2xl md:text-3xl font-bold mb-2 dark:text-white">Browse Members</h1>
+        <p class="text-text-gray text-sm md:text-base dark:text-white">Search, filter or browse the list of
+            recommended members that can repost your music.</p>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="mb-8 flex flex-col lg:flex-row gap-4">
+        <!-- Search Input -->
+        <div class="flex-1 relative">
+            <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text-gray dark:text-gray-400 "
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <input type="text" placeholder="Name or sub-genre" wire:model.live="search"
+                class="w-full bg-card-blue border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-gray-900 dark:text-white dark:bg-gray-900 placeholder-text-gray focus:outline-none focus:border-orange-500">
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4">
+            <button
+                class="bg-card-blue border border-gray-600 rounded-lg px-4 py-3 text-text-gray dark:text-white hover:border-orange-500 transition-colors flex items-center gap-2 min-w-[160px] justify-between">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+                    </path>
+                </svg>
+                Filter by track
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+
+            <select wire:model.live="genreFilter"
+                class="bg-card-blue border border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-4 py-3 text-text-gray hover:border-orange-500 transition-colors min-w-[160px] focus:outline-none focus:border-orange-500">
+                <option value="">Filter by genre</option>
+                <option value="electronic">Electronic</option>
+                <option value="hip-hop">Hip-Hop</option>
+                <option value="pop">Pop</option>
+                <option value="rock">Rock</option>
+            </select>
+
+            <select wire:model.live="costFilter"
+                class="bg-card-blue border border-gray-600 dark:text-white dark:bg-gray-900 rounded-lg px-4 py-3 text-text-gray hover:border-orange-500 transition-colors min-w-[160px] focus:outline-none focus:border-orange-500">
+                <option value="">Filter by cost</option>
+                <option value="low-high">Low to High</option>
+                <option value="high-low">High to Low</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    @if (session()->has('success'))
+        <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if (session()->has('error'))
+        <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <!-- Member Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-3 gap-6">
+        @forelse ($users as $user)
+            <div class="bg-card-blue rounded-lg p-6 border border-gray-600">
+                <!-- Profile Header -->
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="relative">
+                        <img src="{{ asset($user->avatar ?? 'default-avatar.png') }}" alt="{{ $user->name }}"
+                            class="w-12 h-12 rounded-full">
+                        <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-card-blue">
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-lg dark:text-white">{{ $user->name }}</h3>
+                        <p class="text-text-gray text-sm dark:text-white">{{ $user->created_at->format('M d, Y') }}</p>
+                    </div>
+                </div>
+
+                <!-- Genre Tags -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">Ambient</span>
+                    <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">Dubstep</span>
+                    <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">Electronic</span>
+                    <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">Techno</span>
+                </div>
+
+                <!-- Repost Price -->
+                @php
+                    $followerCount = $userinfo ? $userinfo->count() : 0;
+                    $credit = max(1, floor($followerCount / 100));
+                @endphp
+
+                <div class="flex justify-between items-center w-full mb-4">
+                    <p class="text-text-gray text-sm dark:text-white">Repost price:</p>
+                    <p class="text-sm font-medium dark:text-white">
+                        {{ $credit }} Credit{{ $credit > 1 ? 's' : '' }}
+                    </p>
+                </div>
+
+                <!-- Stats -->
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div class="text-center">
+                        <p class="text-text-gray text-xs mb-1 dark:text-white">Credibility</p>
+                        <p class="text-green-400 font-bold">83%</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-text-gray text-xs mb-1 dark:text-white">Efficiency</p>
+                        <p class="text-orange-500 font-bold">92%</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-text-gray text-xs mb-1 dark:text-white">Total Reposts</p>
+                        <p class="text-black font-bold dark:text-white">156</p>
+                    </div>
+                </div>
+
+                <!-- Request Button -->
+                <button wire:click="openModal({{ $user->id }})"
+                    class="w-full max-w-xs bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors dark:text-white">
+                    Request
+                </button>
+            </div>
+        @empty
+            <div class="col-span-full text-center py-8">
+                <p class="text-text-gray dark:text-white">No members found.</p>
+            </div>
+        @endforelse
+    </div>
+
+    <!-- Modal -->
+    @if($showModal)
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center p-4 z-50">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto mx-auto relative">
+                
+                <!-- Close Button -->
+                <button wire:click="closeModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 focus:outline-none">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                <!-- Header -->
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-white text-center">Choose a track or playlist</h2>
+                </div>
+
+                <!-- Tabs -->
+                <div class="flex border-b border-gray-200 dark:border-gray-700">
+                    <button wire:click="setActiveTab('tracks')" 
+                        class="flex-1 py-3 text-center font-semibold focus:outline-none 
+                        {{ $activeTab === 'tracks' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white'  }}">
+                        Tracks
+                    </button>
+                    <button wire:click="setActiveTab('playlists')" 
+                        class="flex-1 py-3 text-center font-semibold focus:outline-none 
+                        {{ $activeTab === 'playlists' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white' }}">
+                        Playlists
+                    </button>
+                </div>
+
+                <!-- Content -->
+                <div class="p-6">
+                    @if($activeTab === 'tracks')
+                        <!-- Tracks Content -->
+                        <div class="space-y-4">
+                            @forelse($tracks as $track)
+                                <div class="flex items-center bg-gray-50 dark:bg-gray-700 rounded-lg p-3 shadow-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
+                                     wire:click="selectTrack({{ $track->id }})">
+                                    <img src="{{ asset('frontend/user/image/pexels-photo-1040881.jpeg') }}"
+                                        alt="Track" class="w-20 h-20 rounded-md object-cover mr-4">
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $track->title }}</h3>
+                                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                                            by {{ $track->artist ?? 'Unknown' }} 
+                                            <span class="text-xs text-gray-500 ml-1">{{ $track->genre ?? 'Electronic' }}</span>
+                                        </p>
+                                        <span class="inline-block bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs px-2 py-1 rounded mt-1">
+                                            {{ $track->urn ?? 'N/A' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            @empty
+                                <p class="text-center text-gray-500 dark:text-gray-400">No tracks available</p>
+                            @endforelse
+                        </div>
+                    @else
+                        <!-- Playlists Content -->
+                        <div class="space-y-4">
+                            @forelse($playlists as $playlist)
+                                <div class="flex items-center bg-gray-50 dark:bg-gray-700 rounded-lg p-3 shadow-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
+                                     wire:click="selectPlaylist({{ $playlist->id }})">
+                                    <img src="{{ asset('frontend/user/image/pexels-photo-1040881.jpeg') }}"
+                                        alt="Playlist Cover" class="w-20 h-20 rounded-md object-cover mr-4">
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $playlist->title }}</h3>
+                                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                                            {{ $playlist->user_urn }}
+                                            <span class="text-xs text-gray-500 ml-1">{{ $playlist->tag_list }}</span>
+                                        </p>
+                                        <span class="inline-block bg-blue-200 dark:bg-blue-600 text-blue-700 dark:text-blue-200 text-xs px-2 py-1 rounded mt-1">
+                                            {{ $playlist->track_count }} tracks
+                                        </span>
+                                    </div>
+                                </div>
+                            @empty
+                                <p class="text-center text-gray-500 dark:text-gray-400">No playlists available</p>
+                            @endforelse
+                        </div>
+                    @endif
+
+                    <!-- Confirm Button -->
+                    @if($selectedPlaylistId)
+                        <div class="mt-6 flex justify-center gap-3">
+                            <button wire:click="closeModal" 
+                                class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+                                Cancel
+                            </button>
+                            <button wire:click="confirmRepost" 
+                                class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700">
+                                Confirm Repost
+                            </button>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    @endif
+</div>
