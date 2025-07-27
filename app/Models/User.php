@@ -56,6 +56,7 @@ class User extends AuthBaseModel
             'expires_in' => 'integer',
             'email_verified_at' => 'datetime',
             'last_sync_at' => 'datetime',
+            'urn' => 'string',
         ];
     }
 

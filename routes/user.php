@@ -5,7 +5,7 @@ use App\Http\Controllers\Backend\Admin\OrderManagement\OrderController as UserOr
 use App\Http\Controllers\Backend\User\AddCaeditsController;
 use App\Http\Controllers\Backend\User\AnalyticsController;
 use App\Http\Controllers\Backend\User\CampaignManagement\CampaignController;
-use App\Http\Controllers\Backend\User\CampaignManagement\MyCampaignController;
+use App\Livewire\User\CampaignManagement\Campaign;
 use App\Livewire\User\CampaignManagement\MyCampaign;
 use App\Http\Controllers\Backend\User\Members\MemberController;
 use App\Http\Controllers\Backend\User\PromoteController;
@@ -39,15 +39,9 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     // Campaign Management
     Route::group(['as' => 'cm.', 'prefix' => 'campaign-management'], function () {
         // Campaign Routes
-        Route::controller(MyCampaignController::class)->name('campaigns.')->prefix('campaigns')->group(function () {
-            Route::get('/', 'index')->name('index');
-
-            Route::post('/tracks', 'getTracks')->name('tracks');
-            Route::post('/playlists', 'getPlaylists')->name('playlists');
-            Route::post('/playlist-tracks/{playlistId}', 'getPlaylistTracks')->name('playlist.tracks');
-            Route::post('/store', 'storeCampaign')->name('store');
-        });
         Route::get('/my-campaigns', MyCampaign::class)->name('my-campaigns');
+        Route::get('/campaigns', Campaign::class)->name('campaigns');
+
     });
     // Member Management
     Route::group(['as' => 'mm.', 'prefix' => 'member-management'], function () {
@@ -55,14 +49,11 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
         Route::get('/members', [MemberController::class, 'index'])->name('members.index');
         Route::get('/members/request', [MemberController::class, 'request'])->name('members.request');
         Route::post('/confirm/repost/{id}', [MemberController::class, 'confirmRepost'])->name('repost.confirm');
+
+
     });
     Route::get('members', Member::class)->name('members');
 
-    // Repost Campaign tracks
-    Route::controller(CampaignController::class)->name('campaign.')->prefix('campaign')->group(function () {
-        Route::get('/feed', 'campaignFeed')->name('feed');
-        Route::post('/{repost}', 'repost')->name('repost');
-    });
 
     // Order Manaagement Routes
     Route::controller(UserOrderController::class)->name('order.')->prefix('order')->group(function () {

@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserInformation extends BaseModel
 {
+
+    protected $table = 'user_informations';
     protected $fillable = [
         'sort_order',
 
@@ -56,7 +59,7 @@ class UserInformation extends BaseModel
     protected $casts = [
         'id' => 'integer',
         'sort_order' => 'integer',
-        'user_urn' => 'integer',
+        'user_urn' => 'string',
         'soundcloud_id' => 'integer',
         'soundcloud_created_at' => 'datetime',
         'soundcloud_last_modified' => 'datetime',
@@ -84,8 +87,8 @@ class UserInformation extends BaseModel
 
     /* %%%%%%%%% ######## ******** ======== RELATIONSHIPS  ======== ******** ######## %%%%%%%%% */
 
-    public function user()
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_urn', 'urn', 'id');
+        return $this->belongsTo(User::class, 'user_urn', 'urn');
     }
 }

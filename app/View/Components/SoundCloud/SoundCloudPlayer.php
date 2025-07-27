@@ -33,6 +33,7 @@ class SoundCloudPlayer extends Component
      * @param bool $showTeaser Whether to show the teaser (default: true).
      * @param bool $visual Whether to show the visual player (true for large, false for compact).
      * @return void
+     *
      */
     public function __construct(
         $track,
@@ -96,7 +97,7 @@ class SoundCloudPlayer extends Component
             'show_user' => $this->showUser ? 'true' : 'false',
             'show_reposts' => $this->showReposts ? 'true' : 'false',
             'show_teaser' => $this->showTeaser ? 'true' : 'false',
-            'visual' => $this->visual ? 'true' : 'false', // Crucial for player type
+            'visual' => $this->visual ? 'true' : 'false',
         ];
 
         // Ensure 'url' parameter is URL-encoded separately
