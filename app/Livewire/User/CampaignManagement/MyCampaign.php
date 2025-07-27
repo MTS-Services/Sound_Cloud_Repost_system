@@ -17,6 +17,7 @@ class MyCampaign extends Component
 
     public bool $showCampaignsModal = false;
     public bool $showSubmitModal = false;
+    public bool $showLowCreditWarningModal = false;
     public string $activeModalTab = 'tracks';
 
     public $tracks = [];
@@ -38,7 +39,7 @@ class MyCampaign extends Component
     public $description = null;
     public $endDate = null;
     public $targetReposts = null;
-    public $totalBudget = null;
+    public $costPerRepost = null;
 
     protected $listeners = ['campaignCreated' => 'refreshCampaigns'];
 
@@ -52,7 +53,7 @@ class MyCampaign extends Component
             'description' => 'required|string|max:1000',
             'endDate' => 'required|date|after_or_equal:today',
             'targetReposts' => 'required|integer|min:1',
-            'totalBudget' => 'required|integer|min:1',
+            'costPerRepost' => 'required|integer|min:1',
             'musicId' => 'required|integer',
         ];
 
@@ -74,8 +75,8 @@ class MyCampaign extends Component
             'endDate.after_or_equal' => 'Expiration date must be today or later.',
             'targetReposts.required' => 'Target repost count is required.',
             'targetReposts.min' => 'Target reposts must be at least 1.',
-            'totalBudget.required' => 'Total budget is required.',
-            'totalBudget.min' => 'Budget must be at least 1 credit.',
+            'costPerRepost.required' => 'Budget per repost is required.',
+            'costPerRepost.min' => 'Budget per repost must be at least 1 credit.',
         ];
     }
 
@@ -93,7 +94,7 @@ class MyCampaign extends Component
             'description',
             'endDate',
             'targetReposts',
-            'totalBudget',
+            'costPerRepost',
             'minFollowers',
             'maxFollowers'
         ]);
@@ -212,10 +213,18 @@ class MyCampaign extends Component
             'description',
             'endDate',
             'targetReposts',
-            'totalBudget'
+            'costPerRepost'
         ]);
 
-        $this->showCampaignsModal = false;
+        $userCredits = 100;
+        if ($userCredits < 50) {
+            $this->showLowCreditWarningModal = true;
+            $this->showSubmitModal = false;
+            return;
+        } else {
+            $this->showLowCreditWarningModal = false;
+        }
+
         $this->showSubmitModal = true;
 
         try {
@@ -263,24 +272,22 @@ class MyCampaign extends Component
 
     public function submitCampaign()
     {
-        // dd('here');
         $this->validate();
 
         try {
-            // Ensure we have a valid track URN
             if (!$this->musicId) {
                 throw new \Exception('Please select a track for your campaign.');
             }
 
             // Calculate credits per repost
-            if ($this->totalBudget <= 0 || $this->targetReposts <= 0) {
-                throw new \Exception('Budget and target reposts must be greater than 0.');
+            if ($this->costPerRepost <= 0 || $this->targetReposts <= 0) {
+                throw new \Exception('Cost per repost and target reposts must be greater than 0.');
             }
 
-            $creditsPerRepost = ($this->totalBudget / $this->targetReposts);
+            $totalBudget = ($this->costPerRepost * $this->targetReposts);
 
-            if ($creditsPerRepost >= 1) {
-                $this->minFollowers = $creditsPerRepost * 100;
+            if ($this->costPerRepost >= 1) {
+                $this->minFollowers = $this->costPerRepost * 100;
                 $this->maxFollowers = $this->minFollowers + 99;
             }
 
@@ -290,8 +297,8 @@ class MyCampaign extends Component
                 'title' => $this->title,
                 'description' => $this->description,
                 'target_reposts' => $this->targetReposts,
-                'cost_per_repost' => $creditsPerRepost,
-                'budget_credits' => $this->totalBudget,
+                'cost_per_repost' => $this->costPerRepost,
+                'budget_credits' => $totalBudget,
                 'end_date' => $this->endDate,
                 'user_urn' => user()->urn,
                 'status' => Campaign::STATUS_OPEN,
@@ -304,6 +311,7 @@ class MyCampaign extends Component
             $this->dispatch('campaignCreated');
 
             // Close modal and reset everything
+            $this->showCampaignsModal = false;
             $this->showSubmitModal = false;
 
             // Complete reset of all form and modal state
@@ -313,7 +321,7 @@ class MyCampaign extends Component
                 'description',
                 'endDate',
                 'targetReposts',
-                'totalBudget',
+                'costPerRepost',
                 'playlistId',
                 'playlistTracks',
                 'activeModalTab',
@@ -333,7 +341,7 @@ class MyCampaign extends Component
                 'music_id' => $this->musicId,
                 'user_urn' => user()->urn ?? 'unknown',
                 'title' => $this->title,
-                'total_budget' => $this->totalBudget,
+                'total_budget' => $totalBudget,
                 'target_reposts' => $this->targetReposts
             ]);
         }

@@ -21,8 +21,8 @@ return new class extends Migration
             $table->foreign('user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
 
             $table->string('kind')->nullable()->index();
-            $table->string('soundcloud_track_id', 255)->unique()->index();
-            $table->string('urn')->unique()->nullable()->index();
+            $table->string('soundcloud_track_id', 255)->unique();
+            $table->string('urn')->unique()->nullable();
             $table->bigInteger('duration')->default(0)->index();
             $table->boolean('commentable')->default(false);
             $table->bigInteger('comment_count')->default(0);
