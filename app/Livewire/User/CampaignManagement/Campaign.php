@@ -40,16 +40,16 @@ class Campaign extends Component
         $allowed_target_credits = repostPrice(user());
 
         $this->featuredCampaigns = $this->campaignService->getCampaigns()
-            // ->where('cost_per_repost', $allowed_target_credits)
-            // ->featured()
-            // ->withoutSelf()
+            ->where('cost_per_repost', $allowed_target_credits)
+            ->featured()
+            ->withoutSelf()
             ->with(['music.user.userInfo'])
             ->get();
 
         $this->campaigns = $this->campaignService->getCampaigns()
-            // ->where('cost_per_repost', $allowed_target_credits)
-            // ->notFeatured()
-            // ->withoutSelf()
+            ->where('cost_per_repost', $allowed_target_credits)
+            ->notFeatured()
+            ->withoutSelf()
             ->with(['music.user.userInfo'])
             ->get();
 
