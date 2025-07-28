@@ -19,6 +19,10 @@ class UserService
     {
         return User::findOrFail(decrypt($encryptedId));
     }
+    public function getMyAccountUser(): User | Collection
+    {
+        return User::where('urn', user()->urn)->with('userInfo')->first();
+    }
     public function getDeletedUser(string $encryptedId): User | Collection
     {
         return User::onlyTrashed()->findOrFail(decrypt($encryptedId));
