@@ -142,6 +142,9 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::get('/', 'index')->name('index');
             Route::post('/store', 'store')->name('store');
             Route::get('/purchase', 'purchase')->name('purchase');
+            Route::get('/payments', 'payments')->name('payments'); 
+          
+            
         });
     });
 });

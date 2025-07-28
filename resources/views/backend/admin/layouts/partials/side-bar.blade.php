@@ -161,6 +161,13 @@
                         'active' => 'purchase',
                         'permission' => 'purchase-list',
                     ],
+                     [
+                        'name' => 'Payment History',
+                        'route' => route('om.credit-transaction.payments'),
+                        'icon' => 'megaphone',
+                        'active' => 'payment',
+                        'permission' => 'payment-list',
+                    ],
                 ]" />
         </nav>
     </div>
