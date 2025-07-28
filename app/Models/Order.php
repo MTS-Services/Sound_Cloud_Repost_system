@@ -50,8 +50,47 @@ class Order extends BaseModel
         ]);
     }
 
-    public const STATUS_PENDING = 0;
-    public const STATUS_SUCCESS = 1;
-    public const STATUS_CANCELLED = 2;
+    // Constants for order status
+public const STATUS_PENDING   = 0;
+public const STATUS_SUCCESS   = 1;
+public const STATUS_CANCELLED = 2;
+
+/**
+ * List of status codes with their labels.
+ */
+
+    public static function statusList(): array
+    {
+        return [
+            self::STATUS_PENDING => 'Pending',
+            self::STATUS_SUCCESS => 'Success',
+            self::STATUS_CANCELLED => 'Cancelled',
+        ];
+    }
+    public function getStatusLabelAttribute()
+    {
+        return self::statusList()[$this->status];
+    }
+
+    public function getStatusColorAttribute()
+    {
+        return $this->status == self::STATUS_PENDING ? 'badge-success' : 'badge-error';
+    }
+
+    public function getStatusBtnLabelAttribute()
+    {
+        return $this->status == self::STATUS_PENDING ? self::statusList()[self::STATUS_SUCCESS] : self::statusList()[self::STATUS_CANCELLED];
+    }
+
+    public function getStatusBtnColorAttribute()
+    {
+        return $this->status == self::STATUS_PENDING ? 'btn-error' : 'btn-success';
+    }
+    public function getStatusBtnClassAttribute()
+    {
+        return $this->status == self::STATUS_CANCELLED ? 'btn-error' : 'btn-success';
+    }
+    
+
 
 }
