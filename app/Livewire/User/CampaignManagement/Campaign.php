@@ -7,7 +7,7 @@ use Livewire\Component;
 
 class Campaign extends Component
 {
-    protected CampaignService $campaignService;
+    protected ?CampaignService $campaignService = null;
     public $featuredCampaigns;
     public $campaigns;
 
@@ -33,10 +33,16 @@ class Campaign extends Component
         'audioTimeUpdate' => 'handleAudioTimeUpdate',
         'audioEnded' => 'handleAudioEnded'
     ];
-
-    public function mount(CampaignService $campaignService)
+    public function boot(CampaignService $campaignService)
     {
+        // Use 'boot' for service injection if you need it available before 'mount'
+        // or for subsequent requests
         $this->campaignService = $campaignService;
+    }
+
+
+    public function mount()
+    {
         $allowed_target_credits = repostPrice(user());
 
         $this->featuredCampaigns = $this->campaignService->getCampaigns()
