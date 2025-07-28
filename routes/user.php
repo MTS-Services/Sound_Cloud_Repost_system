@@ -21,8 +21,7 @@ Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
     Route::post('disconnect', [SoundCloudController::class, 'disconnect'])->name('disconnect')->middleware('auth:web');
     Route::post('sync', [SoundCloudController::class, 'sync'])->name('sync')->middleware('auth:web');
 });
-Route::view('my-account
-', 'backend.user.profile-management.my-account')->name('myAccount');
+
 // Dashboard and other routes
 Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
@@ -64,3 +63,12 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
         Route::get('/my-account', MyAccount::class)->name('my-account');
     });
 });
+
+
+
+// static page route
+
+Route::view('/help-support', 'backend.user.help-support')->name('help-support');
+Route::view('/settings', 'backend.user.settings')->name('settings');
+Route::view('/page', 'backend.user.dummy-page')->name('page');
+Route::view('/charts', 'backend.user.chart')->name('charts');

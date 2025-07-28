@@ -2,14 +2,26 @@
 
 namespace App\Livewire\User\CampaignManagement;
 
+use App\Models\CreditTransaction;
+use App\Models\Playlist;
+use App\Models\Repost;
+use App\Models\Track;
 use App\Services\User\CampaignManagement\CampaignService;
+use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Throwable;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class Campaign extends Component
 {
-    protected CampaignService $campaignService;
+    protected ?CampaignService $campaignService = null;
     public $featuredCampaigns;
     public $campaigns;
+
+    #[Locked]
+    protected string $baseUrl = 'https://api.soundcloud.com';
 
     // Track which campaigns are currently playing
     public $playingCampaigns = [];
@@ -26,6 +38,8 @@ class Campaign extends Component
     // Track which campaigns have been reposted
     public $repostedCampaigns = [];
 
+    public $playcount = false;
+
     // Listeners for browser events
     protected $listeners = [
         'audioPlay' => 'handleAudioPlay',
@@ -33,26 +47,33 @@ class Campaign extends Component
         'audioTimeUpdate' => 'handleAudioTimeUpdate',
         'audioEnded' => 'handleAudioEnded'
     ];
-
-    public function mount(CampaignService $campaignService)
+    public function boot(CampaignService $campaignService)
     {
         $this->campaignService = $campaignService;
         $allowed_target_credits = repostPrice(user());
-
         $this->featuredCampaigns = $this->campaignService->getCampaigns()
             ->where('cost_per_repost', $allowed_target_credits)
             ->featured()
             ->withoutSelf()
-            ->with(['music.user.userInfo'])
+            ->with(['music.user.userInfo', 'reposts']) // Keep 'reposts' if you need it for other purposes, otherwise it can be removed
+            ->whereDoesntHave('reposts', function ($query) { // Use whereDoesntHave
+                $query->where('reposter_urn', user()->urn);
+            })
             ->get();
-
         $this->campaigns = $this->campaignService->getCampaigns()
             ->where('cost_per_repost', $allowed_target_credits)
             ->notFeatured()
             ->withoutSelf()
-            ->with(['music.user.userInfo'])
+            ->with(['music.user.userInfo', 'reposts']) // Keep 'reposts' if you need it for other purposes, otherwise it can be removed
+            ->whereDoesntHave('reposts', function ($query) { // Use whereDoesntHave
+                $query->where('reposter_urn', user()->urn);
+            })
             ->get();
+    }
 
+
+    public function mount()
+    {
         // Initialize tracking arrays
         foreach ($this->featuredCampaigns as $campaign) {
             $this->playTimes[$campaign->id] = 0;
@@ -140,8 +161,6 @@ class Campaign extends Component
      */
     public function startPlaying($campaignId)
     {
-        $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
-        $campaign->increment('playback_count');
         $this->handleAudioPlay($campaignId);
     }
 
@@ -175,8 +194,15 @@ class Campaign extends Component
      */
     public function canRepost($campaignId): bool
     {
-        return in_array($campaignId, $this->playedCampaigns) &&
+        $canRepost = in_array($campaignId, $this->playedCampaigns) &&
             !in_array($campaignId, $this->repostedCampaigns);
+
+        if ($canRepost && !$this->playcount) {
+            $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
+            $campaign->increment('playback_count');
+            $this->playcount = true; // Set playcount to true if repost is allowed
+        }
+        return $canRepost;
     }
 
     /**
@@ -216,23 +242,85 @@ class Campaign extends Component
      */
     public function repost($campaignId)
     {
-        // Check if user can repost
-        if (!$this->canRepost($campaignId)) {
-            session()->flash('error', 'Please listen to the track for at least 5 seconds before reposting.');
-            return;
-        }
-
         try {
-            // Add your repost logic here
-            // Example: $this->campaignService->repost($campaignId);
+            if (!$this->canRepost($campaignId)) {
+                session()->flash('error', 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
+                return;
+            }
+            $currentUserUrn = user()->urn;
 
-            // Mark as reposted
-            $this->repostedCampaigns[] = $campaignId;
+            // Check if the current user owns the campaign
+            if ($this->campaignService->getCampaigns()->where('id', $campaignId)->where('user_urn', $currentUserUrn)->exists()) {
+                session()->flash('error', 'You cannot repost your own campaign.');
+                return;
+            }
 
-            session()->flash('success', 'Track reposted successfully!');
+            // Check if the user has already reposted this specific campaign
+            if (
+                Repost::where('reposter_urn', $currentUserUrn)
+                    ->where('campaign_id', $campaignId)
+                    ->exists()
+            ) {
+                session()->flash('error', 'You have already reposted this campaign.');
+                return;
+            }
 
-        } catch (\Exception $e) {
-            session()->flash('error', 'Failed to repost track. Please try again.');
+            // Find the campaign and eager load its music and the music's user
+            // $campaign = Campaign::with('music.user')->findOrFail($campaignId);
+            $campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
+
+            // Ensure music is associated with the campaign
+            if (!$campaign->music) {
+                session()->flash('error', 'Track or Playlist not found for this campaign.');
+                return;
+            }
+
+            $soundcloudRepostId = null;
+
+            // Prepare HTTP client with authorization header
+            $httpClient = Http::withHeaders([
+                'Authorization' => 'OAuth ' . user()->token,
+            ]);
+
+            // Determine the SoundCloud API endpoint based on music type
+            switch ($campaign->music_type) {
+                case Track::class:
+                    $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
+                    break;
+                case Playlist::class:
+                    $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$campaign->music->urn}");
+                    break;
+                default:
+                    session()->flash('error', 'Invalid music type specified for the campaign.');
+                    return;
+            }
+
+
+            if ($response->successful()) {
+                // If SoundCloud returns a repost ID, capture it (example, adjust based on actual SoundCloud API response)
+                $soundcloudRepostId = $response->json('id');
+                $this->campaignService->syncReposts($campaign, $currentUserUrn, $soundcloudRepostId);
+                session()->flash('success', 'Campaign music reposted successfully.');
+            } else {
+                // Log the error response from SoundCloud for debugging
+                Log::error("SoundCloud Repost Failed: " . $response->body(), [
+                    'campaign_id' => $campaignId,
+                    'user_urn' => $currentUserUrn,
+                    'status' => $response->status(),
+                ]);
+                session()->flash('error', 'Failed to repost campaign music to SoundCloud. Please try again.');
+
+
+            }
+
+        } catch (Throwable $e) {
+            Log::error("Error in repost method: " . $e->getMessage(), [
+                'exception' => $e,
+                'campaign_id_input' => $campaignId,
+                'user_urn' => user()->urn ?? 'N/A',
+            ]);
+            session()->flash('error', 'An unexpected error occurred. Please try again later.');
+            return;
         }
     }
 
