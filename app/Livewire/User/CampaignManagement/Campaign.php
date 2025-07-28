@@ -38,7 +38,6 @@ class Campaign extends Component
     {
         $this->campaignService = $campaignService;
         $allowed_target_credits = repostPrice(user());
-        dd($allowed_target_credits);
 
         $this->featuredCampaigns = $this->campaignService->getCampaigns()
             ->where('cost_per_repost', $allowed_target_credits)
