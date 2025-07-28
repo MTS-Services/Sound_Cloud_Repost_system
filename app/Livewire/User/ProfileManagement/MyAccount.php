@@ -2,6 +2,8 @@
 
 namespace App\Livewire\User\ProfileManagement;
 
+use App\Models\Credit;
+use App\Models\CreditTransaction;
 use App\Models\Track;
 use App\Models\User;
 use Livewire\Component;
@@ -10,6 +12,7 @@ class MyAccount extends Component
 {
     public $user;
     public $tracks;
+    public $transactions;
 
     public $activeTab = 'insights';  // Set default active tab
 
@@ -31,10 +34,19 @@ class MyAccount extends Component
         }
     }
 
-
+    public function getTransactions()
+    {
+       try {
+            $this->transactions = CreditTransaction::all();
+        } catch (\Exception $e) {
+            $this->transactions = collect();
+            session()->flash('error', 'Failed to load transactions: ' . $e->getMessage());
+        }
+    }
     public function mount()
     {
         $this->getTracks();
+        $this->getTransactions();
         $this->user = User::where('urn', user()->urn)->with('userInfo')->first();
     }
     public function render()

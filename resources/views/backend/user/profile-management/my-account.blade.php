@@ -1,4 +1,5 @@
 <section>
+    {{-- @dd($transactions) --}}
     <x-slot name="page_slug">my-account</x-slot>
     <section class="flex-1 overflow-auto">
         <div class="min-h-screen bg-white dark:bg-slate-900">
@@ -531,33 +532,26 @@
                                                     <th class="w-20 px-2 py-3">Amount</th>
                                                     <th class="w-20 px-2 py-3">Credit</th>
                                                     <th class="w-24 px-2 py-3">Type</th>
-                                                    <th class="w-52 px-2 py-3">Description</th>
-                                                    <th class="w-28 px-2 py-3">Metadata</th>
+                                                    {{-- <th class="w-28 px-2 py-3">Metadata</th> --}}
                                                     <th class="w-20 px-2 py-3">Status</th>
                                                 </tr>
                                             </thead>
+                                            @foreach ($transactions as $transaction )
+                                                
+                                           
                                             <tbody class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
                                                 <tr class="border-b border-gray-200 dark:border-gray-700">
-                                                    <td class="px-2 py-2">1</td>
-                                                    <td class="px-2 py-2">John Doe</td>
-                                                    <td class="px-2 py-2">$100</td>
-                                                    <td class="px-2 py-2">50</td>
-                                                    <td class="px-2 py-2">12</td>
-                                                    <td class="px-2 py-2 break-words">Lorem ipsum dolor sit amet.</td>
-                                                    <td class="px-2 py-2">12-01-2023</td>
-                                                    <td class="px-2 py-2 text-green-600 font-semibold">Active</td>
+                                                    <td class="px-2 py-2">{{ $transaction->id}}</td>
+                                                    <td class="px-2 py-2">{{ $transaction->name}}</td>
+                                                    <td class="px-2 py-2">{{ $transaction->amount}}</td>
+                                                    <td class="px-2 py-2">{{ $transaction->credits}}</td>
+                                                    <td class="px-2 py-2">{{ $transaction->transaction_type}}</td>
+                                                    {{-- <td class="px-2 py-2">{{ $transaction->metadata}}</td> --}}
+                                                    <td class="px-2 py-2 text-green-600 font-semibold">{{ $transaction->status}}</td>
                                                 </tr>
-                                                <tr class="border-b border-gray-200 dark:border-gray-700">
-                                                    <td class="px-2 py-2">4</td>
-                                                    <td class="px-2 py-2">Jane Smith</td>
-                                                    <td class="px-2 py-2">$200</td>
-                                                    <td class="px-2 py-2">100</td>
-                                                    <td class="px-2 py-2">12</td>
-                                                    <td class="px-2 py-2 break-words">Consectetur adipiscing elit.</td>
-                                                    <td class="px-2 py-2">12-01-2023</td>
-                                                    <td class="px-2 py-2 text-red-500 font-semibold">Inactive</td>
-                                                </tr>
+                                               
                                             </tbody>
+                                             @endforeach
                                         </table>
                                     </div>
                                 </div>
