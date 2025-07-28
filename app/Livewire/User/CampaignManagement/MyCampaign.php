@@ -41,6 +41,8 @@ class MyCampaign extends Component
     public $endDate = null;
     public $targetReposts = null;
     public $costPerRepost = null;
+    public bool $isCampaignCancelled = false;
+    public bool $showAlreadyCancelledModal = false;
 
     // Properties for Add Credit functionality
     public $addCreditCampaignId = null;
@@ -596,11 +598,30 @@ class MyCampaign extends Component
         }
     }
 
+    public function openAlreadyCancelledModal()
+    {
+        $this->showAlreadyCancelledModal = true;
+
+        // Close other modals
+        $this->showSubmitModal = false;
+        $this->showCampaignsModal = false;
+        $this->showEditCampaignModal = false;
+        $this->showAddCreditModal = false;
+        $this->showCancelWarningModal = false;
+
+        $this->resetErrorBag();
+        $this->resetValidation();
+    }
+
     // Methods for Add Credit functionality
     public function openAddCreditModal(Campaign $campaign)
     {
         $this->resetValidation();
         $this->resetErrorBag();
+        if ($campaign->status === Campaign::STATUS_CANCELLED) {
+            $this->openAlreadyCancelledModal();
+            return;
+        }
 
         $this->addCreditCampaignId = $campaign->id;
         $this->addCreditCostPerRepost = $campaign->cost_per_repost;
@@ -692,6 +713,11 @@ class MyCampaign extends Component
     {
         $this->resetValidation();
         $this->resetErrorBag();
+
+        if ($campaign->status === Campaign::STATUS_CANCELLED) {
+            $this->openAlreadyCancelledModal();
+            return;
+        }
 
         $this->editingCampaignId = $campaign->id;
         $this->editTitle = $campaign->title;
@@ -816,7 +842,7 @@ class MyCampaign extends Component
                 if ($this->refundAmount > 0) {
                     CreditTransaction::create([
                         'receiver_urn' => user()->urn,
-                        'calculation_type' => CreditTransaction::CALCULATION_TYPE_CREDIT,
+                        'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
                         'source_id' => $campaign->id,
                         'source_type' => Campaign::class,
                         'transaction_type' => CreditTransaction::TYPE_REFUND,
