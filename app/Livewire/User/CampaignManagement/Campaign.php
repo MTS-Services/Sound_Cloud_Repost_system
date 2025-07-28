@@ -163,7 +163,6 @@ class Campaign extends Component
         $this->playTimes[$campaignId] += $seconds;
 
         if ($this->playTimes[$campaignId] >= 5 && !in_array($campaignId, $this->playedCampaigns)) {
-            dd('Played for 5+ seconds');
             $this->playedCampaigns[] = $campaignId;
             session()->flash('success', 'Campaign marked as played for 5+ seconds!');
         }
@@ -174,8 +173,13 @@ class Campaign extends Component
      */
     public function canRepost($campaignId): bool
     {
-        return in_array($campaignId, $this->playedCampaigns) &&
+        $canRepost = in_array($campaignId, $this->playedCampaigns) &&
             !in_array($campaignId, $this->repostedCampaigns);
+
+        if ($canRepost) {
+            dd("Campaign {$campaignId} can be repost now.");
+        }
+        return $canRepost;
     }
 
     /**
