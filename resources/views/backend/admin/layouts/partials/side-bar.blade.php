@@ -73,20 +73,20 @@
                         'active' => 'user',
                         'permission' => 'user-list',
                     ],
-                    [
-                        'name' => 'Top Reposters',
-                        'route' => '#',
-                        'icon' => 'user',
-                        'active' => '',
-                        'permission' => 'user-list',
-                    ],
-                    [
-                        'name' => 'Banned Users',
-                        'route' => '#',
-                        'icon' => 'user',
-                        'active' => 'admin-users',
-                        'permission' => 'user-list',
-                    ],
+                    // [
+                    //     'name' => 'Top Reposters',
+                    //     'route' => '#',
+                    //     'icon' => 'user',
+                    //     'active' => '',
+                    //     'permission' => 'user-list',
+                    // ],
+                    // [
+                    //     'name' => 'Banned Users',
+                    //     'route' => '#',
+                    //     'icon' => 'user',
+                    //     'active' => 'admin-users',
+                    //     'permission' => 'user-list',
+                    // ],
                     [
                         'name' => 'User Playlists',
                         'route' => route('um.playlist.index'),
@@ -104,7 +104,7 @@
 
                 ]" />
 
-            <x-admin.navlink type="dropdown" icon="shopping-cart" name="Package Management" :page_slug="$active"
+            <x-admin.navlink type="dropdown" icon="shopping-cart" name="Credit Management" :page_slug="$active"
                 :items="[
                     [
                         'name' => 'Feature Categories',
