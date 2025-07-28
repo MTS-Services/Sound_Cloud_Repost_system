@@ -3,10 +3,9 @@
     showSubmitModal: @entangle('showSubmitModal').live,
     showLowCreditWarningModal: @entangle('showLowCreditWarningModal').live,
     showAddCreditModal: @entangle('showAddCreditModal').live,
-    {{-- NEW FUNCTIONALITY --}}
     showEditCampaignModal: @entangle('showEditCampaignModal').live,
-    {{-- NEW FUNCTIONALITY --}}
-    showDeleteWarningModal: @entangle('showDeleteWarningModal').live NEW FUNCTIONALITY
+    showCancelWarningModal: @entangle('showCancelWarningModal').live,
+    showAlreadyCancelledModal: @entangle('showAlreadyCancelledModal').live DEFAULT
 }">
 
     <x-slot name="page_slug">campaigns</x-slot>
@@ -136,11 +135,11 @@
                                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 w-full">{{ __('Edit') }}</button>
                                             </li>
 
-                                            {{-- Delete Button --}}
+                                            {{-- cancel Button --}}
                                             <li>
-                                                <button wire:click="openDeleteWarningModal({{ $campaign->id }})"
+                                                <button wire:click="openCancelWarningModal({{ $campaign->id }})"
                                                     @click="open = false"
-                                                    class="block px-4 py-2 text-red-600 hover:bg-red-100  dark:hover:bg-red-950/50 w-full">{{ __('Delete') }}</button>
+                                                    class="block px-4 py-2 text-red-600 hover:bg-red-100  dark:hover:bg-red-950/50 w-full">{{ __('Cancel') }}</button>
                                             </li>
 
                                         </ul>
@@ -672,10 +671,12 @@
                                     </path>
                                 </svg>
                             </span>
-                            <span wire:loading.remove wire:target="addCreditsToCampaign">
-                                {{ __('Update Budget') }}
+                            <span wire:loading.remove wire:target="submitCampaign">
+                                {{ __('Create Campaign') }}
                             </span>
-                            <span wire:loading wire:target="addCreditsToCampaign">{{ __('Updating...') }}</span>
+                            <span wire:loading wire:target="submitCampaign">
+                                {{ __('Creating...') }}
+                            </span>
                         </button>
                     </div>
                 </form>
@@ -996,26 +997,26 @@
         </div>
     </div>
 
-    {{-- Delete Warning Modal --}}
-    <div x-data="{ showDeleteWarningModal: @entangle('showDeleteWarningModal').live }" x-show="showDeleteWarningModal" x-cloak
+    {{-- Cancel Warning Modal --}}
+    <div x-data="{ showCancelWarningModal: @entangle('showCancelWarningModal').live }" x-show="showCancelWarningModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
         class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
 
         <div
-            class="w-full max-w-md mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col">
+            class="w-full max-w-lg mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col">
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center">
-                        <i data-lucide="alert-triangle" class="w-5 h-5 text-white"></i>
+                        <x-lucide-alert-triangle class="w-5 h-5 text-white" />
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                        {{ __('Confirm Deletion') }}
+                        {{ __('Confirm Cancellation') }}
                     </h2>
                 </div>
-                <button x-on:click="showDeleteWarningModal = false"
+                <button x-on:click="showCancelWarningModal = false"
                     class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
                     <x-lucide-x class="w-5 h-5" />
                 </button>
@@ -1024,26 +1025,65 @@
             <div class="p-6 text-center">
                 <div
                     class="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i data-lucide="trash-2" class="w-10 h-10 text-red-600 dark:text-red-400"></i>
+                    <x-lucide-trash-2 class="w-10 h-10 text-red-600 dark:text-red-400" />
                 </div>
                 <p class="text-lg text-gray-700 dark:text-gray-300 mb-4">
-                    {{ __('Are you sure you want to delete this campaign?') }}
+                    {{ __('Are you sure you want to cancel this campaign? You will not be able to recover it.') }}
                 </p>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
-                    {{ __('If you delete this campaign, you will receive a 50% refund of the remaining budget: :amount credits.', ['amount' => number_format($refundAmount)]) }}
+                    {{ __('If you cancel this campaign, you will receive a 50% refund of the remaining budget: :amount credits.', ['amount' => number_format($refundAmount)]) }}
                 </p>
                 <div class="flex justify-center gap-4">
-                    <button type="button" x-on:click="showDeleteWarningModal = false"
+                    <button type="button" x-on:click="showCancelWarningModal = false"
                         class="flex-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                        {{ __('Cancel') }}
+                        {{ __('Keep Campaign') }}
                     </button>
-                    <button wire:click="deleteCampaign"
+                    <button wire:click="cancelCampaign"
                         class="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                         wire:loading.attr="disabled">
-                        <span wire:loading.remove wire:target="deleteCampaign">{{ __('Confirm Delete') }}</span>
-                        <span wire:loading wire:target="deleteCampaign">{{ __('Deleting...') }}</span>
+                        <span wire:loading.remove wire:target="cancelCampaign">{{ __('Confirm') }}</span>
+                        <span wire:loading wire:target="cancelCampaign">{{ __('Cancelling...') }}</span>
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+    {{-- Cancel Warning Modal --}}
+    <div x-data="{ showAlreadyCancelledModal: @entangle('showAlreadyCancelledModal').live }" x-show="showAlreadyCancelledModal" x-cloak
+        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+
+        <div
+            class="w-full max-w-lg mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col">
+            <div
+                class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center">
+                        <x-lucide-alert-triangle class="w-5 h-5 text-white" />
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                        {{ __('Campaign Cancelled') }}
+                    </h2>
+                </div>
+                <button x-on:click="showAlreadyCancelledModal = false"
+                    class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
+                    <x-lucide-x class="w-5 h-5" />
+                </button>
+            </div>
+
+            <div class="p-6 text-center">
+                <div
+                    class="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <x-lucide-alert-triangle class="w-10 h-10 text-red-600 dark:text-red-400" />
+                </div>
+                <p class="text-lg text-gray-700 dark:text-gray-300 mb-4">
+                    {{ __('This campaign has already been cancelled.') }}
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                    {{ __('This campaign has already been cancelled. You cannot make any changes to this campaign.') }}
+                </p>
             </div>
         </div>
     </div>

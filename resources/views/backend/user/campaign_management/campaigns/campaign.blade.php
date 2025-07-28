@@ -6,13 +6,22 @@
         <!-- Header Tabs & Button -->
         <div
             class="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-4 pt-3 border-b border-b-gray-200 gap-2 sm:gap-0">
-            <div class="flex items-center w-full sm:w-auto justify-between sm:justify-start space-x-2 text-gray-600">
-                <div class="flex items-center space-x-2 px-2 sm:px-7 cursor-pointer whitespace-nowrap">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+            <div x-data="{ showInput: false }" class="relative flex items-center text-gray-600">
+                <svg class="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+                    fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+
+                <div x-show="!showInput" @click="showInput = true"
+                    class="pl-7 pr-2 py-2 cursor-pointer whitespace-nowrap">
                     <span>Search by tag</span>
+                </div>
+
+                <div x-show="showInput" x-cloak>
+                    <input type="text" placeholder="Search by tag"
+                        class="border py-2 border-red-500 pl-7 pr-2 rounded focus:outline-none focus:ring-1 focus:ring-red-400"
+                        @click.outside="showInput = false" x-ref="searchInput" x-init="$watch('showInput', (value) => { if (value) { $nextTick(() => $refs.searchInput.focus()) } })" />
                 </div>
             </div>
 
@@ -55,34 +64,6 @@
                                         <x-sound-cloud.sound-cloud-player :track="$campaign->music" :height="166"
                                             :visual="false" />
                                     </div>
-
-                                    <!-- Livewire Control Buttons (for testing) -->
-                                    {{-- <div class="mt-2 flex gap-2">
-                                            @if ($this->isPlaying($campaign->id))
-                                                <button wire:click="stopPlaying('{{ $campaign->id }}')"
-                                                    class="text-xs bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded">
-                                                    Stop
-                                                </button>
-                                            @else
-                                                <button wire:click="startPlaying('{{ $campaign->id }}')"
-                                                    class="text-xs bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded">
-                                                    Play
-                                                </button>
-                                            @endif
-
-                                            <!-- Test Button for development -->
-                                            <button wire:click="simulateAudioProgress('{{ $campaign->id }}', 1)"
-                                                class="text-xs bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded">
-                                                +1s Test
-                                            </button>
-
-                                            <!-- Progress Display -->
-                                            <span class="text-xs text-gray-600 dark:text-gray-400 px-2 py-1">
-                                                {{ $this->getPlayTime($campaign->id) }}s / 5s
-                                            </span>
-                                            </div> --}}
-
-
                                     <div
                                         class="absolute top-2 left-2 bg-cyan-600 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
                                         FEATURED
@@ -121,19 +102,20 @@
                                             <div x-show="open" x-transition.opacity
                                                 class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
                                                 x-cloak>
-                                                <a href="{{ $campaign?->music?->user?->userInfo?->soundcloud_permalink }}"
+                                                <a href="{{ $campaign?->music?->user?->userInfo?->soundcloud_permalink_url }}"
+                                                    target="_blank"
                                                     class="block hover:bg-gray-800 px-3 py-1 rounded">Visit SoundCloud
                                                     Profile</a>
-                                                <a href="#"
+                                                <a href="{{ route('user.profile') }}" wire:navigate
                                                     class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
-                                                    RepostExchange Profile</a>
-                                                <button
+                                                    RepostChain Profile</a>
+                                                {{-- <button
                                                     class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
                                                     all content from this
                                                     member</button>
                                                 <button
                                                     class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
-                                                    this track</button>
+                                                    this track</button> --}}
                                             </div>
                                         </div>
                                     </div>
@@ -253,19 +235,20 @@
                                             <div x-show="open" x-transition.opacity
                                                 class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
                                                 x-cloak>
-                                                <a href="{{ $campaign?->music?->user?->userInfo?->soundcloud_permalink }}"
+                                                <a href="{{ $campaign?->music?->user?->userInfo?->soundcloud_permalink_url }}"
+                                                    target="_blank"
                                                     class="block hover:bg-gray-800 px-3 py-1 rounded">Visit SoundCloud
                                                     Profile</a>
-                                                <a href="#"
+                                                <a href="{{ route('user.profile') }}" wire:navigate
                                                     class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
-                                                    RepostExchange Profile</a>
-                                                <button
+                                                    RepostChain Profile</a>
+                                                {{-- <button
                                                     class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
                                                     all content from this
                                                     member</button>
                                                 <button
                                                     class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
-                                                    this track</button>
+                                                    this track</button> --}}
                                             </div>
                                         </div>
                                     </div>
