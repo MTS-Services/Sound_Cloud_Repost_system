@@ -200,8 +200,8 @@
         @if (count($campaigns) > 0)
             <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 my-4">Recommended Campaigns</h2>
 
-            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
-                @foreach ($campaigns as $campaign)
+            @foreach ($campaigns as $campaign)
+                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
                     <div class="flex flex-col lg:flex-row" wire:key="campaign-{{ $campaign->id }}">
                         <!-- Left Column - Track Info -->
                         <div
@@ -215,32 +215,6 @@
                                         <x-sound-cloud.sound-cloud-player :track="$campaign->music" :height="166"
                                             :visual="false" />
                                     </div>
-
-                                    <!-- Livewire Control Buttons (for testing) -->
-                                    {{-- <div class="mt-2 flex gap-2">
-                                    @if ($this->isPlaying($campaign->id))
-                                        <button wire:click="stopPlaying('{{ $campaign->id }}')"
-                                            class="text-xs bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded">
-                                            Stop
-                                        </button>
-                                    @else
-                                        <button wire:click="startPlaying('{{ $campaign->id }}')"
-                                            class="text-xs bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded">
-                                            Play
-                                        </button>
-                                    @endif
-
-                                    <!-- Test Button for development -->
-                                    <button wire:click="simulateAudioProgress('{{ $campaign->id }}', 1)"
-                                        class="text-xs bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded">
-                                        +1s Test
-                                    </button>
-
-                                    <!-- Progress Display -->
-                                    <span class="text-xs text-gray-600 dark:text-gray-400 px-2 py-1">
-                                        {{ $this->getPlayTime($campaign->id) }}s / 5s
-                                    </span>
-                                </div> --}}
                                 </div>
                             </div>
                         </div>
@@ -359,8 +333,8 @@
                             </div>
                         </div>
                     </div>
-                @endforeach
-            </div>
+                </div>
+            @endforeach
         @endif
 
         @if (count($campaigns) == 0 && count($featuredCampaigns) == 0)
