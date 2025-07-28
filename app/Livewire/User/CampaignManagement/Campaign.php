@@ -140,8 +140,6 @@ class Campaign extends Component
      */
     public function startPlaying($campaignId)
     {
-        $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
-        $campaign->increment('playback_count');
         $this->handleAudioPlay($campaignId);
     }
 
@@ -165,6 +163,7 @@ class Campaign extends Component
         $this->playTimes[$campaignId] += $seconds;
 
         if ($this->playTimes[$campaignId] >= 5 && !in_array($campaignId, $this->playedCampaigns)) {
+            dd('Played for 5+ seconds');
             $this->playedCampaigns[] = $campaignId;
             session()->flash('success', 'Campaign marked as played for 5+ seconds!');
         }
