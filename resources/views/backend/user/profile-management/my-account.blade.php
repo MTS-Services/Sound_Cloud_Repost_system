@@ -136,7 +136,6 @@
 
                     <!-- Main Content -->
                     <div class="lg:col-span-3 space-y-4 sm:space-y-6">
-                        <!-- Tab Navigation -->
                         <div x-data="{ activeTab: @entangle('activeTab') }">
                             <!-- Tab Navigation -->
                             <div
@@ -599,33 +598,6 @@
 
     {{-- TAB FUNCTIONALITY --}}
     @push('js')
-        {{-- <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                const tabs = document.querySelectorAll('.tab-btn');
-                const panels = document.querySelectorAll('.tab-panel');
-
-                tabs.forEach(tab => {
-                    tab.addEventListener('click', function() {
-                        // Remove all active states
-                        tabs.forEach(t => {
-                            t.classList.remove('text-orange-500', 'border-orange-500',
-                                'dark:text-orange-400', 'dark:border-orange-400');
-                            t.classList.add('text-gray-500', 'border-transparent',
-                                'dark:text-slate-400');
-                        });
-                        panels.forEach(panel => panel.classList.add('hidden'));
-
-                        // Add active state to clicked
-                        this.classList.add('text-orange-500', 'border-orange-500',
-                            'dark:text-orange-400', 'dark:border-orange-400');
-                        this.classList.remove('text-gray-500', 'border-transparent',
-                            'dark:text-slate-400');
-                        const panelId = this.getAttribute('data-tab');
-                        document.getElementById(panelId).classList.remove('hidden');
-                    });
-                });
-            });
-        </script> --}}
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 // Initialize SoundCloud Widget API integration with Livewire
