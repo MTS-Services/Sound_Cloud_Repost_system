@@ -265,7 +265,7 @@ class Campaign extends Component
 
             // Find the campaign and eager load its music and the music's user
             // $campaign = Campaign::with('music.user')->findOrFail($campaignId);
-            $campaign = $this->campaignService->getCampaign($campaignId)->load('music.user.userInfo');
+            $campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
 
             // Ensure music is associated with the campaign
             if (!$campaign->music) {
