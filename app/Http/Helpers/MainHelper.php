@@ -186,12 +186,26 @@ function isImage($path)
     return in_array($extension, $imageExtensions);
 }
 
-function repostPrice($user)
+function repostPrice($user = null)
 {
+    if (!$user) {
+        $user = user();
+    }
     $user->load('userInfo');
     $followers_count = $user?->userInfo?->followers_count;
     if ($followers_count === null) {
         return 1; // Default to 1 if followers count is not available
     }
     return ceil($followers_count / 100) ?: 1; // Ensure at least 1 credit
+}
+
+function userCredits($user = null)
+{
+    if (!$user) {
+        $user = user();
+    }
+    $user->load(['debitTransactions', 'creditTransactions']);
+    $debit = $user->debitTransactions->sum('credits');
+    $credit = $user->creditTransactions->sum('credits');
+    return $debit - $credit;
 }

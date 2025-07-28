@@ -20,7 +20,7 @@ return new class extends Migration
 
             $table->string('receiver_urn')->index();
             $table->string('sender_urn')->index()->nullable();
-            $table->tinyInteger('calculation_type')->comment(
+            $table->tinyInteger('calculation_type')->comment( 
                 CreditTransaction::CALCULATION_TYPE_DEBIT . ': Debit / Addition',
                 CreditTransaction::CALCULATION_TYPE_CREDIT . ': Credit / Subtraction'
             );
@@ -41,7 +41,7 @@ return new class extends Migration
                 'succeeded',
                 'canceled'
             ])->default('processing');
-            $table->decimal('amount', 15, 2);
+            $table->decimal('amount', 15, 2)->index();
             $table->decimal('credits', 15, 2);
 
             $table->text('description')->nullable();
