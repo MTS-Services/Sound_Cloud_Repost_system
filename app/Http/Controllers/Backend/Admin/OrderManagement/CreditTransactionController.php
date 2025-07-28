@@ -39,7 +39,7 @@ class CreditTransactionController extends Controller
     public function purchase(Request $request)
     {
         if ($request->ajax()) {
-            $query = $this->creditTransactionService->getPurchase()->with('receiver')->purchase();
+            $query = $this->creditTransactionService->getPurchase();
             return DataTables::eloquent($query)
                 ->editColumn('name', function ($purchase) {
                     return $purchase->receiver->name;

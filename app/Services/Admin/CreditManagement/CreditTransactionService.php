@@ -44,4 +44,8 @@ class CreditTransactionService
        
 
     }
+    public function getPurchase($orderBy = 'id', $order = 'asc')
+    {
+        return CreditTransaction::where($orderBy, $order)->with('receiver')->purchase()->latest();
+    }
 }
