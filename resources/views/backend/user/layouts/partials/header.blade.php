@@ -4,7 +4,7 @@
         <div class="flex items-center space-x-2">
             <button @click="sidebarOpen = !sidebarOpen"
                 class="lg:hidden p-1 md:p-2 rounded-md text-gray-900 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700">
-                <i data-lucide="menu" class="w-5 h-5 md:w-6 md:h-6"></i>
+                <x-lucide-menu class="w-5 h-5 md:w-6 md:h-6" />
             </button>
             <a class="flex items-center space-x-2" href="/dashboard" data-discover="true" wire:navigate>
                 <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
@@ -19,7 +19,8 @@
         <div class="flex-1 flex justify-center px-2 md:px-4 lg:px-0 lg:ml-8">
             <form class="relative w-full max-w-md items-center hidden sm:flex">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-4">
-                    <i data-lucide="search" class="w-5 h-5 text-slate-800 dark:text-slate-300"></i>
+
+                    <x-lucide-search class="w-5 h-5 text-slate-800 dark:text-slate-300" />
                 </span>
                 <input type="search" placeholder="Search..."
                     class="w-full pl-12 placeholder-slate-400 pr-4 py-2 rounded-lg bg-white dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600
@@ -32,11 +33,8 @@
         <div class="flex items-center space-x-1 md:space-x-2">
             <!-- Navigation items - hide on mobile -->
             <nav class="hidden lg:flex items-center space-x-2 md:space-x-4 text-sm" x-data="{ activeButton: '' }">
-                <a x-bind:class="{ 'text-orange-500': activeButton === 'upgrade', 'hover:text-orange-400': activeButton !== 'upgrade' }"
-                    class="font-medium" href="{{ route('page') }}" wire:navigate data-discover="true"
-                    @click="activeButton = 'upgrade'">
-                    Upgrade My Plan
-                </a>
+               <a class="text-orange-500 hover:text-orange-400 font-medium" href="#"wire:navigate
+                    data-discover="true">Upgrade My Plan</a>
 
                 <a x-bind:class="{ 'text-orange-500': activeButton === 'charts', 'hover:text-orange-400': activeButton !== 'charts' }"
                     class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
@@ -68,7 +66,7 @@
             <!-- Mobile search button -->
             <button @click="mobileSearchOpen = !mobileSearchOpen"
                 class="lg:hidden p-1 md:p-2 rounded-md text-gray-900 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700">
-                <i data-lucide="search" class="w-5 h-5"></i>
+                <x-lucide-search class="w-5 h-5 text-slate-800 dark:text-slate-300" />
             </button>
 
             <!-- Mobile search overlay -->
@@ -77,7 +75,7 @@
                 <div class="bg-white dark:bg-slate-800 p-4">
                     <form class="relative w-full">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                            <i data-lucide="search" class="w-5 h-5 text-slate-800 dark:text-slate-300"></i>
+                            <x-lucide-search class="w-5 h-5 text-slate-800 dark:text-slate-300" />
                         </span>
                         <input type="search" placeholder="Search..."
                             class="w-full pl-10 placeholder-slate-400 pr-4 py-2 rounded-lg bg-white dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600
@@ -90,9 +88,9 @@
 
             <!-- Notification -->
             <div class="relative ml-1 md:ml-1.5">
-                <i data-lucide="bell" class="w-5 h-5 text-gray-800 dark:text-slate-300"></i>
+                <x-lucide-bell class="w-5 h-5 text-gray-800 dark:text-slate-300" />
                 <span
-                    class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] md:text-xs rounded-full w-3 h-3 md:w-4 md:h-4 flex items-center justify-center">1</span>
+                    class="absolute -top-1.5 -right-1 bg-red-500 text-white text-[10px] md:text-xs rounded-full w-3 h-3 md:w-4 md:h-4 flex items-center justify-center">1</span>
             </div>
 
             <!-- Theme toggle -->
@@ -100,10 +98,10 @@
                 class="p-2 rounded-xl hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
                 data-tooltip="Toggle theme"
                 :title="$store.theme.current.charAt(0).toUpperCase() + $store.theme.current.slice(1) + ' mode'">
-                <i data-lucide="sun" x-show="!$store.theme.darkMode"
-                    class="w-5 h-5 text-text-light-primary dark:text-text-white"></i>
-                <i data-lucide="moon" x-show="$store.theme.darkMode"
-                    class="w-5 h-5 text-text-light-primary dark:text-text-white"></i>
+                <x-heroicon-o-sun x-show="!$store.theme.darkMode"
+                    class="w-5 h-5 text-text-light-primary dark:text-text-white" />
+                <x-heroicon-o-moon x-show="$store.theme.darkMode"
+                    class="w-5 h-5 text-text-light-primary dark:text-text-white" />
             </button>
             <!-- User dropdown -->
             <div class="dropdown dropdown-end">
@@ -125,8 +123,8 @@
                     <li>
                         <a href="{{ route('user.profile') }}"wire:navigate
                             class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M5.121 17.804A4 4 0 017 16h10a4 4 0 011.879.496M15 11a3 3 0 10-6 0 3 3 0 006 0z" />
                             </svg>
