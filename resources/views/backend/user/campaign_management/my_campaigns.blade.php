@@ -312,7 +312,8 @@
                                         </p>
                                         <span
                                             class="bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono flex items-start justify-center w-fit gap-3">
-                                            <x-lucide-audio-lines class="w-4 h-4" /> {{ $track->playback_count }}</span>
+                                            <x-lucide-audio-lines class="w-4 h-4" />
+                                            {{ $track->playback_count }}</span>
                                     </div>
                                     <div class="flex-shrink-0">
                                         <x-lucide-chevron-right
@@ -392,7 +393,7 @@
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center">
-                        <i data-lucide="triangle-alert" class="w-5 h-5 text-white"></i>
+                        <x-lucide-triangle-alert class="w-5 h-5 text-white" />
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                         {{ __('Low Credit Warning') }}
@@ -407,7 +408,7 @@
             <div class="p-6 text-center">
                 <div
                     class="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i data-lucide="wallet" class="w-10 h-10 text-red-600 dark:text-red-400"></i>
+                    <x-lucide-wallet class="w-10 h-10 text-red-600 dark:text-red-400" />
                 </div>
                 <p class="text-lg text-gray-700 dark:text-gray-300 mb-4">
                     {{ __('You need a minimum of 50 credits to create a campaign.') }}
@@ -417,7 +418,7 @@
                 </p>
                 <a href="{{ route('user.add-credits') }}" wire:navigate
                     class="inline-flex items-center justify-center w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                    <i data-lucide="plus" class="w-5 h-5 inline mr-2"></i>
+                    <x-lucide-plus class="w-5 h-5 inline mr-2" />
                     {{ __('Buy Credits Now') }}
                 </a>
             </div>
@@ -437,7 +438,7 @@
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                        <i data-lucide="audio-lines" class="w-5 h-5 text-white"></i>
+                        <x-lucide-audio-lines class="w-5 h-5 text-white" />
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                         {{ __('Create a campaign') }}
@@ -491,21 +492,21 @@
                                             </div>
                                             @if ($musicId == $track['id'])
                                                 <div class="flex-shrink-0">
-                                                    <i data-lucide="check-circle" class="w-5 h-5 text-orange-500"></i>
+                                                    <x-lucide-check-circle class="w-5 h-5 text-orange-500" />
                                                 </div>
                                             @endif
                                         </div>
                                     @endif
                                 @empty
                                     <div class="text-center py-12 text-gray-500 dark:text-gray-400">
-                                        <i data-lucide="music-off" class="w-12 h-12 mx-auto mb-3 text-gray-400"></i>
+                                        <x-lucide-music-off class="w-12 h-12 mx-auto mb-3 text-gray-400" />
                                         <p class="font-medium">{{ __('No tracks found in this playlist.') }}</p>
                                     </div>
                                 @endforelse
                             </div>
                             @error('musicId')
                                 <div class="mt-2 flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <x-lucide-alert-circle class="w-4 h-4" />
                                     <span>{{ $message }}</span>
                                 </div>
                             @enderror
@@ -516,7 +517,7 @@
                         <div class="space-y-2">
                             <label for="campaign_title"
                                 class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                                <i data-lucide="type" class="w-4 h-4 text-orange-500"></i>
+                                <x-lucide-type class="w-4 h-4 text-orange-500" />
                                 {{ __('Campaign name') }}
                             </label>
                             <input type="text" id="campaign_title" wire:model.live="title"
@@ -524,7 +525,7 @@
                                 placeholder="{{ __('Enter campaign name') }}">
                             @error('title')
                                 <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <x-lucide-alert-circle class="w-4 h-4" />
                                     <span>{{ $message }}</span>
                                 </div>
                             @enderror
@@ -533,14 +534,14 @@
                         <div class="space-y-2">
                             <label for="campaign_end_date"
                                 class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                                <i data-lucide="calendar" class="w-4 h-4 text-orange-500"></i>
+                                <x-lucide-calendar class="w-4 h-4 text-orange-500" />
                                 {{ __('Campaign expiration date') }}
                             </label>
                             <input type="date" id="campaign_end_date" wire:model.live="endDate"
                                 class="w-full rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200">
                             @error('endDate')
                                 <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <x-lucide-alert-circle class="w-4 h-4" />
                                     <span>{{ $message }}</span>
                                 </div>
                             @enderror
@@ -550,7 +551,7 @@
                     <div class="space-y-2">
                         <label for="campaign_description"
                             class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                            <i data-lucide="file-text" class="w-4 h-4 text-orange-500"></i>
+                            <x-lucide-file-text class="w-4 h-4 text-orange-500" />
                             {{ __('Campaign description') }}
                         </label>
                         <textarea id="campaign_description" wire:model.live="description" rows="4"
@@ -558,7 +559,7 @@
                             placeholder="{{ __('Describe your campaign goals and target audience...') }}"></textarea>
                         @error('description')
                             <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                <x-lucide-alert-circle class="w-4 h-4" />
                                 <span>{{ $message }}</span>
                             </div>
                         @enderror
@@ -568,7 +569,7 @@
                         <div class="space-y-2">
                             <label for="campaign_cost_per_repost"
                                 class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                                <i data-lucide="coins" class="w-4 h-4 text-orange-500"></i>
+                                <x-lucide-coins class="w-4 h-4 text-orange-500" />
                                 {{ __('Cost per repost (credits)') }}
                             </label>
                             <input type="number" id="campaign_cost_per_repost" wire:model.live="costPerRepost"
@@ -577,7 +578,7 @@
                                 placeholder="{{ __('Enter cost per repost') }}">
                             @error('costPerRepost')
                                 <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <x-lucide-alert-circle class="w-4 h-4" />
                                     <span>{{ $message }}</span>
                                 </div>
                             @enderror
@@ -586,7 +587,7 @@
                         <div class="space-y-2">
                             <label for="campaign_target_reposts"
                                 class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                                <i data-lucide="target" class="w-4 h-4 text-orange-500"></i>
+                                <x-lucide-target class="w-4 h-4 text-orange-500" />
                                 {{ __('Campaign target repost count') }}
                             </label>
                             <input type="number" id="campaign_target_reposts" wire:model.live="targetReposts"
@@ -595,7 +596,7 @@
                                 placeholder="{{ __('Enter target reposts') }}">
                             @error('targetReposts')
                                 <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <x-lucide-alert-circle class="w-4 h-4" />
                                     <span>{{ $message }}</span>
                                 </div>
                             @enderror
@@ -607,7 +608,7 @@
                         <div
                             class="bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-xl p-4 border border-red-200 dark:border-red-800">
                             <div class="flex items-center gap-3">
-                                <i data-lucide="alert-triangle" class="w-5 h-5 text-red-600 dark:text-red-400"></i>
+                                <x-lucide-alert-triangle class="w-5 h-5 text-red-600 dark:text-red-400" />
                                 <div>
                                     <p class="text-sm font-semibold text-red-900 dark:text-red-100">
                                         {{ __('Budget Warning') }}
@@ -631,7 +632,7 @@
                         <div
                             class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
                             <div class="flex items-center gap-3">
-                                <i data-lucide="calculator" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
+                                <x-lucide-calculator class="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                 <div>
                                     <p class="text-sm font-semibold text-blue-900 dark:text-blue-100">
                                         {{ __('Estimated campaign cost') }}
@@ -649,7 +650,7 @@
                             class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-4 px-6 rounded-xl {{ $canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }}"
                             wire:loading.attr="disabled" @if (!$canSubmit) disabled @endif>
                             <span wire:loading.remove wire:target="submitCampaign">
-                                <i data-lucide="rocket" class="w-5 h-5"></i>
+                                <x-lucide-rocket class="w-5 h-5" />
                             </span>
                             <span wire:loading wire:target="submitCampaign">
                                 <svg class="animate-spin w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -687,7 +688,7 @@
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                        <i data-lucide="wallet" class="w-5 h-5 text-white"></i>
+                        <x-lucide-wallet class="w-5 h-5 text-white" />
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                         {{ __('Add Credits to Campaign') }}
@@ -704,7 +705,7 @@
                     <div class="space-y-2">
                         <label for="add_credit_cost_per_repost"
                             class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                            <i data-lucide="coins" class="w-4 h-4 text-orange-500"></i>
+                            <x-lucide-coins class="w-4 h-4 text-orange-500" />
                             {{ __('New Cost per Repost (credits)') }}
                         </label>
                         <input type="number" id="add_credit_cost_per_repost"
@@ -713,7 +714,7 @@
                             placeholder="{{ __('Enter new cost per repost') }}">
                         @error('addCreditCostPerRepost')
                             <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                <x-lucide-alert-circle class="w-4 h-4" />
                                 <span>{{ $message }}</span>
                             </div>
                         @enderror
@@ -755,7 +756,7 @@
                         <div
                             class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
                             <div class="flex items-center gap-3">
-                                <i data-lucide="calculator" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
+                                <x-lucide-calculator class="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                 <div>
                                     <p class="text-sm font-semibold text-blue-900 dark:text-blue-100">
                                         {{ __('New Total Campaign Budget') }}
@@ -779,7 +780,7 @@
                         <button type="submit"
                             class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-4 px-6 rounded-xl {{ $canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }}"
                             wire:loading.attr="disabled" @if (!$canSubmit) disabled @endif>
-                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            <x-lucide-plus class="w-4 h-4" />
                             <span wire:loading.remove wire:target="addCreditsToCampaign">
                                 {{ __('Add Credits') }}
                             </span>
@@ -806,7 +807,7 @@
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                        <i data-lucide="edit" class="w-5 h-5 text-white"></i>
+                        <x-lucide-edit class="w-5 h-5 text-white" />
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                         {{ __('Edit Campaign') }}
@@ -824,7 +825,7 @@
                         <div class="space-y-2">
                             <label for="edit_campaign_title"
                                 class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                                <i data-lucide="type" class="w-4 h-4 text-orange-500"></i>
+                                <x-lucide-type class="w-4 h-4 text-orange-500" />
                                 {{ __('Campaign name') }}
                             </label>
                             <input type="text" id="edit_campaign_title" wire:model.live="editTitle"
@@ -832,7 +833,7 @@
                                 placeholder="{{ __('Enter campaign name') }}">
                             @error('editTitle')
                                 <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <x-lucide-alert-circle class="w-4 h-4" />
                                     <span>{{ $message }}</span>
                                 </div>
                             @enderror
@@ -841,14 +842,14 @@
                         <div class="space-y-2">
                             <label for="edit_campaign_end_date"
                                 class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                                <i data-lucide="calendar" class="w-4 h-4 text-orange-500"></i>
+                                <x-lucide-calendar class="w-4 h-4 text-orange-500" />
                                 {{ __('Campaign expiration date') }}
                             </label>
                             <input type="date" id="edit_campaign_end_date" wire:model.live="editEndDate"
                                 class="w-full rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200">
                             @error('editEndDate')
                                 <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <x-lucide-alert-circle class="w-4 h-4" />
                                     <span>{{ $message }}</span>
                                 </div>
                             @enderror
@@ -858,7 +859,7 @@
                     <div class="space-y-2">
                         <label for="edit_campaign_description"
                             class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                            <i data-lucide="file-text" class="w-4 h-4 text-orange-500"></i>
+                            <x-lucide-file-text class="w-4 h-4 text-orange-500" />
                             {{ __('Campaign description') }}
                         </label>
                         <textarea id="edit_campaign_description" wire:model.live="editDescription" rows="4"
@@ -866,7 +867,7 @@
                             placeholder="{{ __('Describe your campaign goals and target audience...') }}"></textarea>
                         @error('editDescription')
                             <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                <x-lucide-alert-circle class="w-4 h-4" />
                                 <span>{{ $message }}</span>
                             </div>
                         @enderror
@@ -876,7 +877,7 @@
                         <div class="space-y-2">
                             <label for="edit_campaign_cost_per_repost"
                                 class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                                <i data-lucide="coins" class="w-4 h-4 text-orange-500"></i>
+                                <x-lucide-coins class="w-4 h-4 text-orange-500" />
                                 {{ __('Cost per repost (credits)') }}
                             </label>
                             <input type="number" id="edit_campaign_cost_per_repost"
@@ -885,7 +886,7 @@
                                 placeholder="{{ __('Enter cost per repost') }}">
                             @error('editCostPerRepost')
                                 <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <x-lucide-alert-circle class="w-4 h-4" />
                                     <span>{{ $message }}</span>
                                 </div>
                             @enderror
@@ -894,7 +895,7 @@
                         <div class="space-y-2">
                             <label for="edit_campaign_target_reposts"
                                 class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                                <i data-lucide="target" class="w-4 h-4 text-orange-500"></i>
+                                <x-lucide-target class="w-4 h-4 text-orange-500" />
                                 {{ __('Campaign target repost count') }}
                             </label>
                             <input type="number" id="edit_campaign_target_reposts"
@@ -903,7 +904,7 @@
                                 placeholder="{{ __('Enter target reposts') }}">
                             @error('editTargetReposts')
                                 <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <x-lucide-alert-circle class="w-4 h-4" />
                                     <span>{{ $message }}</span>
                                 </div>
                             @enderror
@@ -915,7 +916,7 @@
                         <div
                             class="bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-xl p-4 border border-red-200 dark:border-red-800">
                             <div class="flex items-center gap-3">
-                                <i data-lucide="alert-triangle" class="w-5 h-5 text-red-600 dark:text-red-400"></i>
+                                <x-lucide-alert-triangle class="w-5 h-5 text-red-600 dark:text-red-400" />
                                 <div>
                                     <p class="text-sm font-semibold text-red-900 dark:text-red-100">
                                         {{ __('Budget Warning') }}
@@ -939,7 +940,7 @@
                         <div
                             class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
                             <div class="flex items-center gap-3">
-                                <i data-lucide="calculator" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
+                                <x-lucide-calculator class="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                 <div>
                                     <p class="text-sm font-semibold text-blue-900 dark:text-blue-100">
                                         {{ __('New Total Campaign Budget') }}
@@ -964,7 +965,7 @@
                             class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-4 px-6 rounded-xl {{ $canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }}"
                             wire:loading.attr="disabled" @if (!$canSubmit) disabled @endif>
                             <span wire:loading.remove wire:target="updateCampaign">
-                                <i data-lucide="save" class="w-5 h-5"></i>
+                                <x-lucide-save class="w-5 h-5" />
                             </span>
                             <span wire:loading wire:target="updateCampaign">
                                 <svg class="animate-spin w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
