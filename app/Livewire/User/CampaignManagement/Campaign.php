@@ -306,6 +306,14 @@ class Campaign extends Component
                     $trackOwnerName = $campaign->music->user?->name;
                     $creditsPerRepost = $campaign->cost_per_repost;
 
+                    Log::info("Reposting campaign", [
+                        'campaign_id' => $campaign->id,
+                        'current_user_urn' => $currentUserUrn,
+                        'track_owner_urn' => $trackOwnerUrn,
+                        'soundcloud_repost_id' => $soundcloudRepostId,
+                        'credits_per_repost' => $creditsPerRepost,
+                    ]);
+
                     // Create the Repost record
                     $repost = Repost::create([
                         'reposter_urn' => $currentUserUrn,
