@@ -1109,7 +1109,7 @@
 
                 <div class="p-6 text-center max-h-[80vh] overflow-y-auto">
                     <div class="flex flex-col md:flex-row gap-6">
-                        <div class="w-full md:w-1/3 max-w-44 rounded-xl shadow-lg overflow-hidden">
+                        <div class="w-full md:w-1/3 max-w-56 rounded-xl shadow-lg overflow-hidden">
                             <img class="w-full h-full object-cover"
                                 src="{{ soundcloud_image($campaign->music?->artwork_url) }}">
                         </div>
