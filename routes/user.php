@@ -15,6 +15,7 @@ use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Livewire\User\MemberManagement\Member;
 use App\Livewire\User\ProfileManagement\MyAccount;
 use Illuminate\Validation\Rules\Unique;
 
@@ -51,6 +52,7 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
         Route::get('/members/request', [MemberController::class, 'request'])->name('members.request');
         Route::post('/confirm/repost/{id}', [MemberController::class, 'confirmRepost'])->name('repost.confirm');
     });
+    Route::get('members', Member::class)->name('members');
 
 
     // Order Manaagement Routes

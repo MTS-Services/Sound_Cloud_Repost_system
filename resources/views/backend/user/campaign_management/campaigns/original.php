@@ -45,6 +45,7 @@
             </div>
         </div>
 
+
         <div class="space-y-6" id="campaigns-list">
 
             @forelse ($campaigns as $campaign)
@@ -106,12 +107,12 @@
                             </div>
                             <div class="flex flex-col lg:flex-column sm:items-center sm:space-x-2 gap-2">
 
-                                {{-- Add Credits Button --}}
+                                {{-- NEW FUNCTIONALITY: Add Credits Button --}}
                                 <button wire:click="openAddCreditModal({{ $campaign->id }})"
                                     class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                                     {{ __('Add Credits') }}
                                 </button>
-
+                                {{-- END NEW FUNCTIONALITY --}}
 
                                 <div x-data="{ open: false }"
                                     class="relative text-left bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors flex justify-center">
@@ -127,22 +128,32 @@
                                     </button>
 
                                     <div x-show="open" @click.outside="open = false" x-transition x-cloak
-                                        class="absolute right-11 mt-5 w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50 overflow-hidden">
+                                        class="absolute right-11 mt-5 w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
                                         <ul class="p-0 text-sm text-gray-700 dark:text-gray-200">
-
                                             <li>
-                                                <button wire:click="openEditCampaignModal({{ $campaign->id }})"
-                                                    @click="open = false"
-                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 w-full">{{ __('Edit') }}</button>
+                                                <a href="#"
+                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Details') }}</a>
                                             </li>
-
-                                            {{-- Delete Button --}}
+                                            {{-- NEW FUNCTIONALITY: Edit Button --}}
                                             <li>
-                                                <button wire:click="openDeleteWarningModal({{ $campaign->id }})"
+                                                <a href="#"
+                                                    wire:click="openEditCampaignModal({{ $campaign->id }})"
                                                     @click="open = false"
-                                                    class="block px-4 py-2 text-red-600 hover:bg-red-100  dark:hover:bg-red-950/50 w-full">{{ __('Delete') }}</button>
+                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Edit') }}</a>
                                             </li>
-
+                                            {{-- END NEW FUNCTIONALITY --}}
+                                            <li>
+                                                <a href="#"
+                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Duplicate') }}</a>
+                                            </li>
+                                            {{-- NEW FUNCTIONALITY: Delete Button --}}
+                                            <li>
+                                                <a href="#"
+                                                    wire:click="openDeleteWarningModal({{ $campaign->id }})"
+                                                    @click="open = false"
+                                                    class="block px-4 py-2 text-red-600 hover:bg-red-100  dark:hover:bg-gray-700">{{ __('Delete') }}</a>
+                                            </li>
+                                            {{-- END NEW FUNCTIONALITY --}}
                                         </ul>
                                     </div>
 
@@ -205,59 +216,29 @@
                     </div>
                 </div>
             @empty
-                @if ($activeMainTab === 'all')
+                <div
+                    class="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
                     <div
-                        class="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
-                        <div
-                            class="w-20 h-20 bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/20 dark:to-orange-800/20 rounded-full flex items-center justify-center mb-6">
-                            <x-lucide-megaphone class="w-10 h-10 text-orange-600 dark:text-orange-400" />
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3">
-                            {{ __('No active campaigns found') }}
-                        </h3>
-                        <p class="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
-                            {{ __('Looks like there are no active campaigns right now. Why not start a new one and watch it grow?') }}
-                        </p>
-                        <button wire:click="toggleCampaignsModal" x-on:click="showCampaignsModal = true"
-                            class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all duration-300 shadow-lg hover:shadow-xl">
-                            <x-lucide-plus class="w-5 h-5" />
-                            {{ __('Create Your First Campaign') }}
-                        </button>
+                        class="w-20 h-20 bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/20 dark:to-orange-800/20 rounded-full flex items-center justify-center mb-6">
+                        <x-lucide-megaphone class="w-10 h-10 text-orange-600 dark:text-orange-400" />
                     </div>
-                @elseif ($activeMainTab === 'active')
-                    <div
-                        class="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
-                        <div
-                            class="w-20 h-20 bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/20 dark:to-orange-800/20 rounded-full flex items-center justify-center mb-6">
-                            <x-lucide-megaphone class="w-10 h-10 text-orange-600 dark:text-orange-400" />
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3">
-                            {{ __('No active campaigns found') }}
-                        </h3>
-                        <p class="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
-                            {{ __("You haven't started any active campaigns yet. You can create new campaigns or view active campaigns.") }}
-                        </p>
-                    </div>
-                @elseif ($activeMainTab === 'completed')
-                    <div
-                        class="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
-                        <div
-                            class="w-20 h-20 bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/20 dark:to-orange-800/20 rounded-full flex items-center justify-center mb-6">
-                            <x-lucide-megaphone class="w-10 h-10 text-orange-600 dark:text-orange-400" />
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3">
-                            {{ __('Oops! No completed campaigns yet.') }}
-                        </h3>
-                        <p class="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
-                            {{ __('It looks like there are no completed campaigns at the moment. Start a campaign today and track your progress!') }}
-                        </p>
-                    </div>
-                @endif
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3">
+                        {{ __('No campaigns found') }}
+                    </h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
+                        {{ __("You haven't started any campaigns yet. Click the 'New Campaign' button to create your first one!") }}
+                    </p>
+                    <button wire:click="toggleCampaignsModal" x-on:click="showCampaignsModal = true"
+                        class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <x-lucide-plus class="w-5 h-5" />
+                        {{ __('Create Your First Campaign') }}
+                    </button>
+                </div>
             @endforelse
         </div>
     </div>
 
-    {{-- ================================ Modals ================================ --}}
+    {{-- ================================ Existing Modals ================================ --}}
 
     {{-- Choose a track or playlist Modal --}}
     <div x-data="{ showCampaignsModal: @entangle('showCampaignsModal').live }" x-show="showCampaignsModal" x-cloak
@@ -268,6 +249,7 @@
 
         <div
             class="w-full max-w-3xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col max-h-[80vh] overflow-hidden">
+
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
@@ -338,10 +320,10 @@
                                         <x-lucide-music class="w-8 h-8 text-orange-500" />
                                     </div>
                                     <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                        {{ __('No playlists found') }}
+                                        {{ __('No tracks found') }}
                                     </h3>
                                     <p class="text-gray-500 dark:text-gray-400">
-                                        {{ __('Add one to get started with campaigns.') }}
+                                        {{ __('Try uploading one first to get started.') }}
                                     </p>
                                 </div>
                             @endforelse
@@ -390,7 +372,8 @@
         </div>
     </div>
 
-    {{-- Low Credit Warning Modal --}}
+    {{-- Buy Credits Warning Modal (Existing) --}}
+
     <div x-data="{ showLowCreditWarningModal: @entangle('showLowCreditWarningModal').live }" x-show="showLowCreditWarningModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
@@ -399,6 +382,7 @@
 
         <div
             class="w-full max-w-md mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col">
+
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
                 <div class="flex items-center gap-3">
@@ -435,7 +419,8 @@
         </div>
     </div>
 
-    {{-- Create campaign (submit) Modal --}}
+
+    {{-- Create a campaign (submit) Modal (Existing) --}}
     <div x-data="{ showSubmitModal: @entangle('showSubmitModal').live }" x-show="showSubmitModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
@@ -444,6 +429,7 @@
 
         <div
             class="w-full max-w-4xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col max-h-[85vh] overflow-hidden">
+
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
@@ -462,6 +448,7 @@
 
             <div class="flex-grow overflow-y-auto p-6">
                 <form wire:submit.prevent="submitCampaign" class="space-y-6">
+
                     @if ($activeModalTab === 'playlists')
                         <div
                             class="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
@@ -613,32 +600,7 @@
                         </div>
                     </div>
 
-                    {{-- Budget Warning Display --}}
-                    @if ($showBudgetWarning)
-                        <div
-                            class="bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-xl p-4 border border-red-200 dark:border-red-800">
-                            <div class="flex items-center gap-3">
-                                <i data-lucide="alert-triangle" class="w-5 h-5 text-red-600 dark:text-red-400"></i>
-                                <div>
-                                    <p class="text-sm font-semibold text-red-900 dark:text-red-100">
-                                        {{ __('Budget Warning') }}
-                                    </p>
-                                    <p class="text-sm text-red-600 dark:text-red-400">
-                                        {{ $budgetWarningMessage }}
-                                    </p>
-                                </div>
-                                @if (str_contains($budgetWarningMessage, 'need') && str_contains($budgetWarningMessage, 'more credits'))
-                                    <a href="{{ route('user.add-credits') }}" wire:navigate
-                                        class="ml-auto bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition-colors">
-                                        {{ __('Buy Credits') }}
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                    @endif
-
-                    {{-- Budget Display --}}
-                    @if ($costPerRepost && $targetReposts && $costPerRepost > 0 && $targetReposts > 0 && !$showBudgetWarning)
+                    @if ($costPerRepost && $targetReposts && $costPerRepost > 0 && $targetReposts > 0)
                         <div
                             class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
                             <div class="flex items-center gap-3">
@@ -657,8 +619,8 @@
 
                     <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
                         <button type="submit"
-                            class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-4 px-6 rounded-xl {{ $canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }}"
-                            wire:loading.attr="disabled" @if (!$canSubmit) disabled @endif>
+                            class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                            wire:loading.attr="disabled">
                             <span wire:loading.remove wire:target="submitCampaign">
                                 <i data-lucide="rocket" class="w-5 h-5"></i>
                             </span>
@@ -672,10 +634,8 @@
                                     </path>
                                 </svg>
                             </span>
-                            <span wire:loading.remove wire:target="addCreditsToCampaign">
-                                {{ __('Update Budget') }}
-                            </span>
-                            <span wire:loading wire:target="addCreditsToCampaign">{{ __('Updating...') }}</span>
+                            <span wire:loading.remove wire:target="submitCampaign">{{ __('Create Campaign') }}</span>
+                            <span wire:loading wire:target="submitCampaign">{{ __('Creating...') }}</span>
                         </button>
                     </div>
                 </form>
@@ -683,7 +643,10 @@
         </div>
     </div>
 
-    {{-- Add Credit Modal --}}
+
+    {{-- ================================ NEW MODALS ================================ --}}
+
+    {{-- NEW FUNCTIONALITY: Add Credit Modal --}}
     <div x-data="{ showAddCreditModal: @entangle('showAddCreditModal').live }" x-show="showAddCreditModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
@@ -691,7 +654,8 @@
         class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
 
         <div
-            class="w-full max-w-xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col">
+            class="w-full max-w-md mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col">
+
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
@@ -728,57 +692,19 @@
                         @enderror
                     </div>
 
-                    {{-- Budget Warning Display --}}
-                    @if ($showBudgetWarning)
-                        <div
-                            class="bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-xl p-4 border border-red-200 dark:border-red-800">
-                            <div class="flex items-center gap-3 flex-col">
-                                <div class="flex items-center gap-3">
-                                    <x-lucide-alert-triangle class="w-5 h-5 text-red-600 dark:text-red-400" />
-                                    <div>
-                                        <p class="text-sm font-semibold text-red-900 dark:text-red-100">
-                                            {{ __('Budget Warning') }}
-                                        </p>
-                                        <p class="text-sm text-red-600 dark:text-red-400">
-                                            {{ $budgetWarningMessage }}
-                                        </p>
-                                    </div>
-                                </div>
-                                @if (str_contains($budgetWarningMessage, 'need') && str_contains($budgetWarningMessage, 'more credits'))
-                                    <a href="{{ route('user.add-credits') }}" wire:navigate
-                                        class="ml-auto bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition-colors">
-                                        {{ __('Buy Credits') }}
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                    @endif
-
-                    {{-- Budget Display --}}
-                    @if (
-                        $addCreditCostPerRepost &&
-                            $addCreditTargetReposts &&
-                            $addCreditCostPerRepost > 0 &&
-                            $addCreditTargetReposts > 0 &&
-                            !$showBudgetWarning)
+                    @if ($addCreditCostPerRepost && $addCreditTargetReposts && $addCreditCostPerRepost > 0 && $addCreditTargetReposts > 0)
                         <div
                             class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
                             <div class="flex items-center gap-3">
                                 <i data-lucide="calculator" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
                                 <div>
                                     <p class="text-sm font-semibold text-blue-900 dark:text-blue-100">
-                                        {{ __('New Total Campaign Budget') }}
+                                        {{ __('Estimated New Total Campaign Budget') }}
                                     </p>
                                     <p class="text-lg font-bold text-blue-600 dark:text-blue-400">
                                         {{ number_format($addCreditCostPerRepost * $addCreditTargetReposts) }}
                                         {{ __('credits') }}
                                     </p>
-                                    @if ($addCreditCreditsNeeded > 0)
-                                        <p class="text-sm text-blue-600 dark:text-blue-400">
-                                            {{ __('Additional credits needed:') }}
-                                            {{ number_format($addCreditCreditsNeeded) }}
-                                        </p>
-                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -786,23 +712,33 @@
 
                     <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
                         <button type="submit"
-                            class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-4 px-6 rounded-xl {{ $canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }}"
-                            wire:loading.attr="disabled" @if (!$canSubmit) disabled @endif>
-                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                            wire:loading.attr="disabled">
                             <span wire:loading.remove wire:target="addCreditsToCampaign">
-                                {{ __('Add Credits') }}
+                                <i data-lucide="plus" class="w-5 h-5"></i>
                             </span>
                             <span wire:loading wire:target="addCreditsToCampaign">
-                                {{ __('Adding...') }}
+                                <svg class="animate-spin w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                        stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                    </path>
+                                </svg>
                             </span>
+                            <span wire:loading.remove
+                                wire:target="addCreditsToCampaign">{{ __('Update Budget') }}</span>
+                            <span wire:loading wire:target="addCreditsToCampaign">{{ __('Updating...') }}</span>
                         </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+    {{-- END NEW FUNCTIONALITY --}}
 
-    {{-- Edit Campaign Modal --}}
+    {{-- NEW FUNCTIONALITY: Edit Campaign Modal --}}
     <div x-data="{ showEditCampaignModal: @entangle('showEditCampaignModal').live }" x-show="showEditCampaignModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
@@ -811,6 +747,7 @@
 
         <div
             class="w-full max-w-4xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col max-h-[85vh] overflow-hidden">
+
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
@@ -829,6 +766,7 @@
 
             <div class="flex-grow overflow-y-auto p-6">
                 <form wire:submit.prevent="updateCampaign" class="space-y-6">
+
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div class="space-y-2">
                             <label for="edit_campaign_title"
@@ -919,50 +857,19 @@
                         </div>
                     </div>
 
-                    {{-- Budget Warning Display --}}
-                    @if ($showBudgetWarning)
-                        <div
-                            class="bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-xl p-4 border border-red-200 dark:border-red-800">
-                            <div class="flex items-center gap-3">
-                                <i data-lucide="alert-triangle" class="w-5 h-5 text-red-600 dark:text-red-400"></i>
-                                <div>
-                                    <p class="text-sm font-semibold text-red-900 dark:text-red-100">
-                                        {{ __('Budget Warning') }}
-                                    </p>
-                                    <p class="text-sm text-red-600 dark:text-red-400">
-                                        {{ $budgetWarningMessage }}
-                                    </p>
-                                </div>
-                                @if (str_contains($budgetWarningMessage, 'need') && str_contains($budgetWarningMessage, 'more credits'))
-                                    <a href="{{ route('user.add-credits') }}" wire:navigate
-                                        class="ml-auto bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition-colors">
-                                        {{ __('Buy Credits') }}
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                    @endif
-
-                    {{-- Budget Display --}}
-                    @if ($editCostPerRepost && $editTargetReposts && $editCostPerRepost > 0 && $editTargetReposts > 0 && !$showBudgetWarning)
+                    @if ($editCostPerRepost && $editTargetReposts && $editCostPerRepost > 0 && $editTargetReposts > 0)
                         <div
                             class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
                             <div class="flex items-center gap-3">
                                 <i data-lucide="calculator" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
                                 <div>
                                     <p class="text-sm font-semibold text-blue-900 dark:text-blue-100">
-                                        {{ __('New Total Campaign Budget') }}
+                                        {{ __('Estimated Total Campaign Cost') }}
                                     </p>
                                     <p class="text-lg font-bold text-blue-600 dark:text-blue-400">
                                         {{ number_format($editCostPerRepost * $editTargetReposts) }}
                                         {{ __('credits') }}
                                     </p>
-                                    @if ($editOriginalBudget && $editCostPerRepost * $editTargetReposts > $editOriginalBudget)
-                                        <p class="text-sm text-blue-600 dark:text-blue-400">
-                                            {{ __('Additional credits needed:') }}
-                                            {{ number_format($editCostPerRepost * $editTargetReposts - $editOriginalBudget) }}
-                                        </p>
-                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -970,8 +877,8 @@
 
                     <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
                         <button type="submit"
-                            class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-4 px-6 rounded-xl {{ $canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }}"
-                            wire:loading.attr="disabled" @if (!$canSubmit) disabled @endif>
+                            class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                            wire:loading.attr="disabled">
                             <span wire:loading.remove wire:target="updateCampaign">
                                 <i data-lucide="save" class="w-5 h-5"></i>
                             </span>
@@ -985,9 +892,7 @@
                                     </path>
                                 </svg>
                             </span>
-                            <span wire:loading.remove wire:target="updateCampaign">
-                                {{ __('Save Changes') }}
-                            </span>
+                            <span wire:loading.remove wire:target="updateCampaign">{{ __('Save Changes') }}</span>
                             <span wire:loading wire:target="updateCampaign">{{ __('Saving...') }}</span>
                         </button>
                     </div>
@@ -995,8 +900,9 @@
             </div>
         </div>
     </div>
+    {{-- END NEW FUNCTIONALITY --}}
 
-    {{-- Delete Warning Modal --}}
+    {{-- NEW FUNCTIONALITY: Delete Warning Modal --}}
     <div x-data="{ showDeleteWarningModal: @entangle('showDeleteWarningModal').live }" x-show="showDeleteWarningModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
@@ -1005,6 +911,7 @@
 
         <div
             class="w-full max-w-md mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col">
+
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
                 <div class="flex items-center gap-3">
@@ -1030,7 +937,7 @@
                     {{ __('Are you sure you want to delete this campaign?') }}
                 </p>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
-                    {{ __('If you delete this campaign, you will receive a 50% refund of the remaining budget: :amount credits.', ['amount' => number_format($refundAmount)]) }}
+                    {{ __('If you delete this campaign, you will be refunded :amount credits (50% of the remaining budget).', ['amount' => number_format($refundAmount)]) }}
                 </p>
                 <div class="flex justify-center gap-4">
                     <button type="button" x-on:click="showDeleteWarningModal = false"
@@ -1038,8 +945,7 @@
                         {{ __('Cancel') }}
                     </button>
                     <button wire:click="deleteCampaign"
-                        class="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                        wire:loading.attr="disabled">
+                        class="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                         <span wire:loading.remove wire:target="deleteCampaign">{{ __('Confirm Delete') }}</span>
                         <span wire:loading wire:target="deleteCampaign">{{ __('Deleting...') }}</span>
                     </button>
@@ -1047,4 +953,12 @@
             </div>
         </div>
     </div>
+    {{-- END NEW FUNCTIONALITY --}}
+
+
+    @push('js')
+        <script>
+            lucide.createIcons();
+        </script>
+    @endpush
 </section>

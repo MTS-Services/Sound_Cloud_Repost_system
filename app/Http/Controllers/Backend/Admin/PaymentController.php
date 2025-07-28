@@ -26,6 +26,7 @@ class PaymentController extends Controller
     public function paymentMethod(string $credit_id)
     {
         $data['order'] = $this->orderService->getOrder($credit_id);
+        
         return view('frontend.pages.payment_method', $data);
     }
 
@@ -46,28 +47,26 @@ class PaymentController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email_address' => 'required|email',
-            'amount' => 'required|numeric|min:0.50',
-            'credits' => 'required|numeric|min:0.50',
             'currency' => 'sometimes|string|size:3',
             'customer_email' => 'sometimes|email',
         ]);
-
+        $order = $this->orderService->getOrder(encrypt($request->order_id));
         try {
             $paymentIntent = $this->stripeService->createPaymentIntent([
-                'amount' => $request->amount,
+                'amount' => $order->amount,
                 'currency' => $request->currency ?? 'usd',
                 'metadata' => [
                     'order_id' => $request->order_id ?? null,
                     'customer_email' => $request->customer_email ?? null,
                 ],
             ]);
-            DB::transaction(function () use ($request, $paymentIntent) {
+            DB::transaction(function () use ($request,$order, $paymentIntent) {
                 $creditTransaction = CreditTransaction::create([
                     'receiver_urn' => user()->urn,
                     'transaction_type' => CreditTransaction::TYPE_PURCHASE,
                     'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
-                    'amount' => $request->amount,
-                    'credits' => $request->credits,
+                    'amount' => $order->amount,
+                    'credits' => $order->credits,
                     'metadata' => $paymentIntent->metadata->toArray(),
                     'source_type' => 'test',
                     'source_id' => 000
@@ -78,12 +77,12 @@ class PaymentController extends Controller
                     'name' => $request->name,
                     'email_address' => $request->email_address,
                     'payment_gateway' => Payment::PAYMENT_METHOD_STRIPE,
-                    'credits_purchased' => $request->amount,
+                    'credits_purchased' => $order->credits,
                     'credit_transaction_id' => $creditTransaction->id,
                     'exchange_rate' => 1,
                     'payment_provider_id' => $paymentIntent->id,
                     'payment_intent_id' => $paymentIntent->id,
-                    'amount' => $request->amount,
+                    'amount' => $order->amount,
                     'currency' => $request->currency ?? 'usd',
                     'status' => $paymentIntent->status,
                     'metadata' => $paymentIntent->metadata->toArray(),
@@ -98,7 +97,7 @@ class PaymentController extends Controller
             Log::error('Payment intent creation failed: ' . $e->getMessage());
 
             return response()->json([
-                'error' => 'Failed to create payment intent'
+                'error' => 'Failed to create payment intent ' . $e->getMessage(),
             ], 500);
         }
     }

@@ -157,6 +157,11 @@
                                 data-tab="starred">
                                 Starred members
                             </button>
+                            <button type="button"
+                                class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium border-b-2 transition-colors text-gray-500 dark:text-slate-400 border-transparent hover:text-gray-900 dark:hover:text-white whitespace-nowrap"
+                                data-tab="tandresion">
+                                Tandresion
+                            </button>
                         </div>
 
                         <!-- Tab Panels -->
@@ -296,6 +301,49 @@
                                     No starred members found.</div>
                             </div>
                         </div>
+                       {{-- trandresion --}}
+                   <div id="tandresion" class="tab-panel hidden mt-4">
+    <div class="w-full overflow-x-auto">
+        <table class="min-w-[900px] w-full table-fixed text-sm text-left divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white text-xs sm:text-sm">
+                <tr>
+                    <th class="w-10 px-2 py-3">ID</th>
+                    <th class="w-28 px-2 py-3">Name</th>
+                    <th class="w-20 px-2 py-3">Amount</th>
+                    <th class="w-20 px-2 py-3">Credit</th>
+                    <th class="w-24 px-2 py-3">Type</th>
+                    <th class="w-52 px-2 py-3">Description</th>
+                    <th class="w-28 px-2 py-3">Metadata</th>
+                    <th class="w-20 px-2 py-3">Status</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+                <tr class="border-b border-gray-200 dark:border-gray-700">
+                    <td class="px-2 py-2">1</td>
+                    <td class="px-2 py-2">John Doe</td>
+                    <td class="px-2 py-2">$100</td>
+                    <td class="px-2 py-2">50</td>
+                    <td class="px-2 py-2">12</td>
+                    <td class="px-2 py-2 break-words">Lorem ipsum dolor sit amet.</td>
+                    <td class="px-2 py-2">12-01-2023</td>
+                    <td class="px-2 py-2 text-green-600 font-semibold">Active</td>
+                </tr>
+                <tr class="border-b border-gray-200 dark:border-gray-700">
+                    <td class="px-2 py-2">4</td>
+                    <td class="px-2 py-2">Jane Smith</td>
+                    <td class="px-2 py-2">$200</td>
+                    <td class="px-2 py-2">100</td>
+                    <td class="px-2 py-2">12</td>
+                    <td class="px-2 py-2 break-words">Consectetur adipiscing elit.</td>
+                    <td class="px-2 py-2">12-01-2023</td>
+                    <td class="px-2 py-2 text-red-500 font-semibold">Inactive</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
 
                         <!-- Credibility Insights -->
                         <div
@@ -460,32 +508,32 @@
 
     {{-- TAB FUNCTIONALITY --}}
     @push('js')
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                const tabs = document.querySelectorAll('.tab-btn');
-                const panels = document.querySelectorAll('.tab-panel');
+       <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tabs = document.querySelectorAll('.tab-btn');
+        const panels = document.querySelectorAll('.tab-panel');
 
-                tabs.forEach(tab => {
-                    tab.addEventListener('click', function() {
-                        // Remove all active states
-                        tabs.forEach(t => {
-                            t.classList.remove('text-orange-500', 'border-orange-500',
-                                'dark:text-orange-400', 'dark:border-orange-400');
-                            t.classList.add('text-gray-500', 'border-transparent',
-                                'dark:text-slate-400');
-                        });
-                        panels.forEach(panel => panel.classList.add('hidden'));
-
-                        // Add active state to clicked
-                        this.classList.add('text-orange-500', 'border-orange-500',
-                            'dark:text-orange-400', 'dark:border-orange-400');
-                        this.classList.remove('text-gray-500', 'border-transparent',
-                            'dark:text-slate-400');
-                        const panelId = this.getAttribute('data-tab');
-                        document.getElementById(panelId).classList.remove('hidden');
-                    });
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function () {
+                // Remove all active states
+                tabs.forEach(t => {
+                    t.classList.remove('text-orange-500', 'border-orange-500',
+                        'dark:text-orange-400', 'dark:border-orange-400');
+                    t.classList.add('text-gray-500', 'border-transparent',
+                        'dark:text-slate-400');
                 });
+                panels.forEach(panel => panel.classList.add('hidden'));
+
+                // Add active state to clicked
+                this.classList.add('text-orange-500', 'border-orange-500',
+                    'dark:text-orange-400', 'dark:border-orange-400');
+                this.classList.remove('text-gray-500', 'border-transparent',
+                    'dark:text-slate-400');
+                const panelId = this.getAttribute('data-tab');
+                document.getElementById(panelId).classList.remove('hidden');
             });
-        </script>
+        });
+    });
+</script>
     @endpush
 </section>

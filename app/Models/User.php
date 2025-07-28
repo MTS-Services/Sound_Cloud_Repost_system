@@ -114,6 +114,29 @@ class User extends AuthBaseModel
         return $this->hasMany(Repost::class, 'track_owner_urn', 'urn');
     }
 
+    public function sendTransactions(): HasMany
+    {
+        return $this->hasMany(CreditTransaction::class, 'sender_urn', 'urn');
+    }
+
+    public function receiveTransactions(): HasMany
+    {
+        return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn');
+    }
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn');
+    }
+    public function debitTransactions(): HasMany
+    {
+        return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn')->where('calculation_type', CreditTransaction::CALCULATION_TYPE_DEBIT);
+    }
+    public function creditTransactions(): HasMany
+    {
+        return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn')->where('calculation_type', CreditTransaction::CALCULATION_TYPE_CREDIT);
+    }
+
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS

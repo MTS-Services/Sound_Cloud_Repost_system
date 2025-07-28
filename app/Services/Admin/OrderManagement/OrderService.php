@@ -29,4 +29,19 @@ class OrderService
         $data['creater_id'] = user()->id;
         return Order::create($data);
     }
+    public function toggleStatusS(Order $order)
+    {
+        // logic to toggle the order status
+        $order->status = $order->status === 'active' ? 'inactive' : 'active';
+        $order->save();
+    }
+      public function toggleStatus(Order $order): void
+    {
+        $order->update([
+            'status' => !$order->status,
+            'updater_id' => admin()->id,
+            'updater_type' => get_class(admin())
+        ]);
+    }
+
 }

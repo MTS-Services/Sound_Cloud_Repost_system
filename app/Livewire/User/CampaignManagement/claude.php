@@ -13,7 +13,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
-class MyCampaign extends Component
+class MyCampaignclaude extends Component
 {
     public $campaigns;
 
@@ -50,7 +50,7 @@ class MyCampaign extends Component
 
     // Properties for Add Credit functionality
     public $addCreditCampaignId = null;
-    public int $addCreditCostPerRepost;
+    public $addCreditCostPerRepost = null;
     public $addCreditCurrentBudget = null;
     public $addCreditTargetReposts = null;
     public $addCreditCreditsNeeded = 0; // New property for credits needed calculation
@@ -61,7 +61,7 @@ class MyCampaign extends Component
     public $editDescription = null;
     public $editEndDate = null;
     public $editTargetReposts = null;
-    public int $editCostPerRepost;
+    public $editCostPerRepost = null;
     public $editOriginalBudget = null; // Track original budget to prevent decreases
 
     // Properties for Delete functionality
@@ -75,9 +75,6 @@ class MyCampaign extends Component
 
     protected $listeners = ['campaignCreated' => 'refreshCampaigns'];
 
-    /**
-     * Define validation rules
-     */
     protected function rules()
     {
         $rules = [
@@ -103,7 +100,7 @@ class MyCampaign extends Component
         // Rules for adding credits
         if ($this->showAddCreditModal) {
             $rules = [
-                'addCreditCostPerRepost' => 'required|integer|min:' . $this->addCreditCurrentBudget,
+                'addCreditCostPerRepost' => 'required|integer|min:1',
             ];
         }
 

@@ -145,13 +145,13 @@ function storage_url($urlOrArray)
 function soundcloud_image($url)
 {
     $image = asset('default_img/no_img.jpg');
-    return $url ?  $url : $image;
+    return $url ? $url : $image;
 }
 
 function auth_storage_url($url)
 {
     $image = asset('default_img/other.png');
-    return $url ?  $url : $image;
+    return $url ? $url : $image;
 }
 
 function getSubmitterType($className)
@@ -184,4 +184,28 @@ function isImage($path)
     $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'];
     $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
     return in_array($extension, $imageExtensions);
+}
+
+function repostPrice($user = null)
+{
+    if (!$user) {
+        $user = user();
+    }
+    $user->load('userInfo');
+    $followers_count = $user?->userInfo?->followers_count;
+    if ($followers_count === null) {
+        return 1; // Default to 1 if followers count is not available
+    }
+    return ceil($followers_count / 100) ?: 1; // Ensure at least 1 credit
+}
+
+function userCredits($user = null)
+{
+    if (!$user) {
+        $user = user();
+    }
+    $user->load(['debitTransactions', 'creditTransactions']);
+    $debit = $user->debitTransactions->sum('credits');
+    $credit = $user->creditTransactions->sum('credits');
+    return $debit - $credit;
 }
