@@ -22,24 +22,18 @@ class MyCampaign extends Component
     public bool $showLowCreditWarningModal = false;
     public string $activeModalTab = 'tracks';
 
-    // NEW FUNCTIONALITY
     public bool $showAddCreditModal = false;
     public bool $showEditCampaignModal = false;
-    public bool $showDeleteWarningModal = false;
-
+    public bool $showCancelWarningModal = false;
     public $tracks = [];
     public $playlists = [];
-
     #[Locked]
     public $playlistId = null;
     public $playlistTracks = [];
-
     #[Locked]
     public int $minFollowers = 0;
     #[Locked]
     public int $maxFollowers = 0;
-
-    // Properties for campaign creation
     public $musicId = null;
     public $musicType = null;
     public $title = null;
@@ -292,7 +286,7 @@ class MyCampaign extends Component
             'maxFollowers',
             'showAddCreditModal',
             'showEditCampaignModal',
-            'showDeleteWarningModal',
+            'showCancelWarningModal',
             'addCreditCostPerRepost',
             'addCreditCampaignId',
             'addCreditCurrentBudget',
@@ -440,7 +434,7 @@ class MyCampaign extends Component
             'editTargetReposts',
             'editCostPerRepost',
             'editOriginalBudget',
-            'showDeleteWarningModal',
+            'showCancelWarningModal',
             'campaignToDeleteId',
             'refundAmount',
             'showBudgetWarning',
@@ -625,7 +619,7 @@ class MyCampaign extends Component
         $this->showSubmitModal = false;
         $this->showCampaignsModal = false;
         $this->showEditCampaignModal = false;
-        $this->showDeleteWarningModal = false;
+        $this->showCancelWarningModal = false;
     }
 
     public function addCreditsToCampaign()
@@ -718,7 +712,7 @@ class MyCampaign extends Component
         $this->showSubmitModal = false;
         $this->showCampaignsModal = false;
         $this->showAddCreditModal = false;
-        $this->showDeleteWarningModal = false;
+        $this->showCancelWarningModal = false;
     }
 
     public function updateCampaign()
@@ -792,7 +786,7 @@ class MyCampaign extends Component
     }
 
     // Methods for Delete functionality
-    public function openDeleteWarningModal(Campaign $campaign)
+    public function openCancelWarningModal(Campaign $campaign)
     {
         $this->resetValidation();
         $this->resetErrorBag();
@@ -803,7 +797,7 @@ class MyCampaign extends Component
         $remainingBudget = $campaign->budget_credits - $campaign->credits_spent;
         $this->refundAmount = floor($remainingBudget * 0.5);
 
-        $this->showDeleteWarningModal = true;
+        $this->showCancelWarningModal = true;
 
         // Close other modals
         $this->showSubmitModal = false;
@@ -812,7 +806,7 @@ class MyCampaign extends Component
         $this->showEditCampaignModal = false;
     }
 
-    public function deleteCampaign()
+    public function cancelCampaign()
     {
         try {
             $campaign = Campaign::findOrFail($this->campaignToDeleteId);
@@ -828,28 +822,33 @@ class MyCampaign extends Component
                         'transaction_type' => CreditTransaction::TYPE_REFUND,
                         'status' => 'succeeded',
                         'credits' => $this->refundAmount,
-                        'description' => 'Refund for deleted campaign (50% of remaining budget)',
+                        'description' => 'Refund for canceled campaign (50% of remaining budget)',
                         'metadata' => [
                             'campaign_id' => $campaign->id,
-                            'action' => 'campaign_deletion',
+                            'action' => 'campaign_canceled',
                             'refund_percentage' => 50,
-                            'deleted_at' => now(),
+                            'canceled_at' => now(),
                         ],
                         'created_id' => user()->id,
                         'created_type' => get_class(user())
                     ]);
                 }
 
-                // Delete the campaign
-                $campaign->delete();
+                // update the status of the campaign
+                $campaign->update([
+                    'status' => Campaign::STATUS_CANCELLED,
+                    'refund_credits' => $this->refundAmount,
+                    'updater_id' => user()->id,
+                    'updater_type' => get_class(user())
+                ]);
             });
 
-            session()->flash('success', 'Campaign deleted successfully! ' . number_format($this->refundAmount) . ' credits refunded.');
-            $this->showDeleteWarningModal = false;
+            session()->flash('success', 'Campaign canceled successfully! ' . number_format($this->refundAmount) . ' credits refunded.');
+            $this->showCancelWarningModal = false;
             $this->refreshCampaigns();
         } catch (\Exception $e) {
             session()->flash('error', 'Failed to delete campaign: ' . $e->getMessage());
-            Log::error('Campaign deletion error: ' . $e->getMessage(), [
+            Log::error('Campaign cancellation error: ' . $e->getMessage(), [
                 'campaign_id' => $this->campaignToDeleteId,
                 'user_urn' => user()->urn ?? 'unknown',
             ]);

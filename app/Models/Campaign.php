@@ -31,6 +31,7 @@ class Campaign extends BaseModel
         'is_featured',
         'start_date',
         'end_date',
+        'refund_credits',
 
         'creater_id',
         'updater_id',
@@ -46,13 +47,14 @@ class Campaign extends BaseModel
         'budget_credits' => 'decimal:2',
         'cost_per_repost' => 'decimal:2',
         'credits_spent' => 'decimal:2',
+        'refund_credits' => 'decimal:2',
         'target_reposts' => 'integer',
         'completed_reposts' => 'integer',
         'min_followers' => 'integer',
         'max_followers' => 'integer',
         'is_featured' => 'boolean',
         'status' => 'integer',
-        'playback_count' => 'integer',
+        'playback_count' => 'integer',        
     ];
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
