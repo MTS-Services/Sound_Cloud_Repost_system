@@ -72,3 +72,4 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
 Route::view('/help-support', 'backend.user.help-support')->name('help-support');
 Route::view('/settings', 'backend.user.settings')->name('settings');
 Route::view('/page', 'backend.user.dummy-page')->name('page');
+Route::view('/charts', 'backend.user.chart')->name('charts');

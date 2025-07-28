@@ -31,15 +31,29 @@
 
         <div class="flex items-center space-x-1 md:space-x-2">
             <!-- Navigation items - hide on mobile -->
-            <nav class="hidden lg:flex items-center space-x-2 md:space-x-4 text-sm">
-                <a class="text-orange-500 hover:text-orange-400 font-medium" href="/upgrade"wire:navigate
-                    data-discover="true">Upgrade My Plan</a>
-                <a href="{{route('page')}}" class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50 "wire:navigate
-                    href="/charts" data-discover="true">Charts</a>
-                <a href="{{route('page')}}" class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"wire:navigate
-                    href="/blog" data-discover="true">Blog</a>
+            <nav class="hidden lg:flex items-center space-x-2 md:space-x-4 text-sm" x-data="{ activeButton: '' }">
+                <a x-bind:class="{ 'text-orange-500': activeButton === 'upgrade', 'hover:text-orange-400': activeButton !== 'upgrade' }"
+                    class="font-medium" href="{{ route('page') }}" wire:navigate data-discover="true"
+                    @click="activeButton = 'upgrade'">
+                    Upgrade My Plan
+                </a>
+
+                <a x-bind:class="{ 'text-orange-500': activeButton === 'charts', 'hover:text-orange-400': activeButton !== 'charts' }"
+                    class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
+                    wire:navigate href="{{ route('charts') }}" data-discover="true" @click="activeButton = 'charts'">
+                    Charts
+                </a>
+
+                <a x-bind:class="{ 'text-orange-500': activeButton === 'blog', 'hover:text-orange-400': activeButton !== 'blog' }"
+                    class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
+                    wire:navigate href="{{ route('page') }}" data-discover="true" @click="activeButton = 'blog'">
+                    Blog
+                </a>
+
                 <button
-                    class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50 flex items-center space-x-1" >
+                    x-bind:class="{ 'text-orange-500': activeButton === 'help', 'hover:text-orange-400': activeButton !== 'help' }"
+                    class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50 flex items-center space-x-1"
+                    @click="activeButton = 'help'">
                     <span>Help</span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -48,6 +62,8 @@
                     </svg>
                 </button>
             </nav>
+
+
 
             <!-- Mobile search button -->
             <button @click="mobileSearchOpen = !mobileSearchOpen"
@@ -125,7 +141,8 @@
                         </div>
                         <div class="text-sm flex justify-between items-center">
                             <span class="font-semibold text-slate-800 dark:text-white">Free Plan</span>
-                            <a href="#" class="text-orange-500 text-xs hover:underline" wire:navigate>View All Plans</a>
+                            <a href="#" class="text-orange-500 text-xs hover:underline" wire:navigate>View All
+                                Plans</a>
                         </div>
                     </li>
 
