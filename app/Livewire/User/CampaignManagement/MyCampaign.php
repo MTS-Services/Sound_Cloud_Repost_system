@@ -50,7 +50,7 @@ class MyCampaign extends Component
 
     // Properties for Add Credit functionality
     public $addCreditCampaignId = null;
-    public $addCreditCostPerRepost = null;
+    public int $addCreditCostPerRepost;
     public $addCreditCurrentBudget = null;
     public $addCreditTargetReposts = null;
     public $addCreditCreditsNeeded = 0; // New property for credits needed calculation
@@ -61,7 +61,7 @@ class MyCampaign extends Component
     public $editDescription = null;
     public $editEndDate = null;
     public $editTargetReposts = null;
-    public $editCostPerRepost = null;
+    public int $editCostPerRepost;
     public $editOriginalBudget = null; // Track original budget to prevent decreases
 
     // Properties for Delete functionality
