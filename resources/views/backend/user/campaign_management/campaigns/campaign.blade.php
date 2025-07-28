@@ -154,7 +154,7 @@
                                                     <circle cx="8" cy="9" r="3" fill="none"
                                                         stroke="currentColor" stroke-width="2" />
                                                 </svg>
-                                                <span>{{ ceil(user()?->userInfo?->followers_count / 100) }}
+                                                <span>{{ repostPrice() }}
                                                     Repost</span>
                                             </button>
                                             @if (in_array($campaign->id, $this->repostedCampaigns))
@@ -289,7 +289,8 @@
                                                     <circle cx="8" cy="9" r="3" fill="none"
                                                         stroke="currentColor" stroke-width="2" />
                                                 </svg>
-                                                <span>{{ ceil($campaign?->music?->user?->userInfo?->followers_count / 100) }}
+                                                <span>
+                                                    {{ repostPrice() }}
                                                     Repost</span>
                                             </button>
 
@@ -305,12 +306,12 @@
                                             </div>
                                         @endif --}}
 
-                                            @if (in_array($campaign->id, $this->repostedCampaigns))
+                                            {{-- @if (in_array($campaign->id, $this->repostedCampaigns))
                                                 <div
                                                     class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
                                                     Reposted! ✓
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                         </div>
                                     </div>
                                 </div>
