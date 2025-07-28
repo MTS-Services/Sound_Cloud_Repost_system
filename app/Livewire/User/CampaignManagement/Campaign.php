@@ -3,6 +3,7 @@
 namespace App\Livewire\User\CampaignManagement;
 
 use App\Services\User\CampaignManagement\CampaignService;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class Campaign extends Component
@@ -183,8 +184,11 @@ class Campaign extends Component
             !in_array($campaignId, $this->repostedCampaigns);
 
         if ($canRepost) {
+            Log::info("Campaign {$campaignId} can be reposted.");
             $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
+            Log::info("Incrementing playback count for campaign {$campaignId}.");
             $campaign->increment('playback_count');
+            Log::info("Playback count for campaign {$campaignId} incremented.");
         }
         return $canRepost;
     }
