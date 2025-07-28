@@ -33,7 +33,7 @@
         <div class="flex items-center space-x-1 md:space-x-2">
             <!-- Navigation items - hide on mobile -->
             <nav class="hidden lg:flex items-center space-x-2 md:space-x-4 text-sm" x-data="{ activeButton: '' }">
-               <a class="text-orange-500 hover:text-orange-400 font-medium" href="#"wire:navigate
+                <a class="text-orange-500 hover:text-orange-400 font-medium" href="#"wire:navigate
                     data-discover="true">Upgrade My Plan</a>
 
                 <a x-bind:class="{ 'text-orange-500': activeButton === 'charts', 'hover:text-orange-400': activeButton !== 'charts' }"
@@ -48,17 +48,58 @@
                     Blog
                 </a>
 
-                <button
-                    x-bind:class="{ 'text-orange-500': activeButton === 'help', 'hover:text-orange-400': activeButton !== 'help' }"
-                    class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50 flex items-center space-x-1"
-                    @click="activeButton = 'help'">
-                    <span>Help</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="lucide lucide-chevron-down w-4 h-4">
-                        <path d="m6 9 6 6 6-6"></path>
-                    </svg>
-                </button>
+                <div x-data="{ open: false }" class="relative text-left  rounded-lg  flex justify-center">
+                    <!-- Trigger Button -->
+                    {{-- <button @click="open = !open"
+                        class="p-2 text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50 flex px-3 aline-center py-2 rounded-lg   focus:outline-none focus:ring-offset-2    left-4">
+                        <span class="m-2">help</span>
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" class="lucide lucide-chevron-down w-5 h-5">
+                            <path d="m6 9 6 6 6-6"></path>
+                        </svg>
+                    </button> --}}
+                    <button @click="open = !open"
+                        x-bind:class="{ 'text-orange-500': activeButton === 'help', 'hover:text-orange-400': activeButton !== 'help' }"
+                        class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50 flex items-center space-x-1"
+                        @click="activeButton = 'help'">
+                        <span>Help</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" class="lucide lucide-chevron-down w-4 h-4">
+                            <path d="m6 9 6 6 6-6"></path>
+                        </svg>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div x-show="open" @click.outside="open = false" x-transition x-cloak
+                        class="absolute right-2 mt-5 w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
+                        <ul class="p-0 text-sm text-gray-700 dark:text-gray-200">
+                            <li>
+                                <a href="#"
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Getting Started</a>
+                            </li>
+                            <li>
+                                <a href="#"
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Contact Support</a>
+                            </li>
+                            <li>
+                                <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Help
+                                    Center</a>
+                            </li>
+                            <li>
+                                <a href="#"
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Pricing</a>
+                            </li>
+                            <li>
+                                <a href="#"
+                                    class="block px-4 py-2   hover:bg-red-100  dark:hover:bg-gray-700">FAQs</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
             </nav>
 
 
@@ -111,8 +152,8 @@
                     <span
                         class="text-xs md:text-sm font-medium dark:text-slate-300 hidden sm:block">{{ user()->name ?? 'name' }}</span>
                     <svg class="dark:text-slate-300 w-3 h-3 md:w-4 md:h-4" xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <path d="m6 9 6 6 6-6"></path>
                     </svg>
                 </div>
@@ -123,8 +164,8 @@
                     <li>
                         <a href="{{ route('user.profile') }}"wire:navigate
                             class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M5.121 17.804A4 4 0 017 16h10a4 4 0 011.879.496M15 11a3 3 0 10-6 0 3 3 0 006 0z" />
                             </svg>

@@ -4,8 +4,7 @@ namespace App\Http\Controllers\Backend\Admin\CampaignManagement;
 
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
-use App\Models\Campaign;
-use App\Services\Admin\CampaignManagement\CampaignService;
+use App\Services\User\CampaignManagement\CampaignService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;

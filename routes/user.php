@@ -4,7 +4,6 @@ use App\Http\Controllers\Backend\User\DashboardController;
 use App\Http\Controllers\Backend\Admin\OrderManagement\OrderController as UserOrderController;
 use App\Http\Controllers\Backend\User\AddCaeditsController;
 use App\Http\Controllers\Backend\User\AnalyticsController;
-use App\Http\Controllers\Backend\User\CampaignManagement\CampaignController;
 use App\Livewire\User\CampaignManagement\Campaign;
 use App\Livewire\User\CampaignManagement\MyCampaign;
 use App\Http\Controllers\Backend\User\Members\MemberController;
