@@ -1,12 +1,4 @@
-<section x-data="{
-    showCampaignsModal: @entangle('showCampaignsModal').live,
-    showSubmitModal: @entangle('showSubmitModal').live,
-    showLowCreditWarningModal: @entangle('showLowCreditWarningModal').live,
-    showAddCreditModal: @entangle('showAddCreditModal').live,
-    showEditCampaignModal: @entangle('showEditCampaignModal').live,
-    showCancelWarningModal: @entangle('showCancelWarningModal').live,
-    showAlreadyCancelledModal: @entangle('showAlreadyCancelledModal').live DEFAULT
-}">
+<section>
 
     <x-slot name="page_slug">campaigns</x-slot>
 
@@ -146,15 +138,10 @@
                                     </div>
 
                                 </div>
-                                <button
-                                    class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"><svg
-                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="lucide lucide-eye w-4 h-4">
-                                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-                                        <circle cx="12" cy="12" r="3"></circle>
-                                    </svg><span>{{ __('View Details') }}</span>
+                                <button wire:click="openViewDetailsModal({{ $campaign->id }})"
+                                    class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2">
+                                    <x-lucide-eye class="w-5 h-5" />
+                                    <span>{{ __('View Details') }}</span>
                                 </button>
 
                             </div>
@@ -323,7 +310,8 @@
                                             <span class="ml-2 text-xs text-gray-400">{{ $track->genre }}</span>
                                         </p>
                                         <span
-                                            class="inline-block bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono">{{ $track->isrc }}</span>
+                                            class="inline-block bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono"><x-lucide-music
+                                                class="w-4 h-4" /> {{ $track->playback_count }}</span>
                                     </div>
                                     <div class="flex-shrink-0">
                                         <x-lucide-chevron-right
@@ -397,7 +385,7 @@
         class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
 
         <div
-            class="w-full max-w-md mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col">
+            class="w-full max-w-md mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
                 <div class="flex items-center gap-3">
@@ -692,7 +680,7 @@
         class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
 
         <div
-            class="w-full max-w-xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col">
+            class="w-full max-w-xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
@@ -1005,7 +993,7 @@
         class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
 
         <div
-            class="w-full max-w-lg mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col">
+            class="w-full max-w-lg mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
                 <div class="flex items-center gap-3">
@@ -1048,7 +1036,8 @@
             </div>
         </div>
     </div>
-    {{-- Cancel Warning Modal --}}
+
+    {{-- Already Cancel Warning Modal --}}
     <div x-data="{ showAlreadyCancelledModal: @entangle('showAlreadyCancelledModal').live }" x-show="showAlreadyCancelledModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
@@ -1056,7 +1045,7 @@
         class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
 
         <div
-            class="w-full max-w-lg mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col">
+            class="w-full max-w-lg mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
                 <div class="flex items-center gap-3">
@@ -1085,6 +1074,122 @@
                     {{ __('This campaign has already been cancelled. You cannot make any changes to this campaign.') }}
                 </p>
             </div>
+        </div>
+    </div>
+
+    {{-- Details Modal --}}
+    <div x-data="{ showDetailsModal: @entangle('showDetailsModal').live }" x-show="showDetailsModal" x-cloak
+        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+
+        <div
+            class="w-full max-w-3xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
+
+            @if ($showDetailsModal)
+                <div
+                    class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
+                            <x-lucide-info class="w-5 h-5 text-white" />
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                            {{ __('Campaign Details') }}
+                        </h2>
+                    </div>
+                    <button wire:click="closeViewDetailsModal()"
+                        class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
+                        <x-lucide-x class="w-5 h-5" />
+                    </button>
+                </div>
+
+                <div class="p-6 text-center max-h-[80vh] overflow-y-auto">
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="w-full md:w-1/3 rounded-xl shadow-lg overflow-hidden">
+                            <img class="w-full h-auto object-cover "
+                                src="{{ storage_url($campaign->music?->artwork_url) }}">
+                        </div>
+
+                        <div class="flex-1">
+                            <h2 class="text-3xl font-bold mb-2 text-gray-900 dark:text-white">
+                                {{ $campaign->title ?? $campaign->music?->title }}</h2>
+                            <p class="text-orange-500 mb-2">by {{ $campaign->user?->name ?? 'Unknown' }}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                                Genre: <span
+                                    class="text-black dark:text-white">{{ $campaign->music?->genre ?? 'Unknown' }}</span>
+                            </p>
+                            <p class="text-gray-700 dark:text-gray-300 text-sm mb-4">
+                                {{ $campaign->description ?? 'No description provided' }}
+                            </p>
+
+                            <div class="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg">
+                                <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">Repost Progress:</p>
+                                <div class="w-full h-3 bg-gray-300 dark:bg-gray-700 rounded-full">
+                                    <div class="h-3 bg-orange-500 rounded-full"
+                                        style="width: {{ ($campaign->completed_reposts / $campaign->target_reposts) * 100 }}%">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Campaign Stats -->
+                    <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                        <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Target Reposts</h4>
+                            <p class="text-xl font-bold text-black dark:text-white">{{ $campaign->target_reposts }}
+                            </p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Completed Reposts</h4>
+                            <p class="text-xl font-bold text-black dark:text-white">
+                                {{ $campaign->completed_reposts }}
+                            </p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Playback Count</h4>
+                            <p class="text-xl font-bold text-black dark:text-white">{{ $campaign->playback_count }}
+                            </p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Budget</h4>
+                            <p class="text-xl font-bold text-black dark:text-white">
+                                {{ number_format($campaign->budget) }}</p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Credits Spent</h4>
+                            <p class="text-xl font-bold text-black dark:text-white">
+                                {{ number_format($campaign->credits_spent) }}</p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Cost Per Repost</h4>
+                            <p class="text-xl font-bold text-black dark:text-white">
+                                {{ number_format($campaign->cost_per_repost) }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Campaign Info -->
+                    <div class="mt-10 bg-gray-100 dark:bg-slate-800 p-6 rounded-xl shadow">
+                        <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Campaign Settings</h3>
+                        <div
+                            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-700 dark:text-gray-300">
+                            <p><span class="font-medium text-black dark:text-white">Status:</span>
+                                {{ $campaign->status_label }}</p>
+                            <p><span class="font-medium text-black dark:text-white">Start Date:</span>
+                                {{ $campaign->start_date_formatted }}</p>
+                            <p><span class="font-medium text-black dark:text-white">End Date:</span>
+                                {{ $campaign->end_date_formatted }}</p>
+                            <p><span class="font-medium text-black dark:text-white">Featured:</span>
+                                {{ $campaign->feature_label }}</p>
+                        </div>
+                    </div>
+                    <div
+                        class="mt-10 w-full mx-auto bg-gray-100 dark:bg-gradient-to-r dark:from-zinc-700 dark:to-zinc-900 p-4 rounded-lg">
+                        <x-sound-cloud.sound-cloud-player :track="$campaign->music" :visual="true" :height="166" />
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 </section>

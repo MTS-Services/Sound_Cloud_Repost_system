@@ -103,6 +103,7 @@ class Campaign extends BaseModel
             'start_date_formatted',
             'end_date_formatted',
 
+            'feature_label',
         ]);
     }
 
