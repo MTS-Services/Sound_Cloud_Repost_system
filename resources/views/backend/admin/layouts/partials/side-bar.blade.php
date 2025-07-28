@@ -149,7 +149,7 @@
                 :items="[
                     [
                         'name' => 'Orders',
-                        'route' => route('om.credit-transaction.purchase'),
+                        'route' => route('om.order.index'),
                         'icon' => 'megaphone',
                         'active' => 'order',
                         'permission' => 'order-list',
