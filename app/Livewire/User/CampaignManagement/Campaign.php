@@ -52,18 +52,18 @@ class Campaign extends Component
         $this->campaignService = $campaignService;
         $allowed_target_credits = repostPrice(user());
         $this->featuredCampaigns = $this->campaignService->getCampaigns()
-            // ->where('cost_per_repost', $allowed_target_credits)
-            // ->featured()
-            // ->withoutSelf()
+            ->where('cost_per_repost', $allowed_target_credits)
+            ->featured()
+            ->withoutSelf()
             ->with(['music.user.userInfo', 'reposts']) // Keep 'reposts' if you need it for other purposes, otherwise it can be removed
             ->whereDoesntHave('reposts', function ($query) { // Use whereDoesntHave
                 $query->where('reposter_urn', user()->urn);
             })
             ->get();
         $this->campaigns = $this->campaignService->getCampaigns()
-            // ->where('cost_per_repost', $allowed_target_credits)
-            // ->notFeatured()
-            // ->withoutSelf()
+            ->where('cost_per_repost', $allowed_target_credits)
+            ->notFeatured()
+            ->withoutSelf()
             ->with(['music.user.userInfo', 'reposts']) // Keep 'reposts' if you need it for other purposes, otherwise it can be removed
             ->whereDoesntHave('reposts', function ($query) { // Use whereDoesntHave
                 $query->where('reposter_urn', user()->urn);
