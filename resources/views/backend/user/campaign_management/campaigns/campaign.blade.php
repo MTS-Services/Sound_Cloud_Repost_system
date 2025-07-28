@@ -102,7 +102,7 @@
                                             <div x-show="open" x-transition.opacity
                                                 class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
                                                 x-cloak>
-                                                <a href="{{ $campaign?->music?->user?->userInfo?->soundcloud_permalink }}"
+                                                <a href="{{ $campaign?->music?->user?->userInfo?->soundcloud_permalink_url }}"
                                                     target="_blank"
                                                     class="block hover:bg-gray-800 px-3 py-1 rounded">Visit SoundCloud
                                                     Profile</a>
@@ -235,7 +235,7 @@
                                             <div x-show="open" x-transition.opacity
                                                 class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
                                                 x-cloak>
-                                                <a href="{{ $campaign?->music?->user?->userInfo?->soundcloud_permalink }}"
+                                                <a href="{{ $campaign?->music?->user?->userInfo?->soundcloud_permalink_url }}"
                                                     target="_blank"
                                                     class="block hover:bg-gray-800 px-3 py-1 rounded">Visit SoundCloud
                                                     Profile</a>
