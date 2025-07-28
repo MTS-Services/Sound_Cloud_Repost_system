@@ -316,12 +316,12 @@ class Campaign extends Component
 
                     // Create the Repost record
                     $repost = Repost::create([
+                        'credits_earned' => $creditsPerRepost,
                         'reposter_urn' => $currentUserUrn,
                         'track_owner_urn' => $trackOwnerUrn,
                         'campaign_id' => $campaign->id,
                         'soundcloud_repost_id' => $soundcloudRepostId,
                         'reposted_at' => now(),
-                        'credits_earned' => $creditsPerRepost,
                     ]);
 
                     // Update the Campaign record using atomic increments
@@ -348,7 +348,7 @@ class Campaign extends Component
                     ]);
                 });
                 $this->campaignService->syncReposts($campaign, $currentUserUrn, $soundcloudRepostId);
-                return redirect()->back()->with('success', 'Campaign music reposted successfully.');
+                session()->flash('success', 'Campaign music reposted successfully.');
             } else {
                 // Log the error response from SoundCloud for debugging
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [
@@ -356,8 +356,11 @@ class Campaign extends Component
                     'user_urn' => $currentUserUrn,
                     'status' => $response->status(),
                 ]);
-                return redirect()->back()->with('error', 'Failed to repost campaign music to SoundCloud. Please try again.');
+                session()->flash('error', 'Failed to repost campaign music to SoundCloud. Please try again.');
+
+
             }
+            
         } catch (Throwable $e) {
             Log::error("Error in repost method: " . $e->getMessage(), [
                 'exception' => $e,
