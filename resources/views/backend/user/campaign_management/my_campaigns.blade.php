@@ -499,7 +499,7 @@
                                     @endif
                                 @empty
                                     <div class="text-center py-12 text-gray-500 dark:text-gray-400">
-                                        <x-lucide-music-off class="w-12 h-12 mx-auto mb-3 text-gray-400" />
+                                        <x-lucide-audio-lines class="w-12 h-12 mx-auto mb-3 text-gray-400" />
                                         <p class="font-medium">{{ __('No tracks found in this playlist.') }}</p>
                                     </div>
                                 @endforelse
