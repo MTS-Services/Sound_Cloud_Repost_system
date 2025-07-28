@@ -1,19 +1,12 @@
 <x-admin::layout>
-    <x-slot name="title">{{ __('Order List') }}</x-slot>
-    <x-slot name="breadcrumb">{{ __('Order List') }}</x-slot>
-    <x-slot name="page_slug">order</x-slot>
+    <x-slot name="title">{{ __('Payments List') }}</x-slot>
+    <x-slot name="breadcrumb">{{ __('Payments List') }}</x-slot>
+    <x-slot name="page_slug">payment</x-slot>
     <section>
 
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
-                <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Order List') }}</h2>
-                <div class="flex items-center gap-2">
-                    <x-button href="{{ route('om.order.trash') }}" icon="trash-2" type='secondary'
-                        permission="order-trash">
-                        {{ __('Trash') }}
-                    </x-button>
-                    
-                </div>
+                <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Payments List') }}</h2>
             </div>
         </div>
         <div class="glass-card rounded-2xl p-6">
@@ -44,7 +37,7 @@
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 let table_columns = [
-                    //name and data, orderable, searchable
+                    //name and data, Paymentsable, searchable
                  
                     ['name', true, true],
                     ['email_address', true, true],
@@ -76,7 +69,7 @@
 
                 $(document).on('click', '.view', function() {
                     const id = $(this).data('id');
-                    const route = "{{ route('om.order.show', ':id') }}";
+                    const route = "{{ route('om.Payments.show', ':id') }}";
 
                     const details = [
                         {
@@ -103,7 +96,7 @@
                         }
                     ];
 
-                    showDetailsModal(route, id, '{{ __('Order Details') }}', details);
+                    showDetailsModal(route, id, '{{ __('Payments Details') }}', details);
                 });
             });
         </script> --}}

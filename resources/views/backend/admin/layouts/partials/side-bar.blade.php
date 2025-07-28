@@ -133,6 +133,13 @@
             <x-admin.navlink type="dropdown" icon="credit-card" name="Order Management" :page_slug="$active"
                 :items="[
                     [
+                        'name' => 'Payments',
+                        'route' => route('om.credit-transaction.payments'),
+                        'icon' => 'megaphone',
+                        'active' => 'payment',
+                        'permission' => 'payment-list',
+                    ],
+                    [
                         'name' => 'Orders',
                         'route' => route('om.order.index'),
                         'icon' => 'megaphone',
@@ -145,13 +152,6 @@
                         'icon' => 'megaphone',
                         'active' => 'purchase',
                         'permission' => 'purchase-list',
-                    ],
-                     [
-                        'name' => 'Payment History',
-                        'route' => route('om.credit-transaction.payments'),
-                        'icon' => 'megaphone',
-                        'active' => 'payment',
-                        'permission' => 'payment-list',
                     ],
                 ]" />
         </nav>
