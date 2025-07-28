@@ -16,10 +16,10 @@
                 </div>
             </div>
 
-            <button
+            <a href="{{ route('user.cm.my-campaigns') }}" wire:navigate
                 class="bg-orange-600 text-white px-3 sm:px-5 py-2 mb-2 rounded hover:bg-orange-700 transition w-full sm:w-auto text-center">
                 Start a new campaign
-            </button>
+            </a>
         </div>
     </div>
 
