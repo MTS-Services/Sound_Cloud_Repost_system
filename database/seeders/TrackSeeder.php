@@ -45,7 +45,6 @@ class TrackSeeder extends Seeder
             'uri' => 'soundcloud://sounds/' . rand(1000000, 9999999),
 
             'permalink_url' => 'https://soundcloud.com/user/sample-track-' . rand(1, 10),
-            'artwork_url' => 'https://via.placeholder.com/200x200.png?text=Track+' . rand(1, 10),
             'stream_url' => 'https://api.soundcloud.com/stream/' . rand(1, 10),
             'download_url' => 'https://api.soundcloud.com/download/' . rand(1, 10),
             'waveform_url' => 'https://waveform.example.com/' . rand(1, 10),
@@ -105,7 +104,6 @@ class TrackSeeder extends Seeder
             'uri' => 'soundcloud://sounds/' . rand(1000000, 9999999),
 
             'permalink_url' => 'https://soundcloud.com/user/sample-track-' . rand(1, 10),
-            'artwork_url' => 'https://via.placeholder.com/200x200.png?text=Track+' . rand(1, 10),
             'stream_url' => 'https://api.soundcloud.com/stream/' . rand(1, 10),
             'download_url' => 'https://api.soundcloud.com/download/' . rand(1, 10),
             'waveform_url' => 'https://waveform.example.com/' . rand(1, 10),
@@ -164,8 +162,7 @@ class TrackSeeder extends Seeder
             'license' => 'all-rights-reserved',
             'uri' => 'soundcloud://sounds/' . rand(1000000, 9999999),
 
-            'permalink_url' => 'https://soundcloud.com/user/sample-track-' . rand(1, 10),
-            'artwork_url' => 'https://via.placeholder.com/200x200.png?text=Track+' . rand(1, 10),
+            'permalink_url' => 'https://soundcloud.com/user/sample-track-' . rand(1, 10),            
             'stream_url' => 'https://api.soundcloud.com/stream/' . rand(1, 10),
             'download_url' => 'https://api.soundcloud.com/download/' . rand(1, 10),
             'waveform_url' => 'https://waveform.example.com/' . rand(1, 10),

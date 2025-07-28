@@ -42,8 +42,8 @@
                 <div class=" rounded-lg border border-orange-600 overflow-hidden">
                     <div class="p-6 sm:p-8">
                         <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                            <div class="flex flex-col sm:flex-row sm:items-start gap-4"><img
-                                    src="{{ soundcloud_image($campaign->music?->artwork_url) }}"
+                            <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+                                <img src="{{ soundcloud_image($campaign->music?->artwork_url) }}"
                                     alt="{{ $campaign->music?->title }}" class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
                                 <div class="flex-1">
                                     <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-3 mb-2">
@@ -107,7 +107,7 @@
                                 <div x-data="{ open: false }"
                                     class="relative text-left bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors flex justify-center">
                                     <button @click="open = !open"
-                                        class="p-2 hover:bg-slate-600 text-white px-3 aline-center py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-offset-2 bg-slate-700 dark:bg-gray-700 left-4">
+                                        class="p-2 hover:bg-slate-600 text-white px-3 aline-center py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-offset-2 bg-slate-700 dark:bg-gray-700 left-4">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                             class="lucide lucide-more-horizontal text-white w-5 h-5 text-gray-700 dark:text-gray-200"
                                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -296,7 +296,8 @@
                                     class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
                                     <div class="flex-shrink-0">
                                         <img class="h-14 w-14 rounded-xl object-cover shadow-md"
-                                            src="{{ $track->artwork_url }}" alt="{{ $track->title }}" />
+                                            src="{{ soundcloud_image($track->artwork_url) }}"
+                                            alt="{{ $track->title }}" />
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p
@@ -310,8 +311,8 @@
                                             <span class="ml-2 text-xs text-gray-400">{{ $track->genre }}</span>
                                         </p>
                                         <span
-                                            class="inline-block bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono"><x-lucide-music
-                                                class="w-4 h-4" /> {{ $track->playback_count }}</span>
+                                            class="bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono flex items-start justify-center w-fit gap-3">
+                                            <x-lucide-audio-lines class="w-4 h-4" /> {{ $track->playback_count }}</span>
                                     </div>
                                     <div class="flex-shrink-0">
                                         <x-lucide-chevron-right
@@ -340,7 +341,8 @@
                                     class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
                                     <div class="flex-shrink-0">
                                         <img class="h-14 w-14 rounded-xl object-cover shadow-md"
-                                            src="{{ $playlist->artwork_url }}" alt="{{ $playlist->title }}" />
+                                            src="{{ soundcloud_image($playlist->artwork_url) }}"
+                                            alt="{{ $playlist->title }}" />
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p
@@ -469,7 +471,7 @@
                                             class="flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 p-4 transition-all duration-200 border-b border-gray-100 dark:border-gray-700 last:border-b-0 @if ($musicId == $track['id']) bg-orange-50 dark:bg-orange-900/30 border-l-4 border-l-orange-500 @endif">
                                             <div class="flex-shrink-0">
                                                 <img class="h-12 w-12 rounded-lg object-cover shadow-sm"
-                                                    src="{{ $track['artwork_url'] ?? asset('frontend/user/image/music-notes.jpg') }}"
+                                                    src="{{ soundcloud_image($track['artwork_url']) }}"
                                                     alt="{{ $track['title'] }}"
                                                     onerror="this.src='{{ asset('frontend/user/image/music-notes.jpg') }}'" />
                                             </div>
@@ -1106,9 +1108,9 @@
 
                 <div class="p-6 text-center max-h-[80vh] overflow-y-auto">
                     <div class="flex flex-col md:flex-row gap-6">
-                        <div class="w-full md:w-1/3 max-w-52 rounded-xl shadow-lg overflow-hidden">
+                        <div class="w-full md:w-1/3 max-w-44 rounded-xl shadow-lg overflow-hidden">
                             <img class="w-full h-full object-cover"
-                                src="{{ storage_url($campaign->music?->artwork_url) }}">
+                                src="{{ soundcloud_image($campaign->music?->artwork_url) }}">
                         </div>
 
                         <div class="flex-1">
@@ -1136,33 +1138,33 @@
 
                     <!-- Campaign Stats -->
                     <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                        <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
+                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
                             <h4 class="text-gray-600 dark:text-gray-400 text-sm">Target Reposts</h4>
                             <p class="text-xl font-bold text-black dark:text-white">{{ $campaign->target_reposts }}
                             </p>
                         </div>
-                        <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
+                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
                             <h4 class="text-gray-600 dark:text-gray-400 text-sm">Completed Reposts</h4>
                             <p class="text-xl font-bold text-black dark:text-white">
                                 {{ $campaign->completed_reposts }}
                             </p>
                         </div>
-                        <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
+                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
                             <h4 class="text-gray-600 dark:text-gray-400 text-sm">Playback Count</h4>
                             <p class="text-xl font-bold text-black dark:text-white">{{ $campaign->playback_count }}
                             </p>
                         </div>
-                        <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
+                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
                             <h4 class="text-gray-600 dark:text-gray-400 text-sm">Budget</h4>
                             <p class="text-xl font-bold text-black dark:text-white">
                                 {{ number_format($campaign->budget) }}</p>
                         </div>
-                        <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
+                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
                             <h4 class="text-gray-600 dark:text-gray-400 text-sm">Credits Spent</h4>
                             <p class="text-xl font-bold text-black dark:text-white">
                                 {{ number_format($campaign->credits_spent) }}</p>
                         </div>
-                        <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
+                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
                             <h4 class="text-gray-600 dark:text-gray-400 text-sm">Cost Per Repost</h4>
                             <p class="text-xl font-bold text-black dark:text-white">
                                 {{ number_format($campaign->cost_per_repost) }}</p>
@@ -1170,7 +1172,7 @@
                     </div>
 
                     <!-- Campaign Info -->
-                    <div class="mt-10 bg-gray-100 dark:bg-slate-800 p-6 rounded-xl shadow">
+                    <div class="mt-10 bg-gray-100 dark:bg-slate-700 p-6 rounded-xl shadow">
                         <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Campaign Settings</h3>
                         <div
                             class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-700 dark:text-gray-300">
