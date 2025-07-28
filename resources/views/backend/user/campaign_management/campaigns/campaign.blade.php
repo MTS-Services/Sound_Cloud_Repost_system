@@ -16,26 +16,26 @@
                 </div>
             </div>
 
-            <button
+            <a href="{{ route('user.cm.my-campaigns') }}" wire:navigate
                 class="bg-orange-600 text-white px-3 sm:px-5 py-2 mb-2 rounded hover:bg-orange-700 transition w-full sm:w-auto text-center">
                 Start a new campaign
-            </button>
+            </a>
         </div>
     </div>
 
     <div class="container mx-auto px-4 py-6">
         <!-- Flash Messages -->
-        {{-- @if (session()->has('success')) --}}
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-            {{ session('success') ?? '' }}
-        </div>
-        {{-- @endif --}}
-        {{--
-        @if (session()->has('error')) --}}
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {{ session('error') ?? '' }}
-        </div>
-        {{-- @endif --}}
+        @if (session()->has('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                {{ session('success') ?? '' }}
+            </div>
+        @endif
+
+        @if (session()->has('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {{ session('error') ?? '' }}
+            </div>
+        @endif
 
         <!-- Featured Campaign Section -->
         @if (count($featuredCampaigns) > 0)
