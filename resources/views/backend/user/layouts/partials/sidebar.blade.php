@@ -1,6 +1,6 @@
 <div x-show="sidebarOpen" @click.away="sidebarOpen = false" class="fixed z-30 lg:hidden" x-cloak></div>
 <div :class="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }"
-    class="fixed left-0 lg:top-22 top-17 w-64 lg:w-[15%]  h-[92vh] lg:h-[calc(100vh-9vh)] bg-white dark:bg-slate-800 border-r border-gray-100 dark:border-slate-700 flex flex-col z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0">
+    class="fixed left-0 lg:top-20 top-17 w-64 lg:w-[15%]  h-[92vh] lg:h-[calc(100vh-9vh)] bg-white dark:bg-slate-800 border-r border-gray-100 dark:border-slate-700 flex flex-col z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0">
 
     <!-- Profile Section -->
     <div class="p-3 md:p-4 border-b border-gray-100 dark:border-slate-700">
@@ -30,7 +30,7 @@
             <li>
                 <a href="{{ route('user.dashboard') }}" wire:navigate
                     class="sidebar-item flex items-center px-2 py-1.5 md:px-3 md:py-2.5 rounded-lg transition-colors text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'dashboard') active @endif">
-                    <i data-lucide="home" class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3"></i>
+                    <x-heroicon-o-home class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" />
                     <span class="text-xs md:text-sm">{{ __('Home') }}</span>
                 </a>
             </li>
@@ -58,7 +58,7 @@
                 <a href="{{ route('user.mm.members.index') }}" wire:navigate
                     class="sidebar-item flex items-center px-2 py-1.5 md:px-3 md:py-2.5 rounded-lg transition-colors
                     text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'members') active @endif">
-                    <i data-lucide="users" class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3"></i>
+                    <x-lucide-users class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3"/>
                     <span class="text-xs md:text-sm">{{ __('Members') }}</span>
                 </a>
             </li>
@@ -66,7 +66,7 @@
                 <a href="{{ route('user.mm.members.request') }}" wire:navigate
                     class="sidebar-item flex items-center px-2 py-1.5 md:px-3 md:py-2.5 rounded-lg transition-colors
                     text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'request') active @endif">
-                    <i data-lucide="users" class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3"></i>
+                    <x-heroicon-o-user-plus class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3"/>
                     <span class="text-xs md:text-sm">{{ __('Requests') }}</span>
                 </a>
             </li>
