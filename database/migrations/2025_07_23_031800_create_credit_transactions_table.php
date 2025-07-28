@@ -40,7 +40,7 @@ return new class extends Migration {
                 'succeeded',
                 'canceled'
             ])->default('processing');
-            $table->decimal('amount', 15, 2);
+            $table->decimal('amount', 15, 2)->index();
             $table->decimal('credits', 15, 2);
 
             $table->text('description')->nullable();
