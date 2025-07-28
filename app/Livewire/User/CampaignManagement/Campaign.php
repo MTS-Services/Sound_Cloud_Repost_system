@@ -177,7 +177,8 @@ class Campaign extends Component
             !in_array($campaignId, $this->repostedCampaigns);
 
         if ($canRepost) {
-            dd("Campaign {$campaignId} can be repost now.");
+            $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
+            $campaign->increment('playback_count');
         }
         return $canRepost;
     }
