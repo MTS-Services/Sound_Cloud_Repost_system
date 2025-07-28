@@ -304,7 +304,7 @@ class Campaign extends Component
 
                     $trackOwnerUrn = $campaign->music->user?->urn ?? $campaign->user_urn;
                     $trackOwnerName = $campaign->music->user?->name;
-                    $creditsPerRepost = $campaign->credits_per_repost;
+                    $creditsPerRepost = $campaign->cost_per_repost;
 
                     // Create the Repost record
                     $repost = Repost::create([
@@ -318,7 +318,7 @@ class Campaign extends Component
 
                     // Update the Campaign record using atomic increments
                     $campaign->increment('completed_reposts');
-                    $campaign->increment('credits_spent', $creditsPerRepost);
+                    $campaign->increment('credits_spent', (int) $creditsPerRepost);
 
                     // Create the CreditTransaction record
                     CreditTransaction::create([
