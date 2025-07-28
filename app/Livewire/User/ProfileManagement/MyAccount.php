@@ -2,10 +2,9 @@
 
 namespace App\Livewire\User\ProfileManagement;
 
-use App\Models\Credit;
-use App\Models\CreditTransaction;
-use App\Models\Track;
+use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Models\User;
+use App\Services\Admin\UserManagement\UserService;
 use Livewire\Component;
 
 class MyAccount extends Component
@@ -13,42 +12,43 @@ class MyAccount extends Component
     public $user;
     public $tracks;
     public $transactions;
+    public $activeTab = 'insights';
 
-    public $activeTab = 'insights';  // Set default active tab
+    protected $creditTransactionService;
+    protected $userService;
 
-    public function setActiveTab($tab)
+
+    public function setActiveTab(string $tab): void
     {
-
         $this->activeTab = $tab;
     }
 
-
-    public function getTracks()
+    public function getTracks(): void
     {
-
-        try {
-            $this->tracks = Track::where('user_urn', user()->urn)->get();
-        } catch (\Exception $e) {
-            $this->tracks = collect();
-            session()->flash('error', 'Failed to load tracks: ' . $e->getMessage());
-        }
+        $this->tracks = $this->creditTransactionService->getUserTracks();
     }
 
-    public function getTransactions()
+    public function getTransactions(): void
     {
-       try {
-            $this->transactions = CreditTransaction::all();
-        } catch (\Exception $e) {
-            $this->transactions = collect();
-            session()->flash('error', 'Failed to load transactions: ' . $e->getMessage());
-        }
+        $this->transactions = $this->creditTransactionService->getUserTransactions();
     }
-    public function mount()
+
+    public function getMyUser()
     {
+        $this->user = $this->userService->getMyAccountUser();
+    }
+
+    public function mount(CreditTransactionService $creditTransactionService, UserService $userService): void
+    {
+        $this->userService = $userService;
+        $this->creditTransactionService = $creditTransactionService;
+        $this->getMyUser();
         $this->getTracks();
         $this->getTransactions();
-        $this->user = User::where('urn', user()->urn)->with('userInfo')->first();
+        // $this->user = User::where('urn', user()->urn)->with('userInfo')->first();
+
     }
+
     public function render()
     {
         return view('backend.user.profile-management.my-account');

@@ -528,7 +528,7 @@
                                                 class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white text-xs sm:text-sm">
                                                 <tr>
                                                     <th class="w-10 px-2 py-3">ID</th>
-                                                    <th class="w-28 px-2 py-3">Name</th>
+                                                    <th class="w-28 px-2 py-3">Reciver</th>
                                                     <th class="w-20 px-2 py-3">Amount</th>
                                                     <th class="w-20 px-2 py-3">Credit</th>
                                                     <th class="w-24 px-2 py-3">Type</th>
@@ -542,7 +542,7 @@
                                             <tbody class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
                                                 <tr class="border-b border-gray-200 dark:border-gray-700">
                                                     <td class="px-2 py-2">{{ $transaction->id}}</td>
-                                                    <td class="px-2 py-2">{{ $transaction->name}}</td>
+                                                    <td class="px-2 py-2">{{ $transaction->receiver_urn}}</td>
                                                     <td class="px-2 py-2">{{ $transaction->amount}}</td>
                                                     <td class="px-2 py-2">{{ $transaction->credits}}</td>
                                                     <td class="px-2 py-2">{{ $transaction->transaction_type}}</td>
