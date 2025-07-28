@@ -34,9 +34,9 @@
             <nav class="hidden lg:flex items-center space-x-2 md:space-x-4 text-sm">
                 <a class="text-orange-500 hover:text-orange-400 font-medium" href="/upgrade"wire:navigate
                     data-discover="true">Upgrade My Plan</a>
-                <a class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50 "wire:navigate
+                <a href="{{route('page')}}" class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50 "wire:navigate
                     href="/charts" data-discover="true">Charts</a>
-                <a class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"wire:navigate
+                <a href="{{route('page')}}" class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"wire:navigate
                     href="/blog" data-discover="true">Blog</a>
                 <button
                     class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50 flex items-center space-x-1" >
