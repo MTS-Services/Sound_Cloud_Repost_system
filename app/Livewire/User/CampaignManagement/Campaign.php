@@ -316,7 +316,7 @@ class Campaign extends Component
 
                     // Create the Repost record
                     $repost = Repost::create([
-                        'credits_earned' => $creditsPerRepost,
+                        'credits_earned' => (float) $creditsPerRepost,
                         'reposter_urn' => $currentUserUrn,
                         'track_owner_urn' => $trackOwnerUrn,
                         'campaign_id' => $campaign->id,
@@ -360,7 +360,7 @@ class Campaign extends Component
 
 
             }
-            
+
         } catch (Throwable $e) {
             Log::error("Error in repost method: " . $e->getMessage(), [
                 'exception' => $e,
