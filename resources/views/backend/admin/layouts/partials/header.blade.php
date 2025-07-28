@@ -22,7 +22,7 @@
             <!-- Header Actions -->
             <div class="flex items-center gap-3">
                 <!-- Search -->
-                <x-admin.search-form placeholder="Search here..." />
+                {{-- <x-admin.search-form placeholder="Search here..." /> --}}
 
                 {{-- <!-- Theme Toggle --> --}}
                 <!-- Theme Toggle Button (Only Light/Dark) -->
