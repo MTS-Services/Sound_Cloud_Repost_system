@@ -18,7 +18,7 @@
             </div>
             <button wire:click="toggleCampaignsModal" x-on:click="showCampaignsModal = true"
                 class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 rounded-xl flex items-center gap-3 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                <i data-lucide="plus" class="w-5 h-5"></i>
+                <x-lucide-plus class="w-5 h-5" />
                 {{ __('New Campaign') }}
             </button>
         </div>
@@ -49,191 +49,191 @@
         <div class="space-y-6" id="campaigns-list">
 
             @forelse ($campaigns as $campaign)
-            <div class=" rounded-lg border border-orange-600 overflow-hidden">
-                <div class="p-6 sm:p-8">
-                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                        <div class="flex flex-col sm:flex-row sm:items-start gap-4"><img
-                                src="{{ soundcloud_image($campaign->music?->artwork_url) }}"
-                                alt="{{ $campaign->music?->title }}" class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
-                            <div class="flex-1">
-                                <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-3 mb-2">
-                                    <h3
-                                        class=" text-black dark:text-gray-100 font-semibold text-lg text-center sm:text-left">
-                                        {{ $campaign->title }}
-                                    </h3>
-                                    <span
-                                        class="badge badge-soft {{ $campaign->status_color }} rounded-full">{{ $campaign->status_label }}</span>
-                                </div>
-                                <div
-                                    class="flex flex-col sm:flex-row sm:items-center sm:space-x-6 text-sm text-slate-400 mb-4 space-y-2 sm:space-y-0">
-                                    <div class="flex items-center space-x-1 justify-center sm:justify-start">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-calendar w-4 h-4">
-                                            <path d="M8 2v4"></path>
-                                            <path d="M16 2v4"></path>
-                                            <rect width="18" height="18" x="3" y="4" rx="2">
-                                            </rect>
-                                            <path d="M3 10h18"></path>
-                                        </svg><span>{{ __('Created') }}
-                                            {{ $campaign->start_date_formatted }}</span>
+                <div class=" rounded-lg border border-orange-600 overflow-hidden">
+                    <div class="p-6 sm:p-8">
+                        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                            <div class="flex flex-col sm:flex-row sm:items-start gap-4"><img
+                                    src="{{ soundcloud_image($campaign->music?->artwork_url) }}"
+                                    alt="{{ $campaign->music?->title }}" class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
+                                <div class="flex-1">
+                                    <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-3 mb-2">
+                                        <h3
+                                            class=" text-black dark:text-gray-100 font-semibold text-lg text-center sm:text-left">
+                                            {{ $campaign->title }}
+                                        </h3>
+                                        <span
+                                            class="badge badge-soft {{ $campaign->status_color }} rounded-full">{{ $campaign->status_label }}</span>
                                     </div>
-                                    <div class="flex items-center space-x-1 justify-center sm:justify-start">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-clock w-4 h-4">
-                                            <circle cx="12" cy="12" r="10"></circle>
-                                            <polyline points="12 6 12 12 16 14"></polyline>
-                                        </svg><span>{{ __('Expires') }} {{ $campaign->end_date_formatted }}</span>
+                                    <div
+                                        class="flex flex-col sm:flex-row sm:items-center sm:space-x-6 text-sm text-slate-400 mb-4 space-y-2 sm:space-y-0">
+                                        <div class="flex items-center space-x-1 justify-center sm:justify-start">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-calendar w-4 h-4">
+                                                <path d="M8 2v4"></path>
+                                                <path d="M16 2v4"></path>
+                                                <rect width="18" height="18" x="3" y="4" rx="2">
+                                                </rect>
+                                                <path d="M3 10h18"></path>
+                                            </svg><span>{{ __('Created') }}
+                                                {{ $campaign->start_date_formatted }}</span>
+                                        </div>
+                                        <div class="flex items-center space-x-1 justify-center sm:justify-start">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-clock w-4 h-4">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <polyline points="12 6 12 12 16 14"></polyline>
+                                            </svg><span>{{ __('Expires') }} {{ $campaign->end_date_formatted }}</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="mb-4">
-                                    <div class="flex items-center justify-between text-sm mb-2"><span
-                                            class="text-slate-400">{{ __('Budget used:') }}
-                                            {{ $campaign->credits_spent }} /
-                                            {{ $campaign->budget_credits }}
-                                            {{ __('credits') }}</span><span class="text-orange-500 font-medium">
-                                            {{ $campaign->budget_credits > 0 ? number_format(($campaign->credits_spent / $campaign->budget_credits) * 100, 2) : 0 }}%</span>
-                                    </div>
-                                    <div class="w-full bg-orange-600/20 rounded-full h-2">
-                                        <div class="bg-gradient-to-r from-orange-500 to-orange-600 h-2 rounded-full transition-all duration-300"
-                                            style="width: {{ $campaign->budget_credits > 0 ? ($campaign->credits_spent / $campaign->budget_credits) * 100 : 0 }}%;">
+                                    <div class="mb-4">
+                                        <div class="flex items-center justify-between text-sm mb-2"><span
+                                                class="text-slate-400">{{ __('Budget used:') }}
+                                                {{ $campaign->credits_spent }} /
+                                                {{ $campaign->budget_credits }}
+                                                {{ __('credits') }}</span><span class="text-orange-500 font-medium">
+                                                {{ $campaign->budget_credits > 0 ? number_format(($campaign->credits_spent / $campaign->budget_credits) * 100, 2) : 0 }}%</span>
+                                        </div>
+                                        <div class="w-full bg-orange-600/20 rounded-full h-2">
+                                            <div class="bg-gradient-to-r from-orange-500 to-orange-600 h-2 rounded-full transition-all duration-300"
+                                                style="width: {{ $campaign->budget_credits > 0 ? ($campaign->credits_spent / $campaign->budget_credits) * 100 : 0 }}%;">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="flex flex-col lg:flex-column sm:items-center sm:space-x-2 gap-2">
+                            <div class="flex flex-col lg:flex-column sm:items-center sm:space-x-2 gap-2">
 
-                            {{-- NEW FUNCTIONALITY: Add Credits Button --}}
-                            <button wire:click="openAddCreditModal({{ $campaign->id }})"
-                                class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                                {{ __('Add Credits') }}
-                            </button>
-                            {{-- END NEW FUNCTIONALITY --}}
+                                {{-- NEW FUNCTIONALITY: Add Credits Button --}}
+                                <button wire:click="openAddCreditModal({{ $campaign->id }})"
+                                    class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                    {{ __('Add Credits') }}
+                                </button>
+                                {{-- END NEW FUNCTIONALITY --}}
 
-                            <div x-data="{ open: false }"
-                                class="relative text-left bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors flex justify-center">
-                                <button @click="open = !open"
-                                    class="p-2 hover:bg-slate-600 text-white px-3 aline-center py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-offset-2 bg-slate-700 dark:bg-gray-700 left-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="lucide lucide-more-horizontal text-white w-5 h-5 text-gray-700 dark:text-gray-200"
-                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <circle cx="12" cy="12" r="1"></circle>
-                                        <circle cx="19" cy="12" r="1"></circle>
-                                        <circle cx="5" cy="12" r="1"></circle>
-                                    </svg>
+                                <div x-data="{ open: false }"
+                                    class="relative text-left bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors flex justify-center">
+                                    <button @click="open = !open"
+                                        class="p-2 hover:bg-slate-600 text-white px-3 aline-center py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-offset-2 bg-slate-700 dark:bg-gray-700 left-4">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            class="lucide lucide-more-horizontal text-white w-5 h-5 text-gray-700 dark:text-gray-200"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <circle cx="12" cy="12" r="1"></circle>
+                                            <circle cx="19" cy="12" r="1"></circle>
+                                            <circle cx="5" cy="12" r="1"></circle>
+                                        </svg>
+                                    </button>
+
+                                    <div x-show="open" @click.outside="open = false" x-transition x-cloak
+                                        class="absolute right-11 mt-5 w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
+                                        <ul class="p-0 text-sm text-gray-700 dark:text-gray-200">
+                                            <li>
+                                                <a href="#"
+                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Details') }}</a>
+                                            </li>
+                                            {{-- NEW FUNCTIONALITY: Edit Button --}}
+                                            <li>
+                                                <a href="#"
+                                                    wire:click="openEditCampaignModal({{ $campaign->id }})"
+                                                    @click="open = false"
+                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Edit') }}</a>
+                                            </li>
+                                            {{-- END NEW FUNCTIONALITY --}}
+                                            <li>
+                                                <a href="#"
+                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Duplicate') }}</a>
+                                            </li>
+                                            {{-- NEW FUNCTIONALITY: Delete Button --}}
+                                            <li>
+                                                <a href="#"
+                                                    wire:click="openDeleteWarningModal({{ $campaign->id }})"
+                                                    @click="open = false"
+                                                    class="block px-4 py-2 text-red-600 hover:bg-red-100  dark:hover:bg-gray-700">{{ __('Delete') }}</a>
+                                            </li>
+                                            {{-- END NEW FUNCTIONALITY --}}
+                                        </ul>
+                                    </div>
+
+                                </div>
+                                <button
+                                    class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="lucide lucide-eye w-4 h-4">
+                                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg><span>{{ __('View Details') }}</span>
                                 </button>
 
-                                <div x-show="open" @click.outside="open = false" x-transition x-cloak
-                                    class="absolute right-11 mt-5 w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
-                                    <ul class="p-0 text-sm text-gray-700 dark:text-gray-200">
-                                        <li>
-                                            <a href="#"
-                                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Details') }}</a>
-                                        </li>
-                                        {{-- NEW FUNCTIONALITY: Edit Button --}}
-                                        <li>
-                                            <a href="#"
-                                                wire:click="openEditCampaignModal({{ $campaign->id }})"
-                                                @click="open = false"
-                                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Edit') }}</a>
-                                        </li>
-                                        {{-- END NEW FUNCTIONALITY --}}
-                                        <li>
-                                            <a href="#"
-                                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Duplicate') }}</a>
-                                        </li>
-                                        {{-- NEW FUNCTIONALITY: Delete Button --}}
-                                        <li>
-                                            <a href="#"
-                                                wire:click="openDeleteWarningModal({{ $campaign->id }})"
-                                                @click="open = false"
-                                                class="block px-4 py-2 text-red-600 hover:bg-red-100  dark:hover:bg-gray-700">{{ __('Delete') }}</a>
-                                        </li>
-                                        {{-- END NEW FUNCTIONALITY --}}
-                                    </ul>
+                            </div>
+                        </div>
+                        <div class="divider bg-orange-600/30 h-auto"></div>
+                        <div class="grid grid-cols-3 gap-6">
+                            <div class="text-center">
+                                <div class="flex items-center justify-center mb-2"><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="lucide  lucide-trending-up w-5 h-5 text-orange-500 mr-2">
+                                        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                                        <polyline points="16 7 22 7 22 13"></polyline>
+                                    </svg><span
+                                        class="text-2xl font-bold   text-black dark:text-gray-100">{{ $campaign->completed_reposts ?? 0 }}</span>
                                 </div>
-
+                                <p class="text-slate-400 text-sm">{{ __('Reposts') }}</p>
                             </div>
-                            <button
-                                class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"><svg
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-eye w-4 h-4">
-                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-                                    <circle cx="12" cy="12" r="3"></circle>
-                                </svg><span>{{ __('View Details') }}</span>
-                            </button>
-
-                        </div>
-                    </div>
-                    <div class="divider bg-orange-600/30 h-auto"></div>
-                    <div class="grid grid-cols-3 gap-6">
-                        <div class="text-center">
-                            <div class="flex items-center justify-center mb-2"><svg
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide  lucide-trending-up w-5 h-5 text-orange-500 mr-2">
-                                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
-                                    <polyline points="16 7 22 7 22 13"></polyline>
-                                </svg><span
-                                    class="text-2xl font-bold   text-black dark:text-gray-100">{{ $campaign->completed_reposts ?? 0 }}</span>
+                            <div class="text-center">
+                                <div class="flex items-center justify-center mb-2"><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="lucide lucide-eye w-5 h-5 text-blue-500 mr-2">
+                                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg><span
+                                        class="text-2xl font-bold text-black dark:text-gray-100">{{ $campaign->playback_count ?? 0 }}</span>
+                                </div>
+                                <p class="text-slate-400 text-sm">{{ __('Plays') }}</p>
                             </div>
-                            <p class="text-slate-400 text-sm">{{ __('Reposts') }}</p>
-                        </div>
-                        <div class="text-center">
-                            <div class="flex items-center justify-center mb-2"><svg
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-eye w-5 h-5 text-blue-500 mr-2">
-                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-                                    <circle cx="12" cy="12" r="3"></circle>
-                                </svg><span
-                                    class="text-2xl font-bold text-black dark:text-gray-100">{{ $campaign->playback_count ?? 0 }}</span>
+                            <div class="text-center">
+                                <div class="flex items-center justify-center mb-2"><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="lucide lucide-trending-up w-5 h-5 text-green-500 mr-2">
+                                        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                                        <polyline points="16 7 22 7 22 13"></polyline>
+                                    </svg><span
+                                        class="text-2xl font-bold text-black dark:text-gray-100">{{ $campaign->music?->likes_count ?? 0 }}</span>
+                                </div>
+                                <p class="text-slate-400 text-sm">{{ __('Likes') }}</p>
                             </div>
-                            <p class="text-slate-400 text-sm">{{ __('Plays') }}</p>
-                        </div>
-                        <div class="text-center">
-                            <div class="flex items-center justify-center mb-2"><svg
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-trending-up w-5 h-5 text-green-500 mr-2">
-                                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
-                                    <polyline points="16 7 22 7 22 13"></polyline>
-                                </svg><span
-                                    class="text-2xl font-bold text-black dark:text-gray-100">{{ $campaign->music?->likes_count ?? 0 }}</span>
-                            </div>
-                            <p class="text-slate-400 text-sm">{{ __('Likes') }}</p>
                         </div>
                     </div>
                 </div>
-            </div>
             @empty
-            <div
-                class="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
                 <div
-                    class="w-20 h-20 bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/20 dark:to-orange-800/20 rounded-full flex items-center justify-center mb-6">
-                    <i data-lucide="megaphone" class="w-10 h-10 text-orange-600 dark:text-orange-400"></i>
+                    class="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
+                    <div
+                        class="w-20 h-20 bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/20 dark:to-orange-800/20 rounded-full flex items-center justify-center mb-6">
+                        <x-lucide-megaphone class="w-10 h-10 text-orange-600 dark:text-orange-400" />
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3">
+                        {{ __('No campaigns found') }}
+                    </h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
+                        {{ __("You haven't started any campaigns yet. Click the 'New Campaign' button to create your first one!") }}
+                    </p>
+                    <button wire:click="toggleCampaignsModal" x-on:click="showCampaignsModal = true"
+                        class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <x-lucide-plus class="w-5 h-5" />
+                        {{ __('Create Your First Campaign') }}
+                    </button>
                 </div>
-                <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3">
-                    {{ __('No campaigns found') }}
-                </h3>
-                <p class="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
-                    {{ __("You haven't started any campaigns yet. Click the 'New Campaign' button to create your first one!") }}
-                </p>
-                <button wire:click="toggleCampaignsModal" x-on:click="showCampaignsModal = true"
-                    class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all duration-300 shadow-lg hover:shadow-xl">
-                    <i data-lucide="plus" class="w-5 h-5"></i>
-                    {{ __('Create Your First Campaign') }}
-                </button>
-            </div>
             @endforelse
         </div>
     </div>
@@ -254,7 +254,7 @@
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                        <i data-lucide="music" class="w-5 h-5 text-white"></i>
+                        <x-lucide-music class="w-5 h-5 text-white" />
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                         {{ __('Choose a track or playlist') }}
@@ -262,112 +262,112 @@
                 </div>
                 <button x-on:click="showCampaignsModal = false"
                     class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    <x-lucide-x class="w-5 h-5" />
                 </button>
             </div>
 
             @if ($showCampaignsModal)
-            <div class="flex border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-                <button wire:click="selectModalTab('tracks')"
-                    class="flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeModalTab === 'tracks' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
-                    <div class="flex items-center justify-center gap-2">
-                        <i data-lucide="music" class="w-4 h-4"></i>
-                        {{ __('Tracks') }}
-                    </div>
-                </button>
-                <button wire:click="selectModalTab('playlists')"
-                    class="flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeModalTab === 'playlists' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
-                    <div class="flex items-center justify-center gap-2">
-                        <i data-lucide="list-music" class="w-4 h-4"></i>
-                        {{ __('Playlists') }}
-                    </div>
-                </button>
-            </div>
+                <div class="flex border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                    <button wire:click="selectModalTab('tracks')"
+                        class="flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeModalTab === 'tracks' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
+                        <div class="flex items-center justify-center gap-2">
+                            <x-lucide-music class="w-4 h-4" />
+                            {{ __('Tracks') }}
+                        </div>
+                    </button>
+                    <button wire:click="selectModalTab('playlists')"
+                        class="flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeModalTab === 'playlists' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
+                        <div class="flex items-center justify-center gap-2">
+                            <x-lucide-list-music class="w-4 h-4" />
+                            {{ __('Playlists') }}
+                        </div>
+                    </button>
+                </div>
 
-            <div class="flex-grow overflow-y-auto p-6">
-                @if ($activeModalTab === 'tracks')
-                <div class="space-y-3">
-                    @forelse ($tracks as $track)
-                    <div wire:click="toggleSubmitModal('track', {{ $track->id }})"
-                        class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
-                        <div class="flex-shrink-0">
-                            <img class="h-14 w-14 rounded-xl object-cover shadow-md"
-                                src="{{ $track->artwork_url }}" alt="{{ $track->title }}" />
+                <div class="flex-grow overflow-y-auto p-6">
+                    @if ($activeModalTab === 'tracks')
+                        <div class="space-y-3">
+                            @forelse ($tracks as $track)
+                                <div wire:click="toggleSubmitModal('track', {{ $track->id }})"
+                                    class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
+                                    <div class="flex-shrink-0">
+                                        <img class="h-14 w-14 rounded-xl object-cover shadow-md"
+                                            src="{{ $track->artwork_url }}" alt="{{ $track->title }}" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p
+                                            class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                            {{ $track->title }}
+                                        </p>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                            {{ __('by') }}
+                                            <strong
+                                                class="text-orange-600 dark:text-orange-400">{{ $track->author_username }}</strong>
+                                            <span class="ml-2 text-xs text-gray-400">{{ $track->genre }}</span>
+                                        </p>
+                                        <span
+                                            class="inline-block bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono">{{ $track->isrc }}</span>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                        <x-lucide-chevron-right
+                                            class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors" />
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center py-16 text-gray-500 dark:text-gray-400">
+                                    <div
+                                        class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <x-lucide-music class="w-8 h-8 text-orange-500" />
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                        {{ __('No tracks found') }}
+                                    </h3>
+                                    <p class="text-gray-500 dark:text-gray-400">
+                                        {{ __('Try uploading one first to get started.') }}
+                                    </p>
+                                </div>
+                            @endforelse
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <p
-                                class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                                {{ $track->title }}
-                            </p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                {{ __('by') }}
-                                <strong
-                                    class="text-orange-600 dark:text-orange-400">{{ $track->author_username }}</strong>
-                                <span class="ml-2 text-xs text-gray-400">{{ $track->genre }}</span>
-                            </p>
-                            <span
-                                class="inline-block bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono">{{ $track->isrc }}</span>
+                    @elseif($activeModalTab === 'playlists')
+                        <div class="space-y-3">
+                            @forelse ($playlists as $playlist)
+                                <div wire:click="toggleSubmitModal('playlist', {{ $playlist->id }})"
+                                    class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
+                                    <div class="flex-shrink-0">
+                                        <img class="h-14 w-14 rounded-xl object-cover shadow-md"
+                                            src="{{ $playlist->artwork_url }}" alt="{{ $playlist->title }}" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p
+                                            class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                            {{ $playlist->title }}
+                                        </p>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                            {{ $playlist->track_count }} {{ __('tracks') }}
+                                        </p>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                        <x-lucide-chevron-right
+                                            class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors" />
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center py-16 text-gray-500 dark:text-gray-400">
+                                    <div
+                                        class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <x-lucide-list-music class="w-8 h-8 text-orange-500" />
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                        {{ __('No playlists found') }}
+                                    </h3>
+                                    <p class="text-gray-500 dark:text-gray-400">
+                                        {{ __('Add one to get started with campaigns.') }}
+                                    </p>
+                                </div>
+                            @endforelse
                         </div>
-                        <div class="flex-shrink-0">
-                            <i data-lucide="chevron-right"
-                                class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
-                        </div>
-                    </div>
-                    @empty
-                    <div class="text-center py-16 text-gray-500 dark:text-gray-400">
-                        <div
-                            class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i data-lucide="music" class="w-8 h-8 text-orange-500"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            {{ __('No tracks found') }}
-                        </h3>
-                        <p class="text-gray-500 dark:text-gray-400">
-                            {{ __('Try uploading one first to get started.') }}
-                        </p>
-                    </div>
-                    @endforelse
+                    @endif
                 </div>
-                @elseif($activeModalTab === 'playlists')
-                <div class="space-y-3">
-                    @forelse ($playlists as $playlist)
-                    <div wire:click="toggleSubmitModal('playlist', {{ $playlist->id }})"
-                        class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
-                        <div class="flex-shrink-0">
-                            <img class="h-14 w-14 rounded-xl object-cover shadow-md"
-                                src="{{ $playlist->artwork_url }}" alt="{{ $playlist->title }}" />
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p
-                                class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                                {{ $playlist->title }}
-                            </p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                {{ $playlist->track_count }} {{ __('tracks') }}
-                            </p>
-                        </div>
-                        <div class="flex-shrink-0">
-                            <i data-lucide="chevron-right"
-                                class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
-                        </div>
-                    </div>
-                    @empty
-                    <div class="text-center py-16 text-gray-500 dark:text-gray-400">
-                        <div
-                            class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i data-lucide="list-music" class="w-8 h-8 text-orange-500"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            {{ __('No playlists found') }}
-                        </h3>
-                        <p class="text-gray-500 dark:text-gray-400">
-                            {{ __('Add one to get started with campaigns.') }}
-                        </p>
-                    </div>
-                    @endforelse
-                </div>
-                @endif
-            </div>
             @endif
         </div>
     </div>
@@ -395,7 +395,7 @@
                 </div>
                 <button x-on:click="showLowCreditWarningModal = false"
                     class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    <x-lucide-x class="w-5 h-5" />
                 </button>
             </div>
 
@@ -442,7 +442,7 @@
                 </div>
                 <button x-on:click="showSubmitModal = false"
                     class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    <x-lucide-x class="w-5 h-5" />
                 </button>
             </div>
 
@@ -450,64 +450,64 @@
                 <form wire:submit.prevent="submitCampaign" class="space-y-6">
 
                     @if ($activeModalTab === 'playlists')
-                    <div
-                        class="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                        <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                            <i data-lucide="list-music" class="w-5 h-5 text-orange-500"></i>
-                            {{ __('Select a track from your playlist') }}
-                        </h4>
                         <div
-                            class="max-h-60 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800">
-                            @forelse ($playlistTracks as $track)
-                            @if (is_array($track) &&
-                            isset($track['id']) &&
-                            isset($track['title']) &&
-                            isset($track['user']) &&
-                            is_array($track['user']) &&
-                            isset($track['user']['username']))
-                            <div wire:click="$set('musicId', '{{ $track['id'] }}')"
-                                class="flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 p-4 transition-all duration-200 border-b border-gray-100 dark:border-gray-700 last:border-b-0 @if ($musicId == $track['id']) bg-orange-50 dark:bg-orange-900/30 border-l-4 border-l-orange-500 @endif">
-                                <div class="flex-shrink-0">
-                                    <img class="h-12 w-12 rounded-lg object-cover shadow-sm"
-                                        src="{{ $track['artwork_url'] ?? asset('frontend/user/image/music-notes.jpg') }}"
-                                        alt="{{ $track['title'] }}"
-                                        onerror="this.src='{{ asset('frontend/user/image/music-notes.jpg') }}'" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p
-                                        class="text-sm font-semibold text-gray-900 dark:text-white truncate">
-                                        {{ $track['title'] }}
-                                    </p>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                        {{ __('by') }} <strong
-                                            class="text-orange-600 dark:text-orange-400">{{ $track['user']['username'] }}</strong>
-                                        @if (isset($track['genre']))
-                                        <span
-                                            class="ml-2 text-xs text-gray-400">{{ $track['genre'] }}</span>
-                                        @endif
-                                    </p>
-                                </div>
-                                @if ($musicId == $track['id'])
-                                <div class="flex-shrink-0">
-                                    <i data-lucide="check-circle" class="w-5 h-5 text-orange-500"></i>
-                                </div>
-                                @endif
+                            class="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                            <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                                <x-lucide-list-music class="w-5 h-5 text-orange-500" />
+                                {{ __('Select a track from your playlist') }}
+                            </h4>
+                            <div
+                                class="max-h-60 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800">
+                                @forelse ($playlistTracks as $track)
+                                    @if (is_array($track) &&
+                                            isset($track['id']) &&
+                                            isset($track['title']) &&
+                                            isset($track['user']) &&
+                                            is_array($track['user']) &&
+                                            isset($track['user']['username']))
+                                        <div wire:click="$set('musicId', '{{ $track['id'] }}')"
+                                            class="flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 p-4 transition-all duration-200 border-b border-gray-100 dark:border-gray-700 last:border-b-0 @if ($musicId == $track['id']) bg-orange-50 dark:bg-orange-900/30 border-l-4 border-l-orange-500 @endif">
+                                            <div class="flex-shrink-0">
+                                                <img class="h-12 w-12 rounded-lg object-cover shadow-sm"
+                                                    src="{{ $track['artwork_url'] ?? asset('frontend/user/image/music-notes.jpg') }}"
+                                                    alt="{{ $track['title'] }}"
+                                                    onerror="this.src='{{ asset('frontend/user/image/music-notes.jpg') }}'" />
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p
+                                                    class="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                                                    {{ $track['title'] }}
+                                                </p>
+                                                <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                                    {{ __('by') }} <strong
+                                                        class="text-orange-600 dark:text-orange-400">{{ $track['user']['username'] }}</strong>
+                                                    @if (isset($track['genre']))
+                                                        <span
+                                                            class="ml-2 text-xs text-gray-400">{{ $track['genre'] }}</span>
+                                                    @endif
+                                                </p>
+                                            </div>
+                                            @if ($musicId == $track['id'])
+                                                <div class="flex-shrink-0">
+                                                    <i data-lucide="check-circle" class="w-5 h-5 text-orange-500"></i>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endif
+                                @empty
+                                    <div class="text-center py-12 text-gray-500 dark:text-gray-400">
+                                        <i data-lucide="music-off" class="w-12 h-12 mx-auto mb-3 text-gray-400"></i>
+                                        <p class="font-medium">{{ __('No tracks found in this playlist.') }}</p>
+                                    </div>
+                                @endforelse
                             </div>
-                            @endif
-                            @empty
-                            <div class="text-center py-12 text-gray-500 dark:text-gray-400">
-                                <i data-lucide="music-off" class="w-12 h-12 mx-auto mb-3 text-gray-400"></i>
-                                <p class="font-medium">{{ __('No tracks found in this playlist.') }}</p>
-                            </div>
-                            @endforelse
+                            @error('musicId')
+                                <div class="mt-2 flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
+                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <span>{{ $message }}</span>
+                                </div>
+                            @enderror
                         </div>
-                        @error('musicId')
-                        <div class="mt-2 flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                            <i data-lucide="alert-circle" class="w-4 h-4"></i>
-                            <span>{{ $message }}</span>
-                        </div>
-                        @enderror
-                    </div>
                     @endif
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -521,10 +521,10 @@
                                 class="w-full rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200"
                                 placeholder="{{ __('Enter campaign name') }}">
                             @error('title')
-                            <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
-                                <span>{{ $message }}</span>
-                            </div>
+                                <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
+                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <span>{{ $message }}</span>
+                                </div>
                             @enderror
                         </div>
 
@@ -537,10 +537,10 @@
                             <input type="date" id="campaign_end_date" wire:model.live="endDate"
                                 class="w-full rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200">
                             @error('endDate')
-                            <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
-                                <span>{{ $message }}</span>
-                            </div>
+                                <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
+                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <span>{{ $message }}</span>
+                                </div>
                             @enderror
                         </div>
                     </div>
@@ -555,10 +555,10 @@
                             class="w-full rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 resize-none"
                             placeholder="{{ __('Describe your campaign goals and target audience...') }}"></textarea>
                         @error('description')
-                        <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                            <i data-lucide="alert-circle" class="w-4 h-4"></i>
-                            <span>{{ $message }}</span>
-                        </div>
+                            <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
+                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                <span>{{ $message }}</span>
+                            </div>
                         @enderror
                     </div>
 
@@ -574,10 +574,10 @@
                                 class="w-full rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200"
                                 placeholder="{{ __('Enter cost per repost') }}">
                             @error('costPerRepost')
-                            <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
-                                <span>{{ $message }}</span>
-                            </div>
+                                <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
+                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <span>{{ $message }}</span>
+                                </div>
                             @enderror
                         </div>
 
@@ -592,29 +592,29 @@
                                 class="w-full rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200"
                                 placeholder="{{ __('Enter target reposts') }}">
                             @error('targetReposts')
-                            <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
-                                <span>{{ $message }}</span>
-                            </div>
+                                <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
+                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <span>{{ $message }}</span>
+                                </div>
                             @enderror
                         </div>
                     </div>
 
                     @if ($costPerRepost && $targetReposts && $costPerRepost > 0 && $targetReposts > 0)
-                    <div
-                        class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
-                        <div class="flex items-center gap-3">
-                            <i data-lucide="calculator" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
-                            <div>
-                                <p class="text-sm font-semibold text-blue-900 dark:text-blue-100">
-                                    {{ __('Estimated campaign cost') }}
-                                </p>
-                                <p class="text-lg font-bold text-blue-600 dark:text-blue-400">
-                                    {{ number_format($costPerRepost * $targetReposts) }} {{ __('credits') }}
-                                </p>
+                        <div
+                            class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="calculator" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
+                                <div>
+                                    <p class="text-sm font-semibold text-blue-900 dark:text-blue-100">
+                                        {{ __('Estimated campaign cost') }}
+                                    </p>
+                                    <p class="text-lg font-bold text-blue-600 dark:text-blue-400">
+                                        {{ number_format($costPerRepost * $targetReposts) }} {{ __('credits') }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     @endif
 
                     <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
@@ -668,7 +668,7 @@
                 </div>
                 <button x-on:click="showAddCreditModal = false"
                     class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    <x-lucide-x class="w-5 h-5" />
                 </button>
             </div>
 
@@ -685,29 +685,29 @@
                             class="w-full rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200"
                             placeholder="{{ __('Enter new cost per repost') }}">
                         @error('addCreditCostPerRepost')
-                        <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                            <i data-lucide="alert-circle" class="w-4 h-4"></i>
-                            <span>{{ $message }}</span>
-                        </div>
+                            <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
+                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                <span>{{ $message }}</span>
+                            </div>
                         @enderror
                     </div>
 
                     @if ($addCreditCostPerRepost && $addCreditTargetReposts && $addCreditCostPerRepost > 0 && $addCreditTargetReposts > 0)
-                    <div
-                        class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
-                        <div class="flex items-center gap-3">
-                            <i data-lucide="calculator" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
-                            <div>
-                                <p class="text-sm font-semibold text-blue-900 dark:text-blue-100">
-                                    {{ __('Estimated New Total Campaign Budget') }}
-                                </p>
-                                <p class="text-lg font-bold text-blue-600 dark:text-blue-400">
-                                    {{ number_format($addCreditCostPerRepost * $addCreditTargetReposts) }}
-                                    {{ __('credits') }}
-                                </p>
+                        <div
+                            class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="calculator" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
+                                <div>
+                                    <p class="text-sm font-semibold text-blue-900 dark:text-blue-100">
+                                        {{ __('Estimated New Total Campaign Budget') }}
+                                    </p>
+                                    <p class="text-lg font-bold text-blue-600 dark:text-blue-400">
+                                        {{ number_format($addCreditCostPerRepost * $addCreditTargetReposts) }}
+                                        {{ __('credits') }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     @endif
 
                     <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
@@ -760,7 +760,7 @@
                 </div>
                 <button x-on:click="showEditCampaignModal = false"
                     class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    <x-lucide-x class="w-5 h-5" />
                 </button>
             </div>
 
@@ -778,10 +778,10 @@
                                 class="w-full rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200"
                                 placeholder="{{ __('Enter campaign name') }}">
                             @error('editTitle')
-                            <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
-                                <span>{{ $message }}</span>
-                            </div>
+                                <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
+                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <span>{{ $message }}</span>
+                                </div>
                             @enderror
                         </div>
 
@@ -794,10 +794,10 @@
                             <input type="date" id="edit_campaign_end_date" wire:model.live="editEndDate"
                                 class="w-full rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200">
                             @error('editEndDate')
-                            <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
-                                <span>{{ $message }}</span>
-                            </div>
+                                <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
+                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <span>{{ $message }}</span>
+                                </div>
                             @enderror
                         </div>
                     </div>
@@ -812,10 +812,10 @@
                             class="w-full rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 resize-none"
                             placeholder="{{ __('Describe your campaign goals and target audience...') }}"></textarea>
                         @error('editDescription')
-                        <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                            <i data-lucide="alert-circle" class="w-4 h-4"></i>
-                            <span>{{ $message }}</span>
-                        </div>
+                            <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
+                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                <span>{{ $message }}</span>
+                            </div>
                         @enderror
                     </div>
 
@@ -831,10 +831,10 @@
                                 class="w-full rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200"
                                 placeholder="{{ __('Enter cost per repost') }}">
                             @error('editCostPerRepost')
-                            <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
-                                <span>{{ $message }}</span>
-                            </div>
+                                <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
+                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <span>{{ $message }}</span>
+                                </div>
                             @enderror
                         </div>
 
@@ -849,30 +849,30 @@
                                 class="w-full rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200"
                                 placeholder="{{ __('Enter target reposts') }}">
                             @error('editTargetReposts')
-                            <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
-                                <span>{{ $message }}</span>
-                            </div>
+                                <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
+                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <span>{{ $message }}</span>
+                                </div>
                             @enderror
                         </div>
                     </div>
 
                     @if ($editCostPerRepost && $editTargetReposts && $editCostPerRepost > 0 && $editTargetReposts > 0)
-                    <div
-                        class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
-                        <div class="flex items-center gap-3">
-                            <i data-lucide="calculator" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
-                            <div>
-                                <p class="text-sm font-semibold text-blue-900 dark:text-blue-100">
-                                    {{ __('Estimated Total Campaign Cost') }}
-                                </p>
-                                <p class="text-lg font-bold text-blue-600 dark:text-blue-400">
-                                    {{ number_format($editCostPerRepost * $editTargetReposts) }}
-                                    {{ __('credits') }}
-                                </p>
+                        <div
+                            class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="calculator" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
+                                <div>
+                                    <p class="text-sm font-semibold text-blue-900 dark:text-blue-100">
+                                        {{ __('Estimated Total Campaign Cost') }}
+                                    </p>
+                                    <p class="text-lg font-bold text-blue-600 dark:text-blue-400">
+                                        {{ number_format($editCostPerRepost * $editTargetReposts) }}
+                                        {{ __('credits') }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     @endif
 
                     <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
@@ -924,7 +924,7 @@
                 </div>
                 <button x-on:click="showDeleteWarningModal = false"
                     class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    <x-lucide-x class="w-5 h-5" />
                 </button>
             </div>
 
@@ -957,8 +957,8 @@
 
 
     @push('js')
-    <script>
-        lucide.createIcons();
-    </script>
+        <script>
+            lucide.createIcons();
+        </script>
     @endpush
 </section>
