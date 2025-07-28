@@ -42,9 +42,12 @@
                 @endif
 
                 <form id="payment-form">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Total Payment: ${{ old('amount', $order->amount) }}</h2>
-                    <h3 class="text-lg font-semibold text-gray-600 mb-4">Credits to receive: {{ old('credits', $order->credits) }}</h3>
-                    
+                    <input type="hidden" name="order_id" value="{{ $order->id }}">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Total Payment:
+                        ${{ old('amount', $order->amount) }}</h2>
+                    <h3 class="text-lg font-semibold text-gray-600 mb-4">Credits to receive:
+                        {{ old('credits', $order->credits) }}</h3>
+
                     <div class="flex flex-col sm:flex-row gap-4 mb-4">
                         <div class="w-full">
                             <label class="block text-gray-700 text-sm font-semibold mb-2" for="name">
@@ -72,29 +75,6 @@
                             <input type="tel" id="customer_phone" name="customer_phone"
                                 placeholder="+1 (555) 123-4567"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-300">
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-semibold mb-2" for="credits">
-                            <i class="fas fa-dollar-sign mr-1"></i> Credits
-                        </label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-3 flex items-center font-bold text-gray-600">$</span>
-                            <input type="credits" id="credits" name="credits" step="0.01" min="0.50" 
-                                value="{{ old('credits', $order->credits) }}" placeholder="0.00"
-                                class="w-full pl-8 pr-4 py-2 font-semibold text-lg border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-300">
-                        </div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-semibold mb-2" for="amount">
-                            <i class="fas fa-dollar-sign mr-1"></i> Payment Amount
-                        </label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-3 flex items-center font-bold text-gray-600">$</span>
-                            <input type="text" id="amount" name="amount" step="0.01" min="0.50"
-                                value="{{ old('amount', $order->amount) }}" placeholder="0.00"
-                                class="w-full pl-8 pr-4 py-2 font-semibold text-lg border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-300">
                         </div>
                     </div>
 
@@ -129,15 +109,6 @@
                             <i class="fas fa-bookmark mr-1"></i> Save this payment method for future purchases
                         </label>
                     </div>
-
-                    {{-- <div class="mb-4">
-                    <label for="order_notes" class="block text-gray-700 text-sm font-semibold mb-2">
-                        <i class="fas fa-sticky-note mr-1"></i> Order Notes (Optional)
-                    </label>
-                    <input type="text" id="order_notes" name="order_notes"
-                        placeholder="Any special instructions..."
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-300">
-                </div> --}}
 
                     <button type="submit" id="submit-button"
                         class="w-full bg-gradient-to-br from-orange-500 to-orange-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg transition-all flex items-center justify-center gap-2">
@@ -235,14 +206,12 @@
                             'content')
                     },
                     body: JSON.stringify({
-                        amount: parseFloat(formData.get('amount')),
-                        credits: formData.get('credits'),
                         currency: formData.get('currency'),
                         name: formData.get('name'),
                         email_address: formData.get('email_address'),
                         customer_phone: formData.get('customer_phone'),
                         save_payment_method: formData.get('save_payment_method') === 'on',
-                        // order_notes: formData.get('order_notes')
+                        order_id: formData.get('order_id')
                     })
                 });
 
@@ -295,19 +264,13 @@
         }
 
         function validateForm(formData) {
-            const requiredFields = ['name', 'email_address', 'amount'];
+            const requiredFields = ['name', 'email_address'];
 
             for (let field of requiredFields) {
                 if (!formData.get(field) || formData.get(field).trim() === '') {
                     showError(`Please fill in the ${field.replace('_', ' ')} field.`);
                     return false;
                 }
-            }
-
-            const amount = parseFloat(formData.get('amount'));
-            if (amount < 0.50) {
-                showError('Minimum payment amount is $0.50');
-                return false;
             }
 
             const email = formData.get('email_address');
@@ -330,15 +293,6 @@
                 block: 'center'
             });
         }
-
-        // Format amount input
-        document.getElementById('amount').addEventListener('input', function(e) {
-            let value = parseFloat(e.target.value);
-            if (!isNaN(value)) {
-                e.target.value = value.toFixed(2);
-            }
-        });
-
         // Auto-format phone number
         document.getElementById('customer_phone').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
