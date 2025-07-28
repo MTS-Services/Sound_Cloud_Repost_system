@@ -1085,7 +1085,7 @@
         class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
 
         <div
-            class="w-full max-w-3xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
+            class="w-full max-w-5xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
 
             @if ($showDetailsModal)
                 <div
@@ -1106,8 +1106,8 @@
 
                 <div class="p-6 text-center max-h-[80vh] overflow-y-auto">
                     <div class="flex flex-col md:flex-row gap-6">
-                        <div class="w-full md:w-1/3 rounded-xl shadow-lg overflow-hidden">
-                            <img class="w-full h-auto object-cover "
+                        <div class="w-full md:w-1/3 max-w-52 rounded-xl shadow-lg overflow-hidden">
+                            <img class="w-full h-full object-cover"
                                 src="{{ storage_url($campaign->music?->artwork_url) }}">
                         </div>
 
