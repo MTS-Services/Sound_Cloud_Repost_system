@@ -197,7 +197,7 @@
                             </div>
 
                             <!-- Tab Panels -->
-                            <div id="tabContent">
+                            <div>
                                 <!-- Credibility Insights -->
                                 <div x-show="activeTab === 'insights'" class="tab-panel mt-4" x-transition>
                                     <div
@@ -391,6 +391,7 @@
                                 </div>
                                 <!-- Tracks Tab -->
                                 <div class="tab-panel mt-4" x-show="activeTab === 'tracks'" x-transition>
+
                                     <div
                                         class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6">
                                         <h2
@@ -415,44 +416,46 @@
 
                                     <div class="space-y-3 sm:space-y-4">
                                         <!-- Track Card 1 -->
-                                        <div
-                                            class="bg-gray-100 dark:bg-slate-800 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-slate-700">
+                                        @foreach ($tracks as $track)
                                             <div
-                                                class="flex flex-col xs:flex-row xs:items-center space-y-3 xs:space-y-0 xs:space-x-3 sm:space-x-4">
-                                                <div class="relative flex-shrink-0 mx-auto xs:mx-0">
-                                                    <img src="https://images.pexels.com/photos/1540338/pexels-photo-1540338.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop"
-                                                        alt="Sexy - Fashion - Promo" class="w-16 h-16 rounded-lg">
-                                                    <button
-                                                        class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg opacity-0 hover:opacity-100 transition-opacity">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                            height="24" fill="currentColor" stroke="currentColor"
-                                                            stroke-width="2" stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            class="w-6 h-6 text-orange-500 dark:text-orange-400">
-                                                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                                        </svg>
-                                                    </button>
-                                                </div>
-                                                {{-- <div id="soundcloud-player-{{ $track->id }}"
-                                                data-campaign-id="{{ $track->id }}" wire:ignore>
-                                                <x-sound-cloud.sound-cloud-player :track="$track->music" :height="166"
-                                                    :visual="false" />
-                                            </div> --}}
+                                                class="bg-gray-100 dark:bg-slate-800 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-slate-700">
                                                 <div
-                                                    class="flex items-center justify-between xs:justify-end space-x-2 sm:space-x-4">
-                                                    <button
-                                                        class="text-gray-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
-                                                        <span class="text-xs sm:text-sm">♡ 187</span>
-                                                    </button>
-                                                    <button
-                                                        class="text-gray-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
-                                                        <span class="text-xs sm:text-sm">🔄 68</span>
-                                                    </button>
-                                                    <button
-                                                        class="text-orange-500 dark:text-orange-400 hover:text-orange-400 dark:hover:text-orange-500 text-xs sm:text-sm whitespace-nowrap">Share</button>
+                                                    class="flex flex-col xs:flex-row xs:items-center space-y-3 xs:space-y-0 xs:space-x-3 sm:space-x-4">
+                                                    <div class="relative flex-shrink-0 mx-auto xs:mx-0">
+                                                        <img src="https://images.pexels.com/photos/1540338/pexels-photo-1540338.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop"
+                                                            alt="Sexy - Fashion - Promo" class="w-16 h-16 rounded-lg">
+                                                        <button
+                                                            class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg opacity-0 hover:opacity-100 transition-opacity">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                                height="24" fill="currentColor"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round"
+                                                                class="w-6 h-6 text-orange-500 dark:text-orange-400">
+                                                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                    <div id="soundcloud-player-{{ $track->id }}"
+                                                        data-campaign-id="{{ $track->id }}" wire:ignore>
+                                                        <x-sound-cloud.sound-cloud-player :track="$track->music"
+                                                            :height="166" :visual="false" />
+                                                    </div>
+                                                    <div
+                                                        class="flex items-center justify-between xs:justify-end space-x-2 sm:space-x-4">
+                                                        <button
+                                                            class="text-gray-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
+                                                            <span class="text-xs sm:text-sm">♡ 187</span>
+                                                        </button>
+                                                        <button
+                                                            class="text-gray-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
+                                                            <span class="text-xs sm:text-sm">🔄 68</span>
+                                                        </button>
+                                                        <button
+                                                            class="text-orange-500 dark:text-orange-400 hover:text-orange-400 dark:hover:text-orange-500 text-xs sm:text-sm whitespace-nowrap">Share</button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        @endforeach
                                         <!-- Track Card 2 -->
                                         <div
                                             class="bg-gray-100 dark:bg-slate-800 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-slate-700">

@@ -8,25 +8,23 @@ use Livewire\Component;
 
 class MyAccount extends Component
 {
-    public $user = null;
-    public $tracks = null;
+    public $user;
+    public $tracks;
 
     public $activeTab = 'insights';  // Set default active tab
 
     public function setActiveTab($tab)
     {
-       
+
         $this->activeTab = $tab;
     }
 
 
-    public function Tracks()
+    public function getTracks()
     {
 
         try {
-            $this->tracks = Track::where('user_urn', user()->urn)
-                ->latest()
-                ->get();
+            $this->tracks = Track::where('user_urn', user()->urn)->get();
         } catch (\Exception $e) {
             $this->tracks = collect();
             session()->flash('error', 'Failed to load tracks: ' . $e->getMessage());
@@ -36,6 +34,7 @@ class MyAccount extends Component
 
     public function mount()
     {
+        $this->getTracks();
         $this->user = User::where('urn', user()->urn)->with('userInfo')->first();
     }
     public function render()
