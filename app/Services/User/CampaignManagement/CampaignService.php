@@ -36,12 +36,12 @@ class CampaignService
                     'campaign_id' => $campaign->id,
                     'soundcloud_repost_id' => $soundcloudRepostId,
                     'reposted_at' => now(),
-                    'credits_earned' => $creditsPerRepost,
+                    'credits_earned' => (float) $creditsPerRepost,
                 ]);
 
                 // Update the Campaign record using atomic increments
                 $campaign->increment('completed_reposts');
-                $campaign->increment('credits_spent', $creditsPerRepost);
+                $campaign->increment('credits_spent', (float) $creditsPerRepost);
 
                 // Create the CreditTransaction record
                 CreditTransaction::create([
@@ -65,7 +65,6 @@ class CampaignService
             return true;
         } catch (Throwable $e) {
             throw $e;
-            return false;
         }
     }
 }

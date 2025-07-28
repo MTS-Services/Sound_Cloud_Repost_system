@@ -299,54 +299,6 @@ class Campaign extends Component
             if ($response->successful()) {
                 // If SoundCloud returns a repost ID, capture it (example, adjust based on actual SoundCloud API response)
                 $soundcloudRepostId = $response->json('id');
-
-                DB::transaction(function () use ($campaign, $currentUserUrn, $soundcloudRepostId) {
-
-                    $trackOwnerUrn = $campaign->music->user?->urn ?? $campaign->user_urn;
-                    $trackOwnerName = $campaign->music->user?->name;
-                    $creditsPerRepost = $campaign->cost_per_repost;
-
-                    Log::info("Reposting campaign", [
-                        'campaign_id' => $campaign->id,
-                        'current_user_urn' => $currentUserUrn,
-                        'track_owner_urn' => $trackOwnerUrn,
-                        'soundcloud_repost_id' => $soundcloudRepostId,
-                        'credits_per_repost' => $creditsPerRepost,
-                    ]);
-
-                    // Create the Repost record
-                    $repost = Repost::create([
-                        'credits_earned' => (float) $creditsPerRepost,
-                        'reposter_urn' => $currentUserUrn,
-                        'track_owner_urn' => $trackOwnerUrn,
-                        'campaign_id' => $campaign->id,
-                        'soundcloud_repost_id' => $soundcloudRepostId,
-                        'reposted_at' => now(),
-                    ]);
-
-                    // Update the Campaign record using atomic increments
-                    $campaign->increment('completed_reposts');
-                    $campaign->increment('credits_spent', (int) $creditsPerRepost);
-
-                    // Create the CreditTransaction record
-                    CreditTransaction::create([
-                        'receiver_urn' => $currentUserUrn,
-                        'sender_urn' => $trackOwnerUrn,
-                        'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
-                        'source_id' => $campaign->id,
-                        'source_type' => Campaign::class,
-                        'transaction_type' => CreditTransaction::TYPE_EARN,
-                        'amount' => 0,
-                        'credits' => $creditsPerRepost,
-                        'description' => "Repost of campaign '{$campaign->title}' by {$trackOwnerName}. " .
-                            "Reposted by {$currentUserUrn} with Repost ID: {$repost->id}.",
-                        'metadata' => [
-                            'repost_id' => $repost->id,
-                            'campaign_id' => $campaign->id,
-                            'soundcloud_repost_id' => $soundcloudRepostId,
-                        ]
-                    ]);
-                });
                 $this->campaignService->syncReposts($campaign, $currentUserUrn, $soundcloudRepostId);
                 session()->flash('success', 'Campaign music reposted successfully.');
             } else {
