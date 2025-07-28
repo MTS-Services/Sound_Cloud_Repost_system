@@ -8,13 +8,21 @@ use Livewire\Component;
 
 class MyAccount extends Component
 {
-   public $user=null;
-    public $tracks=null;
+    public $user = null;
+    public $tracks = null;
+
+    public $activeTab = 'insights';  // Set default active tab
+
+    public function setActiveTab($tab)
+    {
+       
+        $this->activeTab = $tab;
+    }
 
 
     public function Tracks()
     {
-      
+
         try {
             $this->tracks = Track::where('user_urn', user()->urn)
                 ->latest()
@@ -26,8 +34,9 @@ class MyAccount extends Component
     }
 
 
-    public function mount(){
-        $this->user = User::where('urn',user()->urn)->with('userInfo')->first();
+    public function mount()
+    {
+        $this->user = User::where('urn', user()->urn)->with('userInfo')->first();
     }
     public function render()
     {
