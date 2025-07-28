@@ -7,8 +7,7 @@ use App\Http\Traits\AuditColumnsTrait;
 use App\Models\CreditTransaction;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-return new class extends Migration
-{
+return new class extends Migration {
     use AuditColumnsTrait, SoftDeletes;
     /**
      * Run the migrations.
@@ -21,7 +20,7 @@ return new class extends Migration
             $table->string('receiver_urn')->index();
             $table->string('sender_urn')->index()->nullable();
             $table->tinyInteger('calculation_type')->comment(
-                CreditTransaction::CALCULATION_TYPE_DEBIT . ': Debit / Addition',
+                CreditTransaction::CALCULATION_TYPE_DEBIT . ': Debit / Addition' .
                 CreditTransaction::CALCULATION_TYPE_CREDIT . ': Credit / Subtraction'
             );
 
@@ -29,11 +28,11 @@ return new class extends Migration
             $table->string('source_type')->index();
 
             $table->tinyInteger('transaction_type')->comment(
-                CreditTransaction::TYPE_EARN . ': Earn',
-                CreditTransaction::TYPE_SPEND . ': Spend',
-                CreditTransaction::TYPE_REFUND . ': Refund',
-                CreditTransaction::TYPE_PURCHASE . ': Purchase',
-                CreditTransaction::TYPE_PENALTY . ': Penalty',
+                CreditTransaction::TYPE_EARN . ': Earn' .
+                CreditTransaction::TYPE_SPEND . ': Spend' .
+                CreditTransaction::TYPE_REFUND . ': Refund' .
+                CreditTransaction::TYPE_PURCHASE . ': Purchase' .
+                CreditTransaction::TYPE_PENALTY . ': Penalty' .
                 CreditTransaction::TYPE_BONUS . ': Bonus'
             );
             $table->enum('status', [
