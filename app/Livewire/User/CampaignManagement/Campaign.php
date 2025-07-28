@@ -27,6 +27,8 @@ class Campaign extends Component
     // Track which campaigns have been reposted
     public $repostedCampaigns = [];
 
+    public $playcount = false;
+
     // Listeners for browser events
     protected $listeners = [
         'audioPlay' => 'handleAudioPlay',
@@ -183,12 +185,10 @@ class Campaign extends Component
         $canRepost = in_array($campaignId, $this->playedCampaigns) &&
             !in_array($campaignId, $this->repostedCampaigns);
 
-        if ($canRepost) {
-            Log::info("Campaign {$campaignId} can be reposted.");
+        if ($canRepost && !$this->playcount) {
             $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
-            Log::info("Incrementing playback count for campaign {$campaignId}.");
             $campaign->increment('playback_count');
-            Log::info("Playback count for campaign {$campaignId} incremented.");
+            $this->playcount = true; // Set playcount to true if repost is allowed
         }
         return $canRepost;
     }
