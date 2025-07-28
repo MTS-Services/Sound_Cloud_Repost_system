@@ -52,7 +52,7 @@ class CampaignService
                     'source_type' => Campaign::class,
                     'transaction_type' => CreditTransaction::TYPE_EARN,
                     'amount' => 0,
-                    'credits' => $creditsPerRepost,
+                    'credits' => (float) $creditsPerRepost,
                     'description' => "Repost of campaign '{$campaign->title}' by {$trackOwnerName}. " .
                         "Reposted by {$currentUserUrn} with Repost ID: {$repost->id}.",
                     'metadata' => [
