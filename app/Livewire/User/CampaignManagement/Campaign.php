@@ -4,12 +4,15 @@ namespace App\Livewire\User\CampaignManagement;
 
 use App\Models\CreditTransaction;
 use App\Models\Playlist;
+use App\Models\Repost;
 use App\Models\Track;
 use App\Services\User\CampaignManagement\CampaignService;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Throwable;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class Campaign extends Component
 {
@@ -244,7 +247,6 @@ class Campaign extends Component
                 session()->flash('error', 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
                 return;
             }
-            $campaignId = decrypt($campaignId);
             $currentUserUrn = user()->urn;
 
             // Check if the current user owns the campaign
@@ -265,7 +267,7 @@ class Campaign extends Component
 
             // Find the campaign and eager load its music and the music's user
             // $campaign = Campaign::with('music.user')->findOrFail($campaignId);
-            $campaign = $this->campaignService->getCampaign($campaignId)->load('music.user.userInfo');
+            $campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
 
             // Ensure music is associated with the campaign
             if (!$campaign->music) {
@@ -302,7 +304,15 @@ class Campaign extends Component
 
                     $trackOwnerUrn = $campaign->music->user?->urn ?? $campaign->user_urn;
                     $trackOwnerName = $campaign->music->user?->name;
-                    $creditsPerRepost = $campaign->credits_per_repost;
+                    $creditsPerRepost = $campaign->cost_per_repost;
+
+                    Log::info("Reposting campaign", [
+                        'campaign_id' => $campaign->id,
+                        'current_user_urn' => $currentUserUrn,
+                        'track_owner_urn' => $trackOwnerUrn,
+                        'soundcloud_repost_id' => $soundcloudRepostId,
+                        'credits_per_repost' => $creditsPerRepost,
+                    ]);
 
                     // Create the Repost record
                     $repost = Repost::create([
@@ -316,7 +326,7 @@ class Campaign extends Component
 
                     // Update the Campaign record using atomic increments
                     $campaign->increment('completed_reposts');
-                    $campaign->increment('credits_spent', $creditsPerRepost);
+                    $campaign->increment('credits_spent', (int) $creditsPerRepost);
 
                     // Create the CreditTransaction record
                     CreditTransaction::create([
