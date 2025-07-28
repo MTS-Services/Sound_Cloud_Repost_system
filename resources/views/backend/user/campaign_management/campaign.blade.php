@@ -5,22 +5,22 @@
     <div class="w-full mt-6">
         <!-- Header Tabs & Button -->
         <div
-            class="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-4 pt-3 border-b border-b-gray-200 gap-2 sm:gap-0">
-            <div x-data="{ showInput: false }" class="relative flex items-center text-gray-600">
-                <svg class="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+            class="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-4 pt-3 border-b border-b-gray-200 dark:border-b-gray-700  gap-2 sm:gap-0">
+            <div x-data="{ showInput: false }" class="relative flex items-center text-gray-600 dark:text-gray-400">
+                <svg class="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-slate-300 pointer-events-none"
                     fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
 
                 <div x-show="!showInput" @click="showInput = true"
-                    class="pl-7 pr-2 py-2 cursor-pointer whitespace-nowrap">
+                    class="pl-7 pr-2 py-2 cursor-pointer whitespace-nowrap dark:text-slate-300">
                     <span>Search by tag</span>
                 </div>
 
                 <div x-show="showInput" x-cloak>
                     <input type="text" placeholder="Search by tag"
-                        class="border py-2 border-red-500 pl-7 pr-2 rounded focus:outline-none focus:ring-1 focus:ring-red-400"
+                        class="border py-2 border-red-500 pl-7 dark:text-slate-300 dark:border-red-400 dark:bg-gray-800 pr-2 rounded focus:outline-none focus:ring-1 focus:ring-red-400"
                         @click.outside="showInput = false" x-ref="searchInput" x-init="$watch('showInput', (value) => { if (value) { $nextTick(() => $refs.searchInput.focus()) } })" />
                 </div>
             </div>
