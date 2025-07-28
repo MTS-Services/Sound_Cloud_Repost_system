@@ -25,11 +25,16 @@ class Repost extends BaseModel
         'deleter_type',
     ];
 
+    protected $casts = [
+        'reposted_at' => 'datetime',
+        'credits_earned' => 'float',
+    ];
+
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 Start of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
-     public function request(): BelongsTo
+    public function request(): BelongsTo
     {
         return $this->belongsTo(RepostRequest::class);
     }
@@ -47,7 +52,7 @@ class Repost extends BaseModel
     {
         return $this->belongsTo(Campaign::class);
     }
-    
+
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */

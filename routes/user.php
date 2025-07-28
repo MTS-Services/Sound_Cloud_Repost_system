@@ -4,7 +4,6 @@ use App\Http\Controllers\Backend\User\DashboardController;
 use App\Http\Controllers\Backend\Admin\OrderManagement\OrderController as UserOrderController;
 use App\Http\Controllers\Backend\User\AddCaeditsController;
 use App\Http\Controllers\Backend\User\AnalyticsController;
-use App\Http\Controllers\Backend\User\CampaignManagement\CampaignController;
 use App\Livewire\User\CampaignManagement\Campaign;
 use App\Livewire\User\CampaignManagement\MyCampaign;
 use App\Http\Controllers\Backend\User\Members\MemberController;
@@ -13,6 +12,7 @@ use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Livewire\User\MemberManagement\Member;
 use App\Livewire\User\ProfileManagement\MyAccount;
 
 Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
@@ -21,8 +21,7 @@ Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
     Route::post('disconnect', [SoundCloudController::class, 'disconnect'])->name('disconnect')->middleware('auth:web');
     Route::post('sync', [SoundCloudController::class, 'sync'])->name('sync')->middleware('auth:web');
 });
-Route::view('my-account
-', 'backend.user.profile-management.my-account')->name('myAccount');
+
 // Dashboard and other routes
 Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
@@ -51,6 +50,7 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
 
 
     });
+    Route::get('members', Member::class)->name('members');
 
 
     // Order Manaagement Routes
@@ -63,3 +63,12 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
         Route::get('/my-account', MyAccount::class)->name('my-account');
     });
 });
+
+
+
+// static page route
+
+Route::view('/help-support', 'backend.user.help-support')->name('help-support');
+Route::view('/settings', 'backend.user.settings')->name('settings');
+Route::view('/page', 'backend.user.dummy-page')->name('page');
+Route::view('/charts', 'backend.user.chart')->name('charts');

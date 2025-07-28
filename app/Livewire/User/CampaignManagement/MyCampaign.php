@@ -3,8 +3,10 @@
 namespace App\Livewire\User\CampaignManagement;
 
 use App\Models\Campaign;
+use App\Models\CreditTransaction;
 use App\Models\Track;
 use App\Models\Playlist;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Locked;
@@ -14,31 +16,60 @@ use Livewire\Component;
 class MyCampaign extends Component
 {
     public $campaigns;
+    public $campaign;
 
     public bool $showCampaignsModal = false;
     public bool $showSubmitModal = false;
+    public bool $showLowCreditWarningModal = false;
     public string $activeModalTab = 'tracks';
 
+    public bool $showAddCreditModal = false;
+    public bool $showEditCampaignModal = false;
+    public bool $showCancelWarningModal = false;
     public $tracks = [];
     public $playlists = [];
-
     #[Locked]
     public $playlistId = null;
     public $playlistTracks = [];
-
     #[Locked]
     public int $minFollowers = 0;
     #[Locked]
     public int $maxFollowers = 0;
-
-    // Input fields for campaign creation
     public $musicId = null;
     public $musicType = null;
     public $title = null;
     public $description = null;
     public $endDate = null;
     public $targetReposts = null;
-    public $totalBudget = null;
+    public $costPerRepost = null;
+    public bool $isCampaignCancelled = false;
+    public bool $showAlreadyCancelledModal = false;
+    public bool $showDetailsModal = false;
+
+    // Properties for Add Credit functionality
+    public $addCreditCampaignId = null;
+    public int $addCreditCostPerRepost;
+    public $addCreditCurrentBudget = null;
+    public $addCreditTargetReposts = null;
+    public $addCreditCreditsNeeded = 0; // New property for credits needed calculation
+
+    // Properties for Edit functionality
+    public $editingCampaignId = null;
+    public $editTitle = null;
+    public $editDescription = null;
+    public $editEndDate = null;
+    public $editTargetReposts = null;
+    public int $editCostPerRepost;
+    public $editOriginalBudget = null; // Track original budget to prevent decreases
+
+    // Properties for Delete functionality
+    public $campaignToDeleteId = null;
+    public $refundAmount = 0;
+
+    // Properties to track budget warnings and validation
+    public $showBudgetWarning = false;
+    public $budgetWarningMessage = '';
+    public $canSubmit = false;
 
     protected $listeners = ['campaignCreated' => 'refreshCampaigns'];
 
@@ -52,9 +83,27 @@ class MyCampaign extends Component
             'description' => 'required|string|max:1000',
             'endDate' => 'required|date|after_or_equal:today',
             'targetReposts' => 'required|integer|min:1',
-            'totalBudget' => 'required|integer|min:1',
+            'costPerRepost' => 'required|integer|min:1',
             'musicId' => 'required|integer',
         ];
+
+        // Rules for editing a campaign
+        if ($this->showEditCampaignModal) {
+            $rules = [
+                'editTitle' => 'required|string|max:255',
+                'editDescription' => 'required|string|max:1000',
+                'editEndDate' => 'required|date|after_or_equal:today',
+                'editTargetReposts' => 'required|integer|min:1',
+                'editCostPerRepost' => 'required|integer|min:1',
+            ];
+        }
+
+        // Rules for adding credits
+        if ($this->showAddCreditModal) {
+            $rules = [
+                'addCreditCostPerRepost' => 'required|integer|min:' . $this->addCreditCurrentBudget,
+            ];
+        }
 
         return $rules;
     }
@@ -74,9 +123,152 @@ class MyCampaign extends Component
             'endDate.after_or_equal' => 'Expiration date must be today or later.',
             'targetReposts.required' => 'Target repost count is required.',
             'targetReposts.min' => 'Target reposts must be at least 1.',
-            'totalBudget.required' => 'Total budget is required.',
-            'totalBudget.min' => 'Budget must be at least 1 credit.',
+            'costPerRepost.required' => 'Budget per repost is required.',
+            'costPerRepost.min' => 'Budget per repost must be at least 1 credit.',
+
+            // Edit specific messages
+            'editTitle.required' => 'Campaign name is required.',
+            'editDescription.required' => 'Campaign description is required.',
+            'editEndDate.required' => 'Campaign expiration date is required.',
+            'editTargetReposts.required' => 'Target repost count is required.',
+            'editCostPerRepost.required' => 'Cost per repost is required.',
+
+            // Add credit specific messages
+            'addCreditCostPerRepost.required' => 'Cost per repost is required.',
+            'addCreditCostPerRepost.min' => 'Cost per repost must be at least 1 credit.',
         ];
+    }
+
+    /**
+     * Watch for changes in campaign creation form to validate budget
+     */
+    public function updated($propertyName)
+    {
+        if (in_array($propertyName, ['costPerRepost', 'targetReposts'])) {
+            $this->validateCampaignBudget();
+        }
+
+        if (in_array($propertyName, ['editCostPerRepost', 'editTargetReposts'])) {
+            $this->validateEditBudget();
+        }
+
+        if ($propertyName === 'addCreditCostPerRepost') {
+            $this->validateAddCreditBudget();
+        }
+    }
+
+    /**
+     * Validate campaign creation budget
+     */
+    protected function validateCampaignBudget()
+    {
+        $this->showBudgetWarning = false;
+        $this->budgetWarningMessage = '';
+        $this->canSubmit = false;
+
+        if (!$this->costPerRepost || !$this->targetReposts || $this->costPerRepost <= 0 || $this->targetReposts <= 0) {
+            return;
+        }
+
+        $totalBudget = $this->costPerRepost * $this->targetReposts;
+        $userCredits = userCredits();
+
+        // Check if all required fields are filled
+        $allFieldsFilled = !empty($this->title) && !empty($this->description) &&
+            !empty($this->endDate) && !empty($this->musicId);
+
+        if ($totalBudget < 50) {
+            $this->showBudgetWarning = true;
+            $this->budgetWarningMessage = "Campaign budget must be at least 50 credits.";
+            $this->canSubmit = false;
+            return;
+        }
+
+        if ($totalBudget > $userCredits) {
+            $shortage = $totalBudget - $userCredits;
+            $this->showBudgetWarning = true;
+            $this->budgetWarningMessage = "You need {$shortage} more credits to create this campaign.";
+            $this->canSubmit = false;
+        } else if ($allFieldsFilled) {
+            $this->canSubmit = true;
+        }
+    }
+
+    /**
+     * Validate edit campaign budget
+     */
+    protected function validateEditBudget()
+    {
+        $this->showBudgetWarning = false;
+        $this->budgetWarningMessage = '';
+        $this->canSubmit = false;
+
+        if (
+            !$this->editCostPerRepost || !$this->editTargetReposts ||
+            $this->editCostPerRepost <= 0 || $this->editTargetReposts <= 0
+        ) {
+            return;
+        }
+
+        $newBudget = $this->editCostPerRepost * $this->editTargetReposts;
+
+        // Check if budget is being decreased
+        if ($newBudget < $this->editOriginalBudget) {
+            $this->showBudgetWarning = true;
+            $this->budgetWarningMessage = "Campaign budget cannot be decreased.";
+            $this->canSubmit = false;
+            return;
+        }
+
+        $creditDifference = $newBudget - $this->editOriginalBudget;
+        $userCredits = userCredits();
+
+        // Check if all required fields are filled
+        $allFieldsFilled = !empty($this->editTitle) && !empty($this->editDescription) &&
+            !empty($this->editEndDate);
+
+        if ($creditDifference > $userCredits) {
+            $this->showBudgetWarning = true;
+            $this->budgetWarningMessage = "You need {$creditDifference} more credits to update this campaign.";
+            $this->canSubmit = false;
+        } else if ($allFieldsFilled) {
+            $this->canSubmit = true;
+        }
+    }
+
+    /**
+     * Validate add credit budget
+     */
+    protected function validateAddCreditBudget()
+    {
+        $this->showBudgetWarning = false;
+        $this->budgetWarningMessage = '';
+        $this->canSubmit = false;
+
+        if (!$this->addCreditCostPerRepost || $this->addCreditCostPerRepost <= 0) {
+            return;
+        }
+
+        $newBudget = $this->addCreditCostPerRepost * $this->addCreditTargetReposts;
+
+        // Check if budget is being decreased
+        if ($newBudget < $this->addCreditCurrentBudget) {
+            $this->showBudgetWarning = true;
+            $this->budgetWarningMessage = "Campaign budget cannot be decreased.";
+            $this->canSubmit = false;
+            return;
+        }
+
+        $this->addCreditCreditsNeeded = $newBudget - $this->addCreditCurrentBudget;
+        $userCredits = userCredits();
+
+        if ($this->addCreditCreditsNeeded > $userCredits) {
+            $this->showBudgetWarning = true;
+            $this->budgetWarningMessage = "You need {$this->addCreditCreditsNeeded} more credits to update this campaign.";
+            $this->canSubmit = false;
+        } else {
+            $this->canSubmit = true;
+        }
     }
 
     public function toggleCampaignsModal()
@@ -93,9 +285,29 @@ class MyCampaign extends Component
             'description',
             'endDate',
             'targetReposts',
-            'totalBudget',
+            'costPerRepost',
             'minFollowers',
-            'maxFollowers'
+            'maxFollowers',
+            'showAddCreditModal',
+            'showEditCampaignModal',
+            'showCancelWarningModal',
+            'addCreditCostPerRepost',
+            'addCreditCampaignId',
+            'addCreditCurrentBudget',
+            'addCreditTargetReposts',
+            'addCreditCreditsNeeded',
+            'editingCampaignId',
+            'editTitle',
+            'editDescription',
+            'editEndDate',
+            'editTargetReposts',
+            'editCostPerRepost',
+            'editOriginalBudget',
+            'campaignToDeleteId',
+            'refundAmount',
+            'showBudgetWarning',
+            'budgetWarningMessage',
+            'canSubmit'
         ]);
 
         $this->resetValidation();
@@ -174,7 +386,6 @@ class MyCampaign extends Component
             if ($response->successful()) {
                 $tracks = $response->json();
 
-                // Ensure we have valid track data
                 if (is_array($tracks)) {
                     $this->playlistTracks = collect($tracks)->filter(function ($track) {
                         return is_array($track) &&
@@ -212,17 +423,44 @@ class MyCampaign extends Component
             'description',
             'endDate',
             'targetReposts',
-            'totalBudget'
+            'costPerRepost',
+            'showAddCreditModal',
+            'addCreditCampaignId',
+            'addCreditCostPerRepost',
+            'addCreditCurrentBudget',
+            'addCreditTargetReposts',
+            'addCreditCreditsNeeded',
+            'showEditCampaignModal',
+            'editingCampaignId',
+            'editTitle',
+            'editDescription',
+            'editEndDate',
+            'editTargetReposts',
+            'editCostPerRepost',
+            'editOriginalBudget',
+            'showCancelWarningModal',
+            'campaignToDeleteId',
+            'refundAmount',
+            'showBudgetWarning',
+            'budgetWarningMessage',
+            'canSubmit'
         ]);
 
-        $this->showCampaignsModal = false;
+        // Check if user has minimum credits
+        if (userCredits() < 50) {
+            $this->showLowCreditWarningModal = true;
+            $this->showSubmitModal = false;
+            return;
+        } else {
+            $this->showLowCreditWarningModal = false;
+        }
+
         $this->showSubmitModal = true;
 
         try {
             if ($type === 'track') {
                 $track = Track::findOrFail($id);
 
-                // Ensure track has required data
                 if (!$track->urn || !$track->title) {
                     throw new \Exception('Track data is incomplete');
                 }
@@ -233,7 +471,6 @@ class MyCampaign extends Component
             } elseif ($type === 'playlist') {
                 $playlist = Playlist::findOrFail($id);
 
-                // Ensure playlist has required data
                 if (!$playlist->title) {
                     throw new \Exception('Playlist data is incomplete');
                 }
@@ -242,16 +479,13 @@ class MyCampaign extends Component
                 $this->title = $playlist->title . ' Campaign';
                 $this->musicType = Playlist::class;
 
-                // Fetch playlist tracks with error handling
                 $this->fetchPlaylistTracks();
-
-                // Reset trackUrn when switching to playlist mode
                 $this->musicId = null;
             }
         } catch (\Exception $e) {
             session()->flash('error', 'Failed to load content: ' . $e->getMessage());
             $this->showSubmitModal = false;
-            $this->showCampaignsModal = true; // Go back to selection modal
+            $this->showCampaignsModal = true;
 
             Log::error('Toggle submit modal error: ' . $e->getMessage(), [
                 'type' => $type,
@@ -263,66 +497,93 @@ class MyCampaign extends Component
 
     public function submitCampaign()
     {
-        // dd('here');
         $this->validate();
 
         try {
-            // Ensure we have a valid track URN
             if (!$this->musicId) {
                 throw new \Exception('Please select a track for your campaign.');
             }
 
-            // Calculate credits per repost
-            if ($this->totalBudget <= 0 || $this->targetReposts <= 0) {
-                throw new \Exception('Budget and target reposts must be greater than 0.');
+            if ($this->costPerRepost <= 0 || $this->targetReposts <= 0) {
+                throw new \Exception('Cost per repost and target reposts must be greater than 0.');
             }
 
-            $creditsPerRepost = ($this->totalBudget / $this->targetReposts);
+            $totalBudget = ($this->costPerRepost * $this->targetReposts);
 
-            if ($creditsPerRepost >= 1) {
-                $this->minFollowers = $creditsPerRepost * 100;
+            // Final budget check before submission
+            if ($totalBudget > userCredits()) {
+                $shortage = $totalBudget - userCredits();
+                throw new \Exception("You need {$shortage} more credits to create this campaign.");
+            }
+
+            if ($this->costPerRepost >= 1) {
+                $this->minFollowers = $this->costPerRepost * 100;
                 $this->maxFollowers = $this->minFollowers + 99;
             }
 
-            Campaign::create([
-                'music_id' => $this->musicId,
-                'music_type' => $this->musicType,
-                'title' => $this->title,
-                'description' => $this->description,
-                'target_reposts' => $this->targetReposts,
-                'cost_per_repost' => $creditsPerRepost,
-                'budget_credits' => $this->totalBudget,
-                'end_date' => $this->endDate,
-                'user_urn' => user()->urn,
-                'status' => Campaign::STATUS_OPEN,
-                'min_followers' => $this->minFollowers,
-                'max_followers' => $this->maxFollowers,
-            ]);
+            DB::transaction(function () use ($totalBudget) {
+                $campaign = Campaign::create([
+                    'music_id' => $this->musicId,
+                    'music_type' => $this->musicType,
+                    'title' => $this->title,
+                    'description' => $this->description,
+                    'target_reposts' => $this->targetReposts,
+                    'cost_per_repost' => $this->costPerRepost,
+                    'budget_credits' => $totalBudget,
+                    'end_date' => $this->endDate,
+                    'user_urn' => user()->urn,
+                    'status' => Campaign::STATUS_OPEN,
+                    'min_followers' => $this->minFollowers,
+                    'max_followers' => $this->maxFollowers,
+                    'creater_id' => user()->id,
+                    'creater_type' => get_class(user())
+                ]);
 
+                CreditTransaction::create([
+                    'receiver_urn' => user()->urn,
+                    'calculation_type' => CreditTransaction::CALCULATION_TYPE_CREDIT,
+                    'source_id' => $campaign->id,
+                    'source_type' => Campaign::class,
+                    'transaction_type' => CreditTransaction::TYPE_SPEND,
+                    'status' => 'succeeded',
+                    'credits' => $totalBudget,
+                    'description' => 'Spent on campaign creation',
+                    'metadata' => [
+                        'campaign_id' => $campaign->id,
+                        'music_id' => $this->musicId,
+                        'music_type' => $this->musicType,
+                        'start_date' => now(),
+                    ],
+                    'created_id' => user()->id,
+                    'created_type' => get_class(user())
+                ]);
+            });
 
             session()->flash('message', 'Campaign created successfully!');
             $this->dispatch('campaignCreated');
 
-            // Close modal and reset everything
+            // Close modal and complete reset
+            $this->showCampaignsModal = false;
             $this->showSubmitModal = false;
 
-            // Complete reset of all form and modal state
             $this->reset([
                 'musicId',
                 'title',
                 'description',
                 'endDate',
                 'targetReposts',
-                'totalBudget',
+                'costPerRepost',
                 'playlistId',
                 'playlistTracks',
                 'activeModalTab',
                 'tracks',
                 'playlists',
                 'minFollowers',
-                'maxFollowers'
+                'maxFollowers',
+                'showBudgetWarning',
+                'budgetWarningMessage',
+                'canSubmit'
             ]);
-
 
             $this->resetValidation();
             $this->resetErrorBag();
@@ -333,8 +594,314 @@ class MyCampaign extends Component
                 'music_id' => $this->musicId,
                 'user_urn' => user()->urn ?? 'unknown',
                 'title' => $this->title,
-                'total_budget' => $this->totalBudget,
+                'total_budget' => $totalBudget ?? 0,
                 'target_reposts' => $this->targetReposts
+            ]);
+        }
+    }
+
+    public function openAlreadyCancelledModal()
+    {
+        $this->showAlreadyCancelledModal = true;
+
+        // Close other modals
+        $this->showSubmitModal = false;
+        $this->showCampaignsModal = false;
+        $this->showEditCampaignModal = false;
+        $this->showAddCreditModal = false;
+        $this->showCancelWarningModal = false;
+
+        $this->resetErrorBag();
+        $this->resetValidation();
+    }
+
+    // Methods for Add Credit functionality
+    public function openAddCreditModal(Campaign $campaign)
+    {
+        $this->resetValidation();
+        $this->resetErrorBag();
+        if ($campaign->status === Campaign::STATUS_CANCELLED) {
+            $this->openAlreadyCancelledModal();
+            return;
+        }
+
+        $this->addCreditCampaignId = $campaign->id;
+        $this->addCreditCostPerRepost = $campaign->cost_per_repost;
+        $this->addCreditCurrentBudget = $campaign->budget_credits;
+        $this->addCreditTargetReposts = $campaign->target_reposts;
+        $this->addCreditCreditsNeeded = 0;
+
+        // Reset warning states
+        $this->showBudgetWarning = false;
+        $this->budgetWarningMessage = '';
+        $this->canSubmit = true; // Default to true for add credits
+
+        $this->showAddCreditModal = true;
+
+        // Close other modals
+        $this->showSubmitModal = false;
+        $this->showCampaignsModal = false;
+        $this->showEditCampaignModal = false;
+        $this->showCancelWarningModal = false;
+    }
+
+
+    public function openViewDetailsModal($id)
+    {
+        $this->showDetailsModal = true;
+        $this->campaign = Campaign::findOrFail($id)->load(['music', 'user']);
+        // dd($this->campaign);
+        return;
+    }
+
+    public function closeViewDetailsModal()
+    {
+        $this->showDetailsModal = false;
+        $this->reset(['campaign']);
+        $this->resetValidation();
+        $this->resetErrorBag();
+    }
+
+
+    public function addCreditsToCampaign()
+    {
+        $this->validate([
+            'addCreditCostPerRepost' => 'required|numeric|min:1',
+        ]);
+
+        try {
+            $campaign = Campaign::findOrFail($this->addCreditCampaignId);
+
+            $newTotalBudget = $this->addCreditCostPerRepost * $campaign->target_reposts;
+            $creditsNeeded = $newTotalBudget - $campaign->budget_credits;
+
+            if ($creditsNeeded <= 0) {
+                session()->flash('warning', 'Campaign budget cannot be reduced.');
+                $this->showAddCreditModal = false;
+                $this->refreshCampaigns();
+                return;
+            }
+
+            if ($creditsNeeded > userCredits()) {
+                session()->flash('error', 'You need ' . $creditsNeeded . ' more credits to update this campaign budget.');
+                $this->showLowCreditWarningModal = true;
+                $this->showAddCreditModal = false;
+                return;
+            }
+
+            DB::transaction(function () use ($campaign, $newTotalBudget, $creditsNeeded) {
+                $campaign->update([
+                    'budget_credits' => $newTotalBudget,
+                    'cost_per_repost' => $this->addCreditCostPerRepost,
+                    'updater_id' => user()->id,
+                    'updater_type' => get_class(user())
+                ]);
+
+                CreditTransaction::create([
+                    'receiver_urn' => user()->urn,
+                    'calculation_type' => CreditTransaction::CALCULATION_TYPE_CREDIT,
+                    'source_id' => $campaign->id,
+                    'source_type' => Campaign::class,
+                    'transaction_type' => CreditTransaction::TYPE_SPEND,
+                    'status' => 'succeeded',
+                    'credits' => $creditsNeeded,
+                    'description' => 'Spent on campaign budget increase',
+                    'metadata' => [
+                        'campaign_id' => $campaign->id,
+                        'action' => 'add_credits',
+                        'updated_at' => now(),
+                    ],
+                    'created_id' => user()->id,
+                    'created_type' => get_class(user())
+                ]);
+            });
+
+            session()->flash('success', 'Campaign budget updated successfully!');
+            $this->showAddCreditModal = false;
+            $this->refreshCampaigns();
+        } catch (\Exception $e) {
+            session()->flash('error', 'Failed to add credits: ' . $e->getMessage());
+            Log::error('Add credit error: ' . $e->getMessage(), [
+                'campaign_id' => $this->addCreditCampaignId,
+                'user_urn' => user()->urn ?? 'unknown',
+            ]);
+        }
+    }
+
+    // Methods for Edit functionality
+    public function openEditCampaignModal(Campaign $campaign)
+    {
+        $this->resetValidation();
+        $this->resetErrorBag();
+
+        if ($campaign->status === Campaign::STATUS_CANCELLED) {
+            $this->openAlreadyCancelledModal();
+            return;
+        }
+
+        $this->editingCampaignId = $campaign->id;
+        $this->editTitle = $campaign->title;
+        $this->editDescription = $campaign->description;
+        $this->editEndDate = $campaign->end_date->format('Y-m-d');
+        $this->editTargetReposts = $campaign->target_reposts;
+        $this->editCostPerRepost = $campaign->cost_per_repost;
+        $this->editOriginalBudget = $campaign->budget_credits;
+
+        // Reset warning states
+        $this->showBudgetWarning = false;
+        $this->budgetWarningMessage = '';
+        $this->canSubmit = true; // Default to true for editing
+
+        $this->showEditCampaignModal = true;
+
+        // Close other modals
+        $this->showSubmitModal = false;
+        $this->showCampaignsModal = false;
+        $this->showAddCreditModal = false;
+        $this->showCancelWarningModal = false;
+    }
+
+    public function updateCampaign()
+    {
+        $this->validate();
+
+        try {
+            $campaign = Campaign::findOrFail($this->editingCampaignId);
+
+            $newBudgetCredits = $this->editCostPerRepost * $this->editTargetReposts;
+            $creditDifference = $newBudgetCredits - $campaign->budget_credits;
+
+            // Prevent budget decrease
+            if ($creditDifference < 0) {
+                session()->flash('error', 'Campaign budget cannot be decreased.');
+                return;
+            }
+
+            // Check if user has enough credits for increase
+            if ($creditDifference > 0 && $creditDifference > userCredits()) {
+                session()->flash('error', 'You need ' . $creditDifference . ' more credits to update this campaign budget.');
+                $this->showLowCreditWarningModal = true;
+                $this->showEditCampaignModal = false;
+                return;
+            }
+
+            DB::transaction(function () use ($campaign, $newBudgetCredits, $creditDifference) {
+                $campaign->update([
+                    'title' => $this->editTitle,
+                    'description' => $this->editDescription,
+                    'end_date' => $this->editEndDate,
+                    'target_reposts' => $this->editTargetReposts,
+                    'cost_per_repost' => $this->editCostPerRepost,
+                    'budget_credits' => $newBudgetCredits,
+                    'updater_id' => user()->id,
+                    'updater_type' => get_class(user())
+                ]);
+
+                // Create credit transaction only if budget increased
+                if ($creditDifference > 0) {
+                    CreditTransaction::create([
+                        'receiver_urn' => user()->urn,
+                        'calculation_type' => CreditTransaction::CALCULATION_TYPE_CREDIT,
+                        'source_id' => $campaign->id,
+                        'source_type' => Campaign::class,
+                        'transaction_type' => CreditTransaction::TYPE_SPEND,
+                        'status' => 'succeeded',
+                        'credits' => $creditDifference,
+                        'description' => 'Spent on campaign update',
+                        'metadata' => [
+                            'campaign_id' => $campaign->id,
+                            'action' => 'edit_campaign',
+                            'updated_at' => now(),
+                        ],
+                        'created_id' => user()->id,
+                        'created_type' => get_class(user())
+                    ]);
+                }
+            });
+
+            session()->flash('success', 'Campaign updated successfully!');
+            $this->showEditCampaignModal = false;
+            $this->refreshCampaigns();
+        } catch (\Exception $e) {
+            session()->flash('error', 'Failed to update campaign: ' . $e->getMessage());
+            Log::error('Campaign update error: ' . $e->getMessage(), [
+                'campaign_id' => $this->editingCampaignId,
+                'user_urn' => user()->urn ?? 'unknown',
+            ]);
+        }
+    }
+
+    // Methods for Delete functionality
+    public function openCancelWarningModal(Campaign $campaign)
+    {
+        $this->resetValidation();
+        $this->resetErrorBag();
+
+        if ($campaign->status === Campaign::STATUS_CANCELLED) {
+            $this->openAlreadyCancelledModal();
+            return;
+        }
+
+        $this->campaignToDeleteId = $campaign->id;
+
+        // Calculate remaining budget and 50% refund
+        $remainingBudget = $campaign->budget_credits - $campaign->credits_spent;
+        $this->refundAmount = floor($remainingBudget * 0.5);
+
+        $this->showCancelWarningModal = true;
+
+        // Close other modals
+        $this->showSubmitModal = false;
+        $this->showCampaignsModal = false;
+        $this->showAddCreditModal = false;
+        $this->showEditCampaignModal = false;
+    }
+
+    public function cancelCampaign()
+    {
+        try {
+            $campaign = Campaign::findOrFail($this->campaignToDeleteId);
+
+            DB::transaction(function () use ($campaign) {
+                // Refund 50% of remaining budget if any
+                if ($this->refundAmount > 0) {
+                    CreditTransaction::create([
+                        'receiver_urn' => user()->urn,
+                        'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
+                        'source_id' => $campaign->id,
+                        'source_type' => Campaign::class,
+                        'transaction_type' => CreditTransaction::TYPE_REFUND,
+                        'status' => 'succeeded',
+                        'credits' => $this->refundAmount,
+                        'description' => 'Refund for canceled campaign (50% of remaining budget)',
+                        'metadata' => [
+                            'campaign_id' => $campaign->id,
+                            'action' => 'campaign_canceled',
+                            'refund_percentage' => 50,
+                            'canceled_at' => now(),
+                        ],
+                        'created_id' => user()->id,
+                        'created_type' => get_class(user())
+                    ]);
+                }
+
+                // update the status of the campaign
+                $campaign->update([
+                    'status' => Campaign::STATUS_CANCELLED,
+                    'refund_credits' => $this->refundAmount,
+                    'updater_id' => user()->id,
+                    'updater_type' => get_class(user())
+                ]);
+            });
+
+            session()->flash('success', 'Campaign canceled successfully! ' . number_format($this->refundAmount) . ' credits refunded.');
+            $this->showCancelWarningModal = false;
+            $this->refreshCampaigns();
+        } catch (\Exception $e) {
+            session()->flash('error', 'Failed to delete campaign: ' . $e->getMessage());
+            Log::error('Campaign cancellation error: ' . $e->getMessage(), [
+                'campaign_id' => $this->campaignToDeleteId,
+                'user_urn' => user()->urn ?? 'unknown',
             ]);
         }
     }
@@ -381,6 +948,6 @@ class MyCampaign extends Component
 
     public function render()
     {
-        return view('backend.user.campaign_management.campaigns.my_campaigns');
+        return view('backend.user.campaign_management.my_campaigns');
     }
 }

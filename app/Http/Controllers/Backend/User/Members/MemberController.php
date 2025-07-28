@@ -3,14 +3,10 @@
 namespace App\Http\Controllers\Backend\User\Members;
 
 use App\Http\Controllers\Controller;
-use App\Models\Credit;
 use App\Models\Playlist;
 use App\Models\Track;
 use App\Models\User;
 use App\Models\UserInformation;
-use App\Services\Admin\UserManagement\UserService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class MemberController extends Controller
 {
@@ -22,7 +18,7 @@ class MemberController extends Controller
         $data['userinfo'] = UserInformation::where('id', user()->id)->get();
         $data['playlists'] = Playlist::where('user_urn', user()->urn)->get();
         $data['tracks'] = Track::where('user_urn', user()->urn)->get();
-        return view('backend.user.members.index', $data);
+        return view('backend.user.member-management.members', $data);
      }
 
   public function confirmRepost($id)
@@ -36,6 +32,6 @@ class MemberController extends Controller
 
     public function request()
     {
-        return view('backend.user.members.request');
+        return view('backend.user.member-management.request');
     }
 }

@@ -8,10 +8,10 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('User Playlist List') }}</h2>
                 <div class="flex items-center gap-2">
-                    <x-button href="{{ route('um.playlist.trash') }}" icon="trash-2" type='secondary'
+                    {{-- <x-button href="{{ route('um.playlist.trash') }}" icon="trash-2" type='secondary'
                         permission="admin-trash">
                         {{ __('Trash') }}
-                    </x-button>
+                    </x-button> --}}
                 </div>
             </div>
         </div>
@@ -64,9 +64,9 @@
                     table_columns: table_columns,
                     main_class: '.datatable',
                     displayLength: 10,
-                    main_route: "{{ route('um.playlist.index') }}",
+                    main_route: "{{ route('um.user.playlist', Auth::user()->id) }}",
                     order_route: "{{ route('update.sort.order') }}",
-                    export_columns: [0, 1, 2, 3, 4, 5, 6],
+                    export_columns: [0, 1, 2, 3, 4, 5, 6,7,8,9,10],
                     model: 'Playlist',
                 };
                 // initializeDataTable(details);
@@ -76,7 +76,7 @@
         </script>
 
         {{-- Details Modal --}}
-        <script>
+        {{-- <script>
             document.addEventListener('DOMContentLoaded', () => {
 
                 $(document).on('click', '.view', function() {
@@ -251,6 +251,6 @@
                     showDetailsModal(route, id, '{{ __('User Details') }}', details);
                 });
             });
-        </script>
+        </script> --}}
     @endpush
 </x-admin::layout>

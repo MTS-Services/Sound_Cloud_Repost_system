@@ -35,8 +35,8 @@
             <x-admin.navlink type="single" icon="layout-dashboard" name="Dashboard" :route="route('admin.dashboard')"
                 active="admin-dashboard" :page_slug="$active" permission="" />
 
-            <x-admin.navlink type="single" icon="layout-dashboard" name="Button UI" :route="route('button-ui')"
-                active="button-ui" :page_slug="$active" />
+            {{-- <x-admin.navlink type="single" icon="layout-dashboard" name="Button UI" :route="route('button-ui')"
+                active="button-ui" :page_slug="$active" /> --}}
 
 
             <x-admin.navlink type="dropdown" icon="users" name="Admin Management" :page_slug="$active"
@@ -67,44 +67,29 @@
             <x-admin.navlink type="dropdown" icon="users" name="User Management" :page_slug="$active"
                 :items="[
                     [
-                        'name' => 'All Users',
+                        'name' => 'Users',
                         'route' => route('um.user.index'),
                         'icon' => 'user',
                         'active' => 'user',
                         'permission' => 'user-list',
                     ],
-                    [
-                        'name' => 'Top Reposters',
-                        'route' => '#',
-                        'icon' => 'user',
-                        'active' => '',
-                        'permission' => 'user-list',
-                    ],
-                    [
-                        'name' => 'Banned Users',
-                        'route' => '#',
-                        'icon' => 'user',
-                        'active' => 'admin-users',
-                        'permission' => 'user-list',
-                    ],
-                    [
-                        'name' => 'User Playlists',
-                        'route' => route('um.playlist.index'),
-                        'icon' => 'music',
-                        'active' => 'user-playlist',
-                        'permission' => 'user-list',
-                    ],
-                    [
-                        'name' => 'User Tracklists',
-                        'route' => route('um.tracklist.index'),
-                        'icon' => 'music',
-                        'active' => 'user-tracklist',
-                        'permission' => 'user-list',
-                    ],
-
+                    // [
+                    //     'name' => 'Top Reposters',
+                    //     'route' => '#',
+                    //     'icon' => 'user',
+                    //     'active' => '',
+                    //     'permission' => 'user-list',
+                    // ],
+                    // [
+                    //     'name' => 'Banned Users',
+                    //     'route' => '#',
+                    //     'icon' => 'user',
+                    //     'active' => 'admin-users',
+                    //     'permission' => 'user-list',
+                    // ],
                 ]" />
 
-            <x-admin.navlink type="dropdown" icon="shopping-cart" name="Package Management" :page_slug="$active"
+            <x-admin.navlink type="dropdown" icon="shopping-cart" name="Credit Management" :page_slug="$active"
                 :items="[
                     [
                         'name' => 'Feature Categories',
@@ -149,7 +134,7 @@
                 :items="[
                     [
                         'name' => 'Orders',
-                        'route' => route('om.credit-transaction.purchase'),
+                        'route' => route('om.order.index'),
                         'icon' => 'megaphone',
                         'active' => 'order',
                         'permission' => 'order-list',
