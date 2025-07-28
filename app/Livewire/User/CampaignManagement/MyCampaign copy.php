@@ -3,10 +3,8 @@
 namespace App\Livewire\User\CampaignManagement;
 
 use App\Models\Campaign;
-use App\Models\CreditTransaction;
 use App\Models\Track;
 use App\Models\Playlist;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Locked;
@@ -20,13 +18,14 @@ class MyCampaign extends Component
     public bool $showCampaignsModal = false;
     public bool $showSubmitModal = false;
     public bool $showLowCreditWarningModal = false;
-    public string $activeModalTab = 'tracks';
-
     // {{-- NEW FUNCTIONALITY --}}
     public bool $showAddCreditModal = false;
     public bool $showEditCampaignModal = false;
     public bool $showDeleteWarningModal = false;
     // {{-- END NEW FUNCTIONALITY --}}
+
+    public string $activeMainTab = 'all';
+    public string $activeModalTab = 'tracks';
 
     public $tracks = [];
     public $playlists = [];
@@ -40,7 +39,7 @@ class MyCampaign extends Component
     #[Locked]
     public int $maxFollowers = 0;
 
-    // Properties for campaign creation
+    // Input fields for campaign creation
     public $musicId = null;
     public $musicType = null;
     public $title = null;
@@ -70,8 +69,12 @@ class MyCampaign extends Component
     public $refundAmount = 0;
     // {{-- END NEW FUNCTIONALITY --}}
 
-
     protected $listeners = ['campaignCreated' => 'refreshCampaigns'];
+
+    public function mount()
+    {
+        $this->refreshCampaigns();
+    }
 
     /**
      * Define validation rules
@@ -127,9 +130,8 @@ class MyCampaign extends Component
             'endDate.after_or_equal' => 'Expiration date must be today or later.',
             'targetReposts.required' => 'Target repost count is required.',
             'targetReposts.min' => 'Target reposts must be at least 1.',
-            'costPerRepost.required' => 'Budget per repost is required.',
-            'costPerRepost.min' => 'Budget per repost must be at least 1 credit.',
-
+            'costPerRepost.required' => 'Cost per repost is required.',
+            'costPerRepost.min' => 'Cost per repost must be at least 1 credit.',
             // {{-- NEW FUNCTIONALITY: Edit specific messages --}}
             'editTitle.required' => 'Campaign name is required.',
             'editDescription.required' => 'Campaign description is required.',
@@ -142,6 +144,23 @@ class MyCampaign extends Component
             'addCreditCostPerRepost.min' => 'Cost per repost must be at least 1 credit.',
             // {{-- END NEW FUNCTIONALITY --}}
         ];
+    }
+
+    public function refreshCampaigns()
+    {
+        if ($this->activeMainTab === 'all') {
+            $this->campaigns = Campaign::self()->latest()->get();
+        } elseif ($this->activeMainTab === 'active') {
+            $this->campaigns = Campaign::self()->active_completed()->latest()->get();
+        } elseif ($this->activeMainTab === 'completed') {
+            $this->campaigns = Campaign::self()->completed()->latest()->get();
+        }
+    }
+
+    public function setActiveTab($tab)
+    {
+        $this->activeMainTab = $tab;
+        $this->refreshCampaigns();
     }
 
     public function toggleCampaignsModal()
@@ -161,7 +180,6 @@ class MyCampaign extends Component
             'costPerRepost',
             'minFollowers',
             'maxFollowers',
-
             // {{-- NEW FUNCTIONALITY: Reset new modals and their data --}}
             'showAddCreditModal',
             'showEditCampaignModal',
@@ -257,7 +275,6 @@ class MyCampaign extends Component
             if ($response->successful()) {
                 $tracks = $response->json();
 
-                // Ensure we have valid track data
                 if (is_array($tracks)) {
                     $this->playlistTracks = collect($tracks)->filter(function ($track) {
                         return is_array($track) &&
@@ -288,7 +305,6 @@ class MyCampaign extends Component
     {
         $this->resetValidation();
         $this->resetErrorBag();
-
         // Reset form fields
         $this->reset([
             'title',
@@ -296,7 +312,6 @@ class MyCampaign extends Component
             'endDate',
             'targetReposts',
             'costPerRepost',
-
             // {{-- NEW FUNCTIONALITY: Reset new modals and their data --}}
             'showAddCreditModal',
             'addCreditCampaignId',
@@ -316,7 +331,12 @@ class MyCampaign extends Component
             // {{-- END NEW FUNCTIONALITY --}}
         ]);
 
-        if (userCredits() < 50) {
+        // Explicitly close the campaign selection modal when opening the submit modal
+        $this->showCampaignsModal = false; // Ensures the first modal closes
+
+        // Simulate user credits for demonstration
+        $userCredits = user()->credits;
+        if ($userCredits < 50) {
             $this->showLowCreditWarningModal = true;
             $this->showSubmitModal = false;
             return;
@@ -325,47 +345,28 @@ class MyCampaign extends Component
         }
 
         $this->showSubmitModal = true;
-
         try {
             if ($type === 'track') {
                 $track = Track::findOrFail($id);
-
-                // Ensure track has required data
                 if (!$track->urn || !$track->title) {
                     throw new \Exception('Track data is incomplete');
                 }
-
                 $this->musicId = $track->id;
                 $this->musicType = Track::class;
                 $this->title = $track->title . ' Campaign';
             } elseif ($type === 'playlist') {
                 $playlist = Playlist::findOrFail($id);
-
-                // Ensure playlist has required data
                 if (!$playlist->title) {
                     throw new \Exception('Playlist data is incomplete');
                 }
-
-                $this->playlistId = $id;
-                $this->title = $playlist->title . ' Campaign';
-                $this->musicType = Playlist::class;
-
-                // Fetch playlist tracks with error handling
+                $this->playlistId = $playlist->id;
                 $this->fetchPlaylistTracks();
-
-                // Reset trackUrn when switching to playlist mode
-                $this->musicId = null;
+                $this->musicType = Playlist::class;
+                $this->title = $playlist->title . ' Campaign';
             }
         } catch (\Exception $e) {
-            session()->flash('error', 'Failed to load content: ' . $e->getMessage());
+            session()->flash('error', 'Failed to prepare campaign: ' . $e->getMessage());
             $this->showSubmitModal = false;
-            $this->showCampaignsModal = true;
-
-            Log::error('Toggle submit modal error: ' . $e->getMessage(), [
-                'type' => $type,
-                'id' => $id,
-                'user_urn' => user()->urn ?? 'unknown'
-            ]);
         }
     }
 
@@ -374,95 +375,77 @@ class MyCampaign extends Component
         $this->validate();
 
         try {
-            if (!$this->musicId) {
-                throw new \Exception('Please select a track for your campaign.');
+            $budgetCredits = $this->costPerRepost * $this->targetReposts;
+
+            $user = user();
+            if ($user->credits < $budgetCredits) {
+                session()->flash('error', 'You do not have enough credits to create this campaign. You need ' . $budgetCredits . ' credits.');
+                $this->showSubmitModal = false;
+                $this->showLowCreditWarningModal = true;
+                return;
             }
 
-            // Calculate credits per repost
-            if ($this->costPerRepost <= 0 || $this->targetReposts <= 0) {
-                throw new \Exception('Cost per repost and target reposts must be greater than 0.');
-            }
-
-            $totalBudget = ($this->costPerRepost * $this->targetReposts);
-
-            if ($this->costPerRepost >= 1) {
-                $this->minFollowers = $this->costPerRepost * 100;
-                $this->maxFollowers = $this->minFollowers + 99;
-            }
-
-            DB::transaction(function () use ($totalBudget) {
-                $campaign = Campaign::create([
-                    'music_id' => $this->musicId,
-                    'music_type' => $this->musicType,
-                    'title' => $this->title,
-                    'description' => $this->description,
-                    'target_reposts' => $this->targetReposts,
-                    'cost_per_repost' => $this->costPerRepost,
-                    'budget_credits' => $totalBudget,
-                    'end_date' => $this->endDate,
-                    'user_urn' => user()->urn,
-                    'status' => Campaign::STATUS_OPEN,
-                    'min_followers' => $this->minFollowers,
-                    'max_followers' => $this->maxFollowers,
-                ]);
-
-                CreditTransaction::create([
-                    'receiver_urn' => user()->urn,
-                    'calculation_type' => CreditTransaction::CALCULATION_TYPE_CREDIT,
-                    'source_id' => $campaign->id,
-                    'source_type' => Campaign::class,
-                    'transaction_type' => CreditTransaction::TYPE_SPEND,
-                    'status' => 'succeeded',
-                    'credits' => $totalBudget,
-                    'description' => 'Spent on campaign creation',
-                    'metadata' => [
-                        'campaign_id' => $campaign->id,
-                        'music_id' => $this->musicId,
-                        'music_type' => $this->musicType,
-                        'start_date' => now(),
-                    ]
-                ]);
-            });
-
-
-            session()->flash('message', 'Campaign created successfully!');
-            $this->dispatch('campaignCreated');
-
-            // Close modal and reset everything
-            $this->showCampaignsModal = false;
-            $this->showSubmitModal = false;
-
-            // Complete reset of all form and modal state
-            $this->reset([
-                'musicId',
-                'title',
-                'description',
-                'endDate',
-                'targetReposts',
-                'costPerRepost',
-                'playlistId',
-                'playlistTracks',
-                'activeModalTab',
-                'tracks',
-                'playlists',
-                'minFollowers',
-                'maxFollowers'
+            $campaign = Campaign::create([
+                'user_urn' => user()->urn,
+                'music_id' => $this->musicId,
+                'music_type' => $this->musicType,
+                'title' => $this->title,
+                'description' => $this->description,
+                'target_reposts' => $this->targetReposts,
+                'completed_reposts' => 0,
+                'cost_per_repost' => $this->costPerRepost,
+                'budget_credits' => $budgetCredits,
+                'credits_spent' => 0,
+                'min_followers' => $this->minFollowers,
+                'max_followers' => $this->maxFollowers,
+                'is_featured' => false,
+                'status' => Campaign::STATUS_OPEN,
+                'start_date' => now(),
+                'end_date' => $this->endDate,
+                'auto_approve' => Campaign::AUTO_APPROVE_NO,
+                'creater_id' => user()->id,
+                'creater_type' => get_class(user()),
             ]);
 
+            $user->decrement('credits', $budgetCredits);
 
-            $this->resetValidation();
-            $this->resetErrorBag();
+            session()->flash('success', 'Campaign created successfully!');
+            $this->resetForm();
+            $this->showSubmitModal = false;
+            $this->refreshCampaigns();
         } catch (\Exception $e) {
             session()->flash('error', 'Failed to create campaign: ' . $e->getMessage());
-
             Log::error('Campaign creation error: ' . $e->getMessage(), [
-                'music_id' => $this->musicId,
                 'user_urn' => user()->urn ?? 'unknown',
+                'music_id' => $this->musicId,
+                'music_type' => $this->musicType,
                 'title' => $this->title,
-                'total_budget' => $totalBudget,
-                'target_reposts' => $this->targetReposts
+                'description' => $this->description,
+                'target_reposts' => $this->targetReposts,
+                'cost_per_repost' => $this->costPerRepost,
+                'endDate' => $this->endDate,
             ]);
         }
+    }
+
+    private function resetForm()
+    {
+        $this->reset([
+            'musicId',
+            'musicType',
+            'title',
+            'description',
+            'endDate',
+            'targetReposts',
+            'costPerRepost',
+            'minFollowers',
+            'maxFollowers',
+            'playlistId',
+            'playlistTracks',
+            'activeModalTab'
+        ]);
+        $this->resetValidation();
+        $this->resetErrorBag();
     }
 
 
@@ -498,41 +481,27 @@ class MyCampaign extends Component
             $creditsNeeded = $newTargetBudget - $oldTotalBudget;
 
             if ($creditsNeeded < 0) {
-                session()->flash('warning', 'Campaign budget cannot be reduced.');
+                session()->flash('warning', 'Reducing the cost per repost will not add credits. Please adjust your campaign via the "Edit" function if you wish to change the cost per repost without adding credits.');
                 $this->showAddCreditModal = false;
                 $this->refreshCampaigns();
                 return;
             }
 
-            if ($creditsNeeded > 0 && userCredits() < $creditsNeeded) {
+            $user = user();
+            if ($creditsNeeded > 0 && $user->credits < $creditsNeeded) {
                 session()->flash('error', 'You need ' . $creditsNeeded . ' more credits to update this campaign budget.');
                 $this->showLowCreditWarningModal = true;
                 $this->showAddCreditModal = false;
                 return;
             }
 
-            DB::transaction(function () use ($campaign, $newTargetBudget, $creditsNeeded) {
-                $campaign->update([
-                    'budget_credits' => $newTargetBudget,
-                    'cost_per_repost' => $this->addCreditCostPerRepost
-                ]);
-                if ($creditsNeeded > 0) {
-                    CreditTransaction::create([
-                        'receiver_urn' => user()->urn,
-                        'calculation_type' => CreditTransaction::CALCULATION_TYPE_CREDIT,
-                        'source_id' => $campaign->id,
-                        'source_type' => Campaign::class,
-                        'transaction_type' => CreditTransaction::TYPE_SPEND,
-                        'status' => 'succeeded',
-                        'credits' => $creditsNeeded,
-                        'description' => 'Spent on campaign update for Add Credits',
-                        'metadata' => [
-                            'campaign_id' => $campaign->id,
-                            'start_date' => now(),
-                        ]
-                    ]);
-                }
-            });
+            $campaign->cost_per_repost = $this->addCreditCostPerRepost;
+            $campaign->budget_credits = $newTargetBudget;
+            $campaign->save();
+
+            if ($creditsNeeded > 0) {
+                $user->decrement('credits', $creditsNeeded);
+            }
 
             session()->flash('success', 'Campaign budget updated successfully!');
             $this->showAddCreditModal = false;
@@ -662,47 +631,6 @@ class MyCampaign extends Component
         }
     }
     // {{-- END NEW FUNCTIONALITY --}}
-
-    public $activeMainTab = 'all';
-
-    public function setActiveTab($tab)
-    {
-        $this->activeMainTab = $tab;
-        $this->refreshCampaigns();
-    }
-
-    public function refreshCampaigns()
-    {
-        try {
-            if ($this->activeMainTab == 'all') {
-                $this->campaigns = Campaign::with(['music'])
-                    ->where('user_urn', user()->urn)
-                    ->latest()
-                    ->get();
-            } elseif ($this->activeMainTab == 'active') {
-                $this->campaigns = Campaign::with(['music'])
-                    ->where('user_urn', user()->urn)
-                    ->Open()
-                    ->latest()
-                    ->get();
-            } elseif ($this->activeMainTab == 'completed') {
-                $this->campaigns = Campaign::with(['music'])
-                    ->where('user_urn', user()->urn)
-                    ->Completed()
-                    ->latest()
-                    ->get();
-            }
-        } catch (\Exception $e) {
-            $this->campaigns = collect();
-            session()->flash('error', 'Failed to refresh campaigns: ' . $e->getMessage());
-        }
-    }
-
-    public function mount()
-    {
-        $this->refreshCampaigns();
-    }
-
     public function render()
     {
         return view('backend.user.campaign_management.campaigns.my_campaigns');
