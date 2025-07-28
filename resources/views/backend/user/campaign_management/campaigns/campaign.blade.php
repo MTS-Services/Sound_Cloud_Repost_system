@@ -101,9 +101,8 @@
                                         <img class="w-14 h-14 rounded-full object-cover"
                                             src="{{ auth_storage_url($campaign?->music?->user?->avatar) }}"
                                             alt="Audio Cure avatar">
-                                        <div class="inline-block text-left">
-                                            <!-- Trigger -->
-                                            <div class="flex items-center gap-1">
+                                        <div x-data="{ open: false }" class="inline-block text-left">
+                                            <div @click="open = !open" class="flex items-center gap-1 cursor-pointer">
                                                 <span
                                                     class="text-slate-700 dark:text-gray-300 font-medium">{{ $campaign?->music?->user?->name }}</span>
                                                 <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none"
@@ -118,9 +117,26 @@
                                                     d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z">
                                                 </path>
                                             </svg>
+
+                                            <div x-show="open" x-transition.opacity
+                                                class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
+                                                x-cloak>
+                                                <a href="{{ $campaign?->music?->user?->userInfo?->soundcloud_permalink }}"
+                                                    class="block hover:bg-gray-800 px-3 py-1 rounded">Visit SoundCloud
+                                                    Profile</a>
+                                                <a href="#"
+                                                    class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
+                                                    RepostExchange Profile</a>
+                                                <button
+                                                    class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
+                                                    all content from this
+                                                    member</button>
+                                                <button
+                                                    class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
+                                                    this track</button>
+                                            </div>
                                         </div>
                                     </div>
-
                                     <!-- Stats and Repost Button -->
                                     <div class="flex items-center gap-4 sm:gap-8">
                                         <div
@@ -159,19 +175,6 @@
                                                 <span>{{ ceil(user()?->userInfo?->followers_count / 100) }}
                                                     Repost</span>
                                             </button>
-
-                                            <!-- Timer Display -->
-                                            {{-- @if (!$this->canRepost($campaign->id) && !in_array($campaign->id, $this->playedCampaigns))
-                                                <div
-                                                    class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-orange-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
-                                                    @if ($this->getPlayTime($campaign->id) > 0)
-                                                        Listen for {{ $this->getRemainingTime($campaign->id) }}s more
-                                                    @else
-                                                        Listen for 5 seconds to enable repost
-                                                    @endif
-                                                </div>
-                                            @endif --}}
-
                                             @if (in_array($campaign->id, $this->repostedCampaigns))
                                                 <div
                                                     class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
@@ -229,9 +232,8 @@
                                         <img class="w-14 h-14 rounded-full object-cover"
                                             src="{{ auth_storage_url($campaign?->music?->user?->avatar) }}"
                                             alt="Audio Cure avatar">
-                                        <div class="inline-block text-left">
-                                            <!-- Trigger -->
-                                            <div class="flex items-center gap-1">
+                                        <div x-data="{ open: false }" class="inline-block text-left">
+                                            <div @click="open = !open" class="flex items-center gap-1 cursor-pointer">
                                                 <span
                                                     class="text-slate-700 dark:text-gray-300 font-medium">{{ $campaign?->music?->user?->name }}</span>
                                                 <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none"
@@ -248,16 +250,23 @@
                                                 </path>
                                             </svg>
 
-                                            <!-- Dropdown Menu (you can add Alpine.js back if needed) -->
-                                            {{--
-                                            <div class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2 hidden">
+                                            <div x-show="open" x-transition.opacity
+                                                class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
+                                                x-cloak>
                                                 <a href="{{ $campaign?->music?->user?->userInfo?->soundcloud_permalink }}"
-                                                    class="block hover:bg-gray-800 px-3 py-1 rounded">Visit SoundCloud Profile</a>
-                                                <a href="#" class="block hover:bg-gray-800 px-3 py-1 rounded">Visit RepostChain Profile</a>
-                                                <button class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide all content from this member</button>
-                                                <button class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide this track</button>
+                                                    class="block hover:bg-gray-800 px-3 py-1 rounded">Visit SoundCloud
+                                                    Profile</a>
+                                                <a href="#"
+                                                    class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
+                                                    RepostExchange Profile</a>
+                                                <button
+                                                    class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
+                                                    all content from this
+                                                    member</button>
+                                                <button
+                                                    class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
+                                                    this track</button>
                                             </div>
-                                            --}}
                                         </div>
                                     </div>
 
