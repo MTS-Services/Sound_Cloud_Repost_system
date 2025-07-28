@@ -244,7 +244,6 @@ class Campaign extends Component
                 session()->flash('error', 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
                 return;
             }
-            $campaignId = decrypt($campaignId);
             $currentUserUrn = user()->urn;
 
             // Check if the current user owns the campaign
