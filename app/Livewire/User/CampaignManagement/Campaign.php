@@ -326,6 +326,6 @@ class Campaign extends Component
 
     public function render()
     {
-        return view('backend.user.campaign_management.campaigns.campaign');
+        return view('backend.user.campaign_management.campaign');
     }
 }

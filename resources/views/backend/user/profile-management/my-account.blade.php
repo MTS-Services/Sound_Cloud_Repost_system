@@ -532,7 +532,6 @@
                                                     <th class="w-20 px-2 py-3">Amount</th>
                                                     <th class="w-20 px-2 py-3">Credit</th>
                                                     <th class="w-24 px-2 py-3">Type</th>
-                                                    {{-- <th class="w-28 px-2 py-3">Metadata</th> --}}
                                                     <th class="w-20 px-2 py-3">Status</th>
                                                 </tr>
                                             </thead>
@@ -545,8 +544,7 @@
                                                     <td class="px-2 py-2">{{ $transaction->receiver_urn}}</td>
                                                     <td class="px-2 py-2">{{ $transaction->amount}}</td>
                                                     <td class="px-2 py-2">{{ $transaction->credits}}</td>
-                                                    <td class="px-2 py-2">{{ $transaction->transaction_type}}</td>
-                                                    {{-- <td class="px-2 py-2">{{ $transaction->metadata}}</td> --}}
+                                                    <td class="px-2 py-2">{{ $transaction->type_name}}</td>
                                                     <td class="px-2 py-2 text-green-600 font-semibold">{{ $transaction->status}}</td>
                                                 </tr>
                                                
