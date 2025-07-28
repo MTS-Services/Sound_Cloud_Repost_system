@@ -39,9 +39,7 @@
 
         <!-- Featured Campaign Section -->
         @if (count($featuredCampaigns) > 0)
-            <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Featured campaigns
-                <x-wi-wind-deg />
-            </h2>
+            <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Featured campaigns</h2>
             @foreach ($featuredCampaigns as $campaign)
                 <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm">
                     <div class="flex flex-col lg:flex-row" wire:key="featured-{{ $campaign->id }}">
