@@ -13,12 +13,15 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Yajra\DataTables\Facades\DataTables;
 use App\Services\Admin\Usermanagement\UserPlaylistService;
+use App\Services\Admin\UserManagement\UserTracklistService;
+
 
 class UserController extends Controller implements HasMiddleware
 {
 
     use AuditRelationTraits;
      protected UserPlaylistService $userPlaylistService;
+     protected UserTracklistService $userTracklistService;
 
     protected function redirectIndex(): RedirectResponse
     {
@@ -32,10 +35,11 @@ class UserController extends Controller implements HasMiddleware
 
     protected UserService $userService;
 
-    public function __construct(UserService $userService, UserPlaylistService $userPlaylistService)
+    public function __construct(UserService $userService, UserPlaylistService $userPlaylistService, UserTracklistService $userTracklistService)
     {
         $this->userService = $userService;
         $this->userPlaylistService = $userPlaylistService;
+        $this->userTracklistService = $userTracklistService;
     }
 
     public static function middleware(): array
@@ -92,13 +96,13 @@ class UserController extends Controller implements HasMiddleware
                 'edit' => true,
                 'permissions' => ['permission-playlist']
             ],
-            //  [
-            //     'routeName' => 'um.user.tracklist',
-            //     'params' => [encrypt($model->id)],
-            //     'label' => 'Tracklist',
-            //     'edit' => true,
-            //     'permissions' => ['permission-tracklist']
-            // ],
+             [
+                'routeName' => 'um.user.tracklist',
+                'params' => [encrypt($model->urn)],
+                'label' => 'Tracklist',
+                'edit' => true,
+                'permissions' => ['permission-tracklist']
+            ],
             [
                 'routeName' => 'um.user.status',
                 'params' => [encrypt($model->id)],
@@ -151,6 +155,42 @@ class UserController extends Controller implements HasMiddleware
                 'label' => 'Details',
                 'permissions' => ['permission-list', 'permission-delete', 'permission-status']
             ],
+        ];
+    }
+
+    public function tracklist(Request $request)
+    {
+
+        if ($request->ajax()) {
+            $query = $this->userTracklistService->getUserTracklists();
+            return DataTables::eloquent($query)
+                ->editColumn('user_urn', function ($tracklist) {
+                    return $tracklist->user?->name;
+                })
+                ->editColumn('creater_id', fn($user) => $this->creater_name($user))
+                ->editColumn('created_at', fn($user) => $user->created_at_formatted)
+                ->editColumn('action', function ($tracklist) {
+                    $menuItems = $this->menuItems($tracklist);
+                    return view('components.action-buttons', compact('menuItems'))->render();
+                })
+                ->rawColumns(['action', 'creater_id', 'created_at', 'user_urn'])
+                ->make(true);
+        }
+        return view('backend.admin.user-management.tracklist.index');
+    }
+
+    protected function tracklistMenuItems($model): array
+    {
+        return [
+            [
+                // 'routeName' => 'javascript:void(0)',
+                // 'data-id' => encrypt($model->id),
+                // 'className' => 'view',
+                // 'label' => 'Details',
+                // 'permissions' => ['permission-list', 'permission-delete', 'permission-status']
+            ],
+           
+
         ];
     }
     /**
