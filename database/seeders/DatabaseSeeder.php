@@ -23,12 +23,14 @@ class DatabaseSeeder extends Seeder
             FeatureCategorySeeder::class,
             FeatureSeeder::class,
             PlanSeeder::class,
-                // CampaignSeeder::class,
+            CampaignSeeder::class,
+            RepostRequestSeeder::class,
             PlaylistSeeder::class,
             TrackSeeder::class,
             CreditSeeder::class,
             OrderSeeder::class,
             UserInformationSeeder::class,
+            RepostSeeder::class,
         ]);
     }
 }

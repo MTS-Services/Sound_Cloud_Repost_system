@@ -36,10 +36,24 @@ class MyAccount extends Component
     {
         $this->playlists = Playlist::where('user_urn', user()->urn)->get();
     }
-   public function getRecentReposts(): void
-{
-    $this->reposts = Repost::where('track_owner_urn', user()->urn)->with(['campaign', 'request'])->orderByDesc('reposted_at')->get();
-}
+    public function getRecentReposts(): void
+    {
+        $this->reposts = Repost::with([
+            'campaign.music',
+            'request.track',
+        ])
+            ->where('reposter_urn', user()->urn)
+            ->orderByDesc('reposted_at')
+            ->take(10)
+            ->get()
+            ->map(function ($repost) {
+                $source = $repost->campaign?->music ?? $repost->request?->track;
+                $repost->source = $source;
+                $repost->source_id = $repost->campaign?->id ?? $repost->request?->id;
+                $repost->source_type = $repost->campaign ? '📢 From Campaign' : ($repost->request ? '🤝 From Request' : '');
+                return $repost;
+            });
+    }
     public function getTransactions(): void
     {
         $this->transactions = $this->creditTransactionService->getUserTransactions();
@@ -50,22 +64,25 @@ class MyAccount extends Component
         $this->user = $this->userService->getMyAccountUser();
     }
 
-    public function mount(CreditTransactionService $creditTransactionService, UserService $userService): void
+    public function loadAll()
     {
-        $this->userService = $userService;
-        $this->creditTransactionService = $creditTransactionService;
         $this->getPlaylists();
         $this->getMyUser();
         $this->getTracks();
         $this->getRecentReposts();
         $this->getTransactions();
-        // $this->user = User::where('urn', user()->urn)->with('userInfo')->first();
+    }
 
+    public function mount(CreditTransactionService $creditTransactionService, UserService $userService): void
+    {
+        $this->userService = $userService;
+        $this->creditTransactionService = $creditTransactionService;
+        $this->loadAll();
     }
 
     public function render()
     {
-      
+
         return view('backend.user.profile-management.my-account');
     }
 }

@@ -1,5 +1,4 @@
 <section>
-    @dd($reposts)
     <x-slot name="page_slug">my-account</x-slot>
     <section class="flex-1 overflow-auto">
         <div class="min-h-screen bg-white dark:bg-slate-900">
@@ -419,58 +418,6 @@
                                                 </div>
                                             </div>
                                         @endforeach
-                                        <!-- Track Card 2 -->
-                                        {{-- <div
-                                            class="bg-gray-100 dark:bg-slate-800 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-slate-700">
-                                            <div
-                                                class="flex flex-col xs:flex-row xs:items-center space-y-3 xs:space-y-0 xs:space-x-3 sm:space-x-4">
-                                                <div class="relative flex-shrink-0 mx-auto xs:mx-0">
-                                                    <img src="https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop"
-                                                        alt="Drop - To - Me" class="w-16 h-16 rounded-lg">
-                                                    <button
-                                                        class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg opacity-0 hover:opacity-100 transition-opacity">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                            height="24" fill="currentColor" stroke="currentColor"
-                                                            stroke-width="2" stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            class="w-6 h-6 text-orange-500 dark:text-orange-400">
-                                                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                                        </svg>
-                                                    </button>
-                                                </div>
-                                                <div class="flex-1 min-w-0 ml-0 sm:ml-4">
-                                                    <h4
-                                                        class="text-gray-900 dark:text-white font-medium mb-1 truncate">
-                                                        Drop - To - Me</h4>
-                                                    <p
-                                                        class="text-gray-500 dark:text-slate-400 text-xs sm:text-sm mb-2">
-                                                        Bhathiya Udara</p>
-                                                    <div class="flex items-center space-x-1 h-6 sm:h-8 mb-2">
-                                                        <div class="bg-gray-300 dark:bg-slate-600 flex-1"
-                                                            style="height: 16px; border-radius: 1px;"></div>
-                                                        <div class="bg-gray-300 dark:bg-slate-600 flex-1"
-                                                            style="height: 21px; border-radius: 1px;"></div>
-                                                        <div class="bg-gray-300 dark:bg-slate-600 flex-1"
-                                                            style="height: 10px; border-radius: 1px;"></div>
-                                                        <div class="bg-gray-300 dark:bg-slate-600 flex-1"
-                                                            style="height: 9px; border-radius: 1px;"></div>
-                                                    </div>
-                                                </div>
-                                                <div
-                                                    class="flex items-center justify-between xs:justify-end space-x-2 sm:space-x-4">
-                                                    <button
-                                                        class="text-gray-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
-                                                        <span class="text-xs sm:text-sm">♡ 187</span>
-                                                    </button>
-                                                    <button
-                                                        class="text-gray-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
-                                                        <span class="text-xs sm:text-sm">🔄 68</span>
-                                                    </button>
-                                                    <button
-                                                        class="text-orange-500 dark:text-orange-400 hover:text-orange-400 dark:hover:text-orange-500 text-xs sm:text-sm whitespace-nowrap">Share</button>
-                                                </div>
-                                            </div>
-                                        </div> --}}
                                     </div>
                                 </div>
                                 <!-- Playlists Tab -->
@@ -540,89 +487,65 @@
                                         </span>
                                     </h2>
 
-                                    <div
-                                        class="bg-gray-100 dark:bg-slate-800 rounded-lg p-4 border border-gray-200 dark:border-slate-700 space-y-4 sm:space-y-0 sm:flex sm:gap-4">
-                                    {{-- @if ()
-                                        
-                                    @endif --}}
-                                        <!-- Left: SoundCloud Player (50%) -->
-                                        <div class="sm:w-1/2 w-full">
-                                            <div id="soundcloud-player-{{ $track->id }}"
-                                                data-campaign-id="{{ $track->id }}" wire:ignore>
-                                                <x-sound-cloud.sound-cloud-player :track="$track" :visual="false" />
+                                    @foreach ($reposts as $repost)
+                                        <div
+                                            class="bg-gray-100 mb-2 dark:bg-slate-800 rounded-lg p-4 border border-gray-200 dark:border-slate-700 sm:flex sm:gap-4 space-y-4 sm:space-y-0">
+
+                                            <!-- SoundCloud Player -->
+                                            <div class="sm:w-1/2 w-full">
+                                                @if ($repost->source)
+                                                    <div id="soundcloud-player-{{ $repost->source_id }}"
+                                                        data-campaign-id="{{ $repost->source_id }}" wire:ignore>
+                                                        <x-sound-cloud.sound-cloud-player :track="$repost->source"
+                                                            :visual="false" />
+                                                    </div>
+                                                @else
+                                                    <p class="text-sm text-gray-500 dark:text-gray-400">No track
+                                                        available</p>
+                                                @endif
                                             </div>
-                                        </div>
 
-                                        <!-- Right: Repost Info Block (50%) -->
-                                        <div class="w-full sm:w-1/2 h-40">
-                                            <div
-                                                class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 h-full bg-gray-100/70 dark:bg-slate-800 rounded-xl shadow border border-gray-200 dark:border-slate-700">
-
-                                                <!-- Thumbnail -->
+                                            <!-- Info Block -->
+                                            <div class="w-full sm:w-1/2 h-40">
                                                 <div
-                                                    class="relative w-36 h-36 flex-shrink-0 mx-auto sm:mx-0 rounded-lg overflow-hidden">
-                                                    <img src="https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop"
-                                                        alt="Track Artwork" class="w-full h-full object-cover" />
-                                                    <button
-                                                        class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 hover:bg-opacity-60 transition duration-200 group">
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                            class="w-6 h-6 text-orange-500 dark:text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity"
-                                                            viewBox="0 0 24 24" fill="currentColor">
-                                                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                                        </svg>
-                                                    </button>
-                                                </div>
+                                                    class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 h-full bg-gray-100/70 dark:bg-slate-800 rounded-xl shadow border border-gray-200 dark:border-slate-700">
+                                                    <div class="flex-1 grid sm:grid-cols-2 gap-4">
 
-                                                <!-- Info + Actions -->
-                                                <div class="flex-1 grid sm:grid-cols-2 items-center gap-4">
+                                                        <!-- Track Info -->
+                                                        <div class="space-y-2">
+                                                            <h3
+                                                                class="text-base font-semibold text-gray-900 dark:text-white truncate">
+                                                                <a href="#"
+                                                                    class="hover:text-orange-500 dark:hover:text-orange-400">{{ $repost->source->title ?? 'Untitled Track' }}</a>
+                                                            </h3>
+                                                            <p
+                                                                class="text-sm text-gray-500 dark:text-slate-400 truncate">
+                                                                <a href="#"
+                                                                    class="hover:text-orange-500 dark:hover:text-orange-400">{{ $repost->source->artist ?? 'Unknown Artist' }}</a>
+                                                            </p>
+                                                            <p class="text-xs text-gray-400 dark:text-slate-500">
+                                                                Reposted at:
+                                                                {{ $repost->reposted_at?->format('M d, Y H:i') }}
+                                                            </p>
+                                                        </div>
 
-                                                    <!-- Track Info -->
-                                                    <div class="space-y-3">
-                                                        <h3
-                                                            class="text-base font-semibold text-gray-900 dark:text-white truncate">
-                                                            <a href="#"
-                                                                class="hover:text-orange-500 dark:hover:text-orange-400 transition">{{ $track->title }}</a>
-                                                        </h3>
-                                                        <p class="text-sm text-gray-500 dark:text-slate-400 truncate">
-                                                            <a href="#"
-                                                                class="hover:text-orange-500 dark:hover:text-orange-400 transition">
-                                                                {{ $track->artist ?? 'Unknown Artist' }}
-                                                            </a>
-                                                        </p>
-                                                        <p class="text-xs text-gray-400 dark:text-slate-500">
-                                                            Reposted at:
-                                                            {{ \Carbon\Carbon::parse($track->reposted_at)->format('M d, Y H:i') }}
-                                                        </p>
-                                                      
+                                                        <!-- Status Info -->
+                                                        <div
+                                                            class="flex flex-col sm:items-end gap-2 text-xs text-gray-400 dark:text-slate-500">
+                                                            <p>{{ $repost->source_type }}</p>
+                                                            <p>💰 Credits Earned: <span
+                                                                    class="font-semibold text-green-500">{{ $repost->credits_earned }}</span>
+                                                            </p>
+                                                        </div>
+
                                                     </div>
-
-                                                    <!-- Actions -->
-                                                    <div class="flex flex-col sm:items-end gap-2">
-                                                        <p class="text-xs text-gray-400 dark:text-slate-500">
-                                                            Campaign ID: {{ $track->campaign_id }}
-                                                        </p>
-                                                        <p class="text-xs text-gray-400 dark:text-slate-500">
-                                                            Credits Earned: <span
-                                                                class="font-semibold text-green-500">{{ $track->credits_earned }}</span>
-                                                        </p>
-                                                        <p class="text-[10px] text-gray-400 dark:text-slate-600">
-                                                            Repost ID: {{ $track->repost_request_id }}
-                                                        </p>
-                                                        <p class="text-[10px] text-gray-400 dark:text-slate-600">
-                                                            Sort Order: {{ $track->sort_order }}
-                                                        </p>
-                                                    </div>
-
                                                 </div>
                                             </div>
                                         </div>
+                                    @endforeach
 
-
-                                    </div>
 
                                 </div>
-
-
 
                                 <!-- Transaction Tab -->
                                 <div class="tab-panel mt-4" x-show="activeTab === 'transaction'" x-transition>
