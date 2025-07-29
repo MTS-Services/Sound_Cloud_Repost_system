@@ -16,7 +16,7 @@ class RepostRequest extends Component
     
     public function dataLoad()
     {
-        $this->repostRequests = ModelsRepostRequest::where('requester_urn', user()->urn)->with('track','requester', 'campaign')->get();
+        $this->repostRequests = ModelsRepostRequest::where('requester_urn', user()->urn)->with('track','requester', 'campaign.music')->get();
     }
     public function render()
     {
