@@ -421,10 +421,10 @@
                                             <div
                                                 class="bg-gray-100 dark:bg-slate-800 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-slate-700">
                                                 <div id="soundcloud-player-{{ $track->id }}"
-                                                        data-campaign-id="{{ $track->id }}" wire:ignore>
-                                                        <x-sound-cloud.sound-cloud-player :track="$track"
-                                                             :visual="false" />
-                                                    </div>
+                                                    data-campaign-id="{{ $track->id }}" wire:ignore>
+                                                    <x-sound-cloud.sound-cloud-player :track="$track"
+                                                        :visual="false" />
+                                                </div>
                                             </div>
                                         @endforeach
                                         <!-- Track Card 2 -->
@@ -504,7 +504,38 @@
                                             </svg>
                                         </a>
                                     </div>
-
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                        <!-- Playlist  -->
+                                        @foreach ($playlists as $playlist)
+                                           
+                                            <div
+                                                class="group bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-gray-100">
+                                                <div class="relative">
+                                                    <img src="{{ soundcloud_image($playlist->artwork_url) }}"
+                                                        alt="Playlist cover"
+                                                        class="w-full h-48 object-cover rounded-t-lg">
+                                                    <button
+                                                        class="absolute bottom-3 right-3 bg-orange-500 text-white w-12 h-12 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-orange-600">
+                                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fill-rule="evenodd"
+                                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                                                                clip-rule="evenodd"></path>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                                <div class="p-4">
+                                                        <h3 class="font-semibold text-gray-900 mb-1 truncate">{{ $playlist->title }}
+                                                    </h3>
+                                                    <p class="text-gray-500 text-sm mb-2 line-clamp-2">{{ $playlist->description }}</p>
+                                                    <div
+                                                        class="flex items-center justify-between text-xs text-gray-400">
+                                                        <span>{{ $playlist->track_count }} tracks</span>
+                                                        <span>{{$playlist->genre}}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
                                 <!-- Reposts Tab -->
                                 <div class="tab-panel mt-4" x-show="activeTab === 'reposts'" x-transition>
@@ -535,21 +566,21 @@
                                                     <th class="w-20 px-2 py-3">Status</th>
                                                 </tr>
                                             </thead>
-                                            @foreach ($transactions as $transaction )
-                                                
-                                           
-                                            <tbody class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
-                                                <tr class="border-b border-gray-200 dark:border-gray-700">
-                                                    <td class="px-2 py-2">{{ $transaction->id}}</td>
-                                                    <td class="px-2 py-2">{{ $transaction->receiver_urn}}</td>
-                                                    <td class="px-2 py-2">{{ $transaction->amount}}</td>
-                                                    <td class="px-2 py-2">{{ $transaction->credits}}</td>
-                                                    <td class="px-2 py-2">{{ $transaction->type_name}}</td>
-                                                    <td class="px-2 py-2 text-green-600 font-semibold">{{ $transaction->status}}</td>
-                                                </tr>
-                                               
-                                            </tbody>
-                                             @endforeach
+                                            @foreach ($transactions as $transaction)
+                                                <tbody
+                                                    class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+                                                    <tr class="border-b border-gray-200 dark:border-gray-700">
+                                                        <td class="px-2 py-2">{{ $transaction->id }}</td>
+                                                        <td class="px-2 py-2">{{ $transaction->receiver_urn }}</td>
+                                                        <td class="px-2 py-2">{{ $transaction->amount }}</td>
+                                                        <td class="px-2 py-2">{{ $transaction->credits }}</td>
+                                                        <td class="px-2 py-2">{{ $transaction->type_name }}</td>
+                                                        <td class="px-2 py-2 text-green-600 font-semibold">
+                                                            {{ $transaction->status }}</td>
+                                                    </tr>
+
+                                                </tbody>
+                                            @endforeach
                                         </table>
                                     </div>
                                 </div>

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User\ProfileManagement;
 
+use App\Models\Playlist;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Models\User;
 use App\Services\Admin\UserManagement\UserService;
@@ -11,6 +12,7 @@ class MyAccount extends Component
 {
     public $user;
     public $tracks;
+    public $playlists;
     public $transactions;
     public $activeTab = 'insights';
 
@@ -28,6 +30,10 @@ class MyAccount extends Component
         $this->tracks = $this->creditTransactionService->getUserTracks();
     }
 
+    public function getPlaylists(): void
+    {
+        $this->playlists = Playlist::where('user_urn', user()->urn)->get();
+    }
     public function getTransactions(): void
     {
         $this->transactions = $this->creditTransactionService->getUserTransactions();
@@ -42,6 +48,7 @@ class MyAccount extends Component
     {
         $this->userService = $userService;
         $this->creditTransactionService = $creditTransactionService;
+        $this->getPlaylists();
         $this->getMyUser();
         $this->getTracks();
         $this->getTransactions();
