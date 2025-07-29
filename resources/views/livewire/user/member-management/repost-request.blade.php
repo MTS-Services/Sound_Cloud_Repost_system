@@ -1,7 +1,6 @@
 <div>
     <x-slot name="page_slug">request</x-slot>
 
-    <h1>This is Repost Request page</h1>
     @foreach ($repostRequests as $repostRequest)
         <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm">
             <div class="flex flex-col lg:flex-row" wire:key="featured-{{ $repostRequest->id }}">
@@ -54,8 +53,8 @@
                                     <div x-show="open" x-transition.opacity
                                         class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
                                         x-cloak>
-                                        <a href=""
-                                            target="_blank" class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
+                                        <a href="" target="_blank"
+                                            class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                             SoundCloud
                                             Profile</a>
                                         <a href="{{ route('user.profile') }}" wire:navigate
@@ -68,7 +67,8 @@
                             <div class="flex items-center gap-4 sm:gap-8">
                                 <div class="relative">
                                     <!-- Repost Button -->
-                                    <button wire:click="repost('{{ $repostRequest->id }}')" class="flex items-center gap-1.5">
+                                    <button wire:click="repost('{{ $repostRequest->id }}')"
+                                        class="flex items-center gap-1.5">
                                         <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <rect x="1" y="1" width="24" height="16" rx="3"
@@ -94,7 +94,7 @@
                         <div class="mt-auto">
                             <span
                                 class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
-                                {{ $repostRequest->music->genre ?? 'Unknown Genre' }}
+                                {{ $repostRequest->campaign?->music->genre ?? 'Unknown Genre' }}
                             </span>
                         </div>
                     </div>
