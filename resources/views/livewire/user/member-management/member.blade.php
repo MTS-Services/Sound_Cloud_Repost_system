@@ -342,7 +342,36 @@
                                     class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
                             </div>
                         </div>
+                       
                     @endif
+                     <div
+                            class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border  border-transparent  hover:border-orange-200 dark:hover:border-orange-800 group">
+                            <div class="flex-shrink-0">
+                                <img class="h-14 w-14 rounded-xl object-cover shadow-md"
+                                    src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p
+                                    class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                    {{ $user->name }}
+                                </p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                    {{ $user->email }}
+                                </p>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <i data-lucide="chevron-right"
+                                    class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
+                            </div>
+                        </div>
+                        <div class="flex-shrink-0  px-x-4 mt-2 ml-4">
+                                <h1 class="flex items-center text-lg  text-gray-900 dark:text-white gap-2">
+                                    {{ __('Repost Price: ') }}
+                                    <p class="text-lg text-gray-900 dark:text-white"> {{ $credit }}</p>
+                                </h1>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 text-center">Send ruqest success</p>
+                            </div>
+                            
                     <!-- Confirm Button -->
                     <div class="mt-6 flex justify-center gap-3">
                         <button wire:click="closeRepostModal"
