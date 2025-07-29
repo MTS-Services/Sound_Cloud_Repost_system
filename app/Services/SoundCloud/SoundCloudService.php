@@ -325,8 +325,9 @@ class SoundCloudService
 
     public function syncUserPlaylists(User $user, int $limit = 200): int
     {
+        $playlistsData = $this->getUserPlaylists($user, $limit);
+        dd($playlistsData);
         try {
-            $playlistsData = $this->getUserPlaylists($user, $limit);
             $syncedCount = 0;
 
             foreach ($playlistsData as $playlistData) {
@@ -394,8 +395,6 @@ class SoundCloudService
     
     public function syncUserProductsAndSubscriptions(User $user, object $soundCloudUser): void
     {
-        $playlists = Playlist::where('user_urn', $user->urn)->first();
-        dd($playlists);
         // Delete all existing subscriptions for the user to ensure a fresh sync
         Subscription::where('user_urn', $user->urn)->delete();
 
