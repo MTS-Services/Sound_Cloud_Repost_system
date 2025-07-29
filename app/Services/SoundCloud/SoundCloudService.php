@@ -330,6 +330,7 @@ class SoundCloudService
             $syncedCount = 0;
 
             foreach ($playlistsData as $playlistData) {
+                dd($playlistData);
                 $playlist = Playlist::updateOrCreate(
                     [
                         'user_urn' => $user->urn,
@@ -372,6 +373,9 @@ class SoundCloudService
                         'last_modified' => isset($playlistData['last_modified']) ? Carbon::parse($playlistData['last_modified'])->toDateTimeString() : null,
                     ]
                 );
+
+
+
 
                 if ($playlist->wasRecentlyCreated) {
                     $syncedCount++;
