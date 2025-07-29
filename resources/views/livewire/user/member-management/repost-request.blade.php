@@ -68,7 +68,7 @@
                                 <div class="relative">
                                     <!-- Repost Button -->
                                     <button wire:click="repost('{{ $repostRequest->id }}')"
-                                        class="flex items-center gap-1.5">
+                                        class="flex items-center gap-2 py-2 px-3 sm:px-5 sm:pl-8 rounded-md shadow-sm text-sm sm:text-base transition-colors dark:text-gray-300 dark:hover:text-gray-200 dark:bg-gray-600 dark:hover:bg-gray-700">
                                         <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <rect x="1" y="1" width="24" height="16" rx="3"
