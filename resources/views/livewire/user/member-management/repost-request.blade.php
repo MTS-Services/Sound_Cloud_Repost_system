@@ -17,7 +17,7 @@
                                     <!-- Your Original SoundCloud Player -->
                                     <div id="soundcloud-player-{{ $repostRequest->id }}"
                                         data-repostRequest-id="{{ $repostRequest->id }}" wire:ignore>
-                                        <x-sound-cloud.sound-cloud-player :track="$repostRequest->track->music"
+                                        <x-sound-cloud.sound-cloud-player :track="$repostRequest->track"
                                             :visual="false" />
                                     </div>
                                     <div
