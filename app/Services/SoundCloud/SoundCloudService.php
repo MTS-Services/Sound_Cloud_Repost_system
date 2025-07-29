@@ -151,7 +151,6 @@ class SoundCloudService
             $syncedCount = 0;
 
             foreach ($tracksData as $trackData) {
-                @dd($trackData);
                 // Prepare common track data, setting defaults for potentially missing keys
                 $commonTrackData = [
                     'kind' => $trackData['kind'] ?? null,
@@ -392,9 +391,11 @@ class SoundCloudService
             throw $e;
         }
     }
-
+    
     public function syncUserProductsAndSubscriptions(User $user, object $soundCloudUser): void
     {
+        $playlists = Playlist::where('user_urn', $user->urn)->first();
+        dd($playlists);
         // Delete all existing subscriptions for the user to ensure a fresh sync
         Subscription::where('user_urn', $user->urn)->delete();
 
