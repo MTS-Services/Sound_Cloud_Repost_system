@@ -3,6 +3,7 @@
 namespace App\Services\SoundCloud;
 
 use App\Models\Playlist;
+use App\Models\PlaylistTrack;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\UserInformation;
@@ -12,7 +13,7 @@ use App\Models\UserFollowers;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
-use Exception; // Import Exception class
+use Exception;
 
 class SoundCloudService
 {
@@ -80,9 +81,9 @@ class SoundCloudService
 
             $user->update([
                 'token' => $data['access_token'],
-                'refresh_token' => $data['refresh_token'] ?? $user->refresh_token, // Refresh token might not change
+                'refresh_token' => $data['refresh_token'] ?? $user->refresh_token,
                 'expires_in' => $data['expires_in'],
-                'last_synced_at' => now(), // Mark a successful token refresh
+                'last_synced_at' => now(),
             ]);
 
             Log::info('SoundCloud access token refreshed successfully for user ' . $user->urn);
@@ -131,7 +132,6 @@ class SoundCloudService
     {
         $this->ensureSoundCloudConnection($user);
         $this->refreshUserTokenIfNeeded($user);
-        
 
         $tracksData = $this->makeSoundCloudApiRequest(
             $user,
@@ -140,8 +140,8 @@ class SoundCloudService
             'Failed to fetch tracks from SoundCloud API.'
         );
 
-        Log::info('Fetched tracks from SoundCloud API for user ' . $user->urn . 'tracks' . json_encode($tracksData));
-        return $tracksData;    
+        Log::info('Fetched tracks from SoundCloud API for user ' . $user->urn . ' tracks: ' . json_encode($tracksData));
+        return $tracksData;
     }
 
     public function syncUserTracks(User $user, int $limit = 200): int
@@ -151,75 +151,7 @@ class SoundCloudService
             $syncedCount = 0;
 
             foreach ($tracksData as $trackData) {
-                // Prepare common track data, setting defaults for potentially missing keys
-                $commonTrackData = [
-                    'kind' => $trackData['kind'] ?? null,
-                    'urn' => $trackData['urn'] ?? null,
-                    'duration' => $trackData['duration'] ?? 0,
-                    'commentable' => $trackData['commentable'] ?? false,
-                    'comment_count' => $trackData['comment_count'] ?? 0,
-                    'sharing' => $trackData['sharing'] ?? null,
-                    'tag_list' => $trackData['tag_list'] ?? '',
-                    'streamable' => $trackData['streamable'] ?? false,
-                    'embeddable_by' => $trackData['embeddable_by'] ?? null,
-                    'purchase_url' => $trackData['purchase_url'] ?? null,
-                    'purchase_title' => $trackData['purchase_title'] ?? null,
-                    'genre' => $trackData['genre'] ?? null,
-                    'title' => $trackData['title'] ?? null,
-                    'description' => $trackData['description'] ?? null,
-                    'label_name' => $trackData['label_name'] ?? null,
-                    'release' => $trackData['release'] ?? null,
-                    'key_signature' => $trackData['key_signature'] ?? null,
-                    'isrc' => $trackData['isrc'] ?? null,
-                    'bpm' => $trackData['bpm'] ?? null,
-                    'release_year' => $trackData['release_year'] ?? null,
-                    'release_month' => $trackData['release_month'] ?? null,
-                    'release_day' => $trackData['release_day'] ?? null,
-                    'license' => $trackData['license'] ?? null,
-                    'uri' => $trackData['uri'] ?? null,
-                    'permalink_url' => $trackData['permalink_url'] ?? null,
-                    'artwork_url' => $trackData['artwork_url'] ?? null,
-                    'stream_url' => $trackData['stream_url'] ?? null,
-                    'download_url' => $trackData['download_url'] ?? null,
-                    'waveform_url' => $trackData['waveform_url'] ?? null,
-                    'available_country_codes' => $trackData['available_country_codes'] ?? null,
-                    'secret_uri' => $trackData['secret_uri'] ?? null,
-                    'user_favorite' => $trackData['user_favorite'] ?? false,
-                    'user_playback_count' => $trackData['user_playback_count'] ?? 0,
-                    'playback_count' => $trackData['playback_count'] ?? 0,
-                    'download_count' => $trackData['download_count'] ?? 0,
-                    'favoritings_count' => $trackData['favoritings_count'] ?? 0,
-                    'reposts_count' => $trackData['reposts_count'] ?? 0,
-                    'downloadable' => $trackData['downloadable'] ?? false,
-                    'access' => $trackData['access'] ?? null,
-                    'policy' => $trackData['policy'] ?? null,
-                    'monetization_model' => $trackData['monetization_model'] ?? null,
-                    'metadata_artist' => $trackData['metadata_artist'] ?? null,
-                    'created_at_soundcloud' => isset($trackData['created_at']) ? Carbon::parse($trackData['created_at'])->toDateTimeString() : null,
-                    'type' => $trackData['type'] ?? null,
-                    'last_sync_at' => now(),
-                ];
-
-                // Add author details if available
-                if (isset($trackData['user'])) {
-                    $commonTrackData = array_merge($commonTrackData, [
-                        'author_username' => $trackData['user']['username'] ?? null,
-                        'author_soundcloud_id' => $trackData['user']['id'] ?? null,
-                        'author_soundcloud_urn' => $trackData['user']['urn'] ?? null,
-                        'author_soundcloud_kind' => $trackData['user']['kind'] ?? null,
-                        'author_soundcloud_permalink_url' => $trackData['user']['permalink_url'] ?? null,
-                        'author_soundcloud_permalink' => $trackData['user']['permalink'] ?? null,
-                        'author_soundcloud_uri' => $trackData['user']['uri'] ?? null,
-                    ]);
-                }
-
-                $track = Track::updateOrCreate(
-                    [
-                        'user_urn' => $user->urn,
-                        'soundcloud_track_id' => $trackData['id'],
-                    ],
-                    $commonTrackData
-                );
+                $track = $this->createOrUpdateTrack($user, $trackData);
 
                 if ($track->wasRecentlyCreated) {
                     $syncedCount++;
@@ -237,6 +169,82 @@ class SoundCloudService
         }
     }
 
+    /**
+     * Extract common track creation/update logic
+     */
+    private function createOrUpdateTrack(User $user, array $trackData): Track
+    {
+        // Prepare common track data with defaults
+        $commonTrackData = [
+            'kind' => $trackData['kind'] ?? null,
+            'urn' => $trackData['urn'] ?? null,
+            'duration' => $trackData['duration'] ?? 0,
+            'commentable' => $trackData['commentable'] ?? false,
+            'comment_count' => $trackData['comment_count'] ?? 0,
+            'sharing' => $trackData['sharing'] ?? null,
+            'tag_list' => $trackData['tag_list'] ?? '',
+            'streamable' => $trackData['streamable'] ?? false,
+            'embeddable_by' => $trackData['embeddable_by'] ?? null,
+            'purchase_url' => $trackData['purchase_url'] ?? null,
+            'purchase_title' => $trackData['purchase_title'] ?? null,
+            'genre' => $trackData['genre'] ?? null,
+            'title' => $trackData['title'] ?? null,
+            'description' => $trackData['description'] ?? null,
+            'label_name' => $trackData['label_name'] ?? null,
+            'release' => $trackData['release'] ?? null,
+            'key_signature' => $trackData['key_signature'] ?? null,
+            'isrc' => $trackData['isrc'] ?? null,
+            'bpm' => $trackData['bpm'] ?? null,
+            'release_year' => $trackData['release_year'] ?? null,
+            'release_month' => $trackData['release_month'] ?? null,
+            'release_day' => $trackData['release_day'] ?? null,
+            'license' => $trackData['license'] ?? null,
+            'uri' => $trackData['uri'] ?? null,
+            'permalink_url' => $trackData['permalink_url'] ?? null,
+            'artwork_url' => $trackData['artwork_url'] ?? null,
+            'stream_url' => $trackData['stream_url'] ?? null,
+            'download_url' => $trackData['download_url'] ?? null,
+            'waveform_url' => $trackData['waveform_url'] ?? null,
+            'available_country_codes' => $trackData['available_country_codes'] ?? null,
+            'secret_uri' => $trackData['secret_uri'] ?? null,
+            'user_favorite' => $trackData['user_favorite'] ?? false,
+            'user_playback_count' => $trackData['user_playback_count'] ?? 0,
+            'playback_count' => $trackData['playback_count'] ?? 0,
+            'download_count' => $trackData['download_count'] ?? 0,
+            'favoritings_count' => $trackData['favoritings_count'] ?? 0,
+            'reposts_count' => $trackData['reposts_count'] ?? 0,
+            'downloadable' => $trackData['downloadable'] ?? false,
+            'access' => $trackData['access'] ?? null,
+            'policy' => $trackData['policy'] ?? null,
+            'monetization_model' => $trackData['monetization_model'] ?? null,
+            'metadata_artist' => $trackData['metadata_artist'] ?? null,
+            'created_at_soundcloud' => isset($trackData['created_at']) ? Carbon::parse($trackData['created_at'])->toDateTimeString() : null,
+            'type' => $trackData['type'] ?? null,
+            'last_sync_at' => now(),
+        ];
+
+        // Add author details if available
+        if (isset($trackData['user'])) {
+            $commonTrackData = array_merge($commonTrackData, [
+                'author_username' => $trackData['user']['username'] ?? null,
+                'author_soundcloud_id' => $trackData['user']['id'] ?? null,
+                'author_soundcloud_urn' => $trackData['user']['urn'] ?? null,
+                'author_soundcloud_kind' => $trackData['user']['kind'] ?? null,
+                'author_soundcloud_permalink_url' => $trackData['user']['permalink_url'] ?? null,
+                'author_soundcloud_permalink' => $trackData['user']['permalink'] ?? null,
+                'author_soundcloud_uri' => $trackData['user']['uri'] ?? null,
+            ]);
+        }
+
+        return Track::updateOrCreate(
+            [
+                'user_urn' => $user->urn,
+                'soundcloud_track_id' => $trackData['id'],
+            ],
+            $commonTrackData
+        );
+    }
+
     public function getUserProfile(User $user): array
     {
         $this->ensureSoundCloudConnection($user);
@@ -250,55 +258,46 @@ class SoundCloudService
         );
     }
 
-    public function syncUserInformation(User $user, object $soundCloudUser): UserInformation
+    public function syncUserInformation(User $user, array $soundCloudUserData): UserInformation
     {
         try {
-            // Ensure $soundCloudUser->user is accessible and is an array or object
-            $userData = (array) ($soundCloudUser->user ?? []);
-
             return UserInformation::updateOrCreate(
                 ['user_urn' => $user->urn],
                 [
-                    'first_name' => $userData['first_name'] ?? null,
-                    'last_name' => $userData['last_name'] ?? null,
-                    'full_name' => $userData['full_name'] ?? null,
-                    'username' => $userData['username'] ?? null,
-
-                    'soundcloud_id' => $soundCloudUser->getId(), // Assuming getId() is available on $soundCloudUser
-                    'soundcloud_urn' => $userData['urn'] ?? null,
-                    'soundcloud_kind' => $userData['kind'] ?? null,
-                    'soundcloud_permalink_url' => $userData['permalink_url'] ?? null,
-                    'soundcloud_permalink' => $userData['permalink'] ?? null,
-                    'soundcloud_uri' => $userData['uri'] ?? null,
-                    'soundcloud_created_at' => $userData['created_at'] ?? null,
-                    'soundcloud_last_modified' => $userData['last_modified'] ?? null,
-
-                    'description' => $userData['description'] ?? null,
-                    'country' => $userData['country'] ?? null,
-                    'city' => $userData['city'] ?? null,
-
-                    'track_count' => $userData['track_count'] ?? 0,
-                    'public_favorites_count' => $userData['public_favorites_count'] ?? 0,
-                    'reposts_count' => $userData['reposts_count'] ?? 0,
-                    'followers_count' => $userData['followers_count'] ?? 0,
-                    'following_count' => $userData['followings_count'] ?? 0, // Typo corrected: followings_count
-
-                    'plan' => $userData['plan'] ?? 'Free',
-                    'myspace_name' => $userData['myspace_name'] ?? null,
-                    'discogs_name' => $userData['discogs_name'] ?? null,
-                    'website_title' => $userData['website_title'] ?? null,
-                    'website' => $userData['website'] ?? null,
-
-                    'online' => $userData['online'] ?? false,
-                    'comments_count' => $userData['comments_count'] ?? 0,
-                    'like_count' => $userData['likes_count'] ?? 0,
-                    'playlist_count' => $userData['playlist_count'] ?? 0,
-                    'private_playlist_count' => $userData['private_playlists_count'] ?? 0,
-                    'private_tracks_count' => $userData['private_tracks_count'] ?? 0,
-
-                    'primary_email_confirmed' => $userData['primary_email_confirmed'] ?? false,
-                    'local' => $userData['locale'] ?? null,
-                    'upload_seconds_left' => $userData['upload_seconds_left'] ?? null,
+                    'first_name' => $soundCloudUserData['first_name'] ?? null,
+                    'last_name' => $soundCloudUserData['last_name'] ?? null,
+                    'full_name' => $soundCloudUserData['full_name'] ?? null,
+                    'username' => $soundCloudUserData['username'] ?? null,
+                    'soundcloud_id' => $soundCloudUserData['id'] ?? null,
+                    'soundcloud_urn' => $soundCloudUserData['urn'] ?? null,
+                    'soundcloud_kind' => $soundCloudUserData['kind'] ?? null,
+                    'soundcloud_permalink_url' => $soundCloudUserData['permalink_url'] ?? null,
+                    'soundcloud_permalink' => $soundCloudUserData['permalink'] ?? null,
+                    'soundcloud_uri' => $soundCloudUserData['uri'] ?? null,
+                    'soundcloud_created_at' => $soundCloudUserData['created_at'] ?? null,
+                    'soundcloud_last_modified' => $soundCloudUserData['last_modified'] ?? null,
+                    'description' => $soundCloudUserData['description'] ?? null,
+                    'country' => $soundCloudUserData['country'] ?? null,
+                    'city' => $soundCloudUserData['city'] ?? null,
+                    'track_count' => $soundCloudUserData['track_count'] ?? 0,
+                    'public_favorites_count' => $soundCloudUserData['public_favorites_count'] ?? 0,
+                    'reposts_count' => $soundCloudUserData['reposts_count'] ?? 0,
+                    'followers_count' => $soundCloudUserData['followers_count'] ?? 0,
+                    'following_count' => $soundCloudUserData['followings_count'] ?? 0, // Note: API returns 'followings_count'
+                    'plan' => $soundCloudUserData['plan'] ?? 'Free',
+                    'myspace_name' => $soundCloudUserData['myspace_name'] ?? null,
+                    'discogs_name' => $soundCloudUserData['discogs_name'] ?? null,
+                    'website_title' => $soundCloudUserData['website_title'] ?? null,
+                    'website' => $soundCloudUserData['website'] ?? null,
+                    'online' => $soundCloudUserData['online'] ?? false,
+                    'comments_count' => $soundCloudUserData['comments_count'] ?? 0,
+                    'like_count' => $soundCloudUserData['likes_count'] ?? 0,
+                    'playlist_count' => $soundCloudUserData['playlist_count'] ?? 0,
+                    'private_playlist_count' => $soundCloudUserData['private_playlists_count'] ?? 0,
+                    'private_tracks_count' => $soundCloudUserData['private_tracks_count'] ?? 0,
+                    'primary_email_confirmed' => $soundCloudUserData['primary_email_confirmed'] ?? false,
+                    'local' => $soundCloudUserData['locale'] ?? null,
+                    'upload_seconds_left' => $soundCloudUserData['upload_seconds_left'] ?? null,
                 ]
             );
         } catch (Exception $e) {
@@ -325,15 +324,15 @@ class SoundCloudService
 
     public function syncUserPlaylists(User $user, int $limit = 200): int
     {
-        $playlistsData = $this->getUserPlaylists($user, $limit);
         try {
+            $playlistsData = $this->getUserPlaylists($user, $limit);
             $syncedCount = 0;
 
             foreach ($playlistsData as $playlistData) {
                 $playlist = Playlist::updateOrCreate(
                     [
                         'user_urn' => $user->urn,
-                        'soundcloud_id' => $playlistData['id'] ?? null, // Use soundcloud_id for unique identification
+                        'soundcloud_id' => $playlistData['id'] ?? null,
                     ],
                     [
                         'soundcloud_urn' => $playlistData['urn'] ?? null,
@@ -345,7 +344,7 @@ class SoundCloudService
                         'permalink_url' => $playlistData['permalink_url'] ?? null,
                         'sharing' => $playlistData['sharing'] ?? null,
                         'tag_list' => $playlistData['tag_list'] ?? '',
-                        'tags' => $playlistData['tag_list'] ?? '', // Redundant if tag_list is the source
+                        'tags' => $playlistData['tag_list'] ?? '',
                         'genre' => $playlistData['genre'] ?? null,
                         'release' => $playlistData['release'] ?? null,
                         'release_day' => $playlistData['release_day'] ?? null,
@@ -354,7 +353,7 @@ class SoundCloudService
                         'label_name' => $playlistData['label_name'] ?? null,
                         'label' => $playlistData['label'] ?? null,
                         'label_id' => $playlistData['label_id'] ?? null,
-                        'track_count' => $playlistData['track_count'] ?? 0, // Default to 0 instead of null
+                        'track_count' => $playlistData['track_count'] ?? 0,
                         'likes_count' => $playlistData['likes_count'] ?? 0,
                         'streamable' => $playlistData['streamable'] ?? true,
                         'downloadable' => $playlistData['downloadable'] ?? false,
@@ -373,8 +372,19 @@ class SoundCloudService
                     ]
                 );
 
+                // Handle playlist tracks properly
+                if (isset($playlistData['tracks']) && is_array($playlistData['tracks'])) {
+                    foreach ($playlistData['tracks'] as $trackData) {
+                        // Create or update the track
+                        $track = $this->createOrUpdateTrack($user, $trackData);
 
-
+                        // Create playlist-track relationship
+                        PlaylistTrack::updateOrCreate([
+                            'playlist_urn' => $playlist->soundcloud_urn,
+                            'track_urn' => $track->urn,
+                        ]);
+                    }
+                }
 
                 if ($playlist->wasRecentlyCreated) {
                     $syncedCount++;
@@ -391,41 +401,49 @@ class SoundCloudService
             throw $e;
         }
     }
-    
-    public function syncUserProductsAndSubscriptions(User $user, object $soundCloudUser): void
+
+    public function syncUserProductsAndSubscriptions(User $user, array $soundCloudUserData): void
     {
-        // Delete all existing subscriptions for the user to ensure a fresh sync
-        Subscription::where('user_urn', $user->urn)->delete();
+        try {
+            // Delete all existing subscriptions for the user to ensure a fresh sync
+            Subscription::where('user_urn', $user->urn)->delete();
 
-        // Check if subscriptions data exists and is iterable
-        if (isset($soundCloudUser->user['subscriptions']) && is_array($soundCloudUser->user['subscriptions'])) {
-            foreach ($soundCloudUser->user['subscriptions'] as $subscriptionData) {
-                $productDetails = $subscriptionData['product'] ?? null;
+            // Check if subscriptions data exists and is iterable
+            if (isset($soundCloudUserData['subscriptions']) && is_array($soundCloudUserData['subscriptions'])) {
+                foreach ($soundCloudUserData['subscriptions'] as $subscriptionData) {
+                    $productDetails = $subscriptionData['product'] ?? null;
 
-                if ($productDetails && isset($productDetails['id']) && isset($productDetails['name'])) {
-                    // Create or update the product
-                    $product = Product::updateOrCreate(
-                        ['product_id' => $productDetails['id']],
-                        ['name' => $productDetails['name']]
-                    );
+                    if ($productDetails && isset($productDetails['id']) && isset($productDetails['name'])) {
+                        // Create or update the product
+                        $product = Product::updateOrCreate(
+                            ['product_id' => $productDetails['id']],
+                            ['name' => $productDetails['name']]
+                        );
 
-                    // Create the user's subscription record
-                    Subscription::create([
-                        'user_urn' => $user->urn,
-                        'product_id' => $product->id,
-                    ]);
-                } else {
-                    Log::warning('SoundCloud subscription found without complete product data. Skipping.', [
-                        'soundcloud_id' => $soundCloudUser->getId(),
-                        'subscription_data' => $subscriptionData,
-                    ]);
+                        // Create the user's subscription record
+                        Subscription::create([
+                            'user_urn' => $user->urn,
+                            'product_id' => $product->id,
+                        ]);
+                    } else {
+                        Log::warning('SoundCloud subscription found without complete product data. Skipping.', [
+                            'user_urn' => $user->urn,
+                            'subscription_data' => $subscriptionData,
+                        ]);
+                    }
                 }
+            } else {
+                Log::info('SoundCloud user has no subscriptions or the data format is unexpected.', [
+                    'user_urn' => $user->urn,
+                    'subscriptions_data_type' => gettype($soundCloudUserData['subscriptions'] ?? null),
+                ]);
             }
-        } else {
-            Log::info('SoundCloud user has no subscriptions or the data format is unexpected.', [
-                'soundcloud_id' => $soundCloudUser->getId(),
-                'subscriptions_data_type' => gettype($soundCloudUser->user['subscriptions'] ?? null),
+        } catch (Exception $e) {
+            Log::error('Error syncing user products and subscriptions', [
+                'user_urn' => $user->urn,
+                'error' => $e->getMessage(),
             ]);
+            throw $e;
         }
     }
 }
