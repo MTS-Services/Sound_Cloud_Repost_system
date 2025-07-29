@@ -146,12 +146,12 @@ class SoundCloudService
 
     public function syncUserTracks(User $user, int $limit = 200): int
     {
-        @dd('syncUserTracks');
         try {
             $tracksData = $this->getUserTracks($user, $limit);
             $syncedCount = 0;
 
             foreach ($tracksData as $trackData) {
+                dd($trackData);
                 // Prepare common track data, setting defaults for potentially missing keys
                 $commonTrackData = [
                     'kind' => $trackData['kind'] ?? null,
