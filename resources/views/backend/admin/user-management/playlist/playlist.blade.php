@@ -85,6 +85,7 @@
     @push('js')
         <script src="{{ asset('assets/js/details-modal.js') }}"></script>
         <script src="{{ asset('assets/js/datatable.js') }}"></script>
+         
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 let table_columns = [
@@ -104,9 +105,9 @@
                     table_columns: table_columns,
                     main_class: '.datatable',
                     displayLength: 10,
-                    main_route: "{{ route('um.user.playlist', id) }}",
+                    main_route: "{{ route('um.user.playlist', Auth::user()->id) }}",
                     order_route: "{{ route('update.sort.order') }}",
-                    export_columns: [0, 1, 2, 3, 4, 5, 6],
+                    export_columns: [0, 1, 2, 3, 4, 5, 6,7,8,9,10],
                     model: 'Playlist',
                 };
                 // initializeDataTable(details);
@@ -121,7 +122,7 @@
 
                 $(document).on('click', '.view', function() {
                     const id = $(this).data('id');
-                    const route = "{{ route('', ':id') }}";
+                    const route = "{{ route('um.user.playlist.show', 'id') }}";
 
                     const details = [{
                             label: '{{ __('Title') }}',

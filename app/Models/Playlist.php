@@ -74,4 +74,5 @@ class  Playlist extends BaseModel
     {
         return $this->belongsTo(User::class, 'user_urn', 'id');
     }
+   
 }
