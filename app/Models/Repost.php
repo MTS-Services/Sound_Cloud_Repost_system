@@ -36,7 +36,7 @@ class Repost extends BaseModel
 
     public function request(): BelongsTo
     {
-        return $this->belongsTo(RepostRequest::class);
+        return $this->belongsTo(RepostRequest::class, 'repost_request_id', 'id');
     }
     public function reposter(): BelongsTo
     {
@@ -50,7 +50,7 @@ class Repost extends BaseModel
 
     public function campaign(): BelongsTo
     {
-        return $this->belongsTo(Campaign::class);
+        return $this->belongsTo(Campaign::class, 'campaign_id', 'id');
     }
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=

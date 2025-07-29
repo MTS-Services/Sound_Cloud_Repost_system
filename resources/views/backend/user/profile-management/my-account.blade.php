@@ -1,5 +1,4 @@
 <section>
-    {{-- @dd($transactions) --}}
     <x-slot name="page_slug">my-account</x-slot>
     <section class="flex-1 overflow-auto">
         <div class="min-h-screen bg-white dark:bg-slate-900">
@@ -177,15 +176,7 @@
                                     class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors">
                                     Recent reposts
                                 </button>
-                                <button type="button"
-                                    :class="{
-                                        'text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400': activeTab === 'starred',
-                                        'text-gray-500 border-transparent dark:text-slate-400': activeTab !== 'starred'
-                                    }"
-                                    @click="activeTab = 'starred'"
-                                    class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors">
-                                    Starred members
-                                </button>
+
                                 <button type="button"
                                     :class="{
                                         'text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400': activeTab === 'transaction',
@@ -421,64 +412,12 @@
                                             <div
                                                 class="bg-gray-100 dark:bg-slate-800 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-slate-700">
                                                 <div id="soundcloud-player-{{ $track->id }}"
-                                                        data-campaign-id="{{ $track->id }}" wire:ignore>
-                                                        <x-sound-cloud.sound-cloud-player :track="$track"
-                                                             :visual="false" />
-                                                    </div>
+                                                    data-campaign-id="{{ $track->id }}" wire:ignore>
+                                                    <x-sound-cloud.sound-cloud-player :track="$track"
+                                                        :visual="false" />
+                                                </div>
                                             </div>
                                         @endforeach
-                                        <!-- Track Card 2 -->
-                                        {{-- <div
-                                            class="bg-gray-100 dark:bg-slate-800 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-slate-700">
-                                            <div
-                                                class="flex flex-col xs:flex-row xs:items-center space-y-3 xs:space-y-0 xs:space-x-3 sm:space-x-4">
-                                                <div class="relative flex-shrink-0 mx-auto xs:mx-0">
-                                                    <img src="https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop"
-                                                        alt="Drop - To - Me" class="w-16 h-16 rounded-lg">
-                                                    <button
-                                                        class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg opacity-0 hover:opacity-100 transition-opacity">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                            height="24" fill="currentColor" stroke="currentColor"
-                                                            stroke-width="2" stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            class="w-6 h-6 text-orange-500 dark:text-orange-400">
-                                                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                                        </svg>
-                                                    </button>
-                                                </div>
-                                                <div class="flex-1 min-w-0 ml-0 sm:ml-4">
-                                                    <h4
-                                                        class="text-gray-900 dark:text-white font-medium mb-1 truncate">
-                                                        Drop - To - Me</h4>
-                                                    <p
-                                                        class="text-gray-500 dark:text-slate-400 text-xs sm:text-sm mb-2">
-                                                        Bhathiya Udara</p>
-                                                    <div class="flex items-center space-x-1 h-6 sm:h-8 mb-2">
-                                                        <div class="bg-gray-300 dark:bg-slate-600 flex-1"
-                                                            style="height: 16px; border-radius: 1px;"></div>
-                                                        <div class="bg-gray-300 dark:bg-slate-600 flex-1"
-                                                            style="height: 21px; border-radius: 1px;"></div>
-                                                        <div class="bg-gray-300 dark:bg-slate-600 flex-1"
-                                                            style="height: 10px; border-radius: 1px;"></div>
-                                                        <div class="bg-gray-300 dark:bg-slate-600 flex-1"
-                                                            style="height: 9px; border-radius: 1px;"></div>
-                                                    </div>
-                                                </div>
-                                                <div
-                                                    class="flex items-center justify-between xs:justify-end space-x-2 sm:space-x-4">
-                                                    <button
-                                                        class="text-gray-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
-                                                        <span class="text-xs sm:text-sm">♡ 187</span>
-                                                    </button>
-                                                    <button
-                                                        class="text-gray-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
-                                                        <span class="text-xs sm:text-sm">🔄 68</span>
-                                                    </button>
-                                                    <button
-                                                        class="text-orange-500 dark:text-orange-400 hover:text-orange-400 dark:hover:text-orange-500 text-xs sm:text-sm whitespace-nowrap">Share</button>
-                                                </div>
-                                            </div>
-                                        </div> --}}
                                     </div>
                                 </div>
                                 <!-- Playlists Tab -->
@@ -504,19 +443,108 @@
                                             </svg>
                                         </a>
                                     </div>
-
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                        <!-- Playlist  -->
+                                        @foreach ($playlists as $playlist)
+                                            <div
+                                                class="group bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-gray-100">
+                                                <div class="relative">
+                                                    <img src="{{ soundcloud_image($playlist->artwork_url) }}"
+                                                        alt="Playlist cover"
+                                                        class="w-full h-48 object-cover rounded-t-lg">
+                                                    <button
+                                                        class="absolute bottom-3 right-3 bg-orange-500 text-white w-12 h-12 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-orange-600">
+                                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fill-rule="evenodd"
+                                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                                                                clip-rule="evenodd"></path>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                                <div class="p-4">
+                                                    <h3 class="font-semibold text-gray-900 mb-1 truncate">
+                                                        {{ $playlist->title }}
+                                                    </h3>
+                                                    <p class="text-gray-500 text-sm mb-2 line-clamp-2">
+                                                        {{ $playlist->description }}</p>
+                                                    <div
+                                                        class="flex items-center justify-between text-xs text-gray-400">
+                                                        <span>{{ $playlist->track_count }} tracks</span>
+                                                        <span>{{ $playlist->genre }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
                                 <!-- Reposts Tab -->
                                 <div class="tab-panel mt-4" x-show="activeTab === 'reposts'" x-transition>
-                                    <div
-                                        class="text-gray-900 dark:text-white py-4 sm:py-6 text-center text-base sm:text-lg">
-                                        No recent reposts available yet.</div>
-                                </div>
-                                <!-- Starred Tab -->
-                                <div class="tab-panel mt-4" x-show="activeTab === 'starred'" x-transition>
-                                    <div
-                                        class="text-gray-900 dark:text-white py-4 sm:py-6 text-center text-base sm:text-lg">
-                                        No starred members found.</div>
+                                    <h2 class="text-gray-900 dark:text-white text-lg sm:text-xl font-semibold mb-4">
+                                        Your Recent Reposts from
+                                        <span
+                                            class="text-orange-500 dark:text-orange-400 hover:text-orange-400/90 dark:hover:text-orange-300">
+                                            {{ user()->name }}
+                                        </span>
+                                    </h2>
+
+                                    @foreach ($reposts as $repost)
+                                        <div
+                                            class="bg-gray-100 mb-2 dark:bg-slate-800 rounded-lg p-4 border border-gray-200 dark:border-slate-700 sm:flex sm:gap-4 space-y-4 sm:space-y-0">
+
+                                            <!-- SoundCloud Player -->
+                                            <div class="sm:w-1/2 w-full">
+                                                @if ($repost->source)
+                                                    <div id="soundcloud-player-{{ $repost->source_id }}"
+                                                        data-campaign-id="{{ $repost->source_id }}" wire:ignore>
+                                                        <x-sound-cloud.sound-cloud-player :track="$repost->source"
+                                                            :visual="false" />
+                                                    </div>
+                                                @else
+                                                    <p class="text-sm text-gray-500 dark:text-gray-400">No track
+                                                        available</p>
+                                                @endif
+                                            </div>
+
+                                            <!-- Info Block -->
+                                            <div class="w-full sm:w-1/2 h-40">
+                                                <div
+                                                    class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 h-full bg-gray-100/70 dark:bg-slate-800 rounded-xl shadow border border-gray-200 dark:border-slate-700">
+                                                    <div class="flex-1 grid sm:grid-cols-2 gap-4">
+
+                                                        <!-- Track Info -->
+                                                        <div class="space-y-2">
+                                                            <h3
+                                                                class="text-base font-semibold text-gray-900 dark:text-white truncate">
+                                                                <a href="#"
+                                                                    class="hover:text-orange-500 dark:hover:text-orange-400">{{ $repost->source->title ?? 'Untitled Track' }}</a>
+                                                            </h3>
+                                                            <p
+                                                                class="text-sm text-gray-500 dark:text-slate-400 truncate">
+                                                                <a href="#"
+                                                                    class="hover:text-orange-500 dark:hover:text-orange-400">{{ $repost->source->artist ?? 'Unknown Artist' }}</a>
+                                                            </p>
+                                                            <p class="text-xs text-gray-400 dark:text-slate-500">
+                                                                Reposted at:
+                                                                {{ $repost->reposted_at?->format('M d, Y H:i') }}
+                                                            </p>
+                                                        </div>
+
+                                                        <!-- Status Info -->
+                                                        <div
+                                                            class="flex flex-col sm:items-end gap-2 text-xs text-gray-400 dark:text-slate-500">
+                                                            <p>{{ $repost->source_type }}</p>
+                                                            <p>💰 Credits Earned: <span
+                                                                    class="font-semibold text-green-500">{{ $repost->credits_earned }}</span>
+                                                            </p>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+
                                 </div>
 
                                 <!-- Transaction Tab -->
@@ -535,21 +563,21 @@
                                                     <th class="w-20 px-2 py-3">Status</th>
                                                 </tr>
                                             </thead>
-                                            @foreach ($transactions as $transaction )
-                                                
-                                           
-                                            <tbody class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
-                                                <tr class="border-b border-gray-200 dark:border-gray-700">
-                                                    <td class="px-2 py-2">{{ $transaction->id}}</td>
-                                                    <td class="px-2 py-2">{{ $transaction->receiver_urn}}</td>
-                                                    <td class="px-2 py-2">{{ $transaction->amount}}</td>
-                                                    <td class="px-2 py-2">{{ $transaction->credits}}</td>
-                                                    <td class="px-2 py-2">{{ $transaction->type_name}}</td>
-                                                    <td class="px-2 py-2 text-green-600 font-semibold">{{ $transaction->status}}</td>
-                                                </tr>
-                                               
-                                            </tbody>
-                                             @endforeach
+                                            @foreach ($transactions as $transaction)
+                                                <tbody
+                                                    class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+                                                    <tr class="border-b border-gray-200 dark:border-gray-700">
+                                                        <td class="px-2 py-2">{{ $transaction->id }}</td>
+                                                        <td class="px-2 py-2">{{ $transaction->receiver_urn }}</td>
+                                                        <td class="px-2 py-2">{{ $transaction->amount }}</td>
+                                                        <td class="px-2 py-2">{{ $transaction->credits }}</td>
+                                                        <td class="px-2 py-2">{{ $transaction->type_name }}</td>
+                                                        <td class="px-2 py-2 text-green-600 font-semibold">
+                                                            {{ $transaction->status }}</td>
+                                                    </tr>
+
+                                                </tbody>
+                                            @endforeach
                                         </table>
                                     </div>
                                 </div>

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('repost_request_id')->index()->nullable();
             $table->string('reposter_urn')->index();
             $table->string('track_owner_urn')->index();
-            $table->unsignedBigInteger('campaign_id')->index();
+            $table->unsignedBigInteger('campaign_id')->nullable()->index();
             $table->string('soundcloud_repost_id')->index()->nullable();
             $table->decimal('credits_earned', 10, 2)->default(0.00);
             $table->timestamp('reposted_at')->index();
