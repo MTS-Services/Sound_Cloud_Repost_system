@@ -1,18 +1,22 @@
 <x-admin::layout>
     <x-slot name="title">{{ __('User Tracklist List') }}</x-slot>
     <x-slot name="breadcrumb">{{ __('User Tracklist List') }}</x-slot>
-    <x-slot name="page_slug">user-tracklist</x-slot>
+    <x-slot name="page_slug">user</x-slot>
     <section>
 
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('User Tracklist List') }}</h2>
-                {{-- <div class="flex items-center gap-2">
-                    <x-button href="{{ route('um.tracklist.trash') }}" icon="trash-2" type='secondary'
+                 <div class="flex items-center gap-2">
+                   {{-- <x-button href="{{ route('um.tracklist.trash') }}" icon="trash-2" type='secondary'
                         permission="admin-trash">
                         {{ __('Trash') }}
+                    </x-button>--}}
+                     <x-button href="{{ route('um.user.index') }}"  type='primary'
+                        permission="admin-trash">
+                        {{ __('back') }}
                     </x-button>
-                </div> --}}
+                </div> 
             </div>
         </div>
         <div class="glass-card rounded-2xl p-6">
@@ -70,12 +74,12 @@
         </script>
 
         {{-- Details Modal --}}
-        {{-- <script>
+        <script>
             document.addEventListener('DOMContentLoaded', () => {
 
                 $(document).on('click', '.view', function() {
                     const id = $(this).data('id');
-                    const route = "{{ route('um.tracklist.show', ':id') }}";
+                    const route = "{{ route('um.user.tracklist.show', ':id') }}";
 
                     const details = [{
                             label: '{{ __('User Urn') }}',
@@ -292,6 +296,6 @@
                     showDetailsModal(route, id, '{{ __('User Details') }}', details);
                 });
             });
-        </script> --}}
+        </script>
     @endpush
 </x-admin::layout>
