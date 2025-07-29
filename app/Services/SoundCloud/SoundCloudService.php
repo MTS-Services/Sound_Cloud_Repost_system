@@ -151,7 +151,7 @@ class SoundCloudService
             $syncedCount = 0;
 
             foreach ($tracksData as $trackData) {
-                dd($trackData);
+                @dd($trackData);
                 // Prepare common track data, setting defaults for potentially missing keys
                 $commonTrackData = [
                     'kind' => $trackData['kind'] ?? null,
