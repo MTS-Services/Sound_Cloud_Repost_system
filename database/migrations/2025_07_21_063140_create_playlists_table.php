@@ -38,7 +38,7 @@ return new class extends Migration
             $table->string('playlist_type')->nullable();
             $table->string('type')->nullable();
             $table->unsignedBigInteger('soundcloud_id');
-            $table->string('soundcloud_urn')->nullable();
+            $table->string('soundcloud_urn')->nullable()->index();
             $table->boolean('downloadable')->nullable();
             $table->integer('likes_count')->default(0);
             $table->string('sharing')->nullable();
