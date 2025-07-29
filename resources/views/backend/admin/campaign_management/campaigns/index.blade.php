@@ -27,6 +27,7 @@
                         <th>{{ __('User') }}</th>
                         <th>{{ __('Target Reposts') }}</th>
                         <th>{{ __('Total Credits Budget') }}</th>
+                        <th>{{ __('Cost Per Repost') }}</th>
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('Start Date') }}</th>
                         <th>{{ __('End Date') }}</th>
@@ -52,7 +53,8 @@
                     ['title', true, true],
                     ['user_urn', true, true],
                     ['target_reposts', true, true],
-                    ['total_credits_budget', true, true],
+                    ['budget_credits', true, true],
+                    ['cost_per_repost', true, true],
                     ['status', true, true],
                     ['start_date', true, true],
                     ['end_date', true, true],

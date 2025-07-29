@@ -16,7 +16,7 @@ class CampaignService
     }
     public function getCampaign(string $encryptedId)
     {
-        return Campaign::findOrFail($encryptedId);
+        return Campaign::findOrFail(decrypt($encryptedId));
     }
 
     public function syncReposts($campaign, $currentUserUrn, $soundcloudRepostId)
@@ -27,7 +27,7 @@ class CampaignService
 
                 $trackOwnerUrn = $campaign->music->user?->urn ?? $campaign->user_urn;
                 $trackOwnerName = $campaign->music->user?->name;
-                $creditsPerRepost = $campaign->credits_per_repost;
+                $creditsPerRepost = $campaign->cost_per_repost;
 
                 // Create the Repost record
                 $repost = Repost::create([
@@ -36,12 +36,17 @@ class CampaignService
                     'campaign_id' => $campaign->id,
                     'soundcloud_repost_id' => $soundcloudRepostId,
                     'reposted_at' => now(),
-                    'credits_earned' => $creditsPerRepost,
+                    'credits_earned' => (float) $creditsPerRepost,
                 ]);
 
                 // Update the Campaign record using atomic increments
                 $campaign->increment('completed_reposts');
-                $campaign->increment('credits_spent', $creditsPerRepost);
+                $campaign->increment('credits_spent', (float) $creditsPerRepost);
+
+                if ($campaign->budget_credits == $campaign->credits_spent) {
+                    $campaign->update(['status' => Campaign::STATUS_COMPLETED]);
+                }
+
 
                 // Create the CreditTransaction record
                 CreditTransaction::create([
@@ -52,7 +57,7 @@ class CampaignService
                     'source_type' => Campaign::class,
                     'transaction_type' => CreditTransaction::TYPE_EARN,
                     'amount' => 0,
-                    'credits' => $creditsPerRepost,
+                    'credits' => (float) $creditsPerRepost,
                     'description' => "Repost of campaign '{$campaign->title}' by {$trackOwnerName}. " .
                         "Reposted by {$currentUserUrn} with Repost ID: {$repost->id}.",
                     'metadata' => [
@@ -65,7 +70,6 @@ class CampaignService
             return true;
         } catch (Throwable $e) {
             throw $e;
-            return false;
         }
     }
 }

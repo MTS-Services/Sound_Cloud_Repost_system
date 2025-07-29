@@ -3,6 +3,11 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\F;
 
 class Campaign extends BaseModel
@@ -10,10 +15,12 @@ class Campaign extends BaseModel
 
     protected $fillable = [
         'user_urn',
-        'track_urn',
+        'music_id',
+        'music_type',
+        'status',
         'title',
         'description',
-
+        'playback_count',
         'target_reposts',
         'completed_reposts',
         'cost_per_repost',
@@ -24,6 +31,7 @@ class Campaign extends BaseModel
         'is_featured',
         'start_date',
         'end_date',
+        'refund_credits',
 
         'creater_id',
         'updater_id',
@@ -36,40 +44,44 @@ class Campaign extends BaseModel
     protected $casts = [
         'start_date' => 'datetime',
         'end_date' => 'datetime',
+        'budget_credits' => 'decimal:2',
+        'cost_per_repost' => 'decimal:2',
+        'credits_spent' => 'decimal:2',
+        'refund_credits' => 'decimal:2',
         'target_reposts' => 'integer',
         'completed_reposts' => 'integer',
-        'cost_per_repost' => 'decimal',
-        'budget_credits' => 'decimal',
-        'credits_spent' => 'decimal',
         'min_followers' => 'integer',
         'max_followers' => 'integer',
+        'is_featured' => 'boolean',
+        'status' => 'integer',
+        'playback_count' => 'integer',        
     ];
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 Start of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_urn', 'urn');
     }
 
-    public function track()
+    public function music(): MorphTo
     {
-        return $this->belongsTo(Track::class, 'track_urn', 'urn');
+        return $this->morphTo();
     }
 
-    public function requests()
+    public function requests(): HasMany
     {
         return $this->hasMany(RepostRequest::class, 'campaign_id', 'id');
     }
 
-    public function reposts()
+    public function reposts(): HasMany
     {
         return $this->hasMany(Repost::class, 'campaign_id', 'id');
     }
 
-    public function creditTransactions()
+    public function creditTransactions(): HasMany
     {
         return $this->hasMany(CreditTransaction::class, 'campaign_id', 'id');
     }
@@ -90,31 +102,9 @@ class Campaign extends BaseModel
             'status_btn_color',
             'start_date_formatted',
             'end_date_formatted',
-            'auto_approve_label',
-            'auto_approve_color',
 
+            'feature_label',
         ]);
-    }
-    public const AUTO_APPROVE_NO = 0;
-    public const AUTO_APPROVE_YES = 1;
-
-    public static function getAutoApproveList(): array
-    {
-        return [
-            self::AUTO_APPROVE_NO => 'No',
-            self::AUTO_APPROVE_YES => 'Yes',
-        ];
-    }
-    public function getAutoApproveLabelAttribute()
-    {
-        return self::getAutoApproveList()[$this->auto_approve];
-    }
-    public function getAutoApproveColorAttribute()
-    {
-        return [
-            self::AUTO_APPROVE_NO => 'badge-error',
-            self::AUTO_APPROVE_YES => 'badge-success',
-        ][$this->auto_approve];
     }
 
     public const STATUS_OPEN = 1;
@@ -125,7 +115,7 @@ class Campaign extends BaseModel
     public static function getStatusList(): array
     {
         return [
-            self::STATUS_OPEN => 'Active',
+            self::STATUS_OPEN => 'Open',
             self::STATUS_PAUSED => 'Paused',
             self::STATUS_COMPLETED => 'Completed',
             self::STATUS_CANCELLED => 'Cancelled',
@@ -134,7 +124,7 @@ class Campaign extends BaseModel
 
     public function getStatusLabelAttribute()
     {
-        return self::getStatusList()[$this->status];
+        return self::getStatusList()[$this->status] ?? 'Unknown';
     }
     // public function getStatusBtnLabelAttribute()
     // {
@@ -148,7 +138,7 @@ class Campaign extends BaseModel
             self::STATUS_PAUSED => 'badge-warning',
             self::STATUS_COMPLETED => 'badge-info',
             self::STATUS_CANCELLED => 'badge-error',
-        ][$this->status];
+        ][$this->status] ?? 'badge-secondary';
     }
 
     public function getStatusBtnColorAttribute()
@@ -158,19 +148,19 @@ class Campaign extends BaseModel
             self::STATUS_PAUSED => 'btn-warning',
             self::STATUS_COMPLETED => 'btn-info',
             self::STATUS_CANCELLED => 'btn-error',
-        ][$this->status];
+        ][$this->status] ?? 'btn-secondary';
     }
 
     public function getStartDateFormattedAttribute()
     {
-        return timeFormat($this->start_date);
+        return Carbon::parse($this->start_date)->format('d M Y');
     }
 
     public function getEndDateFormattedAttribute()
     {
-        return timeFormat($this->end_date);
+        return Carbon::parse($this->end_date)->format('d M Y');
     }
-    // active_completed scope 
+    // active_completed scope
     public function scopeActive_completed()
     {
         return $this->where('status', '!=', self::STATUS_CANCELLED,)->where('status', '!=', self::STATUS_PAUSED);
@@ -188,6 +178,44 @@ class Campaign extends BaseModel
     }
     public function getFeatureLabelAttribute()
     {
-        return self::getFeatureList()[$this->is_featured];
+        return self::getFeatureList()[$this->is_featured] ?? 'Unknown';
+    }
+
+    public function scopeSelf(Builder $query): Builder
+    {
+        return $query->where('user_urn', user()->urn);
+    }
+    public function scopeWithoutSelf(Builder $query): Builder
+    {
+        return $query->where('user_urn', '!=', user()->urn);
+    }
+
+
+    public function scopeFeatured(Builder $query): Builder
+    {
+        return $query->where('is_featured', self::FEATURED);
+    }
+    public function scopeNotFeatured(Builder $query): Builder
+    {
+        return $query->where('is_featured', self::NOT_FEATURED);
+    }
+
+    public function scopeOpen(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_OPEN);
+    }
+
+    public function scopePaused(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_PAUSED);
+    }
+    public function scopeCompleted(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_COMPLETED);
+    }
+
+    public function scopeCancelled(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_CANCELLED);
     }
 }

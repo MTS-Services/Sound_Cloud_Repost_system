@@ -64,4 +64,9 @@ class Credit extends BaseModel
     {
         return $this->status == self::STATUS_ACTIVE ? 'btn-error' : 'btn-success';
     }
+
+    public function scopeActive()
+    {
+        return $this->where('status', self::STATUS_ACTIVE);
+    }
 }

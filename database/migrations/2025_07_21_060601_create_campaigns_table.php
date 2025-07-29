@@ -19,7 +19,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('sort_order')->default(0);
             $table->string('user_urn')->index();
-            $table->string('track_urn')->index();
+            $table->unsignedBigInteger('music_id')->index();
+            $table->string('music_type')->index();
 
             $table->string('title');
             $table->text('description')->nullable();
@@ -28,9 +29,10 @@ return new class extends Migration
             $table->decimal('cost_per_repost', 8, 2)->index();
             $table->decimal('budget_credits', 10, 2);
             $table->decimal('credits_spent', 10, 2)->default(0.00);
+            $table->decimal('refund_credits', 10, 2)->default(0.00);
             $table->unsignedBigInteger('min_followers')->index()->default(0);
             $table->unsignedBigInteger('max_followers')->index()->default(0);
-
+            $table->unsignedBigInteger('playback_count')->index()->default(0);
             $table->tinyInteger('status')->index()->default(Campaign::STATUS_OPEN);
             $table->timestamp('start_date')->index()->default(now());
             $table->timestamp('end_date')->index();
@@ -41,7 +43,6 @@ return new class extends Migration
             $table->softDeletes();
             $this->addMorphedAuditColumns($table);
 
-            $table->foreign('track_urn')->references('urn')->on('tracks')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreign('user_urn')->references('urn')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }

@@ -8,18 +8,18 @@
             class="relative max-w-[500px] w-full bg-white rounded-[20px] shadow-[0_20px_40px_rgba(0,0,0,0.1)] mx-auto p-10 text-center overflow-hidden" style="padding: 20px;">
 
             <!-- Top Gradient Bar -->
-            <div class="absolute top-0 left-0 right-0 h-[5px] bg-gradient-to-r from-teal-500 to-teal-500"></div>
+            <div class="absolute top-0 left-0 right-0 h-[5px] bg-gradient-to-r from-orange-600 to-orange-600"></div>
 
             <!-- Confetti -->
             @for ($i = 1; $i <= 9; $i++)
-                <div class="confetti absolute w-[10px] h-[10px] bg-teal-500 animate-[confetti-fall_3s_linear_infinite]"
+                <div class="confetti absolute w-[10px] h-[10px] bg-orange-600 animate-[confetti-fall_3s_linear_infinite]"
                     style="left: {{ 10 * $i }}%; animation-delay: {{ ($i * 0.3) % 2 }}s; background: {{ ['#00d4aa', '#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#a29bfe', '#fd79a8', '#00b894'][$i - 1] }}">
                 </div>
             @endfor
 
             <!-- Success Icon -->
             <div
-                class="w-20 h-20 bg-gradient-to-br from-teal-500 to-teal-400 rounded-full flex items-center justify-center mx-auto mb-8 animate-pulse">
+                class="w-20 h-20 bg-gradient-to-br from-orange-600 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-8 animate-pulse">
                 <i class="fas fa-check text-white text-[35px]"></i>
             </div>
 
@@ -31,16 +31,24 @@
 
             <!-- Payment Details -->
             @if (isset($payment))
-                <div class="bg-gray-100 border-l-4 border-teal-500 rounded-xl p-6 mb-8">
+                <div class="bg-gray-100 border-l-4 border-orange-600 rounded-xl p-6 mb-8">
                     <h3 class="text-lg text-gray-800 font-semibold mb-5 flex items-center gap-2">
                         <i class="fas fa-receipt"></i> Payment Details
                     </h3>
 
                     <div class="flex justify-between items-center py-3 border-b border-gray-200">
                         <span class="font-semibold text-gray-600 flex items-center gap-2">
-                            <i class="fas fa-dollar-sign"></i> Amount
+                            <i class="fas fa-coins"></i> Credits
                         </span>
-                        <span class="font-bold text-teal-500 text-lg">
+                        <span class="font-bold text-orange-600 text-lg">
+                            {{ number_format($payment->creditTransaction?->credits, 2) }}
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center py-3 border-b border-gray-200">
+                        <span class="font-semibold text-gray-600 flex items-center gap-2">
+                            <i class="fa-solid fa-sack-dollar"></i> Amount
+                        </span>
+                        <span class="font-bold text-orange-600 text-lg">
                             ${{ number_format($payment->amount, 2) }}
                         </span>
                     </div>
@@ -58,7 +66,7 @@
                         <span class="font-semibold text-gray-600 flex items-center gap-2">
                             <i class="fas fa-info-circle"></i> Status
                         </span>
-                        <span class="uppercase bg-teal-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                        <span class="uppercase bg-orange-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
                             {{ ucfirst($payment->status) }}
                         </span>
                     </div>
@@ -88,23 +96,18 @@
             @endif
 
             <!-- Email Notice -->
-            <div class="bg-blue-100 border border-blue-200 rounded-lg p-4 mb-6 flex items-center gap-3">
-                <i class="fas fa-envelope text-blue-600"></i>
-                <p class="text-sm text-blue-800 m-0">
+            <div class="bg-orange-600 border border-blue-200 rounded-lg p-4 mb-6 flex items-center gap-3">
+                <i class="fas fa-envelope text-white"></i>
+                <p class="text-sm text-white m-0">
                     A confirmation email has been sent to your registered email address with the payment receipt.
                 </p>
             </div>
 
             <!-- Action Buttons -->
             <div class="flex flex-wrap gap-4 mt-6 justify-center">
-                <a href="{{ route('f.payment.form') }}"
-                    class="flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-200 rounded-lg text-gray-700 font-semibold bg-gray-100 hover:bg-gray-200 transition-all duration-300 min-w-[140px]">
-                    <i class="fas fa-plus"></i> New Payment
-                </a>
-
-                <a href="/"
-                    class="flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-white font-semibold bg-gradient-to-br from-indigo-400 to-purple-600 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 min-w-[140px]">
-                    <i class="fas fa-home"></i> Back to Home
+                <a href="{{ route('user.dashboard') }}"
+                    class="flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-white font-semibold bg-gradient-to-br from-orange-600 to-orange-600 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 min-w-[140px]">
+                    <i class="fas fa-home"></i> Back to Dashboard
                 </a>
             </div>
         </div>

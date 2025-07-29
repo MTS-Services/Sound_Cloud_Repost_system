@@ -28,27 +28,28 @@
     * {
         scroll-behavior: smooth;
         scrollbar-width: thin;
-        scrollbar-color: var(--primary) var(--secondary) !important;
+        scrollbar-color: var(--color-orange-500) var(--color-orange-100) !important;
     }
 
     /* For Webkit-based browsers (Chrome, Edge, Safari) */
     *::-webkit-scrollbar {
         height: 8px;
         width: 8px;
-        background-color: var(--secondary) !important;
+        background-color: var(--color-orange-100) !important;
     }
+
     .dark *::-webkit-scrollbar {
-        background-color: var(--secondary) !important;
+        background-color: var(--color-orange-100) !important;
     }
 
     *::-webkit-scrollbar-thumb {
-        background-color: var(--primary) !important;
+        background-color: var(--color-orange-500) !important;
         border-radius: 9999px !important;
         box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.75);
     }
 
     *::-webkit-scrollbar-thumb:hover {
-        background-color: var(--primary) !important;
+        background-color: var(--color-orange-600) !important;
     }
 
     *::-webkit-scrollbar-corner {
@@ -71,7 +72,7 @@
     /* Font Family */
     --font-poppins: 'Poppins', sans-serif;
     --font-rubik: 'Rubik', sans-serif;
-    --font-monospace:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --font-monospace: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
     /* ===================================  Colors =================================== */
 
@@ -302,12 +303,5 @@
 
 /* input fieldset */
 /* @layer components { */
-input {
-    @apply focus:outline-0 focus-within:outline-0 focus:ring-0 focus:border-border-active focus-within:border-border-active w-full;
-}
-
-.input {
-    @apply focus:outline-0 focus-within:outline-0 focus:ring-0 focus:border-border-active focus-within:border-border-active w-full;
-}
 
 /* } */

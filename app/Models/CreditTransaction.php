@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CreditTransaction extends BaseModel
 {
@@ -13,10 +14,14 @@ class CreditTransaction extends BaseModel
         'source_id',
         'source_type',
         'transaction_type',
+        'calculation_type',
+        'source_id',
+        'source_type',
         'amount',
         'credits',
         'description',
         'metadata',
+        'status',
 
         'creater_id',
         'updater_id',
@@ -25,6 +30,13 @@ class CreditTransaction extends BaseModel
         'updater_type',
         'deleter_type',
     ];
+
+    public const STATUS_PENDING = 0;
+    public const STATUS_COMPLETED = 1;
+    public const STATUS_FAILED = 2;
+    public const STATUS_REFUNDED = 3;
+    public const STATUS_DISPUTED = 4;
+
 
     protected $casts = [
         'metadata' => 'array',
@@ -49,6 +61,7 @@ class CreditTransaction extends BaseModel
         return $this->belongsTo(Campaign::class);
     }
 
+   
     // public function repostRequest()
     // {
     //     return $this->belongsTo(RepostRequest::class);
@@ -112,5 +125,29 @@ class CreditTransaction extends BaseModel
     public function getTypeNameAttribute(): string
     {
         return self::getTypes()[$this->transaction_type];
+    }
+
+
+    #####################################
+    ########### Type Scopes #############
+    #####################################
+    public function scopeEarn()
+    {
+        return $this->where('transaction_type', '=', self::TYPE_EARN);
+    }
+
+    public function scopeSpend()
+    {
+        return $this->where('transaction_type', '=', self::TYPE_SPEND);
+    }
+
+    public function scopeRefund()
+    {
+        return $this->where('transaction_type', '=', self::TYPE_REFUND);
+    }
+
+    public function scopePurchase()
+    {
+        return $this->where('transaction_type', '=', self::TYPE_PURCHASE);
     }
 }
