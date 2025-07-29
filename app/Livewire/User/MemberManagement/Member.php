@@ -38,6 +38,7 @@ class Member extends Component
     public $playlist;
     public $tracks;
     public $track;
+    public $credits_spent;
 
     protected $listeners = ['refreshData' => 'loadData'];
 
@@ -173,9 +174,10 @@ class Member extends Component
     public function createRepostsRequest(){
         try{
             $repostRequest = new RepostRequest();
-            $repostRequest->requester_urn = $this->user->urn;
+            $repostRequest->requester_urn = user()->urn;
             $repostRequest->target_user_urn = $this->user->urn;
             $repostRequest->track_urn = $this->track->urn;
+            $repostRequest->credits_spent = repostPrice($this->user);
             $repostRequest->save();
             $this->closeRepostModal();
             $this->closeModal();
