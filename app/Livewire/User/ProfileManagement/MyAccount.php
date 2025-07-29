@@ -3,6 +3,7 @@
 namespace App\Livewire\User\ProfileManagement;
 
 use App\Models\Playlist;
+use App\Models\Repost;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Models\User;
 use App\Services\Admin\UserManagement\UserService;
@@ -13,6 +14,7 @@ class MyAccount extends Component
     public $user;
     public $tracks;
     public $playlists;
+    public $reposts;
     public $transactions;
     public $activeTab = 'insights';
 
@@ -34,6 +36,10 @@ class MyAccount extends Component
     {
         $this->playlists = Playlist::where('user_urn', user()->urn)->get();
     }
+   public function getRecentReposts(): void
+{
+    $this->reposts = Repost::where('track_owner_urn', user()->urn)->with(['campaign', 'request'])->orderByDesc('reposted_at')->get();
+}
     public function getTransactions(): void
     {
         $this->transactions = $this->creditTransactionService->getUserTransactions();
@@ -51,6 +57,7 @@ class MyAccount extends Component
         $this->getPlaylists();
         $this->getMyUser();
         $this->getTracks();
+        $this->getRecentReposts();
         $this->getTransactions();
         // $this->user = User::where('urn', user()->urn)->with('userInfo')->first();
 
@@ -58,6 +65,7 @@ class MyAccount extends Component
 
     public function render()
     {
+      
         return view('backend.user.profile-management.my-account');
     }
 }

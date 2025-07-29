@@ -1,5 +1,5 @@
 <section>
-    {{-- @dd($transactions) --}}
+    @dd($reposts)
     <x-slot name="page_slug">my-account</x-slot>
     <section class="flex-1 overflow-auto">
         <div class="min-h-screen bg-white dark:bg-slate-900">
@@ -177,15 +177,7 @@
                                     class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors">
                                     Recent reposts
                                 </button>
-                                <button type="button"
-                                    :class="{
-                                        'text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400': activeTab === 'starred',
-                                        'text-gray-500 border-transparent dark:text-slate-400': activeTab !== 'starred'
-                                    }"
-                                    @click="activeTab = 'starred'"
-                                    class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors">
-                                    Starred members
-                                </button>
+
                                 <button type="button"
                                     :class="{
                                         'text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400': activeTab === 'transaction',
@@ -507,7 +499,6 @@
                                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                         <!-- Playlist  -->
                                         @foreach ($playlists as $playlist)
-                                           
                                             <div
                                                 class="group bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-gray-100">
                                                 <div class="relative">
@@ -524,13 +515,15 @@
                                                     </button>
                                                 </div>
                                                 <div class="p-4">
-                                                        <h3 class="font-semibold text-gray-900 mb-1 truncate">{{ $playlist->title }}
+                                                    <h3 class="font-semibold text-gray-900 mb-1 truncate">
+                                                        {{ $playlist->title }}
                                                     </h3>
-                                                    <p class="text-gray-500 text-sm mb-2 line-clamp-2">{{ $playlist->description }}</p>
+                                                    <p class="text-gray-500 text-sm mb-2 line-clamp-2">
+                                                        {{ $playlist->description }}</p>
                                                     <div
                                                         class="flex items-center justify-between text-xs text-gray-400">
                                                         <span>{{ $playlist->track_count }} tracks</span>
-                                                        <span>{{$playlist->genre}}</span>
+                                                        <span>{{ $playlist->genre }}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -539,16 +532,97 @@
                                 </div>
                                 <!-- Reposts Tab -->
                                 <div class="tab-panel mt-4" x-show="activeTab === 'reposts'" x-transition>
+                                    <h2 class="text-gray-900 dark:text-white text-lg sm:text-xl font-semibold mb-4">
+                                        Your Recent Reposts from
+                                        <span
+                                            class="text-orange-500 dark:text-orange-400 hover:text-orange-400/90 dark:hover:text-orange-300">
+                                            {{ user()->name }}
+                                        </span>
+                                    </h2>
+
                                     <div
-                                        class="text-gray-900 dark:text-white py-4 sm:py-6 text-center text-base sm:text-lg">
-                                        No recent reposts available yet.</div>
+                                        class="bg-gray-100 dark:bg-slate-800 rounded-lg p-4 border border-gray-200 dark:border-slate-700 space-y-4 sm:space-y-0 sm:flex sm:gap-4">
+                                    {{-- @if ()
+                                        
+                                    @endif --}}
+                                        <!-- Left: SoundCloud Player (50%) -->
+                                        <div class="sm:w-1/2 w-full">
+                                            <div id="soundcloud-player-{{ $track->id }}"
+                                                data-campaign-id="{{ $track->id }}" wire:ignore>
+                                                <x-sound-cloud.sound-cloud-player :track="$track" :visual="false" />
+                                            </div>
+                                        </div>
+
+                                        <!-- Right: Repost Info Block (50%) -->
+                                        <div class="w-full sm:w-1/2 h-40">
+                                            <div
+                                                class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 h-full bg-gray-100/70 dark:bg-slate-800 rounded-xl shadow border border-gray-200 dark:border-slate-700">
+
+                                                <!-- Thumbnail -->
+                                                <div
+                                                    class="relative w-36 h-36 flex-shrink-0 mx-auto sm:mx-0 rounded-lg overflow-hidden">
+                                                    <img src="https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop"
+                                                        alt="Track Artwork" class="w-full h-full object-cover" />
+                                                    <button
+                                                        class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 hover:bg-opacity-60 transition duration-200 group">
+                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                            class="w-6 h-6 text-orange-500 dark:text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                            viewBox="0 0 24 24" fill="currentColor">
+                                                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+
+                                                <!-- Info + Actions -->
+                                                <div class="flex-1 grid sm:grid-cols-2 items-center gap-4">
+
+                                                    <!-- Track Info -->
+                                                    <div class="space-y-3">
+                                                        <h3
+                                                            class="text-base font-semibold text-gray-900 dark:text-white truncate">
+                                                            <a href="#"
+                                                                class="hover:text-orange-500 dark:hover:text-orange-400 transition">{{ $track->title }}</a>
+                                                        </h3>
+                                                        <p class="text-sm text-gray-500 dark:text-slate-400 truncate">
+                                                            <a href="#"
+                                                                class="hover:text-orange-500 dark:hover:text-orange-400 transition">
+                                                                {{ $track->artist ?? 'Unknown Artist' }}
+                                                            </a>
+                                                        </p>
+                                                        <p class="text-xs text-gray-400 dark:text-slate-500">
+                                                            Reposted at:
+                                                            {{ \Carbon\Carbon::parse($track->reposted_at)->format('M d, Y H:i') }}
+                                                        </p>
+                                                      
+                                                    </div>
+
+                                                    <!-- Actions -->
+                                                    <div class="flex flex-col sm:items-end gap-2">
+                                                        <p class="text-xs text-gray-400 dark:text-slate-500">
+                                                            Campaign ID: {{ $track->campaign_id }}
+                                                        </p>
+                                                        <p class="text-xs text-gray-400 dark:text-slate-500">
+                                                            Credits Earned: <span
+                                                                class="font-semibold text-green-500">{{ $track->credits_earned }}</span>
+                                                        </p>
+                                                        <p class="text-[10px] text-gray-400 dark:text-slate-600">
+                                                            Repost ID: {{ $track->repost_request_id }}
+                                                        </p>
+                                                        <p class="text-[10px] text-gray-400 dark:text-slate-600">
+                                                            Sort Order: {{ $track->sort_order }}
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
                                 </div>
-                                <!-- Starred Tab -->
-                                <div class="tab-panel mt-4" x-show="activeTab === 'starred'" x-transition>
-                                    <div
-                                        class="text-gray-900 dark:text-white py-4 sm:py-6 text-center text-base sm:text-lg">
-                                        No starred members found.</div>
-                                </div>
+
+
 
                                 <!-- Transaction Tab -->
                                 <div class="tab-panel mt-4" x-show="activeTab === 'transaction'" x-transition>
