@@ -114,167 +114,16 @@
         </div>
     </div>
 
-    {{-- <div class="bg-slate-900 antialiased">
 
-        <main class="p-4 sm:p-6 lg:p-2">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full max-w-8xl mx-auto">
+    <div class=" p-2">
 
-                <div class="lg:col-span-2 bg-slate-800 rounded-lg p-4 sm:p-6 border border-slate-700">
-                    <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6">
-                        <div>
-                            <h2 class="text-white font-bold text-2xl md:text-3xl">Performance Overview</h2>
-                            <p class="text-sm text-slate-400 mt-1">Track the impact of your campaigns</p>
-                        </div>
-                        <a href="#"
-                            class="text-orange-400 text-sm font-medium mt-4 sm:mt-0 hover:text-orange-300 transition-colors">View
-                            all →</a>
-                    </div>
-
-                    <div class="h-80 sm:h-96">
-                        <canvas id="campaignChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="bg-slate-800 rounded-lg p-4 sm:p-6 border border-slate-700">
-                    <h3 class="text-white text-xl font-semibold mb-2">Genre Distribution</h3>
-                    <p class="text-slate-400 text-sm mb-6">What your audience listens to</p>
-
-                    <div class="h-80 sm:h-96 flex flex-col justify-between">
-                        <div class="flex-grow flex items-center justify-center my-4">
-                            <div
-                                class="bg-slate-700/50 rounded-full w-36 h-36 sm:w-44 sm:h-44 flex items-center justify-center">
-                                <p class="text-slate-500 text-sm">Pie Chart</p>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs">
-                            <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 rounded-full bg-violet-500"></span>
-                                <span class="text-slate-300">Electronic</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 rounded-full bg-orange-500"></span>
-                                <span class="text-slate-300">Hip-Hop</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 rounded-full bg-blue-500"></span>
-                                <span class="text-slate-300">Pop</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 rounded-full bg-green-500"></span>
-                                <span class="text-slate-300">R&B</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
-                                <span class="text-slate-300">Rock</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-            const ctx = document.getElementById('campaignChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                    datasets: [{
-                        label: 'Performance',
-                        data: [950, 1700, 2300, 2850, 2700, 3800],
-                        borderColor: '#f97316', // Orange-500
-                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                        pointBackgroundColor: '#f97316',
-                        pointBorderColor: '#ffffff',
-                        pointHoverRadius: 7,
-                        pointHoverBorderWidth: 2,
-                        pointRadius: 5,
-                        borderWidth: 2.5,
-                        tension: 0.4,
-                        fill: true,
-                    }, {
-                        label: 'Baseline',
-                        data: [100, 150, 120, 180, 250, 200],
-                        borderColor: '#22c55e', // Green-500
-                        backgroundColor: 'transparent',
-                        pointBackgroundColor: '#22c55e',
-                        borderWidth: 2,
-                        pointRadius: 5,
-                        tension: 0.4,
-                    }]
-                },
-                options: {
-                    responsive: true, // This is key for responsiveness
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                color: '#94a3b8', // slate-400
-                                font: {
-                                    size: 10
-                                }
-                            },
-                            grid: {
-                                color: '#334155', // slate-700
-                                drawBorder: false,
-                            },
-                        },
-                        x: {
-                            ticks: {
-                                color: '#94a3b8', // slate-400
-                                font: {
-                                    size: 10
-                                }
-                            },
-                            grid: {
-                                display: false,
-                            },
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            align: 'end',
-                            labels: {
-                                color: '#e2e8f0', // slate-200
-                                boxWidth: 12,
-                                font: {
-                                    size: 12
-                                }
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: '#0f172a', // slate-900
-                            titleColor: '#ffffff',
-                            bodyColor: '#cbd5e1', // slate-300
-                            borderColor: '#334155', // slate-700
-                            borderWidth: 1,
-                            padding: 12,
-                            cornerRadius: 8,
-                        }
-                    },
-                    interaction: {
-                        intersect: false,
-                        mode: 'index',
-                    },
-                }
-            });
-        </script>
-
-    </div> --}}
-
-    <div class="bg-slate-900 antialiased">
-
-        <main class="sm:p-6 p-2 lg:-mb-4">
+        <main class="#">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-2  ">
 
-                <div class="lg:col-span-2 bg-slate-800 rounded-lg p-2 border border-slate-700">
-                    <div class="flex flex-col sm:flex-row justify-between sm:items-center ">
+                <div class="lg:col-span-2  rounded-lg p-2 border border-slate-700">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center p-2">
                         <div>
-                            <h2 class="text-white ">Performance Overview</h2>
+                            <h2 class="text-slate-400  text-lg font-semibold ">Performance Overview</h2>
                             <p class="text-sm text-slate-400 ">Track the impact of your campaigns</p>
                         </div>
                         <a href="#"
@@ -289,8 +138,8 @@
                     </div>
                 </div>
 
-                <div class="bg-slate-800 rounded-lg p-4 sm:p-6 border border-slate-700 lg:ml-5">
-                    <h3 class="text-white">Genre Distribution</h3>
+                <div class=" rounded-lg p-4 sm:p-6 border border-slate-700 lg:ml-5">
+                    <h3 class="text-slate-400 text-lg font-semibold">Genre Distribution</h3>
                     <p class="text-slate-400 text-sm mb-2">What your audience listens to</p>
 
                     <div class="h-60 sm:h-96 flex flex-col justify-between">
@@ -331,111 +180,20 @@
                 </div>
             </div>
         </main>
-        <script>
-            const ctx = document.getElementById('campaignChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                    datasets: [{
-                        label: 'Performance',
-                        data: [950, 1700, 2300, 2850, 2700, 3800],
-                        borderColor: '#f97316', // Orange-500
-                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                        pointBackgroundColor: '#f97316',
-                        pointBorderColor: '#ffffff',
-                        pointHoverRadius: 7,
-                        pointHoverBorderWidth: 2,
-                        pointRadius: 5,
-                        borderWidth: 2.5,
-                        tension: 0.4,
-                        fill: true,
-                    }, {
-                        label: 'Baseline',
-                        data: [100, 150, 120, 180, 250, 200],
-                        borderColor: '#22c55e', // Green-500
-                        backgroundColor: 'transparent',
-                        pointBackgroundColor: '#22c55e',
-                        borderWidth: 2,
-                        pointRadius: 5,
-                        tension: 0.4,
-                    }]
-                },
-                options: {
-                    responsive: true, // This is key for responsiveness
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                color: '#94a3b8', // slate-400
-                                font: {
-                                    size: 10
-                                }
-                            },
-                            grid: {
-                                color: '#334155', // slate-700
-                                drawBorder: false,
-                            },
-                        },
-                        x: {
-                            ticks: {
-                                color: '#94a3b8', // slate-400
-                                font: {
-                                    size: 10
-                                }
-                            },
-                            grid: {
-                                display: false,
-                            },
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            align: 'end',
-                            labels: {
-                                color: '#e2e8f0', // slate-200
-                                boxWidth: 12,
-                                font: {
-                                    size: 12
-                                }
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: '#0f172a', // slate-900
-                            titleColor: '#ffffff',
-                            bodyColor: '#cbd5e1', // slate-300
-                            borderColor: '#334155', // slate-700
-                            borderWidth: 1,
-                            padding: 12,
-                            cornerRadius: 8,
-                        }
-                    },
-                    interaction: {
-                        intersect: false,
-                        mode: 'index',
-                    },
-                }
-            });
-        </script>
-
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3  p-2">
-        <div
-            class="lg:col-span-2 bg-slate-800 rounded-lg lg-px-4 lg-py-6 lg-ml-6 border border-slate-700 sm:ml-4 sm:mr-3 lg:mt-2">
-            <div class="flex items-center justify-between lg-mb-6 p-2">
+    <div class="grid grid-cols-1 lg:grid-cols-3 p-2 dark:text-white">
+        <div class="lg:col-span-2  rounded-lg lg-px-4 lg-py-6 lg-ml-6 border border-slate-700 m-4 my-2">
+            <div class="flex items-center justify-between lg-mb-6 p-4">
                 <div>
-                    <h3 class="text-white text-lg font-semibold">Recent Tracks</h3>
+                    <h3 class="text-slate-400  text-lg font-semibold">Recent Tracks</h3>
                     <p class="text-slate-400 text-sm">Your latest submissions</p>
                 </div>
                 <a class="text-orange-500 hover:text-orange-400 text-sm font-medium" href="/my-campaigns"
                     data-discover="true">View all →</a>
             </div>
             <div class="space-y-4">
-                <div
-                    class="bg-slate-800 rounded-lg p-4 border border-slate-700 hover:border-slate-600 transition-colors">
+                <div class="  rounded-lg p-4 border border-slate-700 hover:border-slate-600 transition-colors m-2">
                     <div class="flex items-start space-x-4">
                         <div class="relative">
                             <img src="https://images.pexels.com/photos/1540338/pexels-photo-1540338.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=300&amp;h=300&amp;fit=crop"
@@ -583,14 +341,13 @@
                         </div>
                     </div>
                 </div>
-                <div
-                    class="bg-slate-800 rounded-lg p-4 border border-slate-700 hover:border-slate-600 transition-colors">
+                <div class=" rounded-lg p-4 border border-slate-700 hover:border-slate-600 transition-colors m-2">
                     <div class="flex items-start space-x-4">
                         <div class="relative">
                             <img src="https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=300&amp;h=300&amp;fit=crop"
                                 alt="Drop - To - Me" class="w-16 h-16 rounded-lg">
                             <button
-                                class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg opacity-0 hover:opacity-100 transition-opacity">
+                                class="absolute inset-0 flex items-center justify-center bg-opacity-50 rounded-lg opacity-0 hover:opacity-100 transition-opacity">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="white" stroke="currentColor" stroke-width="2"
                                     stroke-linecap="round" stroke-linejoin="round"
@@ -751,10 +508,10 @@
             </div>
         </div>
         <div
-            class="bg-slate-800 rounded-lg lg-px-6 lg-py-8 lg-mr-8 lg-ml-0 border border-slate-700 sm:ml-4 sm:mr-3 mt-2">
+            class=" rounded-lg  border border-slate-700 lg:ml-8 ml-0 lg:mr-6 mr-6 lg:p-4 p-4 lg:mt-3 mt-3 lg:mb-2 mb-2">
             <div class="flex items-center justify-between lg-mb-6 p-2">
                 <div>
-                    <h3 class="text-white text-lg font-semibold">Latest Repost Requests</h3>
+                    <h3 class=" text-lg font-semibold text-slate-400 text-lg">Latest Repost Requests</h3>
                     <p class="text-slate-400 text-sm">Earn credits by reposting tracks</p>
                 </div>
                 <a class="text-orange-500 hover:text-orange-400 text-sm font-medium" href="/requests"
@@ -766,7 +523,7 @@
                         <img src="https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=150&amp;h=150&amp;fit=crop"
                             alt="carlvalor" class="w-8 h-8 rounded-full">
                         <div class="flex-1 min-w-0">
-                            <h4 class="text-white font-medium text-sm">The Beginning</h4>
+                            <h4 class="text-slate-400 text-sm font-medium text-sm">The Beginning</h4>
                             <p class="text-slate-400 text-xs">by carlvalor</p>
                         </div>
                         <span class="text-orange-500 font-semibold text-sm">+7 credits</span>
@@ -788,7 +545,7 @@
                             <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
                             <polyline points="16 7 22 7 22 13"></polyline>
                         </svg>
-                        <span class="text-white font-medium">Trending</span>
+                        <span class="text-slate-400 text-sm font-medium">Trending</span>
                     </div>
                     <a class="text-orange-500 hover:text-orange-400 text-sm" href="/charts" data-discover="true">View
                         charts</a>
@@ -797,14 +554,14 @@
                     <div class="flex items-center justify-between text-sm">
                         <div class="flex items-center space-x-2">
                             <span class="text-orange-500 font-bold">#1</span>
-                            <span class="text-white">Why Do I?</span>
+                            <span class="text-slate-400 text-sm">Why Do I?</span>
                         </div>
                         <span class="text-slate-400">EMMAAG</span>
                     </div>
                     <div class="flex items-center justify-between text-sm">
                         <div class="flex items-center space-x-2">
                             <span class="text-slate-400 font-bold">#2</span>
-                            <span class="text-white">The Strength Of Love</span>
+                            <span class="text-slate-400 text-sm">The Strength Of Love</span>
                         </div>
                         <span class="text-slate-400">Constellation Lyra</span>
                     </div>
@@ -814,6 +571,96 @@
     </div>
 
 
+    <script></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
 
-
+    <script>
+        const ctx = document.getElementById('campaignChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Performance',
+                    data: [950, 1700, 2300, 2850, 2700, 3800],
+                    borderColor: '#f97316', // Orange-500
+                    backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                    pointBackgroundColor: '#f97316',
+                    pointBorderColor: '#ffffff',
+                    pointHoverRadius: 7,
+                    pointHoverBorderWidth: 2,
+                    pointRadius: 5,
+                    borderWidth: 2.5,
+                    tension: 0.4,
+                    fill: true,
+                }, {
+                    label: 'Baseline',
+                    data: [100, 150, 120, 180, 250, 200],
+                    borderColor: '#22c55e', // Green-500
+                    backgroundColor: 'transparent',
+                    pointBackgroundColor: '#22c55e',
+                    borderWidth: 2,
+                    pointRadius: 5,
+                    tension: 0.4,
+                }]
+            },
+            options: {
+                responsive: true, // This is key for responsiveness
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: '#94a3b8', // slate-400
+                            font: {
+                                size: 10
+                            }
+                        },
+                        grid: {
+                            color: '#334155', // slate-700
+                            drawBorder: false,
+                        },
+                    },
+                    x: {
+                        ticks: {
+                            color: '#94a3b8', // slate-400
+                            font: {
+                                size: 10
+                            }
+                        },
+                        grid: {
+                            display: false,
+                        },
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            color: '#e2e8f0', // slate-200
+                            boxWidth: 12,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#0f172a', // slate-900
+                        titleColor: '#ffffff',
+                        bodyColor: '#cbd5e1', // slate-300
+                        borderColor: '#334155', // slate-700
+                        borderWidth: 1,
+                        padding: 12,
+                        cornerRadius: 8,
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+            }
+        });
+    </script>
 </x-user::layout>

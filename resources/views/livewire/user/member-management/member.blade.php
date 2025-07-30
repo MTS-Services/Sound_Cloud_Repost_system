@@ -184,27 +184,27 @@
                     @if ($activeTab === 'tracks')
                         <!-- Tracks Content -->
                         <div class="space-y-4">
-                            @forelse ($tracks as $track)
-                                <div wire:click="openRepostsModal({{ $track->id }})"
+                            @forelse ($tracks as $track_)
+                                <div wire:click="openRepostsModal({{ $track_->id }})"
                                     class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
                                     <div class="flex-shrink-0">
                                         <img class="h-14 w-14 rounded-xl object-cover shadow-md"
-                                            src="{{ storage_url($track->artwork_url) }}"
-                                            alt="{{ $track->title }}" />
+                                            src="{{ soundcloud_image($track_->artwork_url) }}"
+                                            alt="{{ $track_->title }}" />
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p
                                             class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                                            {{ $track->title }}
+                                            {{ $track_->title }}
                                         </p>
                                         <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
                                             by
                                             <strong
-                                                class="text-orange-600 dark:text-orange-400">{{ $track->author_username }}</strong>
-                                            <span class="ml-2 text-xs text-gray-400">{{ $track->genre }}</span>
+                                                class="text-orange-600 dark:text-orange-400">{{ $track_->author_username }}</strong>
+                                            <span class="ml-2 text-xs text-gray-400">{{ $track_->genre }}</span>
                                         </p>
                                         <span
-                                            class="inline-block bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono">{{ $track->isrc }}</span>
+                                            class="inline-block bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono">{{ $track_->isrc }}</span>
                                     </div>
                                     <div class="flex-shrink-0">
                                         <i data-lucide="chevron-right"
@@ -227,21 +227,21 @@
                     @else
                         <!-- Playlists Content -->
                         <div class="space-y-4">
-                            @forelse ($playlists as $playlist)
-                                <div wire:click="openRepostsModal(null, {{ $playlist->id }})"
+                            @forelse ($playlists as $playlist_)
+                                <div wire:click="openRepostsModal(null, {{ $playlist_->id }})"
                                     class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
                                     <div class="flex-shrink-0">
                                         <img class="h-14 w-14 rounded-xl object-cover shadow-md"
-                                            src="{{ storage_url($playlist->artwork_url) }}"
-                                            alt="{{ $playlist->title }}" />
+                                            src="{{ soundcloud_image($playlist_->artwork_url) }}"
+                                            alt="{{ $playlist_->title }}" />
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p
                                             class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                                            {{ $playlist->title }}
+                                            {{ $playlist_->title }}
                                         </p>
                                         <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                            {{ $playlist->track_count }} {{ __('tracks') }}
+                                            {{ $playlist_->track_count }} {{ __('tracks') }}
                                         </p>
                                     </div>
                                     <div class="flex-shrink-0">
@@ -321,6 +321,17 @@
                                     class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
                             </div>
                         </div>
+                        <!-- Confirm Button -->
+                        <div class="mt-6 flex justify-center gap-3">
+                            <button wire:click="closeRepostModal"
+                                class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+                                Cancel
+                            </button>
+                            <button wire:click="createRepostsRequest('track')"
+                                class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700">
+                                Send Repost
+                            </button>
+                        </div>
                     @elseif ($playlist)
                         <div
                             class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
@@ -342,47 +353,19 @@
                                     class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
                             </div>
                         </div>
-                       
-                    @endif
-                     <div
-                            class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border  border-transparent  hover:border-orange-200 dark:hover:border-orange-800 group">
-                            <div class="flex-shrink-0">
-                                <img class="h-14 w-14 rounded-xl object-cover shadow-md"
-                                    src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p
-                                    class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                                    {{ $user->name }}
-                                </p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                    {{ $user->email }}
-                                </p>
-                            </div>
-                            <div class="flex-shrink-0">
-                                <i data-lucide="chevron-right"
-                                    class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
-                            </div>
+                        <!-- Confirm Button -->
+                        <div class="mt-6 flex justify-center gap-3">
+                            <button wire:click="closeRepostModal"
+                                class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+                                Cancel
+                            </button>
+                            <button wire:click="createRepostsRequest('playlist')"
+                                class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700">
+                                Send Repost
+                            </button>
                         </div>
-                        <div class="flex-shrink-0  px-x-4 mt-2 ml-4">
-                                <h1 class="flex items-center text-lg  text-gray-900 dark:text-white gap-2">
-                                    {{ __('Repost Price: ') }}
-                                    <p class="text-lg text-gray-900 dark:text-white"> {{ $credit }}</p>
-                                </h1>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 text-center">Send ruqest success</p>
-                            </div>
-                            
-                    <!-- Confirm Button -->
-                    <div class="mt-6 flex justify-center gap-3">
-                        <button wire:click="closeRepostModal"
-                            class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
-                            Cancel
-                        </button>
-                        <button wire:click="createRepostsRequest"
-                            class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700">
-                            Send Repost
-                        </button>
-                    </div>
+                    @endif
+
                 </div>
             </div>
         </div>
