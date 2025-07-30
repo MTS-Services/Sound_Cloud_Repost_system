@@ -51,7 +51,7 @@ class RepostRequest extends BaseModel
 
     public function track(): BelongsTo
     {
-        return $this->belongsTo(Track::class, 'track_urn', 'urn');
+        return $this->belongsTo(Track::class, 'track_urn', 'urn','soundcloud_urn');
     }
 
     public function reposts(): HasMany
@@ -69,6 +69,7 @@ class RepostRequest extends BaseModel
         return $this->hasMany(CreditTransaction::class);
     }
 
+    
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */

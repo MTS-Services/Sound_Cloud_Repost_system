@@ -52,6 +52,10 @@ class Repost extends BaseModel
     {
         return $this->belongsTo(Campaign::class, 'campaign_id', 'id');
     }
+    public function track()
+{
+    return $this->belongsTo(Track::class, 'track_id');
+}
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
