@@ -327,7 +327,7 @@ class SoundCloudService
     public function syncUserPlaylists(User $user, int $limit = 200): int
     {
         $playlistsData = $this->getUserPlaylists($user, $limit);
-        // try {
+        try {
             $syncedCount = 0;
 
             foreach ($playlistsData as $playlistData) {
@@ -373,64 +373,63 @@ class SoundCloudService
                         'last_modified' => isset($playlistData['last_modified']) ? Carbon::parse($playlistData['last_modified'])->toDateTimeString() : null,
                     ]
                 );
-                if (!empty($playlistData['tracks'])) {
-                    foreach ($playlistData['tracks'] as $trackData) {
-                        $track = Track::updateOrCreate(
-                            [
-                                'soundcloud_track_id' => $trackData['id'] ?? null,
-                                'user_urn' => $user->urn,
-                            ],
-                            [
-                                'kind' => $trackData['kind'] ?? null,
-                                'urn' => $trackData['urn'] ?? null,
-                                'duration' => $trackData['duration'] ?? 0,
-                                'commentable' => $trackData['commentable'] ?? false,
-                                'comment_count' => $trackData['comment_count'] ?? 0,
-                                'sharing' => $trackData['sharing'] ?? null,
-                                'tag_list' => $trackData['tag_list'] ?? '',
-                                'streamable' => $trackData['streamable'] ?? false,
-                                'embeddable_by' => $trackData['embeddable_by'] ?? null,
-                                'purchase_url' => $trackData['purchase_url'] ?? null,
-                                'purchase_title' => $trackData['purchase_title'] ?? null,
-                                'genre' => $trackData['genre'] ?? null,
-                                'title' => $trackData['title'] ?? null,
-                                'description' => $trackData['description'] ?? null,
-                                'label_name' => $trackData['label_name'] ?? null,
-                                'release' => $trackData['release'] ?? null,
-                                'key_signature' => $trackData['key_signature'] ?? null,
-                                'isrc' => $trackData['isrc'] ?? null,
-                                'bpm' => $trackData['bpm'] ?? null,
-                                'release_year' => $trackData['release_year'] ?? null,
-                                'release_month' => $trackData['release_month'] ?? null,
-                                'release_day' => $trackData['release_day'] ?? null,
-                                'license' => $trackData['license'] ?? null,
-                                'uri' => $trackData['uri'] ?? null,
-                                'permalink_url' => $trackData['permalink_url'] ?? null,
-                                'artwork_url' => $trackData['artwork_url'] ?? null,
-                                'stream_url' => $trackData['stream_url'] ?? null,
-                                'download_url' => $trackData['download_url'] ?? null,
-                                'waveform_url' => $trackData['waveform_url'] ?? null,
-                                'available_country_codes' => $trackData['available_country_codes'] ?? null,
-                                'secret_uri' => $trackData['secret_uri'] ?? null,
-                                'user_favorite' => $trackData['user_favorite'] ?? false,
-                                'user_playback_count' => $trackData['user_playback_count'] ?? 0,
-                                'playback_count' => $trackData['playback_count'] ?? 0,
-                                'download_count' => $trackData['download_count'] ?? 0,
-                                'favoritings_count' => $trackData['favoritings_count'] ?? 0,
-                                'reposts_count' => $trackData['reposts_count'] ?? 0,
-                                'downloadable' => $trackData['downloadable'] ?? false,
-                                'access' => $trackData['access'] ?? null,
-                                'policy' => $trackData['policy'] ?? null,
-                                'monetization_model' => $trackData['monetization_model'] ?? null,
-                                'metadata_artist' => $trackData['metadata_artist'] ?? null,
-                                'created_at_soundcloud' => isset($trackData['created_at']) ? Carbon::parse($trackData['created_at'])->toDateTimeString() : null,
-                                'type' => $trackData['type'] ?? null,
-                                'last_sync_at' => now(),
-                            ]
-                        );
-                        dd($playlist, $track);
-                    }
-                }
+                // if (!empty($playlistData['tracks'])) {
+                //     foreach ($playlistData['tracks'] as $trackData) {
+                //         $track = Track::updateOrCreate(
+                //             [
+                //                 'soundcloud_track_id' => $trackData['id'] ?? null,
+                //                 'user_urn' => $user->urn,
+                //             ],
+                //             [
+                //                 'kind' => $trackData['kind'] ?? null,
+                //                 'urn' => $trackData['urn'] ?? null,
+                //                 'duration' => $trackData['duration'] ?? 0,
+                //                 'commentable' => $trackData['commentable'] ?? false,
+                //                 'comment_count' => $trackData['comment_count'] ?? 0,
+                //                 'sharing' => $trackData['sharing'] ?? null,
+                //                 'tag_list' => $trackData['tag_list'] ?? '',
+                //                 'streamable' => $trackData['streamable'] ?? false,
+                //                 'embeddable_by' => $trackData['embeddable_by'] ?? null,
+                //                 'purchase_url' => $trackData['purchase_url'] ?? null,
+                //                 'purchase_title' => $trackData['purchase_title'] ?? null,
+                //                 'genre' => $trackData['genre'] ?? null,
+                //                 'title' => $trackData['title'] ?? null,
+                //                 'description' => $trackData['description'] ?? null,
+                //                 'label_name' => $trackData['label_name'] ?? null,
+                //                 'release' => $trackData['release'] ?? null,
+                //                 'key_signature' => $trackData['key_signature'] ?? null,
+                //                 'isrc' => $trackData['isrc'] ?? null,
+                //                 'bpm' => $trackData['bpm'] ?? null,
+                //                 'release_year' => $trackData['release_year'] ?? null,
+                //                 'release_month' => $trackData['release_month'] ?? null,
+                //                 'release_day' => $trackData['release_day'] ?? null,
+                //                 'license' => $trackData['license'] ?? null,
+                //                 'uri' => $trackData['uri'] ?? null,
+                //                 'permalink_url' => $trackData['permalink_url'] ?? null,
+                //                 'artwork_url' => $trackData['artwork_url'] ?? null,
+                //                 'stream_url' => $trackData['stream_url'] ?? null,
+                //                 'download_url' => $trackData['download_url'] ?? null,
+                //                 'waveform_url' => $trackData['waveform_url'] ?? null,
+                //                 'available_country_codes' => $trackData['available_country_codes'] ?? null,
+                //                 'secret_uri' => $trackData['secret_uri'] ?? null,
+                //                 'user_favorite' => $trackData['user_favorite'] ?? false,
+                //                 'user_playback_count' => $trackData['user_playback_count'] ?? 0,
+                //                 'playback_count' => $trackData['playback_count'] ?? 0,
+                //                 'download_count' => $trackData['download_count'] ?? 0,
+                //                 'favoritings_count' => $trackData['favoritings_count'] ?? 0,
+                //                 'reposts_count' => $trackData['reposts_count'] ?? 0,
+                //                 'downloadable' => $trackData['downloadable'] ?? false,
+                //                 'access' => $trackData['access'] ?? null,
+                //                 'policy' => $trackData['policy'] ?? null,
+                //                 'monetization_model' => $trackData['monetization_model'] ?? null,
+                //                 'metadata_artist' => $trackData['metadata_artist'] ?? null,
+                //                 'created_at_soundcloud' => isset($trackData['created_at']) ? Carbon::parse($trackData['created_at'])->toDateTimeString() : null,
+                //                 'type' => $trackData['type'] ?? null,
+                //                 'last_sync_at' => now(),
+                //             ]
+                //         );
+                //     }
+                // }
 
                 // if ($playlist->exists && $track->exists) {
                 //     PlaylistTrack::updateOrCreate([
@@ -446,13 +445,13 @@ class SoundCloudService
 
             Log::info("Successfully synced {$syncedCount} playlists for user {$user->urn}.");
             return $syncedCount;
-        // } catch (Exception $e) {
-        //     Log::error('Error syncing user playlists in syncUserPlaylists', [
-        //         'user_urn' => $user->urn,
-        //         'error' => $e->getMessage(),
-        //     ]);
-        //     throw $e;
-        // }
+        } catch (Exception $e) {
+            Log::error('Error syncing user playlists in syncUserPlaylists', [
+                'user_urn' => $user->urn,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
     }
 
     public function syncUserProductsAndSubscriptions(User $user, object $soundCloudUser): void
