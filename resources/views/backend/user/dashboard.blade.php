@@ -189,7 +189,7 @@
                     <h3 class="text-slate-400  text-lg font-semibold">Recent Tracks</h3>
                     <p class="text-slate-400 text-sm">Your latest submissions</p>
                 </div>
-                <a class="text-orange-500 hover:text-orange-400 text-sm font-medium" href="/my-campaigns"
+                <a class="text-orange-500 hover:text-orange-400 text-sm font-medium" href="{{ route('user.reposts-request') }}"
                     data-discover="true">View all →</a>
             </div>
             <div class="space-y-4">
