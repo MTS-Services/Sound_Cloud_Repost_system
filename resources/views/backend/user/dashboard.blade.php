@@ -123,7 +123,8 @@
                 <div class="lg:col-span-2  rounded-lg p-2 border border-slate-700">
                     <div class="flex flex-col sm:flex-row justify-between sm:items-center p-2">
                         <div>
-                            <h2 class="text-slate-400  text-lg font-semibold ">Performance Overview</h2>
+                            <h2 class=" dark:text-white dark:text-black text-lg font-semibold ">
+                                Performance Overview</h2>
                             <p class="text-sm text-slate-400 ">Track the impact of your campaigns</p>
                         </div>
                         <a href="#"
@@ -139,7 +140,7 @@
                 </div>
 
                 <div class=" rounded-lg p-4 sm:p-6 border border-slate-700 lg:ml-5">
-                    <h3 class="text-slate-400 text-lg font-semibold">Genre Distribution</h3>
+                    <h3 class="dark:text-white dark:text-black text-lg font-semibold">Genre Distribution</h3>
                     <p class="text-slate-400 text-sm mb-2">What your audience listens to</p>
 
                     <div class="h-60 sm:h-96 flex flex-col justify-between">
@@ -186,7 +187,7 @@
         <div class="lg:col-span-2  rounded-lg lg-px-4 lg-py-6 lg-ml-6 border border-slate-700 m-4 my-2">
             <div class="flex items-center justify-between lg-mb-6 p-4">
                 <div>
-                    <h3 class="text-slate-400  text-lg font-semibold">Recent Tracks</h3>
+                    <h3 class="dark:text-white dark:text-black  text-lg font-semibold">Recent Tracks</h3>
                     <p class="text-slate-400 text-sm">Your latest submissions</p>
                 </div>
                 <a class="text-orange-500 hover:text-orange-400 text-sm font-medium" href="/my-campaigns"
@@ -492,7 +493,8 @@
                 </div>
             </div>
             <div class="text-center py-8 border-t border-slate-700 lg-mt-6">
-                <div class="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div
+                    class="w-16 h-16 dark:text-white dark:text-black  rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round" class="lucide lucide-plus w-8 h-8 text-slate-400">
@@ -511,7 +513,8 @@
             class=" rounded-lg  border border-slate-700 lg:ml-8 ml-0 lg:mr-6 mr-6 lg:p-4 p-4 lg:mt-3 mt-3 lg:mb-2 mb-2">
             <div class="flex items-center justify-between lg-mb-6 p-2">
                 <div>
-                    <h3 class=" text-lg font-semibold text-slate-400 text-lg">Latest Repost Requests</h3>
+                    <h3 class=" text-lg font-semibold dark:text-white dark:text-black text-lg">Latest Repost Requests
+                    </h3>
                     <p class="text-slate-400 text-sm">Earn credits by reposting tracks</p>
                 </div>
                 <a class="text-orange-500 hover:text-orange-400 text-sm font-medium" href="/requests"
