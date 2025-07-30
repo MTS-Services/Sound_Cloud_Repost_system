@@ -513,7 +513,7 @@
             class=" rounded-lg  border border-slate-700 lg:ml-8 ml-0 lg:mr-6 mr-6 lg:p-4 p-4 lg:mt-3 mt-3 lg:mb-2 mb-2">
             <div class="flex items-center justify-between lg-mb-6 p-2">
                 <div>
-                    <h3 class=" text-lg font-semibold dark:text-white dark:text-black text-lg">Latest Repost Requests
+                    <h3 class=" text-lg font-semibold dark:text-white">Latest Repost Requests
                     </h3>
                     <p class="text-slate-400 text-sm">Earn credits by reposting tracks</p>
                 </div>
