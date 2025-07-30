@@ -16,6 +16,7 @@ use App\Http\Controllers\Backend\Admin\OrderManagement\CreditTransactionControll
 use App\Http\Controllers\Backend\Admin\PackageManagement\FeatureCategoryController;
 use App\Http\Controllers\Backend\Admin\DashboardController as AdminDashboardController;
 
+
 Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], function () {
 
     // Button UI Route 
@@ -89,22 +90,25 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{user}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{user}', 'permanentDelete')->name('permanent-delete');
+            Route::get('/playlist/{user}',[UserController::class,'playlist'])->name('playlist');
+            Route::get('/tracklist/{user}', 'tracklist')->name('tracklist');
+
         });
 
-        Route::resource('playlist', UserPlaylistController::class);
-        Route::controller(UserPlaylistController::class)->name('playlist.')->prefix('playlist')->group(function () {
-            Route::post('/show/{playlist}', 'show')->name('show');
-            Route::get('/trash/bin', 'trash')->name('trash');
-            Route::get('/restore/{playlist}', 'restore')->name('restore');
-            Route::delete('/permanent-delete/{playlist}', 'permanentDelete')->name('permanent-delete');
-        });
-        Route::resource('tracklist', UserTracklistController::class);
-        Route::controller(UserTracklistController::class)->name('tracklist.')->prefix('tracklist')->group(function () {
-            Route::post('/show/{tracklist}', 'show')->name('show');
-            Route::get('/trash/bin', 'trash')->name('trash');
-            Route::get('/restore/{tracklist}', 'restore')->name('restore');
-            Route::delete('/permanent-delete/{tracklist}', 'permanentDelete')->name('permanent-delete');
-        });
+        // Route::resource('playlist', UserPlaylistController::class);
+        // Route::controller(UserPlaylistController::class)->name('playlist.')->prefix('playlist')->group(function () {
+        //     Route::post('/show/{playlist}', 'show')->name('show');
+        //     Route::get('/trash/bin', 'trash')->name('trash');
+        //     Route::get('/restore/{playlist}', 'restore')->name('restore');
+        //     Route::delete('/permanent-delete/{playlist}', 'permanentDelete')->name('permanent-delete');
+        // });
+        // Route::resource('tracklist', UserTracklistController::class);
+        // Route::controller(UserTracklistController::class)->name('tracklist.')->prefix('tracklist')->group(function () {
+        //     Route::post('/show/{tracklist}', 'show')->name('show');
+        //     Route::get('/trash/bin', 'trash')->name('trash');
+        //     Route::get('/restore/{tracklist}', 'restore')->name('restore');
+        //     Route::delete('/permanent-delete/{tracklist}', 'permanentDelete')->name('permanent-delete');
+        // });
     });
 
     // Campaign Management
@@ -138,6 +142,9 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::get('/', 'index')->name('index');
             Route::post('/store', 'store')->name('store');
             Route::get('/purchase', 'purchase')->name('purchase');
+            Route::get('/payments', 'payments')->name('payments'); 
+          
+            
         });
     });
 });

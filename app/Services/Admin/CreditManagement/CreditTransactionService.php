@@ -3,35 +3,49 @@
 namespace App\Services\Admin\CreditManagement;
 
 use App\Models\CreditTransaction;
+use App\Models\Track;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class CreditTransactionService
 {
-    /**
-     * Create a new class instance.
-     */
-    public function __construct()
+    public function getTransactions($orderBy = 'id', $order = 'asc')
     {
-        //
-    }
-    public function getPurchase($orderBy = 'id', $order = 'asc')
-    {
-        return CreditTransaction::where($orderBy, $order)->latest();
+        return CreditTransaction::orderBy($orderBy, $order)->latest()->get();
     }
 
     public function getUserTotalCredits()
     {
-        $total_credits = 0;
-        if (Auth::check()) {
-            $user = Auth::user();
-
-            $urnValue = $user->urn;
-            $total_credits = CreditTransaction::where('receiver_urn', $urnValue)
-                ->sum('credits');
-            $total_credits = number_format($total_credits, 0);
+        if (user()) {
+            return number_format(CreditTransaction::where('receiver_urn', user()->urn)->sum('credits'), 0);
         }
 
-        return $total_credits;
+        return '0';
+    }
+
+    public function getUserTransactions()
+    {
+        if (user()) {
+            return CreditTransaction::where('receiver_urn', user()->urn)
+                ->orWhere('sender_urn', user()->urn)
+                ->latest()
+                ->get();
+        }
+
+        return collect();
+    }
+
+    public function getUserTracks()
+    {
+        
+      if(user()){ 
+        return Track::where('user_urn', user()->urn)->latest()->get();
+      }
+            return collect();
+       
+
+    }
+    public function getPurchase($orderBy = 'id', $order = 'asc')
+    {
+        return CreditTransaction::where($orderBy, $order)->with('receiver')->purchase()->latest();
     }
 }

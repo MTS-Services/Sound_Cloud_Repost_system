@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Admin\UserManagement;
 
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
+use App\Models\Playlist;
 use App\Services\Admin\UserManagement\UserService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -14,6 +15,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller implements HasMiddleware
 {
+
     use AuditRelationTraits;
     protected function redirectIndex(): RedirectResponse
     {
@@ -77,6 +79,22 @@ class UserController extends Controller implements HasMiddleware
                 'label' => 'Details',
                 'permissions' => ['permission-list', 'permission-delete', 'permission-status']
             ],
+
+            [
+                'routeName' => 'um.user.playlist',
+                ['user' => $model->urn],
+                'params' => [encrypt($model->urn)],
+                'label' => 'Playlist',
+                'edit' => true,
+                'permissions' => ['permission-playlist']
+            ],
+            //  [
+            //     'routeName' => 'um.user.tracklist',
+            //     'params' => [encrypt($model->id)],
+            //     'label' => 'Tracklist',
+            //     'edit' => true,
+            //     'permissions' => ['permission-tracklist']
+            // ],
             [
                 'routeName' => 'um.user.status',
                 'params' => [encrypt($model->id)],
@@ -95,16 +113,39 @@ class UserController extends Controller implements HasMiddleware
         ];
     }
 
+    public function playlist(Request $request, $id)
+    {
+        if ($request->ajax()) {
+            $query = Playlist::where('user_urn', decrypt($id))->get();
 
+            return DataTables::eloquent($query)
+                ->editColumn('user_id', fn($playlist) => $this->creater_name($playlist))
+                ->editColumn('user_urn', fn($playlist) => $playlist->user?->name)
+                ->editColumn('soundcloud_id', fn($playlist) => $playlist->soundcloud?->name)
+                ->editColumn('status', fn($playlist) => "<span class='badge badge-soft {$playlist->status_color}'>{$playlist->status_label}</span>")
+                ->editColumn('creater_id', fn($playlist) => $this->creater_name($playlist))
+                ->editColumn('created_at', fn($playlist) => $playlist->created_at_formatted)
+                ->editColumn('action', fn($playlist) => view('components.action-buttons', ['menuItems' => $this->playlistmenuItems($playlist)])->render())
+                ->rawColumns(['user_urn', 'soundcloud_id', 'action', 'status', 'created_at', 'creater_id'])
+                ->make(true);
+        }
+        return view('backend.admin.user-management.playlist.playlist');
+    }
 
-
+    public function playlistmenuItems($model): array
+    {
+        return [
+            [
+            ],
+        ];
+    }
     /**
      * Display the specified resource.
      */
     public function show(Request $request, string $id)
     {
         $data = $this->userService->getUser($id)->load(['userInfo']);
-         $data['creater_name'] = $this->creater_name($data);
+        $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
         return response()->json($data);
     }

@@ -1,12 +1,4 @@
-<section x-data="{
-    showCampaignsModal: @entangle('showCampaignsModal').live,
-    showSubmitModal: @entangle('showSubmitModal').live,
-    showLowCreditWarningModal: @entangle('showLowCreditWarningModal').live,
-    showAddCreditModal: @entangle('showAddCreditModal').live,
-    showEditCampaignModal: @entangle('showEditCampaignModal').live,
-    showCancelWarningModal: @entangle('showCancelWarningModal').live,
-    showAlreadyCancelledModal: @entangle('showAlreadyCancelledModal').live DEFAULT
-}">
+<section>
 
     <x-slot name="page_slug">campaigns</x-slot>
 
@@ -50,8 +42,8 @@
                 <div class=" rounded-lg border border-orange-600 overflow-hidden">
                     <div class="p-6 sm:p-8">
                         <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                            <div class="flex flex-col sm:flex-row sm:items-start gap-4"><img
-                                    src="{{ soundcloud_image($campaign->music?->artwork_url) }}"
+                            <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+                                <img src="{{ soundcloud_image($campaign->music?->artwork_url) }}"
                                     alt="{{ $campaign->music?->title }}" class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
                                 <div class="flex-1">
                                     <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-3 mb-2">
@@ -115,7 +107,7 @@
                                 <div x-data="{ open: false }"
                                     class="relative text-left bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors flex justify-center">
                                     <button @click="open = !open"
-                                        class="p-2 hover:bg-slate-600 text-white px-3 aline-center py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-offset-2 bg-slate-700 dark:bg-gray-700 left-4">
+                                        class="p-2 hover:bg-slate-600 text-white px-3 aline-center py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-offset-2 bg-slate-700 dark:bg-gray-700 left-4">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                             class="lucide lucide-more-horizontal text-white w-5 h-5 text-gray-700 dark:text-gray-200"
                                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -146,15 +138,10 @@
                                     </div>
 
                                 </div>
-                                <button
-                                    class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"><svg
-                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="lucide lucide-eye w-4 h-4">
-                                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-                                        <circle cx="12" cy="12" r="3"></circle>
-                                    </svg><span>{{ __('View Details') }}</span>
+                                <button wire:click="openViewDetailsModal({{ $campaign->id }})"
+                                    class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2">
+                                    <x-lucide-eye class="w-5 h-5" />
+                                    <span>{{ __('View Details') }}</span>
                                 </button>
 
                             </div>
@@ -309,7 +296,8 @@
                                     class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
                                     <div class="flex-shrink-0">
                                         <img class="h-14 w-14 rounded-xl object-cover shadow-md"
-                                            src="{{ $track->artwork_url }}" alt="{{ $track->title }}" />
+                                            src="{{ soundcloud_image($track->artwork_url) }}"
+                                            alt="{{ $track->title }}" />
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p
@@ -323,7 +311,9 @@
                                             <span class="ml-2 text-xs text-gray-400">{{ $track->genre }}</span>
                                         </p>
                                         <span
-                                            class="inline-block bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono">{{ $track->isrc }}</span>
+                                            class="bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono flex items-start justify-center w-fit gap-3">
+                                            <x-lucide-audio-lines class="w-4 h-4" />
+                                            {{ $track->playback_count }}</span>
                                     </div>
                                     <div class="flex-shrink-0">
                                         <x-lucide-chevron-right
@@ -352,7 +342,8 @@
                                     class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
                                     <div class="flex-shrink-0">
                                         <img class="h-14 w-14 rounded-xl object-cover shadow-md"
-                                            src="{{ $playlist->artwork_url }}" alt="{{ $playlist->title }}" />
+                                            src="{{ soundcloud_image($playlist->artwork_url) }}"
+                                            alt="{{ $playlist->title }}" />
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p
@@ -397,12 +388,12 @@
         class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
 
         <div
-            class="w-full max-w-md mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col">
+            class="w-full max-w-md mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center">
-                        <i data-lucide="triangle-alert" class="w-5 h-5 text-white"></i>
+                        <x-lucide-triangle-alert class="w-5 h-5 text-white" />
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                         {{ __('Low Credit Warning') }}
@@ -417,7 +408,7 @@
             <div class="p-6 text-center">
                 <div
                     class="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i data-lucide="wallet" class="w-10 h-10 text-red-600 dark:text-red-400"></i>
+                    <x-lucide-wallet class="w-10 h-10 text-red-600 dark:text-red-400" />
                 </div>
                 <p class="text-lg text-gray-700 dark:text-gray-300 mb-4">
                     {{ __('You need a minimum of 50 credits to create a campaign.') }}
@@ -427,7 +418,7 @@
                 </p>
                 <a href="{{ route('user.add-credits') }}" wire:navigate
                     class="inline-flex items-center justify-center w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                    <i data-lucide="plus" class="w-5 h-5 inline mr-2"></i>
+                    <x-lucide-plus class="w-5 h-5 inline mr-2" />
                     {{ __('Buy Credits Now') }}
                 </a>
             </div>
@@ -447,7 +438,7 @@
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                        <i data-lucide="audio-lines" class="w-5 h-5 text-white"></i>
+                        <x-lucide-audio-lines class="w-5 h-5 text-white" />
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                         {{ __('Create a campaign') }}
@@ -481,7 +472,7 @@
                                             class="flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 p-4 transition-all duration-200 border-b border-gray-100 dark:border-gray-700 last:border-b-0 @if ($musicId == $track['id']) bg-orange-50 dark:bg-orange-900/30 border-l-4 border-l-orange-500 @endif">
                                             <div class="flex-shrink-0">
                                                 <img class="h-12 w-12 rounded-lg object-cover shadow-sm"
-                                                    src="{{ $track['artwork_url'] ?? asset('frontend/user/image/music-notes.jpg') }}"
+                                                    src="{{ soundcloud_image($track['artwork_url']) }}"
                                                     alt="{{ $track['title'] }}"
                                                     onerror="this.src='{{ asset('frontend/user/image/music-notes.jpg') }}'" />
                                             </div>
@@ -501,21 +492,21 @@
                                             </div>
                                             @if ($musicId == $track['id'])
                                                 <div class="flex-shrink-0">
-                                                    <i data-lucide="check-circle" class="w-5 h-5 text-orange-500"></i>
+                                                    <x-lucide-check-circle class="w-5 h-5 text-orange-500" />
                                                 </div>
                                             @endif
                                         </div>
                                     @endif
                                 @empty
                                     <div class="text-center py-12 text-gray-500 dark:text-gray-400">
-                                        <i data-lucide="music-off" class="w-12 h-12 mx-auto mb-3 text-gray-400"></i>
+                                        <x-lucide-audio-lines class="w-12 h-12 mx-auto mb-3 text-gray-400" />
                                         <p class="font-medium">{{ __('No tracks found in this playlist.') }}</p>
                                     </div>
                                 @endforelse
                             </div>
                             @error('musicId')
                                 <div class="mt-2 flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <x-lucide-alert-circle class="w-4 h-4" />
                                     <span>{{ $message }}</span>
                                 </div>
                             @enderror
@@ -526,7 +517,7 @@
                         <div class="space-y-2">
                             <label for="campaign_title"
                                 class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                                <i data-lucide="type" class="w-4 h-4 text-orange-500"></i>
+                                <x-lucide-type class="w-4 h-4 text-orange-500" />
                                 {{ __('Campaign name') }}
                             </label>
                             <input type="text" id="campaign_title" wire:model.live="title"
@@ -534,7 +525,7 @@
                                 placeholder="{{ __('Enter campaign name') }}">
                             @error('title')
                                 <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <x-lucide-alert-circle class="w-4 h-4" />
                                     <span>{{ $message }}</span>
                                 </div>
                             @enderror
@@ -543,14 +534,14 @@
                         <div class="space-y-2">
                             <label for="campaign_end_date"
                                 class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                                <i data-lucide="calendar" class="w-4 h-4 text-orange-500"></i>
+                                <x-lucide-calendar class="w-4 h-4 text-orange-500" />
                                 {{ __('Campaign expiration date') }}
                             </label>
                             <input type="date" id="campaign_end_date" wire:model.live="endDate"
                                 class="w-full rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200">
                             @error('endDate')
                                 <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <x-lucide-alert-circle class="w-4 h-4" />
                                     <span>{{ $message }}</span>
                                 </div>
                             @enderror
@@ -560,7 +551,7 @@
                     <div class="space-y-2">
                         <label for="campaign_description"
                             class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                            <i data-lucide="file-text" class="w-4 h-4 text-orange-500"></i>
+                            <x-lucide-file-text class="w-4 h-4 text-orange-500" />
                             {{ __('Campaign description') }}
                         </label>
                         <textarea id="campaign_description" wire:model.live="description" rows="4"
@@ -568,7 +559,7 @@
                             placeholder="{{ __('Describe your campaign goals and target audience...') }}"></textarea>
                         @error('description')
                             <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                <x-lucide-alert-circle class="w-4 h-4" />
                                 <span>{{ $message }}</span>
                             </div>
                         @enderror
@@ -578,7 +569,7 @@
                         <div class="space-y-2">
                             <label for="campaign_cost_per_repost"
                                 class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                                <i data-lucide="coins" class="w-4 h-4 text-orange-500"></i>
+                                <x-lucide-coins class="w-4 h-4 text-orange-500" />
                                 {{ __('Cost per repost (credits)') }}
                             </label>
                             <input type="number" id="campaign_cost_per_repost" wire:model.live="costPerRepost"
@@ -587,7 +578,7 @@
                                 placeholder="{{ __('Enter cost per repost') }}">
                             @error('costPerRepost')
                                 <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <x-lucide-alert-circle class="w-4 h-4" />
                                     <span>{{ $message }}</span>
                                 </div>
                             @enderror
@@ -596,7 +587,7 @@
                         <div class="space-y-2">
                             <label for="campaign_target_reposts"
                                 class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                                <i data-lucide="target" class="w-4 h-4 text-orange-500"></i>
+                                <x-lucide-target class="w-4 h-4 text-orange-500" />
                                 {{ __('Campaign target repost count') }}
                             </label>
                             <input type="number" id="campaign_target_reposts" wire:model.live="targetReposts"
@@ -605,7 +596,7 @@
                                 placeholder="{{ __('Enter target reposts') }}">
                             @error('targetReposts')
                                 <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <x-lucide-alert-circle class="w-4 h-4" />
                                     <span>{{ $message }}</span>
                                 </div>
                             @enderror
@@ -617,7 +608,7 @@
                         <div
                             class="bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-xl p-4 border border-red-200 dark:border-red-800">
                             <div class="flex items-center gap-3">
-                                <i data-lucide="alert-triangle" class="w-5 h-5 text-red-600 dark:text-red-400"></i>
+                                <x-lucide-alert-triangle class="w-5 h-5 text-red-600 dark:text-red-400" />
                                 <div>
                                     <p class="text-sm font-semibold text-red-900 dark:text-red-100">
                                         {{ __('Budget Warning') }}
@@ -641,7 +632,7 @@
                         <div
                             class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
                             <div class="flex items-center gap-3">
-                                <i data-lucide="calculator" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
+                                <x-lucide-calculator class="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                 <div>
                                     <p class="text-sm font-semibold text-blue-900 dark:text-blue-100">
                                         {{ __('Estimated campaign cost') }}
@@ -659,7 +650,7 @@
                             class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-4 px-6 rounded-xl {{ $canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }}"
                             wire:loading.attr="disabled" @if (!$canSubmit) disabled @endif>
                             <span wire:loading.remove wire:target="submitCampaign">
-                                <i data-lucide="rocket" class="w-5 h-5"></i>
+                                <x-lucide-rocket class="w-5 h-5" />
                             </span>
                             <span wire:loading wire:target="submitCampaign">
                                 <svg class="animate-spin w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -692,12 +683,12 @@
         class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
 
         <div
-            class="w-full max-w-xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col">
+            class="w-full max-w-xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                        <i data-lucide="wallet" class="w-5 h-5 text-white"></i>
+                        <x-lucide-wallet class="w-5 h-5 text-white" />
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                         {{ __('Add Credits to Campaign') }}
@@ -714,7 +705,7 @@
                     <div class="space-y-2">
                         <label for="add_credit_cost_per_repost"
                             class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                            <i data-lucide="coins" class="w-4 h-4 text-orange-500"></i>
+                            <x-lucide-coins class="w-4 h-4 text-orange-500" />
                             {{ __('New Cost per Repost (credits)') }}
                         </label>
                         <input type="number" id="add_credit_cost_per_repost"
@@ -723,7 +714,7 @@
                             placeholder="{{ __('Enter new cost per repost') }}">
                         @error('addCreditCostPerRepost')
                             <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                <x-lucide-alert-circle class="w-4 h-4" />
                                 <span>{{ $message }}</span>
                             </div>
                         @enderror
@@ -765,7 +756,7 @@
                         <div
                             class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
                             <div class="flex items-center gap-3">
-                                <i data-lucide="calculator" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
+                                <x-lucide-calculator class="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                 <div>
                                     <p class="text-sm font-semibold text-blue-900 dark:text-blue-100">
                                         {{ __('New Total Campaign Budget') }}
@@ -789,7 +780,7 @@
                         <button type="submit"
                             class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-4 px-6 rounded-xl {{ $canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }}"
                             wire:loading.attr="disabled" @if (!$canSubmit) disabled @endif>
-                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            <x-lucide-plus class="w-4 h-4" />
                             <span wire:loading.remove wire:target="addCreditsToCampaign">
                                 {{ __('Add Credits') }}
                             </span>
@@ -816,7 +807,7 @@
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                        <i data-lucide="edit" class="w-5 h-5 text-white"></i>
+                        <x-lucide-edit class="w-5 h-5 text-white" />
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                         {{ __('Edit Campaign') }}
@@ -834,7 +825,7 @@
                         <div class="space-y-2">
                             <label for="edit_campaign_title"
                                 class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                                <i data-lucide="type" class="w-4 h-4 text-orange-500"></i>
+                                <x-lucide-type class="w-4 h-4 text-orange-500" />
                                 {{ __('Campaign name') }}
                             </label>
                             <input type="text" id="edit_campaign_title" wire:model.live="editTitle"
@@ -842,7 +833,7 @@
                                 placeholder="{{ __('Enter campaign name') }}">
                             @error('editTitle')
                                 <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <x-lucide-alert-circle class="w-4 h-4" />
                                     <span>{{ $message }}</span>
                                 </div>
                             @enderror
@@ -851,14 +842,14 @@
                         <div class="space-y-2">
                             <label for="edit_campaign_end_date"
                                 class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                                <i data-lucide="calendar" class="w-4 h-4 text-orange-500"></i>
+                                <x-lucide-calendar class="w-4 h-4 text-orange-500" />
                                 {{ __('Campaign expiration date') }}
                             </label>
                             <input type="date" id="edit_campaign_end_date" wire:model.live="editEndDate"
                                 class="w-full rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200">
                             @error('editEndDate')
                                 <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <x-lucide-alert-circle class="w-4 h-4" />
                                     <span>{{ $message }}</span>
                                 </div>
                             @enderror
@@ -868,7 +859,7 @@
                     <div class="space-y-2">
                         <label for="edit_campaign_description"
                             class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                            <i data-lucide="file-text" class="w-4 h-4 text-orange-500"></i>
+                            <x-lucide-file-text class="w-4 h-4 text-orange-500" />
                             {{ __('Campaign description') }}
                         </label>
                         <textarea id="edit_campaign_description" wire:model.live="editDescription" rows="4"
@@ -876,7 +867,7 @@
                             placeholder="{{ __('Describe your campaign goals and target audience...') }}"></textarea>
                         @error('editDescription')
                             <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                <x-lucide-alert-circle class="w-4 h-4" />
                                 <span>{{ $message }}</span>
                             </div>
                         @enderror
@@ -886,7 +877,7 @@
                         <div class="space-y-2">
                             <label for="edit_campaign_cost_per_repost"
                                 class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                                <i data-lucide="coins" class="w-4 h-4 text-orange-500"></i>
+                                <x-lucide-coins class="w-4 h-4 text-orange-500" />
                                 {{ __('Cost per repost (credits)') }}
                             </label>
                             <input type="number" id="edit_campaign_cost_per_repost"
@@ -895,7 +886,7 @@
                                 placeholder="{{ __('Enter cost per repost') }}">
                             @error('editCostPerRepost')
                                 <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <x-lucide-alert-circle class="w-4 h-4" />
                                     <span>{{ $message }}</span>
                                 </div>
                             @enderror
@@ -904,7 +895,7 @@
                         <div class="space-y-2">
                             <label for="edit_campaign_target_reposts"
                                 class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                                <i data-lucide="target" class="w-4 h-4 text-orange-500"></i>
+                                <x-lucide-target class="w-4 h-4 text-orange-500" />
                                 {{ __('Campaign target repost count') }}
                             </label>
                             <input type="number" id="edit_campaign_target_reposts"
@@ -913,7 +904,7 @@
                                 placeholder="{{ __('Enter target reposts') }}">
                             @error('editTargetReposts')
                                 <div class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                    <x-lucide-alert-circle class="w-4 h-4" />
                                     <span>{{ $message }}</span>
                                 </div>
                             @enderror
@@ -925,7 +916,7 @@
                         <div
                             class="bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-xl p-4 border border-red-200 dark:border-red-800">
                             <div class="flex items-center gap-3">
-                                <i data-lucide="alert-triangle" class="w-5 h-5 text-red-600 dark:text-red-400"></i>
+                                <x-lucide-alert-triangle class="w-5 h-5 text-red-600 dark:text-red-400" />
                                 <div>
                                     <p class="text-sm font-semibold text-red-900 dark:text-red-100">
                                         {{ __('Budget Warning') }}
@@ -949,7 +940,7 @@
                         <div
                             class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
                             <div class="flex items-center gap-3">
-                                <i data-lucide="calculator" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
+                                <x-lucide-calculator class="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                 <div>
                                     <p class="text-sm font-semibold text-blue-900 dark:text-blue-100">
                                         {{ __('New Total Campaign Budget') }}
@@ -974,7 +965,7 @@
                             class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-4 px-6 rounded-xl {{ $canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }}"
                             wire:loading.attr="disabled" @if (!$canSubmit) disabled @endif>
                             <span wire:loading.remove wire:target="updateCampaign">
-                                <i data-lucide="save" class="w-5 h-5"></i>
+                                <x-lucide-save class="w-5 h-5" />
                             </span>
                             <span wire:loading wire:target="updateCampaign">
                                 <svg class="animate-spin w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -1005,7 +996,7 @@
         class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
 
         <div
-            class="w-full max-w-lg mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col">
+            class="w-full max-w-lg mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
                 <div class="flex items-center gap-3">
@@ -1048,7 +1039,8 @@
             </div>
         </div>
     </div>
-    {{-- Cancel Warning Modal --}}
+
+    {{-- Already Cancel Warning Modal --}}
     <div x-data="{ showAlreadyCancelledModal: @entangle('showAlreadyCancelledModal').live }" x-show="showAlreadyCancelledModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
@@ -1056,7 +1048,7 @@
         class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
 
         <div
-            class="w-full max-w-lg mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col">
+            class="w-full max-w-lg mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
                 <div class="flex items-center gap-3">
@@ -1085,6 +1077,122 @@
                     {{ __('This campaign has already been cancelled. You cannot make any changes to this campaign.') }}
                 </p>
             </div>
+        </div>
+    </div>
+
+    {{-- Details Modal --}}
+    <div x-data="{ showDetailsModal: @entangle('showDetailsModal').live }" x-show="showDetailsModal" x-cloak
+        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+
+        <div
+            class="w-full max-w-5xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
+
+            @if ($showDetailsModal)
+                <div
+                    class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
+                            <x-lucide-info class="w-5 h-5 text-white" />
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                            {{ __('Campaign Details') }}
+                        </h2>
+                    </div>
+                    <button wire:click="closeViewDetailsModal()"
+                        class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
+                        <x-lucide-x class="w-5 h-5" />
+                    </button>
+                </div>
+
+                <div class="p-6 text-center max-h-[80vh] overflow-y-auto">
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="w-full md:w-1/3 max-w-56 rounded-xl shadow-lg overflow-hidden">
+                            <img class="w-full h-full object-cover"
+                                src="{{ soundcloud_image($campaign->music?->artwork_url) }}">
+                        </div>
+
+                        <div class="flex-1">
+                            <h2 class="text-3xl font-bold mb-2 text-gray-900 dark:text-white">
+                                {{ $campaign->title ?? $campaign->music?->title }}</h2>
+                            <p class="text-orange-500 mb-2">by {{ $campaign->user?->name ?? 'Unknown' }}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                                Genre: <span
+                                    class="text-black dark:text-white">{{ $campaign->music?->genre ?? 'Unknown' }}</span>
+                            </p>
+                            <p class="text-gray-700 dark:text-gray-300 text-sm mb-4">
+                                {{ $campaign->description ?? 'No description provided' }}
+                            </p>
+
+                            <div class="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg">
+                                <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">Repost Progress:</p>
+                                <div class="w-full h-3 bg-gray-300 dark:bg-gray-700 rounded-full">
+                                    <div class="h-3 bg-orange-500 rounded-full"
+                                        style="width: {{ ($campaign->completed_reposts / $campaign->target_reposts) * 100 }}%">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Campaign Stats -->
+                    <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Target Reposts</h4>
+                            <p class="text-xl font-bold text-black dark:text-white">{{ $campaign->target_reposts }}
+                            </p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Completed Reposts</h4>
+                            <p class="text-xl font-bold text-black dark:text-white">
+                                {{ $campaign->completed_reposts }}
+                            </p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Playback Count</h4>
+                            <p class="text-xl font-bold text-black dark:text-white">{{ $campaign->playback_count }}
+                            </p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Budget</h4>
+                            <p class="text-xl font-bold text-black dark:text-white">
+                                {{ number_format($campaign->budget) }}</p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Credits Spent</h4>
+                            <p class="text-xl font-bold text-black dark:text-white">
+                                {{ number_format($campaign->credits_spent) }}</p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Cost Per Repost</h4>
+                            <p class="text-xl font-bold text-black dark:text-white">
+                                {{ number_format($campaign->cost_per_repost) }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Campaign Info -->
+                    <div class="mt-10 bg-gray-100 dark:bg-slate-700 p-6 rounded-xl shadow">
+                        <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Campaign Settings</h3>
+                        <div
+                            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-700 dark:text-gray-300">
+                            <p><span class="font-medium text-black dark:text-white">Status:</span>
+                                {{ $campaign->status_label }}</p>
+                            <p><span class="font-medium text-black dark:text-white">Start Date:</span>
+                                {{ $campaign->start_date_formatted }}</p>
+                            <p><span class="font-medium text-black dark:text-white">End Date:</span>
+                                {{ $campaign->end_date_formatted }}</p>
+                            <p><span class="font-medium text-black dark:text-white">Featured:</span>
+                                {{ $campaign->feature_label }}</p>
+                        </div>
+                    </div>
+                    <div
+                        class="mt-10 w-full mx-auto bg-gray-100 dark:bg-gradient-to-r dark:from-zinc-700 dark:to-zinc-900 p-4 rounded-lg">
+                        <x-sound-cloud.sound-cloud-player :track="$campaign->music" :visual="true" :height="166" />
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 </section>

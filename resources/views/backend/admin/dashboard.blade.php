@@ -17,17 +17,15 @@
                     </div>
                     <div class="text-green-400 text-sm font-medium flex items-center gap-1">
                         <i data-lucide="trending-up" class="w-3 h-3"></i>
-                        +12%
+                        
                     </div>
                 </div>
                 <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1"
-                    x-text="stats.users.toLocaleString()">
-                    12,384</h3>
+                   >
+                    {{ $user}}
+                   </h3>
                 <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Total Users</p>
-                <div class="mt-4 h-1 bg-white/10 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full progress-bar"
-                        style="width: 75%;"></div>
-                </div>
+                
             </div>
 
             <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0.2s;"
@@ -41,13 +39,9 @@
                         +23%
                     </div>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">$<span
-                        x-text="stats.revenue.toLocaleString()">48,392</span></h3>
-                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Total Revenue</p>
-                <div class="mt-4 h-1 bg-white/10 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full progress-bar"
-                        style="width: 60%;"></div>
-                </div>
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1"><span>{{$track}}</span></h3>
+                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Total Tracks</p>
+               
             </div>
 
             <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0.4s;"
@@ -61,14 +55,10 @@
                         -5%
                     </div>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1"
-                    x-text="stats.orders.toLocaleString()">
-                    2,847</h3>
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">
+                    {{$order}}</h3>
                 <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Total Orders</p>
-                <div class="mt-4 h-1 bg-white/10 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-purple-400 to-purple-600 rounded-full progress-bar"
-                        style="width: 45%;"></div>
-                </div>
+                
             </div>
 
             <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0.6s;"
@@ -83,12 +73,9 @@
                     </div>
                 </div>
                 <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1"
-                    x-text="stats.activeUsers.toLocaleString()">847</h3>
+                    >{{$total_payment}}</h3>
                 <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Active Users</p>
-                <div class="mt-4 h-1 bg-white/10 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full pulse-slow progress-bar"
-                        style="width: 85%;"></div>
-                </div>
+                
             </div>
         </div>
 

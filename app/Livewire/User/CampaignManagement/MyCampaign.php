@@ -16,6 +16,7 @@ use Livewire\Component;
 class MyCampaign extends Component
 {
     public $campaigns;
+    public $campaign;
 
     public bool $showCampaignsModal = false;
     public bool $showSubmitModal = false;
@@ -43,6 +44,7 @@ class MyCampaign extends Component
     public $costPerRepost = null;
     public bool $isCampaignCancelled = false;
     public bool $showAlreadyCancelledModal = false;
+    public bool $showDetailsModal = false;
 
     // Properties for Add Credit functionality
     public $addCreditCampaignId = null;
@@ -643,6 +645,24 @@ class MyCampaign extends Component
         $this->showCancelWarningModal = false;
     }
 
+
+    public function openViewDetailsModal($id)
+    {
+        $this->showDetailsModal = true;
+        $this->campaign = Campaign::findOrFail($id)->load(['music', 'user']);
+        // dd($this->campaign);
+        return;
+    }
+
+    public function closeViewDetailsModal()
+    {
+        $this->showDetailsModal = false;
+        $this->reset(['campaign']);
+        $this->resetValidation();
+        $this->resetErrorBag();
+    }
+
+
     public function addCreditsToCampaign()
     {
         $this->validate([
@@ -817,6 +837,11 @@ class MyCampaign extends Component
         $this->resetValidation();
         $this->resetErrorBag();
 
+        if ($campaign->status === Campaign::STATUS_CANCELLED) {
+            $this->openAlreadyCancelledModal();
+            return;
+        }
+
         $this->campaignToDeleteId = $campaign->id;
 
         // Calculate remaining budget and 50% refund
@@ -923,6 +948,6 @@ class MyCampaign extends Component
 
     public function render()
     {
-        return view('backend.user.campaign_management.campaigns.my_campaigns');
+        return view('backend.user.campaign_management.my_campaigns');
     }
 }

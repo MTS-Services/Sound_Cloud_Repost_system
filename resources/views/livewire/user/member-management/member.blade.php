@@ -1,4 +1,7 @@
-<div>
+<div x-data="{
+    showModal: @entangle('showModal').live,
+    showRepostsModal: @entangle('showRepostsModal').live
+}">
     {{-- @dd($this->all()); --}}
     <!-- Header -->
     <div class="mb-8">
@@ -73,7 +76,7 @@
                 <!-- Profile Header -->
                 <div class="flex items-center gap-3 mb-6">
                     <div class="relative">
-                        <img src="{{ asset($user->avatar ?? 'default-avatar.png') }}" alt="{{ $user->name }}"
+                        <img src="{{ auth_storage_url($user->avatar) }}" alt="{{ $user->name }}"
                             class="w-12 h-12 rounded-full">
                         <div
                             class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-card-blue">
@@ -135,52 +138,31 @@
         @endforelse
     </div>
 
-    <!-- Modal -->
-    @if ($showModal)
-        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center p-4 z-50">
+    <div x-data="{ showModal: @entangle('showModal').live }" x-show="showModal" x-cloak x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+
+        <div
+            class="w-full max-w-3xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col max-h-[80vh] overflow-hidden">
+
             <div
-                class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto mx-auto relative">
-
-                {{-- <!-- Close Button -->
-                <button wire:click="closeModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 focus:outline-none">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-
-                <!-- Header -->
-                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                    <h2 class="text-xl font-semibold text-gray-800 dark:text-white text-center">Choose a track or playlist</h2>
-                </div> --}}
-                <div
-                    class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                            <i data-lucide="music" class="w-5 h-5 text-white"></i>
-                        </div>
-                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                            {{ __('Choose a track or playlist') }}
-                        </h2>
+                class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
+                        <i data-lucide="music" class="w-5 h-5 text-white"></i>
                     </div>
-                    <button wire:click="closeModal"
-                        class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </button>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                        {{ __('Choose a track or playlist') }}
+                    </h2>
                 </div>
-
-                <!-- Tabs -->
-                {{-- <div class="flex border-b border-gray-200 dark:border-gray-700">
-                    <button wire:click="setActiveTab('tracks')" 
-                        class="flex-1 py-3 text-center font-semibold focus:outline-none 
-                        {{ $activeTab === 'tracks' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white'  }}">
-                        Tracks
-                    </button>
-                    <button wire:click="setActiveTab('playlists')" 
-                        class="flex-1 py-3 text-center font-semibold focus:outline-none 
-                        {{ $activeTab === 'playlists' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white' }}">
-                        Playlists
-                    </button>
-                </div> --}}
+                <button x-on:click="showModal = false"
+                    class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            @if ($showModal)
                 <div class="flex border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
                     <button wire:click="setActiveTab('tracks')"
                         class="flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeTab === 'tracks' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
@@ -197,18 +179,18 @@
                         </div>
                     </button>
                 </div>
-
                 <!-- Content -->
                 <div class="p-6">
                     @if ($activeTab === 'tracks')
                         <!-- Tracks Content -->
                         <div class="space-y-4">
                             @forelse ($tracks as $track)
-                                <div wire:click="selectTrack({{ $track->id }})"
+                                <div wire:click="openRepostsModal({{ $track->id }})"
                                     class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
                                     <div class="flex-shrink-0">
                                         <img class="h-14 w-14 rounded-xl object-cover shadow-md"
-                                            src="{{ $track->artwork_url }}" alt="{{ $track->title }}" />
+                                            src="{{ storage_url($track->artwork_url) }}"
+                                            alt="{{ $track->title }}" />
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p
@@ -241,38 +223,17 @@
                                     </p>
                                 </div>
                             @endforelse
-                            {{-- @forelse($tracks as $track)
-                                <div class="flex items-center bg-gray-50 dark:bg-gray-700 rounded-lg p-3 shadow-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
-                                    wire:click="selectTrack({{ $track->id }})">
-                                    <img src="{{ asset('frontend/user/image/pexels-photo-1040881.jpeg') }}"
-                                        alt="Track" class="w-20 h-20 rounded-md object-cover mr-4">
-                                    <div>
-                                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                            {{ $track->title }}</h3>
-                                        <p class="text-sm text-gray-600 dark:text-gray-300">
-                                            by {{ $track->artist ?? 'Unknown' }}
-                                            <span
-                                                class="text-xs text-gray-500 ml-1">{{ $track->genre ?? 'Electronic' }}</span>
-                                        </p>
-                                        <span
-                                            class="inline-block bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs px-2 py-1 rounded mt-1">
-                                            {{ $track->urn ?? 'N/A' }}
-                                        </span>
-                                    </div>
-                                </div>
-                            @empty
-                                <p class="text-center text-gray-500 dark:text-gray-400">No tracks available</p>
-                            @endforelse --}}
                         </div>
                     @else
                         <!-- Playlists Content -->
                         <div class="space-y-4">
                             @forelse ($playlists as $playlist)
-                                <div {{-- wire:click="toggleSubmitModal('playlist', {{ $playlist->id }})" --}} wire:click="selectPlaylist({{ $playlist->id }})"
+                                <div wire:click="openRepostsModal(null, {{ $playlist->id }})"
                                     class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
                                     <div class="flex-shrink-0">
                                         <img class="h-14 w-14 rounded-xl object-cover shadow-md"
-                                            src="{{ $playlist->artwork_url }}" alt="{{ $playlist->title }}" />
+                                            src="{{ storage_url($playlist->artwork_url) }}"
+                                            alt="{{ $playlist->title }}" />
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p
@@ -300,46 +261,101 @@
                                     </p>
                                 </div>
                             @endforelse
-
-                            {{-- @forelse($playlists as $playlist)
-                                <div class="flex items-center bg-gray-50 dark:bg-gray-700 rounded-lg p-3 shadow-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
-                                    wire:click="selectPlaylist({{ $playlist->id }})">
-                                    <img src="{{ asset('frontend/user/image/pexels-photo-1040881.jpeg') }}"
-                                        alt="Playlist Cover" class="w-20 h-20 rounded-md object-cover mr-4">
-                                    <div>
-                                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                            {{ $playlist->title }}</h3>
-                                        <p class="text-sm text-gray-600 dark:text-gray-300">
-                                            {{ $playlist->user_urn }}
-                                            <span class="text-xs text-gray-500 ml-1">{{ $playlist->tag_list }}</span>
-                                        </p>
-                                        <span
-                                            class="inline-block bg-blue-200 dark:bg-blue-600 text-blue-700 dark:text-blue-200 text-xs px-2 py-1 rounded mt-1">
-                                            {{ $playlist->track_count }} tracks
-                                        </span>
-                                    </div>
-                                </div>
-                            @empty
-                                <p class="text-center text-gray-500 dark:text-gray-400">No playlists available</p>
-                            @endforelse --}}
-                        </div>
-                    @endif
-
-                    <!-- Confirm Button -->
-                    @if ($selectedPlaylistId || $selectedTrackId)
-                        <div class="mt-6 flex justify-center gap-3">
-                            <button wire:click="closeModal"
-                                class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
-                                Cancel
-                            </button>
-                            <button wire:click="confirmRepost"
-                                class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700">
-                                Confirm Repost
-                            </button>
                         </div>
                     @endif
                 </div>
+            @endif
+        </div>
+    </div>
+    {{-- Reposts Modal --}}
+    <div x-data="{ showRepostsModal: @entangle('showRepostsModal').live }" x-show="showRepostsModal" x-cloak
+        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+
+        <div
+            class="w-full max-w-3xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col max-h-[80vh] overflow-hidden">
+
+            <div
+                class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
+                        <i data-lucide="music" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                        {{ __('Choose a track or playlist') }}
+                    </h2>
+                </div>
+                <button x-on:click="showRepostsModal= false"
+                    class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto">
+                <div class="p-6">
+                    @if ($track)
+                        <div
+                            class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
+                            <div class="flex-shrink-0">
+                                <img class="h-14 w-14 rounded-xl object-cover shadow-md"
+                                    src="{{ storage_url($track->artwork_url) }}" alt="{{ $track->title }}" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p
+                                    class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                    {{ $track->title }}
+                                </p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                    by
+                                    <strong
+                                        class="text-orange-600 dark:text-orange-400">{{ $track->author_username }}</strong>
+                                    <span class="ml-2 text-xs text-gray-400">{{ $track->genre }}</span>
+                                </p>
+                                <span
+                                    class="inline-block bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono">{{ $track->isrc }}</span>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <i data-lucide="chevron-right"
+                                    class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
+                            </div>
+                        </div>
+                    @elseif ($playlist)
+                        <div
+                            class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
+                            <div class="flex-shrink-0">
+                                <img class="h-14 w-14 rounded-xl object-cover shadow-md"
+                                    src="{{ storage_url($playlist->artwork_url) }}" alt="{{ $playlist->title }}" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p
+                                    class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                    {{ $playlist->title }}
+                                </p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                    {{ $playlist->track_count }} {{ __('tracks') }}
+                                </p>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <i data-lucide="chevron-right"
+                                    class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
+                            </div>
+                        </div>
+                    @endif
+                    <!-- Confirm Button -->
+                    <div class="mt-6 flex justify-center gap-3">
+                        <button wire:click="closeRepostModal"
+                            class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+                            Cancel
+                        </button>
+                        <button wire:click="createRepostsRequest"
+                            class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700">
+                            Send Repost
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
-    @endif
+    </div>
 </div>

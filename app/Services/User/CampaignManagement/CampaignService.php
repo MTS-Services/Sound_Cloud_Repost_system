@@ -27,7 +27,7 @@ class CampaignService
 
                 $trackOwnerUrn = $campaign->music->user?->urn ?? $campaign->user_urn;
                 $trackOwnerName = $campaign->music->user?->name;
-                $creditsPerRepost = $campaign->credits_per_repost;
+                $creditsPerRepost = $campaign->cost_per_repost;
 
                 // Create the Repost record
                 $repost = Repost::create([
@@ -42,6 +42,11 @@ class CampaignService
                 // Update the Campaign record using atomic increments
                 $campaign->increment('completed_reposts');
                 $campaign->increment('credits_spent', (float) $creditsPerRepost);
+
+                if ($campaign->budget_credits == $campaign->credits_spent) {
+                    $campaign->update(['status' => Campaign::STATUS_COMPLETED]);
+                }
+
 
                 // Create the CreditTransaction record
                 CreditTransaction::create([

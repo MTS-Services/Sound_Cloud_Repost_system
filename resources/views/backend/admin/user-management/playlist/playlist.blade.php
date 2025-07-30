@@ -2,7 +2,47 @@
     <x-slot name="title">{{ __('User Playlist List') }}</x-slot>
     <x-slot name="breadcrumb">{{ __('User Playlist List') }}</x-slot>
     <x-slot name="page_slug">user-playlist</x-slot>
-    <section>
+  
+    {{-- <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ __('User Playlist List') }}</h3>
+                        </div>
+                        <div class="card-body">
+                            <table class="table datatable table-zebra">
+                                <thead>
+                                    <tr>
+                                        <th width="5%">{{ __('SL') }}</th>
+                                        <th>{{ __('Name') }}</th>
+                                        <th>{{ __('Soundcloud ID') }}</th>
+                                        <th>{{ __('Status') }}</th>
+                                        <th>{{ __('Last Synced At') }}</th>
+                                        <th width="10%">{{ __('Action') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Playlist 1</td>
+                                        <td>123456789</td>
+                                        <td>Active</td>
+                                        <td>2023-06-01 12:34:56</td>
+                                        <td>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> --}}
+
+      <section>
 
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
@@ -64,9 +104,9 @@
                     table_columns: table_columns,
                     main_class: '.datatable',
                     displayLength: 10,
-                    main_route: "{{ route('um.user.playlist', Auth::user()->id) }}",
+                    main_route: "{{ route('um.user.playlist', id) }}",
                     order_route: "{{ route('update.sort.order') }}",
-                    export_columns: [0, 1, 2, 3, 4, 5, 6,7,8,9,10],
+                    export_columns: [0, 1, 2, 3, 4, 5, 6],
                     model: 'Playlist',
                 };
                 // initializeDataTable(details);
@@ -81,7 +121,7 @@
 
                 $(document).on('click', '.view', function() {
                     const id = $(this).data('id');
-                    const route = "{{ route('um.playlist.show', ':id') }}";
+                    const route = "{{ route('', ':id') }}";
 
                     const details = [{
                             label: '{{ __('Title') }}',
@@ -253,4 +293,5 @@
             });
         </script> --}}
     @endpush
+    
 </x-admin::layout>
