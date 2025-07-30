@@ -37,7 +37,7 @@
 
                     <div class="flex-1">
                         <h2 class="text-3xl font-bold mb-2 text-gray-900 dark:text-white">
-                            Status</h2>
+                            {{ $campaigns->title ?? $campaign->music?->title }}</h2>
                         <p class="text-orange-500 mb-2">by {{ $campaigns->user?->name ?? 'Unknown' }}</p>
                         <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
                             Genre: <span
