@@ -1,18 +1,22 @@
 <x-admin::layout>
     <x-slot name="title">{{ __('User Tracklist List') }}</x-slot>
     <x-slot name="breadcrumb">{{ __('User Tracklist List') }}</x-slot>
-    <x-slot name="page_slug">user-tracklist</x-slot>
+    <x-slot name="page_slug">user</x-slot>
     <section>
 
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('User Tracklist List') }}</h2>
-                <div class="flex items-center gap-2">
-                    <x-button href="{{ route('um.tracklist.trash') }}" icon="trash-2" type='secondary'
+                 <div class="flex items-center gap-2">
+                   {{-- <x-button href="{{ route('um.tracklist.trash') }}" icon="trash-2" type='secondary'
                         permission="admin-trash">
                         {{ __('Trash') }}
+                    </x-button>--}}
+                     <x-button href="{{ route('um.user.index') }}"  type='primary'
+                        permission="admin-trash">
+                        {{ __('back') }}
                     </x-button>
-                </div>
+                </div> 
             </div>
         </div>
         <div class="glass-card rounded-2xl p-6">
@@ -58,7 +62,7 @@
                     table_columns: table_columns,
                     main_class: '.datatable',
                     displayLength: 10,
-                    main_route: "{{ route('um.tracklist.index') }}",
+                    main_route: "{{ route('um.user.tracklist', Auth::user()->id) }}",
                     order_route: "{{ route('update.sort.order') }}",
                     export_columns: [0, 1, 2, 3, 4, 5, 6],
                     model: 'Tracklist',
@@ -75,7 +79,7 @@
 
                 $(document).on('click', '.view', function() {
                     const id = $(this).data('id');
-                    const route = "{{ route('um.tracklist.show', ':id') }}";
+                    const route = "{{ route('um.user.tracklist.show', ':id') }}";
 
                     const details = [{
                             label: '{{ __('User Urn') }}',

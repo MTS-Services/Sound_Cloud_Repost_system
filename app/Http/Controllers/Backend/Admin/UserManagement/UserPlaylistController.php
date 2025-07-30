@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Admin\UserManagement;
 
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
+use App\Models\Playlist;
 use App\Services\Admin\Usermanagement\UserPlaylistService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -55,25 +56,29 @@ class UserPlaylistController extends Controller implements HasMiddleware
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request , string $id)
     {
-
+        
         if ($request->ajax()) {
-            $query = $this->userPlaylistService->getUserPlaylists();
+            $query = $this->userPlaylistService-> getUserPlaylists();
             return DataTables::eloquent($query)
                 ->editColumn('user_urn', function ($playlist) {
                     return $playlist->user?->name;
                 })
-                ->editColumn('creater_id', fn($user) => $this->creater_name($user))
-                ->editColumn('created_at', fn($user) => $user->created_at_formatted)
+                // ->editColumn('soundcloud_id', function ($playlist) {
+                //     return $playlist->soundcloud?->name;
+                // })
+                ->editColumn('creater_id', fn($playlist) => $this->creater_name($playlist))
+                ->editColumn('created_at', fn($playlist) => $playlist->created_at_formatted)
                 ->editColumn('action', function ($playlist) {
                     $menuItems = $this->menuItems($playlist);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action', 'creater_id', 'created_at', 'user_urn'])
+                ->rawColumns([  'user_urn',
+                'action', 'creater_id', 'created_at',])
                 ->make(true);
         }
-        return view('backend.admin.user-management.playlist.index');
+        return view('backend.admin.user-management.playlist.playlist');
     }
 
     protected function menuItems($model): array

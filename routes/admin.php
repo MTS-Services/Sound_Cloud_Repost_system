@@ -90,8 +90,11 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{user}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{user}', 'permanentDelete')->name('permanent-delete');
-            Route::get('/playlist/{user}',[UserController::class,'playlist'])->name('playlist');
-            Route::get('/tracklist/{user}', 'tracklist')->name('tracklist');
+            Route::get('/playlist/{user}','playlist')->name('playlist'); // all playlist
+            Route::post('/playlist/{playlist}', 'playlistShow')->name('playlist.show'); // single palylist details
+            Route::get('/playlist/{playlistId}', 'playlistTrackShow')->name('playlist.track.show'); // all tracks under playlist
+            Route::get('/tracklist/{user}', 'tracklist')->name('tracklist'); // all tracklist
+            Route::post('/tracklist/{trackId}', 'tracklistShow')->name('tracklist.show');
 
         });
 
@@ -118,6 +121,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         Route::controller(CampaignController::class)->name('campaign.')->prefix('campaign')->group(function () {
             Route::get('/status/{campaign}', 'status')->name('status');
             Route::post('/show/{campaign}', 'show')->name('show');
+            Route::get('/detail/{campaign}', 'detail')->name('detail');
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{campaign}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{campaign}', 'permanentDelete')->name('permanent-delete');

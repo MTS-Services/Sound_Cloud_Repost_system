@@ -1,7 +1,7 @@
 <x-admin::layout>
     <x-slot name="title">{{ __('User Playlist List') }}</x-slot>
     <x-slot name="breadcrumb">{{ __('User Playlist List') }}</x-slot>
-    <x-slot name="page_slug">user-playlist</x-slot>
+    <x-slot name="page_slug">user</x-slot>
   
     {{-- <section class="content">
         <div class="container-fluid">
@@ -48,10 +48,15 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('User Playlist List') }}</h2>
                 <div class="flex items-center gap-2">
+
                     {{-- <x-button href="{{ route('um.playlist.trash') }}" icon="trash-2" type='secondary'
                         permission="admin-trash">
                         {{ __('Trash') }}
                     </x-button> --}}
+                     <x-button href="{{ route('um.user.index') }}"  type='primary'
+                        permission="admin-trash">
+                        {{ __('back') }}
+                    </x-button>
                 </div>
             </div>
         </div>
@@ -85,6 +90,7 @@
     @push('js')
         <script src="{{ asset('assets/js/details-modal.js') }}"></script>
         <script src="{{ asset('assets/js/datatable.js') }}"></script>
+         
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 let table_columns = [
@@ -104,9 +110,9 @@
                     table_columns: table_columns,
                     main_class: '.datatable',
                     displayLength: 10,
-                    main_route: "{{ route('um.user.playlist', id) }}",
+                    main_route: "{{ route('um.user.playlist', Auth::user()->id) }}",
                     order_route: "{{ route('update.sort.order') }}",
-                    export_columns: [0, 1, 2, 3, 4, 5, 6],
+                    export_columns: [0, 1, 2, 3, 4, 5, 6,7,8,9,10],
                     model: 'Playlist',
                 };
                 // initializeDataTable(details);
@@ -116,12 +122,12 @@
         </script>
 
         {{-- Details Modal --}}
-        {{-- <script>
+        <script>
             document.addEventListener('DOMContentLoaded', () => {
 
                 $(document).on('click', '.view', function() {
                     const id = $(this).data('id');
-                    const route = "{{ route('', ':id') }}";
+                    const route = "{{ route('um.user.playlist.show',':id') }}";
 
                     const details = [{
                             label: '{{ __('Title') }}',
@@ -288,10 +294,10 @@
                             key: 'updated_at'
                         },
                     ];
-                    showDetailsModal(route, id, '{{ __('User Details') }}', details);
+                    showDetailsModal(route, id, '{{ __('Playlist Details') }}', details);
                 });
             });
-        </script> --}}
+        </script>
     @endpush
     
 </x-admin::layout>
