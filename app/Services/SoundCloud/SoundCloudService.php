@@ -326,7 +326,6 @@ class SoundCloudService
     public function syncUserPlaylists(User $user, int $limit = 200): int
     {
         $playlistsData = $this->getUserPlaylists($user, $limit);
-        dd($playlistsData);
         try {
             $syncedCount = 0;
 
