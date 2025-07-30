@@ -428,16 +428,16 @@ class SoundCloudService
                                 'last_sync_at' => now(),
                             ]
                         );
+                        dd($playlist, $track);
                     }
                 }
 
-                dd($playlist, $track);
-                if ($playlist->exists && $track->exists) {
-                    PlaylistTrack::updateOrCreate([
-                        'playlist_urn' => $playlist->soundcloud_urn,
-                        'track_urn' => $track->urn,
-                    ]);
-                }
+                // if ($playlist->exists && $track->exists) {
+                //     PlaylistTrack::updateOrCreate([
+                //         'playlist_urn' => $playlist->soundcloud_urn,
+                //         'track_urn' => $track->urn,
+                //     ]);
+                // }
 
                 if ($playlist->wasRecentlyCreated) {
                     $syncedCount++;
