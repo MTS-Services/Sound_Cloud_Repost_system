@@ -323,7 +323,7 @@ class RepostRequest extends Component
             
         // Alternative: If you want requests made BY the current user, use:
         $this->repostRequests = ModelsRepostRequest::where('requester_urn', user()->urn)
-            ->with(['track', 'requester', 'targetUser', 'campaign'])
+            ->with(['track', 'targetUser', 'campaign'])
             ->get();
     }
 
