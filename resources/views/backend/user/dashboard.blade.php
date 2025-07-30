@@ -180,8 +180,6 @@
                 </div>
             </div>
         </main>
-
-
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 p-2 dark:text-white">
@@ -195,7 +193,7 @@
                     data-discover="true">View all →</a>
             </div>
             <div class="space-y-4">
-                <div class=" rounded-lg p-4 border border-slate-700 hover:border-slate-600 transition-colors">
+                <div class="  rounded-lg p-4 border border-slate-700 hover:border-slate-600 transition-colors m-2">
                     <div class="flex items-start space-x-4">
                         <div class="relative">
                             <img src="https://images.pexels.com/photos/1540338/pexels-photo-1540338.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=300&amp;h=300&amp;fit=crop"
@@ -343,7 +341,7 @@
                         </div>
                     </div>
                 </div>
-                <div class=" rounded-lg p-4 border border-slate-700 hover:border-slate-600 transition-colors">
+                <div class=" rounded-lg p-4 border border-slate-700 hover:border-slate-600 transition-colors m-2">
                     <div class="flex items-start space-x-4">
                         <div class="relative">
                             <img src="https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=300&amp;h=300&amp;fit=crop"
@@ -573,6 +571,9 @@
     </div>
 
 
+    <script></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
 
     <script>
         const ctx = document.getElementById('campaignChart').getContext('2d');
