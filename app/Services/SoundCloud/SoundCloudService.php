@@ -433,7 +433,7 @@ class SoundCloudService
 
                 // if ($playlist->exists && $track->exists) {
                     PlaylistTrack::updateOrCreate([
-                        'playlist_urn' => $playlist->soundcloud_urn,
+                        'playlist_urn' => 'suroewosdf',
                         'track_urn' => 'wiqeryewr',
                     ]);
                 // }
