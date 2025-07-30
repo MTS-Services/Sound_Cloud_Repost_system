@@ -22,8 +22,9 @@ return new class extends Migration
             $table->softDeletes();
             $this->addAdminAuditColumns($table);
 
-            $table->foreign('playlist_urn')->references('soundcloud_urn')->on('playlists')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('track_urn')->references('urn')->on('tracks')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('playlist_urn', 'playlist_urn_fk')->references('soundcloud_urn')->on('playlists')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('track_urn', 'track_urn_fk')->references('urn')->on('tracks')->onDelete('cascade')->onUpdate('cascade');
+
         });
     }
 

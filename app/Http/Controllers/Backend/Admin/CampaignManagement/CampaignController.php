@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Backend\Admin\CampaignManagement;
 
-use App\Http\Controllers\Controller;
-use App\Http\Traits\AuditRelationTraits;
-use App\Services\User\CampaignManagement\CampaignService;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
+use App\Models\Campaign;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Contracts\View\View;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
+use App\Http\Traits\AuditRelationTraits;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use App\Services\User\CampaignManagement\CampaignService;
 
 class CampaignController extends Controller implements HasMiddleware
 {
@@ -32,7 +33,7 @@ class CampaignController extends Controller implements HasMiddleware
     {
         $this->campaignService = $campaignService;
     }
-    
+
     public static function middleware(): array
     {
         return [
@@ -56,7 +57,7 @@ class CampaignController extends Controller implements HasMiddleware
      */
     public function index(Request $request)
     {
-        
+
         if ($request->ajax()) {
             $query = $this->campaignService->getCampaigns();
             return DataTables::eloquent($query)

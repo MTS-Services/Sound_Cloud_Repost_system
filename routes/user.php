@@ -8,13 +8,16 @@ use App\Livewire\User\CampaignManagement\Campaign;
 use App\Livewire\User\CampaignManagement\MyCampaign;
 use App\Http\Controllers\Backend\User\Members\MemberController;
 use App\Http\Controllers\Backend\User\PromoteController;
+use App\Http\Controllers\Backend\User\UniquCampingController;
 use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
+
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Livewire\User\MemberManagement\Member;
 use App\Livewire\User\MemberManagement\RepostRequest;
 use App\Livewire\User\ProfileManagement\MyAccount;
+use Illuminate\Validation\Rules\Unique;
 
 Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
     Route::get('redirect', [SoundCloudController::class, 'redirect'])->name('redirect');
@@ -40,7 +43,6 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
         // Campaign Routes
         Route::get('/my-campaigns', MyCampaign::class)->name('my-campaigns');
         Route::get('/campaigns', Campaign::class)->name('campaigns');
-
     });
     // Member Management
     Route::group(['as' => 'mm.', 'prefix' => 'member-management'], function () {
@@ -48,8 +50,6 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
         Route::get('/members', [MemberController::class, 'index'])->name('members.index');
         Route::get('/members/request', [MemberController::class, 'request'])->name('members.request');
         Route::post('/confirm/repost/{id}', [MemberController::class, 'confirmRepost'])->name('repost.confirm');
-
-
     });
     Route::get('members', Member::class)->name('members');
     Route::get('reposts-request', RepostRequest::class)->name('reposts-request');
