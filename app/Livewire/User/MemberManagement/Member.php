@@ -7,7 +7,6 @@ use App\Models\RepostRequest;
 use App\Models\Track;
 use App\Models\User;
 use App\Models\UserInformation;
-use App\Services\Admin\TrackService;
 use Livewire\Component;
 
 class Member extends Component
@@ -61,10 +60,6 @@ class Member extends Component
 
         // Load current user info
         $this->userinfo = UserInformation::where('user_urn', user()->urn)->first();
-
-        // // Load current user's playlists and tracks
-        // $this->playlists = Playlist::where('user_urn', user()->urn ?? '')->get();
-        // $this->tracks = Track::where('user_urn', user()->urn ?? '')->get();
     }
 
     public function updatedSearch()
@@ -84,22 +79,20 @@ class Member extends Component
 
     public function openRepostsModal($trackId = null, $playlistId = null)
     {
+        $this->reset(['track', 'playlist']);
         $this->selectedTrackId = $trackId;
-        $this->showRepostsModal = !$this->showRepostsModal;
+      
         if ($trackId) {
             $this->track = Track::findOrFail($trackId);
         } elseif ($playlistId) {
-            $this->track = Playlist::findOrFail($playlistId);
+            $this->playlist = Playlist::findOrFail($playlistId);
         }
+        $this->showRepostsModal = !$this->showRepostsModal;
     }
 
     public function closeRepostModal()
     {
-        $this->showRepostsModal = false;
-        $this->selectedTrackId = null;
-        $this->selectedPlaylistId = null;
-        $this->track = null;
-        $this->playlist = null;
+        $this->reset(['track', 'playlist', 'selectedTrackId', 'selectedPlaylistId','showRepostsModal']);
     }
 
     public function openModal($userId)
@@ -111,24 +104,22 @@ class Member extends Component
         $this->selectedTrackId = null;
         $this->user = User::findOrFail($userId);
         $this->user_urn = $this->user->urn;
-        $this->tracks = Track::where('user_urn',$this->user_urn )->where('user_urn', '!=', user()->urn)->get();
-        $this->playlists = Playlist::where('user_urn', $userId)->where('user_urn', '!=', user()->urn)->get();
+        $this->tracks = Track::where('user_urn', user()->urn)->get();
     }
 
     public function closeModal()
     {
-        $this->showModal = false;
-        $this->selectedUserId = null;
-        $this->selectedPlaylistId = null;
-        $this->selectedTrackId = null;
-        $this->activeTab = 'tracks';
+        $this->reset(['showModal', 'selectedUserId', 'selectedPlaylistId', 'selectedTrackId','activeTab', 'tracks','playlists']);
     }
 
     public function setActiveTab($tab)
     {
+        $this->reset(['selectedPlaylistId', 'selectedTrackId']);
         $this->activeTab = $tab;
-        $this->selectedPlaylistId = null;
-        $this->selectedTrackId = null;
+
+        if ($tab === 'playlists') {
+            $this->playlists = Playlist::where('user_urn', user()->urn)->get();
+        }
     }
 
     public function confirmRepost()
@@ -171,12 +162,16 @@ class Member extends Component
             session()->flash('error', 'Failed to confirm repost. Please try again.');
         }
     }
-    public function createRepostsRequest(){
+    public function createRepostsRequest($request){
         try{
             $repostRequest = new RepostRequest();
             $repostRequest->requester_urn = user()->urn;
             $repostRequest->target_user_urn = $this->user->urn;
-            $repostRequest->track_urn = $this->track->urn;
+            if($request == 'tracks'){
+                $repostRequest->track_urn = $this->track->urn;
+            }elseif($request == 'playlists'){
+                $repostRequest->track_urn = $this->playlist->urn;
+            }
             $repostRequest->credits_spent = repostPrice($this->user);
             $repostRequest->save();
             $this->closeRepostModal();
