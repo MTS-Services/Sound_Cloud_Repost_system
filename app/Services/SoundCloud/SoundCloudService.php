@@ -431,8 +431,8 @@ class SoundCloudService
                     }
                 }
 
+                dd($playlist, $track);
                 if ($playlist->exists && $track->exists) {
-                    dd($playlist, $track);
                     PlaylistTrack::updateOrCreate([
                         'playlist_urn' => $playlist->soundcloud_urn,
                         'track_urn' => $track->urn,
