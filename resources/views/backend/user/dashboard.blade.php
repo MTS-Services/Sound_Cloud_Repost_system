@@ -502,8 +502,8 @@
                         <path d="M12 5v14"></path>
                     </svg>
                 </div>
-                <h4 class="text-white font-medium mb-2">No upcoming campaigns scheduled</h4>
-                <p class="text-slate-400 text-sm mb-4">Submit a track to start a new campaign</p>
+                <h4 class="text-gray-800 dark:text-white font-medium mb-2">No upcoming campaigns scheduled</h4>
+                <p class="text-gray-500 dark:text-slate-400 text-sm mb-4">Submit a track to start a new campaign</p>
                 <button
                     class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">Create
                     Campaign</button>
