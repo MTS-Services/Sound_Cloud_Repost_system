@@ -136,6 +136,20 @@ class User extends AuthBaseModel
     {
         return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn')->where('calculation_type', CreditTransaction::CALCULATION_TYPE_CREDIT);
     }
+    public function succedDebitTransactions(): HasMany
+    {
+        return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn')
+            ->where('calculation_type', CreditTransaction::CALCULATION_TYPE_DEBIT)
+            ->where('status', 'succeeded');
+    }
+
+    public function succedCreditTransactions(): HasMany
+    {
+        return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn')
+            ->where('calculation_type', CreditTransaction::CALCULATION_TYPE_CREDIT)
+            ->where('status', 'succeeded');
+    }
+
 
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
