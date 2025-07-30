@@ -113,12 +113,7 @@ class PaymentController extends Controller
         try {
             $decryptedId = Crypt::decryptString($request->pid);
             $paymentIntent = $this->stripeService->retrievePaymentIntent($decryptedId);
-            $credidTransaction = CreditTransaction::where('amount', $paymentIntent->amount / 100)->where('receiver_urn', user()->urn)->where('transaction_type', CreditTransaction::TYPE_PURCHASE)->first();
-            if ($credidTransaction) {
-                $credidTransaction->update([
-                    'status' => $paymentIntent->status
-                ]);
-            }
+        
             // Update payment record
             $payment = Payment::where('payment_intent_id', $paymentIntent->id)->first();
             if ($payment) {
@@ -126,6 +121,13 @@ class PaymentController extends Controller
                     'status' => $paymentIntent->status,
                     'payment_method' => $paymentIntent->payment_method ?? null,
                     'processed_at' => $paymentIntent->status === 'succeeded' ? now() : null,
+                ]);
+            }
+            // Update credit transaction
+            $credidTransaction = CreditTransaction::where('id', $payment->credit_transaction_id )->first();
+            if ($credidTransaction) {
+                $credidTransaction->update([
+                    'status' => $paymentIntent->status
                 ]);
             }
             return view('backend.admin.payments.success', compact('payment', 'paymentIntent'));
