@@ -204,7 +204,7 @@ function userCredits($user = null)
     if (!$user) {
         $user = user();
     }
-    $user->load(['debitTransactions', 'creditTransactions']);
+    $user->load(['succedDebitTransactions', 'succedCreditTransactions']);
     $debit = $user->debitTransactions->sum('credits');
     $credit = $user->creditTransactions->sum('credits');
     return $debit - $credit;

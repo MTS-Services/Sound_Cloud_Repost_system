@@ -55,6 +55,7 @@ class AppServiceProvider extends ServiceProvider
                 // Check if urn exists, otherwise fallback to id
                 $urnValue = $user->urn;
                 $totalCredits = CreditTransaction::where('receiver_urn', $urnValue)
+                    ->where('status', 'succeeded')
                     ->sum('credits');
                 $totalCredits = number_format($totalCredits, 0);
             }
