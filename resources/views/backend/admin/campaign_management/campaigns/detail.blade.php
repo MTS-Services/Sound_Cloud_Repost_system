@@ -96,6 +96,11 @@
                         <p class="text-xl font-bold text-black dark:text-white">
                             {{ $campaigns->min_followers }}</p>
                     </div>
+                    <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
+                        <h4 class="text-gray-600 dark:text-gray-400 text-sm">Refund Credits</h4>
+                        <p class="text-xl font-bold text-black dark:text-white">
+                            {{ $campaigns->refund_credits }}</p>
+                    </div>
                 </div>
 
                 <!-- Campaign Info -->
