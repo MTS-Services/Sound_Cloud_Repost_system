@@ -373,7 +373,6 @@ class SoundCloudService
                         'last_modified' => isset($playlistData['last_modified']) ? Carbon::parse($playlistData['last_modified'])->toDateTimeString() : null,
                     ]
                 );
-                dd($playlistData['tracks']);
                 if (!empty($playlistData['tracks'])) {
                     foreach ($playlistData['tracks'] as $trackData) {
                         $track = Track::updateOrCreate(
@@ -433,6 +432,7 @@ class SoundCloudService
                 }
 
                 if ($playlist->exists && $track->exists) {
+                    dd($playlist, $track);
                     PlaylistTrack::updateOrCreate([
                         'playlist_urn' => $playlist->soundcloud_urn,
                         'track_urn' => $track->urn,
