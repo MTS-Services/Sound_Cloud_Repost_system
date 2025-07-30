@@ -325,8 +325,8 @@ class SoundCloudService
 
     public function syncUserPlaylists(User $user, int $limit = 200): int
     {
-        $playlistsData = $this->getUserPlaylists($user, $limit);
         try {
+            $playlistsData = $this->getUserPlaylists($user, $limit);
             $syncedCount = 0;
 
             foreach ($playlistsData as $playlistData) {
@@ -373,9 +373,6 @@ class SoundCloudService
                     ]
                 );
 
-
-
-
                 if ($playlist->wasRecentlyCreated) {
                     $syncedCount++;
                 }
@@ -391,7 +388,7 @@ class SoundCloudService
             throw $e;
         }
     }
-    
+
     public function syncUserProductsAndSubscriptions(User $user, object $soundCloudUser): void
     {
         // Delete all existing subscriptions for the user to ensure a fresh sync
