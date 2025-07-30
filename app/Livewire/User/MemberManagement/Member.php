@@ -167,9 +167,9 @@ class Member extends Component
             $repostRequest = new RepostRequest();
             $repostRequest->requester_urn = user()->urn;
             $repostRequest->target_user_urn = $this->user->urn;
-            if($request == 'tracks'){
+            if($request == 'track'){
                 $repostRequest->track_urn = $this->track->urn;
-            }elseif($request == 'playlists'){
+            }elseif($request == 'playlist'){
                 $repostRequest->track_urn = $this->playlist->urn;
             }
             $repostRequest->credits_spent = repostPrice($this->user);
