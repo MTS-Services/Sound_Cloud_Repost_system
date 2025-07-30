@@ -177,6 +177,7 @@ class Member extends Component
             $this->closeRepostModal();
             $this->closeModal();
             $this->loadData();
+            $this->reset(['track', 'playlist']);
             session()->flash('success', 'Repost request sent successfully!');
         }
         catch(\Exception $e){
