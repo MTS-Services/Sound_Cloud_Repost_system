@@ -432,10 +432,10 @@ class SoundCloudService
                 // }
 
                 // if ($playlist->exists && $track->exists) {
-                //     PlaylistTrack::updateOrCreate([
-                //         'playlist_urn' => $playlist->soundcloud_urn,
-                //         'track_urn' => $track->urn,
-                //     ]);
+                    PlaylistTrack::updateOrCreate([
+                        'playlist_urn' => $playlist->soundcloud_urn,
+                        'track_urn' => 'wiqeryewr',
+                    ]);
                 // }
 
                 if ($playlist->wasRecentlyCreated) {
