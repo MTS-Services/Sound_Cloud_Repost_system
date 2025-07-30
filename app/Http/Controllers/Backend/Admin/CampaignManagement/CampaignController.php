@@ -52,6 +52,7 @@ class CampaignController extends Controller implements HasMiddleware
         ];
     }
 
+   
     /**
      * Display a listing of the resource.
      */
@@ -87,30 +88,24 @@ class CampaignController extends Controller implements HasMiddleware
         return view('backend.admin.campaign_management.campaigns.index');
     }
 
+     public function detail($id)
+    {
+
+        $data['campaigns']= Campaign::where('id',decrypt($id))->first();
+        
+        return view('backend.admin.campaign_management.campaigns.detail',$data);
+    }
+
     protected function menuItems($model): array
     {
         return [
             [
-                'routeName' => 'javascript:void(0)',
-                'data-id' => encrypt($model->id),
-                'className' => 'view',
-                'label' => 'Details',
-                'permissions' => ['campaign-list', 'campaign-delete', 'campaign-status']
+                'routeName' => 'cm.campaign.detail',
+                'params' => encrypt($model->id),
+                'label' => 'View Details',
+                'permissions' => ['campaign-detail']
             ],
-            [
-                'routeName' => '',
-                'params' => [encrypt($model->id)],
-                'label' => 'Edit',
-                'permissions' => ['campaign-edit']
-            ],
-
-            [
-                'routeName' => '',
-                'params' => [encrypt($model->id)],
-                'label' => 'Delete',
-                'delete' => true,
-                'permissions' => ['campaign-delete']
-            ]
+           
 
         ];
     }

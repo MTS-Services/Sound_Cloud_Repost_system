@@ -121,6 +121,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         Route::controller(CampaignController::class)->name('campaign.')->prefix('campaign')->group(function () {
             Route::get('/status/{campaign}', 'status')->name('status');
             Route::post('/show/{campaign}', 'show')->name('show');
+            Route::get('/detail/{campaign}', 'detail')->name('detail');
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{campaign}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{campaign}', 'permanentDelete')->name('permanent-delete');
