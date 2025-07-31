@@ -327,6 +327,7 @@ class SoundCloudService
     public function syncUserPlaylists(User $user, int $limit = 200): int
     {
         $playlistsData = $this->getUserPlaylists($user, $limit);
+        dd($playlistsData);
         // try {
             $syncedCount = 0;
 
@@ -373,7 +374,6 @@ class SoundCloudService
                         'last_modified' => isset($playlistData['last_modified']) ? Carbon::parse($playlistData['last_modified'])->toDateTimeString() : null,
                     ]
                 );
-            dd(!empty($playlistData['tracks']));
                 // --- Uncommented and refined playlist track syncing ---
                 if (!empty($playlistData['tracks'])) {
                     foreach ($playlistData['tracks'] as $trackData) {
