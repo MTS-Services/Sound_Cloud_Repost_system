@@ -91,10 +91,10 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::get('/restore/{user}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{user}', 'permanentDelete')->name('permanent-delete');
             Route::get('/playlist/{user}','playlist')->name('playlist'); // all playlist
-            Route::post('/playlist/{playlist}', 'playlistShow')->name('playlist.show'); // single palylist details
-            Route::get('/playlist-tracks/{playlistUrn}', 'playlistTracks')->name('playlist.track-list'); // all tracks under playlist
+            Route::post('/playlist/{soundcloudUrn}', 'playlistShow')->name('playlist.show'); // single palylist details
+            Route::get('/playlist-tracks/{soundcloudUrn}', 'playlistTracks')->name('playlist.track-list'); // all tracks under playlist
             Route::get('/tracklist/{user}', 'tracklist')->name('tracklist'); // all tracklist
-            Route::post('/tracklist/{trackId}', 'tracklistShow')->name('tracklist.show');
+            Route::post('/tracklist/{urn}', 'tracklistShow')->name('tracklist.show');
             Route::post('/add-credit/{user_urn}', 'addCredit')->name('add-credit');
 
         });

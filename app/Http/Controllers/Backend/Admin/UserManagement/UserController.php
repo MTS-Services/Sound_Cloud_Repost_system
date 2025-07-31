@@ -172,7 +172,7 @@ class UserController extends Controller implements HasMiddleware
         return [
             [
                 'routeName' => 'javascript:void(0)',
-                'data-id' => encrypt($model->id),
+                'data-id' => encrypt($model->soundcloud_urn),
                 'className' => 'view',
                 'label' => 'Details',
                 'permissions' => ['permission-list', 'permission-delete', 'permission-status']
@@ -226,27 +226,26 @@ class UserController extends Controller implements HasMiddleware
         return [
             [
                 'routeName' => 'javascript:void(0)',
-                'data-id' => encrypt($model->id),
+                'data-id' => encrypt($model->urn),
                 'className' => 'view',
                 'label' => 'Tracklist',
-                'permissions' => ['permission-list', 'permission-delete', 'permission-status']
+                'permissions' => ['permission-list']
             ],
 
 
         ];
     }
-    public function playlistShow(Request $request, string $id)
+    public function playlistShow(string $soudcloud_urn)
     {
-        $data = $this->playlistService->getPlaylist($id);
+        $data = $this->playlistService->getPlaylist($soudcloud_urn, 'soundcloud_urn');
         $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
         return response()->json($data);
     }
 
-    public function tracklistShow(Request $request, string $id)
+    public function tracklistShow(string $urn)
     {
-        $data = $this->trackService->getTrack($id);
-        $data['user_urn'] = $data->user?->name;
+        $data = $this->trackService->getTrack($urn, 'urn');
         $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
         return response()->json($data);

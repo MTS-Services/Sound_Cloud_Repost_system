@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Models\Track;
+use Illuminate\Database\Eloquent\Collection;
 
 class TrackService
 {
@@ -17,9 +18,8 @@ class TrackService
     {
         return Track::orderBy($orderBy, $order)->latest();
     }
-    public function getTrack(string $encryptedId)
+    public function getTrack(string $encryptedValue ,  string $field = 'id'): Track | Collection
     {
-        $track = Track::where('id', $encryptedId)->first();
-        return $track;
+        return Track::where($field, decrypt($encryptedValue))->first();
     }
 }

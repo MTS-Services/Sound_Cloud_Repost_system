@@ -18,9 +18,9 @@ class PlaylistService
     {
         return Playlist::orderBy($orderBy, $order)->latest();
     }
-    public function getPlaylist(string $encryptedUrn): Playlist | Collection
+    public function getPlaylist(string $encryptedValue, string $field = 'id'): Playlist | Collection
     {
-        return Playlist::where('urn', decrypt($encryptedUrn))->first();
+        return Playlist::where($field, decrypt($encryptedValue))->first();
     }
     public function getPlaylistTracks( string $soundcloudUrn)
     {
