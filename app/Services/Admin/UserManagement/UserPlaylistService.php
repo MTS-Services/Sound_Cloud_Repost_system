@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Admin\Usermanagement;
+namespace App\Services\Admin\UserManagement;
 
 use App\Http\Traits\FileManagementTrait;
 use App\Models\Playlist;
