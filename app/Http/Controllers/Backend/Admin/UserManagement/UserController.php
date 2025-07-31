@@ -88,6 +88,14 @@ class UserController extends Controller implements HasMiddleware
                 'label' => 'Details',
                 'permissions' => ['permission-list', 'permission-delete', 'permission-status']
             ],
+            // <button class="btn" onclick="add_credit_modal.showModal()">open modal</button>
+            [
+                'routeName' => 'javascript:void(0)',
+                'label' => 'Add Credit',
+                'data-id' => encrypt($model->urn),
+                'className' => 'add-credit',
+                'permissions' => ['permission-credit']
+            ],
 
             [
                 'routeName' => 'um.user.playlist',
@@ -242,5 +250,19 @@ class UserController extends Controller implements HasMiddleware
         $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
         return response()->json($data);
+    }
+
+    public function addCredit(Request $request, string $user_urn)
+    {
+        $user = $this->userService->getUser($user_urn, 'urn');
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+        $data = $request->validate([
+            'credit' => 'required|numeric|min:1',
+        ]);
+        $this->userService->addCredit($user, $data);
+        session()->flash('success', 'Credit added successfully.');
+        return $this->redirectIndex();
     }
 }

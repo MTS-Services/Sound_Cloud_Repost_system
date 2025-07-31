@@ -95,6 +95,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::get('/playlist-tracks/{playlistUrn}', 'playlistTracks')->name('playlist.track-list'); // all tracks under playlist
             Route::get('/tracklist/{user}', 'tracklist')->name('tracklist'); // all tracklist
             Route::post('/tracklist/{trackId}', 'tracklistShow')->name('tracklist.show');
+            Route::post('/add-credit/{user_urn}', 'addCredit')->name('add-credit');
 
         });
 

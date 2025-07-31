@@ -1,12 +1,12 @@
 <x-admin::layout>
-    <x-slot name="title">{{ __('User Playlist List') }}</x-slot>
-    <x-slot name="breadcrumb">{{ __('User Playlist List') }}</x-slot>
-    <x-slot name="page_slug">user-playlist</x-slot>
+    <x-slot name="title">{{ __('Playlist List Track') }}</x-slot>
+    <x-slot name="breadcrumb">{{ __('Playlist List Track') }}</x-slot>
+    <x-slot name="page_slug">user</x-slot>
     <section>
 
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
-                <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('User Playlist List') }}</h2>
+                <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Playlist List Track') }}</h2>
                 <div class="flex items-center gap-2">
                     {{-- <x-button href="{{ route('um.playlist.trash') }}" icon="trash-2" type='secondary'
                         permission="admin-trash">
