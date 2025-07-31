@@ -327,11 +327,11 @@ class SoundCloudService
     public function syncUserPlaylists(User $user, int $limit = 200): int
     {
         $playlistsData = $this->getUserPlaylists($user, $limit);
-        dd($playlistsData);
         // try {
             $syncedCount = 0;
 
             foreach ($playlistsData as $playlistData) {
+                dd($playlistData);
                 $playlist = Playlist::updateOrCreate(
                     [
                         'user_urn' => $user->urn,
