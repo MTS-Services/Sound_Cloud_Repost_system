@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Yajra\DataTables\Facades\DataTables;
-use App\Services\Admin\Usermanagement\UserPlaylistService;
+use App\Services\Admin\UserManagement\UserPlaylistService;
 use App\Services\Admin\UserManagement\UserTracklistService;
 
 

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Backend\Admin\UserManagement;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
 use App\Models\Playlist;
-use App\Services\Admin\Usermanagement\UserPlaylistService;
+use App\Services\Admin\UserManagement\UserPlaylistService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
