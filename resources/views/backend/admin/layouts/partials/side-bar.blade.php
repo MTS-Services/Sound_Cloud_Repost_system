@@ -154,6 +154,17 @@
                         'permission' => 'purchase-list',
                     ],
                 ]" />
+                 <x-admin.navlink type="dropdown" icon="credit-card" name="Repost Management" :page_slug="$active"
+                :items="[
+                    [
+                        'name' => 'Reports Management',
+                        'route' => route('rm.repost.index'),
+                        'icon' => 'request-quote',
+                        'active' => 'Reports ',
+                        'permission' => 'Reports-list',
+                    ],
+                 
+                ]" />
         </nav>
     </div>
 </aside>
