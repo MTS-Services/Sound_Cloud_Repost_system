@@ -2,45 +2,6 @@
     <x-slot name="title">{{ __('User Playlist List') }}</x-slot>
     <x-slot name="breadcrumb">{{ __('User Playlist List') }}</x-slot>
     <x-slot name="page_slug">user</x-slot>
-  
-    {{-- <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">{{ __('User Playlist List') }}</h3>
-                        </div>
-                        <div class="card-body">
-                            <table class="table datatable table-zebra">
-                                <thead>
-                                    <tr>
-                                        <th width="5%">{{ __('SL') }}</th>
-                                        <th>{{ __('Name') }}</th>
-                                        <th>{{ __('Soundcloud ID') }}</th>
-                                        <th>{{ __('Status') }}</th>
-                                        <th>{{ __('Last Synced At') }}</th>
-                                        <th width="10%">{{ __('Action') }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Playlist 1</td>
-                                        <td>123456789</td>
-                                        <td>Active</td>
-                                        <td>2023-06-01 12:34:56</td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> --}}
 
       <section>
 
@@ -132,10 +93,6 @@
                     const details = [{
                             label: '{{ __('Title') }}',
                             key: 'title'
-                        },
-                        {
-                            label: '{{ __('Sort Order') }}',
-                            key: 'sort_order'
                         },
                         {
                             label: '{{ __('User URN') }}',
