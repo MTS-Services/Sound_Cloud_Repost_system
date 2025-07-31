@@ -15,12 +15,12 @@
                                 data-request-id="{{ $repostRequest->id }}" wire:ignore>
                                 <x-sound-cloud.sound-cloud-player :track="$repostRequest->track" :visual="false" />
                             </div>
-                            
+
                             {{-- <!-- Play Time Display -->
                             <div class="absolute top-2 right-2 bg-blue-600 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10">
                                 {{ $this->getPlayTime($repostRequest->id) }}s / 5s
                             </div> --}}
-                            
+
                             <!-- Request Status Badge -->
                             <div
                                 class="absolute top-2 left-2 bg-purple-600 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
@@ -56,13 +56,14 @@
                                                 d="M19 9l-7 7-7-7"></path>
                                         </svg>
                                     </div>
-                                    
+
                                     <!-- Rating Stars -->
                                     <div class="flex items-center mt-1">
                                         @for ($i = 1; $i <= 1; $i++)
-                                            <svg class="w-4 h-4 {{ $i <= ($repostRequest->targetUser->rating ?? 0) ? 'text-yellow-400' : 'text-gray-300' }}" 
-                                                 fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                                            <svg class="w-4 h-4 {{ $i <= ($repostRequest->targetUser->rating ?? 0) ? 'text-yellow-400' : 'text-gray-300' }}"
+                                                fill="currentColor" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                                             </svg>
                                         @endfor
                                     </div>
@@ -71,10 +72,12 @@
                                     <div x-show="open" x-transition.opacity
                                         class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
                                         x-cloak>
-                                        <a href="{{ $repostRequest->targetUser->soundcloud_url ?? '#' }}" target="_blank"
-                                            class="block hover:bg-gray-800 px-3 py-1 rounded">Visit SoundCloud Profile</a>
-                                        <a href="{{ route('user.profile', $repostRequest->targetUser->username ?? $repostRequest->targetUser->id) }}" wire:navigate
-                                            class="block hover:bg-gray-800 px-3 py-1 rounded">Visit RepostChain Profile</a>
+                                        <a href="{{ $repostRequest->targetUser->soundcloud_url ?? '#' }}"
+                                            target="_blank" class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
+                                            SoundCloud Profile</a>
+                                        <a href="{{ route('user.profile', $repostRequest->targetUser->username ?? $repostRequest->targetUser->id) }}"
+                                            wire:navigate class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
+                                            RepostChain Profile</a>
                                     </div>
                                 </div>
                             </div>
@@ -93,17 +96,22 @@
                                 <div class="relative">
                                     <button wire:click="repost('{{ $repostRequest->id }}')" @class([
                                         'flex items-center gap-2 py-2 px-3 sm:px-5 rounded-md shadow-sm text-sm sm:text-base transition-all duration-300',
-                                        'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white cursor-pointer transform hover:scale-105' => $this->canRepost($repostRequest->id),
-                                        'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost($repostRequest->id),
+                                        'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white cursor-pointer transform hover:scale-105' => $this->canRepost(
+                                            $repostRequest->id),
+                                        'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
+                                            $repostRequest->id),
                                     ])
                                         @disabled(!$this->canRepost($repostRequest->id))>
-                                        
+
                                         <!-- Repost Icon -->
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                        <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <rect x="1" y="1" width="24" height="16" rx="3"
+                                                fill="none" stroke="currentColor" stroke-width="2" />
+                                            <circle cx="8" cy="9" r="3" fill="none"
+                                                stroke="currentColor" stroke-width="2" />
                                         </svg>
-                                        
+
                                         <span>{{ $repostRequest->credits_spent ?? repostPrice() }} Repost</span>
                                     </button>
 
@@ -124,7 +132,7 @@
                                 </div>
 
                                 <!-- Manual Play Controls (for testing) -->
-                                @if (app()->environment('local'))
+                                {{-- @if (app()->environment('local'))
                                     <div class="flex gap-1">
                                         <button wire:click="startPlaying('{{ $repostRequest->id }}')" 
                                                 class="text-xs bg-green-500 text-white px-2 py-1 rounded">
@@ -139,7 +147,7 @@
                                             +1s
                                         </button>
                                     </div>
-                                @endif
+                                @endif --}}
                             </div>
                         </div>
 
@@ -160,7 +168,7 @@
                                     class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
                                     {{ $repostRequest->track->genre ?? 'Unknown Genre' }}
                                 </span>
-                                
+
                                 <!-- Status Badge -->
                                 {{-- <span @class([
                                     'inline-block text-xs font-medium px-2 py-1 rounded-full',
@@ -173,7 +181,7 @@
                                     {{ $repostRequest->status_label }}
                                 </span> --}}
                             </div>
-                            
+
                             <!-- Request Date -->
                             {{-- <span class="text-xs text-gray-500 dark:text-gray-400">
                                 {{ $repostRequest->requested_at ? \Carbon\Carbon::parse($repostRequest->requested_at)->diffForHumans() : $repostRequest->created_at->diffForHumans() }}
@@ -185,7 +193,7 @@
         </div>
     @endforeach
 
-    @if($repostRequests->isEmpty())
+    @if ($repostRequests->isEmpty())
         <div class="text-center py-12">
             <div class="text-gray-500 dark:text-gray-400 text-lg mb-2">
                 No repost requests found
@@ -198,49 +206,50 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Audio event handling for SoundCloud players
-    document.querySelectorAll('[id^="soundcloud-player-"]').forEach(player => {
-        const requestId = player.dataset.requestId;
-        const iframe = player.querySelector('iframe');
-        
-        if (iframe) {
-            iframe.addEventListener('load', function() {
-                // SoundCloud Widget API integration would go here
-                // This is a simplified example - you'll need to implement
-                // proper SoundCloud Widget API event handling
-                
-                // Simulate audio events for now
-                const widget = SC.Widget(iframe);
-                
-                widget.bind(SC.Widget.Events.PLAY, function() {
-                    @this.call('handleAudioPlay', requestId);
-                });
-                
-                widget.bind(SC.Widget.Events.PAUSE, function() {
-                    @this.call('handleAudioPause', requestId);
-                });
-                
-                widget.bind(SC.Widget.Events.PLAY_PROGRESS, function(data) {
-                    @this.call('handleAudioTimeUpdate', requestId, data.currentPosition / 1000);
-                });
-                
-                widget.bind(SC.Widget.Events.FINISH, function() {
-                    @this.call('handleAudioEnded', requestId);
-                });
-            });
-        }
-    });
-    
-    // Listen for Livewire events
-    Livewire.on('requestPlayedEnough', (requestId) => {
-        console.log('Request played for 5+ seconds:', requestId);
-        // You can add visual feedback here
-    });
-});
+    document.addEventListener('DOMContentLoaded', function() {
+        // Audio event handling for SoundCloud players
+        document.querySelectorAll('[id^="soundcloud-player-"]').forEach(player => {
+            const requestId = player.dataset.requestId;
+            const iframe = player.querySelector('iframe');
 
-// Polling for play time updates (optional)
-setInterval(() => {
-    @this.call('updatePlayingTimes');
-}, 1000);
+            if (iframe) {
+                iframe.addEventListener('load', function() {
+                    // SoundCloud Widget API integration would go here
+                    // This is a simplified example - you'll need to implement
+                    // proper SoundCloud Widget API event handling
+
+                    // Simulate audio events for now
+                    const widget = SC.Widget(iframe);
+
+                    widget.bind(SC.Widget.Events.PLAY, function() {
+                        @this.call('handleAudioPlay', requestId);
+                    });
+
+                    widget.bind(SC.Widget.Events.PAUSE, function() {
+                        @this.call('handleAudioPause', requestId);
+                    });
+
+                    widget.bind(SC.Widget.Events.PLAY_PROGRESS, function(data) {
+                        @this.call('handleAudioTimeUpdate', requestId, data
+                            .currentPosition / 1000);
+                    });
+
+                    widget.bind(SC.Widget.Events.FINISH, function() {
+                        @this.call('handleAudioEnded', requestId);
+                    });
+                });
+            }
+        });
+
+        // Listen for Livewire events
+        Livewire.on('requestPlayedEnough', (requestId) => {
+            console.log('Request played for 5+ seconds:', requestId);
+            // You can add visual feedback here
+        });
+    });
+
+    // Polling for play time updates (optional)
+    setInterval(() => {
+        @this.call('updatePlayingTimes');
+    }, 1000);
 </script>
