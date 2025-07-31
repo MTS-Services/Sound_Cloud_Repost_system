@@ -94,24 +94,22 @@ class RepostController extends Controller implements HasMiddleware
                 'data-id' => encrypt($model->id),
                 'className' => 'view',
                 'label' => 'Details',
-                'permissions' => ['permission-list', 'permission-delete', 'permission-status']
+                'permissions' => ['permission-list']
             ],
-            // [
-            //     'routeName' => '',
-            //     'params' => [encrypt($model->id)],
-            //     'label' => 'Edit',
-            //     'permissions' => ['permission-edit']
-            // ],
-
-            // [
-            //     'routeName' => '',
-            //     'params' => [encrypt($model->id)],
-            //     'label' => 'Delete',
-            //     'delete' => true,
-            //     'permissions' => ['permission-delete']
-            // ]
+            
 
         ];
+    }
+
+    public function show($id)
+    {
+         $data = $this->RepostTrackingService->getRepost($id);
+    $data['user_urn'] = $data->user?->name;
+  
+    // remove the following line
+    // $data['updater_name'] = $this->updater_name($data);
+    return response()->json($data);
+
     }
 
    

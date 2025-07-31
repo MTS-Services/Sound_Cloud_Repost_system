@@ -72,6 +72,48 @@
                 initializeDataTable(details);
             })
         </script>
+         <script>
+            document.addEventListener('DOMContentLoaded', () => {
+
+                $(document).on('click', '.view', function() {
+                    const id = $(this).data('id');
+                    const route = "{{ route('rm.repost.show', ':id') }}";
+
+                    const details = [
+                        {
+                            label: '{{ __('reposter') }}',
+                            key: 'name',
+                        },
+                       
+                       
+                        {
+                            label: '{{ __('Camping Title') }}',
+                            key: 'title',
+                        },
+                        {
+                            label: '{{ __('Soundcloud ID') }}',
+                            key: 'soundcloud_repost_id',
+                        },
+                        
+                       
+                        {
+                            label: '{{ __('Credits') }}',
+                            key: 'credits_earned',
+                        },
+                        {
+                            label: '{{ __('Reposted At') }}',
+                            key: 'reposted_at',
+                        },
+                        {
+                            label: '{{ __('Created Date') }}',
+                            key: 'created_at',
+                        },
+                    ];
+
+                    showDetailsModal(route, id, '{{ __('Repost Details') }}', details);
+                });
+            });
+        </script>
 @endpush
 
 

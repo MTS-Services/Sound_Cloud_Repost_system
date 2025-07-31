@@ -156,7 +156,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
     Route::group(['as' => 'rm.', 'prefix' => 'repost-management'], function () {
           Route::resource('repost', RepostController::class);
         Route::controller(RepostController::class)->name('repost.')->prefix('repost')->group(function () {
-
+            Route::post('/show/{repost}', 'show')->name('show');
 
         });
 
