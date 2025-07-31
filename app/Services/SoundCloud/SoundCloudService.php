@@ -326,7 +326,7 @@ class SoundCloudService
     public function syncUserPlaylists(User $user, int $limit = 200): int
     {
         $playlistsData = $this->getUserPlaylists($user, $limit);
-        // try {
+        try {
             $syncedCount = 0;
 
             foreach ($playlistsData as $playlistData) {
@@ -446,7 +446,6 @@ class SoundCloudService
                             ],
                             $commonTrackData
                         );
-dd($playlist->soundcloud_urn && $track->urn);
                         // Link the track to the playlist
                         // Ensure playlist and track have valid URNs before linking
                         if ($playlist->soundcloud_urn && $track->urn) {
@@ -473,13 +472,13 @@ dd($playlist->soundcloud_urn && $track->urn);
 
             Log::info("Successfully synced {$syncedCount} playlists for user {$user->urn}.");
             return $syncedCount;
-        // } catch (Exception $e) {
-        //     Log::error('Error syncing user playlists in syncUserPlaylists', [
-        //         'user_urn' => $user->urn,
-        //         'error' => $e->getMessage(),
-        //     ]);
-        //     throw $e;
-        // }
+        } catch (Exception $e) {
+            Log::error('Error syncing user playlists in syncUserPlaylists', [
+                'user_urn' => $user->urn,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
     }
 
     public function syncUserProductsAndSubscriptions(User $user, object $soundCloudUser): void
