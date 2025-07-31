@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend\User;
 use App\Http\Controllers\Controller;
 use App\Models\Repost;
 use App\Models\RepostRequest;
+use App\Models\User;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -17,12 +18,17 @@ class DashboardController extends Controller
     {
         $this->creditTransactionService = $creditTransactionService;
     }
-   
+
     public function dashboard()
     {
-    $data['total_credits'] = $this->creditTransactionService->getUserTotalCredits();
-    $data['repostRequests'] = RepostRequest::where('requester_urn', user()->urn)
-    ->with('track')->latest()->take(2)->latest()->get();
+        $data['total_credits'] = $this->creditTransactionService->getUserTotalCredits();
+        $data['totalCount'] = RepostRequest::where('requester_urn', user()->urn)->count();
+
+        $data['repostRequests'] = RepostRequest::where('requester_urn', user()->urn)
+            ->with(['track', 'requester'])
+            ->latest()
+            ->take(2)
+            ->get();
         return view('backend.user.dashboard', $data);
     }
 }

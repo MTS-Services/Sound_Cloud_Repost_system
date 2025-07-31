@@ -222,27 +222,29 @@
                     Campaign</a>
             </div>
         </div>
-        <div
-            class=" rounded-lg  border border-slate-700 lg:ml-8 ml-0 lg:mr-6 mr-6 lg:p-4 p-4 lg:mt-3 mt-3 lg:mb-2 mb-2">
-            <div class="flex items-center justify-between lg-mb-6 p-2">
+        <div class=" rounded-lg  border border-slate-700 lg:ml-8 ml-0 lg:mr-6 mr-6 lg:p-4 p-4 lg:mt-3 mt-3 lg:mb-2 mb-2">
+             <div class="flex items-center justify-between lg-mb-6 p-2">
                 <div>
                     <h3 class=" text-lg font-semibold dark:text-white">Latest Repost Requests
                     </h3>
-                    <p class="text-slate-400 text-sm">Earn credits by reposting tracks</p>
+                    <p class="text-slate-400 text-sm">{{ $totalCount }} requests</p>
                 </div>
                 <a class="text-orange-500 hover:text-orange-400 text-sm font-medium" href="/requests"
                     data-discover="true">View all →</a>
             </div>
+           @foreach ($repostRequests as $request)
+    
+           
             <div class="space-y-4">
                 <div class="border border-slate-700 rounded-lg p-4">
                     <div class="flex items-start space-x-3 mb-3">
                         <img src="https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=150&amp;h=150&amp;fit=crop"
                             alt="carlvalor" class="w-8 h-8 rounded-full">
                         <div class="flex-1 min-w-0">
-                            <h4 class="text-slate-400 text-sm font-medium text-sm">The Beginning</h4>
-                            <p class="text-slate-400 text-xs">by carlvalor</p>
+                            <h4 class="text-slate-400 text-sm font-medium ">{{$request?->requester?->name}}</h4>
+                            <p class="text-slate-400 text-xs">by {{$request?->requester?->email}}</p>
                         </div>
-                        <span class="text-orange-500 font-semibold text-sm">+7 credits</span>
+                        <span class="text-orange-500 font-semibold text-sm">+{{ $request->credits_spent }} credits</span>
                     </div>
                     <div class="flex items-center space-x-2">
                         <button
@@ -272,7 +274,7 @@
                             <span class="text-orange-500 font-bold">#1</span>
                             <span class="text-slate-400 text-sm">Why Do I?</span>
                         </div>
-                        <span class="text-slate-400">EMMAAG</span>
+                        <span class="text-slate-400">{{$request?->track?->embeddable_by}}</span>
                     </div>
                     <div class="flex items-center justify-between text-sm">
                         <div class="flex items-center space-x-2">
@@ -283,6 +285,8 @@
                     </div>
                 </div>
             </div>
+                       
+           @endforeach
         </div>
     </div>
 
