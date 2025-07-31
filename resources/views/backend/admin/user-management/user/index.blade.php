@@ -43,7 +43,7 @@
                                 <span class="label-text">{{ __('Credit') }}</span>
                             </label>
                             <input type="number" name="credit" id="credit"
-                                class="input input-bordered text-gray-800 w-full" placeholder="{{ __('Enter credit') }}"
+                                class="input input-bordered text-gray-800 dark:text-gray-200 w-full" placeholder="{{ __('Enter credit') }}"
                                 required>
                         </div>
                         {{-- <div class="flex items-center justify-end w-full mt-4">
