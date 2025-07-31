@@ -60,17 +60,27 @@ class RepostController extends Controller implements HasMiddleware
         if ($request->ajax()) {
             $query = $this->RepostTrackingService->getReposts();
             return DataTables::eloquent($query)
-                 ->editColumn('created_by', function ($admin) {
-                    return $this->creater_name($admin);
+              ->editColumn('name', function ($repost) {
+                    return $repost->reposter->name ;
                 })
-                ->editColumn('created_at', function ($admin) {
-                    return $admin->created_at_formatted;
+                // ->editColumn('track_owner_urn', function ($repost) {
+                //     return $repost->trackOwner->name;
+                // })
+                ->editColumn('title', function ($repost) {
+                    return $repost->campaign->title ?? '' ;
                 })
-                ->editColumn('action', function ($service) {
-                    $menuItems = $this->menuItems($service);
+
+                 ->editColumn('created_by', function ($repost) {
+                    return $this->creater_name($repost);
+                })
+                ->editColumn('created_at', function ($repost) {
+                    return $repost->created_at_formatted;
+                })
+                ->editColumn('action', function ($repost) {
+                    $menuItems = $this->menuItems($repost);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['created_by', 'created_at', 'action'])
+                ->rawColumns([ 'name','title','created_by', 'created_at', 'action'])
                 ->make(true);
         }
         return view('backend.admin.repost-management.repost.index');
@@ -86,20 +96,20 @@ class RepostController extends Controller implements HasMiddleware
                 'label' => 'Details',
                 'permissions' => ['permission-list', 'permission-delete', 'permission-status']
             ],
-            [
-                'routeName' => '',
-                'params' => [encrypt($model->id)],
-                'label' => 'Edit',
-                'permissions' => ['permission-edit']
-            ],
+            // [
+            //     'routeName' => '',
+            //     'params' => [encrypt($model->id)],
+            //     'label' => 'Edit',
+            //     'permissions' => ['permission-edit']
+            // ],
 
-            [
-                'routeName' => '',
-                'params' => [encrypt($model->id)],
-                'label' => 'Delete',
-                'delete' => true,
-                'permissions' => ['permission-delete']
-            ]
+            // [
+            //     'routeName' => '',
+            //     'params' => [encrypt($model->id)],
+            //     'label' => 'Delete',
+            //     'delete' => true,
+            //     'permissions' => ['permission-delete']
+            // ]
 
         ];
     }
