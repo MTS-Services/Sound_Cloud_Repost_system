@@ -373,7 +373,7 @@ class SoundCloudService
                         'last_modified' => isset($playlistData['last_modified']) ? Carbon::parse($playlistData['last_modified'])->toDateTimeString() : null,
                     ]
                 );
-
+            dd(!empty($playlistData['tracks']));
                 // --- Uncommented and refined playlist track syncing ---
                 if (!empty($playlistData['tracks'])) {
                     foreach ($playlistData['tracks'] as $trackData) {
@@ -447,7 +447,6 @@ class SoundCloudService
                             ],
                             $commonTrackData
                         );
-dd($playlist->soundcloud_urn && $track->urn);
                         // Link the track to the playlist
                         // Ensure playlist and track have valid URNs before linking
                         if ($playlist->soundcloud_urn && $track->urn) {
