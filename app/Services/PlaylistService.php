@@ -16,7 +16,7 @@ class PlaylistService
     }
     public function getPlaylists($orderBy = 'sort_order', $order = 'asc')
     {
-        return Playlist::orderBy($orderBy, $order)->latest();
+        return Playlist::orderBy($orderBy, $order)->latest()->with('tracks', 'user');
     }
     public function getPlaylist(string $encryptedValue, string $field = 'id'): Playlist | Collection
     {

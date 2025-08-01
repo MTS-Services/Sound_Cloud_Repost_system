@@ -148,21 +148,21 @@ class UserController extends Controller implements HasMiddleware
     public function playlist(Request $request, $id)
     {
         if ($request->ajax()) {
-            $query = $this->playlistService->getPlaylists();
+            $query = $this->playlistService->getPlaylists()->with('user');
             return DataTables::eloquent($query)
-                ->editColumn('user_urn', function ($playlist) {
+                ->editColumn('user_name', function ($playlist) {
                     return $playlist->user?->name;
                 })
-                // ->editColumn('soundcloud_id', function ($playlist) {
-                //     return $playlist->soundcloud?->name;
-                // })
+                ->editColumn('release_month', function ($playlist) {
+                    return $playlist->release_month_formatted;
+                })
                 ->editColumn('creater_id', fn($playlist) => $this->creater_name($playlist))
                 ->editColumn('created_at', fn($playlist) => $playlist->created_at_formatted)
                 ->editColumn('action', function ($playlist) {
                     $menuItems = $this->playlistmenuItems($playlist);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['user_urn', 'action', 'creater_id', 'created_at',])->make(true);
+                ->rawColumns(['user_name','release_month', 'action', 'creater_id', 'created_at',])->make(true);
         }
         return view('backend.admin.user-management.playlists.playlist');
     }
