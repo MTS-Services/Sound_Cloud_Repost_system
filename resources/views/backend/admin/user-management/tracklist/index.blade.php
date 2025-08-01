@@ -26,11 +26,10 @@
                         <th>{{ __('SL') }}</th>
                         <th>{{ __('Title') }}</th>
                         <th>{{ __('Tag List') }}</th>
-                        <th>{{ __('User Urn') }}</th>
-                        <th>{{ __('Soundcloud ID') }}</th>
-                        <th>{{ __('Soundcloud Kind') }}</th>
-                        <th>{{ __('Release Year') }}</th>
-                        <th>{{ __('Duration') }}</th>
+                        <th>{{ __('User Name') }}</th>
+                        <th>{{ __('Author Name') }}</th>
+                        <th>{{ __('Purchased') }}</th>
+                        <th>{{ __('Release Month') }}</th>
                         <th>{{ __('Action') }}</th>
                     </tr>
                 </thead>
@@ -52,10 +51,9 @@
                     ['title', true, true],
                     ['tag_list', true, true],
                     ['user_urn', true, true],
-                    ['author_soundcloud_id', true, true],
-                    ['author_soundcloud_kind', true, true],
-                    ['release_year', true, true],
-                    ['duration', true, false],
+                    ['author_username', true, true],
+                    ['purchase_title', true, true],
+                    ['release_month', true, true],
                     ['action', false, false],
                 ];
                 const details = {

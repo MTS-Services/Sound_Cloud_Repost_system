@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Backend\Admin\UserManagement;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
 use App\Models\Playlist;
-use App\Services\Admin\TrackService;
 use App\Services\Admin\UserManagement\UserService;
 use App\Services\PlaylistService;
+use App\Services\TrackService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -162,7 +162,7 @@ class UserController extends Controller implements HasMiddleware
                     $menuItems = $this->playlistmenuItems($playlist);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['user_name','release_month', 'action', 'creater_id', 'created_at',])->make(true);
+                ->rawColumns(['user_name', 'release_month', 'action', 'creater_id', 'created_at',])->make(true);
         }
         return view('backend.admin.user-management.playlists.playlist');
     }
@@ -206,6 +206,9 @@ class UserController extends Controller implements HasMiddleware
         if ($request->ajax()) {
             $query = $this->trackService->getTracks();
             return DataTables::eloquent($query)
+                ->editColumn('release_month', function ($playlist) {
+                    return $playlist->release_month_formatted;
+                })
                 ->editColumn('user_urn', function ($tracklist) {
                     return $tracklist->user?->name;
                 })
@@ -215,7 +218,7 @@ class UserController extends Controller implements HasMiddleware
                     $menuItems = $this->tracklistMenuItems($tracklist);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action', 'creater_id', 'created_at', 'user_urn'])
+                ->rawColumns(['action', 'creater_id', 'created_at', 'user_urn','release_month'])
                 ->make(true);
         }
         return view('backend.admin.user-management.tracklist.index');

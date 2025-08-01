@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\BaseModel;
 use Carbon\Carbon;
+use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -98,11 +99,22 @@ class Playlist extends BaseModel
     }
 
     // Month format
+    // public function getReleaseMonthFormattedAttribute()
+    // {
+    //     $months = [1 => 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    //     if (array_key_exists($this->release_month, $months)) {
+    //         return $months[$this->release_month];
+    //     }
+    //     return 'Invalid';
+    // }
     public function getReleaseMonthFormattedAttribute()
     {
-        $months = [1 => 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        if (array_key_exists($this->release_month, $months)) {
-            return $months[$this->release_month];
+        $monthString = str_pad($this->release_month, 2, '0', STR_PAD_LEFT);
+
+        $date = DateTime::createFromFormat('Y-m-d', '2000-' . $monthString . '-01');
+
+        if ($date && $date->format('n') == (int) $this->release_month) {
+            return $date->format('M'); // Formats to 'Jan', 'Feb', etc.
         }
         return 'Invalid';
     }

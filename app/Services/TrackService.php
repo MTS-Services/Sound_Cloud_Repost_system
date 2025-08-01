@@ -10,13 +10,13 @@ class TrackService
 {
     use FileManagementTrait;
 
-    public function getTracks($orderBy = 'sort_order', $order = 'asc')
+   public function getTracks($orderBy = 'id', $order = 'asc')
     {
         return Track::orderBy($orderBy, $order)->latest();
     }
-    public function getTrack(string $encryptedUrn): Track | Collection
+    public function getTrack(string $encryptedValue ,  string $field = 'id'): Track | Collection
     {
-        return Track::findOrFail(decrypt($encryptedUrn));
+        return Track::where($field, decrypt($encryptedValue))->first();
     }
    
 }
