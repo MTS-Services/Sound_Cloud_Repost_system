@@ -5,23 +5,24 @@ namespace App\Http\Controllers\Backend\Admin\UserManagement;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
 use App\Models\Playlist;
+use App\Services\Admin\TrackService;
 use App\Services\Admin\UserManagement\UserService;
-use Illuminate\Contracts\View\View;
+use App\Services\PlaylistService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Yajra\DataTables\Facades\DataTables;
-use App\Services\Admin\UserManagement\UserPlaylistService;
-use App\Services\Admin\UserManagement\UserTracklistService;
 
 
 class UserController extends Controller implements HasMiddleware
 {
 
     use AuditRelationTraits;
-     protected UserPlaylistService $userPlaylistService;
-     protected UserTracklistService $userTracklistService;
+
+    protected UserService $userService;
+    protected PlaylistService $playlistService;
+    protected TrackService $trackService;
 
     protected function redirectIndex(): RedirectResponse
     {
@@ -33,13 +34,13 @@ class UserController extends Controller implements HasMiddleware
         return redirect()->route('um.user.trash');
     }
 
-    protected UserService $userService;
 
-    public function __construct(UserService $userService, UserPlaylistService $userPlaylistService, UserTracklistService $userTracklistService)
+
+    public function __construct(UserService $userService, PlaylistService $playlistService, TrackService $trackService)
     {
         $this->userService = $userService;
-        $this->userPlaylistService = $userPlaylistService;
-        $this->userTracklistService = $userTracklistService;
+        $this->playlistService = $playlistService;
+        $this->trackService = $trackService;
     }
 
     public static function middleware(): array
@@ -87,6 +88,14 @@ class UserController extends Controller implements HasMiddleware
                 'label' => 'Details',
                 'permissions' => ['permission-list', 'permission-delete', 'permission-status']
             ],
+            // <button class="btn" onclick="add_credit_modal.showModal()">open modal</button>
+            [
+                'routeName' => 'javascript:void(0)',
+                'label' => 'Add Credit',
+                'data-id' => encrypt($model->urn),
+                'className' => 'add-credit',
+                'permissions' => ['permission-credit']
+            ],
 
             [
                 'routeName' => 'um.user.playlist',
@@ -96,7 +105,7 @@ class UserController extends Controller implements HasMiddleware
                 'edit' => true,
                 'permissions' => ['permission-playlist']
             ],
-             [
+            [
                 'routeName' => 'um.user.tracklist',
                 'params' => [encrypt($model->urn)],
                 'label' => 'Tracklist',
@@ -120,11 +129,26 @@ class UserController extends Controller implements HasMiddleware
 
         ];
     }
+    public function show(Request $request, string $id)
+    {
+        $data = $this->userService->getUser($id)->load(['userInfo']);
+        // dd($data);
+        $data['creater_name'] = $this->creater_name($data);
+        $data['updater_name'] = $this->updater_name($data);
+        return response()->json($data);
+    }
+    public function status(Request $request, string $id)
+    {
+        $user = $this->userService->getUser($id);
+        $this->userService->toggleStatus($user);
+        session()->flash('success', 'User status updated successfully.');
+        return $this->redirectIndex();
+    }
 
     public function playlist(Request $request, $id)
     {
-          if ($request->ajax()) {
-            $query = $this->userPlaylistService-> getUserPlaylists();
+        if ($request->ajax()) {
+            $query = $this->playlistService->getPlaylists();
             return DataTables::eloquent($query)
                 ->editColumn('user_urn', function ($playlist) {
                     return $playlist->user?->name;
@@ -138,11 +162,9 @@ class UserController extends Controller implements HasMiddleware
                     $menuItems = $this->playlistmenuItems($playlist);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns([  'user_urn',
-                'action', 'creater_id', 'created_at',])
-                ->make(true);
+                ->rawColumns(['user_urn', 'action', 'creater_id', 'created_at',])->make(true);
         }
-        return view('backend.admin.user-management.playlist.playlist');
+        return view('backend.admin.user-management.playlists.playlist');
     }
 
     public function playlistmenuItems($model): array
@@ -150,26 +172,39 @@ class UserController extends Controller implements HasMiddleware
         return [
             [
                 'routeName' => 'javascript:void(0)',
-                'data-id' => encrypt($model->id),
+                'data-id' => encrypt($model->soundcloud_urn),
                 'className' => 'view',
                 'label' => 'Details',
                 'permissions' => ['permission-list', 'permission-delete', 'permission-status']
             ],
             [
-                'routeName' => 'um.user.playlist.track.show',
-                'params' => [encrypt($model->id)],
-                'className' => 'view',
+                'routeName' => 'um.user.playlist.track-list',
+                'params' => [encrypt($model->soundcloud_urn), encrypt($model->id)],
                 'label' => 'Tracks',
                 'permissions' => ['permission-tracklist']
             ]
         ];
+    }
+    public function playlistTracks(Request $request, $playlistUrn)
+    {
+        $palaylistUrn = $playlistUrn;
+        if ($request->ajax()) {
+            $query = $this->playlistService->getPlaylistTracks($playlistUrn);
+            return DataTables::eloquent($query)
+                ->editColumn('action', function ($playlist) {
+                    $menuItems = $this->playlistmenuItems($playlist);
+                    return view('components.action-buttons', compact('menuItems'))->render();
+                })
+                ->rawColumns(['action', 'created_at', 'title'])->make(true);
+        }
+        return view('backend.admin.user-management.playlists.playlist_track', compact('palaylistUrn'));
     }
 
     public function tracklist(Request $request)
     {
 
         if ($request->ajax()) {
-            $query = $this->userTracklistService->getUserTracklists();
+            $query = $this->trackService->getTracks();
             return DataTables::eloquent($query)
                 ->editColumn('user_urn', function ($tracklist) {
                     return $tracklist->user?->name;
@@ -191,123 +226,42 @@ class UserController extends Controller implements HasMiddleware
         return [
             [
                 'routeName' => 'javascript:void(0)',
-                'data-id' => encrypt($model->id),
+                'data-id' => encrypt($model->urn),
                 'className' => 'view',
                 'label' => 'Tracklist',
-                'permissions' => ['permission-list', 'permission-delete', 'permission-status']
+                'permissions' => ['permission-list']
             ],
-           
+
 
         ];
     }
-    /**
-     * Display the specified resource.
-     */
-    public function show(Request $request, string $id)
+    public function playlistShow(string $soudcloud_urn)
     {
-        $data = $this->userService->getUser($id)->load(['userInfo']);
-        $data['user_urn'] = $data->user->name;
-        $data['creater_name'] = $this->creater_name($data);
-        $data['updater_name'] = $this->updater_name($data);
-        return response()->json($data);
-    }
-    public function playlistShow(Request $request, string $id)
-    {
-        $data = $this->userPlaylistService->getUserPlaylist($id);
+        $data = $this->playlistService->getPlaylist($soudcloud_urn, 'soundcloud_urn');
         $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
         return response()->json($data);
     }
 
-    public function tracklistShow(Request $request, string $id)
+    public function tracklistShow(string $urn)
     {
-        $data = $this->userTracklistService->getUserTracklist($id);
-        $data['user_urn'] = $data->user?->name;
+        $data = $this->trackService->getTrack($urn, 'urn');
         $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
         return response()->json($data);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-
-    public function destroy(string $id)
+    public function addCredit(Request $request, string $user_urn)
     {
-        try {
-            $user = $this->userService->getUser($id);
-            $this->userService->delete($user);
-            session()->flash('success', "Service deleted successfully");
-        } catch (\Throwable $e) {
-            session()->flash('Service delete failed');
-            throw $e;
+        $user = $this->userService->getUser($user_urn, 'urn');
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
         }
+        $data = $request->validate([
+            'credit' => 'required|numeric|min:1',
+        ]);
+        $this->userService->addCredit($user, $data);
+        session()->flash('success', 'Credit added successfully.');
         return $this->redirectIndex();
-    }
-
-    public function trash(Request $request)
-    {
-        if ($request->ajax()) {
-            $query = $this->userService->getUsers()->onlyTrashed();
-            return DataTables::eloquent($query)
-                ->editColumn('status', fn($user) => "<span class='badge badge-soft {$user->status_color}'>{$user->status_label}</span>")
-                ->editColumn('deleter_id', fn($user) => $this->deleter_name($user))
-                ->editColumn('deleted_at', fn($user) => $user->deleted_at_formatted)
-                ->editColumn('action', fn($user) => view('components.action-buttons', ['menuItems' => $this->trashedMenuItems($user)])->render())
-                ->rawColumns(['action', 'status', 'deleted_at', 'deleter_id'])
-                ->make(true);
-        }
-        return view('backend.admin.user-management.user.trash');
-    }
-
-    protected function trashedMenuItems($model): array
-    {
-        return [
-            [
-                'routeName' => 'um.user.restore',
-                'params' => [encrypt($model->id)],
-                'label' => 'Restore',
-                'permissions' => ['permission-restore']
-            ],
-            [
-                'routeName' => 'um.user.permanent-delete',
-                'params' => [encrypt($model->id)],
-                'label' => 'Permanent Delete',
-                'p-delete' => true,
-                'permissions' => ['permission-permanent-delete']
-            ]
-
-        ];
-    }
-
-    public function restore(string $id): RedirectResponse
-    {
-        try {
-            $this->userService->restore($id);
-            session()->flash('success', "Service restored successfully");
-        } catch (\Throwable $e) {
-            session()->flash('Service restore failed');
-            throw $e;
-        }
-        return $this->redirectTrashed();
-    }
-
-    public function permanentDelete(string $id): RedirectResponse
-    {
-        try {
-            $this->userService->permanentDelete($id);
-            session()->flash('success', "Service permanently deleted successfully");
-        } catch (\Throwable $e) {
-            session()->flash('Service permanent delete failed');
-            throw $e;
-        }
-        return $this->redirectTrashed();
-    }
-    public function status(string $id)
-    {
-        $user = $this->userService->getUser($id);
-        $this->userService->toggleStatus($user);
-        session()->flash('success', 'User status updated successfully!');
-        return redirect()->back();
     }
 }

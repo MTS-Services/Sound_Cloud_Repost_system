@@ -110,6 +110,7 @@ class CreditTransaction extends BaseModel
     public const TYPE_PURCHASE = 3;
     public const TYPE_PENALTY = 4;
     public const TYPE_BONUS = 5;
+    public const TYPE_MANUAL = 6;
 
     public static function getTypes()
     {

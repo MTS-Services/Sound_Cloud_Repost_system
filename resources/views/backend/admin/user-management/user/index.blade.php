@@ -3,12 +3,68 @@
     <x-slot name="breadcrumb">{{ __('User List') }}</x-slot>
     <x-slot name="page_slug">user</x-slot>
     <section>
+        {{-- Add Credit Modal Start --}}
+        <!-- You can open the modal using ID.showModal() method -->
+        {{-- <button class="btn" onclick="add_credit_modal.showModal()">open modal</button> --}}
+        <dialog id="add_credit_modal"
+            class="modal modal-backdrop fixed inset-0 bg-black/60 backdrop-blur-sm animate-fade-in flex items-center justify-center min-h-screen p-4">
+            <div
+                class="modal-boxglass-card relative w-full max-w-2xl mx-auto rounded-2xl shadow-2xl animate-slide-up bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg border border-white/20 dark:border-gray-700/30">
+                <!-- Header -->
+                <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center space-x-3">
+                        <div
+                            class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                            <i data-lucide="layout-list" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
+                        </div>
+                        <div>
+                            <h3 id="modal-title" class="text-xl font-bold text-gray-900 dark:text-white">
+                                {{ __('Add Credit') }}
+                            </h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Add credit to user') }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <form method="dialog">
+                        <button
+                            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                            <i data-lucide="x" class="w-6 h-6"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Content -->
+                <div class="modal-action p-6">
+                    <form action="" method="POST" id="add_credit_form" class="space-y-4 w-full">
+                        @csrf
+                        <div class="form-control w-full">
+                            <label class="label">
+                                <span class="label-text">{{ __('Credit') }}</span>
+                            </label>
+                            <input type="number" name="credit" id="credit"
+                                class="input input-bordered text-gray-800 dark:text-gray-200 w-full" placeholder="{{ __('Enter credit') }}"
+                                required>
+                        </div>
+                        {{-- <div class="flex items-center justify-end w-full mt-4">
+                            <button type="submit" class="btn btn-primary">{{ __('Add Credit') }}</button>
+                        </div> --}}
+                        <div class="flex justify-end mt-5">
+                            <x-button type="accent" :button="true" icon="wallet">{{ __('Add Credit') }}</x-button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </dialog>
+        {{-- Add Credit Modal End --}}
 
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('User List') }}</h2>
                 <div class="flex items-center gap-2">
-                    <x-button href="{{ route('um.user.trash') }}" icon="trash-2" type='secondary' permission="admin-trash">
+                    <x-button href="{{ route('um.user.trash') }}" icon="trash-2" type='secondary'
+                        permission="admin-trash">
                         {{ __('Trash') }}
                     </x-button>
                 </div>
@@ -277,6 +333,22 @@
                     ];
 
                     showDetailsModal(route, id, '{{ __('User Details') }}', details);
+                });
+            });
+        </script>
+
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+
+                $(document).on('click', '.add-credit', function() {
+                    const user_urn = $(this).data('id');
+                    const route = "{{ route('um.user.add-credit', ':urn') }}";
+                    const url = route.replace(':urn', user_urn);
+                    const form = document.getElementById('add_credit_form');
+                    form.action = url;
+                    const modal = document.getElementById('add_credit_modal');
+                    modal.showModal();
                 });
             });
         </script>

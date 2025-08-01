@@ -3,6 +3,7 @@
 namespace App\Services\Admin\UserManagement;
 
 use App\Http\Traits\FileManagementTrait;
+use App\Models\CreditTransaction;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -15,9 +16,9 @@ class UserService
     {
         return User::orderBy($orderBy, $order)->latest();
     }
-    public function getUser(string $encryptedId): User | Collection
+    public function getUser(string $value, string $field = 'id'): User | Collection
     {
-        return User::findOrFail(decrypt($encryptedId));
+        return User::where($field, decrypt($value))->with('userInfo')->first();
     }
     public function getMyAccountUser(): User | Collection
     {
@@ -81,5 +82,22 @@ class UserService
             'updater_id' => admin()->id,
             'updater_type' => get_class(admin())
         ]);
+    }
+
+    public function addCredit(User $user, array $data): void
+    {
+        $credit['transaction_type'] = CreditTransaction::TYPE_MANUAL;
+        $credit['calculation_type'] = CreditTransaction::CALCULATION_TYPE_DEBIT;
+        $credit['receiver_urn'] = $user->urn;
+        $credit['credits'] = $data['credit'];
+        $credit['amount'] = 0;
+        $credit['status'] = 'succeeded';
+        $credit['creater_id'] = admin()->id;
+        $credit['creater_type'] = get_class(admin());
+        $credit['description'] = $data['description'] ?? 'Manual credit addition by '.admin()->name;
+        $credit['source_id'] = admin()->id;
+        $credit['source_type'] = get_class(admin());
+        CreditTransaction::create($credit);
+       
     }
 }
