@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Backend\Admin\RepostManagement;
 
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
-use App\Services\Admin\RepostManagement\RepostTrackingService;
+use App\Services\Admin\RepostManagement\RepostService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -27,13 +27,13 @@ class RepostController extends Controller implements HasMiddleware
         return redirect()->route('trash route');
     }
 
-    protected RepostTrackingService $RepostTrackingService;
+    protected RepostService $repostService;
 
-    public function __construct(RepostTrackingService $RepostTrackingService)
+    public function __construct(RepostService $repostService)
     {
-        $this->RepostTrackingService = $RepostTrackingService;
+        $this->repostService = $repostService;
     }
-    
+
     public static function middleware(): array
     {
         return [
@@ -58,16 +58,19 @@ class RepostController extends Controller implements HasMiddleware
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = $this->RepostTrackingService->getReposts();
+            $query = $this->repostService->getReposts()->with('reposter', 'campaign');
             return DataTables::eloquent($query)
-              ->editColumn('name', function ($repost) {
-                    return $repost->reposter->name ;
+                ->editColumn('name', function ($repost) {
+                    return $repost->reposter->name;
                 })
                 // ->editColumn('track_owner_urn', function ($repost) {
                 //     return $repost->trackOwner->name;
                 // })
                 ->editColumn('title', function ($repost) {
-                    return $repost->campaign->title ?? '' ;
+                    return $repost->campaign->title ?? '';
+                })
+                ->editColumn('reposte_at_format', function ($repost) {
+                    return $repost->repost_at_formatted;
                 })
 
                  ->editColumn('created_by', function ($repost) {
@@ -80,7 +83,7 @@ class RepostController extends Controller implements HasMiddleware
                     $menuItems = $this->menuItems($repost);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns([ 'name','title','created_by', 'created_at', 'action'])
+                ->rawColumns(['name', 'title','reposte_at_format', 'created_by', 'created_at', 'action'])
                 ->make(true);
         }
         return view('backend.admin.repost-management.repost.index');
@@ -96,21 +99,22 @@ class RepostController extends Controller implements HasMiddleware
                 'label' => 'Details',
                 'permissions' => ['permission-list']
             ],
-            
+
 
         ];
     }
 
     public function show($id)
     {
-         $data = $this->RepostTrackingService->getRepost($id);
-    $data['user_urn'] = $data->user?->name;
-  
-    // remove the following line
-    // $data['updater_name'] = $this->updater_name($data);
-    return response()->json($data);
+        $data = $this->repostService->getRepost($id);
+        $data['name'] = $data->reposter->name;
+        $data['title'] = $data->campaign->title ?? '';
+
+        // remove the following line
+        // $data['updater_name'] = $this->updater_name($data);
+        return response()->json($data);
 
     }
 
-   
+
 }

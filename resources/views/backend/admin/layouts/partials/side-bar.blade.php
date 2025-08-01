@@ -89,7 +89,7 @@
                     // ],
                 ]" />
 
-            <x-admin.navlink type="dropdown" icon="shopping-cart" name="Credit Management" :page_slug="$active"
+            <x-admin.navlink type="dropdown" icon="credit-card" name="Credit Management" :page_slug="$active"
                 :items="[
                     [
                         'name' => 'Feature Categories',
@@ -120,7 +120,7 @@
                         'permission' => 'credit-list',
                     ],
                 ]" />
-            <x-admin.navlink type="dropdown" icon="shopping-cart" name="Campaign Management" :page_slug="$active"
+            <x-admin.navlink type="dropdown" icon="megaphone" name="Campaign Management" :page_slug="$active"
                 :items="[
                     [
                         'name' => 'Campaigns',
@@ -130,15 +130,8 @@
                         'permission' => 'campaign-list',
                     ],
                 ]" />
-            <x-admin.navlink type="dropdown" icon="credit-card" name="Order Management" :page_slug="$active"
+            <x-admin.navlink type="dropdown" icon="shopping-cart" name="Order Management" :page_slug="$active"
                 :items="[
-                    [
-                        'name' => 'Payments',
-                        'route' => route('om.credit-transaction.payments'),
-                        'icon' => 'megaphone',
-                        'active' => 'payment',
-                        'permission' => 'payment-list',
-                    ],
                     [
                         'name' => 'Orders',
                         'route' => route('om.order.index'),
@@ -154,17 +147,27 @@
                         'permission' => 'purchase-list',
                     ],
                 ]" />
-                 <x-admin.navlink type="dropdown" icon="credit-card" name="Repost Management" :page_slug="$active"
+            <x-admin.navlink type="dropdown" icon="rocket" name="Repost Request Tracking" :page_slug="$active"
                 :items="[
                     [
-                        'name' => 'Reports Management',
+                        'name' => 'Repost Request',
                         'route' => route('rm.repost.index'),
-                        'icon' => 'request-quote',
-                        'active' => 'Reports ',
-                        'permission' => 'Reports-list',
+                        'icon' => 'megaphone',
+                        'active' => 'repost-request',
+                        'permission' => 'repost-request-list',
                     ],
-                 
+                    [
+                        'name' => 'Repost',
+                        'route' => route('rm.repost.index'),
+                        'icon' => 'megaphone',
+                        'active' => 'repost',
+                        'permission' => 'repost-list',
+                    ],
                 ]" />
+            <x-admin.navlink type="single" icon="dollar-sign" name="Payments" :route="route('om.credit-transaction.payments')" active="payment"
+                :page_slug="$active" permission="payment-list" />
+            <x-admin.navlink type="single" icon="credit-card" name="Credit Transactions" :route="route('admin.dashboard')"
+                active="credit-transaction" :page_slug="$active" permission="" />
         </nav>
     </div>
 </aside>

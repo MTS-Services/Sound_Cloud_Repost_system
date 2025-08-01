@@ -19,7 +19,7 @@ class RepostRequest extends BaseModel
         'rejection_reason',
         'requested_at',
         'expired_at',
-        'responded_at',
+        'reposted_at',
         'completed_at',
 
         'creater_id',
@@ -80,6 +80,7 @@ class RepostRequest extends BaseModel
         parent::__construct($attributes);
         $this->appends = array_merge(parent::getAppends(), [
             'status_label',
+            'repost_at_formatted',
         ]);
     }
 
@@ -103,5 +104,10 @@ class RepostRequest extends BaseModel
     public function getStatusLabelAttribute()
     {
         return self::getStatusList()[$this->status];
+    }
+    // date time format
+    public function getRepostAtFormattedAttribute()
+    {
+        return timeFormat($this->reposted_at);
     }
 }
