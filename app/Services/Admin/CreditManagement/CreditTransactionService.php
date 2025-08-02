@@ -4,13 +4,17 @@ namespace App\Services\Admin\CreditManagement;
 
 use App\Models\CreditTransaction;
 use App\Models\Track;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Collection;
 
 class CreditTransactionService
 {
     public function getTransactions($orderBy = 'id', $order = 'asc')
     {
         return CreditTransaction::orderBy($orderBy, $order)->latest()->get();
+    }
+    public function getTransaction(string $encryptedValue, string $field = 'id'): CreditTransaction | Collection
+    {
+        return CreditTransaction::where($field, decrypt($encryptedValue))->first();
     }
 
     public function getUserTotalCredits()
