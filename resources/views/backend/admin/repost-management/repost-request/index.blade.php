@@ -104,7 +104,7 @@
                        
                         {
                             label: '{{ __('Credits') }}',
-                            key: 'credits_earned',
+                            key: 'credits_spent',
                         },
                         {
                             label: '{{ __('Status') }}',

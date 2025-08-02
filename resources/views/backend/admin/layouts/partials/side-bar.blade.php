@@ -153,8 +153,8 @@
                         'name' => 'Repost Request',
                         'route' => route('rrm.request.index'),
                         'icon' => 'megaphone',
-                        'active' => 'request',
-                        'permission' => 'repost-request-list',
+                        'active' => 'repost request',
+                        'permission' => 'request-list',
                     ],
                     [
                         'name' => 'Repost',
