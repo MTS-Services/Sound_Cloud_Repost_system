@@ -650,6 +650,7 @@ class MyCampaign extends Component
     {
         $this->showDetailsModal = true;
         $this->campaign = Campaign::findOrFail($id)->load(['music', 'user']);
+        dd($this->campaign);
         // dd($this->campaign);
         return;
     }
