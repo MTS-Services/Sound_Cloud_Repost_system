@@ -1189,8 +1189,12 @@
                     </div>
                     <div
                         class="mt-10 w-full mx-auto bg-gray-100 dark:bg-gradient-to-r dark:from-zinc-700 dark:to-zinc-900 p-4 rounded-lg">
-                        <x-sound-cloud.sound-cloud-player :track="$campaign->music" :visual="true" :height="166" />
+                        <div id="soundcloud-player-{{ $campaign->id }}" data-campaign-id="{{ $campaign->id }}"
+                            wire:ignore>
+                            <x-sound-cloud.sound-cloud-player :track="$campaign->music" :height="166" :visual="false" />
+                        </div>
                     </div>
+
                 </div>
             @endif
         </div>

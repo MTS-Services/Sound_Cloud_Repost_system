@@ -41,7 +41,7 @@
                     <div class="flex flex-col h-full justify-between">
                         <!-- Avatar + Title + User Info -->
                         <div
-                            class="flex flex-col sm:flex-row relative items-start sm:items-center justify-between gap-4 mb-4">
+                            class="flex flex-col sm:flex-row relative items-start sm:items-center justify-between gap-4 mb-2">
                             <div class="flex items-center gap-3">
                                 <img class="w-14 h-14 rounded-full object-cover"
                                     src="{{ auth_storage_url($repostRequest->targetUser->avatar) }}"
@@ -83,7 +83,7 @@
                             </div>
 
                             <!-- Stats and Repost Button -->
-                            <div class="flex items-center gap-4 sm:gap-8">
+                            <div class="flex flex-col justify-between items-center gap-4 sm:gap-8">
                                 {{-- <!-- Play Stats -->
                                 <div class="text-center">
                                     <div class="text-xs text-gray-500 dark:text-gray-400">Credits</div>
@@ -180,12 +180,13 @@
                                 ])>
                                     {{ $repostRequest->status_label }}
                                 </span> --}}
-                            </div>
+                            </div>  
 
                             <!-- Request Date -->
                             {{-- <span class="text-xs text-gray-500 dark:text-gray-400">
                                 {{ $repostRequest->requested_at ? \Carbon\Carbon::parse($repostRequest->requested_at)->diffForHumans() : $repostRequest->created_at->diffForHumans() }}
                             </span> --}}
+                            <button {{-- wire:click="decline('{{ $repostRequest->id }}')" --}} class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Decline</button>
                         </div>
                     </div>
                 </div>
