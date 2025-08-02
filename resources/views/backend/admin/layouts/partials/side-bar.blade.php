@@ -149,13 +149,13 @@
                 ]" />
             <x-admin.navlink type="dropdown" icon="rocket" name="Repost Request Tracking" :page_slug="$active"
                 :items="[
-                    // [
-                    //     'name' => 'Repost Request',
-                    //     'route' => route('rm.repost.index'),
-                    //     'icon' => 'megaphone',
-                    //     'active' => 'repost-request',
-                    //     'permission' => 'repost-request-list',
-                    // ],
+                    [
+                        'name' => 'Repost Request',
+                        'route' => route('rrm.request.index'),
+                        'icon' => 'megaphone',
+                        'active' => 'request',
+                        'permission' => 'repost-request-list',
+                    ],
                     [
                         'name' => 'Repost',
                         'route' => route('rm.repost.index'),

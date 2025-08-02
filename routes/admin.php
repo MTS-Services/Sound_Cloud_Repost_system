@@ -16,6 +16,7 @@ use App\Http\Controllers\Backend\Admin\OrderManagement\CreditTransactionControll
 use App\Http\Controllers\Backend\Admin\PackageManagement\FeatureCategoryController;
 use App\Http\Controllers\Backend\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Backend\Admin\RepostManagement\RepostController;
+use App\Http\Controllers\Backend\Admin\RepostManagement\RepostRequestController;
 
 Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], function () {
 
@@ -160,6 +161,13 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::post('/show/{repost}', 'show')->name('show');
 
         });
+    });
+    // Repost Request Management Routes
+    Route::group(['as' => 'rrm.', 'prefix' => 'request-management'], function () {
+          Route::resource('request', RepostRequestController::class);
+          Route::controller(RepostRequestController::class)->name('request.')->prefix('request')->group(function () {
+            Route::post('/show/{request}', 'show')->name('show');
 
+        });
     });
 });
