@@ -166,8 +166,8 @@
                 ]" />
             <x-admin.navlink type="single" icon="dollar-sign" name="Payments" :route="route('om.credit-transaction.payments')" active="payment"
                 :page_slug="$active" permission="payment-list" />
-            {{-- <x-admin.navlink type="single" icon="credit-card" name="Credit Transactions" :route="route('admin.dashboard')"
-                active="credit-transaction" :page_slug="$active" permission="" /> --}}
+            <x-admin.navlink type="single" icon="credit-card" name="Credit Transactions" :route="route('om.credit-transaction.index')"
+                active="credit-transaction" :page_slug="$active" permission="" />
         </nav>
     </div>
 </aside>

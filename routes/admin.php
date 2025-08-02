@@ -146,6 +146,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         // Credit Transaction Routes
         Route::controller(CreditTransactionController::class)->name('credit-transaction.')->prefix('credit-transaction')->group(function () {
             Route::get('/', 'index')->name('index');
+            Route::post('/show/{credit_transaction}', 'show')->name('show');
             Route::post('/store', 'store')->name('store');
             Route::get('/purchase', 'purchase')->name('purchase');
             Route::get('/payments', 'payments')->name('payments'); 
