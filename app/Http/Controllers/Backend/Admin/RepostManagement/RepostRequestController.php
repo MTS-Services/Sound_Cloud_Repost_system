@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Backend\Admin\RepostManagement;
 
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
-use App\Livewire\User\MemberManagement\RepostRequest;
+use App\Models\RepostRequest;
 use App\Services\Admin\RepostManagement\RepostRequestService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -88,6 +88,13 @@ class RepostRequestController extends Controller implements HasMiddleware
     protected function menuItems($model): array
     {
         return [
+
+            [
+                'routeName' => 'rrm.request.detail',
+                'params' => [encrypt($model->id)],
+                'label' => 'View Details',
+                'permissions' => ['req-detail']
+            ],
              [
                 'routeName' => 'javascript:void(0)',
                 'data-id' => encrypt($model->id),
@@ -98,6 +105,12 @@ class RepostRequestController extends Controller implements HasMiddleware
            
 
         ];
+    }
+
+    public function detail($id)
+    {
+        $data['requests'] = RepostRequest::where('id', decrypt($id))->first();
+        return view('backend.admin.repost-management.repost-request.detail',$data);
     }
 
     /**

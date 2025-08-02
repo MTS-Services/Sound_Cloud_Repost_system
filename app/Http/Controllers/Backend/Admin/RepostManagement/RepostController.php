@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Admin\RepostManagement;
 
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
+use App\Models\Repost;
 use App\Services\Admin\RepostManagement\RepostService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -92,6 +93,13 @@ class RepostController extends Controller implements HasMiddleware
     protected function menuItems($model): array
     {
         return [
+
+            [
+                'routeName' => 'rm.repost.detail',
+                'params' => [encrypt($model->id)],
+                'label' => 'View Details',
+                'permissions' => ['repost-detail']
+            ],
             [
                 'routeName' => 'javascript:void(0)',
                 'data-id' => encrypt($model->id),
@@ -103,7 +111,11 @@ class RepostController extends Controller implements HasMiddleware
 
         ];
     }
-
+  public function detail($id)
+  {
+      $data['reposts'] = Repost::where('id', decrypt($id))->first();
+      return view('backend.admin.repost-management.repost.detail',$data);
+  }
     public function show($id)
     {
         $data = $this->repostService->getRepost($id);

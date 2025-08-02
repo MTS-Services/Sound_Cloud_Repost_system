@@ -80,6 +80,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{credit}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{credit}', 'permanentDelete')->name('permanent-delete');
+            Route::get('/detail/{credit}', 'detail')->name('detail');
         });
     });
 
@@ -97,6 +98,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::get('/tracklist/{user}', 'tracklist')->name('tracklist'); // all tracklist
             Route::post('/tracklist/{urn}', 'tracklistShow')->name('tracklist.show');
             Route::post('/add-credit/{user_urn}', 'addCredit')->name('add-credit');
+            Route::get('/detail/{user}', 'detail')->name('detail');
 
         });
 
@@ -141,6 +143,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{order}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{order}', 'permanentDelete')->name('permanent-delete');
+            Route::get('/detail/{order}', 'detail')->name('detail');
         });
 
         // Credit Transaction Routes
@@ -150,6 +153,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::post('/store', 'store')->name('store');
             Route::get('/purchase', 'purchase')->name('purchase');
             Route::get('/payments', 'payments')->name('payments'); 
+            Route::get('/detail/{payment}', 'detail')->name('detail');
           
             
         });
@@ -159,7 +163,9 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
     Route::group(['as' => 'rm.', 'prefix' => 'repost-management'], function () {
           Route::resource('repost', RepostController::class);
         Route::controller(RepostController::class)->name('repost.')->prefix('repost')->group(function () {
-            Route::post('/show/{repost}', 'show')->name('show');
+         
+            Route::get('/detail/{repost}', 'detail')->name('detail');
+           
 
         });
     });
@@ -167,7 +173,8 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
     Route::group(['as' => 'rrm.', 'prefix' => 'request-management'], function () {
           Route::resource('request', RepostRequestController::class);
           Route::controller(RepostRequestController::class)->name('request.')->prefix('request')->group(function () {
-            Route::post('/show/{request}', 'show')->name('show');
+         
+            Route::get('/detail/{request}', 'detail')->name('detail');
 
         });
     });

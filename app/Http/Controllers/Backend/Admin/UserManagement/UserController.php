@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend\Admin\UserManagement;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
 use App\Models\Playlist;
+use App\Models\User;
 use App\Services\Admin\UserManagement\UserService;
 use App\Services\PlaylistService;
 use App\Services\TrackService;
@@ -81,12 +82,12 @@ class UserController extends Controller implements HasMiddleware
     protected function menuItems($model): array
     {
         return [
+            
             [
-                'routeName' => 'javascript:void(0)',
-                'data-id' => encrypt($model->id),
-                'className' => 'view',
-                'label' => 'Details',
-                'permissions' => ['permission-list', 'permission-delete', 'permission-status']
+                'routeName' => 'um.user.detail',
+                'params' => encrypt($model->id),
+                'label' => 'View Details',
+                'permissions' => ['user-detail']
             ],
             // <button class="btn" onclick="add_credit_modal.showModal()">open modal</button>
             [
@@ -128,6 +129,13 @@ class UserController extends Controller implements HasMiddleware
             ]
 
         ];
+    }
+
+    public function detail(Request $request, string $id)
+    {
+        $data['user'] = $this->userService->getUser($id)->load(['userInfo']);
+       
+        return view('backend.admin.user-management.user.detail', $data);
     }
     public function show(Request $request, string $id)
     {
