@@ -110,4 +110,20 @@ class RepostRequest extends BaseModel
     {
         return timeFormat($this->reposted_at);
     }
+    public function scopeApproved($query)
+    {
+        return $query->where('status', self::STATUS_APPROVED);
+    }
+    public function scopePending($query)
+    {
+        return $query->where('status', self::STATUS_PENDING);
+    }
+    public function scopeDeclined($query)
+    {
+        return $query->where('status', self::STATUS_REJECTED);
+    }
+    public function scopeExpired($query)
+    {
+        return $query->where('status', self::STATUS_EXPIRED);
+    }
 }
