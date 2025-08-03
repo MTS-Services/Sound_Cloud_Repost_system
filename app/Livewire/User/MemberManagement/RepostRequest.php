@@ -238,7 +238,7 @@ class RepostRequest extends Component
             }
 
             // Find the request and load its track
-            $request = ModelsRepostRequest::with('track', 'campaign')->findOrFail($requestId);
+            $request = ModelsRepostRequest::findOrFail($requestId)->load('track');
 
             // Ensure track is associated with the request
             if (!$request->track) {
@@ -252,6 +252,7 @@ class RepostRequest extends Component
             $httpClient = Http::withHeaders([
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
+            dd($httpClient, $request->track->urn);
 
             // Repost the track to SoundCloud
             $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$request->track->urn}");

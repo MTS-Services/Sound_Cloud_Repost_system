@@ -281,6 +281,7 @@ class Campaign extends Component
             $httpClient = Http::withHeaders([
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
+            dd($httpClient);
 
             // Determine the SoundCloud API endpoint based on music type
             switch ($campaign->music_type) {
@@ -294,7 +295,6 @@ class Campaign extends Component
                     session()->flash('error', 'Invalid music type specified for the campaign.');
                     return;
             }
-@dd($response);
 
             if ($response->successful()) {
                 // If SoundCloud returns a repost ID, capture it (example, adjust based on actual SoundCloud API response)
