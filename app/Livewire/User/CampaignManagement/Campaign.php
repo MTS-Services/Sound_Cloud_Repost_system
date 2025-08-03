@@ -2,7 +2,6 @@
 
 namespace App\Livewire\User\CampaignManagement;
 
-use App\Models\CreditTransaction;
 use App\Models\Playlist;
 use App\Models\Repost;
 use App\Models\Track;
@@ -11,7 +10,6 @@ use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Throwable;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 class Campaign extends Component
@@ -281,7 +279,6 @@ class Campaign extends Component
             $httpClient = Http::withHeaders([
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
-            dd($httpClient);
 
             // Determine the SoundCloud API endpoint based on music type
             switch ($campaign->music_type) {
