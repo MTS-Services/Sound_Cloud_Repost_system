@@ -252,7 +252,6 @@ class RepostRequest extends Component
             $httpClient = Http::withHeaders([
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
-            dd($httpClient, $request->track->urn);
 
             // Repost the track to SoundCloud
             $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$request->track->urn}");
