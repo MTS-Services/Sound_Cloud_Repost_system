@@ -254,7 +254,7 @@ class RepostRequest extends Component
             ]);
 
             // Repost the track to SoundCloud
-            $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$request->track_urn}");
+            $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$request->track_urn}");
 dd($response);
             if ($response->successful()) {
                 // If SoundCloud returns a repost ID, capture it
