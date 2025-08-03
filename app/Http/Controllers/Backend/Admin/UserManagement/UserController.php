@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend\Admin\UserManagement;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
 use App\Models\Playlist;
+use App\Models\Track;
 use App\Models\User;
 use App\Models\UserInformation;
 use App\Services\Admin\UserManagement\UserService;
@@ -249,15 +250,20 @@ class UserController extends Controller implements HasMiddleware
     {
         return [
             [
-                'routeName' => 'javascript:void(0)',
-                'data-id' => encrypt($model->urn),
-                'className' => 'view',
-                'label' => 'Tracklist',
-                'permissions' => ['permission-list']
+                'routeName' => 'um.user.tracklist.detail',
+                'params' => encrypt($model->id),
+                'label' => 'View Details',
+                'permissions' => ['Detail-list']
             ],
 
 
         ];
+    }
+
+    public function tracklistDetail($id)
+    {
+        $data['tracklists'] = Track::with('user')->find(decrypt($id));
+        return view('backend.admin.user-management.tracklist.details', $data);
     }
     public function playlistShow(string $soudcloud_urn)
     {

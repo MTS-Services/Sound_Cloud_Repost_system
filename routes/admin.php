@@ -98,6 +98,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::get('/playlist-tracks/{soundcloudUrn}', 'playlistTracks')->name('playlist.track-list'); // all tracks under playlist
 
             Route::get('/tracklist/{user}', 'tracklist')->name('tracklist'); // all tracklist
+            Route::get('/details/{tracklist}', 'tracklistDetail')->name('tracklist.detail');
             Route::post('/tracklist/{urn}', 'tracklistShow')->name('tracklist.show');
             Route::post('/add-credit/{user_urn}', 'addCredit')->name('add-credit');
             Route::get('/detail/{user}', 'detail')->name('detail');
