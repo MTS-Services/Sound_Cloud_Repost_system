@@ -8,7 +8,7 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Playlist List Track') }}</h2>
                 <div class="flex items-center gap-2">
-                    <x-button href="{{ route('um.user.index') }}"  type='secondary'
+                    <x-button href="{{ route('um.user.index') }}"  type='primary'
                         permission="admin-trash">
                         {{ __('Back') }}
                     </x-button>
@@ -55,8 +55,8 @@
                     displayLength: 10,
                     main_route: "{{ route('um.user.playlist.track-list', $palaylistUrn) }}",
                     order_route: "{{ route('update.sort.order') }}",
-                    export_columns: [0, 1,],
-                    model: 'Playlist',
+                    export_columns: [0, 1,2,3,4],
+                    model: 'Track',
                 };
                 // initializeDataTable(details);
 
@@ -65,7 +65,7 @@
         </script>
 
         {{-- Details Modal --}}
-        <script>
+        {{-- <script>
             document.addEventListener('DOMContentLoaded', () => {
 
                 $(document).on('click', '.view', function() {
@@ -240,6 +240,6 @@
                     showDetailsModal(route, id, '{{ __('User Details') }}', details);
                 });
             });
-        </script>
+        </script> --}}
     @endpush
 </x-admin::layout>

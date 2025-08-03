@@ -92,9 +92,10 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{user}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{user}', 'permanentDelete')->name('permanent-delete');
+            Route::get('/detail/{user}', 'detail')->name('detail');
+            //palylist
             Route::get('/playlist/{user}','playlist')->name('playlist'); // all playlist
-            Route::post('/playlist/{soundcloudUrn}', 'playlistShow')->name('playlist.show'); // single palylist details
-            Route::get('detail/{playlist}', 'playlistDetail')->name('playlist.detail');
+            Route::get('detail/{playlist}', 'playlistDetail')->name('playlist.details');
           
             Route::get('/playlist-tracks/{soundcloudUrn}', 'playlistTracks')->name('playlist.track-list'); // all tracks under playlist
 

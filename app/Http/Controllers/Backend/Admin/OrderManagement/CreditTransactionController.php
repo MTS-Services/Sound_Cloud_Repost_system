@@ -64,7 +64,7 @@ class CreditTransactionController extends Controller
             [
                 'routeName' => 'om.credit-transaction.detail',
                 'params' => encrypt($model->id),
-                'label' => 'View Details',
+                'label' => ' Details',
                 'permissions' => ['creditTransaction-detail']
             ],
             // [
@@ -183,7 +183,7 @@ class CreditTransactionController extends Controller
             [
                 'routeName' => 'om.credit-transaction.payment-detail',
                 'params' => encrypt($model->id),
-                'label' => 'View Details',
+                'label' => ' Details',
                 'permissions' => ['payment-detail']
             ],
             // [

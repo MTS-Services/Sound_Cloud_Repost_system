@@ -92,7 +92,7 @@ class RepostRequestController extends Controller implements HasMiddleware
             [
                 'routeName' => 'rrm.request.detail',
                 'params' => [encrypt($model->id)],
-                'label' => 'View Details',
+                'label' => ' Details',
                 'permissions' => ['req-detail']
             ],
              [

@@ -1,7 +1,7 @@
 <x-admin::layout>
     <x-slot name="title">{{ __('Credit transaction History') }}</x-slot>
     <x-slot name="breadcrumb">{{ __('Credit transaction History') }}</x-slot>
-    <x-slot name="page_slug">Credit transaction History</x-slot>
+    <x-slot name="page_slug">credit-transaction</x-slot>
 
     <section>
 

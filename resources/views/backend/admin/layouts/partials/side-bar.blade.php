@@ -153,7 +153,7 @@
                         'name' => 'Repost Request',
                         'route' => route('rrm.request.index'),
                         'icon' => 'megaphone',
-                        'active' => 'repost request',
+                        'active' => 'repost_request',
                         'permission' => 'request-list',
                     ],
                     [
@@ -167,7 +167,7 @@
             <x-admin.navlink type="single" icon="dollar-sign" name="Payments" :route="route('om.credit-transaction.payments')" active="payment"
                 :page_slug="$active" permission="payment-list" />
             <x-admin.navlink type="single" icon="credit-card" name="Credit Transactions" :route="route('om.credit-transaction.index')"
-                active="credit-transaction" :page_slug="$active" permission="" />
+                active="credit-transaction" :page_slug="$active" permission="transaction-list" />
         </nav>
     </div>
 </aside>

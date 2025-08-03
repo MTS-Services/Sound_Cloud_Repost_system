@@ -19,7 +19,7 @@
         class="w-full max-w-8xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
         <div class="p-6 text-center">
             <div class="flex flex-col md:flex-row gap-6">
-                <div class="flex-1">
+                <div class="flex-1 text-left">
                     <h2 class="text-3xl font-bold mb-2 text-gray-900 dark:text-white">Name: 
                         {{ $credits->name ?? '' }}</h2>
                     

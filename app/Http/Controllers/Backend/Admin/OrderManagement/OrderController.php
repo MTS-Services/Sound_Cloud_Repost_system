@@ -56,16 +56,16 @@ class OrderController extends Controller
             [
                 'routeName' => 'om.order.detail',
                 'params' => [encrypt($model->id)],
-                'label' => 'View Details',
+                'label' => ' Details',
                 'permissions' => ['order-detail']
             ],
-            [
-                'routeName' => 'javascript:void(0)',
-                'data-id' => encrypt($model->id),
-                'className' => 'view',
-                'label' => 'Details',
-                'permissions' => ['order-list', 'order-delete', 'order-status']
-            ],
+            // [
+            //     'routeName' => 'javascript:void(0)',
+            //     'data-id' => encrypt($model->id),
+            //     'className' => 'view',
+            //     'label' => 'Details',
+            //     'permissions' => ['order-list', 'order-delete', 'order-status']
+            // ],
             [
                 'routeName' => 'om.order.status',
                 'params' => [encrypt($model->id)],

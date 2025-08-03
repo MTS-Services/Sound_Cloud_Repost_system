@@ -1,7 +1,7 @@
 <x-admin::layout>
     <x-slot name="title">{{ __('Credit Transaction Detail') }}</x-slot>
     <x-slot name="breadcrumb">{{ __('Credit Transaction Detail') }}</x-slot>
-    <x-slot name="page_slug">Detail</x-slot>
+    <x-slot name="page_slug">credit-transaction</x-slot>
 
 
     <div class="glass-card rounded-2xl p-6 mb-6">
@@ -37,18 +37,18 @@
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Calculation Type</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $transactions->calculation_type }}
+                        {{ $transactions->calculation_type ?? 'N/A' }}
                     </p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Source ID</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $transactions->source_id }}</p>
+                        {{ $transactions->source_id ?? 'N/A' }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Source Type</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $transactions->source_type }}</p>
+                        {{ $transactions->source_type ?? 'N/A' }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Transaction Type</h4>
@@ -64,44 +64,46 @@
                         @elseif($transactions->status == 'Failed') text-red-500 
                         @else  @endif
                         ">
-                        {{ $transactions->status }}
+                        {{ $transactions->status  }}
                     </p>
                 </div>
 
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Amount</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $transactions->amount}}</p>
+                        {{ $transactions->amount ?? 'N/A' }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Credits</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $transactions->credits}}</p>
+                        {{ $transactions->credits ?? 'N/A' }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Description</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
                         {{ $transactions->description ?? 'N/A' }}</p>
                 </div>
-                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
+                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Metadata</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                         @if (is_array($transactions->metadata))
-            {{ json_encode($transactions->metadata) }}
-        @else
-            {{ $transactions->metadata }}
-        @endif
+                        @if (is_array($transactions->metadata))
+                            @foreach ($transactions->metadata as $key => $value)
+                                {{ ucfirst($key) }}: {{ $value }}<br>
+                            @endforeach
+                        @else
+                            {{ $transactions->metadata ?? 'N/A' }}
+                        @endif
                     </p>
                 </div>
                  <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Created At</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $transactions->created_at}}</p>
+                        {{ $transactions->created_at ?? 'N/A' }}</p>
                 </div>
                  <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">updated_at</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $transactions->updated_at}}</p>
+                        {{ $transactions->updated_at ?? 'N/A' }}</p>
                 </div>
 
             </div>

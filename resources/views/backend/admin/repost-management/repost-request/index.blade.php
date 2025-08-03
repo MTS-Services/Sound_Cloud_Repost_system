@@ -1,7 +1,7 @@
 <x-admin::layout>
     <x-slot name="title">{{ __('Repost Request List') }}</x-slot>
     <x-slot name="breadcrumb">{{ __('Repost Request List') }}</x-slot>
-    <x-slot name="page_slug">repostRequest</x-slot>
+    <x-slot name="page_slug">repost_request</x-slot>
 
 <section>
 

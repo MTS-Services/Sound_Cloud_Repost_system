@@ -26,7 +26,7 @@
                 <!-- Image -->
                 <div class="w-full md:w-1/3 max-w-56 rounded-xl shadow-lg overflow-hidden">
                     <img class="w-full h-full object-cover"
-                        src="{{ asset($user->avatar) ?: asset('images/default-profile.png') }}" alt="{{ $user->name }}">
+                        src="{{ auth_storage_url($user->avatar) }}" alt="{{ $user->name }}">
                 </div>
 
                 <!-- User Info -->
@@ -100,8 +100,8 @@
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud Permalink URL</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->soundcloud_permalink_url }}</p>
+                    <a class="text-xl font-bold text-black dark:text-white hover:underline"  href="{{ $userinfo->soundcloud_permalink_url }}">{{ $userinfo->soundcloud_permalink_url }}
+                       </a>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud Permalink</h4>
@@ -110,8 +110,8 @@
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud URI</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->soundcloud_uri }}</p>
+                    <a href="{{ $userinfo->soundcloud_uri }}" class="hover:underline text-xl font-bold text-black dark:text-white">
+                        {{ $userinfo->soundcloud_uri }}</a>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud Created At</h4>
@@ -175,8 +175,8 @@
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Website Title</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->website_title }}</p>
+                    <a href="{{ $userinfo->website_title }}" class=" hover:underline text-xl font-bold text-black dark:text-white">
+                        {{ $userinfo->website_title }}</a>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Website</h4>
@@ -186,7 +186,7 @@
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Online</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->online?? 'N/A' }}</p>
+                        {{ $userinfo->online ?? 'N/A' }}</p>
                 </div>
 
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
