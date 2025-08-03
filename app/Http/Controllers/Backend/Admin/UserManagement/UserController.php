@@ -180,12 +180,18 @@ class UserController extends Controller implements HasMiddleware
     {
         return [
             [
-                'routeName' => 'javascript:void(0)',
-                'data-id' => encrypt($model->soundcloud_urn),
-                'className' => 'view',
-                'label' => 'Details',
-                'permissions' => ['permission-list', 'permission-delete', 'permission-status']
+                'routeName' => 'um.user.playlist.detail',
+                'params' => encrypt($model->id),
+                'label' => 'view details',
+                'permissions' => ['Detail-list']
             ],
+            // [
+            //     'routeName' => 'javascript:void(0)',
+            //     'data-id' => encrypt($model->soundcloud_urn),
+            //     'className' => 'view',
+            //     'label' => 'Details',
+            //     'permissions' => ['permission-list', 'permission-delete', 'permission-status']
+            // ],
             [
                 'routeName' => 'um.user.playlist.track-list',
                 'params' => [encrypt($model->soundcloud_urn), encrypt($model->id)],
@@ -193,6 +199,12 @@ class UserController extends Controller implements HasMiddleware
                 'permissions' => ['permission-tracklist']
             ]
         ];
+    }
+
+    public function playlistDetail($id)
+    {
+      $data['playlists'] = Playlist::with('user')->find(decrypt($id));
+        return view('backend.admin.user-management.playlists.details', $data);
     }
     public function playlistTracks(Request $request, $playlistUrn)
     {
