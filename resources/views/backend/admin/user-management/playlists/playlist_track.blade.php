@@ -8,10 +8,10 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Playlist List Track') }}</h2>
                 <div class="flex items-center gap-2">
-                    {{-- <x-button href="{{ route('um.playlist.trash') }}" icon="trash-2" type='secondary'
+                    <x-button href="{{ route('um.user.index') }}"  type='secondary'
                         permission="admin-trash">
-                        {{ __('Trash') }}
-                    </x-button> --}}
+                        {{ __('Back') }}
+                    </x-button>
                 </div>
             </div>
         </div>
@@ -21,6 +21,10 @@
                     <tr>
                         <th>{{ __('SL') }}</th>
                         <th>{{ __('Title') }}</th>
+                        <th>{{ __('Tag List') }}</th>
+                        <th>{{ __('User Urn') }}</th>
+                        <th>{{ __('Release Year') }}</th>
+                      
                         <th>{{ __('Action') }}</th>
                     </tr>
                 </thead>
@@ -40,6 +44,9 @@
             document.addEventListener('DOMContentLoaded', () => {
                 let table_columns = [
                     ['title', true, true],
+                    ['tag_list', true, true],
+                    ['user_urn', true, true],
+                    ['release_month', true, true],
                     ['action', false, false],
                 ];
                 const details = {
@@ -58,12 +65,12 @@
         </script>
 
         {{-- Details Modal --}}
-        {{-- <script>
+        <script>
             document.addEventListener('DOMContentLoaded', () => {
 
                 $(document).on('click', '.view', function() {
                     const id = $(this).data('id');
-                    const route = "{{ route('um.playlist.show', ':id') }}";
+                    const route = "{{ route('um.user.playlist.show', ':id') }}";
 
                     const details = [{
                             label: '{{ __('Title') }}',
@@ -233,6 +240,6 @@
                     showDetailsModal(route, id, '{{ __('User Details') }}', details);
                 });
             });
-        </script> --}}
+        </script>
     @endpush
 </x-admin::layout>

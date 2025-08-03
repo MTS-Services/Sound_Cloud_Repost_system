@@ -194,18 +194,27 @@ class UserController extends Controller implements HasMiddleware
             //     'permissions' => ['permission-list', 'permission-delete', 'permission-status']
             // ],
             [
-                'routeName' => 'um.user.playlist.track-list',
-                'params' => [encrypt($model->soundcloud_urn), encrypt($model->id)],
-                'label' => 'Tracks',
-                'permissions' => ['permission-tracklist']
-            ]
+                'routeName' => 'um.user.tracklist.detail',
+                'params' => encrypt($model->id),
+                'label' => 'View Tracklist',
+                'permissions' => ['-list']
+            ],
         ];
     }
 
     public function playlistDetail($id)
     {
       $data['playlists'] = Playlist::with('user')->find(decrypt($id));
+      
         return view('backend.admin.user-management.playlists.details', $data);
+    }
+
+    
+    public function trackDetail($id)
+    {
+      $data['tracklists'] = Track::with('user')->find(decrypt($id));
+     
+        return view('backend.admin.user-management.playlists.tracklist_details', $data);
     }
     public function playlistTracks(Request $request, $playlistUrn)
     {
