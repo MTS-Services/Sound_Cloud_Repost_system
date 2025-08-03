@@ -16,25 +16,15 @@ class RepostRequest extends Component
 {
     public $repostRequests;
     public $track;
+    public $activeMainTab = 'pending'; // Default tab
 
     #[Locked]
     protected string $baseUrl = 'https://api.soundcloud.com';
-
-    // Track which requests are currently playing
     public $playingRequests = [];
-
-    // Track play start times
     public $playStartTimes = [];
-
-    // Track total play time for each request
     public $playTimes = [];
-
-    // Track which requests have been played for 5+ seconds
     public $playedRequests = [];
-
-    // Track which requests have been reposted
     public $repostedRequests = [];
-
     public $playCount = false;
 
     // Listeners for browser events
@@ -48,7 +38,7 @@ class RepostRequest extends Component
     public function mount()
     {
         $this->dataLoad();
-        
+
         // Initialize tracking arrays
         foreach ($this->repostRequests as $request) {
             $this->playTimes[$request->id] = 0;
@@ -166,7 +156,7 @@ class RepostRequest extends Component
     public function canRepost($requestId): bool
     {
         $request = $this->repostRequests->find($requestId);
-        
+
         if (!$request) {
             return false;
         }
@@ -188,7 +178,7 @@ class RepostRequest extends Component
             // $request->increment('playback_count');
             $this->playCount = true;
         }
-        
+
         return $canRepost;
     }
 
@@ -240,8 +230,8 @@ class RepostRequest extends Component
             // Check if the user has already reposted this specific request
             if (
                 Repost::where('reposter_urn', $currentUserUrn)
-                    ->where('repost_request_id', $requestId)
-                    ->exists()
+                ->where('repost_request_id', $requestId)
+                ->exists()
             ) {
                 session()->flash('error', 'You have already reposted this request.');
                 return;
@@ -269,7 +259,7 @@ class RepostRequest extends Component
             if ($response->successful()) {
                 // If SoundCloud returns a repost ID, capture it
                 $soundcloudRepostId = $response->json('id');
-                
+
                 // Create repost record
                 Repost::create([
                     'reposter_urn' => $currentUserUrn,
@@ -290,7 +280,7 @@ class RepostRequest extends Component
 
                 // Mark as reposted in component
                 $this->repostedRequests[] = $requestId;
-                
+
                 session()->flash('success', 'Request reposted successfully.');
             } else {
                 // Log the error response from SoundCloud for debugging
@@ -301,7 +291,6 @@ class RepostRequest extends Component
                 ]);
                 session()->flash('error', 'Failed to repost to SoundCloud. Please try again.');
             }
-
         } catch (Throwable $e) {
             Log::error("Error in repost method: " . $e->getMessage(), [
                 'exception' => $e,
@@ -313,18 +302,55 @@ class RepostRequest extends Component
         }
     }
 
+    public function declineRepostRequest($requestId)
+    {
+        try {
+            $request = ModelsRepostRequest::findOrFail($requestId);
+            $request->update([
+                'status' => ModelsRepostRequest::STATUS_DECLINE,
+                'rejection_reason' => 'Declined by user',
+                'responded_at' => now(),
+            ]);
+            $this->dataLoad();
+            session()->flash('success', 'Repost request declined successfully.');
+        } catch (Throwable $e) {
+            Log::error("Error declining repost request: " . $e->getMessage(), [
+                'exception' => $e,
+                'request_id' => $requestId,
+                'user_urn' => user()->urn ?? 'N/A',
+            ]);
+            session()->flash('error', 'Failed to decline repost request. Please try again.');
+        }
+    }
+    public function setActiveTab($tab)
+    {
+        $this->activeMainTab = $tab;
+        $this->dataLoad();
+    }
     public function dataLoad()
     {
-        // Load requests that are sent TO the current user (requests they need to fulfill)
-        // $this->repostRequests = ModelsRepostRequest::where('target_user_urn', user()->urn)
-        //     ->where('status', ModelsRepostRequest::STATUS_PENDING)
-        //     ->with(['track', 'requester', 'targetUser', 'campaign'])
-        //     ->get();
-            
-        // Alternative: If you want requests made BY the current user, use:
-        $this->repostRequests = ModelsRepostRequest::where('requester_urn', user()->urn)
-            ->with(['track', 'targetUser', 'campaign'])
-            ->get();
+        $query = ModelsRepostRequest::with(['track', 'targetUser'])->where('requester_urn', user()->urn);
+
+        switch ($this->activeMainTab) {
+            case 'pending':
+                $query->where('status', ModelsRepostRequest::STATUS_PENDING);
+                break;
+            case 'approved':
+                $query->where('status', ModelsRepostRequest::STATUS_APPROVED);
+                break;
+            case 'declined':
+                $query->where('status', ModelsRepostRequest::STATUS_DECLINE);
+                break;
+            case 'expired':
+                $query->where('status', ModelsRepostRequest::STATUS_EXPIRED);
+                break;
+            case 'completed':
+                $query->where('status', ModelsRepostRequest::STATUS_COMPLETED);
+                break;
+        }
+
+        // Order by created_at desc and paginate
+        return $this->repostRequests = $query->orderBy('sort_order', 'asc')->take(10)->get();
     }
 
     public function render()
