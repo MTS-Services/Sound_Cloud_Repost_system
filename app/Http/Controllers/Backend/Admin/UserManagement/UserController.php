@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
 use App\Models\Playlist;
 use App\Models\User;
+use App\Models\UserInformation;
 use App\Services\Admin\UserManagement\UserService;
 use App\Services\PlaylistService;
 use App\Services\TrackService;
@@ -134,7 +135,7 @@ class UserController extends Controller implements HasMiddleware
     public function detail(Request $request, string $id)
     {
         $data['user'] = $this->userService->getUser($id)->load(['userInfo']);
-       
+       $data['userinfo'] = $data['user']->userInfo;
         return view('backend.admin.user-management.user.detail', $data);
     }
     public function show(Request $request, string $id)
