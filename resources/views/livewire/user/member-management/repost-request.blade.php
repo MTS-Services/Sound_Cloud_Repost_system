@@ -37,7 +37,6 @@
             </nav>
         </div>
     </div>
-{{-- @dd($repostRequests); --}}
     @foreach ($repostRequests as $repostRequest)
         <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm">
             <div class="flex flex-col lg:flex-row" wire:key="request-{{ $repostRequest->id }}">
@@ -59,10 +58,10 @@
                             </div> --}}
 
                             <!-- Request Status Badge -->
-                            <div
+                            {{-- <div
                                 class="absolute top-2 left-2 bg-purple-600 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
                                 FEATURED
-                            </div>
+                            </div> --}}
 
                             {{-- <!-- Play Progress Bar -->
                             <div class="absolute bottom-2 left-2 right-2 bg-gray-200 dark:bg-gray-600 rounded-full h-1.5">
