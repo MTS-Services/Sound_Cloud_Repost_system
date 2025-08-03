@@ -238,7 +238,7 @@ class RepostRequest extends Component
             }
 
             // Find the request and load its track
-            $request = ModelsRepostRequest::findOrFail($requestId)->load('track');
+            $request = ModelsRepostRequest::with('track', 'campaign')->findOrFail($requestId);
 
             // Ensure track is associated with the request
             if (!$request->track) {
