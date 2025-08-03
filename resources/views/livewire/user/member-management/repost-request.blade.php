@@ -4,11 +4,12 @@
         <div>
             <h1 class="text-xl text-black dark:text-gray-100 font-bold">{{ __('Repost Requests') }}</h1>
         </div>
-        <button wire:click="toggleCampaignsModal" x-on:click="showCampaignsModal = true"
+        {{-- Set Route --}}
+        <a href="{{ route('user.mm.members.index') }}" wire:navigate
             class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 rounded-xl flex items-center gap-3 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
             <x-lucide-plus class="w-5 h-5" />
             {{ __('Send Repost') }}
-        </button>
+        </a>
     </div>
     <div class="mb-8">
         <div class="border-b border-gray-200 dark:border-gray-700">
