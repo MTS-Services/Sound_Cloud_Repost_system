@@ -9,7 +9,6 @@ use App\Models\User;
 use App\Models\UserInformation;
 use App\Models\Subscription;
 use App\Models\Track;
-use App\Models\UserFollowers;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -373,70 +372,98 @@ class SoundCloudService
                         'last_modified' => isset($playlistData['last_modified']) ? Carbon::parse($playlistData['last_modified'])->toDateTimeString() : null,
                     ]
                 );
-                // if (!empty($playlistData['tracks'])) {
-                //     foreach ($playlistData['tracks'] as $trackData) {
-                //         $track = Track::updateOrCreate(
-                //             [
-                //                 'soundcloud_track_id' => $trackData['id'] ?? null,
-                //                 'user_urn' => $user->urn,
-                //             ],
-                //             [
-                //                 'kind' => $trackData['kind'] ?? null,
-                //                 'urn' => $trackData['urn'] ?? null,
-                //                 'duration' => $trackData['duration'] ?? 0,
-                //                 'commentable' => $trackData['commentable'] ?? false,
-                //                 'comment_count' => $trackData['comment_count'] ?? 0,
-                //                 'sharing' => $trackData['sharing'] ?? null,
-                //                 'tag_list' => $trackData['tag_list'] ?? '',
-                //                 'streamable' => $trackData['streamable'] ?? false,
-                //                 'embeddable_by' => $trackData['embeddable_by'] ?? null,
-                //                 'purchase_url' => $trackData['purchase_url'] ?? null,
-                //                 'purchase_title' => $trackData['purchase_title'] ?? null,
-                //                 'genre' => $trackData['genre'] ?? null,
-                //                 'title' => $trackData['title'] ?? null,
-                //                 'description' => $trackData['description'] ?? null,
-                //                 'label_name' => $trackData['label_name'] ?? null,
-                //                 'release' => $trackData['release'] ?? null,
-                //                 'key_signature' => $trackData['key_signature'] ?? null,
-                //                 'isrc' => $trackData['isrc'] ?? null,
-                //                 'bpm' => $trackData['bpm'] ?? null,
-                //                 'release_year' => $trackData['release_year'] ?? null,
-                //                 'release_month' => $trackData['release_month'] ?? null,
-                //                 'release_day' => $trackData['release_day'] ?? null,
-                //                 'license' => $trackData['license'] ?? null,
-                //                 'uri' => $trackData['uri'] ?? null,
-                //                 'permalink_url' => $trackData['permalink_url'] ?? null,
-                //                 'artwork_url' => $trackData['artwork_url'] ?? null,
-                //                 'stream_url' => $trackData['stream_url'] ?? null,
-                //                 'download_url' => $trackData['download_url'] ?? null,
-                //                 'waveform_url' => $trackData['waveform_url'] ?? null,
-                //                 'available_country_codes' => $trackData['available_country_codes'] ?? null,
-                //                 'secret_uri' => $trackData['secret_uri'] ?? null,
-                //                 'user_favorite' => $trackData['user_favorite'] ?? false,
-                //                 'user_playback_count' => $trackData['user_playback_count'] ?? 0,
-                //                 'playback_count' => $trackData['playback_count'] ?? 0,
-                //                 'download_count' => $trackData['download_count'] ?? 0,
-                //                 'favoritings_count' => $trackData['favoritings_count'] ?? 0,
-                //                 'reposts_count' => $trackData['reposts_count'] ?? 0,
-                //                 'downloadable' => $trackData['downloadable'] ?? false,
-                //                 'access' => $trackData['access'] ?? null,
-                //                 'policy' => $trackData['policy'] ?? null,
-                //                 'monetization_model' => $trackData['monetization_model'] ?? null,
-                //                 'metadata_artist' => $trackData['metadata_artist'] ?? null,
-                //                 'created_at_soundcloud' => isset($trackData['created_at']) ? Carbon::parse($trackData['created_at'])->toDateTimeString() : null,
-                //                 'type' => $trackData['type'] ?? null,
-                //                 'last_sync_at' => now(),
-                //             ]
-                //         );
-                //     }
-                // }
 
-                // if ($playlist->exists && $track->exists) {
-                    // PlaylistTrack::updateOrCreate([
-                    //     'playlist_urn' => 'suroewosdf',
-                    //     'track_urn' => 'wiqeryewr',
-                    // ]);
-                // }
+                // --- Uncommented and refined playlist track syncing ---
+                if (!empty($playlistData['tracks'])) {
+                    foreach ($playlistData['tracks'] as $trackData) {
+                        // Prepare common track data (similar to syncUserTracks, but for a playlist context)
+                        $commonTrackData = [
+                            'kind' => $trackData['kind'] ?? null,
+                            'urn' => $trackData['urn'] ?? null,
+                            'duration' => $trackData['duration'] ?? 0,
+                            'commentable' => $trackData['commentable'] ?? false,
+                            'comment_count' => $trackData['comment_count'] ?? 0,
+                            'sharing' => $trackData['sharing'] ?? null,
+                            'tag_list' => $trackData['tag_list'] ?? '',
+                            'streamable' => $trackData['streamable'] ?? false,
+                            'embeddable_by' => $trackData['embeddable_by'] ?? null,
+                            'purchase_url' => $trackData['purchase_url'] ?? null,
+                            'purchase_title' => $trackData['purchase_title'] ?? null,
+                            'genre' => $trackData['genre'] ?? null,
+                            'title' => $trackData['title'] ?? null,
+                            'description' => $trackData['description'] ?? null,
+                            'label_name' => $trackData['label_name'] ?? null,
+                            'release' => $trackData['release'] ?? null,
+                            'key_signature' => $trackData['key_signature'] ?? null,
+                            'isrc' => $trackData['isrc'] ?? null,
+                            'bpm' => $trackData['bpm'] ?? null,
+                            'release_year' => $trackData['release_year'] ?? null,
+                            'release_month' => $trackData['release_month'] ?? null,
+                            'release_day' => $trackData['release_day'] ?? null,
+                            'license' => $trackData['license'] ?? null,
+                            'uri' => $trackData['uri'] ?? null,
+                            'permalink_url' => $trackData['permalink_url'] ?? null,
+                            'artwork_url' => $trackData['artwork_url'] ?? null,
+                            'stream_url' => $trackData['stream_url'] ?? null,
+                            'download_url' => $trackData['download_url'] ?? null,
+                            'waveform_url' => $trackData['waveform_url'] ?? null,
+                            'available_country_codes' => $trackData['available_country_codes'] ?? null,
+                            'secret_uri' => $trackData['secret_uri'] ?? null,
+                            'user_favorite' => $trackData['user_favorite'] ?? false,
+                            'user_playback_count' => $trackData['user_playback_count'] ?? 0,
+                            'playback_count' => $trackData['playback_count'] ?? 0,
+                            'download_count' => $trackData['download_count'] ?? 0,
+                            'favoritings_count' => $trackData['favoritings_count'] ?? 0,
+                            'reposts_count' => $trackData['reposts_count'] ?? 0,
+                            'downloadable' => $trackData['downloadable'] ?? false,
+                            'access' => $trackData['access'] ?? null,
+                            'policy' => $trackData['policy'] ?? null,
+                            'monetization_model' => $trackData['monetization_model'] ?? null,
+                            'metadata_artist' => $trackData['metadata_artist'] ?? null,
+                            'created_at_soundcloud' => isset($trackData['created_at']) ? Carbon::parse($trackData['created_at'])->toDateTimeString() : null,
+                            'type' => $trackData['type'] ?? null,
+                            'last_sync_at' => now(),
+                        ];
+
+                        // Add author details if available for the track
+                        if (isset($trackData['user'])) {
+                            $commonTrackData = array_merge($commonTrackData, [
+                                'author_username' => $trackData['user']['username'] ?? null,
+                                'author_soundcloud_id' => $trackData['user']['id'] ?? null,
+                                'author_soundcloud_urn' => $trackData['user']['urn'] ?? null,
+                                'author_soundcloud_kind' => $trackData['user']['kind'] ?? null,
+                                'author_soundcloud_permalink_url' => $trackData['user']['permalink_url'] ?? null,
+                                'author_soundcloud_permalink' => $trackData['user']['permalink'] ?? null,
+                                'author_soundcloud_uri' => $trackData['uri'] ?? null,
+                            ]);
+                        }
+
+                        $track = Track::updateOrCreate(
+                            [
+                                // Use the user_urn from the main user object and the soundcloud_track_id
+                                'user_urn' => $user->urn,
+                                'soundcloud_track_id' => $trackData['id'],
+                            ],
+                            $commonTrackData
+                        );
+                        // Link the track to the playlist
+                        // Ensure playlist and track have valid URNs before linking
+                        if ($playlist->soundcloud_urn && $track->urn) {
+                            PlaylistTrack::updateOrCreate([
+                                'playlist_urn' => $playlist->soundcloud_urn,
+                                'track_urn' => $track->urn,
+                            ]);
+                        } else {
+                            Log::warning('Skipping PlaylistTrack creation due to missing URNs', [
+                                'playlist_id' => $playlist->id,
+                                'playlist_urn' => $playlist->soundcloud_urn,
+                                'track_id' => $track->id,
+                                'track_urn' => $track->urn,
+                            ]);
+                        }
+                    }
+                }
+                // --- End of uncommented and refined playlist track syncing ---
 
                 if ($playlist->wasRecentlyCreated) {
                     $syncedCount++;
