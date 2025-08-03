@@ -152,6 +152,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::post('/show/{credit_transaction}', 'show')->name('show');
             Route::post('/store', 'store')->name('store');
             Route::get('/purchase', 'purchase')->name('purchase');
+            Route::get('/details/{transaction}', 'paymentDetails')->name('payment-detail');
             Route::get('/payments', 'payments')->name('payments'); 
             Route::get('/detail/{payment}', 'detail')->name('detail');
           

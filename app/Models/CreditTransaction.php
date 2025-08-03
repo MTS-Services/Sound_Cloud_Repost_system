@@ -57,7 +57,7 @@ class CreditTransaction extends BaseModel
      }
      public function getStatusColorAttribute(): string
      {
-         return $this->status == self::STATUS_PENDING ? 'warning' : 'success';
+         return $this->status == self::STATUS_PENDING ? 'Green' : 'success';
      }
      public function getStatusBtnLabelAttribute(): string
      {

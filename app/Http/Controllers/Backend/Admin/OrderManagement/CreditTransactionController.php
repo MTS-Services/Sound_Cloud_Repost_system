@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Backend\Admin\OrderManagement;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CreditTransactionRequest;
+use App\Models\Credit;
+use App\Models\CreditTransaction;
 use App\Models\Payment;
+use App\Models\User;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\Admin\OrderManagement\PaymentService;
 use Illuminate\Http\Request;
@@ -57,15 +60,27 @@ class CreditTransactionController extends Controller
     public function creditmeniItems($model)
     {
         return [
+
             [
-                'routeName' => 'javascript:void(0)',
-                'data-id' => encrypt($model->id),
-                'className' => 'view',
-                'label' => 'Details',
-                'permissions' => ['creditTransaction-list',]
+                'routeName' => 'om.credit-transaction.detail',
+                'params' => encrypt($model->id),
+                'label' => 'View Details',
+                'permissions' => ['creditTransaction-detail']
             ],
+            // [
+            //     'routeName' => 'javascript:void(0)',
+            //     'data-id' => encrypt($model->id),
+            //     'className' => 'view',
+            //     'label' => 'Details',
+            //     'permissions' => ['creditTransaction-list',]
+            // ],
             
         ];
+    }
+    public function detail($id)
+    { 
+        $data['transactions'] = Payment::where('id', decrypt($id))->first();
+        return view('backend.admin.order-management.transactions.detail',$data);
     }
 
     public function show(string $id)
@@ -166,12 +181,18 @@ class CreditTransactionController extends Controller
     {
         return [
             [
-                'routeName' => 'javascript:void(0)',
-                'data-id' => encrypt($model->id),
-                'className' => 'view',
-                'label' => 'Details',
-                'permissions' => ['purchase-list', 'purchase-delete', 'purchase-status']
+                'routeName' => 'om.credit-transaction.payment-detail',
+                'params' => encrypt($model->id),
+                'label' => 'View Details',
+                'permissions' => ['payment-detail']
             ],
+            // [
+            //     'routeName' => 'javascript:void(0)',
+            //     'data-id' => encrypt($model->id),
+            //     'className' => 'view',
+            //     'label' => 'Details',
+            //     'permissions' => ['purchase-list', 'purchase-delete', 'purchase-status']
+            // ],
             [
                 'routeName' => '',
                 'params' => [encrypt($model->id)],
@@ -188,5 +209,10 @@ class CreditTransactionController extends Controller
             ]
 
         ];
+    }
+    public function paymentDetails($id)
+    { 
+        $data['payments'] = Payment::where('id', decrypt($id))->first();
+        return view('backend.admin.order-management.payments.detail',$data);
     }
 }
