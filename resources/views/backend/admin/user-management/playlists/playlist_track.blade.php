@@ -21,6 +21,11 @@
                     <tr>
                         <th>{{ __('SL') }}</th>
                         <th>{{ __('Title') }}</th>
+                        <th>{{ __('Tag List') }}</th>
+                        <th>{{ __('User Name') }}</th>
+                        <th>{{ __('Author Name') }}</th>
+                        <th>{{ __('Purchased') }}</th>
+                        <th>{{ __('Release Month') }}</th>
                         <th>{{ __('Action') }}</th>
                     </tr>
                 </thead>
@@ -40,6 +45,11 @@
             document.addEventListener('DOMContentLoaded', () => {
                 let table_columns = [
                     ['title', true, true],
+                    ['tag_list', true, true],
+                    ['user_urn', true, true],
+                    ['author_username', true, true],
+                    ['purchase_title', true, true],
+                    ['release_month', true, true],
                     ['action', false, false],
                 ];
                 const details = {
@@ -48,7 +58,7 @@
                     displayLength: 10,
                     main_route: "{{ route('um.user.playlist.track-list', $palaylistUrn) }}",
                     order_route: "{{ route('update.sort.order') }}",
-                    export_columns: [0, 1,],
+                    export_columns: [0, 1, ],
                     model: 'Playlist',
                 };
                 // initializeDataTable(details);
@@ -58,141 +68,49 @@
         </script>
 
         {{-- Details Modal --}}
-        {{-- <script>
+        <script>
             document.addEventListener('DOMContentLoaded', () => {
 
                 $(document).on('click', '.view', function() {
                     const id = $(this).data('id');
-                    const route = "{{ route('um.playlist.show', ':id') }}";
+                    const route = "{{ route('um.user.tracklist.show', ':id') }}";
 
                     const details = [{
-                            label: '{{ __('Title') }}',
-                            key: 'title'
-                        },
-                        {
-                            label: '{{ __('Sort Order') }}',
-                            key: 'sort_order'
-                        },
-                        {
-                            label: '{{ __('User URN') }}',
+                            label: '{{ __('User Urn') }}',
                             key: 'user_urn'
+                        },
+                        {
+                            label: '{{ __('Kind') }}',
+                            key: 'kind'
+                        },
+                        {
+                            label: '{{ __('SoundCloud Track ID') }}',
+                            key: 'soundcloud_track_id'
+                        },
+                        {
+                            label: '{{ __('URN') }}',
+                            key: 'urn'
                         },
                         {
                             label: '{{ __('Duration') }}',
                             key: 'duration'
                         },
                         {
-                            label: '{{ __('Label ID') }}',
-                            key: 'label_id'
+                            label: '{{ __('Commentable') }}',
+                            key: 'commentable'
                         },
                         {
-                            label: '{{ __('Genre') }}',
-                            key: 'genre'
-                        },
-                        {
-                            label: '{{ __('Release Day') }}',
-                            key: 'release_day'
-                        },
-                        {
-                            label: '{{ __('Permalink') }}',
-                            key: 'permalink'
-                        },
-                        {
-                            label: '{{ __('Permalink URL') }}',
-                            key: 'permalink_url'
-                        },
-                        {
-                            label: '{{ __('Release Month') }}',
-                            key: 'release_month'
-                        },
-                        {
-                            label: '{{ __('Release Year') }}',
-                            key: 'release_year'
-                        },
-                        {
-                            label: '{{ __('Description') }}',
-                            key: 'description'
-                        },
-                        {
-                            label: '{{ __('URI') }}',
-                            key: 'uri'
-                        },
-                        {
-                            label: '{{ __('Label Name') }}',
-                            key: 'label_name'
-                        },
-                        {
-                            label: '{{ __('Label') }}',
-                            key: 'label'
-                        },
-                        {
-                            label: '{{ __('Tag List') }}',
-                            key: 'tag_list'
-                        },
-                        {
-                            label: '{{ __('Track Count') }}',
-                            key: 'track_count'
-                        },
-                        {
-                            label: '{{ __('Last Modified') }}',
-                            key: 'last_modified'
-                        },
-                        {
-                            label: '{{ __('License') }}',
-                            key: 'license'
-                        },
-                        {
-                            label: '{{ __('Playlist Type') }}',
-                            key: 'playlist_type'
-                        },
-                        {
-                            label: '{{ __('Type') }}',
-                            key: 'type'
-                        },
-                        {
-                            label: '{{ __('SoundCloud ID') }}',
-                            key: 'soundcloud_id'
-                        },
-                        {
-                            label: '{{ __('SoundCloud URN') }}',
-                            key: 'soundcloud_urn'
-                        },
-                        {
-                            label: '{{ __('Downloadable') }}',
-                            key: 'downloadable'
-                        },
-                        {
-                            label: '{{ __('Likes Count') }}',
-                            key: 'likes_count'
+                            label: '{{ __('Comment Count') }}',
+                            key: 'comment_count'
                         },
                         {
                             label: '{{ __('Sharing') }}',
                             key: 'sharing'
                         },
                         {
-                            label: '{{ __('SoundCloud Created At') }}',
-                            key: 'soundcloud_created_at'
-                        },
-                        {
-                            label: '{{ __('Release') }}',
-                            key: 'release'
-                        },
-                        {
-                            label: '{{ __('Tags') }}',
-                            key: 'tags'
-                        },
-                        {
-                            label: '{{ __('SoundCloud Kind') }}',
-                            key: 'soundcloud_kind'
-                        },
-                        {
-                            label: '{{ __('Purchase Title') }}',
-                            key: 'purchase_title'
-                        },
-                        {
-                            label: '{{ __('EAN') }}',
-                            key: 'ean'
-                        },
+                            label: '{{ __('Tag List') }}',
+                            key: 'tag_list'
+                        }, // Note: Original key has a typo
                         {
                             label: '{{ __('Streamable') }}',
                             key: 'streamable'
@@ -202,37 +120,176 @@
                             key: 'embeddable_by'
                         },
                         {
-                            label: '{{ __('Artwork URL') }}',
-                            key: 'artwork_url'
-                        },
-                        {
                             label: '{{ __('Purchase URL') }}',
                             key: 'purchase_url'
                         },
                         {
-                            label: '{{ __('Tracks URI') }}',
-                            key: 'tracks_uri'
+                            label: '{{ __('Purchase Title') }}',
+                            key: 'purchase_title'
                         },
                         {
-                            label: '{{ __('Secret Token') }}',
-                            key: 'secret_token'
+                            label: '{{ __('Genre') }}',
+                            key: 'genre'
+                        },
+                        {
+                            label: '{{ __('Title') }}',
+                            key: 'title'
+                        },
+                        {
+                            label: '{{ __('Description') }}',
+                            key: 'description'
+                        },
+                        {
+                            label: '{{ __('Label Name') }}',
+                            key: 'label_name'
+                        },
+                        {
+                            label: '{{ __('Release') }}',
+                            key: 'release'
+                        },
+                        {
+                            label: '{{ __('Key Signature') }}',
+                            key: 'key_signature'
+                        },
+                        {
+                            label: '{{ __('ISRC') }}',
+                            key: 'isrc'
+                        },
+                        {
+                            label: '{{ __('BPM') }}',
+                            key: 'bpm'
+                        },
+                        {
+                            label: '{{ __('Release Year') }}',
+                            key: 'release_year'
+                        },
+                        {
+                            label: '{{ __('Release Month') }}',
+                            key: 'release_month'
+                        },
+                        {
+                            label: '{{ __('License') }}',
+                            key: 'license'
+                        },
+                        {
+                            label: '{{ __('URI') }}',
+                            key: 'uri'
+                        },
+                        {
+                            label: '{{ __('Permalink URL') }}',
+                            key: 'permalink_url'
+                        },
+                        {
+                            label: '{{ __('Artwork URL') }}',
+                            key: 'artwork_url'
+                        },
+                        {
+                            label: '{{ __('Stream URL') }}',
+                            key: 'stream_url'
+                        },
+                        {
+                            label: '{{ __('Download URL') }}',
+                            key: 'download_url'
+                        },
+                        {
+                            label: '{{ __('Waveform URL') }}',
+                            key: 'waveform_url'
+                        },
+                        {
+                            label: '{{ __('Available Country Codes') }}',
+                            key: 'available_country_codes'
                         },
                         {
                             label: '{{ __('Secret URI') }}',
                             key: 'secret_uri'
                         },
                         {
-                            label: '{{ __('Created At') }}',
-                            key: 'created_at'
+                            label: '{{ __('User Favorite') }}',
+                            key: 'user_favorite'
                         },
                         {
-                            label: '{{ __('Updated At') }}',
-                            key: 'updated_at'
+                            label: '{{ __('User Playback Count') }}',
+                            key: 'user_playback_count'
+                        },
+                        {
+                            label: '{{ __('Playback Count') }}',
+                            key: 'playback_count'
+                        },
+                        {
+                            label: '{{ __('Download Count') }}',
+                            key: 'download_count'
+                        },
+                        {
+                            label: '{{ __('Favoritings Count') }}',
+                            key: 'favoritings_count'
+                        },
+                        {
+                            label: '{{ __('Reposts Count') }}',
+                            key: 'reposts_count'
+                        },
+                        {
+                            label: '{{ __('Downloadable') }}',
+                            key: 'downloadable'
+                        },
+                        {
+                            label: '{{ __('Access') }}',
+                            key: 'access'
+                        },
+                        {
+                            label: '{{ __('Policy') }}',
+                            key: 'policy'
+                        },
+                        {
+                            label: '{{ __('Monetization Model') }}',
+                            key: 'monetization_model'
+                        },
+                        {
+                            label: '{{ __('Metadata Artist') }}',
+                            key: 'metadata_artist'
+                        },
+                        {
+                            label: '{{ __('Created At SoundCloud') }}',
+                            key: 'created_at_soundcloud'
+                        },
+                        {
+                            label: '{{ __('Type') }}',
+                            key: 'type'
+                        },
+
+                        // Author details
+                        {
+                            label: '{{ __('Author Username') }}',
+                            key: 'author_username'
+                        },
+                        {
+                            label: '{{ __('Author SoundCloud ID') }}',
+                            key: 'author_soundcloud_id'
+                        },
+                        {
+                            label: '{{ __('Author SoundCloud URN') }}',
+                            key: 'author_soundcloud_urn'
+                        },
+                        {
+                            label: '{{ __('Author SoundCloud Kind') }}',
+                            key: 'author_soundcloud_kind'
+                        },
+                        {
+                            label: '{{ __('Author SoundCloud Permalink URL') }}',
+                            key: 'author_soundcloud_permalink_url'
+                        },
+                        {
+                            label: '{{ __('Author SoundCloud Permalink') }}',
+                            key: 'author_soundcloud_permalink'
+                        },
+                        {
+                            label: '{{ __('Author SoundCloud URI') }}',
+                            key: 'author_soundcloud_uri'
                         },
                     ];
+
                     showDetailsModal(route, id, '{{ __('User Details') }}', details);
                 });
             });
-        </script> --}}
+        </script>
     @endpush
 </x-admin::layout>

@@ -192,13 +192,28 @@ class UserController extends Controller implements HasMiddleware
             $playlist = $this->playlistService->getPlaylist($playlistUrn)->load(['tracks', 'user']);
             $query = $playlist->tracks();
             return DataTables::eloquent($query)
+                ->editColumn('release_month', function ($playlist) {
+                    return $playlist->release_month_formatted;
+                })
                 ->editColumn('action', function ($playlist) {
-                    $menuItems = $this->playlistmenuItems($playlist);
+                    $menuItems = $this->playlistTrackMenuItems($playlist);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action', 'created_at', 'title'])->make(true);
+                ->rawColumns(['action', 'created_at', 'title', 'release_month'])->make(true);
         }
         return view('backend.admin.user-management.playlists.playlist_track', compact('palaylistUrn'));
+    }
+    public function playlistTrackMenuItems($model): array
+    {
+        return [
+            [
+                'routeName' => 'javascript:void(0)',
+                'data-id' => encrypt($model->urn),
+                'className' => 'view',
+                'label' => 'Details',
+                'permissions' => ['permission-list', 'permission-delete', 'permission-status']
+            ],
+        ];
     }
 
     public function tracklist(Request $request)
@@ -219,7 +234,7 @@ class UserController extends Controller implements HasMiddleware
                     $menuItems = $this->tracklistMenuItems($tracklist);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action', 'creater_id', 'created_at', 'user_urn','release_month'])
+                ->rawColumns(['action', 'creater_id', 'created_at', 'user_urn', 'release_month'])
                 ->make(true);
         }
         return view('backend.admin.user-management.tracklist.index');
