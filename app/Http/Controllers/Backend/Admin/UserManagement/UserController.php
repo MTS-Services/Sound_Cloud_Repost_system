@@ -189,7 +189,8 @@ class UserController extends Controller implements HasMiddleware
     {
         $palaylistUrn = $playlistUrn;
         if ($request->ajax()) {
-            $query = $this->playlistService->getPlaylistTracks($playlistUrn);
+            $playlist = $this->playlistService->getPlaylist($playlistUrn)->load(['tracks', 'user']);
+            $query = $playlist->tracks();
             return DataTables::eloquent($query)
                 ->editColumn('action', function ($playlist) {
                     $menuItems = $this->playlistmenuItems($playlist);
