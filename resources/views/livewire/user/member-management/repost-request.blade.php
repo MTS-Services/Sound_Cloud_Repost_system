@@ -19,11 +19,6 @@
                     {{ __('Pendings') }}
                 </button>
                 <button
-                    class="tab-button @if ($activeMainTab === 'approved') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                    wire:click="setActiveTab('approved')">
-                    {{ __('Approved') }}
-                </button>
-                <button
                     class="tab-button @if ($activeMainTab === 'decline') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
                     wire:click="setActiveTab('decline')">
                     {{ __('Declined') }}
