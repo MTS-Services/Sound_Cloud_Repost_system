@@ -437,7 +437,8 @@
                                             stroke="currentColor" stroke-width="2" />
                                     </svg>
                                 </div>
-                                <span class="text-orange-500 dark:text-orange-400 font-bold">1 Credit</span>
+                                <span class="text-orange-500 dark:text-orange-400 font-bold">{{ repostPrice($user) }} </span>
+                                <span class="text-gray-500 dark:text-gray-400">Credit</span>
                             </div>
                         </div>
                         <div class="p-4 bg-gray-50 dark:bg-slate-700 rounded-xl border-l-4 border-orange-500 mt-4">
