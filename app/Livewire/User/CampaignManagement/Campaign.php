@@ -19,9 +19,16 @@ class Campaign extends Component
     protected ?CampaignService $campaignService = null;
     public $featuredCampaigns;
     public $campaigns;
-
     #[Locked]
     protected string $baseUrl = 'https://api.soundcloud.com';
+
+    // Properties for filtering and search
+    public $search = '';
+    public $selectedTags = [];
+    public $suggestedTags = [];
+    public $showSuggestions = false;
+    public $isLoading = false;
+
 
     // Track which campaigns are currently playing
     public $playingCampaigns = [];
@@ -51,29 +58,161 @@ class Campaign extends Component
     {
         $this->campaignService = $campaignService;
         $allowed_target_credits = repostPrice(user());
-        $this->featuredCampaigns = $this->campaignService->getCampaigns()
-            ->where('cost_per_repost', $allowed_target_credits)
-            ->featured()
-            ->withoutSelf()
-            ->with(['music.user.userInfo', 'reposts']) // Keep 'reposts' if you need it for other purposes, otherwise it can be removed
-            ->whereDoesntHave('reposts', function ($query) { // Use whereDoesntHave
-                $query->where('reposter_urn', user()->urn);
-            })
-            ->get();
-        $this->campaigns = $this->campaignService->getCampaigns()
-            ->where('cost_per_repost', $allowed_target_credits)
-            ->notFeatured()
-            ->withoutSelf()
-            ->with(['music.user.userInfo', 'reposts']) // Keep 'reposts' if you need it for other purposes, otherwise it can be removed
-            ->whereDoesntHave('reposts', function ($query) { // Use whereDoesntHave
-                $query->where('reposter_urn', user()->urn);
-            })
-            ->get();
+        // $this->featuredCampaigns = $this->campaignService->getCampaigns()
+        //     ->where('cost_per_repost', $allowed_target_credits)
+        //     ->featured()
+        //     ->withoutSelf()
+        //     ->with(['music.user.userInfo', 'reposts']) // Keep 'reposts' if you need it for other purposes, otherwise it can be removed
+        //     ->whereDoesntHave('reposts', function ($query) { // Use whereDoesntHave
+        //         $query->where('reposter_urn', user()->urn);
+        //     })
+        //     ->get();
+        // $this->campaigns = $this->campaignService->getCampaigns()
+        //     ->where('cost_per_repost', $allowed_target_credits)
+        //     ->notFeatured()
+        //     ->withoutSelf()
+        //     ->with(['music.user.userInfo', 'reposts']) // Keep 'reposts' if you need it for other purposes, otherwise it can be removed
+        //     ->whereDoesntHave('reposts', function ($query) { // Use whereDoesntHave
+        //         $query->where('reposter_urn', user()->urn);
+        //     })
+        //     ->get();
+
     }
 
 
     public function mount()
     {
+        $this->loadInitialData();
+    }
+    public function updatedSearch()
+    {
+        if (strlen($this->search) >= 2) {
+            $this->loadTagSuggestions();
+            $this->showSuggestions = true;
+        } else {
+            $this->suggestedTags = [];
+            $this->showSuggestions = false;
+        }
+    }
+
+    public function loadTagSuggestions()
+    {
+        // Get unique tags from tracks table that match the search query
+        // $this->suggestedTags = $this->campaignService->getCampaigns()->with('music')->get()->pluck('music.tag_list')->flatten()->unique()->filter(function ($tag) {
+        //     return strpos(strtolower($tag), strtolower($this->search)) !== false;
+        // });
+        $this->suggestedTags = $this->campaignService->getCampaigns()
+            ->with('music')
+            ->get()
+            ->pluck('music.tag_list')
+            ->flatten()
+            ->unique()
+            ->filter(function ($tag) {
+                return stripos($tag, $this->search) !== false && !in_array($tag, $this->selectedTags);
+            })
+            ->take(10)
+            ->values()
+            ->toArray();
+        // $this->suggestedTags = Track::whereNotNull('tags')
+        //     ->where('tags', '!=', '')
+        //     ->get()
+        //     ->pluck('tags')
+        //     ->flatMap(function ($tagString) {
+        //         return collect(explode(',', $tagString))->map(function ($tag) {
+        //             return trim($tag);
+        //         });
+        //     }) 
+        //     ->unique()
+        //     ->filter(function ($tag) {
+        //         return stripos($tag, $this->search) !== false && !in_array($tag, $this->selectedTags);
+        //     })
+        //     ->take(10)
+        //     ->values()
+        //     ->toArray();
+        // If no tags found, set showSuggestions to false
+        if (empty($this->suggestedTags)) {
+            $this->showSuggestions = false;
+        } else {
+            $this->showSuggestions = true;
+        }
+    }
+
+    public function selectTag($tag)
+    {
+        if (!in_array($tag, $this->selectedTags)) {
+            $this->selectedTags[] = $tag;
+            $this->search = '';
+            $this->suggestedTags = [];
+            $this->showSuggestions = false;
+            $this->searchByTags();
+        }
+    }
+    public function removeTag($tag)
+    {
+        unset($this->selectedTags[$tag]);
+        $this->selectedTags = array_values($this->selectedTags);
+        $this->searchByTags();
+    }
+    public function searchByTags()
+    {
+        $this->isLoading = true;
+
+        if (empty($this->selectedTags)) {
+            $this->loadInitialData();
+        } else {
+            $this->featuredCampaigns = $this->campaignService->getCampaigns()
+                ->where('cost_per_repost', repostPrice(user()))
+                ->featured()
+                ->withoutSelf()
+                ->with(['music.user.userInfo', 'reposts'])
+                ->whereDoesntHave('reposts', function ($query) {
+                    $query->where('reposter_urn', user()->urn);
+                })
+                ->whereHas('music', function ($query) {
+                    $query->whereIn('tag_list', $this->selectedTags);
+                })
+                ->get();
+
+            $this->campaigns = $this->campaignService->getCampaigns()
+                ->where('cost_per_repost', repostPrice(user()))
+                ->notFeatured()
+                ->withoutSelf()
+                ->with(['music.user.userInfo', 'reposts'])
+                ->whereDoesntHave('reposts', function ($query) {
+                    $query->where('reposter_urn', user()->urn);
+                })
+                ->whereHas('music', function ($query) {
+                    $query->whereIn('tag_list', $this->selectedTags);
+                })
+                ->get();
+        }
+
+        $this->isLoading = false;
+    }
+    public function loadInitialData()
+    {
+
+        $allowed_target_credits = repostPrice(user());
+        $this->featuredCampaigns = $this->campaignService->getCampaigns()
+            ->where('cost_per_repost', $allowed_target_credits)
+            ->featured()
+            ->withoutSelf()
+            ->with(['music.user.userInfo', 'reposts'])
+            ->whereDoesntHave('reposts', function ($query) {
+                $query->where('reposter_urn', user()->urn);
+            })
+            ->get();
+
+        $this->campaigns = $this->campaignService->getCampaigns()
+            ->where('cost_per_repost', $allowed_target_credits)
+            ->notFeatured()
+            ->withoutSelf()
+            ->with(['music.user.userInfo', 'reposts'])
+            ->whereDoesntHave('reposts', function ($query) {
+                $query->where('reposter_urn', user()->urn);
+            })
+            ->get();
+
         // Initialize tracking arrays
         foreach ($this->featuredCampaigns as $campaign) {
             $this->playTimes[$campaign->id] = 0;
@@ -83,6 +222,37 @@ class Campaign extends Component
             $this->playTimes[$campaign->id] = 0;
         }
     }
+
+    public function searchTags($tags)
+    {
+        $this->selectedTags = $tags;
+        $this->featuredCampaigns = $this->campaignService->getCampaigns()
+            ->where('cost_per_repost', repostPrice(user()))
+            ->featured()
+            ->withoutSelf()
+            ->with(['music.user.userInfo', 'reposts'])
+            ->whereDoesntHave('reposts', function ($query) {
+                $query->where('reposter_urn', user()->urn);
+            })
+            ->filterByTags($this->selectedTags)
+            ->get();
+
+        $this->campaigns = $this->campaignService->getCampaigns()
+            ->where('cost_per_repost', repostPrice(user()))
+            ->notFeatured()
+            ->withoutSelf()
+            ->with(['music.user.userInfo', 'reposts'])
+            ->whereDoesntHave('reposts', function ($query) {
+                $query->where('reposter_urn', user()->urn);
+            })
+            ->filterByTags($this->selectedTags)
+            ->get();
+    }
+    // public function hideSuggestions()
+    // {
+    //     // Delay hiding to allow click events on suggestions
+    //     $this->dispatchBrowserEvent('hide-suggestions-delayed');
+    // }
 
     /**
      * Handle audio play event
@@ -258,8 +428,8 @@ class Campaign extends Component
             // Check if the user has already reposted this specific campaign
             if (
                 Repost::where('reposter_urn', $currentUserUrn)
-                    ->where('campaign_id', $campaignId)
-                    ->exists()
+                ->where('campaign_id', $campaignId)
+                ->exists()
             ) {
                 session()->flash('error', 'You have already reposted this campaign.');
                 return;
@@ -309,10 +479,7 @@ class Campaign extends Component
                     'status' => $response->status(),
                 ]);
                 session()->flash('error', 'Failed to repost campaign music to SoundCloud. Please try again.');
-
-
             }
-
         } catch (Throwable $e) {
             Log::error("Error in repost method: " . $e->getMessage(), [
                 'exception' => $e,

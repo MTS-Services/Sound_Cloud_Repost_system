@@ -2,7 +2,7 @@
     <x-slot name="page_slug">campaign-feed</x-slot>
 
     <!-- Header Section -->
-    <div class="w-full mt-6">
+    <div class="w-full mt-6 relative">
         <!-- Header Tabs & Button -->
         <div
             class="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-4 pt-3 border-b border-b-gray-200 dark:border-b-gray-700  gap-2 sm:gap-0">
@@ -19,10 +19,29 @@
                 </div>
 
                 <div x-show="showInput" x-cloak>
-                    <input type="text" placeholder="Search by tag"
-                        class="border py-2 border-red-500 pl-7 dark:text-slate-300 dark:border-red-400 dark:bg-gray-800 pr-2 rounded focus:outline-none focus:ring-1 focus:ring-red-400"
-                        @click.outside="showInput = false" x-ref="searchInput" x-init="$watch('showInput', (value) => { if (value) { $nextTick(() => $refs.searchInput.focus()) } })" />
+                    <input type="text" wire:model.debounce.300ms="search" wire:focus="$set('showSuggestions', true)"
+                        placeholder="Search by tag"
+                        class="border py-2 border-red-500 pl-7 dark:text-slate-300 dark:border-red-400 dark:bg-gray-800 pr-2 rounded focus:outline-none focus:ring-1 focus:ring-red-400 mr-20"
+                        @click.outside="showInput = false" x-ref="searchInput" x-init="$watch('showInput', (value) => { if (value) { $nextTick(() => $refs.searchInput.focus()) } })"
+                        autocomplete="off" />
+                    {{-- <input type="text" wire:model.debounce.300ms="search" wire:focus="$set('showSuggestions', true)"
+                        wire:blur="hideSuggestions" placeholder="Type to search tags..."
+                        class="flex-1 min-w-0 border-0 outline-none focus:ring-0 p-1" autocomplete="off"> --}}
                 </div>
+                @foreach ($selectedTags as $index => $tag)
+                    <span
+                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 mt-4 ml-20">
+                        {{ $tag }}
+                        <button type="button" wire:click="removeTag({{ $index }})"
+                            class="ml-2 text-blue-600 hover:text-blue-800 focus:outline-none">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12">
+                                </path>
+                            </svg>
+                        </button>
+                    </span>
+                @endforeach
             </div>
 
             <a href="{{ route('user.cm.my-campaigns') }}" wire:navigate
@@ -30,6 +49,18 @@
                 Start a new campaign
             </a>
         </div>
+        <!-- Suggestions Dropdown -->
+        @if ($showSuggestions && !empty($suggestedTags))
+            <div
+                class="absolute z-50 w-full mt-1  border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                @foreach ($suggestedTags as $tag)
+                    <button type="button" wire:click="selectTag('{{ $tag }}')"
+                        class="w-full text-left px-4 py-3 hover:bg-blue-50 focus:bg-blue-50 focus:outline-none border-b border-gray-100 last:border-b-0 transition-colors duration-150">
+                        <span class="text-gray-800 font-medium">{{ $tag }}</span>
+                    </button>
+                @endforeach
+            </div>
+        @endif
     </div>
 
     <div class="container mx-auto px-4 py-6">
@@ -134,7 +165,8 @@
                                                 <span
                                                     class="text-sm sm:text-base">{{ $campaign->budget_credits - $campaign->credits_spent }}</span>
                                             </div>
-                                            <span class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
+                                            <span
+                                                class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
                                         </div>
 
                                         <div class="relative">
@@ -147,8 +179,8 @@
                                                     'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
                                                         $campaign->id),
                                                 ]) @disabled(!$this->canRepost($campaign->id))>
-                                                <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
+                                                <svg width="26" height="18" viewBox="0 0 26 18"
+                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <rect x="1" y="1" width="24" height="16" rx="3"
                                                         fill="none" stroke="currentColor" stroke-width="2" />
                                                     <circle cx="8" cy="9" r="3" fill="none"
@@ -339,6 +371,13 @@
 
     <!-- Simple Livewire-SoundCloud Bridge Script -->
     <script>
+        // document.addEventListener('livewire:load', function() {
+        //     window.addEventListener('hide-suggestions-delayed', function() {
+        //         setTimeout(function() {
+        //             @this.set('showSuggestions', false);
+        //         }, 200);
+        //     });
+        // });
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize SoundCloud Widget API integration with Livewire
             function initializeSoundCloudWidgets() {
