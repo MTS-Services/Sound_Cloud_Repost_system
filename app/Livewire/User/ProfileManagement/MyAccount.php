@@ -56,7 +56,9 @@ class MyAccount extends Component
     }
     public function getTransactions(): void
     {
-        $this->transactions = $this->creditTransactionService->getUserTransactions();
+        $this->transactions = $this->creditTransactionService->getUserTransactions()->where('status', 'succeeded')
+            ->sortByDesc('created_at')
+            ->take(10);
     }
 
     public function getMyUser()

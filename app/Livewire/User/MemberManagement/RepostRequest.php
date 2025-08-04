@@ -338,7 +338,7 @@ class RepostRequest extends Component
             case 'approved':
                 $query->where('status', ModelsRepostRequest::STATUS_APPROVED);
                 break;
-            case 'declined':
+            case 'decline':
                 $query->where('status', ModelsRepostRequest::STATUS_DECLINE);
                 break;
             case 'expired':
