@@ -101,7 +101,8 @@
                     [
                         'name' => 'Features',
                         'route' => route('pm.feature.index'),
-                        'icon' => 'megaphone',
+                        'icon' => 'megaphone'
+                        ,
                         'active' => 'feature',
                         'permission' => 'features-list',
                     ],

@@ -41,7 +41,7 @@
             <div
                 class="bg-white  dark:bg-slate-800 rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-slate-400 text-sm font-medium">Available Credits</h3>
+                    <h3 class="text-gray-900 dark:text-white text-sm font-medium">Available Credits</h3>
                     <div class="p-2 rounded-lg bg-yellow-500/20 text-yellow-500"><svg xmlns="http://www.w3.org/2000/svg"
                             width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -58,7 +58,7 @@
             <div
                 class="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-slate-400 text-sm font-medium">Active Campaigns</h3>
+                    <h3 class="text-gray-900 dark:text-white text-sm font-medium">Active Campaigns</h3>
                     <div class="p-2 rounded-lg bg-blue-500/20 text-blue-500"><svg xmlns="http://www.w3.org/2000/svg"
                             width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -77,7 +77,7 @@
             <div
                 class="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-slate-400 text-sm font-medium">Reposts Received</h3>
+                    <h3 class="text-gray-900 dark:text-white text-sm font-medium">Reposts Received</h3>
                     <div class="p-2 rounded-lg bg-green-500/20 text-green-500"><svg xmlns="http://www.w3.org/2000/svg"
                             width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -97,7 +97,7 @@
             <div
                 class="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-slate-400 text-sm font-medium">Credibility Score</h3>
+                    <h3 class="text-gray-900 dark:text-white text-sm font-medium">Credibility Score</h3>
                     <div class="p-2 rounded-lg bg-purple-500/20 text-purple-500"><svg xmlns="http://www.w3.org/2000/svg"
                             width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -158,23 +158,23 @@
                         <div class="flex flex-wrap justify-center gap-x-2 gap-y-2 text-xs">
                             <div class="flex items-center gap-2">
                                 <span class="w-3 h-3 rounded-full bg-violet-500"></span>
-                                <span class="text-slate-300">Electronic</span>
+                                <span class="text-slate-400">Electronic</span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="w-3 h-3 rounded-full bg-orange-500"></span>
-                                <span class="text-slate-300">Hip-Hop</span>
+                                <span class="text-slate-400">Hip-Hop</span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="w-3 h-3 rounded-full bg-blue-500"></span>
-                                <span class="text-slate-300">Pop</span>
+                                <span class="text-slate-400">Pop</span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="w-3 h-3 rounded-full bg-green-500"></span>
-                                <span class="text-slate-300">R&B</span>
+                                <span class="text-slate-400">R&B</span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
-                                <span class="text-slate-300">Rock</span>
+                                <span class="text-slate-400">Rock</span>
                             </div>
                         </div>
                     </div>
@@ -190,8 +190,8 @@
                     <h3 class="dark:text-white dark:text-black  text-lg font-semibold">Recent Tracks</h3>
                     <p class="text-slate-400 text-sm">Your latest submissions</p>
                 </div>
-                <a class="text-orange-500 hover:text-orange-400 text-sm font-medium" href="{{ route('user.reposts-request') }}"
-                    data-discover="true">View all →</a>
+                <a class="text-orange-500 hover:text-orange-400 text-sm font-medium"
+                    href="{{ route('user.reposts-request') }}" data-discover="true">View all →</a>
             </div>
             <div class="space-y-4">
                 @foreach ($repostRequests as $repostRequest)
@@ -214,7 +214,7 @@
                         <path d="M12 5v14"></path>
                     </svg>
                 </div>
-                <h4 class="text-white font-medium mb-2">No upcoming campaigns scheduled</h4>
+                <h4 class="text-gray-900 dark:text-white font-medium mb-2">No upcoming campaigns scheduled</h4>
                 <p class="text-slate-400 text-sm mb-4">Submit a track to start a new campaign</p>
 
                 <a href="{{ route('user.cm.my-campaigns') }}" wire:navigate
@@ -222,8 +222,9 @@
                     Campaign</a>
             </div>
         </div>
-        <div class=" rounded-lg  border border-slate-700 lg:ml-8 ml-0 lg:mr-6 mr-6 lg:p-4 p-4 lg:mt-3 mt-3 lg:mb-2 mb-2">
-             <div class="flex items-center justify-between lg-mb-6 p-2">
+        <div
+            class=" rounded-lg  border border-slate-700 lg:ml-8 ml-0 lg:mr-6 mr-6 lg:p-4 p-4 lg:mt-3 mt-3 lg:mb-2 mb-2">
+            <div class="flex items-center justify-between lg-mb-6 p-2">
                 <div>
                     <h3 class=" text-lg font-semibold dark:text-white">Latest Repost Requests
                     </h3>
@@ -232,61 +233,62 @@
                 <a class="text-orange-500 hover:text-orange-400 text-sm font-medium" href="/requests"
                     data-discover="true">View all →</a>
             </div>
-           @foreach ($repostRequests as $request)
-    
-           
-            <div class="space-y-4">
-                <div class="border border-slate-700 rounded-lg p-4">
-                    <div class="flex items-start space-x-3 mb-3">
-                        <img src="https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=150&amp;h=150&amp;fit=crop"
-                            alt="carlvalor" class="w-8 h-8 rounded-full">
-                        <div class="flex-1 min-w-0">
-                            <h4 class="text-slate-400 text-sm font-medium ">{{$request?->requester?->name}}</h4>
-                            <p class="text-slate-400 text-xs">by {{$request?->requester?->email}}</p>
+            @foreach ($repostRequests as $request)
+                <div class="space-y-4">
+                    <div class="border border-slate-700 rounded-lg p-4">
+                        <div class="flex items-start space-x-3 mb-3">
+                            <img src="https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=150&amp;h=150&amp;fit=crop"
+                                alt="carlvalor" class="w-8 h-8 rounded-full">
+                            <div class="flex-1 min-w-0">
+                                <h4 class="text-sm font-medium text-gray-900 dark:text-white">
+                                    {{ $request?->requester?->name }}</h4>
+                                <p class="text-slate-400 text-xs">by {{ $request?->requester?->email }}</p>
+                            </div>
+                            <span class="text-orange-500 font-semibold text-sm">+{{ $request->credits_spent }}
+                                credits</span>
                         </div>
-                        <span class="text-orange-500 font-semibold text-sm">+{{ $request->credits_spent }} credits</span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <button
-                            class="flex-1 bg-slate-600 hover:bg-slate-500 text-white text-sm py-2 rounded-lg transition-colors">Decline</button>
-                        <button
-                            class="flex-1 bg-orange-500 hover:bg-orange-600 text-white text-sm py-2 rounded-lg font-medium transition-colors">Repost</button>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-6 pt-6 border-t border-slate-700 p-2">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center space-x-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" class="lucide lucide-trending-up w-5 h-5 text-orange-500">
-                            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
-                            <polyline points="16 7 22 7 22 13"></polyline>
-                        </svg>
-                        <span class="text-slate-400 text-sm font-medium">Trending</span>
-                    </div>
-                    <a class="text-orange-500 hover:text-orange-400 text-sm" href="/charts" data-discover="true">View
-                        charts</a>
-                </div>
-                <div class="space-y-2">
-                    <div class="flex items-center justify-between text-sm">
                         <div class="flex items-center space-x-2">
-                            <span class="text-orange-500 font-bold">#1</span>
-                            <span class="text-slate-400 text-sm">Why Do I?</span>
+                            <button
+                                class="flex-1 bg-slate-600 hover:bg-slate-500 text-white text-sm py-2 rounded-lg transition-colors">Decline</button>
+                            <button
+                                class="flex-1 bg-orange-500 hover:bg-orange-600 text-white text-sm py-2 rounded-lg font-medium transition-colors">Repost</button>
                         </div>
-                        <span class="text-slate-400">{{$request?->track?->embeddable_by}}</span>
-                    </div>
-                    <div class="flex items-center justify-between text-sm">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-slate-400 font-bold">#2</span>
-                            <span class="text-slate-400 text-sm">The Strength Of Love</span>
-                        </div>
-                        <span class="text-slate-400">Constellation Lyra</span>
                     </div>
                 </div>
-            </div>
-                       
-           @endforeach
+                <div class="mt-6 pt-6 border-t border-slate-700 p-2">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-trending-up w-5 h-5 text-orange-500">
+                                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                                <polyline points="16 7 22 7 22 13"></polyline>
+                            </svg>
+                            <span class="text-gray-900 dark:text-white text-sm font-medium">Trending</span>
+                        </div>
+                        <a class="text-orange-500 hover:text-orange-400 text-sm" href="/charts"
+                            data-discover="true">View
+                            charts</a>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between text-sm">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-orange-500 font-bold">#1</span>
+                                <span class="text-gray-900 dark:text-white text-sm">Why Do I?</span>
+                            </div>
+                            <span class="text-slate-400">{{ $request?->track?->embeddable_by }}</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-slate-400 font-bold">#2</span>
+                                <span class="text-slate-400 text-sm">The Strength Of Love</span>
+                            </div>
+                            <span class="text-slate-400">Constellation Lyra</span>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
         </div>
     </div>
 
