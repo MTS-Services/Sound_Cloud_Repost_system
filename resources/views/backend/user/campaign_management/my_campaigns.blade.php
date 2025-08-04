@@ -38,21 +38,21 @@
 
         <div class="space-y-6" id="campaigns-list">
 
-            @forelse ($campaigns as $campaign)
+            @forelse ($campaigns as $campaig_)
                 <div class=" rounded-lg border border-orange-600 overflow-hidden">
                     <div class="p-6 sm:p-8">
                         <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                             <div class="flex flex-col sm:flex-row sm:items-start gap-4">
-                                <img src="{{ soundcloud_image($campaign->music?->artwork_url) }}"
-                                    alt="{{ $campaign->music?->title }}" class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
+                                <img src="{{ soundcloud_image($campaig_->music?->artwork_url) }}"
+                                    alt="{{ $campaig_->music?->title }}" class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
                                 <div class="flex-1">
                                     <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-3 mb-2">
                                         <h3
                                             class=" text-black dark:text-gray-100 font-semibold text-lg text-center sm:text-left">
-                                            {{ $campaign->title }}
+                                            {{ $campaig_->title }}
                                         </h3>
                                         <span
-                                            class="badge badge-soft {{ $campaign->status_color }} rounded-full">{{ $campaign->status_label }}</span>
+                                            class="badge badge-soft {{ $campaig_->status_color }} rounded-full">{{ $campaig_->status_label }}</span>
                                     </div>
                                     <div
                                         class="flex flex-col sm:flex-row sm:items-center sm:space-x-6 text-sm text-slate-400 mb-4 space-y-2 sm:space-y-0">
@@ -67,7 +67,7 @@
                                                 </rect>
                                                 <path d="M3 10h18"></path>
                                             </svg><span>{{ __('Created') }}
-                                                {{ $campaign->start_date_formatted }}</span>
+                                                {{ $campaig_->start_date_formatted }}</span>
                                         </div>
                                         <div class="flex items-center space-x-1 justify-center sm:justify-start">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -76,20 +76,20 @@
                                                 class="lucide lucide-clock w-4 h-4">
                                                 <circle cx="12" cy="12" r="10"></circle>
                                                 <polyline points="12 6 12 12 16 14"></polyline>
-                                            </svg><span>{{ __('Expires') }} {{ $campaign->end_date_formatted }}</span>
+                                            </svg><span>{{ __('Expires') }} {{ $campaig_->end_date_formatted }}</span>
                                         </div>
                                     </div>
                                     <div class="mb-4">
                                         <div class="flex items-center justify-between text-sm mb-2"><span
                                                 class="text-slate-400">{{ __('Budget used:') }}
-                                                {{ $campaign->credits_spent }} /
-                                                {{ $campaign->budget_credits }}
+                                                {{ $campaig_->credits_spent }} /
+                                                {{ $campaig_->budget_credits }}
                                                 {{ __('credits') }}</span><span class="text-orange-500 font-medium">
-                                                {{ $campaign->budget_credits > 0 ? number_format(($campaign->credits_spent / $campaign->budget_credits) * 100, 2) : 0 }}%</span>
+                                                {{ $campaig_->budget_credits > 0 ? number_format(($campaig_->credits_spent / $campaig_->budget_credits) * 100, 2) : 0 }}%</span>
                                         </div>
                                         <div class="w-full bg-orange-600/20 rounded-full h-2">
                                             <div class="bg-gradient-to-r from-orange-500 to-orange-600 h-2 rounded-full transition-all duration-300"
-                                                style="width: {{ $campaign->budget_credits > 0 ? ($campaign->credits_spent / $campaign->budget_credits) * 100 : 0 }}%;">
+                                                style="width: {{ $campaig_->budget_credits > 0 ? ($campaig_->credits_spent / $campaig_->budget_credits) * 100 : 0 }}%;">
                                             </div>
                                         </div>
                                     </div>
@@ -98,7 +98,7 @@
                             <div class="flex flex-col lg:flex-column sm:items-center sm:space-x-2 gap-2">
 
                                 {{-- Add Credits Button --}}
-                                <button wire:click="openAddCreditModal({{ $campaign->id }})"
+                                <button wire:click="openAddCreditModal({{ $campaig_->id }})"
                                     class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                                     {{ __('Add Credits') }}
                                 </button>
@@ -122,14 +122,14 @@
                                         <ul class="p-0 text-sm text-gray-700 dark:text-gray-200">
 
                                             <li>
-                                                <button wire:click="openEditCampaignModal({{ $campaign->id }})"
+                                                <button wire:click="openEditCampaignModal({{ $campaig_->id }})"
                                                     @click="open = false"
                                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 w-full">{{ __('Edit') }}</button>
                                             </li>
 
                                             {{-- cancel Button --}}
                                             <li>
-                                                <button wire:click="openCancelWarningModal({{ $campaign->id }})"
+                                                <button wire:click="openCancelWarningModal({{ $campaig_->id }})"
                                                     @click="open = false"
                                                     class="block px-4 py-2 text-red-600 hover:bg-red-100  dark:hover:bg-red-950/50 w-full">{{ __('Cancel') }}</button>
                                             </li>
@@ -138,7 +138,7 @@
                                     </div>
 
                                 </div>
-                                <button wire:click="openViewDetailsModal({{ $campaign->id }})"
+                                <button wire:click="openViewDetailsModal({{ $campaig_->id }})"
                                     class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2">
                                     <x-lucide-eye class="w-5 h-5" />
                                     <span>{{ __('View Details') }}</span>
@@ -157,7 +157,7 @@
                                         <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
                                         <polyline points="16 7 22 7 22 13"></polyline>
                                     </svg><span
-                                        class="text-2xl font-bold   text-black dark:text-gray-100">{{ $campaign->completed_reposts ?? 0 }}</span>
+                                        class="text-2xl font-bold   text-black dark:text-gray-100">{{ $campaig_->completed_reposts ?? 0 }}</span>
                                 </div>
                                 <p class="text-slate-400 text-sm">{{ __('Reposts') }}</p>
                             </div>
@@ -170,7 +170,7 @@
                                         <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
                                         <circle cx="12" cy="12" r="3"></circle>
                                     </svg><span
-                                        class="text-2xl font-bold text-black dark:text-gray-100">{{ $campaign->playback_count ?? 0 }}</span>
+                                        class="text-2xl font-bold text-black dark:text-gray-100">{{ $campaig_->playback_count ?? 0 }}</span>
                                 </div>
                                 <p class="text-slate-400 text-sm">{{ __('Plays') }}</p>
                             </div>
@@ -183,7 +183,7 @@
                                         <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
                                         <polyline points="16 7 22 7 22 13"></polyline>
                                     </svg><span
-                                        class="text-2xl font-bold text-black dark:text-gray-100">{{ $campaign->music?->likes_count ?? 0 }}</span>
+                                        class="text-2xl font-bold text-black dark:text-gray-100">{{ $campaig_->music?->likes_count ?? 0 }}</span>
                                 </div>
                                 <p class="text-slate-400 text-sm">{{ __('Likes') }}</p>
                             </div>
