@@ -121,6 +121,7 @@ class CreditTransaction extends BaseModel
             self::TYPE_PURCHASE => 'Purchase',
             self::TYPE_PENALTY => 'Penalty',
             self::TYPE_BONUS => 'Bonus',
+            self::TYPE_MANUAL => 'Manual',
         ];
     }
     public function getTypeNameAttribute(): string
