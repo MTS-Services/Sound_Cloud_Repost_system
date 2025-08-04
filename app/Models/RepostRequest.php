@@ -81,21 +81,22 @@ class RepostRequest extends BaseModel
         $this->appends = array_merge(parent::getAppends(), [
             'status_label',
             'repost_at_formatted',
+            'pending_to_declined',
         ]);
     }
 
-    public const STATUS_PENDING = '0';
-    public const STATUS_APPROVED = '1';
-    public const STATUS_REJECTED = '2';
-    public const STATUS_EXPIRED = '3';
-    public const STATUS_COMPLETED = '4';
+    public const STATUS_PENDING = 0;
+    public const STATUS_APPROVED = 1;
+    public const STATUS_DECLINE = 2;
+    public const STATUS_EXPIRED = 3;
+    public const STATUS_COMPLETED = 4;
 
     public static function getStatusList(): array
     {
         return [
             self::STATUS_PENDING => 'Pending',
             self::STATUS_APPROVED => 'Approved',
-            self::STATUS_REJECTED => 'Rejected',
+            self::STATUS_DECLINE => 'Decline',
             self::STATUS_EXPIRED => 'Expired',
             self::STATUS_COMPLETED => 'Completed',
         ];
@@ -105,9 +106,32 @@ class RepostRequest extends BaseModel
     {
         return self::getStatusList()[$this->status];
     }
+    // pending thakle decline button show korbe
+    public function getPendingToDeclinedAttribute()
+    {
+        return $this->status === self::STATUS_PENDING ? 'Decline' : $this->getStatusLabelAttribute();
+    }
     // date time format
     public function getRepostAtFormattedAttribute()
     {
         return timeFormat($this->reposted_at);
+    }
+
+    // Status Scopes
+    public function scopeApproved($query)
+    {
+        return $query->where('status', self::STATUS_APPROVED);
+    }
+    public function scopePending($query)
+    {
+        return $query->where('status', self::STATUS_PENDING);
+    }
+    public function scopeDeclined($query)
+    {
+        return $query->where('status', self::STATUS_DECLINE);
+    }
+    public function scopeExpired($query)
+    {
+        return $query->where('status', self::STATUS_EXPIRED);
     }
 }

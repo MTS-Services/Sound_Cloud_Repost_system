@@ -98,7 +98,7 @@ class Member extends Component
         $this->loadData();
     }
 
-    public function openRepostsModal($trackId )
+    public function openRepostsModal($trackId)
     {
         $this->reset(['track']);
         $this->selectedTrackId = $trackId;
@@ -137,7 +137,7 @@ class Member extends Component
 
     public function closeModal()
     {
-        $this->reset(['showModal','user', 'selectedUserUrn', 'selectedPlaylistId', 'selectedTrackId', 'activeTab', 'tracks', 'playlists']);
+        $this->reset(['showModal', 'user', 'selectedUserUrn', 'selectedPlaylistId', 'selectedTrackId', 'activeTab', 'tracks', 'playlists']);
     }
 
     public function setActiveTab($tab)
@@ -167,14 +167,23 @@ class Member extends Component
             $amount = repostPrice($this->user);
 
             DB::transaction(function () use ($targetUrn, $amount) {
+                // Create repost request
+                $repostRequest = new RepostRequest();
+                $repostRequest->requester_urn = user()->urn;
+                $repostRequest->target_user_urn = $this->user->urn;
+                $repostRequest->track_urn = $targetUrn;
+
+                $repostRequest->credits_spent = $amount;
+                $repostRequest->save();
+
                 // Create credit transaction
                 $creditTransaction = new CreditTransaction();
-                $creditTransaction->receiver_urn = $this->user->urn;
-                $creditTransaction->sender_urn = user()->urn;
+                $creditTransaction->receiver_urn = user()->urn;
+                $creditTransaction->sender_urn = $this->user->urn;
                 $creditTransaction->transaction_type = CreditTransaction::TYPE_SPEND;
-                $creditTransaction->calculation_type = CreditTransaction::CALCULATION_TYPE_DEBIT;
-                $creditTransaction->source_id = $this->user->id;
-                $creditTransaction->source_type = User::class;
+                $creditTransaction->calculation_type = CreditTransaction::CALCULATION_TYPE_CREDIT;
+                $creditTransaction->source_id = $repostRequest->id;
+                $creditTransaction->source_type = RepostRequest::class;
                 $creditTransaction->amount = 0;
                 $creditTransaction->credits = $amount; // Assuming credits is the same as amount
                 $creditTransaction->description = "Repost request for track by " . user()->name;
@@ -184,15 +193,6 @@ class Member extends Component
                 ];
                 $creditTransaction->status = 'succeeded';
                 $creditTransaction->save();
-
-                // Create repost request
-                $repostRequest = new RepostRequest();
-                $repostRequest->requester_urn = user()->urn;
-                $repostRequest->target_user_urn = $this->user->urn;
-                $repostRequest->track_urn = $targetUrn;
-
-                $repostRequest->credits_spent = $amount;
-                $repostRequest->save();
             });
             $this->closeRepostModal();
             $this->closePlaylistTracksModal();

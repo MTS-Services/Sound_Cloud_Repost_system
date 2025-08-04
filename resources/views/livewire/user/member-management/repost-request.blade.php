@@ -1,6 +1,42 @@
 <div>
     <x-slot name="page_slug">request</x-slot>
-
+    <div class="flex justify-between items-start mb-5">
+        <div>
+            <h1 class="text-xl text-black dark:text-gray-100 font-bold">{{ __('Repost Requests') }}</h1>
+        </div>
+        {{-- Set Route --}}
+        <a href="{{ route('user.mm.members.index') }}" wire:navigate
+            class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 rounded-xl flex items-center gap-3 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+            <x-lucide-plus class="w-5 h-5" />
+            {{ __('Send Repost') }}
+        </a>
+    </div>
+    <div class="mb-8">
+        <div class="border-b border-gray-200 dark:border-gray-700">
+            <nav class="-mb-px flex space-x-8">
+                <button
+                    class="tab-button @if ($activeMainTab === 'pending') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
+                    wire:click="setActiveTab('pending')">
+                    {{ __('Pendings') }}
+                </button>
+                <button
+                    class="tab-button @if ($activeMainTab === 'decline') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
+                    wire:click="setActiveTab('decline')">
+                    {{ __('Declined') }}
+                </button>
+                <button
+                    class="tab-button @if ($activeMainTab === 'expired') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
+                    wire:click="setActiveTab('expired')">
+                    {{ __('Expired') }}
+                </button>
+                <button
+                    class="tab-button @if ($activeMainTab === 'completed') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
+                    wire:click="setActiveTab('completed')">
+                    {{ __('Completed') }}
+                </button>
+            </nav>
+        </div>
+    </div>
     @foreach ($repostRequests as $repostRequest)
         <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm">
             <div class="flex flex-col lg:flex-row" wire:key="request-{{ $repostRequest->id }}">
@@ -22,10 +58,10 @@
                             </div> --}}
 
                             <!-- Request Status Badge -->
-                            <div
+                            {{-- <div
                                 class="absolute top-2 left-2 bg-purple-600 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
                                 FEATURED
-                            </div>
+                            </div> --}}
 
                             {{-- <!-- Play Progress Bar -->
                             <div class="absolute bottom-2 left-2 right-2 bg-gray-200 dark:bg-gray-600 rounded-full h-1.5">
@@ -94,14 +130,14 @@
 
                                 <!-- Repost Button -->
                                 <div class="relative">
-                                    <button wire:click="repost('{{ $repostRequest->id }}')" @class([
-                                        'flex items-center gap-2 py-2 px-3 sm:px-5 rounded-md shadow-sm text-sm sm:text-base transition-all duration-300',
-                                        'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white cursor-pointer transform hover:scale-105' => $this->canRepost(
-                                            $repostRequest->id),
-                                        'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
-                                            $repostRequest->id),
-                                    ])
-                                        @disabled(!$this->canRepost($repostRequest->id))>
+                                    <button wire:click="repost('{{ $repostRequest->id }}')"
+                                        @class([
+                                            'flex items-center gap-2 py-2 px-3 sm:px-5 rounded-md shadow-sm text-sm sm:text-base transition-all duration-300',
+                                            'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white cursor-pointer transform hover:scale-105' => $this->canRepost(
+                                                $repostRequest->id),
+                                            'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
+                                                $repostRequest->id),
+                                        ]) @disabled(!$this->canRepost($repostRequest->id))>
 
                                         <!-- Repost Icon -->
                                         <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
@@ -112,7 +148,7 @@
                                                 stroke="currentColor" stroke-width="2" />
                                         </svg>
 
-                                        <span>{{ $repostRequest->credits_spent ?? repostPrice() }} Repost</span>
+                                        <span>{{ repostPrice($repostRequest->targetUser) }} Repost</span>
                                     </button>
 
                                     <!-- Success Indicator -->
@@ -180,13 +216,16 @@
                                 ])>
                                     {{ $repostRequest->status_label }}
                                 </span> --}}
-                            </div>  
+                            </div>
 
                             <!-- Request Date -->
                             {{-- <span class="text-xs text-gray-500 dark:text-gray-400">
                                 {{ $repostRequest->requested_at ? \Carbon\Carbon::parse($repostRequest->requested_at)->diffForHumans() : $repostRequest->created_at->diffForHumans() }}
                             </span> --}}
-                            <button {{-- wire:click="decline('{{ $repostRequest->id }}')" --}} class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Decline</button>
+                            @if ($repostRequest->status == App\Models\RepostRequest::STATUS_PENDING)
+                                <button wire:click="declineRepostRequest({{ $repostRequest->id }})"
+                                class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">{{ $repostRequest->pending_to_declined }}</button>
+                            @endif
                         </div>
                     </div>
                 </div>

@@ -2,7 +2,6 @@
 
 namespace App\Livewire\User\CampaignManagement;
 
-use App\Models\CreditTransaction;
 use App\Models\Playlist;
 use App\Models\Repost;
 use App\Models\Track;
@@ -11,7 +10,6 @@ use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Throwable;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 class Campaign extends Component
@@ -294,7 +292,6 @@ class Campaign extends Component
                     session()->flash('error', 'Invalid music type specified for the campaign.');
                     return;
             }
-
 
             if ($response->successful()) {
                 // If SoundCloud returns a repost ID, capture it (example, adjust based on actual SoundCloud API response)

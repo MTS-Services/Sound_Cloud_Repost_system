@@ -219,7 +219,8 @@ class UserController extends Controller implements HasMiddleware
     {
         $palaylistUrn = $playlistUrn;
         if ($request->ajax()) {
-            $query = $this->playlistService->getPlaylistTracks($playlistUrn);
+            $playlist = $this->playlistService->getPlaylist($playlistUrn)->load(['tracks', 'user']);
+            $query = $playlist->tracks();
             return DataTables::eloquent($query)
                 ->editColumn('user_name', function ($tracklist) {
                     return $tracklist->user?->name;
@@ -233,6 +234,18 @@ class UserController extends Controller implements HasMiddleware
                 ->rawColumns(['user_name', 'action', 'created_at', 'creater_id'])->make(true);
         }
         return view('backend.admin.user-management.playlists.playlist_track', compact('palaylistUrn'));
+    }
+    public function playlistTrackMenuItems($model): array
+    {
+        return [
+            [
+                'routeName' => 'javascript:void(0)',
+                'data-id' => encrypt($model->urn),
+                'className' => 'view',
+                'label' => 'Details',
+                'permissions' => ['permission-list', 'permission-delete', 'permission-status']
+            ],
+        ];
     }
 
     public function trackMenuItems($model): array
@@ -267,7 +280,7 @@ class UserController extends Controller implements HasMiddleware
                     $menuItems = $this->tracklistMenuItems($tracklist);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action', 'creater_id', 'created_at', 'user_urn','release_month'])
+                ->rawColumns(['action', 'creater_id', 'created_at', 'user_urn', 'release_month'])
                 ->make(true);
         }
         return view('backend.admin.user-management.tracklist.index');
