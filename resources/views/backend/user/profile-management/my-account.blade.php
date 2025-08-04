@@ -7,12 +7,12 @@
                 <div class="max-w-8xl mx-auto">
                     <!-- Header -->
                     <div class="text-center mb-8 bg-gray-200 dark:bg-slate-700 py-4 rounded-lg">
-                        <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">Edit Profile</h1>
-                        <p class="text-gray-600">Update your personal information and preferences</p>
+                        <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-2">Edit Profile</h1>
+                        <p class="text-gray-600 dark:text-white">Update your personal information and preferences</p>
                     </div>
 
                     <!-- Form Container -->
-                    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden">
                         <!-- Profile Header -->
                         <div class="bg-orange-500  px-6 lg:px-8 py-8">
                             <div class="flex flex-col sm:flex-row items-center gap-6">
@@ -41,7 +41,7 @@
                                         onchange="previewProfileImage(event)">
                                 </div>
 
-                                <div class="text-center sm:text-left">
+                                <div class="text-center sm:text-left dark:text-white">
                                     <h2 class="text-2xl font-bold text-white mb-1">{{ user()->name }}</h2>
                                     <p class="text-primary-100">{{ user()->email }}</p>
                                     <p class="text-primary-200 text-sm mt-1">Joined {{ user()->created_at->diffForHumans() }}</p>
@@ -54,7 +54,7 @@
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                                 <!-- Personal Information Section -->
                                 <div class="lg:col-span-2">
-                                    <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
                                         <svg class="w-5 h-5 mr-2 text-primary-500" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -67,7 +67,7 @@
 
                                 <!-- First Name -->
                                 <div class="space-y-2">
-                                    <label for="firstName" class="block text-sm font-medium text-gray-700">First
+                                    <label for="firstName" class="block text-sm font-medium text-gray-700 dark:text-white">First
                                         Name</label>
                                     <input type="text" id="firstName" name="firstName" value="John"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-gray-400">
@@ -75,7 +75,7 @@
 
                                 <!-- Last Name -->
                                 <div class="space-y-2">
-                                    <label for="lastName" class="block text-sm font-medium text-gray-700">Last
+                                    <label for="lastName" class="block text-sm font-medium text-gray-700 dark:text-white">Last
                                         Name</label>
                                     <input type="text" id="lastName" name="lastName" value="Doe"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-gray-400">
@@ -83,7 +83,7 @@
 
                                 <!-- Email -->
                                 <div class="space-y-2">
-                                    <label for="email" class="block text-sm font-medium text-gray-700">Email
+                                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-white">Email
                                         Address</label>
                                     <input type="email" id="email" name="email" value="john.doe@example.com"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-gray-400">
@@ -94,11 +94,11 @@
                             <!-- Action Buttons -->
                             <div class="flex flex-wrap justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
                                 <button type="button"
-                                    class="px-4 py-2flex-1 sm:flex-none px-6 py-3 border text-white border-gray-300 bg-gray-800 rounded-lg hover:bg-gray-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-200 font-medium">
+                                    class="px-4 py-2flex-1 sm:flex-none px-6 py-3 border text-white dark:text-white border-gray-300 bg-gray-800 rounded-lg hover:bg-gray-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-200 font-medium">
                                     Cancel
                                 </button>
                                 <button type="submit"
-                                    class=" px-4 py-2flex-1 sm:flex-none px-8 py-3 bg-orange-500 text-white rounded-lg hover:from-primary-600 hover:to-primary-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-200 font-medium shadow-lg hover:shadow-xl">
+                                    class=" px-4 py-2flex-1 sm:flex-none px-8 py-3 bg-orange-500 text-white dark:text-white rounded-lg hover:from-primary-600 hover:to-primary-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-200 font-medium shadow-lg hover:shadow-xl">
                                     Profile Update
                                 </button>
                             </div>
@@ -115,88 +115,9 @@
                 };
                 reader.readAsDataURL(event.target.files[0]);
             }
-        </script>
+     </script>
 
-        {{-- <section>
-            <div class="container mx-auto px-4 py-8 lg:py-12">
-                <div class="max-w-8xl mx-auto dark:bg-slate-800">
-                    <!-- Header -->
-                    <div class="text-center mb-8 bg-gray-200 dark:bg-slate-700 py-4 rounded-lg">
-                        <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-2">Edit Profile</h1>
-                        <p class="text-gray-600 dark:text-white">Update your personal information and preferences</p>
-                    </div>
-
-                    <!-- Form Container -->
-                    <div class="bg-white  dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden px-20 py-8">
-
-
-                        <!-- Form Content -->
-                        <form class="p-6 lg:p-8">
-                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-                                <!-- First Name -->
-                                <div class="space-y-2">
-                                    <label for="firstName"
-                                        class="block text-sm font-medium text-gray-700 dark:text-white">First
-                                        Name</label>
-                                    <input type="text" id="firstName" name="firstName" value="" placeholder="first name"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-gray-400">
-                                </div>
-
-                                <!-- Last Name -->
-                                <div class="space-y-2">
-                                    <label for="lastName"
-                                        class="block text-sm font-medium text-gray-700 dark:text-white">Last
-                                        Name</label>
-                                    <input type="text" id="lastName" name="lastName" value="" placeholder="last name"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-gray-400">
-                                </div>
-
-                                <div class="space-y-2">
-                                    <label for="lastName"
-                                        class="block text-sm font-medium text-gray-700 dark:text-white">User
-                                        Name</label>
-                                    <input type="text" id="lastName" name="userName" value="" placeholder="user name"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-gray-400">
-                                </div>
-
-                                <!-- Email -->
-                                <div class="space-y-2">
-                                    <label for="email"
-                                        class="block text-sm font-medium text-gray-700 dark:text-white">Email
-                                        Address</label>
-                                    <input type="email" id="email" name="email" value="" placeholder="email address"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-gray-400">
-                                </div>
-
-                                <div class="space-y-2">
-                                    <label for="image"
-                                        class="block text-sm font-medium text-gray-700 dark:text-white">Image</label>
-                                    <input type="file" id="" name="image" value=""
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-gray-400">
-                                </div>
-
-                            </div>
-
-                            <!-- Action Buttons -->
-                            <div class="flex flex-wrap justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
-
-                                <button type="submit"
-                                    class="px-10 py-4 bg-orange-500 text-white rounded-md hover:bg-orange-600 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-150 text-sm font-medium shadow-md hover:shadow-lg border border-orange-600">
-                                    Update Profile
-                                </button>
-
-                                <button type="button"
-                                    class="px-4 py-2 border border-gray-300 text-white bg-gray-700 rounded-md hover:bg-gray-800 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-150 text-sm font-medium">
-                                    Cancel
-                                </button>
-
-                            </div>
-
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </section> --}}
+      
     @else
         <section class="flex-1 overflow-auto">
             <div class="min-h-screen bg-white dark:bg-slate-900">
