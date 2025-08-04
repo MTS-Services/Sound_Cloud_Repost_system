@@ -13,7 +13,7 @@
                         d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
 
-                <div x-show="!showInput" @click="showInput = true"
+                <div x-show="!showInput" @click="showInput = true" wire:click ="getAllTags"
                     class="pl-7 pr-2 py-2 cursor-pointer whitespace-nowrap dark:text-slate-300">
                     <span>Search by tag</span>
                 </div>
@@ -30,11 +30,11 @@
                 </div>
                 @foreach ($selectedTags as $index => $tag)
                     <span
-                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 mt-4 ml-20">
+                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 ml-2">
                         {{ $tag }}
-                        <button type="button" wire:click="removeTag({{ $index }})"
-                            class="ml-2 text-blue-600 hover:text-blue-800 focus:outline-none">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button type="button" wire:click="selectTag('{{ $tag }}')"
+                            class="ml-2 text-blue-600 hover:text-blue-800 focus:outline-none cursor-pointer">
+                            <svg wire:click="removeTag({{ $index }})"  class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M6 18L18 6M6 6l12 12">
                                 </path>

@@ -94,6 +94,10 @@ class Campaign extends Component
             $this->showSuggestions = false;
         }
     }
+    public function getAllTags()
+    {
+        $this->selectedTags = $this->campaignService->getCampaigns()->with('music')->get()->pluck('music.tag_list')->flatten()->unique()->toArray();
+    }
 
     public function loadTagSuggestions()
     {
