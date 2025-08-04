@@ -65,7 +65,7 @@
         </script>
 
         {{-- Details Modal --}}
-        <script>
+        {{-- <script>
             document.addEventListener('DOMContentLoaded', () => {
 
                 $(document).on('click', '.view', function() {
@@ -287,6 +287,6 @@
                     showDetailsModal(route, id, '{{ __('User Details') }}', details);
                 });
             });
-        </script>
+        </script> --}}
     @endpush
 </x-admin::layout>

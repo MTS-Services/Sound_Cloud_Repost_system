@@ -155,7 +155,7 @@ class UserController extends Controller implements HasMiddleware
         return $this->redirectIndex();
     }
 
-    public function playlist(Request $request, $id)
+    public function playlist(Request $request)
     {
         if ($request->ajax()) {
             $query = $this->playlistService->getPlaylists()->with('user');
@@ -191,7 +191,7 @@ class UserController extends Controller implements HasMiddleware
               [
                 'routeName' => 'um.user.playlist.track-list',
                 ['user' => $model->urn],
-                'params' => [encrypt($model->urn)],
+                'params' => [encrypt($model->soundcloud_urn), encrypt($model->id)],
                 'label' => 'Tracklist',
                 'edit' => true,
                 'permissions' => ['permission-tracklist']
@@ -251,12 +251,12 @@ class UserController extends Controller implements HasMiddleware
     public function trackMenuItems($model): array
     {
         return [
-            // [
-            //     'routeName' => 'um.user.tracklist.details',
-            //     'params' => encrypt($model->id),
-            //     'label' => ' details',
-            //     'permissions' => ['Detail-list']
-            // ],
+            [
+                'routeName' => 'um.user.tracklist.detail',
+                'params' => encrypt($model->id),
+                'label' => ' details',
+                'permissions' => ['Detail-list']
+            ],
         ];
     }
 
@@ -305,9 +305,9 @@ class UserController extends Controller implements HasMiddleware
         $data['tracklists'] = Track::with('user')->find(decrypt($id));
         return view('backend.admin.user-management.tracklist.details', $data);
     }
-    public function playlistShow(string $soudcloud_urn)
+    public function playlistShow(string $soudcloud_urn,)
     {
-        $data = $this->playlistService->getPlaylist($soudcloud_urn, 'soundcloud_urn');
+        $data = $this->playlistService->getPlaylist($soudcloud_urn, 'soundcloud_urn',);
         $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
         return response()->json($data);

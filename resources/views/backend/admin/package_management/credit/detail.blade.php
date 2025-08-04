@@ -48,7 +48,7 @@
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Credits Notes</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $credits->notes }}</p>
+                        {{ $credits->notes ?? 'N/A' }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Created At</h4>
