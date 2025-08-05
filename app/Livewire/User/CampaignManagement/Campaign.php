@@ -5,6 +5,7 @@ namespace App\Livewire\User\CampaignManagement;
 use App\Models\Playlist;
 use App\Models\Repost;
 use App\Models\Track;
+use App\Services\TrackService;
 use App\Services\User\CampaignManagement\CampaignService;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Locked;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Http;
 class Campaign extends Component
 {
     protected ?CampaignService $campaignService = null;
+    protected ?TrackService $trackService = null;
     public $featuredCampaigns;
     public $campaigns;
     #[Locked]
@@ -23,8 +25,10 @@ class Campaign extends Component
     // Properties for filtering and search
     public $search = '';
     public $selectedTags = [];
+    public $selecteTags = [];
     public $suggestedTags = [];
     public $showSuggestions = false;
+    public $showSelectedTags = false;
     public $isLoading = false;
 
 
@@ -52,9 +56,10 @@ class Campaign extends Component
         'audioTimeUpdate' => 'handleAudioTimeUpdate',
         'audioEnded' => 'handleAudioEnded'
     ];
-    public function boot(CampaignService $campaignService)
+    public function boot(CampaignService $campaignService, TrackService $trackService)
     {
         $this->campaignService = $campaignService;
+        $this->trackService = $trackService;
         $allowed_target_credits = repostPrice(user());
         // $this->featuredCampaigns = $this->campaignService->getCampaigns()
         //     ->where('cost_per_repost', $allowed_target_credits)
@@ -84,7 +89,9 @@ class Campaign extends Component
     }
     public function updatedSearch()
     {
-        if (strlen($this->search) >= 2) {
+        if (strlen($this->search) >= 0) {
+            $this->selectedTags = [];
+            $this->suggestedTags = [];
             $this->loadTagSuggestions();
             $this->showSuggestions = true;
         } else {
@@ -92,21 +99,40 @@ class Campaign extends Component
             $this->showSuggestions = false;
         }
     }
-    public function getAllTags()
+   public function getAllTags()
     {
-        $this->selectedTags = $this->campaignService->getCampaigns()->with('music')->get()->pluck('music.tag_list')->flatten()->unique()->toArray();
+        $this->showSelectedTags = true;
+
+        // Get all tag_list values from tracks
+        $this->suggestedTags = $this->trackService->getTracks()
+            ->pluck('tag_list') // get all tag_list values
+            ->flatten()
+            ->map(function ($tagString) {
+                // Split comma-separated strings into arrays
+                return array_map('trim', explode(',', $tagString));
+            })
+            ->flatten() // flatten the resulting array of arrays
+            ->unique() // remove duplicates
+            ->filter(function ($tag) {
+                return stripos($tag, $this->search) !== false && !in_array($tag, $this->selecteTags);
+            })
+            ->take(10)
+            ->values()
+            ->toArray();
     }
 
     public function loadTagSuggestions()
     {
         // Get unique tags from tracks table that match the search query
-        // $this->suggestedTags = $this->campaignService->getCampaigns()->with('music')->get()->pluck('music.tag_list')->flatten()->unique()->filter(function ($tag) {
-        //     return strpos(strtolower($tag), strtolower($this->search)) !== false;
-        // });
         $this->suggestedTags = $this->campaignService->getCampaigns()
             ->with('music')
             ->get()
             ->pluck('music.tag_list')
+            ->flatten()
+             ->map(function ($tagString) {
+                // Split comma-separated strings into arrays
+                return array_map('trim', explode(',', $tagString));
+            })
             ->flatten()
             ->unique()
             ->filter(function ($tag) {
@@ -115,22 +141,6 @@ class Campaign extends Component
             ->take(10)
             ->values()
             ->toArray();
-        // $this->suggestedTags = Track::whereNotNull('tags')
-        //     ->where('tags', '!=', '')
-        //     ->get()
-        //     ->pluck('tags')
-        //     ->flatMap(function ($tagString) {
-        //         return collect(explode(',', $tagString))->map(function ($tag) {
-        //             return trim($tag);
-        //         });
-        //     }) 
-        //     ->unique()
-        //     ->filter(function ($tag) {
-        //         return stripos($tag, $this->search) !== false && !in_array($tag, $this->selectedTags);
-        //     })
-        //     ->take(10)
-        //     ->values()
-        //     ->toArray();
         // If no tags found, set showSuggestions to false
         if (empty($this->suggestedTags)) {
             $this->showSuggestions = false;
@@ -143,17 +153,21 @@ class Campaign extends Component
     {
         if (!in_array($tag, $this->selectedTags)) {
             $this->selectedTags[] = $tag;
-            $this->search = '';
+            $this->search = $tag; // Set search to the selected tag
             $this->suggestedTags = [];
             $this->showSuggestions = false;
             $this->searchByTags();
-        }
+        }   
     }
     public function removeTag($tag)
     {
-        unset($this->selectedTags[$tag]);
-        $this->selectedTags = array_values($this->selectedTags);
-        $this->searchByTags();
+        unset($this->selecteTags[$tag]);
+        $this->selecteTags = array_values($this->selecteTags);
+        // $this->searchByTags();
+    }
+    public function hideSuggestions()
+    {
+        $this->showSuggestions = false;
     }
     public function searchByTags()
     {
@@ -190,6 +204,7 @@ class Campaign extends Component
         }
 
         $this->isLoading = false;
+        $this->selectedTags = [];
     }
     public function loadInitialData()
     {

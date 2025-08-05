@@ -6,7 +6,8 @@
         <!-- Header Tabs & Button -->
         <div
             class="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-4 pt-3 border-b border-b-gray-200 dark:border-b-gray-700  gap-2 sm:gap-0">
-            <div x-data="{ showInput: false }" class="relative flex items-center text-gray-600 dark:text-gray-400">
+            <div x-data="{ showInput: false }"
+                class="w-64 relative flex items-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded">
                 <svg class="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-slate-300 pointer-events-none"
                     fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -15,33 +16,19 @@
 
                 <div x-show="!showInput" @click="showInput = true" wire:click ="getAllTags"
                     class="pl-7 pr-2 py-2 cursor-pointer whitespace-nowrap dark:text-slate-300">
-                    <span>Search by tag</span>
+                    <span>{{ $search ? $search : 'Type to search tags...' }}</span>
                 </div>
 
                 <div x-show="showInput" x-cloak>
                     <input type="text" wire:model.debounce.300ms="search" wire:focus="$set('showSuggestions', true)"
-                        placeholder="Search by tag"
-                        class="border py-2 border-red-500 pl-7 dark:text-slate-300 dark:border-red-400 dark:bg-gray-800 pr-2 rounded focus:outline-none focus:ring-1 focus:ring-red-400 mr-20"
+                        wire:blur="hideSuggestions" placeholder="{{ $search ? $search : 'Type to search tags...' }}"
+                        class="w-64 border py-2 border-red-500 pl-7 dark:text-slate-300 dark:border-red-400 dark:bg-gray-800 pr-2 rounded focus:outline-none focus:ring-1 focus:ring-red-400 mr-20"
                         @click.outside="showInput = false" x-ref="searchInput" x-init="$watch('showInput', (value) => { if (value) { $nextTick(() => $refs.searchInput.focus()) } })"
                         autocomplete="off" />
                     {{-- <input type="text" wire:model.debounce.300ms="search" wire:focus="$set('showSuggestions', true)"
                         wire:blur="hideSuggestions" placeholder="Type to search tags..."
                         class="flex-1 min-w-0 border-0 outline-none focus:ring-0 p-1" autocomplete="off"> --}}
                 </div>
-                @foreach ($selectedTags as $index => $tag)
-                    <span
-                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 ml-2">
-                        {{ $tag }}
-                        <button type="button" wire:click="selectTag('{{ $tag }}')"
-                            class="ml-2 text-blue-600 hover:text-blue-800 focus:outline-none cursor-pointer">
-                            <svg wire:click="removeTag({{ $index }})"  class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12">
-                                </path>
-                            </svg>
-                        </button>
-                    </span>
-                @endforeach
             </div>
 
             <a href="{{ route('user.cm.my-campaigns') }}" wire:navigate
@@ -52,13 +39,28 @@
         <!-- Suggestions Dropdown -->
         @if ($showSuggestions && !empty($suggestedTags))
             <div
-                class="absolute z-50 w-full mt-1  border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                @foreach ($suggestedTags as $tag)
+                class="flex flex-wrap absolute z-50 w-full mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto py-2">
+                {{-- @foreach ($suggestedTags as $tag)
                     <button type="button" wire:click="selectTag('{{ $tag }}')"
-                        class="w-full text-left px-4 py-3 hover:bg-blue-50 focus:bg-blue-50 focus:outline-none border-b border-gray-100 last:border-b-0 transition-colors duration-150">
-                        <span class="text-gray-800 font-medium">{{ $tag }}</span>
+                        class="w-full text-left px-4 py-3 hover:bg-blue-50 dark:hover:bg-blue-900 focus:bg-blue-50 dark:focus:bg-blue-900  focus:outline-none border-b border-gray-100 dark:border-gray-600 last:border-b-0 transition-colors duration-150">
+                        <span class="font-medium text-gray-800 dark:text-slate-200">{{ $tag }}</span>
                     </button>
+                @endforeach --}}
+                @foreach ($suggestedTags as $index => $tag)
+                    <span wire:click="selectTag('{{ $tag }}')"
+                        class="inline-flex items-center px-3 py-1 rounded-sm text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 ml-2 cursor-default">
+                        {{ $tag }}
+                        <button type="button"
+                            class="ml-2 text-blue-600 hover:text-blue-800 focus:outline-none cursor-pointer"
+                            onclick="event.stopPropagation(); @this.call('removeTag', {{ $index }})">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </span>
                 @endforeach
+
             </div>
         @endif
     </div>
@@ -371,13 +373,6 @@
 
     <!-- Simple Livewire-SoundCloud Bridge Script -->
     <script>
-        // document.addEventListener('livewire:load', function() {
-        //     window.addEventListener('hide-suggestions-delayed', function() {
-        //         setTimeout(function() {
-        //             @this.set('showSuggestions', false);
-        //         }, 200);
-        //     });
-        // });
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize SoundCloud Widget API integration with Livewire
             function initializeSoundCloudWidgets() {
