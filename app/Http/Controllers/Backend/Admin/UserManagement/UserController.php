@@ -209,12 +209,6 @@ class UserController extends Controller implements HasMiddleware
     }
 
     
-    public function trackDetail($id)
-    {
-      $data['tracklists'] = Track::with('user')->find(decrypt($id));
-     
-        return view('backend.admin.user-management.playlists.tracklist_details', $data);
-    }
     public function playlistTracks(Request $request, $playlistUrn)
     {
         $palaylistUrn = $playlistUrn;
@@ -302,7 +296,7 @@ class UserController extends Controller implements HasMiddleware
 
     public function tracklistDetail($id)
     {
-        $data['tracklists'] = Track::with('user')->find(decrypt($id));
+        $data['tracklists'] = $this->trackService->getTrack($id)->load(['user']);
         return view('backend.admin.user-management.tracklist.details', $data);
     }
     public function playlistShow(string $soudcloud_urn,)
