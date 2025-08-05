@@ -296,7 +296,8 @@ class UserController extends Controller implements HasMiddleware
 
     public function tracklistDetail($id)
     {
-        $data['tracklists'] = $this->trackService->getTrack($id)->load(['user']);
+        $data['tracklists'] = $this->trackService->getTrack($id);
+        dd($data['tracklists']);
         return view('backend.admin.user-management.tracklist.details', $data);
     }
     public function playlistShow(string $soudcloud_urn,)
