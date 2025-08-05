@@ -295,6 +295,7 @@ class UserController extends Controller implements HasMiddleware
 
     public function tracklistDetail($id)
     {
+        dd(decrypt($id));
         $data['tracklists'] = $this->trackService->getTrack($id)->load(['user']);
         return view('backend.admin.user-management.tracklist.details', $data);
     }
