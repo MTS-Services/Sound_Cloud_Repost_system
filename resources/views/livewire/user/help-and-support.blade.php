@@ -3,34 +3,27 @@
 
     <!----billing---->
     @if ($billing)
-        <div class="mt-4 max-w-8xl mx-auto bg-gray-100 p-4 rounded shadow">
-            <H1 class="text-gray-700 text-xl font-bold">Billing info shown here.</H1>
+        <div class="mt-4 max-w-5xl mx-auto bg-gray-100 dark:bg-gray-800 p-4 rounded shadow">
+            <H1 class="text-gray-700 dark:text-white text-xl font-bold">Billing info shown here.</H1>
             <div class="mt-4 ">
               <form wire:submit.prevent="billings">
+
                 <div class="mb-4">
-                    <label for="name" class="block text-gray-700 font-bold mb-2">Name:</label>
-                    <input type="text" id="name" wire:model="name" class="w-full p-2 border rounded">
+                    <label for="email" class="block text-gray-700 dark:text-white font-bold mb-2">Email:</label>
+                    <input type="email" id="email" wire:model="email" placeholder="Enter your email" class="w-full p-2 border rounded">
                 </div>
 
                 <div class="mb-4">
-                    <label for="email" class="block text-gray-700 font-bold mb-2">Email:</label>
-                    <input type="email" id="email" wire:model="email" class="w-full p-2 border rounded">
+                    <label for="message" class="block text-gray-700 font-bold mb-2 dark:text-white">Massage:</label>
+                    <textarea type="message" id="message" wire:model="message" placeholder="Enter your message" class="w-full p-2 border rounded"></textarea>
                 </div>
-
-                <div class="mb-4">
-                    <label for="message" class="block text-gray-700 font-bold mb-2">Massage:</label>
-                    <textarea type="message" id="message" wire:model="message" class="w-full p-2 border rounded"></textarea>
-                </div>
-                <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded">Update Billing Info</button>
+                <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded">Submit</button>
             </form>
             </div>
         </div>
     @endif
 
-    <!---privacy---->
-    @if ($privacys)
-       <h1>Privacy</h1>
-    @endif
+ 
 
    @if ($test)
         <section class="bg-orange-500 text-white py-16 sm:py-24">
@@ -51,31 +44,31 @@
                     <h3 class="text-xl font-semibold mb-2 dark:text-white">Account & Billing</h3>
                     <p class="text-gray-600 dark:text-white">Manage your subscription, payments, and invoices.</p>
                 </a>
-                <a href="#"
+                <a href="javascript:void(0);" wire:click="billings"
                     class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 text-center">
                     <div class="text-5xl mb-4">&#x1F50A;</div>
                     <h3 class="text-xl font-semibold mb-2 dark:text-white">Uploading & Playback</h3>
                     <p class="text-gray-600 dark:text-white">Solutions for uploading music and playback issues.</p>
                 </a>
-                <a href="javascript:void(0);" wire:click="privacy"
+                <a href="javascript:void(0);" wire:click="billings"
                     class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 text-center">
                     <div class="text-5xl mb-4">&#x1F4E6;</div>
                     <h3 class="text-xl font-semibold dark:text-white mb-2">Privacy & Safety</h3>
                     <p class="text-gray-600 dark:text-white">Information about your data and safety online.</p>
                 </a>
-                <a href="#"
+                <a href="javascript:void(0);" wire:click="billings"
                     class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 text-center">
                     <div class="text-5xl mb-4">&#x1F4AC;</div>
                     <h3 class="text-xl font-semibold dark:text-white mb-2">Community Guidelines</h3>
                     <p class="text-gray-600 dark:text-white">Learn about our community rules and policies.</p>
                 </a>
-                <a href="#"
+                <a href="javascript:void(0);" wire:click="billings"
                     class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 text-center">
                     <div class="text-5xl mb-4">&#x1F4BB;</div>
                     <h3 class="text-xl font-semibold mb-2 dark:text-white">Technical Support</h3>
                     <p class="text-gray-600 dark:text-white">Troubleshooting for app and website issues.</p>
                 </a>
-                <a href="#"
+                <a href="javascript:void(0);" wire:click="billings"
                     class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 text-center">
                     <div class="text-5xl mb-4">&#x1F3A4;</div>
                     <h3 class="text-xl font-semibold mb-2 dark:text-white">Creator Tools</h3>
