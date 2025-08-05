@@ -37,22 +37,22 @@
 
     <!-- Repost Requests -->
     @if ($activeMainTab)
-        <div class="flex flex-col md:flex-row md:items-start md:space-x-3 p-4  rounded bg-gray-100 mb-8 gap-8">
+        <div class="flex flex-col md:flex-row md:items-start md:space-x-3 p-4  rounded bg-gray-100 dark:bg-gray-800 mb-8 gap-8">
             <!-- Left Icon and "Quick Tip" -->
             <div class="flex items-top space-x-2 mb-2 md:mb-0 ">
                 <!-- Lightbulb Icon -->
-                <svg class="w-4 h-4 text-sky-500" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-4 h-4 text-sky-600 dark:text-sky-400" fill="currentColor" viewBox="0 0 20 20">
                     <path
                         d="M10 2a6 6 0 00-4 10.49V15a1 1 0 001 1h6a1 1 0 001-1v-2.51A6 6 0 0010 2zm1 13h-2v-1h2v1zm1-2H8v-1h4v1zm-.44-2.93a1 1 0 01-.32 1.36L10 11l-.24-.14a1 1 0 111.36-1.36l.44.57z" />
                 </svg>
                 <!-- Quick Tip Text -->
-                <span class="text-sm font-medium text-gray-700">Quick Tip</span>
+                <span class="text-sm font-medium text-gray-700 dark:text-white">Quick Tip</span>
             </div>
 
             <!-- Content -->
             <div class="flex-1 flex flex-col space-y-2">
                 <!-- Message Text -->
-                <p class="text-sm text-gray-700">
+                <p class="text-sm text-gray-700 dark:text-white">
                     Your response rate could be better! Improve your response rate and get more requests by accepting OR
                     declining requests quickly.
                 </p>
@@ -61,7 +61,7 @@
                 <div class="flex items-center space-x-1">
                   <div class="w-4 h-4 rounded-full bg-orange-500"></div>
 
-                    <span class="text-xs text-orange-600 font-semibold">64% <span class="text-gray-900">Response rate.</span></span>
+                    <span class="text-xs text-orange-600 font-semibold">64% <span class="text-gray-900 dark:text-white">Response rate.</span></span>
                     <a href="#" class="text-xs text-red-500 underline">Reset</a>
                 </div>
 
@@ -77,7 +77,7 @@
                             </div>
                         </div>
                         <!-- Label -->
-                        <span id="toggleLabel" class="text-sm text-gray-700">Accepting Requests</span>
+                        <span id="toggleLabel" class="text-sm text-gray-700 dark:text-white">Accepting Requests</span>
                     </div>
                     
                 </label>

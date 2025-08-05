@@ -162,6 +162,7 @@
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
+
             @if ($showModal)
                 <div class="flex border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
                     <button wire:click="setActiveTab('tracks')"
@@ -179,91 +180,130 @@
                         </div>
                     </button>
                 </div>
-                <!-- Content -->
-                <div class="p-6">
-                    @if ($activeTab === 'tracks')
-                        <!-- Tracks Content -->
-                        <div class="space-y-4">
-                            @forelse ($tracks as $track_)
-                                <div wire:click="openRepostsModal({{ $track_->id }})"
-                                    class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
-                                    <div class="flex-shrink-0">
-                                        <img class="h-14 w-14 rounded-xl object-cover shadow-md"
-                                            src="{{ soundcloud_image($track_->artwork_url) }}"
-                                            alt="{{ $track_->title }}" />
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p
-                                            class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                                            {{ $track_->title }}
-                                        </p>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                            by
-                                            <strong
-                                                class="text-orange-600 dark:text-orange-400">{{ $track_->author_username }}</strong>
-                                            <span class="ml-2 text-xs text-gray-400">{{ $track_->genre }}</span>
-                                        </p>
-                                        <span
-                                            class="inline-block bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono">{{ $track_->isrc }}</span>
-                                    </div>
-                                    <div class="flex-shrink-0">
-                                        <i data-lucide="chevron-right"
-                                            class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="text-center py-16 text-gray-500 dark:text-gray-400">
-                                    <div
-                                        class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <i data-lucide="music" class="w-8 h-8 text-orange-500"></i>
-                                    </div>
-                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">No tracks
-                                        found</h3>
-                                    <p class="text-gray-500 dark:text-gray-400">Try uploading one first to get started.
-                                    </p>
-                                </div>
-                            @endforelse
+
+                <!-- Search option -->
+                <div class="h-full overflow-y-auto">
+                    <div class="p-4 sm:p-8 bg-white dark:bg-slate-800 flex flex-col items-center ">
+                        <label for="track-link" class="mb-2 text-gray-700 dark:text-white font-semibold text-lg">
+                            Paste a SoundCloud profile or track link
+                        </label>
+
+                        <div class="flex w-full max-w-xl shadow-md rounded-lg overflow-hidden">
+                            <input type="text" id="track-link"
+                                placeholder="Paste a SoundCloud profile or track link"
+                                class="flex-grow p-4 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200">
+
+                            <button type="submit"
+                                class="bg-orange-500 text-white p-4 w-16 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </button>
                         </div>
-                    @else
-                        <!-- Playlists Content -->
-                        <div class="space-y-4">
-                            @forelse ($playlists as $playlist_)
-                                <div wire:click='openPlaylistTracksModal({{ $playlist_->id }})'
-                                    class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
-                                    <div class="flex-shrink-0">
-                                        <img class="h-14 w-14 rounded-xl object-cover shadow-md"
-                                            src="{{ soundcloud_image($playlist_->artwork_url) }}"
-                                            alt="{{ $playlist_->title }}" />
+                    </div>
+                    <!-- Content -->
+                    <div class="p-6 ">
+                        @if ($activeTab === 'tracks')
+                            <!-- Tracks Content -->
+                            <div class="space-y-4">
+                                @forelse ($tracks as $track_)
+                                    <div wire:click="openRepostsModal({{ $track_->id }})"
+                                        class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
+                                        <div class="flex-shrink-0">
+                                            <img class="h-14 w-14 rounded-xl object-cover shadow-md"
+                                                src="{{ soundcloud_image($track_->artwork_url) }}"
+                                                alt="{{ $track_->title }}" />
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p
+                                                class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                                {{ $track_->title }}
+                                            </p>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                                by
+                                                <strong
+                                                    class="text-orange-600 dark:text-orange-400">{{ $track_->author_username }}</strong>
+                                                <span class="ml-2 text-xs text-gray-400">{{ $track_->genre }}</span>
+                                            </p>
+                                            <span
+                                                class="inline-block bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono">{{ $track_->isrc }}</span>
+                                        </div>
+                                        <div class="flex-shrink-0">
+                                            <i data-lucide="chevron-right"
+                                                class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
+                                        </div>
                                     </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p
-                                            class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                                            {{ $playlist_->title }}
+                                @empty
+                                    <div class="text-center py-16 text-gray-500 dark:text-gray-400">
+                                        <div
+                                            class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <i data-lucide="music" class="w-8 h-8 text-orange-500"></i>
+                                        </div>
+                                        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">No
+                                            tracks
+                                            found</h3>
+                                        <p class="text-gray-500 dark:text-gray-400">Try uploading one first to get
+                                            started.
                                         </p>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                            {{ $playlist_->track_count }} {{ __('tracks') }}
+                                    </div>
+                                @endforelse
+                            </div>
+                            <div class="text-center mt-6">
+
+                            </div>
+                        @else
+                            <!-- Playlists Content -->
+                            <div class="space-y-4">
+                                @forelse ($playlists as $playlist_)
+                                    <div wire:click='openPlaylistTracksModal({{ $playlist_->id }})'
+                                        class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
+                                        <div class="flex-shrink-0">
+                                            <img class="h-14 w-14 rounded-xl object-cover shadow-md"
+                                                src="{{ soundcloud_image($playlist_->artwork_url) }}"
+                                                alt="{{ $playlist_->title }}" />
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p
+                                                class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                                {{ $playlist_->title }}
+                                            </p>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                                {{ $playlist_->track_count }} {{ __('tracks') }}
+                                            </p>
+                                        </div>
+                                        <div class="flex-shrink-0">
+                                            <i data-lucide="chevron-right"
+                                                class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="text-center py-16 text-gray-500 dark:text-gray-400">
+                                        <div
+                                            class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <i data-lucide="list-music" class="w-8 h-8 text-orange-500"></i>
+                                        </div>
+                                        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">No
+                                            playlists found</h3>
+                                        <p class="text-gray-500 dark:text-gray-400">Try creating one first to get
+                                            started.
                                         </p>
                                     </div>
-                                    <div class="flex-shrink-0">
-                                        <i data-lucide="chevron-right"
-                                            class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="text-center py-16 text-gray-500 dark:text-gray-400">
-                                    <div
-                                        class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <i data-lucide="list-music" class="w-8 h-8 text-orange-500"></i>
-                                    </div>
-                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">No
-                                        playlists found</h3>
-                                    <p class="text-gray-500 dark:text-gray-400">Try creating one first to get started.
-                                    </p>
-                                </div>
-                            @endforelse
-                        </div>
-                    @endif
+                                @endforelse
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="text-center mt-6 mb-10">
+                        <button {{-- wire:click="loadMore" --}}
+                            class="px-6 py-2 text-xl font-bold  text-orange-600 dark:text-orange-400  border-orange-600 dark:border-orange-400 hover:bg-orange-600 hover:text-white transition-colors duration-200">
+                            Load More
+                        </button>
+                    </div>
+
                 </div>
+
             @endif
         </div>
     </div>
@@ -442,7 +482,8 @@
                         </div>
                         <div class="p-4 bg-gray-50 dark:bg-slate-700 rounded-xl border-l-4 border-orange-500 mt-4">
                             <p class="text-gray-400 dark:text-gray-300 text-sm leading-relaxed">
-                                Your track will be shared across our network of 50K+ followers on SoundCloud,. Expected reach: 10-15K impressions within 48 hours.
+                                Your track will be shared across our network of 50K+ followers on SoundCloud,. Expected
+                                reach: 10-15K impressions within 48 hours.
                             </p>
                         </div>
                         <!-- Confirm Button -->
