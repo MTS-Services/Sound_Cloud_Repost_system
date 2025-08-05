@@ -33,31 +33,10 @@
                 Start a new campaign
             </a>
         </div>
-        <!-- Suggestions Dropdown -->
-        {{-- @if ($showSuggestions && !empty($suggestedTags))
-            <div
-                class="flex flex-wrap absolute z-50 w-full mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto py-2">
-                @foreach ($suggestedTags as $index => $tag)
-                    <span wire:click="selectTag('{{ $tag }}')"
-                        class="inline-flex items-center px-3 py-1 rounded-sm text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 ml-2 cursor-default">
-                        {{ $tag }}
-                        <button type="button"
-                            class="ml-2 text-blue-600 hover:text-blue-800 focus:outline-none cursor-pointer"
-                            onclick="event.stopPropagation(); @this.call('removeTag', {{ $index }})">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </span>
-                @endforeach
-
-            </div>
-        @endif --}}
     </div>
 
     <div x-data ="{ openFilterByTrack: false, openFilterByGenre: false }"
-        class="flex items-center justify-start gap-4 mt-4 mb-2">
+        class="flex items-center justify-start gap-4 mt-4 mb-2 relative">
         <div class="relative">
             <button @click="openFilterByTrack = !openFilterByTrack , openFilterByGenre = false"
                 wire:click="getAllTrackTypes" @click.outside="openFilterByTrack = false"
@@ -131,17 +110,17 @@
                     <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
                         <div class="py-1">
                             @foreach ($genres as $genre)
-                            <button wire:click="filterByGenre('{{ $genre }}')"
-                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
-                                {{ $genre }}
-                            </button>
-                        @endforeach
+                                <button wire:click="filterByGenre('{{ $genre }}')"
+                                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                    {{ $genre }}
+                                </button>
+                            @endforeach
                         </div>
                     </div>
                 </div>
             @endif
         </div>
-
+        {{-- Search --}}
         <div x-data="{ showInput: false }"
             class="w-64 relative flex items-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded">
             <svg class="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-slate-300 pointer-events-none"
@@ -166,6 +145,26 @@
                         class="flex-1 min-w-0 border-0 outline-none focus:ring-0 p-1" autocomplete="off"> --}}
             </div>
         </div>
+        {{-- <!-- Suggestions Dropdown -->
+        @if ($showSuggestions && !empty($suggestedTags))
+            <div
+                class="flex flex-wrap absolute right-0 mt-20 z-50 w-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto py-2">
+                @foreach ($suggestedTags as $index => $tag)
+                    <span wire:click="selectTag('{{ $tag }}')"
+                        class="inline-flex items-center px-3 py-1 rounded-sm text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 ml-2 cursor-default">
+                        {{ $tag }}
+                        <button type="button"
+                            class="ml-2 text-blue-600 hover:text-blue-800 focus:outline-none cursor-pointer"
+                            onclick="event.stopPropagation(); @this.call('removeTag', {{ $index }})">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </span>
+                @endforeach
+            </div>
+        @endif --}}
     </div>
 
     <div class="container mx-auto px-4 py-6">

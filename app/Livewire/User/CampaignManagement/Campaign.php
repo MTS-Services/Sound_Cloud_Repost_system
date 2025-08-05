@@ -87,7 +87,7 @@ class Campaign extends Component
             $this->showSuggestions = false;
         }
     }
-   public function getAllTags()
+    public function getAllTags()
     {
         $this->showSelectedTags = true;
 
@@ -117,7 +117,7 @@ class Campaign extends Component
             ->get()
             ->pluck('music.tag_list')
             ->flatten()
-             ->map(function ($tagString) {
+            ->map(function ($tagString) {
                 // Split comma-separated strings into arrays
                 return array_map('trim', explode(',', $tagString));
             })
@@ -145,7 +145,7 @@ class Campaign extends Component
             $this->suggestedTags = [];
             $this->showSuggestions = false;
             $this->searchByTags();
-        }   
+        }
     }
     public function removeTag($tag)
     {
@@ -157,6 +157,43 @@ class Campaign extends Component
     {
         $this->showSuggestions = false;
     }
+    // public function searchByTags()
+    // {
+    //     $this->isLoading = true;
+
+    //     if (empty($this->selectedTags)) {
+    //         $this->loadInitialData();
+    //     } else {
+    //         $this->featuredCampaigns = $this->campaignService->getCampaigns()
+    //             ->where('cost_per_repost', repostPrice(user()))
+    //             ->featured()
+    //             ->withoutSelf()
+    //             ->with(['music.user.userInfo', 'reposts'])
+    //             ->whereDoesntHave('reposts', function ($query) {
+    //                 $query->where('reposter_urn', user()->urn);
+    //             })
+    //             ->whereHas('music', function ($query) {
+    //                 $query->whereIn('tag_list', $this->selectedTags);
+    //             })
+    //             ->get();
+
+    //         $this->campaigns = $this->campaignService->getCampaigns()
+    //             ->where('cost_per_repost', repostPrice(user()))
+    //             ->notFeatured()
+    //             ->withoutSelf()
+    //             ->with(['music.user.userInfo', 'reposts'])
+    //             ->whereDoesntHave('reposts', function ($query) {
+    //                 $query->where('reposter_urn', user()->urn);
+    //             })
+    //             ->whereHas('music', function ($query) {
+    //                 $query->whereIn('tag_list', $this->selectedTags);
+    //             })
+    //             ->get();
+    //     }
+
+    //     $this->isLoading = false;
+    //     $this->selectedTags = [];
+    // }
     public function searchByTags()
     {
         $this->isLoading = true;
@@ -173,7 +210,11 @@ class Campaign extends Component
                     $query->where('reposter_urn', user()->urn);
                 })
                 ->whereHas('music', function ($query) {
-                    $query->whereIn('tag_list', $this->selectedTags);
+                    $query->where(function ($q) {
+                        foreach ($this->selectedTags as $tag) {
+                            $q->orWhere('tag_list', 'LIKE', "%$tag%");
+                        }
+                    });
                 })
                 ->get();
 
@@ -186,7 +227,11 @@ class Campaign extends Component
                     $query->where('reposter_urn', user()->urn);
                 })
                 ->whereHas('music', function ($query) {
-                    $query->whereIn('tag_list', $this->selectedTags);
+                    $query->where(function ($q) {
+                        foreach ($this->selectedTags as $tag) {
+                            $q->orWhere('tag_list', 'LIKE', "%$tag%");
+                        }
+                    });
                 })
                 ->get();
         }
@@ -194,6 +239,7 @@ class Campaign extends Component
         $this->isLoading = false;
         $this->selectedTags = [];
     }
+
     public function loadInitialData()
     {
 
@@ -260,10 +306,10 @@ class Campaign extends Component
     // }
 
     /**
-    *  ###########################################
-    * ******* Start Tabs Events ********
-    * ###########################################
-    */
+     *  ###########################################
+     * ******* Start Tabs Events ********
+     * ###########################################
+     */
     public function getAllTrackTypes()
     {
         $this->selectedTrackTypes = $this->trackService->getTracks()
@@ -291,17 +337,17 @@ class Campaign extends Component
     }
 
     /**
-    *  ###########################################
-    * ******* End Tabs Events ********
-    * ###########################################
-    */
+     *  ###########################################
+     * ******* End Tabs Events ********
+     * ###########################################
+     */
 
 
     /**
-    *  ###########################################
-    * ******* Start Audio Player Events ********
-    * ###########################################
-    */
+     *  ###########################################
+     * ******* Start Audio Player Events ********
+     * ###########################################
+     */
     public function handleAudioPlay($campaignId)
     {
         $this->playingCampaigns[$campaignId] = true;
