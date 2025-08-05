@@ -234,7 +234,7 @@ class UserController extends Controller implements HasMiddleware
         return [
             [
                 'routeName' => 'um.user.tracklist.detail',
-                'params' => encrypt($model->id),
+                'params' => [encrypt($model->urn), encrypt($model->id)],
                 'label' => ' details',
                 'permissions' => ['Detail-list']
             ],
@@ -284,7 +284,7 @@ class UserController extends Controller implements HasMiddleware
         return [
             [
                 'routeName' => 'um.user.tracklist.detail',
-                'params' => encrypt($model->id),
+                'params' => [encrypt($model->urn), encrypt($model->id)],
                 'label' => ' Details',
                 'permissions' => ['Detail-list']
             ],
@@ -293,10 +293,9 @@ class UserController extends Controller implements HasMiddleware
         ];
     }
 
-    public function tracklistDetail($id)
+    public function tracklistDetail($trackUrn)
     {
-        dd(decrypt($id));
-        $data['tracklists'] = $this->trackService->getTrack($id)->load(['user']);
+        $data['tracklists'] = $this->trackService->getTrack($trackUrn , 'urn')->load(['user']);
         return view('backend.admin.user-management.tracklist.details', $data);
     }
     public function playlistShow(string $soudcloud_urn,)

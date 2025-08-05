@@ -13,7 +13,7 @@ class TrackService
     {
         return Track::orderBy($orderBy, $order)->latest();
     }
-    public function getTrack(string $encryptedValue ,  string $field = 'id'): Track | Null
+    public function getTrack(string $encryptedValue ,  string $field = 'id'): Track
     {
         return Track::where($field, decrypt($encryptedValue))->first();
     }
