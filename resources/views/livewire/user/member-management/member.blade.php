@@ -346,7 +346,7 @@
                         <i data-lucide="music" class="w-5 h-5 text-white"></i>
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                        {{ __('Reposts Requeste') }}
+                        {{ __('Requesting Reposts') }}
                     </h2>
                 </div>
                 <button x-on:click="showRepostsModal= false"
@@ -442,8 +442,7 @@
                         </div>
                         <div class="p-4 bg-gray-50 dark:bg-slate-700 rounded-xl border-l-4 border-orange-500 mt-4">
                             <p class="text-gray-400 dark:text-gray-300 text-sm leading-relaxed">
-                                Your track will be shared across our network of 50K+ followers on SoundCloud, Spotify,
-                                and social media platforms. Expected reach: 10-15K impressions within 48 hours.
+                                Your track will be shared across our network of 50K+ followers on SoundCloud,. Expected reach: 10-15K impressions within 48 hours.
                             </p>
                         </div>
                         <!-- Confirm Button -->
@@ -454,7 +453,7 @@
                             </button>
                             <button wire:click="createRepostsRequest()"
                                 class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700">
-                                Send Repost
+                                Send Request
                             </button>
                         </div>
                     @endif

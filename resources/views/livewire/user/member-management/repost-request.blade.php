@@ -11,32 +11,106 @@
             {{ __('Send Repost') }}
         </a>
     </div>
+   
     <div class="mb-8">
         <div class="border-b border-gray-200 dark:border-gray-700">
             <nav class="-mb-px flex space-x-8">
                 <button
                     class="tab-button @if ($activeMainTab === 'pending') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
                     wire:click="setActiveTab('pending')">
-                    {{ __('Pendings') }}
+                    {{ __('Incoming requests') }}
                 </button>
                 <button
                     class="tab-button @if ($activeMainTab === 'decline') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
                     wire:click="setActiveTab('decline')">
-                    {{ __('Declined') }}
+                    {{ __('Outgoing request') }}
                 </button>
-                <button
+                 <button
                     class="tab-button @if ($activeMainTab === 'expired') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
                     wire:click="setActiveTab('expired')">
-                    {{ __('Expired') }}
+                    {{ __('Previously Reposted') }}
                 </button>
-                <button
-                    class="tab-button @if ($activeMainTab === 'completed') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                    wire:click="setActiveTab('completed')">
-                    {{ __('Completed') }}
-                </button>
+
             </nav>
         </div>
     </div>
+
+    <!-- Repost Requests -->
+    @if ($activeMainTab)
+        <div class="flex flex-col md:flex-row md:items-start md:space-x-3 p-4  rounded bg-gray-100 mb-8 gap-8">
+            <!-- Left Icon and "Quick Tip" -->
+            <div class="flex items-top space-x-2 mb-2 md:mb-0 ">
+                <!-- Lightbulb Icon -->
+                <svg class="w-4 h-4 text-sky-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                        d="M10 2a6 6 0 00-4 10.49V15a1 1 0 001 1h6a1 1 0 001-1v-2.51A6 6 0 0010 2zm1 13h-2v-1h2v1zm1-2H8v-1h4v1zm-.44-2.93a1 1 0 01-.32 1.36L10 11l-.24-.14a1 1 0 111.36-1.36l.44.57z" />
+                </svg>
+                <!-- Quick Tip Text -->
+                <span class="text-sm font-medium text-gray-700">Quick Tip</span>
+            </div>
+
+            <!-- Content -->
+            <div class="flex-1 flex flex-col space-y-2">
+                <!-- Message Text -->
+                <p class="text-sm text-gray-700">
+                    Your response rate could be better! Improve your response rate and get more requests by accepting OR
+                    declining requests quickly.
+                </p>
+
+                <!-- Response Rate -->
+                <div class="flex items-center space-x-1">
+                  <div class="w-4 h-4 rounded-full bg-orange-500"></div>
+
+                    <span class="text-xs text-orange-600 font-semibold">64% <span class="text-gray-900">Response rate.</span></span>
+                    <a href="#" class="text-xs text-red-500 underline">Reset</a>
+                </div>
+
+                <!-- Toggle -->
+                <label class="inline-flex items-center cursor-pointer">
+                    <input type="checkbox" checked class="sr-only peer mb-3">
+                    <div class="flex items-center space-x-2">
+                        <!-- Toggle Switch -->
+                        <div id="toggleSwitch"
+                            class="w-7 h-3 bg-gray-300 rounded-full relative cursor-pointer transition-colors">
+                            <div id="toggleCircle"
+                                class="absolute left-0.5 top-0  w-3 h-3 bg-white rounded-full shadow transition-transform duration-300">
+                            </div>
+                        </div>
+                        <!-- Label -->
+                        <span id="toggleLabel" class="text-sm text-gray-700">Accepting Requests</span>
+                    </div>
+                    
+                </label>
+            </div>
+        </div>
+
+   <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleSwitch = document.getElementById('toggleSwitch');
+        const toggleCircle = document.getElementById('toggleCircle');
+        const toggleLabel = document.getElementById('toggleLabel');
+
+        // Load saved state from localStorage
+        let isChecked = localStorage.getItem('toggleChecked') === 'true';
+
+        function updateToggleUI() {
+            toggleSwitch.classList.toggle('bg-orange-500', isChecked);
+            toggleSwitch.classList.toggle('bg-gray-300', !isChecked);
+            toggleCircle.classList.toggle('translate-x-4', isChecked);
+            toggleLabel.textContent = isChecked ? 'Accepting Requests' : 'Not Accepting';
+        }
+
+        // Initial render
+        updateToggleUI();
+
+        toggleSwitch.addEventListener('click', () => {
+            isChecked = !isChecked;
+            localStorage.setItem('toggleChecked', isChecked);
+            updateToggleUI();
+        });
+    });
+</script>
+  @endif
     @foreach ($repostRequests as $repostRequest)
         <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm">
             <div class="flex flex-col lg:flex-row" wire:key="request-{{ $repostRequest->id }}">
