@@ -1,21 +1,24 @@
 <x-admin::layout>
-    <x-slot name="title">{{ __('Repost List') }}</x-slot>
-    <x-slot name="breadcrumb">{{ __('Repost List') }}</x-slot>
-    <x-slot name="page_slug">repost</x-slot>
-
-
+    <x-slot name="title">{{ __('Repost Request List') }}</x-slot>
+    <x-slot name="breadcrumb">{{ __('Repost Request List') }}</x-slot>
+    <x-slot name="page_slug">repost_request</x-slot>
 
 <section>
 
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
-                <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Repost List') }}</h2>
+                <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Repost Request List') }}</h2>
                 <div class="flex items-center gap-2">
                     {{-- <x-button href="{{ route('om.order.trash') }}" icon="trash-2" type='secondary'
                         permission="order-trash">
                         {{ __('Trash') }}
                     </x-button>
                      --}}
+                      {{-- <x-button href="{{ route('rrm.request.index') }}"  type='secondary'
+                        permission="order-trash">
+                        {{ __('Back') }}
+                    </x-button> --}}
+                    
                 </div>
             </div>
         </div>
@@ -25,10 +28,10 @@
                     <tr>
                         <th >{{ __('SL') }}</th>
                         <th>{{ __('Requester Name') }}</th>
+                    
                         <th>{{ __('Reposter Name') }}</th>
-                        <th>{{ __('Type') }}</th> 
                         <th>{{ __('Credits') }}</th>
-                        <th>{{ __('Reposted At') }}</th>
+                        <th>{{ __('Requested At') }}</th>
                         <th>{{ __('Created Date') }}</th>
                         <th >{{ __('Action') }}</th>
                     </tr>
@@ -49,12 +52,11 @@
                 let table_columns = [
                     //name and data, orderable, searchable
                    
-                    ['requester_name', true, true],
-                    ['reposter_name', true, true],
-                    ['repost_type', true, true],
-                    ['credits_earned', true, true],
-                    ['reposted_at', true, true],
-                   
+                    ['name', true, true],
+                  
+                    ['title', true, true],                 
+                    ['credits_spent', true, true],
+                    ['requested_at', true, true],                  
                     ['created_at', true, true],
                     ['action', false, false],
                 ];
@@ -62,10 +64,10 @@
                     table_columns: table_columns,
                     main_class: '.datatable',
                     displayLength: 10,
-                    main_route: "{{ route('rm.repost.index') }}",
+                    main_route: "{{ route('rrm.request.index') }}",
                     order_route: "{{ route('update.sort.order') }}",
                     export_columns: [0, 1, 2, 3,4],
-                    model: 'Repost',
+                    model: 'RepostRequest',
                 };
                 // initializeDataTable(details);
 
@@ -77,11 +79,11 @@
 
                 $(document).on('click', '.view', function() {
                     const id = $(this).data('id');
-                    const route = "{{ route('rm.repost.show', ':id') }}";
+                    const route = "{{ route('rrm.request.show', ':id') }}";
 
                     const details = [
                         {
-                            label: '{{ __('reposter') }}',
+                            label: '{{ __('requester') }}',
                             key: 'name',
                         },
                        
@@ -91,18 +93,42 @@
                             key: 'title',
                         },
                         {
-                            label: '{{ __('Soundcloud ID') }}',
-                            key: 'soundcloud_repost_id',
+                            label: '{{ __('Target User') }}',
+                            key: 'target_user_urn',
+                        },
+                         {
+                            label: '{{ __('Track') }}',
+                            key: 'track_urn',
                         },
                         
                        
                         {
                             label: '{{ __('Credits') }}',
-                            key: 'credits_earned',
+                            key: 'credits_spent',
+                        },
+                        {
+                            label: '{{ __('Status') }}',
+                            key: 'status',
+                        },
+                        {
+                            label: '{{ __('Rejection Reason') }}',
+                            key: 'rejection_reason',
+                        },
+                        {
+                            label: '{{ __('Expired At') }}',
+                            key: 'expired_at',
+                        },
+                        {
+                            label: '{{ __('Requested At') }}',
+                            key: 'requested_at',
                         },
                         {
                             label: '{{ __('Reposted At') }}',
                             key: 'reposted_at',
+                        },
+                        {
+                            label: '{{ __('Completed At') }}',
+                            key: 'completed_at',
                         },
                         {
                             label: '{{ __('Created Date') }}',
@@ -115,9 +141,6 @@
             });
         </script>
 @endpush
-
-
-
 
 
 </x-admin::layout>

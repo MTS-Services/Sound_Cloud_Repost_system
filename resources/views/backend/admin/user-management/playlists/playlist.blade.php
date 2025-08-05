@@ -81,7 +81,7 @@
         </script>
 
         {{-- Details Modal --}}
-        <script>
+        {{-- <script>
             document.addEventListener('DOMContentLoaded', () => {
 
                 $(document).on('click', '.view', function() {
@@ -252,7 +252,7 @@
                     showDetailsModal(route, id, '{{ __('Playlist Details') }}', details);
                 });
             });
-        </script>
+        </script> --}}
     @endpush
     
 </x-admin::layout>

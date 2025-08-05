@@ -10,11 +10,16 @@ class CreditTransactionService
 {
     public function getTransactions($orderBy = 'id', $order = 'asc')
     {
-        return CreditTransaction::orderBy($orderBy, $order)->latest()->get();
+        return CreditTransaction::orderBy($orderBy, $order)->latest();
     }
     public function getTransaction(string $encryptedValue, string $field = 'id'): CreditTransaction | Collection
     {
         return CreditTransaction::where($field, decrypt($encryptedValue))->first();
+    }
+     public function toggleStatus(CreditTransaction $credit): void
+    {
+        $credit->status = $credit->status === 'processing' ? 'success' : 'cancelled';
+        $credit->save();
     }
 
     public function getUserTotalCredits()
@@ -52,4 +57,5 @@ class CreditTransactionService
     {
         return CreditTransaction::where($orderBy, $order)->with('receiver')->purchase()->latest();
     }
+    
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Admin\OrderManagement;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\OrderManagement\OrderRequest;
+use App\Models\Order;
 use App\Services\Admin\OrderManagement\OrderService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -53,12 +54,18 @@ class OrderController extends Controller
     {
         return [
             [
-                'routeName' => 'javascript:void(0)',
-                'data-id' => encrypt($model->id),
-                'className' => 'view',
-                'label' => 'Details',
-                'permissions' => ['order-list', 'order-delete', 'order-status']
+                'routeName' => 'om.order.detail',
+                'params' => [encrypt($model->id)],
+                'label' => ' Details',
+                'permissions' => ['order-detail']
             ],
+            // [
+            //     'routeName' => 'javascript:void(0)',
+            //     'data-id' => encrypt($model->id),
+            //     'className' => 'view',
+            //     'label' => 'Details',
+            //     'permissions' => ['order-list', 'order-delete', 'order-status']
+            // ],
             [
                 'routeName' => 'om.order.status',
                 'params' => [encrypt($model->id)],
@@ -71,6 +78,12 @@ class OrderController extends Controller
           
 
         ];
+    }
+
+    public function detail($id)
+    {
+        $data['orders'] = Order::where('id', decrypt($id))->first();
+        return view('backend.admin.order-management.orders.detail',$data);
     }
 
    public function show(Request $request, string $id)

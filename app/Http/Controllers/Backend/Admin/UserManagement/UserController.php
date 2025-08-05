@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Backend\Admin\UserManagement;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
 use App\Models\Playlist;
+use App\Models\Track;
+use App\Models\User;
+use App\Models\UserInformation;
 use App\Services\Admin\UserManagement\UserService;
 use App\Services\PlaylistService;
 use App\Services\TrackService;
@@ -81,12 +84,12 @@ class UserController extends Controller implements HasMiddleware
     protected function menuItems($model): array
     {
         return [
+            
             [
-                'routeName' => 'javascript:void(0)',
-                'data-id' => encrypt($model->id),
-                'className' => 'view',
+                'routeName' => 'um.user.detail',
+                'params' => encrypt($model->id),
                 'label' => 'Details',
-                'permissions' => ['permission-list', 'permission-delete', 'permission-status']
+                'permissions' => ['user-detail']
             ],
             // <button class="btn" onclick="add_credit_modal.showModal()">open modal</button>
             [
@@ -129,6 +132,13 @@ class UserController extends Controller implements HasMiddleware
 
         ];
     }
+
+    public function detail(Request $request, string $id)
+    {
+        $data['user'] = $this->userService->getUser($id)->load(['userInfo']);
+       $data['userinfo'] = $data['user']->userInfo;
+        return view('backend.admin.user-management.user.detail', $data);
+    }
     public function show(Request $request, string $id)
     {
         $data = $this->userService->getUser($id)->load(['userInfo']);
@@ -145,7 +155,7 @@ class UserController extends Controller implements HasMiddleware
         return $this->redirectIndex();
     }
 
-    public function playlist(Request $request, $id)
+    public function playlist(Request $request)
     {
         if ($request->ajax()) {
             $query = $this->playlistService->getPlaylists()->with('user');
@@ -171,20 +181,34 @@ class UserController extends Controller implements HasMiddleware
     {
         return [
             [
-                'routeName' => 'javascript:void(0)',
-                'data-id' => encrypt($model->soundcloud_urn),
-                'className' => 'view',
-                'label' => 'Details',
-                'permissions' => ['permission-list', 'permission-delete', 'permission-status']
+                'routeName' => 'um.user.playlist.details',
+                'params' => encrypt($model->id),
+                'label' => ' details',
+                'permissions' => ['permissions-list']
             ],
-            [
+            
+            
+              [
                 'routeName' => 'um.user.playlist.track-list',
+                ['user' => $model->urn],
                 'params' => [encrypt($model->soundcloud_urn), encrypt($model->id)],
-                'label' => 'Tracks',
+                'label' => 'Tracklist',
+                'edit' => true,
                 'permissions' => ['permission-tracklist']
-            ]
+            ],
         ];
     }
+
+    //palylest track
+     
+
+    public function playlistDetail($id)
+    {
+      $data['playlists'] = Playlist::with('user')->find(decrypt($id));
+        return view('backend.admin.user-management.playlists.details', $data);
+    }
+
+    
     public function playlistTracks(Request $request, $playlistUrn)
     {
         $palaylistUrn = $playlistUrn;
@@ -192,14 +216,16 @@ class UserController extends Controller implements HasMiddleware
             $playlist = $this->playlistService->getPlaylist($playlistUrn)->load(['tracks', 'user']);
             $query = $playlist->tracks();
             return DataTables::eloquent($query)
-                ->editColumn('release_month', function ($playlist) {
-                    return $playlist->release_month_formatted;
+                ->editColumn('user_name', function ($tracklist) {
+                    return $tracklist->user?->name;
                 })
+                ->editColumn('creater_id', fn($tracklist) => $this->creater_name($tracklist))
+                ->editColumn('created_at', fn($tracklist) => $tracklist->created_at_formatted)
                 ->editColumn('action', function ($playlist) {
                     $menuItems = $this->playlistTrackMenuItems($playlist);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action', 'created_at', 'title', 'release_month'])->make(true);
+                ->rawColumns(['user_name', 'action', 'created_at', 'creater_id'])->make(true);
         }
         return view('backend.admin.user-management.playlists.playlist_track', compact('palaylistUrn'));
     }
@@ -207,14 +233,27 @@ class UserController extends Controller implements HasMiddleware
     {
         return [
             [
-                'routeName' => 'javascript:void(0)',
-                'data-id' => encrypt($model->urn),
-                'className' => 'view',
-                'label' => 'Details',
-                'permissions' => ['permission-list', 'permission-delete', 'permission-status']
+                'routeName' => 'um.user.tracklist.detail',
+                'params' => [encrypt($model->urn), encrypt($model->id)],
+                'label' => ' details',
+                'permissions' => ['Detail-list']
             ],
         ];
     }
+
+    public function trackMenuItems($model): array
+    {
+        return [
+            [
+                'routeName' => 'um.user.tracklist.detail',
+                'params' => encrypt($model->id),
+                'label' => ' details',
+                'permissions' => ['Detail-list']
+            ],
+        ];
+    }
+
+
 
     public function tracklist(Request $request)
     {
@@ -244,19 +283,24 @@ class UserController extends Controller implements HasMiddleware
     {
         return [
             [
-                'routeName' => 'javascript:void(0)',
-                'data-id' => encrypt($model->urn),
-                'className' => 'view',
-                'label' => 'Tracklist',
-                'permissions' => ['permission-list']
+                'routeName' => 'um.user.tracklist.detail',
+                'params' => [encrypt($model->urn), encrypt($model->id)],
+                'label' => ' Details',
+                'permissions' => ['Detail-list']
             ],
 
 
         ];
     }
-    public function playlistShow(string $soudcloud_urn)
+
+    public function tracklistDetail($trackUrn)
     {
-        $data = $this->playlistService->getPlaylist($soudcloud_urn, 'soundcloud_urn');
+        $data['tracklists'] = $this->trackService->getTrack($trackUrn , 'urn')->load(['user']);
+        return view('backend.admin.user-management.tracklist.details', $data);
+    }
+    public function playlistShow(string $soudcloud_urn,)
+    {
+        $data = $this->playlistService->getPlaylist($soudcloud_urn, 'soundcloud_urn',);
         $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
         return response()->json($data);

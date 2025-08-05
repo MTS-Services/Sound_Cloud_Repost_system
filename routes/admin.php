@@ -16,6 +16,7 @@ use App\Http\Controllers\Backend\Admin\OrderManagement\CreditTransactionControll
 use App\Http\Controllers\Backend\Admin\PackageManagement\FeatureCategoryController;
 use App\Http\Controllers\Backend\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Backend\Admin\RepostManagement\RepostController;
+use App\Http\Controllers\Backend\Admin\RepostManagement\RepostRequestController;
 
 Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], function () {
 
@@ -79,6 +80,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{credit}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{credit}', 'permanentDelete')->name('permanent-delete');
+            Route::get('/detail/{credit}', 'detail')->name('detail');
         });
     });
 
@@ -90,12 +92,17 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{user}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{user}', 'permanentDelete')->name('permanent-delete');
+            Route::get('/user-detail/{user}', 'detail')->name('detail');
+            //palylist
             Route::get('/playlist/{user}','playlist')->name('playlist'); // all playlist
-            Route::post('/playlist/{soundcloudUrn}', 'playlistShow')->name('playlist.show'); // single palylist details
+            Route::get('/playlist-detail/{playlist}', 'playlistDetail')->name('playlist.details');
             Route::get('/playlist-tracks/{soundcloudUrn}', 'playlistTracks')->name('playlist.track-list'); // all tracks under playlist
+
             Route::get('/tracklist/{user}', 'tracklist')->name('tracklist'); // all tracklist
+            Route::get('/details/{tracklist}', 'tracklistDetail')->name('tracklist.detail');
             Route::post('/tracklist/{urn}', 'tracklistShow')->name('tracklist.show');
             Route::post('/add-credit/{user_urn}', 'addCredit')->name('add-credit');
+            Route::get('/detail/{user}', 'detail')->name('detail');
 
         });
 
@@ -140,14 +147,18 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{order}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{order}', 'permanentDelete')->name('permanent-delete');
+            Route::get('/detail/{order}', 'detail')->name('detail');
         });
 
         // Credit Transaction Routes
         Route::controller(CreditTransactionController::class)->name('credit-transaction.')->prefix('credit-transaction')->group(function () {
             Route::get('/', 'index')->name('index');
+            Route::post('/show/{credit_transaction}', 'show')->name('show');
             Route::post('/store', 'store')->name('store');
             Route::get('/purchase', 'purchase')->name('purchase');
+            Route::get('/details/{transaction}', 'paymentDetails')->name('payment-detail');
             Route::get('/payments', 'payments')->name('payments'); 
+            Route::get('/detail/{payment}', 'detail')->name('detail');
           
             
         });
@@ -157,9 +168,19 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
     Route::group(['as' => 'rm.', 'prefix' => 'repost-management'], function () {
           Route::resource('repost', RepostController::class);
         Route::controller(RepostController::class)->name('repost.')->prefix('repost')->group(function () {
-            Route::post('/show/{repost}', 'show')->name('show');
+         
+            Route::get('/detail/{repost}', 'detail')->name('detail');
+           
 
         });
+    });
+    // Repost Request Management Routes
+    Route::group(['as' => 'rrm.', 'prefix' => 'request-management'], function () {
+          Route::resource('request', RepostRequestController::class);
+          Route::controller(RepostRequestController::class)->name('request.')->prefix('request')->group(function () {
+         
+            Route::get('/detail/{request}', 'detail')->name('detail');
 
+        });
     });
 });

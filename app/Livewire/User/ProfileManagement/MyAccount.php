@@ -17,6 +17,7 @@ class MyAccount extends Component
     public $reposts;
     public $transactions;
     public $activeTab = 'insights';
+    public $showEditProfileModal = false;
 
     protected $creditTransactionService;
     protected $userService;
@@ -64,6 +65,12 @@ class MyAccount extends Component
     public function getMyUser()
     {
         $this->user = $this->userService->getMyAccountUser();
+    }
+
+    public function profileUpdated($propertyName)
+    {
+        $this->showEditProfileModal = true;
+        
     }
 
     public function loadAll()
