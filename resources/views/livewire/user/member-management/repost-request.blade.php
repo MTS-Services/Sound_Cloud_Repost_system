@@ -84,7 +84,7 @@
             </div>
         </div>
 
-   <script>
+   {{-- <script>
     document.addEventListener('DOMContentLoaded', function () {
         const toggleSwitch = document.getElementById('toggleSwitch');
         const toggleCircle = document.getElementById('toggleCircle');
@@ -109,7 +109,7 @@
             updateToggleUI();
         });
     });
-</script>
+</script> --}}
   @endif
     @foreach ($repostRequests as $repostRequest)
         <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm">
