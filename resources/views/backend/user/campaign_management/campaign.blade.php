@@ -37,15 +37,9 @@
             </a>
         </div>
         <!-- Suggestions Dropdown -->
-        @if ($showSuggestions && !empty($suggestedTags))
+        {{-- @if ($showSuggestions && !empty($suggestedTags))
             <div
                 class="flex flex-wrap absolute z-50 w-full mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto py-2">
-                {{-- @foreach ($suggestedTags as $tag)
-                    <button type="button" wire:click="selectTag('{{ $tag }}')"
-                        class="w-full text-left px-4 py-3 hover:bg-blue-50 dark:hover:bg-blue-900 focus:bg-blue-50 dark:focus:bg-blue-900  focus:outline-none border-b border-gray-100 dark:border-gray-600 last:border-b-0 transition-colors duration-150">
-                        <span class="font-medium text-gray-800 dark:text-slate-200">{{ $tag }}</span>
-                    </button>
-                @endforeach --}}
                 @foreach ($suggestedTags as $index => $tag)
                     <span wire:click="selectTag('{{ $tag }}')"
                         class="inline-flex items-center px-3 py-1 rounded-sm text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 ml-2 cursor-default">
@@ -62,7 +56,7 @@
                 @endforeach
 
             </div>
-        @endif
+        @endif --}}
     </div>
 
     <div class="container mx-auto px-4 py-6">
