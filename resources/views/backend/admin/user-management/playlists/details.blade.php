@@ -1,7 +1,7 @@
 <x-admin::layout>
     <x-slot name="title">{{ __('Playlist Detail') }}</x-slot>
     <x-slot name="breadcrumb">{{ __('Playlist Detail') }}</x-slot>
-    <x-slot name="page_slug">Palylist Detail</x-slot>
+    <x-slot name="page_slug">user</x-slot>
 
 
     <div class="glass-card rounded-2xl p-6 mb-6">

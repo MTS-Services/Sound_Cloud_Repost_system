@@ -1,7 +1,7 @@
 <x-admin::layout>
     <x-slot name="title">{{ __(' User Detail') }}</x-slot>
     <x-slot name="breadcrumb">{{ __(' User Detail') }}</x-slot>
-    <x-slot name="page_slug">User Detail</x-slot>
+    <x-slot name="page_slug">user</x-slot>
 
 
     <div class="glass-card rounded-2xl p-6 mb-6">
@@ -58,130 +58,130 @@
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">First Name</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->first_name }}
+                        {{ $userinfo->first_name ?? "N/A" }}
                     </p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Last Name</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->last_name }}
+                        {{ $userinfo->last_name ?? "N/A" }}
                     </p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">{{ __('Full Name') }}</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->full_name }}
+                        {{ $userinfo->full_name ?? "N/A" }}
                     </p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Username </h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->username }}</p>
+                        {{ $userinfo->username ?? "N/A" }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud ID</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->soundcloud_id }}</p>
+                        {{ $userinfo->soundcloud_id ?? "N/A" }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud URN</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->soundcloud_urn }}</p>
+                        {{ $userinfo->soundcloud_urn ?? "N/A" }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud ID</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->soundcloud_id }}</p>
+                        {{ $userinfo->soundcloud_id ?? "N/A" }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud Kind</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->soundcloud_kind }}</p>
+                        {{ $userinfo->soundcloud_kind ?? "N/A" }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud Permalink URL</h4>
-                    <a class="text-xl font-bold text-black dark:text-white hover:underline"  href="{{ $userinfo->soundcloud_permalink_url }}">{{ $userinfo->soundcloud_permalink_url }}
+                    <a class="text-xl font-bold text-black dark:text-white hover:underline"  href="{{ $userinfo->soundcloud_permalink_url ?? '' }}">{{ $userinfo->soundcloud_permalink_url ?? "N/A" }}
                        </a>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud Permalink</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->soundcloud_permalink }}</p>
+                        {{ $userinfo->soundcloud_permalink ?? "N/A" }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud URI</h4>
-                    <a href="{{ $userinfo->soundcloud_uri }}" class="hover:underline text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->soundcloud_uri }}</a>
+                    <a href="{{ $userinfo->soundcloud_uri ?? '' }}" class="hover:underline text-xl font-bold text-black dark:text-white">
+                        {{ $userinfo->soundcloud_uri ?? "N/A" }}</a>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud Created At</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->soundcloud_created_at }}</p>
+                        {{ $userinfo->soundcloud_created_at ?? "N/A" }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud Last Modified</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->soundcloud_last_modified }}</p>
+                        {{ $userinfo->soundcloud_last_modified ?? "N/A" }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Description</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->description }}</p>
+                        {{ $userinfo->description ?? "N/A" }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Country</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->country }}</p>
+                        {{ $userinfo->country ?? "N/A" }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">City</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->city }}</p>
+                        {{ $userinfo->city  ?? "N/A" }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">track_count</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->track_count }}</p>
+                        {{ $userinfo->track_count ?? "0" }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">public_favorites_count</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->public_favorites_count }}</p>
+                        {{ $userinfo->public_favorites_count ?? "0" }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">reposts_count</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->reposts_count }}</p>
+                        {{ $userinfo->reposts_count ?? "0" }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">followers_count</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->followers_count }}</p>
+                        {{ $userinfo->followers_count ?? "0" }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Plan</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->plan }}</p>
+                        {{ $userinfo->plan ?? "N/A" }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Myspace Name</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->myspace_name }}</p>
+                        {{ $userinfo->myspace_name ?? "N/A" }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Discogs Name</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->discogs_name }}</p>
+                        {{ $userinfo->discogs_name ?? "N/A" }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Website Title</h4>
-                    <a href="{{ $userinfo->website_title }}" class=" hover:underline text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->website_title }}</a>
+                    <a href="{{ $userinfo->website_title ?? '' }}" class=" hover:underline text-xl font-bold text-black dark:text-white">
+                        {{ $userinfo->website_title ?? "N/A" }}</a>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Website</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->website }}</p>
+                        {{ $userinfo->website ?? "N/A" }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Online</h4>
@@ -192,52 +192,52 @@
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Comments Count</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->comments_count }}</p>
+                        {{ $userinfo->comments_count ?? '0' }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Like Count</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->like_count }}</p>
+                        {{ $userinfo->like_count ?? '0' }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Playlist Count</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->playlist_count }}</p>
+                        {{ $userinfo->playlist_count ?? '0' }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Private Playlist Count</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->private_playlist_count }}</p>
+                        {{ $userinfo->private_playlist_count ?? '0' }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Private Tracks Count</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->private_tracks_count }}</p>
+                        {{ $userinfo->private_tracks_count ?? 'N/A' }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Primary Email Confirmed</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->primary_email_confirmed?? 'N/A' }}</p>
+                        {{ $userinfo->primary_email_confirmed ?? 'N/A' }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Local</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->local }}</p>
+                        {{ $userinfo->local ?? 'N/A' }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Upload Seconds Left</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->upload_seconds_left }}</p>
+                        {{ $userinfo->upload_seconds_left ?? 'N/A' }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Created At</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->created_at }}</p>
+                        {{ $userinfo->created_at_formatted ?? 'N/A' }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Updated At</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->updated_at }}</p>
+                        {{ $userinfo->updated_at_formatted ?? 'N/A' }}</p>
                 </div>
                
 
