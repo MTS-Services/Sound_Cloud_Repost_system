@@ -222,7 +222,7 @@ class UserController extends Controller implements HasMiddleware
                 ->editColumn('creater_id', fn($tracklist) => $this->creater_name($tracklist))
                 ->editColumn('created_at', fn($tracklist) => $tracklist->created_at_formatted)
                 ->editColumn('action', function ($playlist) {
-                    $menuItems = $this->trackMenuItems($playlist);
+                    $menuItems = $this->playlistTrackMenuItems($playlist);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
                 ->rawColumns(['user_name', 'action', 'created_at', 'creater_id'])->make(true);
@@ -233,11 +233,10 @@ class UserController extends Controller implements HasMiddleware
     {
         return [
             [
-                'routeName' => 'javascript:void(0)',
-                'data-id' => encrypt($model->urn),
-                'className' => 'view',
-                'label' => 'Details',
-                'permissions' => ['permission-list', 'permission-delete', 'permission-status']
+                'routeName' => 'um.user.tracklist.detail',
+                'params' => encrypt($model->id),
+                'label' => ' details',
+                'permissions' => ['Detail-list']
             ],
         ];
     }
@@ -296,8 +295,7 @@ class UserController extends Controller implements HasMiddleware
 
     public function tracklistDetail($id)
     {
-        $data['tracklists'] = $this->trackService->getTrack($id);
-        dd($data['tracklists']);
+        $data['tracklists'] = $this->trackService->getTrack($id)->load(['user']);
         return view('backend.admin.user-management.tracklist.details', $data);
     }
     public function playlistShow(string $soudcloud_urn,)
