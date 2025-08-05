@@ -27,9 +27,9 @@
                 <thead>
                     <tr>
                         <th >{{ __('SL') }}</th>
-                        <th>{{ __('Request Name') }}</th>
+                        <th>{{ __('Requester Name') }}</th>
                     
-                        <th>{{ __('Campaign Title') }}</th>
+                        <th>{{ __('Reposter Name') }}</th>
                         <th>{{ __('Credits') }}</th>
                         <th>{{ __('Requested At') }}</th>
                         <th>{{ __('Created Date') }}</th>

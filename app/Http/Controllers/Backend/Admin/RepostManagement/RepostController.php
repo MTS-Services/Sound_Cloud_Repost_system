@@ -59,16 +59,13 @@ class RepostController extends Controller implements HasMiddleware
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = $this->repostService->getReposts()->with('reposter', 'campaign');
+            $query = $this->repostService->getReposts()->with('reposter', 'trackOwner', 'campaign');
             return DataTables::eloquent($query)
-                ->editColumn('name', function ($repost) {
-                    return $repost->reposter->name;
+                ->editColumn('requester_name', function ($repost) {
+                    return $repost->trackOwner->name;
                 })
-                // ->editColumn('track_owner_urn', function ($repost) {
-                //     return $repost->trackOwner->name;
-                // })
-                ->editColumn('title', function ($repost) {
-                    return $repost->campaign->title ?? '';
+                ->editColumn('reposter_name', function ($repost) {
+                    return $repost->reposter->name ?? '';
                 })
                 ->editColumn('reposte_at_format', function ($repost) {
                     return $repost->repost_at_formatted;
@@ -84,7 +81,7 @@ class RepostController extends Controller implements HasMiddleware
                     $menuItems = $this->menuItems($repost);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['name', 'title','reposte_at_format', 'created_by', 'created_at', 'action'])
+                ->rawColumns(['requester_name', 'reposter_name','reposte_at_format', 'created_by', 'created_at', 'action'])
                 ->make(true);
         }
         return view('backend.admin.repost-management.repost.index');

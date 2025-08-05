@@ -24,9 +24,9 @@
                 <thead>
                     <tr>
                         <th >{{ __('SL') }}</th>
-                        <th>{{ __('User Name') }}</th>
-                        <th>{{ __('Campaign Title') }}</th>
-                        <th>{{ __('Soundcloud ID') }}</th>
+                        <th>{{ __('Requester Name') }}</th>
+                        <th>{{ __('Reposter Name') }}</th>
+                        <th>{{ __('Type') }}</th> 
                         <th>{{ __('Credits') }}</th>
                         <th>{{ __('Reposted At') }}</th>
                         <th>{{ __('Created Date') }}</th>
@@ -49,9 +49,9 @@
                 let table_columns = [
                     //name and data, orderable, searchable
                    
-                    ['name', true, true],
-                    ['title', true, true],
-                    ['soundcloud_repost_id', true, true],
+                    ['requester_name', true, true],
+                    ['reposter_name', true, true],
+                    ['repost_type', true, true],
                     ['credits_earned', true, true],
                     ['reposted_at', true, true],
                    

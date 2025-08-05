@@ -65,8 +65,13 @@ class Repost extends BaseModel
     {
         parent::__construct($attributes);
         $this->appends = array_merge(parent::getAppends(), [
-            //
+            'repost_type',
         ]);
+    }
+
+    public function getRepostTypeAttribute()
+    {
+        return $this->repost_request_id ===  null ? 'Campaign Repost' : 'Direct Repost';
     }
 
 }
