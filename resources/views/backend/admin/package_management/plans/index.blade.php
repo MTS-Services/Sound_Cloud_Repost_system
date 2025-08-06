@@ -34,7 +34,7 @@
             </table>
         </div>
     </section>
-
+    <x-admin.details-modal />
 
     @push('js')
         <script src="{{ asset('assets/js/details-modal.js') }}"></script>
@@ -65,6 +65,41 @@
 
                 initializeDataTable(details);
             })
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+
+                $(document).on('click', '.view', function() {
+                    const id = $(this).data('id');
+                    const route = "{{ route('pm.plan.show', ':id') }}";
+
+                    const details = [{
+                            label: '{{ __('Name') }}',
+                            key: 'name',
+                        },
+                        {
+                            label: '{{ __('Slug') }}',
+                            key: 'slug',
+                        },
+                        {
+                            label: '{{ __('Credits') }}',
+                            key: 'credits',
+                        },
+                        {
+                            label: '{{ __('Notes') }}',
+                            key: 'notes',
+                        },
+                        {
+                            label: '{{ __('Status') }}',
+                            key: 'status_label',
+                            label_color: 'status_color',
+                            type: 'badge'
+                        }
+                    ];
+
+                    showDetailsModal(route, id, '{{ __('Credit Details') }}', details);
+                });
+            });
         </script>
     @endpush
 </x-admin::layout>

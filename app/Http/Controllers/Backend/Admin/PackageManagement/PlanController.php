@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Admin\PackageManagement;
 
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
+use App\Services\Admin\PackageManagement\FeatureCategorySevice;
 use App\Services\Admin\PackageManagement\PlanService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -27,10 +28,12 @@ class PlanController extends Controller implements HasMiddleware
     }
 
     protected PlanService $planService;
+    protected FeatureCategorySevice $featureCategoryService;
 
-    public function __construct(planService $planService)
+    public function __construct(planService $planService,FeatureCategorySevice $featureCategoryService)
     {
         $this->planService = $planService;
+        $this->featureCategoryService = $featureCategoryService;
     }
 
     public static function middleware(): array
@@ -113,8 +116,8 @@ class PlanController extends Controller implements HasMiddleware
      */
     public function create(): View
     {
-        //
-        return view('backend.admin.package_management.plans.create');
+        $data['feature_categories'] = $this->featureCategoryService->getFeatureCategories()->get();
+        return view('backend.admin.package_management.plans.create', $data);
     }
 
     /**

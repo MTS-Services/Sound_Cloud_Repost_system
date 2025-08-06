@@ -106,13 +106,13 @@
                         'active' => 'feature',
                         'permission' => 'features-list',
                     ],
-                    // [
-                    //     'name' => 'Plans',
-                    //     'route' => route('pm.plan.index'),
-                    //     'icon' => 'megaphone',
-                    //     'active' => 'plan',
-                    //     'permission' => 'plan-list',
-                    // ],
+                    [
+                        'name' => 'Plans',
+                        'route' => route('pm.plan.index'),
+                        'icon' => 'shopping-bag',
+                        'active' => 'plan',
+                        'permission' => 'plan-list',
+                    ],
                     [
                         'name' => 'Credit',
                         'route' => route('pm.credit.index'),

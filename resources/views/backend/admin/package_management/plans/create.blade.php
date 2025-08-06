@@ -22,24 +22,38 @@
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
 
                         <div class="space-y-2">
-                            <x-inputs.input name="name" label="{{ __('Name') }}" placeholder="Enter Credit Name"
+                            <x-inputs.input name="name" label="{{ __('Name') }}" placeholder="Enter Plan Name"
                                 value="{{ old('name') }}" :messages="$errors->get('name')" />
                         </div>
-                        {{-- <div class="space-y-2">
-                            <x-inputs.select name="type" label="{{ __('Type') }}" icon="shield"
-                                placeholder="{{ __('Select a Type') }}" :options="App\Models\plan::getTypes()" :selected="old('type')"
-                                :messages="$errors->get('type')" />
-                        </div> --}}
-                    </div>
+                        <div class="space-y-2">
+                            <x-inputs.input name="slug" label="{{ __('Slug') }}" placeholder="Enter plan slug"
+                                value="{{ old('slug') }}" :messages="$errors->get('slug')" />
+                        </div>
 
+                        <div class="space-y-2">
+                            <x-inputs.input name="price_monthly" label="{{ __('Monthly Price') }}"
+                                placeholder="Enter Price Monthly" value="{{ old('price_monthly') }}"
+                                :messages="$errors->get('price_monthly')" />
+                        </div>
+                        <div class="space-y-2">
+                            <x-inputs.input name="price_monthly_yearly" label="{{ __('Yearly Price') }}"
+                                placeholder="Enter Price Monthly Yearly" value="{{ old('price_monthly_yearly') }}"
+                                :messages="$errors->get('price_monthly_yearly')" />
+                        </div>
+                    </div>
+                    <div class="space-y-2 sm:col-span-2">
+                        <x-inputs.textarea name="notes" label="{{ __('Notes') }}" placeholder="Enter notes"
+                            value="{{ old('notes') }}" :messages="$errors->get('notes')" />
+                    </div>
                     <div class="flex justify-end mt-5">
                         <x-button type="accent" :button="true" icon="save">{{ __('Create') }}</x-button>
                     </div>
                 </form>
             </div>
 
-            {{-- documentation will be loded here and add md:col-span-2 class --}}
-
         </div>
     </section>
+    @push('js')
+   
+    @endpush
 </x-admin::layout>
