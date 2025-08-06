@@ -278,6 +278,14 @@
                                     <p>No matching playlists found for your search.</p>
                                 </div>
                             @endforelse
+                            @if (count($playlists) < count($allPlaylists))
+                                <div class="text-center mt-6">
+                                    <button wire:click="loadMorePlaylists"
+                                        class="font-semibold text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 transition-colors duration-200">
+                                        Load more
+                                    </button>
+                                </div>
+                            @endif
                         @endif
                     </div>
                 </div>

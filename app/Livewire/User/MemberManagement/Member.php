@@ -47,6 +47,10 @@ class Member extends Component
     public $trackLimit = 4;
     public $allTracks = [];
 
+    // For "Load more" playlists
+    public $playlistLimit = 4;
+    public $allPlaylists = [];
+
     protected $listeners = ['refreshData' => 'loadData'];
 
     protected UserService $userService;
@@ -84,7 +88,7 @@ class Member extends Component
     {
         $this->reset([
             'showModal', 'user', 'selectedPlaylistId', 'selectedTrackId',
-            'activeTab', 'tracks', 'playlists', 'trackLimit'
+            'activeTab', 'tracks', 'playlists', 'trackLimit', 'playlistLimit'
         ]);
 
         $this->selectedUserUrn = $userUrn;
@@ -96,6 +100,9 @@ class Member extends Component
 
         $this->allTracks = Track::where('user_urn', user()->urn)->get();
         $this->tracks = $this->allTracks->take($this->trackLimit);
+
+        $this->allPlaylists = Playlist::where('user_urn', user()->urn)->get();
+        $this->playlists = $this->allPlaylists->take($this->playlistLimit);
     }
 
     public function closeModal()
@@ -103,7 +110,7 @@ class Member extends Component
         $this->reset([
             'showModal', 'user', 'selectedUserUrn',
             'selectedPlaylistId', 'selectedTrackId',
-            'activeTab', 'tracks', 'playlists', 'trackLimit'
+            'activeTab', 'tracks', 'playlists', 'trackLimit', 'playlistLimit'
         ]);
     }
 
@@ -112,8 +119,12 @@ class Member extends Component
         $this->reset(['selectedPlaylistId', 'selectedTrackId']);
         $this->activeTab = $tab;
 
+        if ($tab === 'tracks') {
+            $this->tracks = $this->allTracks->take($this->trackLimit);
+        }
+
         if ($tab === 'playlists') {
-            $this->playlists = Playlist::where('user_urn', user()->urn)->get();
+            $this->playlists = $this->allPlaylists->take($this->playlistLimit);
         }
     }
 
@@ -199,6 +210,12 @@ class Member extends Component
     {
         $this->trackLimit += 4;
         $this->tracks = $this->allTracks->take($this->trackLimit);
+    }
+
+    public function loadMorePlaylists()
+    {
+        $this->playlistLimit += 4;
+        $this->playlists = $this->allPlaylists->take($this->playlistLimit);
     }
 
     public function render()
