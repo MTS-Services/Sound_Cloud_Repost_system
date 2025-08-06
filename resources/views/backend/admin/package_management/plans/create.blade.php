@@ -57,39 +57,42 @@
                                             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
                                             @forelse($category->features as $feature)
                                                 <label for="feature_{{ $feature->id }}" class="block cursor-pointer">
-                                                    <!-- Hidden Checkbox -->
+                                                    <!-- Actual checkbox (hidden but state used via peer) -->
                                                     <input type="checkbox" name="features[]"
                                                         value="{{ $feature->id }}" id="feature_{{ $feature->id }}"
-                                                        class="sr-only peer" {{-- wire:model="selected_features" --}}>
+                                                        class="sr-only peer">
 
                                                     <!-- Card -->
                                                     <div
-                                                        class="h-full p-2.5 flex items-center border rounded-lg transition-all duration-200
-                                bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600
-                                peer-checked:border-blue-500 peer-checked:ring-2 peer-checked:ring-blue-200 dark:peer-checked:ring-blue-900/50
-                                peer-checked:bg-blue-50/50 dark:peer-checked:bg-blue-900/10
-                                hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-sm">
+                                                        class="flex items-center p-2.5 h-full border rounded-lg transition-all duration-200
+        bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600
+        peer-checked:border-blue-500 peer-checked:ring-2 peer-checked:ring-blue-200 dark:peer-checked:ring-blue-900/50
+        peer-checked:bg-blue-50/50 dark:peer-checked:bg-blue-900/10
+        hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-sm">
 
-                                                        <div class="flex items-center">
-                                                            <!-- Checkbox Icon -->
-                                                            <div class="mt-0.5 mr-3 flex-shrink-0">
-                                                                <div
-                                                                    class="h-5 w-5 rounded border-2 flex items-center justify-center transition-all
-                                            border-gray-300 dark:border-gray-500
-                                            peer-checked:bg-blue-600 peer-checked:border-blue-600">
-                                                                 
-                                                                </div>
-                                                               
+                                                        <!-- Checkbox box -->
+                                                        <div class="mt-0.5 mr-3 flex-shrink-0 ">
+                                                            <div
+                                                                class="h-5 w-5 rounded border-2 border-gray-300 dark:border-gray-500 flex items-center justify-center
+                transition-all duration-200 peer-checked:bg-blue-600 peer-checked:border-blue-600">
+                                                                <!-- Checkmark icon -->
+                                                                <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200"
+                                                                    xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                                    viewBox="0 0 20 20" stroke="currentColor">
+                                                                    <path fill="currentColor" fill-rule="evenodd"
+                                                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                                        clip-rule="evenodd" />
+                                                                </svg>
                                                             </div>
-
-                                                            <!-- Feature Name -->
-                                                            <p
-                                                                class="text-sm font-medium text-gray-800 dark:text-gray-200">
-                                                                {{ $feature->name }}
-                                                            </p>
                                                         </div>
+
+                                                        <!-- Feature name -->
+                                                        <p class="text-sm font-medium text-gray-800 dark:text-gray-200">
+                                                            {{ $feature->name }}
+                                                        </p>
                                                     </div>
                                                 </label>
+
                                             @empty
                                                 <div class="col-span-full text-center text-gray-500 dark:text-gray-400">
                                                     {{ __('No features in this category') }}
