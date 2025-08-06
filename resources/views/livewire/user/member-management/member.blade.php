@@ -147,6 +147,7 @@
         <div
             class="w-full max-w-3xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col max-h-[80vh] overflow-hidden">
 
+            {{-- HEADER --}}
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
@@ -164,6 +165,7 @@
             </div>
 
             @if ($showModal)
+                {{-- TABS --}}
                 <div class="flex border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
                     <button wire:click="setActiveTab('tracks')"
                         class="flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeTab === 'tracks' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
@@ -181,19 +183,16 @@
                     </button>
                 </div>
 
-                <!-- Search option -->
-                <div
-                    class="w-full max-w-2xl mx-auto max-h-[80vh]  mt-6  flex flex-col overflow-hidden">
-
-                    <!-- Search Input -->
-                    <div class="p-4 ">
-                        <label for="track-link-search" class="text-xl font-semibold  text-gray-700 dark:text-gray-200">Paste a SoundCloud profile or track
-                            link</label>
+                {{-- SEARCH --}}
+                <div class="w-full max-w-2xl mx-auto mt-6 flex flex-col overflow-hidden">
+                    <div class="p-4">
+                        <label for="track-link-search" class="text-xl font-semibold text-gray-700 dark:text-gray-200">
+                            Paste a SoundCloud profile or track link
+                        </label>
                         <div class="flex w-full mt-2">
                             <input type="text" id="track-link-search"
                                 placeholder="Paste a SoundCloud profile or track link"
                                 class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 border border-gray-300 dark:border-gray-600 rounded-l-md">
-
                             <button type="submit"
                                 class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200 rounded-r-md">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
@@ -205,93 +204,88 @@
                         </div>
                     </div>
 
-                    <!-- Content -->
-                    @if ($showModal)
-                        <div class="h-full overflow-y-auto px-4 pb-6 space-y-1">
-                            @if ($activeTab === 'tracks')
-                                @forelse ($tracks as $track_)
-                                    <div wire:click="openRepostsModal({{ $track_->id }})"
-                                        class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">
-                                        <div class="flex-shrink-0">
-                                            <img class="h-12 w-12 rounded object-cover shadow"
-                                                src="{{ soundcloud_image($track_->artwork_url) }}"
-                                                alt="{{ $track_->title }}" />
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                           
-                                            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                                {{ $track_->type }} •
-                                                {{ $track_->author_username }}
-                                            </p>
-                                            {{-- <span
-                                                class="inline-block bg-gray-100 dark:bg-slate-600 text-xs px-2 py-0.5 rounded-full text-gray-700 dark:text-gray-300 mt-1 font-mono">
-                                                {{ $track_->title }}
-                                            </span> --}}
-                                             <p class="font-semibold text-gray-800 dark:text-white truncate">
-                                                {{ $track_->title }}
-                                            </p>
-                                        </div>
-                                        <div class="flex-shrink-0">
-                                            <i data-lucide="chevron-right"
-                                                class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
-                                        </div>
+                    {{-- CONTENT LIST --}}
+                    <div class="h-full overflow-y-auto px-4 pb-6 space-y-1">
+                        @if ($activeTab === 'tracks')
+                            @forelse ($tracks as $track_)
+                                <div wire:click="openRepostsModal({{ $track_->id }})"
+                                    class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">
+                                    <div class="flex-shrink-0">
+                                        <img class="h-12 w-12 rounded object-cover shadow"
+                                            src="{{ soundcloud_image($track_->artwork_url) }}"
+                                            alt="{{ $track_->title }}" />
                                     </div>
-                                @empty
-                                    <div class="text-center py-12 text-gray-500 dark:text-gray-400">
-                                        <i data-lucide="music"
-                                            class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-3"></i>
-                                        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">No tracks
-                                            found</h3>
-                                        <p>No matching tracks found for your search.</p>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                            {{ $track_->type }} • {{ $track_->author_username }}
+                                        </p>
+                                        <p class="font-semibold text-gray-800 dark:text-white truncate">
+                                            {{ $track_->title }}
+                                        </p>
                                     </div>
-                                @endforelse
-                            @else
-                                @forelse ($playlists as $playlist_)
-                                    <div wire:click='openPlaylistTracksModal({{ $playlist_->id }})'
-                                        class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">
-                                        <div class="flex-shrink-0">
-                                            <img class="h-12 w-12 rounded object-cover shadow"
-                                                src="{{ soundcloud_image($playlist_->artwork_url) }}"
-                                                alt="{{ $playlist_->title }}" />
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="font-semibold text-gray-800 dark:text-white truncate">
-                                                {{ $playlist_->title }}
-                                            </p>
-                                            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                                {{ $playlist_->track_count }} {{ __('tracks') }}
-                                            </p>
-                                        </div>
-                                        <div class="flex-shrink-0">
-                                            <i data-lucide="chevron-right"
-                                                class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
-                                        </div>
+                                    <div class="flex-shrink-0">
+                                        <i data-lucide="chevron-right"
+                                            class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
                                     </div>
-                                @empty
-                                    <div class="text-center py-12 text-gray-500 dark:text-gray-400">
-                                        <i data-lucide="list-music"
-                                            class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-3"></i>
-                                        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">No playlists
-                                            found</h3>
-                                        <p>No matching playlists found for your search.</p>
-                                    </div>
-                                @endforelse
+                                </div>
+                            @empty
+                                <div class="text-center py-12 text-gray-500 dark:text-gray-400">
+                                    <i data-lucide="music"
+                                        class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-3"></i>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">No tracks found
+                                    </h3>
+                                    <p>No matching tracks found for your search.</p>
+                                </div>
+                            @endforelse
+
+                            @if (count($tracks) < count($allTracks))
+                                <div class="text-center mt-6">
+                                    <button wire:click="loadMoreTracks"
+                                        class="font-semibold text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 transition-colors duration-200">
+                                        Load more
+                                    </button>
+                                </div>
                             @endif
-
-                            <div class="text-center mt-6">
-                                <button {{-- wire:click="loadMore" --}}
-                                    class="font-semibold text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 transition-colors duration-200">
-                                    Load more
-                                </button>
-                            </div>
-                        </div>
-                    @endif
+                        @else
+                            {{-- PLAYLISTS TAB --}}
+                            @forelse ($playlists as $playlist_)
+                                <div wire:click="openPlaylistTracksModal({{ $playlist_->id }})"
+                                    class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">
+                                    <div class="flex-shrink-0">
+                                        <img class="h-12 w-12 rounded object-cover shadow"
+                                            src="{{ soundcloud_image($playlist_->artwork_url) }}"
+                                            alt="{{ $playlist_->title }}" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="font-semibold text-gray-800 dark:text-white truncate">
+                                            {{ $playlist_->title }}
+                                        </p>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                            {{ $playlist_->track_count }} {{ __('tracks') }}
+                                        </p>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                        <i data-lucide="chevron-right"
+                                            class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center py-12 text-gray-500 dark:text-gray-400">
+                                    <i data-lucide="list-music"
+                                        class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-3"></i>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">No playlists
+                                        found</h3>
+                                    <p>No matching playlists found for your search.</p>
+                                </div>
+                            @endforelse
+                        @endif
+                    </div>
                 </div>
-
-
             @endif
+
         </div>
     </div>
+
     {{-- Playlist Tracks Modal --}}
     <div x-data="{ showPlaylistTracksModal: @entangle('showPlaylistTracksModal').live }" x-show="showPlaylistTracksModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"

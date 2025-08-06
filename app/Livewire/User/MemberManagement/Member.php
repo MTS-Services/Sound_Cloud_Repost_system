@@ -18,16 +18,12 @@ use Livewire\Component;
 
 class Member extends Component
 {
-    // Remove the typed property declaration - use dependency injection instead
-
-    // page slug
     public $page_slug = 'members';
-    // Properties for filtering and search
+
     public $search = '';
     public $genreFilter = '';
     public $costFilter = '';
 
-    // Modal properties
     public $showModal = false;
     public $showRepostsModal = false;
     public $showPlaylistTracksModal = false;
@@ -36,7 +32,6 @@ class Member extends Component
     public $selectedPlaylistId = null;
     public $selectedTrackId = null;
 
-    // Data properties
     public $users;
     public $user;
     public $user_urn;
@@ -48,19 +43,20 @@ class Member extends Component
     public $track;
     public $credits_spent;
 
+    // For "Load more" tracks
+    public $trackLimit = 4;
+    public $allTracks = [];
+
     protected $listeners = ['refreshData' => 'loadData'];
 
-    // Services
     protected UserService $userService;
     protected TrackService $trackService;
     protected PlaylistService $playlistService;
-
 
     public function boot(TrackService $trackService)
     {
         $this->trackService = $trackService;
     }
-
 
     public function mount()
     {
@@ -70,7 +66,6 @@ class Member extends Component
 
     public function loadData()
     {
-        // Load users (excluding current user)
         $query = User::where('urn', '!=', user()->urn);
 
         if ($this->search) {
@@ -78,66 +73,38 @@ class Member extends Component
         }
 
         $this->users = $query->get();
-
-        // Load current user info
         $this->userinfo = UserInformation::where('user_urn', user()->urn)->first();
     }
 
-    public function updatedSearch()
-    {
-        $this->loadData();
-    }
-
-    public function updatedGenreFilter()
-    {
-        $this->loadData();
-    }
-
-    public function updatedCostFilter()
-    {
-        $this->loadData();
-    }
-
-    public function openRepostsModal($trackId)
-    {
-        $this->reset(['track']);
-        $this->selectedTrackId = $trackId;
-
-        $this->track = Track::findOrFail($trackId);
-        $this->showRepostsModal = true;
-    }
-
-    public function closeRepostModal()
-    {
-        $this->reset(['track',  'selectedTrackId', 'selectedPlaylistId', 'showRepostsModal']);
-    }
-    public function openPlaylistTracksModal($playlistId)
-    {
-        $this->showPlaylistTracksModal = true;
-        $this->selectedPlaylistId = $playlistId;
-        $this->selectedTrackId = null;
-        $this->playlistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()->get();
-    }
-    public function closePlaylistTracksModal()
-    {
-        $this->reset(['selectedPlaylistId', 'playlistTracks']);
-        $this->showPlaylistTracksModal = false;
-    }
+    public function updatedSearch() { $this->loadData(); }
+    public function updatedGenreFilter() { $this->loadData(); }
+    public function updatedCostFilter() { $this->loadData(); }
 
     public function openModal($userUrn)
     {
-        $this->reset(['showModal', 'user', 'selectedPlaylistId', 'selectedTrackId', 'activeTab', 'tracks', 'playlists']);
+        $this->reset([
+            'showModal', 'user', 'selectedPlaylistId', 'selectedTrackId',
+            'activeTab', 'tracks', 'playlists', 'trackLimit'
+        ]);
+
         $this->selectedUserUrn = $userUrn;
         $this->showModal = true;
         $this->activeTab = 'tracks';
+
         $this->user = User::where('urn', $this->selectedUserUrn)->with('userInfo')->first();
         $this->user_urn = $this->user->urn;
-        $this->tracks = Track::where('user_urn', user()->urn)->get();
+
+        $this->allTracks = Track::where('user_urn', user()->urn)->get();
+        $this->tracks = $this->allTracks->take($this->trackLimit);
     }
 
     public function closeModal()
     {
-        $this->reset(['showModal', 'user', 'selectedUserUrn', 'selectedPlaylistId', 'selectedTrackId', 'activeTab', 'tracks', 'playlists']);
+        $this->reset([
+            'showModal', 'user', 'selectedUserUrn',
+            'selectedPlaylistId', 'selectedTrackId',
+            'activeTab', 'tracks', 'playlists', 'trackLimit'
+        ]);
     }
 
     public function setActiveTab($tab)
@@ -149,34 +116,52 @@ class Member extends Component
             $this->playlists = Playlist::where('user_urn', user()->urn)->get();
         }
     }
+
+    public function openRepostsModal($trackId)
+    {
+        $this->reset(['track']);
+        $this->selectedTrackId = $trackId;
+        $this->track = Track::findOrFail($trackId);
+        $this->showRepostsModal = true;
+    }
+
+    public function closeRepostModal()
+    {
+        $this->reset(['track', 'selectedTrackId', 'selectedPlaylistId', 'showRepostsModal']);
+    }
+
+    public function openPlaylistTracksModal($playlistId)
+    {
+        $this->showPlaylistTracksModal = true;
+        $this->selectedPlaylistId = $playlistId;
+        $this->selectedTrackId = null;
+        $this->playlistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()->get();
+    }
+
+    public function closePlaylistTracksModal()
+    {
+        $this->reset(['selectedPlaylistId', 'playlistTracks']);
+        $this->showPlaylistTracksModal = false;
+    }
+
     public function createRepostsRequest()
     {
         try {
-            // Validate required objects exist
-            if (!$this->user) {
-                throw new Exception('Target user not found');
-            }
+            if (!$this->user) throw new Exception('Target user not found');
 
-            $targetUrn = null;
-            if ($this->track) {
-                $targetUrn = $this->track->urn;
-            } else {
-                throw new Exception('Target content not found');
-            }
+            $targetUrn = $this->track?->urn;
+            if (!$targetUrn) throw new Exception('Target content not found');
 
             $amount = repostPrice($this->user);
 
             DB::transaction(function () use ($targetUrn, $amount) {
-                // Create repost request
                 $repostRequest = new RepostRequest();
                 $repostRequest->requester_urn = user()->urn;
                 $repostRequest->target_user_urn = $this->user->urn;
                 $repostRequest->track_urn = $targetUrn;
-
                 $repostRequest->credits_spent = $amount;
                 $repostRequest->save();
 
-                // Create credit transaction
                 $creditTransaction = new CreditTransaction();
                 $creditTransaction->receiver_urn = user()->urn;
                 $creditTransaction->sender_urn = $this->user->urn;
@@ -185,7 +170,7 @@ class Member extends Component
                 $creditTransaction->source_id = $repostRequest->id;
                 $creditTransaction->source_type = RepostRequest::class;
                 $creditTransaction->amount = 0;
-                $creditTransaction->credits = $amount; // Assuming credits is the same as amount
+                $creditTransaction->credits = $amount;
                 $creditTransaction->description = "Repost request for track by " . user()->name;
                 $creditTransaction->metadata = [
                     'request_type' => 'track',
@@ -194,19 +179,26 @@ class Member extends Component
                 $creditTransaction->status = 'succeeded';
                 $creditTransaction->save();
             });
+
             $this->closeRepostModal();
             $this->closePlaylistTracksModal();
             $this->closeModal();
             $this->loadData();
             $this->reset(['track', 'user']);
+
             session()->flash('success', 'Repost request sent successfully!');
         } catch (InvalidArgumentException $e) {
             session()->flash('error', $e->getMessage());
         } catch (\Exception $e) {
             session()->flash('error', 'Failed to send repost request. Please try again.');
-            // Log the actual error for debugging
             logger()->error('Repost request failed', ['error' => $e->getMessage()]);
         }
+    }
+
+    public function loadMoreTracks()
+    {
+        $this->trackLimit += 4;
+        $this->tracks = $this->allTracks->take($this->trackLimit);
     }
 
     public function render()
