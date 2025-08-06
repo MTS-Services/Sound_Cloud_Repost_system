@@ -27,6 +27,8 @@ class MyCampaign extends Component
     public bool $showEditCampaignModal = false;
     public bool $showCancelWarningModal = false;
     public $tracks = [];
+    public $track = null;
+    public $credit = 100;
     public $playlists = [];
     #[Locked]
     public $playlistId = null;

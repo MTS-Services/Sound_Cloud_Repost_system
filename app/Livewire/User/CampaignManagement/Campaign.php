@@ -157,43 +157,6 @@ class Campaign extends Component
     {
         $this->showSuggestions = false;
     }
-    // public function searchByTags()
-    // {
-    //     $this->isLoading = true;
-
-    //     if (empty($this->selectedTags)) {
-    //         $this->loadInitialData();
-    //     } else {
-    //         $this->featuredCampaigns = $this->campaignService->getCampaigns()
-    //             ->where('cost_per_repost', repostPrice(user()))
-    //             ->featured()
-    //             ->withoutSelf()
-    //             ->with(['music.user.userInfo', 'reposts'])
-    //             ->whereDoesntHave('reposts', function ($query) {
-    //                 $query->where('reposter_urn', user()->urn);
-    //             })
-    //             ->whereHas('music', function ($query) {
-    //                 $query->whereIn('tag_list', $this->selectedTags);
-    //             })
-    //             ->get();
-
-    //         $this->campaigns = $this->campaignService->getCampaigns()
-    //             ->where('cost_per_repost', repostPrice(user()))
-    //             ->notFeatured()
-    //             ->withoutSelf()
-    //             ->with(['music.user.userInfo', 'reposts'])
-    //             ->whereDoesntHave('reposts', function ($query) {
-    //                 $query->where('reposter_urn', user()->urn);
-    //             })
-    //             ->whereHas('music', function ($query) {
-    //                 $query->whereIn('tag_list', $this->selectedTags);
-    //             })
-    //             ->get();
-    //     }
-
-    //     $this->isLoading = false;
-    //     $this->selectedTags = [];
-    // }
     public function searchByTags()
     {
         $this->isLoading = true;
