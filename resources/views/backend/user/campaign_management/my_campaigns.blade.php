@@ -549,24 +549,47 @@
                         </div>
 
                         <div class="space-y-3">
-                            <div class="flex items-start space-x-3">
-                                <input type="checkbox"
-                                    class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-gray-700">Limit max number of followers</span>
-                                    <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
-                                        <span class="text-white text-xs">i</span>
+                            <div x-data="{ showOptions: false }" class="flex flex-col space-y-2">
+                                <!-- Checkbox + Label -->
+                                <div class="flex items-start space-x-3">
+                                    <input type="checkbox" @change="showOptions = !showOptions"
+                                        class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-sm text-gray-700">Limit max number of followers</span>
+                                        <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
+                                            <span class="text-white text-xs">i</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="flex items-start space-x-3">
-                                <input type="checkbox"
-                                    class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-gray-700">Limit max number of reposts (last 24h)</span>
-                                    <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
-                                        <span class="text-white text-xs">i</span>
+                                <!-- Toggle Options (Hidden by default) -->
+                                <div x-show="showOptions" x-transition class="ml-7 p-3">
+                                    <div class=" items-center space-x-3">
+                                        <!-- Number Input -->
+                                        <input type="number" placeholder=" max follow"
+                                            class="block w-48 px-3 py-1 border rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div x-data="{ showOptions: false }" class="flex flex-col space-y-2">
+                                <div class="flex items-start space-x-3">
+                                    <input type="checkbox" @change="showOptions = !showOptions"
+                                        class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-sm text-gray-700">Limit max number of reposts (last
+                                            24h)</span>
+                                        <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
+                                            <span class="text-white text-xs">i</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div x-show="showOptions" x-transition class="ml-7 p-3">
+                                    <div class=" items-center space-x-3">
+                                        <!-- Number Input -->
+                                        <input type="number" placeholder="max repost"
+                                            class="block w-48 px-3 py-1 border rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
                                     </div>
                                 </div>
                             </div>
@@ -597,10 +620,43 @@
                                         class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
                                     <span class="text-sm text-gray-700">The track genre - Hip-hop & Rap</span>
                                 </div>
-                                <div class="flex items-center space-x-2">
-                                    <input type="radio" name="genre" value="profile"
-                                        class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
-                                    <span class="text-sm text-gray-700">One of my profile genres</span>
+                                <div x-data="{ showRadios: false }" class="space-y-3">
+
+                                    <!-- Toggle Checkbox -->
+                                    <div class="flex items-center space-x-2">
+                                        <input type="checkbox" @change="showRadios = !showRadios"
+                                            class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                        <span class="text-sm text-gray-700">Limit profile genre options</span>
+                                    </div>
+
+                                    <!-- Radio Options (Toggle area) -->
+                                    <div x-show="showRadios" x-transition class="ml-6 space-y-2">
+                                        <div class="flex items-center space-x-2">
+                                            <input type="radio" name="genre" value="profile1"
+                                                class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
+                                            <span class="text-sm text-gray-700">One of my profile genres</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <input type="radio" name="genre" value="profile2"
+                                                class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
+                                            <span class="text-sm text-gray-700">Another profile genre</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <input type="radio" name="genre" value="profile3"
+                                                class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
+                                            <span class="text-sm text-gray-700">Custom genre option</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <input type="radio" name="genre" value="profile3"
+                                                class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
+                                            <span class="text-sm text-gray-700">Custom genre option</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <input type="radio" name="genre" value="profile3"
+                                                class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
+                                            <span class="text-sm text-gray-700">Custom genre option</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
