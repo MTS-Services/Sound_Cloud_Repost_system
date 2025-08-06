@@ -21,26 +21,37 @@
                     @csrf
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
 
-                        <div class="glass-card p-6 rounded-2xl  bg-white w-full col-span-2 dark:bg-gray-800">
-                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6 border-b pb-4">
+                        <div class="glass-card p-8 rounded-3xl shadow-2xl col-span-2 bg-white w-full dark:bg-gray-800">
+                            <h3
+                                class="text-2xl font-bold text-gray-900 dark:text-white mb-8 border-b-2 border-gray-200 dark:border-gray-700 pb-4">
                                 {{ __('Feature Categories & Features') }}
                             </h3>
 
                             @forelse($feature_categories as $category)
-                                <div class="grid grid-cols-6 gap-6 py-6 border-b last:border-b-0">
-                                    <div class="col-span-1">
-                                        <p class="text-base font-semibold text-gray-800 dark:text-gray-200">
-                                            {{ $category->name }}:
+                                <div class="grid grid-cols-1 lg:grid-cols-6 gap-8 py-8 border-b last:border-b-0">
+                                    <div class="lg:col-span-1">
+                                        <p class="text-lg font-bold text-gray-800 dark:text-gray-200">
+                                            {{ $category->name }}
                                         </p>
+                                        @if ($category->description)
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                                                {{ $category->description }}
+                                            </p>
+                                        @endif
                                     </div>
 
-                                    <div class="col-span-5">
-                                        <div class="flex flex-wrap gap-x-4 gap-y-2">
+                                    <div class="lg:col-span-5">
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
                                             @forelse($category->features as $feature)
-                                                <div class="flex items-center gap-2">
-                                                    <div class="h-4 w-4 rounded-md border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center text-white transition-colors duration-200 cursor-pointer"
-                                                        onclick="this.classList.toggle('bg-blue-600')">
-                                                        <svg class="w-2 h-2 opacity-0 transition-opacity duration-200"
+                                                <label for="feature_{{ $feature->id }}"
+                                                    class="relative flex items-center p-4 border rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow duration-200 bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+                                                    <input type="checkbox" name="features[]"
+                                                        value="{{ $feature->id }}" id="feature_{{ $feature->id }}"
+                                                        class="absolute opacity-0 pointer-events-none peer" />
+
+                                                    <div
+                                                        class="h-5 w-5 rounded-md border-2 border-gray-400 dark:border-gray-500 flex items-center justify-center transition-colors duration-200 peer-checked:bg-blue-600 peer-checked:border-blue-600">
+                                                        <svg class="w-4 h-4 text-white opacity-0 transition-opacity duration-200 peer-checked:opacity-100"
                                                             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                                                             fill="currentColor">
                                                             <path fill-rule="evenodd"
@@ -48,10 +59,12 @@
                                                                 clip-rule="evenodd" />
                                                         </svg>
                                                     </div>
-                                                    <span class="text-sm text-gray-700 dark:text-gray-300">
+
+                                                    <span
+                                                        class="ml-3 text-sm font-medium text-gray-800 dark:text-gray-200">
                                                         {{ $feature->name }}
                                                     </span>
-                                                </div>
+                                                </label>
                                             @empty
                                                 <p class="text-sm text-gray-400 italic">
                                                     {{ __('No features found') }}
