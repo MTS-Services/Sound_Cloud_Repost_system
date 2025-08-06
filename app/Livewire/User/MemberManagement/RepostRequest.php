@@ -16,7 +16,7 @@ class RepostRequest extends Component
 {
     public $repostRequests;
     public $track;
-    public $activeMainTab = 'pending'; // Default tab
+    public $activeMainTab = 'incoming_request'; // Default tab
 
     #[Locked]
     protected string $baseUrl = 'https://api.soundcloud.com';
@@ -328,20 +328,20 @@ class RepostRequest extends Component
     }
     public function dataLoad()
     {
-        $query = ModelsRepostRequest::with(['track', 'targetUser'])->where('target_user_urn', user()->urn);
+        $query = ModelsRepostRequest::with(['track', 'targetUser']);
 
         switch ($this->activeMainTab) {
-            case 'pending':
-                $query->where('status', ModelsRepostRequest::STATUS_PENDING);
+            case 'incoming_request':
+                $query->where('target_user_urn', user()->urn);
                 break;
             case 'approved':
                 $query->where('status', ModelsRepostRequest::STATUS_APPROVED);
                 break;
-            case 'decline':
-                $query->where('status', ModelsRepostRequest::STATUS_DECLINE);
+            case 'outgoing_request':
+                $query->where('target_user_urn', user()->urn);
                 break;
-            case 'expired':
-                $query->where('status', ModelsRepostRequest::STATUS_EXPIRED);
+            case 'previously_reposted':
+                $query->where('target_user_urn', user()->urn);
                 break;
             case 'completed':
                 $query->where('status', ModelsRepostRequest::STATUS_COMPLETED);

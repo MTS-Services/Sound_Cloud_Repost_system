@@ -8,7 +8,7 @@
         <a href="{{ route('user.mm.members.index') }}" wire:navigate
             class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 rounded-xl flex items-center gap-3 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
             <x-lucide-plus class="w-5 h-5" />
-            {{ __('Send Repost') }}
+            {{ __('Send Request') }}
         </a>
     </div>
    
@@ -16,18 +16,18 @@
         <div class="border-b border-gray-200 dark:border-gray-700">
             <nav class="-mb-px flex space-x-8">
                 <button
-                    class="tab-button @if ($activeMainTab === 'pending') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                    wire:click="setActiveTab('pending')">
+                    class="tab-button @if ($activeMainTab === 'incoming_request') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
+                    wire:click="setActiveTab('incoming_request')">
                     {{ __('Incoming requests') }}
                 </button>
                 <button
-                    class="tab-button @if ($activeMainTab === 'decline') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                    wire:click="setActiveTab('decline')">
+                    class="tab-button @if ($activeMainTab === 'outgoing_request') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
+                    wire:click="setActiveTab('outgoing_request')">
                     {{ __('Outgoing request') }}
                 </button>
                  <button
-                    class="tab-button @if ($activeMainTab === 'expired') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                    wire:click="setActiveTab('expired')">
+                    class="tab-button @if ($activeMainTab === 'previously_reposted') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
+                    wire:click="setActiveTab('previously_reposted')">
                     {{ __('Previously Reposted') }}
                 </button>
 
