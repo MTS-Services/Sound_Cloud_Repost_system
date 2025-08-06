@@ -10,7 +10,41 @@
 /* .ck.ck-editor__editable.ck-focused:not(.ck-editor__nested-editable) {
     min-height: 200px !important;
 } */
-.ck.ck-editor__main>.ck-editor__editable {
+/* .ck.ck-editor__main>.ck-editor__editable {
     min-height: 200px;
-    background-color: transparent !important;
+    background-color: red !important;
 }
+
+input[type="range"] {
+  -webkit-appearance: none;
+  background: red;
+} */
+
+/* input[type="range"]::-webkit-slider-runnable-track {
+
+  background-color: black; 
+  height: 8px;
+  border-radius: 5px;
+}
+
+input[type="range"]::-moz-range-track {
+  background-color: red; 
+  height: 8px;
+  border-radius: 5px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background-color: #e74c3c;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  margin-top: -4px; 
+}
+input[type="range"]::-moz-range-thumb {
+  background-color: #e74c3c;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  border: none;
+} */
