@@ -183,28 +183,32 @@
                     </button>
                 </div>
 
-                {{-- SEARCH --}}
+                {{-- SEARCH & CONTENT --}}
                 <div class="w-full max-w-2xl mx-auto mt-6 flex flex-col overflow-hidden">
-                    <div class="p-4">
-                        <label for="track-link-search" class="text-xl font-semibold text-gray-700 dark:text-gray-200">
-                            Paste a SoundCloud profile or track link
-                        </label>
-                        <div class="flex w-full mt-2">
-                            <input type="text" id="track-link-search"
-                                placeholder="Paste a SoundCloud profile or track link"
-                                class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 border border-gray-300 dark:border-gray-600 rounded-l-md">
-                            <button type="submit"
-                                class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200 rounded-r-md">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
-                            </button>
+                    @if ($activeTab === 'tracks')
+                        {{-- SEARCH BAR --}}
+                        <div class="p-4">
+                            <label for="track-link-search"
+                                class="text-xl font-semibold text-gray-700 dark:text-gray-200">
+                                Paste a SoundCloud profile or track link
+                            </label>
+                            <div class="flex w-full mt-2">
+                                <input wire:model.live.debounce.500ms="searchQuery" type="text"
+                                    id="track-link-search" placeholder="Paste a SoundCloud profile or track link"
+                                    class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 border border-gray-300 dark:border-gray-600 rounded-l-md">
+                                <button wire:click="search" type="button"
+                                    class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200 rounded-r-md">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    @endif
 
-                    {{-- CONTENT LIST --}}
+                    {{-- TRACKS OR PLAYLISTS --}}
                     <div class="h-full overflow-y-auto px-4 pb-6 space-y-1">
                         @if ($activeTab === 'tracks')
                             @forelse ($tracks as $track_)
@@ -247,7 +251,6 @@
                                 </div>
                             @endif
                         @else
-                            {{-- PLAYLISTS TAB --}}
                             @forelse ($playlists as $playlist_)
                                 <div wire:click="openPlaylistTracksModal({{ $playlist_->id }})"
                                     class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">
@@ -278,6 +281,7 @@
                                     <p>No matching playlists found for your search.</p>
                                 </div>
                             @endforelse
+
                             @if (count($playlists) < count($allPlaylists))
                                 <div class="text-center mt-6">
                                     <button wire:click="loadMorePlaylists"
@@ -290,10 +294,8 @@
                     </div>
                 </div>
             @endif
-
         </div>
     </div>
-
     {{-- Playlist Tracks Modal --}}
     <div x-data="{ showPlaylistTracksModal: @entangle('showPlaylistTracksModal').live }" x-show="showPlaylistTracksModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
