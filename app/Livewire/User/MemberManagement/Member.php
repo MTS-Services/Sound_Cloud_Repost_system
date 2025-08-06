@@ -184,19 +184,6 @@ class Member extends Component
         }
     }
 
-    protected function fetchUserPlaylists($userId)
-    {
-        $response = Http::get("{$this->soundcloudApiUrl}/users/{$userId}/playlists", [
-            'client_id' => $this->soundcloudClientId,
-        ]);
-        if ($response->successful()) {
-            $this->allPlaylists = collect($response->json());
-            $this->playlists = $this->allPlaylists->take($this->playlistLimit);
-        } else {
-            $this->allPlaylists = collect();
-            $this->playlists = collect();
-        }
-    }
 
     public function openModal($userUrn)
     {
@@ -255,8 +242,7 @@ class Member extends Component
         if ($trackData) {
             $this->track = $trackData;
         } else {
-            // You may need to fetch the track from SoundCloud API if not found locally
-            // This is where you would handle reposting a track directly from SoundCloud
+            
         }
         $this->showRepostsModal = true;
     }
