@@ -13,7 +13,6 @@ class Feature extends BaseModel
         'sort_order',
         'feature_category_id',
         'name',
-        'key',
         'type',
 
         'created_by',
@@ -31,7 +30,7 @@ class Feature extends BaseModel
         parent::__construct($attributes);
         $this->appends = array_merge(parent::getAppends(), [
 
-            'key_name',
+            'name',
             'type_name',
         ]);
     }
@@ -103,8 +102,9 @@ class Feature extends BaseModel
             self::FEATURE_KEY_WAVEPLAYER_ARTWORK                => 'Waveplayer Artwork',
         ];
     }
-    public function getKeyNameAttribute(): string
-    {
-        return self::getKeys()[$this->key];
-    }
+   public function getNameAttribute(): string
+{
+    return self::getKeys()[$this->attributes['name']] ?? 'Unknown';
+}
+
 }

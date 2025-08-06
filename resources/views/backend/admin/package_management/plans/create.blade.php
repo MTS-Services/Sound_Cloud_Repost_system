@@ -21,8 +21,7 @@
                     @csrf
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
                         {{-- Feature Categories & Features --}}
-                        <div
-                            class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg col-span-2 overflow-hidden border border-gray-100 dark:border-gray-700">
+                        <div class="bg-white dark:bg-gray-900 col-span-2 overflow-hidden ">
                             <!-- Header -->
                             <div
                                 class="px-6 py-5 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-800">
@@ -37,7 +36,7 @@
                             </div>
 
                             <!-- Content -->
-                            <div class="p-6">
+                            <div class="px-3 py-6">
                                 @forelse ($feature_categories as $category)
                                     <div class="mb-8 last:mb-0">
                                         <!-- Category Header -->
@@ -57,19 +56,23 @@
                                                         id="feature_{{ $feature->id }}" x-model="checked"
                                                         class="hidden">
 
+                                                    <!-- Hidden category ID input -->
+                                                    <template x-if="checked">
+                                                        <input type="hidden"
+                                                            name="feature_category_ids[{{ $feature->id }}]"
+                                                            value="{{ $category->id }}">
+                                                    </template>
+
                                                     <div :class="checked
                                                         ?
                                                         'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-900/50 bg-blue-100 dark:bg-blue-900/30' :
                                                         'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700'"
-                                                        class="flex flex-col items-start p-2.5 h-full border rounded-lg transition-all duration-200 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-sm">
+                                                        class="flex flex-col items-center p-3 h-full border rounded-lg transition-all duration-200 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-sm">
 
-                                                        <!-- Checkbox Icon & Label -->
                                                         <label for="feature_{{ $feature->id }}"
                                                             class="flex items-center w-full mb-1 cursor-pointer">
                                                             <div class="mt-0.5 mr-3 flex-shrink-0">
-                                                                <div :class="checked
-                                                                    ?
-                                                                    'bg-blue-700 border-blue-600' :
+                                                                <div :class="checked ? 'bg-blue-700 border-blue-600' :
                                                                     'border-gray-300 dark:border-gray-500'"
                                                                     class="h-5 w-5 rounded border-2 flex items-center justify-center transition-all duration-200">
                                                                     <svg x-show="checked" class="w-3 h-3 text-white"
@@ -121,6 +124,7 @@
                                         </p>
                                     </div>
                                 @endforelse
+
                             </div>
                         </div>
 

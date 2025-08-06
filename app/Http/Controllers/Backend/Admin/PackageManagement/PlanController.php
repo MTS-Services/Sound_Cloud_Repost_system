@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend\Admin\PackageManagement;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\PackageManagement\StorePlanRequest;
 use App\Http\Traits\AuditRelationTraits;
 use App\Services\Admin\PackageManagement\FeatureCategorySevice;
 use App\Services\Admin\PackageManagement\PlanService;
@@ -123,14 +124,17 @@ class PlanController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePlanRequest $request)
     {
+        // dd($request->feature_category_ids);
+
         try {
-            // $validated = $request->validated();
-            //
-            session()->flash('success', "Service created successfully");
+            $validated = $request->validated();
+            // dd($validated);
+            $this->planService->createPlan($validated);
+            session()->flash('success', "Plan created successfully");
         } catch (\Throwable $e) {
-            session()->flash('Service creation failed');
+            session()->flash('Plan creation failed');
             throw $e;
         }
         return $this->redirectIndex();
