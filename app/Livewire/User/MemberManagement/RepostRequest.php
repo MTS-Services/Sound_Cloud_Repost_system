@@ -328,7 +328,7 @@ class RepostRequest extends Component
     }
     public function dataLoad()
     {
-        $query = ModelsRepostRequest::with(['track', 'targetUser'])->where('requester_urn', user()->urn);
+        $query = ModelsRepostRequest::with(['track', 'targetUser'])->where('target_user_urn', user()->urn);
 
         switch ($this->activeMainTab) {
             case 'pending':
