@@ -17,6 +17,7 @@ class MyAccount extends Component
     public $reposts;
     public $transactions;
     public $activeTab = 'insights';
+    public $showEditProfileModal = false;
 
     protected $creditTransactionService;
     protected $userService;
@@ -56,12 +57,20 @@ class MyAccount extends Component
     }
     public function getTransactions(): void
     {
-        $this->transactions = $this->creditTransactionService->getUserTransactions();
+        $this->transactions = $this->creditTransactionService->getUserTransactions()->where('status', 'succeeded')
+            ->sortByDesc('created_at')
+            ->take(10);
     }
 
     public function getMyUser()
     {
         $this->user = $this->userService->getMyAccountUser();
+    }
+
+    public function profileUpdated($propertyName)
+    {
+        $this->showEditProfileModal = true;
+        
     }
 
     public function loadAll()

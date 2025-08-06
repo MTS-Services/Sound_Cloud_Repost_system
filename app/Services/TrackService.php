@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Http\Traits\FileManagementTrait;
 use App\Models\Track;
-use Illuminate\Database\Eloquent\Collection;
 
 class TrackService
 {
@@ -14,7 +13,7 @@ class TrackService
     {
         return Track::orderBy($orderBy, $order)->latest();
     }
-    public function getTrack(string $encryptedValue ,  string $field = 'id'): Track | Collection
+    public function getTrack(string $encryptedValue ,  string $field = 'id'): Track
     {
         return Track::where($field, decrypt($encryptedValue))->first();
     }

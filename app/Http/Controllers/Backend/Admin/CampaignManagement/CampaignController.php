@@ -102,7 +102,7 @@ class CampaignController extends Controller implements HasMiddleware
             [
                 'routeName' => 'cm.campaign.detail',
                 'params' => encrypt($model->id),
-                'label' => 'View Details',
+                'label' => ' Details',
                 'permissions' => ['campaign-detail']
             ],
            

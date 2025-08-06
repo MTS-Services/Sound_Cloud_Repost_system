@@ -31,7 +31,6 @@ class DatabaseSeeder extends Seeder
             OrderSeeder::class,
             UserInformationSeeder::class,
             RepostSeeder::class,
-            // PlaylistTrackSeeder::class,
         ]);
     }
 }

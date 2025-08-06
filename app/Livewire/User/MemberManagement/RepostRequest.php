@@ -328,7 +328,7 @@ class RepostRequest extends Component
     }
     public function dataLoad()
     {
-        $query = ModelsRepostRequest::with(['track', 'targetUser'])->where('requester_urn', user()->urn);
+        $query = ModelsRepostRequest::with(['track', 'targetUser'])->where('target_user_urn', user()->urn);
 
         switch ($this->activeMainTab) {
             case 'pending':
@@ -337,7 +337,7 @@ class RepostRequest extends Component
             case 'approved':
                 $query->where('status', ModelsRepostRequest::STATUS_APPROVED);
                 break;
-            case 'declined':
+            case 'decline':
                 $query->where('status', ModelsRepostRequest::STATUS_DECLINE);
                 break;
             case 'expired':
