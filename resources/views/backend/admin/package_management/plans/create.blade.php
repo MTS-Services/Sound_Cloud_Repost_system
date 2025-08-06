@@ -20,80 +20,121 @@
                 <form action="{{ route('pm.plan.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                        {{-- Feature Categories & Features --}}
+                        <div
+                            class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg col-span-2 overflow-hidden border border-gray-100 dark:border-gray-700">
+                            <!-- Header -->
+                            <div
+                                class="px-6 py-5 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-800">
+                                <h3 class="text-2xl font-bold text-gray-800 dark:text-white flex items-center">
+                                    <svg class="w-6 h-6 mr-2 text-blue-600 dark:text-blue-400" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                    </svg>
+                                    {{ __('Feature Categories & Features') }}
+                                </h3>
+                            </div>
 
-                        <div class="glass-card p-8 rounded-3xl shadow-2xl col-span-2 bg-white w-full dark:bg-gray-800">
-                            <h3
-                                class="text-2xl font-bold text-gray-900 dark:text-white mb-8 border-b-2 border-gray-200 dark:border-gray-700 pb-4">
-                                {{ __('Feature Categories & Features') }}
-                            </h3>
+                            <!-- Content -->
+                            <div class="p-6">
+                                @forelse($feature_categories as $category)
+                                    <div class="mb-8 last:mb-0">
+                                        <!-- Category Header -->
+                                        <div class="flex items-center mb-4">
+                                            <div class="w-1 h-8 bg-blue-500 rounded-full mr-3"></div>
+                                            <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                                                {{ $category->name }}
+                                            </h4>
+                                            <span
+                                                class="ml-auto px-3 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full">
+                                                {{ count($category->features) }} features
+                                            </span>
+                                        </div>
 
-                            @forelse($feature_categories as $category)
-                                <div class="grid grid-cols-1 lg:grid-cols-6 gap-8 py-8 border-b last:border-b-0">
-                                    <div class="lg:col-span-1">
-                                        <p class="text-lg font-bold text-gray-800 dark:text-gray-200">
-                                            {{ $category->name }}
-                                        </p>
-                                        @if ($category->description)
-                                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                                                {{ $category->description }}
-                                            </p>
-                                        @endif
-                                    </div>
-
-                                    <div class="lg:col-span-5">
-                                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+                                        <!-- Features Grid -->
+                                        <div
+                                            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
                                             @forelse($category->features as $feature)
-                                                <label for="feature_{{ $feature->id }}"
-                                                    class="relative flex items-center p-4 border rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow duration-200 bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+                                                <label for="feature_{{ $feature->id }}" class="block cursor-pointer">
+                                                    <!-- Hidden Checkbox -->
                                                     <input type="checkbox" name="features[]"
                                                         value="{{ $feature->id }}" id="feature_{{ $feature->id }}"
-                                                        class="absolute opacity-0 pointer-events-none peer" />
+                                                        class="sr-only peer" {{-- wire:model="selected_features" --}}>
 
+                                                    <!-- Card -->
                                                     <div
-                                                        class="h-5 w-5 rounded-md border-2 border-gray-400 dark:border-gray-500 flex items-center justify-center transition-colors duration-200 peer-checked:bg-blue-600 peer-checked:border-blue-600">
-                                                        <svg class="w-4 h-4 text-white opacity-0 transition-opacity duration-200 peer-checked:opacity-100"
-                                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                                                            fill="currentColor">
-                                                            <path fill-rule="evenodd"
-                                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                                clip-rule="evenodd" />
-                                                        </svg>
-                                                    </div>
+                                                        class="h-full p-2.5 flex items-center border rounded-lg transition-all duration-200
+                                bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600
+                                peer-checked:border-blue-500 peer-checked:ring-2 peer-checked:ring-blue-200 dark:peer-checked:ring-blue-900/50
+                                peer-checked:bg-blue-50/50 dark:peer-checked:bg-blue-900/10
+                                hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-sm">
 
-                                                    <span
-                                                        class="ml-3 text-sm font-medium text-gray-800 dark:text-gray-200">
-                                                        {{ $feature->name }}
-                                                    </span>
+                                                        <div class="flex items-center">
+                                                            <!-- Checkbox Icon -->
+                                                            <div class="mt-0.5 mr-3 flex-shrink-0">
+                                                                <div
+                                                                    class="h-5 w-5 rounded border-2 flex items-center justify-center transition-all
+                                            border-gray-300 dark:border-gray-500
+                                            peer-checked:bg-blue-600 peer-checked:border-blue-600">
+                                                                 
+                                                                </div>
+                                                               
+                                                            </div>
+
+                                                            <!-- Feature Name -->
+                                                            <p
+                                                                class="text-sm font-medium text-gray-800 dark:text-gray-200">
+                                                                {{ $feature->name }}
+                                                            </p>
+                                                        </div>
+                                                    </div>
                                                 </label>
                                             @empty
-                                                <p class="text-sm text-gray-400 italic">
-                                                    {{ __('No features found') }}
-                                                </p>
+                                                <div class="col-span-full text-center text-gray-500 dark:text-gray-400">
+                                                    {{ __('No features in this category') }}
+                                                </div>
                                             @endforelse
                                         </div>
                                     </div>
-                                </div>
-                            @empty
-                                <p class="text-base text-gray-500 text-center py-4">
-                                    {{ __('No feature categories found.') }}
-                                </p>
-                            @endforelse
+                                @empty
+                                    <div class="text-center py-8">
+                                        <div
+                                            class="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                                            <svg class="w-10 h-10 text-gray-400 dark:text-gray-500" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                            </svg>
+                                        </div>
+                                        <h4 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                            {{ __('No feature categories found') }}
+                                        </h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                                            {{ __('Feature categories will appear here once available') }}
+                                        </p>
+                                    </div>
+                                @endforelse
+                            </div>
                         </div>
 
+                        {{-- name --}}
                         <div class="space-y-2">
                             <x-inputs.input name="name" label="{{ __('Name') }}" placeholder="Enter Plan Name"
                                 value="{{ old('name') }}" :messages="$errors->get('name')" />
                         </div>
+                        {{-- slug --}}
                         <div class="space-y-2">
                             <x-inputs.input name="slug" label="{{ __('Slug') }}" placeholder="Enter plan slug"
                                 value="{{ old('slug') }}" :messages="$errors->get('slug')" />
                         </div>
-
+                        {{-- monthly price --}}
                         <div class="space-y-2">
                             <x-inputs.input name="price_monthly" label="{{ __('Monthly Price') }}"
                                 placeholder="Enter Price Monthly" value="{{ old('price_monthly') }}"
                                 :messages="$errors->get('price_monthly')" />
                         </div>
+                        {{-- yearly price --}}
                         <div class="space-y-2">
                             <x-inputs.input name="price_monthly_yearly" label="{{ __('Yearly Price') }}"
                                 placeholder="Enter Price Monthly Yearly" value="{{ old('price_monthly_yearly') }}"
