@@ -41,7 +41,7 @@
             <div
                 class="bg-white  dark:bg-slate-800 rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-gray-900 dark:text-white text-sm font-medium">Available Credits</h3>
+                    <h3 class="text-gray-500 dark:text-white text-sm font-medium">Available Credits</h3>
                     <div class="p-2 rounded-lg bg-yellow-500/20 text-yellow-500"><svg xmlns="http://www.w3.org/2000/svg"
                             width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -58,7 +58,7 @@
             <div
                 class="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-gray-900 dark:text-white text-sm font-medium">Active Campaigns</h3>
+                    <h3 class="text-gray-500 dark:text-white text-sm font-medium">Active Campaigns</h3>
                     <div class="p-2 rounded-lg bg-blue-500/20 text-blue-500"><svg xmlns="http://www.w3.org/2000/svg"
                             width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -77,7 +77,7 @@
             <div
                 class="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-gray-900 dark:text-white text-sm font-medium">Reposts Received</h3>
+                    <h3 class="text-gray-500 dark:text-white text-sm font-medium">Reposts Received</h3>
                     <div class="p-2 rounded-lg bg-green-500/20 text-green-500"><svg xmlns="http://www.w3.org/2000/svg"
                             width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -97,7 +97,7 @@
             <div
                 class="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-gray-900 dark:text-white text-sm font-medium">Credibility Score</h3>
+                    <h3 class="text-gray-500 dark:text-white text-sm font-medium">Credibility Score</h3>
                     <div class="p-2 rounded-lg bg-purple-500/20 text-purple-500"><svg xmlns="http://www.w3.org/2000/svg"
                             width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
