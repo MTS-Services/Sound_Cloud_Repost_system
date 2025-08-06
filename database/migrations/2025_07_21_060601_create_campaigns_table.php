@@ -22,6 +22,14 @@ return new class extends Migration
             $table->unsignedBigInteger('music_id')->index();
             $table->string('music_type')->index();
 
+            $table->boolean('comentable');
+            $table->boolean('likeable');
+            $table->integer('my_followers')->nullable();
+            $table->integer('my_repost_last_24_h')->nullable();
+            $table->integer('my_repost_per_day')->nullable();
+            $table->string('target_genre')->nullable();
+            $table->string('target_repost')->nullable();
+
             $table->string('title');
             $table->text('description')->nullable();
             $table->unsignedBigInteger('target_reposts')->default(0);
