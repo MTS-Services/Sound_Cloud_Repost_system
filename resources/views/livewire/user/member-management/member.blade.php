@@ -184,11 +184,11 @@
                 <!-- Search option -->
                 <div class="h-full overflow-y-auto">
                     <div class="p-4 sm:p-8 bg-white dark:bg-slate-800 flex flex-col items-center ">
-                        <label for="track-link" class="mb-2 text-gray-700 dark:text-white font-semibold text-lg">
+                        <label for="track-link" class="mb-2 text-gray-700  dark:text-white font-semibold text-lg">
                             Paste a SoundCloud profile or track link
                         </label>
 
-                        <div class="flex w-full max-w-xl shadow-md rounded-lg overflow-hidden">
+                        <div class="flex  max-w-xl w-full shadow-md rounded-lg overflow-hidden">
                             <input type="text" id="track-link"
                                 placeholder="Paste a SoundCloud profile or track link"
                                 class="flex-grow p-4 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200">
@@ -297,7 +297,7 @@
 
                     <div class="text-center mt-6 mb-10">
                         <button {{-- wire:click="loadMore" --}}
-                            class="px-6 py-2 text-xl font-bold  text-orange-600 dark:text-orange-400  border-orange-600 dark:border-orange-400 hover:bg-orange-600 hover:text-white transition-colors duration-200">
+                            class="px-6 py-2 text-sm font-semibold  text-orange-600 dark:text-orange-400  border-orange-600 dark:border-orange-400   transition-colors duration-200">
                             Load More
                         </button>
                     </div>
