@@ -451,8 +451,7 @@
             </div>
 
             <div class="flex-grow overflow-y-auto p-6">
-                <!-- Content -->
-                <div class="space-y-6">
+                <form wire:submit.prevent="createCampaign" class="space-y-6">
                     <!-- Selected Track -->
                     <div>
                         <div class="flex items-center justify-between mb-3">
@@ -494,7 +493,7 @@
                         <!-- Slider -->
                         <div class="relative">
                             <input type="range" x-data x-on:input="$wire.set('credit', $event.target.value)"
-                                min="0" max="500" value="{{ $credit }}"
+                                min="100" max="500" value="{{ $credit }}"
                                 class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
                         </div>
 
@@ -503,7 +502,7 @@
 
                     <!-- Enable CommentPlus -->
                     <div class="flex items-start space-x-3">
-                        <input type="checkbox" checked
+                        <input type="checkbox" wire:model="commentable"
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                         <div>
                             <h4 class="text-sm font-medium text-gray-900">Enable CommentPlus</h4>
@@ -515,18 +514,19 @@
 
                     <!-- Enable LikePlus -->
                     <div class="flex items-start space-x-3">
-                        <input type="checkbox" checked
+                        <input type="checkbox" wire:model="likeable"
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                         <div>
                             <h4 class="text-sm font-medium text-gray-900">Enable LikePlus <span
                                     class="text-xs bg-gray-200 px-1 py-0.5 rounded">BETA</span></h4>
-                            <p class="text-xs text-gray-500">Use budget to incentivise likes (2 credits per like)</p>
+                            <p class="text-xs text-gray-500">Use budget to incentivise likes (2 credits per like)
+                            </p>
                         </div>
                     </div>
 
                     <!-- Enable Campaign Accelerator -->
                     <div class="flex items-start space-x-3">
-                        <input type="checkbox"
+                        <input type="checkbox" wire:model="isFeatureEnabled"
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                         <div>
                             <div class="flex items-center space-x-2">
@@ -545,7 +545,8 @@
                     <div class="border border-gray-200 rounded-lg p-4">
                         <div class="flex items-center space-x-2 mb-4">
                             <h4 class="text-sm font-medium text-gray-900">Campaign Targeting</h4>
-                            <span class="text-xs bg-orange-500 text-white px-2 py-0.5 rounded">PRO PLAN FEATURE</span>
+                            <span class="text-xs bg-orange-500 text-white px-2 py-0.5 rounded">PRO PLAN
+                                FEATURE</span>
                         </div>
 
                         <div class="space-y-3">
@@ -567,7 +568,7 @@
                                 <div x-show="showOptions" x-transition class="ml-7 p-3">
                                     <div class=" items-center space-x-3">
                                         <!-- Number Input -->
-                                        <input type="number" placeholder=" max follow"
+                                        <input type="number" placeholder="Max follow" wire:model="maxFollower"
                                             class="block w-48 px-3 py-1 border rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
                                     </div>
                                 </div>
@@ -588,19 +589,29 @@
                                 <div x-show="showOptions" x-transition class="ml-7 p-3">
                                     <div class=" items-center space-x-3">
                                         <!-- Number Input -->
-                                        <input type="number" placeholder="max repost"
+                                        <input type="number" placeholder="Max Repost" wire:model="maxRepostLast24h"
                                             class="block w-48 px-3 py-1 border rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="flex items-start space-x-3">
-                                <input type="checkbox"
-                                    class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-gray-700">Limit max number of reposts/day (avg)</span>
-                                    <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
-                                        <span class="text-white text-xs">i</span>
+                            <div x-data="{ showRepostPerDay: false }" class="flex flex-col space-y-2">
+                                <div class="flex items-start space-x-3">
+                                    <input type="checkbox" @click="showRepostPerDay = !showRepostPerDay"
+                                        class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-sm text-gray-700">Limit max number of reposts/day
+                                            (avg)</span>
+                                        <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
+                                            <span class="text-white text-xs">i</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div x-show="showRepostPerDay" x-transition class="ml-7 p-3">
+                                    <div class=" items-center space-x-3">
+                                        <!-- Number Input -->
+                                        <input type="number" placeholder="Max Repost per day" wire:model="maxRepostsPerDay"
+                                            class="block w-48 px-3 py-1 border rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
                                     </div>
                                 </div>
                             </div>
@@ -611,12 +622,14 @@
                             <p class="text-sm text-gray-700 mb-3">Reposters must have the following genres:</p>
                             <div class="space-y-2">
                                 <div class="flex items-center space-x-2">
-                                    <input type="radio" name="genre" value="any" checked
+                                    <input type="radio" name="genre" value="anyGenre"
+                                        @click="showRadios = false" wire:model="anyGenre"
                                         class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
                                     <span class="text-sm text-gray-700">Any genre</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
-                                    <input type="radio" name="genre" value="track"
+                                    <input type="radio" name="genre" value="trackGenre"
+                                        @click="showRadios = false" wire:model="trackGenre"
                                         class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
                                     <span class="text-sm text-gray-700">The track genre - Hip-hop & Rap</span>
                                 </div>
@@ -624,38 +637,26 @@
 
                                     <!-- Toggle Checkbox -->
                                     <div class="flex items-center space-x-2">
-                                        <input type="checkbox" @change="showRadios = !showRadios"
-                                            class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                        <input type="radio" name="genre" @click="showRadios = !showRadios"
+                                            wire:click="getAllGenres"
+                                            class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
                                         <span class="text-sm text-gray-700">Limit profile genre options</span>
                                     </div>
 
                                     <!-- Radio Options (Toggle area) -->
                                     <div x-show="showRadios" x-transition class="ml-6 space-y-2">
-                                        <div class="flex items-center space-x-2">
-                                            <input type="radio" name="genre" value="profile1"
-                                                class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
-                                            <span class="text-sm text-gray-700">One of my profile genres</span>
-                                        </div>
-                                        <div class="flex items-center space-x-2">
-                                            <input type="radio" name="genre" value="profile2"
-                                                class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
-                                            <span class="text-sm text-gray-700">Another profile genre</span>
-                                        </div>
-                                        <div class="flex items-center space-x-2">
-                                            <input type="radio" name="genre" value="profile3"
-                                                class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
-                                            <span class="text-sm text-gray-700">Custom genre option</span>
-                                        </div>
-                                        <div class="flex items-center space-x-2">
-                                            <input type="radio" name="genre" value="profile3"
-                                                class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
-                                            <span class="text-sm text-gray-700">Custom genre option</span>
-                                        </div>
-                                        <div class="flex items-center space-x-2">
-                                            <input type="radio" name="genre" value="profile3"
-                                                class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
-                                            <span class="text-sm text-gray-700">Custom genre option</span>
-                                        </div>
+                                        @forelse ($genres as $genre)
+                                            <div class="flex items-center space-x-2">
+                                                <input type="radio" name="genre" wire:model="targetGenre"
+                                                    value="{{ $genre }}"
+                                                    class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
+                                                <span class="text-sm text-gray-700">{{ $genre }}</span>
+                                            </div>
+                                        @empty
+                                            <div class="">
+                                                <span class="text-sm text-gray-700">No genres found</span>
+                                            </div>
+                                        @endforelse
                                     </div>
                                 </div>
                             </div>
@@ -667,15 +668,15 @@
                         <button type="submit"
                             class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-4 px-6 rounded-xl {{ !$canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }}">
 
-                            <span wire:loading.remove wire:target="submitCampaign">
+                            <span wire:loading.remove wire:target="createCampaign">
                                 {{ __('Create Campaign') }}
                             </span>
-                            <span wire:loading wire:target="submitCampaign">
+                            <span wire:loading wire:target="createCampaign">
                                 {{ __('Creating...') }}
                             </span>
                         </button>
                     </div>
-                </div>
+                </form>
                 {{-- <form wire:submit.prevent="submitCampaign" class="space-y-6">
                     @if ($activeModalTab === 'playlists')
                         <div

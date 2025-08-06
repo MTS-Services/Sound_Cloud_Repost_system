@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\CreditTransaction;
 use App\Models\Track;
 use App\Models\Playlist;
+use App\Services\TrackService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -15,6 +16,9 @@ use Livewire\Component;
 
 class MyCampaign extends Component
 {
+
+    protected TrackService $trackService;
+
     public $campaigns;
     public $campaign;
 
@@ -27,15 +31,13 @@ class MyCampaign extends Component
     public bool $showEditCampaignModal = false;
     public bool $showCancelWarningModal = false;
     public $tracks = [];
-    public $track = null;
-    public $credit = 100;
     public $playlists = [];
     #[Locked]
     public $playlistId = null;
     public $playlistTracks = [];
     #[Locked]
     public int $minFollowers = 0;
-    #[Locked]
+    // #[Locked]
     public int $maxFollowers = 0;
     public $musicId = null;
     public $musicType = null;
@@ -75,37 +77,62 @@ class MyCampaign extends Component
 
     protected $listeners = ['campaignCreated' => 'refreshCampaigns'];
 
+    public $track = null;
+    public $credit = 100;
+    public $genres =[]; 
+    public $commentable = false;
+    public $likeable = false;
+    public $isFeatureEnabled = false;
+    public $maxFollower = 0;
+    public $maxRepostLast24h = 0;
+    public $maxRepostsPerDay = 0;
+    public $anyGenre = '';
+    public $trackGenre = '';
+    public $targetGenre = '';
+
+
+    public function boot(TrackService $trackService)
+    {
+        $this->trackService = $trackService;
+    }
+
     /**
      * Define validation rules
      */
     protected function rules()
     {
         $rules = [
-            'title' => 'required|string|max:255',
-            'description' => 'required|string|max:1000',
-            'endDate' => 'required|date|after_or_equal:today',
-            'targetReposts' => 'required|integer|min:1',
-            'costPerRepost' => 'required|integer|min:1',
-            'musicId' => 'required|integer',
+            'credit' => 'required|integer|min:0',
+            // 'title' => 'required|string|max:255',
+            // 'description' => 'required|string|max:1000',
+            // 'endDate' => 'required|date|after_or_equal:today',
+            // 'targetReposts' => 'required|integer|min:1',
+            // 'costPerRepost' => 'required|integer|min:1',
+            // 'musicId' => 'required|integer',
+            // 'commentable' => 'required|boolean',
+            // 'likeable' => 'required|boolean',
+            // 'maxFollowers' => 'required|integer|min:0',
+            // 'maxRepostLast24h' => 'required|integer|min:0',
+            // 'targetGenre' => '|integer|min:0',
         ];
 
-        // Rules for editing a campaign
-        if ($this->showEditCampaignModal) {
-            $rules = [
-                'editTitle' => 'required|string|max:255',
-                'editDescription' => 'required|string|max:1000',
-                'editEndDate' => 'required|date|after_or_equal:today',
-                'editTargetReposts' => 'required|integer|min:1',
-                'editCostPerRepost' => 'required|integer|min:1',
-            ];
-        }
+        // // Rules for editing a campaign
+        // if ($this->showEditCampaignModal) {
+        //     $rules = [
+        //         'editTitle' => 'required|string|max:255',
+        //         'editDescription' => 'required|string|max:1000',
+        //         'editEndDate' => 'required|date|after_or_equal:today',
+        //         'editTargetReposts' => 'required|integer|min:1',
+        //         'editCostPerRepost' => 'required|integer|min:1',
+        //     ];
+        // }
 
-        // Rules for adding credits
-        if ($this->showAddCreditModal) {
-            $rules = [
-                'addCreditCostPerRepost' => 'required|integer|min:' . $this->addCreditCurrentBudget,
-            ];
-        }
+        // // Rules for adding credits
+        // if ($this->showAddCreditModal) {
+        //     $rules = [
+        //         'addCreditCostPerRepost' => 'required|integer|min:' . $this->addCreditCurrentBudget,
+        //     ];
+        // }
 
         return $rules;
     }
@@ -113,33 +140,33 @@ class MyCampaign extends Component
     /**
      * Custom validation messages
      */
-    protected function messages()
-    {
-        return [
-            'musicId.required' => 'Please select a track for your campaign.',
-            'title.required' => 'Campaign name is required.',
-            'title.max' => 'Campaign name cannot exceed 255 characters.',
-            'description.required' => 'Campaign description is required.',
-            'description.max' => 'Description cannot exceed 1000 characters.',
-            'endDate.required' => 'Please select an expiration date.',
-            'endDate.after_or_equal' => 'Expiration date must be today or later.',
-            'targetReposts.required' => 'Target repost count is required.',
-            'targetReposts.min' => 'Target reposts must be at least 1.',
-            'costPerRepost.required' => 'Budget per repost is required.',
-            'costPerRepost.min' => 'Budget per repost must be at least 1 credit.',
+    // protected function messages()
+    // {
+    //     return [
+    //         'musicId.required' => 'Please select a track for your campaign.',
+    //         'title.required' => 'Campaign name is required.',
+    //         'title.max' => 'Campaign name cannot exceed 255 characters.',
+    //         'description.required' => 'Campaign description is required.',
+    //         'description.max' => 'Description cannot exceed 1000 characters.',
+    //         'endDate.required' => 'Please select an expiration date.',
+    //         'endDate.after_or_equal' => 'Expiration date must be today or later.',
+    //         'targetReposts.required' => 'Target repost count is required.',
+    //         'targetReposts.min' => 'Target reposts must be at least 1.',
+    //         'costPerRepost.required' => 'Budget per repost is required.',
+    //         'costPerRepost.min' => 'Budget per repost must be at least 1 credit.',
 
-            // Edit specific messages
-            'editTitle.required' => 'Campaign name is required.',
-            'editDescription.required' => 'Campaign description is required.',
-            'editEndDate.required' => 'Campaign expiration date is required.',
-            'editTargetReposts.required' => 'Target repost count is required.',
-            'editCostPerRepost.required' => 'Cost per repost is required.',
+    //         // Edit specific messages
+    //         'editTitle.required' => 'Campaign name is required.',
+    //         'editDescription.required' => 'Campaign description is required.',
+    //         'editEndDate.required' => 'Campaign expiration date is required.',
+    //         'editTargetReposts.required' => 'Target repost count is required.',
+    //         'editCostPerRepost.required' => 'Cost per repost is required.',
 
-            // Add credit specific messages
-            'addCreditCostPerRepost.required' => 'Cost per repost is required.',
-            'addCreditCostPerRepost.min' => 'Cost per repost must be at least 1 credit.',
-        ];
-    }
+    //         // Add credit specific messages
+    //         'addCreditCostPerRepost.required' => 'Cost per repost is required.',
+    //         'addCreditCostPerRepost.min' => 'Cost per repost must be at least 1 credit.',
+    //     ];
+    // }
 
     /**
      * Watch for changes in campaign creation form to validate budget
@@ -601,9 +628,119 @@ class MyCampaign extends Component
     //         ]);
     //     }
     // }
-    public function createCampaign()
+    public function getAllGenres()
     {
-        
+        $this->genres = $this->trackService->getTracks()->where('user_urn', user()->urn)->pluck('genre')->unique()->values()->toArray();
+    }
+    public function createCampaign()
+     {
+        $this->validate();
+
+        try {
+            if (!$this->musicId) {
+                throw new \Exception('Please select a track for your campaign.');
+            }
+
+            if ($this->costPerRepost <= 0 || $this->targetReposts <= 0) {
+                throw new \Exception('Cost per repost and target reposts must be greater than 0.');
+            }
+
+            $totalBudget = $this->credit; //($this->costPerRepost * $this->targetReposts);
+
+            // Final budget check before submission
+            if ($totalBudget > userCredits()) {
+                $shortage = $totalBudget - userCredits();
+                throw new \Exception("You need {$shortage} more credits to create this campaign.");
+            }
+
+            if ($this->costPerRepost >= 1) {
+                $this->minFollowers = $this->costPerRepost * 100;
+                $this->maxFollowers = $this->minFollowers + 99;
+            }
+
+            DB::transaction(function () use ($totalBudget) {
+                $campaign = Campaign::create([
+                    'music_id' => $this->musicId,
+                    'music_type' => $this->musicType,
+                    'title' => $this->title,
+                    'description' => $this->description,
+                    'target_reposts' => $this->targetReposts,
+                    'cost_per_repost' => $this->costPerRepost,
+                    'budget_credits' => $totalBudget,
+                    'end_date' => $this->endDate,
+                    'user_urn' => user()->urn,
+                    'status' => Campaign::STATUS_OPEN,
+                    'min_followers' => $this->minFollowers,
+                    'max_followers' => $this->maxFollower,
+                    'creater_id' => user()->id,
+                    'creater_type' => get_class(user()),
+                    'commentable' => $this->commentable,
+                    'likeable' => $this->likeable,
+                    'is_featured' => $this->isFeatureEnabled,
+                    'max_repost_last_24h' => $this->maxRepostLast24h,
+                    'max_reposts_per_day' => $this->maxRepostsPerDay,
+                    'target_genre' => $this->targetGenre,
+                    ''
+                ]);
+                CreditTransaction::create([
+                    'receiver_urn' => user()->urn,
+                    'calculation_type' => CreditTransaction::CALCULATION_TYPE_CREDIT,
+                    'source_id' => $campaign->id,
+                    'source_type' => Campaign::class,
+                    'transaction_type' => CreditTransaction::TYPE_SPEND,
+                    'status' => 'succeeded',
+                    'credits' => $totalBudget,
+                    'description' => 'Spent on campaign creation',
+                    'metadata' => [
+                        'campaign_id' => $campaign->id,
+                        'music_id' => $this->musicId,
+                        'music_type' => $this->musicType,
+                        'start_date' => now(),
+                    ],
+                    'created_id' => user()->id,
+                    'created_type' => get_class(user())
+                ]);
+            });
+
+            session()->flash('message', 'Campaign created successfully!');
+            $this->dispatch('campaignCreated');
+
+            // Close modal and complete reset
+            $this->showCampaignsModal = false;
+            $this->showSubmitModal = false;
+
+            $this->reset([
+                'musicId',
+                'title',
+                'description',
+                'endDate',
+                'targetReposts',
+                'costPerRepost',
+                'playlistId',
+                'playlistTracks',
+                'activeModalTab',
+                'tracks',
+                'playlists',
+                'minFollowers',
+                'maxFollowers',
+                'showBudgetWarning',
+                'budgetWarningMessage',
+                'canSubmit'
+            ]);
+
+            $this->resetValidation();
+            $this->resetErrorBag();
+        } catch (\Exception $e) {
+            session()->flash('error', 'Failed to create campaign: ' . $e->getMessage());
+
+            Log::error('Campaign creation error: ' . $e->getMessage(), [
+                'music_id' => $this->musicId,
+                'user_urn' => user()->urn ?? 'unknown',
+                'title' => $this->title,
+                'total_budget' => $totalBudget ?? 0,
+                'target_reposts' => $this->targetReposts
+            ]);
+        }
     }
 
     public function openAlreadyCancelledModal()
