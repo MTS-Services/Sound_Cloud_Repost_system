@@ -38,7 +38,7 @@
 
                             <!-- Content -->
                             <div class="p-6">
-                                @forelse($feature_categories as $category)
+                                @forelse ($feature_categories as $category)
                                     <div class="mb-8 last:mb-0">
                                         <!-- Category Header -->
                                         <div class="flex items-center mb-4">
@@ -46,53 +46,43 @@
                                             <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
                                                 {{ $category->name }}
                                             </h4>
-                                            <span
-                                                class="ml-auto px-3 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full">
-                                                {{ count($category->features) }} features
-                                            </span>
                                         </div>
 
-                                        <!-- Features Grid -->
+                                        <!-- Feature Grid -->
                                         <div
                                             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-                                            @forelse($category->features as $feature)
-                                                <label for="feature_{{ $feature->id }}" class="block cursor-pointer">
-                                                    <!-- Actual checkbox (hidden but state used via peer) -->
-                                                    <input type="checkbox" name="features[]"
-                                                        value="{{ $feature->id }}" id="feature_{{ $feature->id }}"
-                                                        class="sr-only peer">
+                                            @forelse ($category->features as $feature)
+                                                <div x-data="{ checked: false }">
+                                                    <input type="checkbox" name="features[]" value="{{ $feature->id }}"
+                                                        id="feature_{{ $feature->id }}" x-model="checked"
+                                                        class="hidden">
 
-                                                    <!-- Card -->
-                                                    <div
-                                                        class="flex items-center p-2.5 h-full border rounded-lg transition-all duration-200
-        bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600
-        peer-checked:border-blue-500 peer-checked:ring-2 peer-checked:ring-blue-200 dark:peer-checked:ring-blue-900/50
-        peer-checked:bg-blue-50/50 dark:peer-checked:bg-blue-900/10
-        hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-sm">
-
-                                                        <!-- Checkbox box -->
-                                                        <div class="mt-0.5 mr-3 flex-shrink-0 ">
-                                                            <div
-                                                                class="h-5 w-5 rounded border-2 border-gray-300 dark:border-gray-500 flex items-center justify-center
-                transition-all duration-200 peer-checked:bg-blue-600 peer-checked:border-blue-600">
-                                                                <!-- Checkmark icon -->
-                                                                <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200"
-                                                                    xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                                    viewBox="0 0 20 20" stroke="currentColor">
-                                                                    <path fill="currentColor" fill-rule="evenodd"
+                                                    <div @click="checked = !checked"
+                                                        :class="{
+                                                            'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-900/50 bg-blue-100 dark:bg-blue-900/30': checked,
+                                                            'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700':
+                                                                !checked
+                                                        }"
+                                                        class="cursor-pointer flex items-center p-2.5 h-full border rounded-lg transition-all duration-200 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-sm">
+                                                        <div class="mt-0.5 mr-3 flex-shrink-0">
+                                                            <div :class="{
+                                                                'bg-blue-900 border-blue-600': checked,
+                                                                'border-gray-300 dark:border-gray-500': !checked
+                                                            }"
+                                                                class="h-5 w-5 rounded border-2 flex items-center justify-center transition-all duration-200">
+                                                                <svg x-show="checked" class="w-3 h-3 text-white"
+                                                                    fill="currentColor" viewBox="0 0 20 20">
+                                                                    <path fill-rule="evenodd"
                                                                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                                                                         clip-rule="evenodd" />
                                                                 </svg>
                                                             </div>
                                                         </div>
-
-                                                        <!-- Feature name -->
                                                         <p class="text-sm font-medium text-gray-800 dark:text-gray-200">
                                                             {{ $feature->name }}
                                                         </p>
                                                     </div>
-                                                </label>
-
+                                                </div>
                                             @empty
                                                 <div class="col-span-full text-center text-gray-500 dark:text-gray-400">
                                                     {{ __('No features in this category') }}
@@ -118,6 +108,7 @@
                                         </p>
                                     </div>
                                 @endforelse
+
                             </div>
                         </div>
 
