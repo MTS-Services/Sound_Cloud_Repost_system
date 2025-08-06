@@ -148,7 +148,7 @@ class Member extends Component
         }
     }
 
-   
+
     protected function processResolvedData($data)
     {
         switch ($data['kind']) {
@@ -287,7 +287,62 @@ class Member extends Component
 
     public function createRepostsRequest()
     {
-        // Your existing method for creating a repost request
+        try {
+            // Validate required objects exist
+            if (!$this->user) {
+                throw new Exception('Target user not found');
+            }
+
+            $targetUrn = null;
+            if ($this->track) {
+                $targetUrn = $this->track->urn;
+            } else {
+                throw new Exception('Target content not found');
+            }
+
+            $amount = repostPrice($this->user);
+
+            DB::transaction(function () use ($targetUrn, $amount) {
+                // Create repost request
+                $repostRequest = new RepostRequest();
+                $repostRequest->requester_urn = user()->urn;
+                $repostRequest->target_user_urn = $this->user->urn;
+                $repostRequest->track_urn = $targetUrn;
+
+                $repostRequest->credits_spent = $amount;
+                $repostRequest->save();
+
+                // Create credit transaction
+                $creditTransaction = new CreditTransaction();
+                $creditTransaction->receiver_urn = user()->urn;
+                $creditTransaction->sender_urn = $this->user->urn;
+                $creditTransaction->transaction_type = CreditTransaction::TYPE_SPEND;
+                $creditTransaction->calculation_type = CreditTransaction::CALCULATION_TYPE_CREDIT;
+                $creditTransaction->source_id = $repostRequest->id;
+                $creditTransaction->source_type = RepostRequest::class;
+                $creditTransaction->amount = 0;
+                $creditTransaction->credits = $amount; // Assuming credits is the same as amount
+                $creditTransaction->description = "Repost request for track by " . user()->name;
+                $creditTransaction->metadata = [
+                    'request_type' => 'track',
+                    'target_urn' => $targetUrn,
+                ];
+                $creditTransaction->status = 'succeeded';
+                $creditTransaction->save();
+            });
+            $this->closeRepostModal();
+            $this->closePlaylistTracksModal();
+            $this->closeModal();
+            $this->loadData();
+            $this->reset(['track', 'user']);
+            session()->flash('success', 'Repost request sent successfully!');
+        } catch (InvalidArgumentException $e) {
+            session()->flash('error', $e->getMessage());
+        } catch (\Exception $e) {
+            session()->flash('error', 'Failed to send repost request. Please try again.');
+            // Log the actual error for debugging
+            logger()->error('Repost request failed', ['error' => $e->getMessage()]);
+        }
     }
 
     public function loadMoreTracks()
