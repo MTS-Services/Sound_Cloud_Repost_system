@@ -52,35 +52,48 @@
                                         <div
                                             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
                                             @forelse ($category->features as $feature)
-                                                <div x-data="{ checked: false }">
+                                                <div x-data="{ checked: false }" x-init="checked = false">
                                                     <input type="checkbox" name="features[]" value="{{ $feature->id }}"
                                                         id="feature_{{ $feature->id }}" x-model="checked"
                                                         class="hidden">
 
-                                                    <div @click="checked = !checked"
-                                                        :class="{
-                                                            'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-900/50 bg-blue-100 dark:bg-blue-900/30': checked,
-                                                            'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700':
-                                                                !checked
-                                                        }"
-                                                        class="cursor-pointer flex items-center p-2.5 h-full border rounded-lg transition-all duration-200 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-sm">
-                                                        <div class="mt-0.5 mr-3 flex-shrink-0">
-                                                            <div :class="{
-                                                                'bg-blue-900 border-blue-600': checked,
-                                                                'border-gray-300 dark:border-gray-500': !checked
-                                                            }"
-                                                                class="h-5 w-5 rounded border-2 flex items-center justify-center transition-all duration-200">
-                                                                <svg x-show="checked" class="w-3 h-3 text-white"
-                                                                    fill="currentColor" viewBox="0 0 20 20">
-                                                                    <path fill-rule="evenodd"
-                                                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                                        clip-rule="evenodd" />
-                                                                </svg>
+                                                    <div :class="checked
+                                                        ?
+                                                        'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-900/50 bg-blue-100 dark:bg-blue-900/30' :
+                                                        'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700'"
+                                                        class="flex flex-col items-start p-2.5 h-full border rounded-lg transition-all duration-200 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-sm">
+
+                                                        <!-- Checkbox Icon & Label -->
+                                                        <label for="feature_{{ $feature->id }}"
+                                                            class="flex items-center w-full mb-1 cursor-pointer">
+                                                            <div class="mt-0.5 mr-3 flex-shrink-0">
+                                                                <div :class="checked
+                                                                    ?
+                                                                    'bg-blue-700 border-blue-600' :
+                                                                    'border-gray-300 dark:border-gray-500'"
+                                                                    class="h-5 w-5 rounded border-2 flex items-center justify-center transition-all duration-200">
+                                                                    <svg x-show="checked" class="w-3 h-3 text-white"
+                                                                        fill="currentColor" viewBox="0 0 20 20">
+                                                                        <path fill-rule="evenodd"
+                                                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                                            clip-rule="evenodd" />
+                                                                    </svg>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <p class="text-sm font-medium text-gray-800 dark:text-gray-200">
-                                                            {{ $feature->name }}
-                                                        </p>
+                                                            <p
+                                                                class="text-sm font-medium text-gray-800 dark:text-gray-200 select-none">
+                                                                {{ $feature->name }}
+                                                            </p>
+                                                        </label>
+
+                                                        <!-- Input field ONLY SHOWS when checked -->
+                                                        <template x-if="checked">
+                                                            <input type="text"
+                                                                name="feature_values[{{ $feature->id }}]"
+                                                                placeholder="Enter value for this feature"
+                                                                class="mt-2 w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:text-white"
+                                                                @click.stop />
+                                                        </template>
                                                     </div>
                                                 </div>
                                             @empty
@@ -108,9 +121,9 @@
                                         </p>
                                     </div>
                                 @endforelse
-
                             </div>
                         </div>
+
 
                         {{-- name --}}
                         <div class="space-y-2">
