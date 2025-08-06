@@ -34,8 +34,8 @@ return new class extends Migration
             $table->unsignedBigInteger('max_followers')->index()->default(0);
             $table->unsignedBigInteger('playback_count')->index()->default(0);
             $table->tinyInteger('status')->index()->default(Campaign::STATUS_OPEN);
-            $table->timestamp('start_date')->index()->default(now());
-            $table->timestamp('end_date')->index();
+            $table->timestamp('start_date')->index()->nullable();
+            $table->timestamp('end_date')->index()->nullable();
 
             $table->boolean('is_featured')->default(Campaign::NOT_FEATURED);
 

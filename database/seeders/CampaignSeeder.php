@@ -16,27 +16,32 @@ class CampaignSeeder extends Seeder
     public function run(): void
     {
         $user = User::first();
-
         if (!$user) {
             $user = User::factory()->create();
         }
-        
+
+        $track = Track::first();
+        if (!$track) {
+            $this->call(TrackSeeder::class); // ✅ call the seeder instead of factory
+            $track = Track::first(); // re-fetch after seeding
+        }
+
         Campaign::create([
             'user_urn' => $user->urn,
-            'music_id' => rand(1, 10),
+            'music_id' => $track->id,
             'music_type' => 'App\Models\Track',
             'title' => 'Boost Track Campaign',
             'description' => 'A campaign to promote this track.',
             'target_reposts' => 1000,
             'completed_reposts' => 100,
-            'credits_per_repost' => 0.50,
-            'total_credits_budget' => 500.00,
+            'cost_per_repost' => 0.50,
+            'budget_credits' => 500.00,
             'credits_spent' => 50.00,
-            'min_followers_required' => 100,
-            'max_followers_limit' => 5000,
+            'min_followers' => 100,
+            'max_followers' => 5000,
             'start_date' => Carbon::now(),
             'end_date' => Carbon::now()->addDays(30),
-            'auto_approve' => true,
+            'is_featured' => true,
         ]);
     }
 }

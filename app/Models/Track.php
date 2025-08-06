@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 use App\Models\BaseModel;
@@ -117,4 +118,18 @@ class Track extends BaseModel
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
+
+
+    // Month format
+    public function getReleaseMonthFormattedAttribute()
+    {
+        $monthString = str_pad($this->release_month, 2, '0', STR_PAD_LEFT);
+
+        $date = DateTime::createFromFormat('Y-m-d', '2000-' . $monthString . '-01');
+
+        if ($date && $date->format('n') == (int) $this->release_month) {
+            return $date->format('M'); // Formats to 'Jan', 'Feb', etc.
+        }
+        return 'Invalid';
+    }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Admin\Usermanagement;
+namespace App\Services\Admin\UserManagement;
 
 use App\Http\Traits\FileManagementTrait;
 use App\Models\Playlist;
@@ -23,11 +23,25 @@ class UserPlaylistService
     {
         return Playlist::onlyTrashed()->findOrFail(decrypt($encryptedId));
     }
+    public function getUserPlaylistTracks( string $soundcloudUrn)
+    {
+        $playlistTracks = Playlist::with('tracks')->where('soundcloud_urn', decrypt($soundcloudUrn))->latest();
+        return $playlistTracks;
+    }
+    // public function getUserPlaylistTracks(string $soundcloudUrn)
+    // {
+    //     $playlist = Playlist::with('tracks')
+    //         ->where('soundcloud_urn', decrypt($soundcloudUrn))
+    //         ->first();
+
+    //     return $playlist ? $playlist->tracks : collect();
+    // }
+
 
     public function createUser(array $data, $file = null): Playlist
     {
         return DB::transaction(function () use ($data, $file) {
-           
+
             $data['creater_id'] = admin()->id;
             $user = Playlist::create($data);
             return $user;
@@ -37,7 +51,7 @@ class UserPlaylistService
     public function updateUser(Playlist $user, array $data, $file = null): Playlist
     {
         return DB::transaction(function () use ($user, $data, $file) {
-         
+
             $data['updater_id'] = admin()->id;
             $data['updater_type'] = get_class(admin());
             $user->update($data);
@@ -54,8 +68,10 @@ class UserPlaylistService
     public function restore(string $encryptedId): void
     {
         $user = $this->getDeletedUserPlaylist($encryptedId);
-        $user->update(['updater_id' => admin()->id],
-            ['updater_type' => get_class(admin())]);
+        $user->update(
+            ['updater_id' => admin()->id],
+            ['updater_type' => get_class(admin())]
+        );
         $user->restore();
     }
 

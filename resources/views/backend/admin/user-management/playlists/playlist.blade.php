@@ -1,46 +1,7 @@
 <x-admin::layout>
     <x-slot name="title">{{ __('User Playlist List') }}</x-slot>
     <x-slot name="breadcrumb">{{ __('User Playlist List') }}</x-slot>
-    <x-slot name="page_slug">user-playlist</x-slot>
-  
-    {{-- <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">{{ __('User Playlist List') }}</h3>
-                        </div>
-                        <div class="card-body">
-                            <table class="table datatable table-zebra">
-                                <thead>
-                                    <tr>
-                                        <th width="5%">{{ __('SL') }}</th>
-                                        <th>{{ __('Name') }}</th>
-                                        <th>{{ __('Soundcloud ID') }}</th>
-                                        <th>{{ __('Status') }}</th>
-                                        <th>{{ __('Last Synced At') }}</th>
-                                        <th width="10%">{{ __('Action') }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Playlist 1</td>
-                                        <td>123456789</td>
-                                        <td>Active</td>
-                                        <td>2023-06-01 12:34:56</td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> --}}
+    <x-slot name="page_slug">user</x-slot>
 
       <section>
 
@@ -48,10 +9,15 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('User Playlist List') }}</h2>
                 <div class="flex items-center gap-2">
+
                     {{-- <x-button href="{{ route('um.playlist.trash') }}" icon="trash-2" type='secondary'
                         permission="admin-trash">
                         {{ __('Trash') }}
                     </x-button> --}}
+                     <x-button href="{{ route('um.user.index') }}"  type='primary'
+                        permission="admin-trash">
+                        {{ __('back') }}
+                    </x-button>
                 </div>
             </div>
         </div>
@@ -62,14 +28,13 @@
                         <th>{{ __('SL') }}</th>
                         <th>{{ __('Title') }}</th>
                         <th>{{ __('Tag List') }}</th>
-                        <th>{{ __('User Urn') }}</th>
-                        <th>{{ __('Soundcloud ID') }}</th>
-                        <th>{{ __('Soundcloud Kind') }}</th>
-                        <th>{{ __('Release Year') }}</th>
+                        <th>{{ __('User Name') }}</th>
+                        <th>{{ __('Label Name') }}</th>
+                        <th>{{ __('Likes') }}</th>
                         <th>{{ __('Playlist Type') }}</th>
                         <th>{{ __('Tracks') }}</th>
-                        <th>{{ __('Duration') }}</th>
-                        <th>{{ __('Likes') }}</th>
+                        <th>{{ __('Purchased') }}</th>
+                        <th>{{ __('Release Month') }}</th>
                         <th>{{ __('Action') }}</th>
                     </tr>
                 </thead>
@@ -85,28 +50,28 @@
     @push('js')
         <script src="{{ asset('assets/js/details-modal.js') }}"></script>
         <script src="{{ asset('assets/js/datatable.js') }}"></script>
+         
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 let table_columns = [
                     ['title', true, true],
                     ['tag_list', true, true],
-                    ['user_urn', true, true],
-                    ['soundcloud_id', true, true],
-                    ['soundcloud_kind', true, true],
-                    ['release_year', true, true],
+                    ['user_name', true, true],
+                    ['label_name', true, true],
+                    ['likes_count', true, false],
                     ['playlist_type', true, true],
                     ['track_count', true, true],
-                    ['duration', true, false],
-                    ['likes_count', true, false],
+                    ['purchase_title', true, true],
+                    ['release_month', true, true],
                     ['action', false, false],
                 ];
                 const details = {
                     table_columns: table_columns,
                     main_class: '.datatable',
                     displayLength: 10,
-                    main_route: "{{ route('um.user.playlist', id) }}",
+                    main_route: "{{ route('um.user.playlist', Auth::user()->id) }}",
                     order_route: "{{ route('update.sort.order') }}",
-                    export_columns: [0, 1, 2, 3, 4, 5, 6],
+                    export_columns: [0, 1, 2, 3, 4, 5, 6,7,8,9,10],
                     model: 'Playlist',
                 };
                 // initializeDataTable(details);
@@ -121,15 +86,11 @@
 
                 $(document).on('click', '.view', function() {
                     const id = $(this).data('id');
-                    const route = "{{ route('', ':id') }}";
+                    const route = "{{ route('um.user.playlist.show',':id') }}";
 
                     const details = [{
                             label: '{{ __('Title') }}',
                             key: 'title'
-                        },
-                        {
-                            label: '{{ __('Sort Order') }}',
-                            key: 'sort_order'
                         },
                         {
                             label: '{{ __('User URN') }}',
@@ -288,7 +249,7 @@
                             key: 'updated_at'
                         },
                     ];
-                    showDetailsModal(route, id, '{{ __('User Details') }}', details);
+                    showDetailsModal(route, id, '{{ __('Playlist Details') }}', details);
                 });
             });
         </script> --}}

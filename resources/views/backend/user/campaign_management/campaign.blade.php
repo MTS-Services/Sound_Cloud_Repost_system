@@ -2,26 +2,29 @@
     <x-slot name="page_slug">campaign-feed</x-slot>
 
     <!-- Header Section -->
-    <div class="w-full mt-6">
+    <div class="w-full mt-6 relative">
         <!-- Header Tabs & Button -->
         <div
             class="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-4 pt-3 border-b border-b-gray-200 dark:border-b-gray-700  gap-2 sm:gap-0">
-            <div x-data="{ showInput: false }" class="relative flex items-center text-gray-600 dark:text-gray-400">
-                <svg class="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-slate-300 pointer-events-none"
-                    fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-
-                <div x-show="!showInput" @click="showInput = true"
-                    class="pl-7 pr-2 py-2 cursor-pointer whitespace-nowrap dark:text-slate-300">
-                    <span>Search by tag</span>
-                </div>
-
-                <div x-show="showInput" x-cloak>
-                    <input type="text" placeholder="Search by tag"
-                        class="border py-2 border-red-500 pl-7 dark:text-slate-300 dark:border-red-400 dark:bg-gray-800 pr-2 rounded focus:outline-none focus:ring-1 focus:ring-red-400"
-                        @click.outside="showInput = false" x-ref="searchInput" x-init="$watch('showInput', (value) => { if (value) { $nextTick(() => $refs.searchInput.focus()) } })" />
+            <div class="">
+                <div class="">
+                    <nav class="-mb-px flex space-x-8">
+                        <button
+                            class="tab-button @if ($activeMainTab === 'recommended_pro') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 pb-1 px-2 text-md font-semibold transition-all duration-200"
+                            wire:click="setActiveTab('recommended_pro')">
+                            {{ __('Recomended Pro') }} <span class="text-xs ml-2">{{ __('20') }}</span>
+                        </button>
+                        <button
+                            class="tab-button @if ($activeMainTab === 'recommended') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 pb-1 px-2 text-md font-semibold transition-all duration-200"
+                            wire:click="setActiveTab('recommended')">
+                            {{ __('Recommended') }}<span class="text-xs ml-2">{{ __('95') }}</span>
+                        </button>
+                        <button
+                            class="tab-button @if ($activeMainTab === 'all') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 pb-1 px-2 text-md font-semibold transition-all duration-200"
+                            wire:click="setActiveTab('all')">
+                            {{ __('All') }}<span class="text-xs ml-2 text-orange-500">{{ __('205') }}</span>
+                        </button>
+                    </nav>
                 </div>
             </div>
 
@@ -30,6 +33,138 @@
                 Start a new campaign
             </a>
         </div>
+    </div>
+
+    <div x-data ="{ openFilterByTrack: false, openFilterByGenre: false }"
+        class="flex items-center justify-start gap-4 mt-4 mb-2 relative">
+        <div class="relative">
+            <button @click="openFilterByTrack = !openFilterByTrack , openFilterByGenre = false"
+                wire:click="getAllTrackTypes" @click.outside="openFilterByTrack = false"
+                class="bg-orange-100 !hover:bg-orange-400 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer">
+                Filter by track type /all
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-chevron-down-icon lucide-chevron-down">
+                    <path d="m6 9 6 6 6-6" />
+                </svg>
+            </button>
+
+            @if (!empty($selectedTrackTypes))
+                <div x-show="openFilterByTrack" x-transition:enter="transition ease-out duration-100"
+                    x-transition:enter-start="transform opacity-0 scale-95"
+                    x-transition:enter-end="transform opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-75"
+                    x-transition:leave-start="transform opacity-100 scale-100"
+                    x-transition:leave-end="transform opacity-0 scale-95"
+                    class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
+                    <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
+                        <div class="py-1">
+                            <button wire:click="filterByTrackType('all')"
+                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                All
+                            </button>
+                            @forelse ($selectedTrackTypes as $type)
+                                <button wire:click="filterByTrackType('{{ $type }}')"
+                                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                    {{-- Type Capitalize --}}
+                                    {{ ucfirst($type) }}
+                                </button>
+                            @empty
+                                <span class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                    {{ __('No track types available') }}
+                                </span>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+
+        <!-- Filter by genre dropdown -->
+        <div class="relative">
+            <button @click="openFilterByGenre = !openFilterByGenre, openFilterByTrack = false" wire:click="getAllGenres"
+                @click.outside="openFilterByGenre = false"
+                class="bg-orange-100 hover:bg-orange-300 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-music-icon lucide-music">
+                    <path d="M9 18V5l12-2v13" />
+                    <circle cx="6" cy="18" r="3" />
+                    <circle cx="18" cy="16" r="3" />
+                </svg>
+                Filter by genre / {{ __('2') }}
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-chevron-down-icon lucide-chevron-down">
+                    <path d="m6 9 6 6 6-6" />
+                </svg>
+            </button>
+            @if (!empty($genres))
+                <div x-show="openFilterByGenre" x-transition:enter="transition ease-out duration-100"
+                    x-transition:enter-start="transform opacity-0 scale-95"
+                    x-transition:enter-end="transform opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-75"
+                    x-transition:leave-start="transform opacity-100 scale-100"
+                    x-transition:leave-end="transform opacity-0 scale-95"
+                    class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
+                    <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
+                        <div class="py-1">
+                            @foreach ($genres as $genre)
+                                <button wire:click="filterByGenre('{{ $genre }}')"
+                                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                    {{ $genre }}
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+        {{-- Search --}}
+        <div x-data="{ showInput: false }"
+            class="w-64 relative flex items-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded">
+            <svg class="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-slate-300 pointer-events-none"
+                fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+
+            <div x-show="!showInput" @click="showInput = true" wire:click ="getAllTags"
+                class="pl-7 pr-2 py-2 cursor-pointer whitespace-nowrap dark:text-slate-300">
+                <span>{{ $search ? $search : 'Type to search tags...' }}</span>
+            </div>
+
+            <div x-show="showInput" x-cloak>
+                <input type="text" wire:model.debounce.300ms="search" wire:focus="$set('showSuggestions', true)"
+                    wire:blur="hideSuggestions" placeholder="{{ $search ? $search : 'Type to search tags...' }}"
+                    class="w-64 border py-2 border-red-500 pl-7 dark:text-slate-300 dark:border-red-400 dark:bg-gray-800 pr-2 rounded focus:outline-none focus:ring-1 focus:ring-red-400 mr-20"
+                    @click.outside="showInput = false" x-ref="searchInput" x-init="$watch('showInput', (value) => { if (value) { $nextTick(() => $refs.searchInput.focus()) } })"
+                    autocomplete="off" />
+                {{-- <input type="text" wire:model.debounce.300ms="search" wire:focus="$set('showSuggestions', true)"
+                        wire:blur="hideSuggestions" placeholder="Type to search tags..."
+                        class="flex-1 min-w-0 border-0 outline-none focus:ring-0 p-1" autocomplete="off"> --}}
+            </div>
+        </div>
+        {{-- <!-- Suggestions Dropdown -->
+        @if ($showSuggestions && !empty($suggestedTags))
+            <div
+                class="flex flex-wrap absolute right-0 mt-20 z-50 w-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto py-2">
+                @foreach ($suggestedTags as $index => $tag)
+                    <span wire:click="selectTag('{{ $tag }}')"
+                        class="inline-flex items-center px-3 py-1 rounded-sm text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 ml-2 cursor-default">
+                        {{ $tag }}
+                        <button type="button"
+                            class="ml-2 text-blue-600 hover:text-blue-800 focus:outline-none cursor-pointer"
+                            onclick="event.stopPropagation(); @this.call('removeTag', {{ $index }})">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </span>
+                @endforeach
+            </div>
+        @endif --}}
     </div>
 
     <div class="container mx-auto px-4 py-6">
@@ -94,7 +229,8 @@
                                             </div>
                                             <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 mt-1" fill="none"
                                                 viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="1.5"
                                                     d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z">
                                                 </path>
                                             </svg>
@@ -124,8 +260,8 @@
                                         <div
                                             class="flex flex-col items-center sm:items-start text-gray-600 dark:text-gray-400">
                                             <div class="flex items-center gap-1.5">
-                                                <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
+                                                <svg width="26" height="18" viewBox="0 0 26 18"
+                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <rect x="1" y="1" width="24" height="16" rx="3"
                                                         fill="none" stroke="currentColor" stroke-width="2" />
                                                     <circle cx="8" cy="9" r="3" fill="none"
@@ -134,7 +270,8 @@
                                                 <span
                                                     class="text-sm sm:text-base">{{ $campaign->budget_credits - $campaign->credits_spent }}</span>
                                             </div>
-                                            <span class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
+                                            <span
+                                                class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
                                         </div>
 
                                         <div class="relative">
@@ -147,8 +284,8 @@
                                                     'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
                                                         $campaign->id),
                                                 ]) @disabled(!$this->canRepost($campaign->id))>
-                                                <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
+                                                <svg width="26" height="18" viewBox="0 0 26 18"
+                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <rect x="1" y="1" width="24" height="16" rx="3"
                                                         fill="none" stroke="currentColor" stroke-width="2" />
                                                     <circle cx="8" cy="9" r="3" fill="none"

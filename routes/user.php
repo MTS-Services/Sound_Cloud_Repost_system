@@ -10,10 +10,15 @@ use App\Http\Controllers\Backend\User\Members\MemberController;
 use App\Http\Controllers\Backend\User\PromoteController;
 use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
 
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Livewire\User\HelpAndSupport;
 use App\Livewire\User\MemberManagement\Member;
+use App\Livewire\User\MemberManagement\RepostRequest;
 use App\Livewire\User\ProfileManagement\MyAccount;
+use Illuminate\Validation\Rules\Unique;
+use PHPUnit\TextUI\Help;
 
 Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
     Route::get('redirect', [SoundCloudController::class, 'redirect'])->name('redirect');
@@ -25,6 +30,7 @@ Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
 // Dashboard and other routes
 Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+
 
     Route::get('/user-profile', [ProfileController::class, 'profile'])->name('profile');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -39,7 +45,6 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
         // Campaign Routes
         Route::get('/my-campaigns', MyCampaign::class)->name('my-campaigns');
         Route::get('/campaigns', Campaign::class)->name('campaigns');
-
     });
     // Member Management
     Route::group(['as' => 'mm.', 'prefix' => 'member-management'], function () {
@@ -47,12 +52,9 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
         Route::get('/members', [MemberController::class, 'index'])->name('members.index');
         Route::get('/members/request', [MemberController::class, 'request'])->name('members.request');
         Route::post('/confirm/repost/{id}', [MemberController::class, 'confirmRepost'])->name('repost.confirm');
-
-
     });
     Route::get('members', Member::class)->name('members');
-
-
+    Route::get('reposts-request', RepostRequest::class)->name('reposts-request');
     // Order Manaagement Routes
     Route::controller(UserOrderController::class)->name('order.')->prefix('order')->group(function () {
         Route::post('/store', 'store')->name('store');
@@ -62,13 +64,16 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
 
         Route::get('/my-account', MyAccount::class)->name('my-account');
     });
+
+    // Help Support
+    Route::get('/help-support', HelpAndSupport::class)->name('help-support');
 });
 
 
 
 // static page route
 
-Route::view('/help-support', 'backend.user.help-support')->name('help-support');
+// Route::view('/help-support', 'backend.user.help-support')->name('help-support');
 Route::view('/settings', 'backend.user.settings')->name('settings');
 Route::view('/page', 'backend.user.dummy-page')->name('page');
 Route::view('/charts', 'backend.user.chart')->name('charts');

@@ -1,18 +1,18 @@
 <x-admin::layout>
     <x-slot name="title">{{ __('User Tracklist List') }}</x-slot>
     <x-slot name="breadcrumb">{{ __('User Tracklist List') }}</x-slot>
-    <x-slot name="page_slug">user-tracklist</x-slot>
+    <x-slot name="page_slug">user</x-slot>
     <section>
 
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('User Tracklist List') }}</h2>
-                <div class="flex items-center gap-2">
-                    <x-button href="{{ route('um.tracklist.trash') }}" icon="trash-2" type='secondary'
+                 <div class="flex items-center gap-2">
+                     <x-button href="{{ route('um.user.index') }}"  type='primary'
                         permission="admin-trash">
-                        {{ __('Trash') }}
+                        {{ __('back') }}
                     </x-button>
-                </div>
+                </div> 
             </div>
         </div>
         <div class="glass-card rounded-2xl p-6">
@@ -22,11 +22,10 @@
                         <th>{{ __('SL') }}</th>
                         <th>{{ __('Title') }}</th>
                         <th>{{ __('Tag List') }}</th>
-                        <th>{{ __('User Urn') }}</th>
-                        <th>{{ __('Soundcloud ID') }}</th>
-                        <th>{{ __('Soundcloud Kind') }}</th>
-                        <th>{{ __('Release Year') }}</th>
-                        <th>{{ __('Duration') }}</th>
+                        <th>{{ __('User Name') }}</th>
+                        <th>{{ __('Author Name') }}</th>
+                        <th>{{ __('Purchased') }}</th>
+                        <th>{{ __('Release Month') }}</th>
                         <th>{{ __('Action') }}</th>
                     </tr>
                 </thead>
@@ -48,17 +47,16 @@
                     ['title', true, true],
                     ['tag_list', true, true],
                     ['user_urn', true, true],
-                    ['author_soundcloud_id', true, true],
-                    ['author_soundcloud_kind', true, true],
-                    ['release_year', true, true],
-                    ['duration', true, false],
+                    ['author_username', true, true],
+                    ['purchase_title', true, true],
+                    ['release_month', true, true],
                     ['action', false, false],
                 ];
                 const details = {
                     table_columns: table_columns,
                     main_class: '.datatable',
                     displayLength: 10,
-                    main_route: "{{ route('um.tracklist.index') }}",
+                    main_route: "{{ route('um.user.tracklist', Auth::user()->id) }}",
                     order_route: "{{ route('update.sort.order') }}",
                     export_columns: [0, 1, 2, 3, 4, 5, 6],
                     model: 'Tracklist',
@@ -75,7 +73,7 @@
 
                 $(document).on('click', '.view', function() {
                     const id = $(this).data('id');
-                    const route = "{{ route('um.tracklist.show', ':id') }}";
+                    const route = "{{ route('um.user.tracklist.show', ':id') }}";
 
                     const details = [{
                             label: '{{ __('User Urn') }}',

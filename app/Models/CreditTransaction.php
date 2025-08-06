@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use Faker\Core\Color;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CreditTransaction extends BaseModel
@@ -41,6 +42,31 @@ class CreditTransaction extends BaseModel
     protected $casts = [
         'metadata' => 'array',
     ];
+     public function getAppends()
+     {
+         return['status_label', 'status_color', 'status_btn_label', 'status_btn_color',
+         
+        ];
+
+
+     }
+     
+     public function getStatusLabelAttribute(): string
+     {
+         return $this->status == self::STATUS_PENDING ? 'Pending' : 'Completed';
+     }
+     public function getStatusColorAttribute(): string
+     {
+         return $this->status == self::STATUS_PENDING ? 'Green' : 'success';
+     }
+     public function getStatusBtnLabelAttribute(): string
+     {
+         return $this->status == self::STATUS_PENDING ? 'Pending' : 'Completed' ;
+     }
+     public function getStatusBtnColorAttribute(): string
+     {
+         return $this->status == self::STATUS_PENDING ? 'btn-warning' : 'btn-success';
+     }
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                     Start of RELATIONSHIPS
@@ -110,6 +136,7 @@ class CreditTransaction extends BaseModel
     public const TYPE_PURCHASE = 3;
     public const TYPE_PENALTY = 4;
     public const TYPE_BONUS = 5;
+    public const TYPE_MANUAL = 6;
 
     public static function getTypes()
     {
@@ -120,6 +147,7 @@ class CreditTransaction extends BaseModel
             self::TYPE_PURCHASE => 'Purchase',
             self::TYPE_PENALTY => 'Penalty',
             self::TYPE_BONUS => 'Bonus',
+            self::TYPE_MANUAL => 'Manual',
         ];
     }
     public function getTypeNameAttribute(): string

@@ -82,7 +82,7 @@ class CampaignController extends Controller
                 return redirect()->back()->with('error', 'Invalid music type specified for the campaign.');
             }
 
-
+            dd($response);
             if ($response->successful()) {
                 // If SoundCloud returns a repost ID, capture it (example, adjust based on actual SoundCloud API response)
                 // $soundcloudRepostId = $response->json('id');

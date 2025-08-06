@@ -26,7 +26,7 @@ class PaymentController extends Controller
     public function paymentMethod(string $credit_id)
     {
         $data['order'] = $this->orderService->getOrder($credit_id);
-        
+
         return view('frontend.pages.payment_method', $data);
     }
 
@@ -60,7 +60,7 @@ class PaymentController extends Controller
                     'customer_email' => $request->customer_email ?? null,
                 ],
             ]);
-            DB::transaction(function () use ($request,$order, $paymentIntent) {
+            DB::transaction(function () use ($request, $order, $paymentIntent) {
                 $creditTransaction = CreditTransaction::create([
                     'receiver_urn' => user()->urn,
                     'transaction_type' => CreditTransaction::TYPE_PURCHASE,
@@ -113,6 +113,7 @@ class PaymentController extends Controller
         try {
             $decryptedId = Crypt::decryptString($request->pid);
             $paymentIntent = $this->stripeService->retrievePaymentIntent($decryptedId);
+        
             // Update payment record
             $payment = Payment::where('payment_intent_id', $paymentIntent->id)->first();
             if ($payment) {
@@ -120,6 +121,13 @@ class PaymentController extends Controller
                     'status' => $paymentIntent->status,
                     'payment_method' => $paymentIntent->payment_method ?? null,
                     'processed_at' => $paymentIntent->status === 'succeeded' ? now() : null,
+                ]);
+            }
+            // Update credit transaction
+            $credidTransaction = CreditTransaction::where('id', $payment->credit_transaction_id )->first();
+            if ($credidTransaction) {
+                $credidTransaction->update([
+                    'status' => $paymentIntent->status
                 ]);
             }
             return view('backend.admin.payments.success', compact('payment', 'paymentIntent'));

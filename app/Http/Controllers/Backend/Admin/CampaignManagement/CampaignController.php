@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Backend\Admin\CampaignManagement;
 
-use App\Http\Controllers\Controller;
-use App\Http\Traits\AuditRelationTraits;
-use App\Services\User\CampaignManagement\CampaignService;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
+use App\Models\Campaign;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Contracts\View\View;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
+use App\Http\Traits\AuditRelationTraits;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use App\Services\User\CampaignManagement\CampaignService;
 
 class CampaignController extends Controller implements HasMiddleware
 {
@@ -32,7 +33,7 @@ class CampaignController extends Controller implements HasMiddleware
     {
         $this->campaignService = $campaignService;
     }
-    
+
     public static function middleware(): array
     {
         return [
@@ -51,12 +52,13 @@ class CampaignController extends Controller implements HasMiddleware
         ];
     }
 
+   
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        
+
         if ($request->ajax()) {
             $query = $this->campaignService->getCampaigns();
             return DataTables::eloquent($query)
@@ -86,30 +88,24 @@ class CampaignController extends Controller implements HasMiddleware
         return view('backend.admin.campaign_management.campaigns.index');
     }
 
+     public function detail($id)
+    {
+
+        $data['campaigns']= Campaign::where('id',decrypt($id))->first();
+        
+        return view('backend.admin.campaign_management.campaigns.detail',$data);
+    }
+
     protected function menuItems($model): array
     {
         return [
             [
-                'routeName' => 'javascript:void(0)',
-                'data-id' => encrypt($model->id),
-                'className' => 'view',
-                'label' => 'Details',
-                'permissions' => ['campaign-list', 'campaign-delete', 'campaign-status']
+                'routeName' => 'cm.campaign.detail',
+                'params' => encrypt($model->id),
+                'label' => ' Details',
+                'permissions' => ['campaign-detail']
             ],
-            [
-                'routeName' => '',
-                'params' => [encrypt($model->id)],
-                'label' => 'Edit',
-                'permissions' => ['campaign-edit']
-            ],
-
-            [
-                'routeName' => '',
-                'params' => [encrypt($model->id)],
-                'label' => 'Delete',
-                'delete' => true,
-                'permissions' => ['campaign-delete']
-            ]
+           
 
         ];
     }

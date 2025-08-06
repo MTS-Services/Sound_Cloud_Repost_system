@@ -36,7 +36,7 @@ class Repost extends BaseModel
 
     public function request(): BelongsTo
     {
-        return $this->belongsTo(RepostRequest::class);
+        return $this->belongsTo(RepostRequest::class, 'repost_request_id', 'id');
     }
     public function reposter(): BelongsTo
     {
@@ -50,8 +50,12 @@ class Repost extends BaseModel
 
     public function campaign(): BelongsTo
     {
-        return $this->belongsTo(Campaign::class);
+        return $this->belongsTo(Campaign::class, 'campaign_id', 'id');
     }
+    public function track()
+{
+    return $this->belongsTo(Track::class, 'track_id');
+}
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
@@ -61,8 +65,13 @@ class Repost extends BaseModel
     {
         parent::__construct($attributes);
         $this->appends = array_merge(parent::getAppends(), [
-            //
+            'repost_type',
         ]);
+    }
+
+    public function getRepostTypeAttribute()
+    {
+        return $this->repost_request_id ===  null ? 'Campaign Repost' : 'Direct Repost';
     }
 
 }

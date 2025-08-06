@@ -7,6 +7,7 @@ use Illuminate\Contracts\View\View;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PackageManagement\CreditRequest;
 use App\Http\Traits\AuditRelationTraits;
+use App\Models\Credit;
 use Illuminate\Http\RedirectResponse;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Routing\Controllers\Middleware;
@@ -75,11 +76,10 @@ class CreditController extends Controller implements HasMiddleware
     {
         return [
             [
-                'routeName' => 'javascript:void(0)',
-                'data-id' => encrypt($model->id),
-                'className' => 'view',
-                'label' => 'Details',
-                'permissions' => ['credit-details']
+                'routeName' => 'pm.credit.detail',
+                'params' => encrypt($model->id),
+                'label' => 'View Details',
+                'permissions' => ['user-detail']
             ],
             [
                 'routeName' => 'pm.credit.edit',
@@ -104,6 +104,11 @@ class CreditController extends Controller implements HasMiddleware
         ];
     }
 
+    public function detail($id)
+    {
+        $data['credits'] = Credit::where('id',decrypt($id))->first();
+        return view('backend.admin.package_management.credit.detail', $data);
+    }
     /**
      * Show the form for creating a new resource.
      */
