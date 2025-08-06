@@ -116,7 +116,7 @@ class PlanController extends Controller implements HasMiddleware
      */
     public function create(): View
     {
-        $data['feature_categories'] = $this->featureCategoryService->getFeatureCategories()->get();
+        $data['feature_categories'] = $this->featureCategoryService->getFeatureCategories()->with('features')->get();
         return view('backend.admin.package_management.plans.create', $data);
     }
 
