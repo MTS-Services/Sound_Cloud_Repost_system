@@ -194,172 +194,7 @@
                         </aside>
                     </div>
                 </div> --}}
-                <div class="flex flex-col lg:flex-row justify-between gap-6 px-4">
-                    <!-- Main Content -->
-                    <div class="w-full">
-                        <div class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-                            <div class="p-4 sm:p-6">
-                                <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
-                                    <div class="flex flex-col sm:flex-row gap-4">
-                                        <img src="https://i1.sndcdn.com/avatars-000006220351-r38vu9-t120x120.jpg"
-                                            alt="Sample Track 3" class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
-                                        <div class="flex-1">
-                                            <div
-                                                class="flex flex-col sm:flex-row sm:items-center sm:space-x-3 mb-2 text-center sm:text-left">
-                                                <h3 class="text-black dark:text-gray-100 font-semibold text-lg">
-                                                    Boost Track Campaign
-                                                </h3>
-                                                <span>
-                                                    <!-- Pencil Icon -->
-                                                    <svg class="w-5 h-5 inline-block text-black dark:text-gray-100"
-                                                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                                        fill="none" stroke="currentColor" stroke-width="2"
-                                                        stroke-linecap="round" stroke-linejoin="round">
-                                                        <path
-                                                            d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                                        <path
-                                                            d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                                    </svg>
-                                                </span>
-                                            </div>
 
-                                            <div class="mb-4 text-sm text-center sm:text-left text-slate-400">
-                                                Budget used: 50.00 / 500.00 credits
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Right Stats Block -->
-                                    <div class="text-center sm:text-right">
-                                        <div class="flex items-center justify-center sm:justify-end mb-2 ">
-                                            <x-lucide-trending-up class="m-2 w-5 h-5  text-green-600" />
-                                            <span class=" text-green-600 dark:text-gray-100"> Running</span>
-                                        </div>
-                                        <p class="text-slate-400 text-sm">Start 2 Aug 2025</p>
-                                        <div class="flex flex-wrap justify-center sm:justify-end items-center mt-2">
-                                            <x-lucide-ban class="w-5 h-5 m-2 dark:text-white text-black" />
-                                            <span class="text-slate-500">Stop</span>
-                                            <x-lucide-square-pen class="w-5 h-5 m-2 dark:text-white text-black" />
-                                            <span class=" font-medium cursor-pointer">Edit</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <hr class="my-6 border-orange-600/30" />
-
-                                <!-- Stats -->
-                                <div class="flex justify-between gap-6 mb-2">
-                                    <div class="flex gap-6">
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center mb-2">
-
-                                                <x-lucide-repeat class="w-5 h-5 m-2 dark:text-white text-black" />
-                                                <span class=" text-black dark:text-white">22</span>
-                                            </div>
-
-                                        </div>
-                                        <!-- Repeat block with different data -->
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center mb-2">
-                                                <x-lucide-user-plus class="w-5 h-5 m-2 dark:text-white text-black" />
-                                                <span class=" text-black dark:text-gray-100">8</span>
-                                            </div>
-
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center mb-2">
-                                                <x-lucide-heart class="w-5 h-5 m-2 dark:text-white text-black" />
-                                                <span class=" text-black dark:text-gray-100">17</span>
-                                            </div>
-
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center mb-2">
-                                                <x-lucide-mail class="w-5 h-5 m-2 dark:text-white text-black" />
-                                                <span class=" text-black dark:text-gray-100">6</span>
-                                            </div>
-
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center mb-2">
-                                                <x-lucide-smile class="w-5 h-5 m-2 dark:text-white text-black" />
-                                                <span class=" text-black dark:text-gray-100">0</span>
-                                            </div>
-
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center mb-2">
-
-                                                <span class="text-orange-500 items-end font-medium mt-2">Show
-                                                    All</span>
-                                            </div>
-
-                                        </div>
-                                        <!-- Add more blocks if needed -->
-                                    </div>
-
-                                    <div>
-                                        <p class="text-slate-400 text-sm">Start 2 Aug 2025</p>
-                                    </div>
-                                </div>
-
-                                <div class="flex flex-col sm:flex-row sm:justify-between items-center gap-4">
-                                    <span></span>
-
-                                    <div class="flex flex-wrap justify-center sm:justify-end gap-4">
-                                        <button
-                                            class="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-sm text-sm font-semibold hover:bg-gray-100 transition-colors">
-                                            Set featured
-                                        </button>
-                                        <button
-                                            class="bg-red-500 text-white py-2 px-4 rounded-sm text-sm font-semibold shadow-sm hover:bg-red-600 transition-colors">
-                                            Boost campaign
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Sidebar -->
-                    <aside class="lg:w-1/3 space-y-6 bg-white dark:bg-slate-800 rounded-sm lg:mt-0">
-                        <!-- Tools Section -->
-                        <div class=" dark:bg-slate-400 rounded-sm p-6">
-                            <h2 class="text-lg font-bold text-gray-800 mb-4 text-black dark:text-gray-100">Tools and
-                                FAQs</h2>
-                            <ul class="space-y-3">
-                                <li><a href="#" class="text-red-500 hover:underline">What is a campaign?</a>
-                                </li>
-                                <li><a href="#" class="text-red-500 hover:underline">How do I get the best out
-                                        of my campaigns?</a></li>
-                                <li><a href="#" class="text-red-500 hover:underline">Why did my campaign finish
-                                        so quickly?</a></li>
-                                <li><a href="#" class="text-red-500 hover:underline">Why is my campaign running
-                                        slowly?</a></li>
-                            </ul>
-                        </div>
-
-                        <!-- Reach More Section -->
-                        <div class="dark:bg-slate-400 rounded-sm p-6 text-black dark:text-gray-100">
-                            <h2 class="text-lg font-bold text-gray-800 mb-4 text-black dark:text-gray-100">Reach more
-                                people</h2>
-                            <hr class="text-red-500 mb-4">
-                            <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
-                                <img src="https://i1.sndcdn.com/artworks-ZmemRDWSfmXwMCWO-xZp0wA-t500x500.jpg"
-                                    alt="Reach people icon" class="w-16 h-16 rounded-lg object-cover">
-                                <div>
-                                    <p class="font-bold text-gray-800 text-black dark:text-gray-100">Feature your
-                                        campaign and reach more people</p>
-                                    <p class="text-gray-500 text-sm">ALL_BLACK_.75</p>
-                                </div>
-                            </div>
-                            <button
-                                class="mx-auto block bg-red-500 text-white py-2 px-4 rounded-sm font-semibold hover:bg-red-600 transition-colors">
-                                Get featured
-                            </button>
-                        </div>
-                    </aside>
-                </div>
 
             @empty
                 @if ($activeMainTab === 'all')
@@ -412,6 +247,171 @@
                     </div>
                 @endif
             @endforelse
+            <div class="flex flex-col lg:flex-row justify-between gap-6 px-4">
+                <!-- Main Content -->
+                <div class="w-full">
+                    <div class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                        <div class="p-4 sm:p-6">
+                            <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
+                                <div class="flex flex-col sm:flex-row gap-4">
+                                    <img src="https://i1.sndcdn.com/avatars-000006220351-r38vu9-t120x120.jpg"
+                                        alt="Sample Track 3" class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
+                                    <div class="flex-1">
+                                        <div
+                                            class="flex flex-col sm:flex-row sm:items-center sm:space-x-3 mb-2 text-center sm:text-left">
+                                            <h3 class="text-black dark:text-gray-100 font-semibold text-lg">
+                                                Boost Track Campaign
+                                            </h3>
+                                            <span>
+                                                <!-- Pencil Icon -->
+                                                <svg class="w-5 h-5 inline-block text-black dark:text-gray-100"
+                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                    fill="none" stroke="currentColor" stroke-width="2"
+                                                    stroke-linecap="round" stroke-linejoin="round">
+                                                    <path
+                                                        d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                </svg>
+                                            </span>
+                                        </div>
+
+                                        <div class="mb-4 text-sm text-center sm:text-left text-slate-400">
+                                            Budget used: 50.00 / 500.00 credits
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Right Stats Block -->
+                                <div class="text-center sm:text-right">
+                                    <div class="flex items-center justify-center sm:justify-end mb-2 ">
+                                        <x-lucide-trending-up class="m-2 w-5 h-5  text-green-600" />
+                                        <span class=" text-green-600 dark:text-gray-100"> Running</span>
+                                    </div>
+                                    <p class="text-slate-400 text-sm">Start 2 Aug 2025</p>
+                                    <div class="flex flex-wrap justify-center sm:justify-end items-center mt-2">
+                                        <x-lucide-ban class="w-5 h-5 m-2 dark:text-white text-black" />
+                                        <span class="text-slate-500">Stop</span>
+                                        <x-lucide-square-pen class="w-5 h-5 m-2 dark:text-white text-black" />
+                                        <span class=" font-medium cursor-pointer">Edit</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="my-6 border-orange-600/30" />
+
+                            <!-- Stats -->
+                            <div class="flex justify-between gap-6 mb-2">
+                                <div class="flex gap-6">
+                                    <div class="text-center">
+                                        <div class="flex items-center justify-center mb-2">
+
+                                            <x-lucide-repeat class="w-5 h-5 m-2 dark:text-white text-black" />
+                                            <span class=" text-black dark:text-white">22</span>
+                                        </div>
+
+                                    </div>
+                                    <!-- Repeat block with different data -->
+                                    <div class="text-center">
+                                        <div class="flex items-center justify-center mb-2">
+                                            <x-lucide-user-plus class="w-5 h-5 m-2 dark:text-white text-black" />
+                                            <span class=" text-black dark:text-gray-100">8</span>
+                                        </div>
+
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="flex items-center justify-center mb-2">
+                                            <x-lucide-heart class="w-5 h-5 m-2 dark:text-white text-black" />
+                                            <span class=" text-black dark:text-gray-100">17</span>
+                                        </div>
+
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="flex items-center justify-center mb-2">
+                                            <x-lucide-mail class="w-5 h-5 m-2 dark:text-white text-black" />
+                                            <span class=" text-black dark:text-gray-100">6</span>
+                                        </div>
+
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="flex items-center justify-center mb-2">
+                                            <x-lucide-smile class="w-5 h-5 m-2 dark:text-white text-black" />
+                                            <span class=" text-black dark:text-gray-100">0</span>
+                                        </div>
+
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="flex items-center justify-center mb-2">
+
+                                            <span class="text-orange-500 items-end font-medium mt-2">Show
+                                                All</span>
+                                        </div>
+
+                                    </div>
+                                    <!-- Add more blocks if needed -->
+                                </div>
+
+                                <div>
+                                    <p class="text-slate-400 text-sm">Start 2 Aug 2025</p>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row sm:justify-between items-center gap-4">
+                                <span></span>
+
+                                <div class="flex flex-wrap justify-center sm:justify-end gap-4">
+                                    <button
+                                        class="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-sm text-sm font-semibold hover:bg-gray-100 transition-colors">
+                                        Set featured
+                                    </button>
+                                    <button
+                                        class="bg-red-500 text-white py-2 px-4 rounded-sm text-sm font-semibold shadow-sm hover:bg-red-600 transition-colors">
+                                        Boost campaign
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <aside class="lg:w-1/3 space-y-6 bg-white dark:bg-slate-800 rounded-sm lg:mt-0">
+                    <!-- Tools Section -->
+                    <div class=" dark:bg-slate-400 rounded-sm p-6">
+                        <h2 class="text-lg font-bold text-gray-800 mb-4 text-black dark:text-gray-100">Tools and
+                            FAQs</h2>
+                        <ul class="space-y-3">
+                            <li><a href="#" class="text-red-500 hover:underline">What is a campaign?</a>
+                            </li>
+                            <li><a href="#" class="text-red-500 hover:underline">How do I get the best out
+                                    of my campaigns?</a></li>
+                            <li><a href="#" class="text-red-500 hover:underline">Why did my campaign finish
+                                    so quickly?</a></li>
+                            <li><a href="#" class="text-red-500 hover:underline">Why is my campaign running
+                                    slowly?</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Reach More Section -->
+                    <div class="dark:bg-slate-400 rounded-sm p-6 text-black dark:text-gray-100">
+                        <h2 class="text-lg font-bold text-gray-800 mb-4 text-black dark:text-gray-100">Reach more
+                            people</h2>
+                        <hr class="text-red-500 mb-4">
+                        <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
+                            <img src="https://i1.sndcdn.com/artworks-ZmemRDWSfmXwMCWO-xZp0wA-t500x500.jpg"
+                                alt="Reach people icon" class="w-16 h-16 rounded-lg object-cover">
+                            <div>
+                                <p class="font-bold text-gray-800 text-black dark:text-gray-100">Feature your
+                                    campaign and reach more people</p>
+                                <p class="text-gray-500 text-sm">ALL_BLACK_.75</p>
+                            </div>
+                        </div>
+                        <button
+                            class="mx-auto block bg-red-500 text-white py-2 px-4 rounded-sm font-semibold hover:bg-red-600 transition-colors">
+                            Get featured
+                        </button>
+                    </div>
+                </aside>
+            </div>
         </div>
     </div>
 
@@ -782,7 +782,8 @@
                                 <div x-show="showRepostPerDay" x-transition class="ml-7 p-3">
                                     <div class=" items-center space-x-3">
                                         <!-- Number Input -->
-                                        <input type="number" placeholder="Max Repost per day" wire:model="maxRepostsPerDay"
+                                        <input type="number" placeholder="Max Repost per day"
+                                            wire:model="maxRepostsPerDay"
                                             class="block w-48 px-3 py-1 border rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
                                     </div>
                                 </div>
