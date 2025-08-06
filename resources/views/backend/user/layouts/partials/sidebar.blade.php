@@ -58,7 +58,7 @@
                 <a href="{{ route('user.mm.members.index') }}" wire:navigate
                     class="sidebar-item flex items-center px-2 py-1.5 md:px-3 md:py-2.5 rounded-lg transition-colors
                     text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'members') active @endif">
-                    <x-lucide-users class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3"/>
+                    <x-lucide-users class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" />
                     <span class="text-xs md:text-sm">{{ __('Members') }}</span>
                 </a>
             </li>
@@ -66,7 +66,7 @@
                 <a href="{{ route('user.reposts-request') }}" wire:navigate
                     class="sidebar-item flex items-center px-2 py-1.5 md:px-3 md:py-2.5 rounded-lg transition-colors
                     text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'request') active @endif">
-                    <x-heroicon-o-user-plus class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3"/>
+                    <x-heroicon-o-user-plus class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" />
                     <span class="text-xs md:text-sm">{{ __('Requests') }}</span>
                 </a>
             </li>
@@ -107,7 +107,7 @@
 
             <a href="{{ route('user.analytics') }}"wire:navigate
                 class="flex items-center px-2 py-1.5 md:px-3 md:py-2 rounded-lg transition-colors
-                text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'analytics') active sidebar-item  @endif">
+                text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'analytics') active sidebar-item @endif">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 3v18h18"></path>
@@ -131,7 +131,7 @@
 
             <a href="{{ route('settings') }}" wire:navigate
                 class="flex items-center px-2 py-1.5 md:px-3 md:py-2 rounded-lg transition-colors
-                text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'settings') active sidebar-item  @endif">
+                text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'settings') active sidebar-item @endif">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path
@@ -144,7 +144,7 @@
 
             <a href="{{route('user.help-support')}}" wire:navigate
                 class="flex items-center px-2 py-1.5 md:px-3 md:py-2 rounded-lg transition-colors
-                text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'help') active sidebar-item  @endif">
+                text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'help') active sidebar-item @endif">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
