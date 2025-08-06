@@ -100,7 +100,12 @@ class PlanController extends Controller implements HasMiddleware
                 'label' => 'Edit',
                 'permissions' => ['permission-edit']
             ],
-
+            [
+                'routeName' => 'pm.plan.status',
+                'params' => [encrypt($model->id)],
+                'label' => $model->status_btn_label,
+                'permissions' => ['permission-status']
+            ],
             [
                 'routeName' => 'pm.plan.destroy',
                 'params' => [encrypt($model->id)],
@@ -126,11 +131,10 @@ class PlanController extends Controller implements HasMiddleware
      */
     public function store(StorePlanRequest $request)
     {
-        // dd($request->feature_category_ids);
+        
 
         try {
             $validated = $request->validated();
-            // dd($validated);
             $this->planService->createPlan($validated);
             session()->flash('success', "Plan created successfully");
         } catch (\Throwable $e) {

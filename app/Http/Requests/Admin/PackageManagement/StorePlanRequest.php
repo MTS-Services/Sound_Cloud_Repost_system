@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Admin\PackageManagement;
 
+use App\Models\Plan;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StorePlanRequest extends FormRequest
 {
@@ -27,7 +29,7 @@ class StorePlanRequest extends FormRequest
             'price_monthly' => ['nullable', 'numeric', 'min:0'],
             'price_monthly_yearly' => ['nullable', 'numeric', 'min:0'],
             'notes' => ['nullable', 'string', 'max:1000'],
-
+            'tag' => ['nullable', Rule::in(array_keys(Plan::getTagList()))],
             'features' => ['nullable', 'array'],
             'features.*' => ['integer', 'exists:features,id'],
 

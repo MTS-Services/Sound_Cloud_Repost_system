@@ -30,7 +30,7 @@ class Feature extends BaseModel
         parent::__construct($attributes);
         $this->appends = array_merge(parent::getAppends(), [
 
-            'name',
+           
             'type_name',
         ]);
     }
@@ -102,9 +102,5 @@ class Feature extends BaseModel
             self::FEATURE_KEY_WAVEPLAYER_ARTWORK                => 'Waveplayer Artwork',
         ];
     }
-   public function getNameAttribute(): string
-{
-    return self::getKeys()[$this->attributes['name']] ?? 'Unknown';
-}
 
 }

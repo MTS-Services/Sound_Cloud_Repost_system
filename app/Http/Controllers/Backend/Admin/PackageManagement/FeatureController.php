@@ -52,9 +52,6 @@ class FeatureController extends Controller
         if ($request->ajax()) {
             $query = $this->featureService->getFeatures();
             return DataTables::eloquent($query)
-                ->editColumn('name', function ($feature) {
-                    return $feature->name;
-                })
                 ->editColumn('type', function ($feature) {
                     return $feature->type_name;
                 })
@@ -71,7 +68,7 @@ class FeatureController extends Controller
                     $menuItems = $this->menuItems($feature);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action', 'feature_category_id', 'created_by', 'created_at'])
+                ->rawColumns(['action' ,'feature_category_id', 'created_by', 'created_at'])
                 ->make(true);
         }
         return view('backend.admin.package_management.features.index');
@@ -139,7 +136,7 @@ class FeatureController extends Controller
     public function edit(string $id)
     {
         $data['feature'] = $this->featureService->getFeature($id);
-        $data['feature_categories'] = $this->featureCategoryService->getFeatureCategories()->select(['id', 'name'])->get();
+        $data['feature_categories'] = $this->featureCategoryService->getFeatureCategories()->select(['id'])->get();
         return view('backend.admin.package_management.features.edit', $data);
     }
 

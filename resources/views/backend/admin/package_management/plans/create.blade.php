@@ -89,16 +89,30 @@
                                                             </p>
                                                         </label>
 
-                                                        <!-- Input field ONLY SHOWS when checked -->
+                                                        <!-- Dynamic Input Based on Feature Type -->
                                                         <template x-if="checked">
-                                                            <input type="text"
-                                                                name="feature_values[{{ $feature->id }}]"
-                                                                placeholder="Enter value for this feature"
-                                                                class="mt-2 w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:text-white"
-                                                                @click.stop />
+                                                            <div class="w-full mt-2">
+                                                                @if ($feature->type == \App\Models\Feature::TYPE_STRING)
+                                                                    <input type="text"
+                                                                        name="feature_values[{{ $feature->id }}]"
+                                                                        placeholder="Enter value for this feature"
+                                                                        class="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:text-white"
+                                                                        @click.stop />
+                                                                @elseif ($feature->type == \App\Models\Feature::TYPE_BOOLEAN)
+                                                                    <select name="feature_values[{{ $feature->id }}]"
+                                                                        class="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:text-white"
+                                                                        @click.stop>
+                                                                        <option value="True">{{ __('True') }}
+                                                                        </option>
+                                                                        <option value="False">{{ __('False') }}
+                                                                        </option>
+                                                                    </select>
+                                                                @endif
+                                                            </div>
                                                         </template>
                                                     </div>
                                                 </div>
+
                                             @empty
                                                 <div class="col-span-full text-center text-gray-500 dark:text-gray-400">
                                                     {{ __('No features in this category') }}
@@ -150,6 +164,43 @@
                             <x-inputs.input name="price_monthly_yearly" label="{{ __('Yearly Price') }}"
                                 placeholder="Enter Price Monthly Yearly" value="{{ old('price_monthly_yearly') }}"
                                 :messages="$errors->get('price_monthly_yearly')" />
+                        </div>
+                        {{-- Tag Selection (Styled as Radio Buttons) --}}
+                        <div class="space-y-2 col-span-2 py-3" x-data="{ selectedTag: '{{ old('tag') }}' }">
+                            <label
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Plan Tag') }}</label>
+
+                            <div class="flex gap-6 mt-2 flex-wrap">
+                                @foreach (\App\Models\Plan::getTagList() as $tagValue => $tagLabel)
+                                    <label class="inline-flex items-center cursor-pointer space-x-2"
+                                        @click="selectedTag = '{{ $tagValue }}'">
+                                        <!-- Custom radio button -->
+                                        <div class="w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all duration-150"
+                                            :class="selectedTag == '{{ $tagValue }}' ?
+                                                'border-blue-600' :
+                                                'border-gray-400 dark:border-gray-600'">
+                                            <div class="w-2.5 h-2.5 rounded-full"
+                                                :class="selectedTag == '{{ $tagValue }}' ?
+                                                    'bg-blue-600' :
+                                                    'bg-transparent'">
+                                            </div>
+                                        </div>
+
+                                        <!-- Tag label -->
+                                        <span class="text-sm text-gray-800 dark:text-gray-200">
+                                            {{ $tagLabel }}
+                                        </span>
+
+                                        <!-- Synced radio input (important!) -->
+                                        <input type="radio" name="tag" value="{{ $tagValue }}"
+                                            class="hidden" x-model="selectedTag">
+                                    </label>
+                                @endforeach
+                            </div>
+
+                            @error('tag')
+                                <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                     <div class="space-y-2 sm:col-span-2">
