@@ -151,8 +151,8 @@
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                        <i data-lucide="music" class="w-5 h-5 text-white"></i>
+                    <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                        <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                         {{ __('Choose a track or playlist') }}
@@ -160,7 +160,7 @@
                 </div>
                 <button x-on:click="showModal = false"
                     class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    <x-heroicon-s-x-mark  class="w-5 h-5"/>
                 </button>
             </div>
 
@@ -309,16 +309,16 @@
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                        <i data-lucide="music" class="w-5 h-5 text-white"></i>
-                    </div>
+                   <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                    <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
+                </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                         {{ __('Playlist Tracks') }}
                     </h2>
                 </div>
                 <button x-on:click="showPlaylistTracksModal= false"
                     class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    <x-heroicon-s-x-mark  class="w-5 h-5"/>
                 </button>
             </div>
 
@@ -371,8 +371,8 @@
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                        <i data-lucide="music" class="w-5 h-5 text-white"></i>
+                    <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                        <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                         {{ __('Requesting Reposts') }}
@@ -380,7 +380,7 @@
                 </div>
                 <button x-on:click="showRepostsModal= false"
                     class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    <x-heroicon-s-x-mark  class="w-5 h-5"/>
                 </button>
             </div>
 
