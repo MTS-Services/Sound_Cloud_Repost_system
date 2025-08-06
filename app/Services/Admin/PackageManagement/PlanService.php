@@ -13,9 +13,9 @@ class PlanService
     /**
      * Get all plans with sorting.
      */
-    public function getPlans(string $orderBy = 'name', string $order = 'asc')
+    public function getPlans(string $orderBy = 'sort_order', string $order = 'asc')
     {
-        return Plan::orderBy($orderBy, $order)->get();
+        return Plan::orderBy($orderBy, $order)->latest();
     }
 
     /**
@@ -41,7 +41,7 @@ class PlanService
             $features = $data['features'] ?? [];
             $featureValues = $data['feature_values'] ?? [];
             $categoryIds = $data['feature_category_ids'] ?? [];
-         
+
             $data['created_by'] = admin()->id;
 
             $plan = Plan::create($data);
@@ -70,16 +70,38 @@ class PlanService
     public function updatePlan(Plan $plan, array $data): Plan
     {
         return DB::transaction(function () use ($plan, $data) {
+            $features = $data['features'] ?? [];
+            $featureValues = $data['feature_values'] ?? [];
+            $categoryIds = $data['feature_category_ids'] ?? [];
+
             $data['updated_by'] = admin()->id;
+
+            // Update plan fields
             $plan->update($data);
+
+
+
+            // Re-create feature relations
+            foreach ($features as $featureId) {
+                FeatureRelation::create([
+                    'package_id'          => $plan->id,
+                    'package_type'        => Plan::class,
+                    'feature_id' => $featureId,
+                    'feature_category_id' => $categoryIds[$featureId] ?? null,
+                    'value' => $featureValues[$featureId] ?? '',
+                    'updated_by' => admin()->id,
+                ]);
+            }
+
             return $plan;
         });
     }
 
+
     /**
      * Soft delete a plan.
      */
-    public function deletePlan(Plan $plan): void
+    public function delete(Plan $plan): void
     {
         $plan->update(['deleted_by' => admin()->id]);
         $plan->delete();
@@ -89,7 +111,7 @@ class PlanService
     /**
      * Restore a soft-deleted plan.
      */
-    public function restorePlan(string $encryptedId): void
+    public function restore(string $encryptedId): void
     {
         $plan = $this->getDeletedPlan($encryptedId);
         $plan->update(['updated_by' => admin()->id]);
@@ -99,7 +121,7 @@ class PlanService
     /**
      * Permanently delete a plan.
      */
-    public function forceDeletePlan(string $encryptedId): void
+    public function permanentDelete(string $encryptedId): void
     {
         $plan = $this->getDeletedPlan($encryptedId);
         $plan->forceDelete();

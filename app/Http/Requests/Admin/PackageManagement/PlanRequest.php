@@ -6,7 +6,7 @@ use App\Models\Plan;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StorePlanRequest extends FormRequest
+class PlanRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -44,13 +44,13 @@ class StorePlanRequest extends FormRequest
     protected function store(): array
     {
         return [
-            'slug' => ['required', 'string', 'max:255', 'unique:plans,slug'],
+            'slug' => ['required', 'string', 'slug', Rule::unique('plans', 'slug')],
         ];
     }
     protected function update(): array
     {
         return [
-            'slug' => ['required', 'string', 'max:255', 'unique:plans,slug,' . $this->route('plan')],
+            'slug' => ['required', 'string', Rule::unique('plans', 'slug')->ignore(decrypt($this->route('plan')))],
         ];
     }
 }

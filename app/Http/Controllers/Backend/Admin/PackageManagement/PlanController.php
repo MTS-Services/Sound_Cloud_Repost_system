@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Backend\Admin\PackageManagement;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\PackageManagement\StorePlanRequest;
+use App\Http\Requests\Admin\PackageManagement\PlanRequest;
 use App\Http\Traits\AuditRelationTraits;
+use App\Models\FeatureCategory;
+use App\Models\Plan;
 use App\Services\Admin\PackageManagement\FeatureCategorySevice;
 use App\Services\Admin\PackageManagement\PlanService;
 use Illuminate\Contracts\View\View;
@@ -31,7 +33,7 @@ class PlanController extends Controller implements HasMiddleware
     protected PlanService $planService;
     protected FeatureCategorySevice $featureCategoryService;
 
-    public function __construct(planService $planService,FeatureCategorySevice $featureCategoryService)
+    public function __construct(PlanService $planService, FeatureCategorySevice $featureCategoryService)
     {
         $this->planService = $planService;
         $this->featureCategoryService = $featureCategoryService;
@@ -77,7 +79,7 @@ class PlanController extends Controller implements HasMiddleware
                     $menuItems = $this->menuItems($feature);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action', 'feature_category_id', 'created_by', 'created_at', 'status'])
+                ->rawColumns(['action', 'created_by', 'created_at', 'status'])
                 ->make(true);
         }
         return view('backend.admin.package_management.plans.index');
@@ -129,9 +131,9 @@ class PlanController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePlanRequest $request)
+    public function store(PlanRequest $request)
     {
-        
+
 
         try {
             $validated = $request->validated();
@@ -158,104 +160,124 @@ class PlanController extends Controller implements HasMiddleware
     // /**
     //  * Show the form for editing the specified resource.
     //  */
-    // public function edit(string $id): View
-    // {
+    public function edit(string $encryptedId): View
+    {
+        $data['plan'] = $this->planService->getPlan($encryptedId);
 
-    // }
+        $data['featureCategories'] = $this->featureCategoryService->getFeatureCategories()->with('features')->get();
+        $data['planFeatures'] = $data['plan']->features->pluck('pivot.value', 'id')->toArray();
+        $data['planFeatureCategoryIds'] = $data['plan']->features->pluck('pivot.feature_category_id', 'id')->toArray();
+
+        return view('backend.admin.package_management.plans.edit', $data);
+    }
 
     // /**
     //  * Update the specified resource in storage.
     //  */
-    // public function update(Request $request, string $id)
-    // {
-    //      try {
-    //         // $validated = $request->validated();
-    //         //
-    //         session()->flash('success', "Service updated successfully");
-    //     } catch (\Throwable $e) {
-    //         session()->flash('Service update failed');
-    //         throw $e;
-    //     }
-    //     return $this->redirectIndex();
-    // }
+    public function update(PlanRequest $request, string $encryptedId)
+    {
+        try {
+            $plan = $this->planService->getPlan($encryptedId);
+
+            $validated = $request->validated();
+            $this->planService->updatePlan($plan, $validated);
+            session()->flash('success', "Plan updated successfully");
+        } catch (\Throwable $e) {
+            session()->flash('Plan update failed');
+            throw $e;
+        }
+        return $this->redirectIndex();
+    }
 
     // /**
     //  * Remove the specified resource from storage.
     //  */
-    // public function destroy(string $id)
-    // {
-    //      try {
-    //         //
-    //         session()->flash('success', "Service deleted successfully");
-    //     } catch (\Throwable $e) {
-    //         session()->flash('Service delete failed');
-    //         throw $e;
-    //     }
-    //     return $this->redirectIndex();
-    // }
+    public function destroy(string $id)
+    {
+        try {
+            $plan = $this->planService->getPlan($id);
+            $this->planService->delete($plan);
+            session()->flash('success', "Plan deleted successfully");
+        } catch (\Throwable $e) {
+            session()->flash('Plan delete failed');
+            throw $e;
+        }
+        return $this->redirectIndex();
+    }
 
-    // public function trash(Request $request)
-    // {
-    //     if ($request->ajax()) {
-    //         $query = $this->planService->getPermissions()->onlyTrashed();
-    //         return DataTables::eloquent($query)
-    //             ->editColumn('deleted_by', function ($plan) {
-    //                 return $this->deleter_name($plan);
-    //             })
-    //             ->editColumn('deleted_at', function ($plan) {
-    //                 return $plan->deleted_at_formatted;
-    //             })
-    //             ->editColumn('action', function ($permission) {
-    //                 $menuItems = $this->trashedMenuItems($permission);
-    //                 return view('components.action-buttons', compact('menuItems'))->render();
-    //             })
-    //             ->rawColumns(['deleted_by', 'deleted_at', 'action'])
-    //             ->make(true);
-    //     }
-    //     return view('view blade file url...');
-    // }
+    public function trash(Request $request)
+    {
+        if ($request->ajax()) {
+            $query = $this->planService->getPlans()->onlyTrashed();
+            return DataTables::eloquent($query)
+                ->editColumn('status', fn($user) => "<span class='badge badge-soft {$user->status_color}'>{$user->status_label}</span>")
+                ->editColumn('tag', function ($feature) {
+                    return $feature->tag_label;
+                })
+                ->editColumn('deleted_by', function ($plan) {
+                    return $this->deleter_name($plan);
+                })
+                ->editColumn('deleted_at', function ($plan) {
+                    return $plan->deleted_at_formatted;
+                })
+                ->editColumn('action', function ($permission) {
+                    $menuItems = $this->trashedMenuItems($permission);
+                    return view('components.action-buttons', compact('menuItems'))->render();
+                })
+                ->rawColumns(['status','tag','deleted_by', 'deleted_at', 'action'])
+                ->make(true);
+        }
+        return view('backend.admin.package_management.plans.trash');
+    }
 
-    // protected function trashedMenuItems($model): array
-    // {
-    //     return [
-    //         [
-    //             'routeName' => '',
-    //             'params' => [encrypt($model->id)],
-    //             'label' => 'Restore',
-    //             'permissions' => ['permission-restore']
-    //         ],
-    //         [
-    //             'routeName' => '',
-    //             'params' => [encrypt($model->id)],
-    //             'label' => 'Permanent Delete',
-    //             'p-delete' => true,
-    //             'permissions' => ['permission-permanent-delete']
-    //         ]
+    protected function trashedMenuItems($model): array
+    {
+        return [
+            [
+                'routeName' => 'pm.plan.restore',
+                'params' => [encrypt($model->id)],
+                'label' => 'Restore',
+                'permissions' => ['permission-restore']
+            ],
+            [
+                'routeName' => 'pm.plan.permanent-delete',
+                'params' => [encrypt($model->id)],
+                'label' => 'Permanent Delete',
+                'p-delete' => true,
+                'permissions' => ['permission-permanent-delete']
+            ]
 
-    //     ];
-    // }
+        ];
+    }
 
-    //  public function restore(string $id): RedirectResponse
-    // {
-    //     try {
-    //         $this->planService->restore($id);
-    //         session()->flash('success', "Service restored successfully");
-    //     } catch (\Throwable $e) {
-    //         session()->flash('Service restore failed');
-    //         throw $e;
-    //     }
-    //     return $this->redirectTrashed();
-    // }
+    public function restore(string $id): RedirectResponse
+    {
+        try {
+            $this->planService->restore($id);
+            session()->flash('success', "Plan restored successfully");
+        } catch (\Throwable $e) {
+            session()->flash('Plan restore failed');
+            throw $e;
+        }
+        return $this->redirectTrashed();
+    }
 
-    // public function permanentDelete(string $id): RedirectResponse
-    // {
-    //     try {
-    //         $this->planService->permanentDelete($id);
-    //         session()->flash('success', "Service permanently deleted successfully");
-    //     } catch (\Throwable $e) {
-    //         session()->flash('Service permanent delete failed');
-    //         throw $e;
-    //     }
-    //     return $this->redirectTrashed();
-    // }
+    public function permanentDelete(string $id): RedirectResponse
+    {
+        try {
+            $this->planService->permanentDelete($id);
+            session()->flash('success', "Plan permanently deleted successfully");
+        } catch (\Throwable $e) {
+            session()->flash('Plan permanent delete failed');
+            throw $e;
+        }
+        return $this->redirectTrashed();
+    }
+    public function status(string $id): RedirectResponse
+    {
+        $data = $this->planService->getPlan($id);
+        $this->planService->toggleStatus($data);
+        session()->flash('success', 'Plan status updated successfully!');
+        return $this->redirectIndex();
+    }
 }

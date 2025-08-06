@@ -83,4 +83,5 @@ class Plan extends BaseModel
     {
         return $this->status == self::STATUS_ACTIVE ? 'btn-error' : 'btn-success';
     }
+   
 }

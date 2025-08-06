@@ -8,7 +8,11 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Plans List') }}</h2>
                 <div class="flex items-center gap-2">
-                    <x-button href="{{ route('pm.plan.create') }}" icon="user-plus" permission="plan-create">
+                    <x-button href="{{ route('pm.plan.trash') }}" icon="trash-2" type='secondary'
+                        permission="admin-trash">
+                        {{ __('Trash') }}
+                    </x-button>
+                    <x-button href="{{ route('pm.plan.create') }}" icon="user-plus" permission="admin-create">
                         {{ __('Add') }}
                     </x-button>
                 </div>
@@ -82,10 +86,6 @@
                             key: 'slug',
                         },
                         {
-                            label: '{{ __('Credits') }}',
-                            key: 'credits',
-                        },
-                        {
                             label: '{{ __('Notes') }}',
                             key: 'notes',
                         },
@@ -94,6 +94,17 @@
                             key: 'status_label',
                             label_color: 'status_color',
                             type: 'badge'
+                        },{
+                            label:'{{ __('Monthly Price') }}',
+                            key:'price_monthly',
+                        },
+                        {
+                            label:'{{ __('Yearly Price') }}',
+                            key:'price_monthly_yearly',
+                        },
+                        {
+                            label:'{{ __('Tag') }}',
+                            key:'tag',
                         }
                     ];
 
