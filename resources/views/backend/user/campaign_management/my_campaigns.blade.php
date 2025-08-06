@@ -39,157 +39,328 @@
         <div class="space-y-6" id="campaigns-list">
 
             @forelse ($campaigns as $campaig_)
-                <div class=" rounded-lg border border-orange-600 overflow-hidden">
-                    <div class="p-6 sm:p-8">
-                        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                            <div class="flex flex-col sm:flex-row sm:items-start gap-4">
-                                <img src="{{ soundcloud_image($campaig_->music?->artwork_url) }}"
-                                    alt="{{ $campaig_->music?->title }}" class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
-                                <div class="flex-1">
-                                    <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-3 mb-2">
-                                        <h3
-                                            class=" text-black dark:text-gray-100 font-semibold text-lg text-center sm:text-left">
-                                            {{ $campaig_->title }}
-                                        </h3>
-                                        <span
-                                            class="badge badge-soft {{ $campaig_->status_color }} rounded-full">{{ $campaig_->status_label }}</span>
-                                    </div>
-                                    <div
-                                        class="flex flex-col sm:flex-row sm:items-center sm:space-x-6 text-sm text-slate-400 mb-4 space-y-2 sm:space-y-0">
-                                        <div class="flex items-center space-x-1 justify-center sm:justify-start">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                class="lucide lucide-calendar w-4 h-4">
-                                                <path d="M8 2v4"></path>
-                                                <path d="M16 2v4"></path>
-                                                <rect width="18" height="18" x="3" y="4" rx="2">
-                                                </rect>
-                                                <path d="M3 10h18"></path>
-                                            </svg><span>{{ __('Created') }}
-                                                {{ $campaig_->start_date_formatted }}</span>
-                                        </div>
-                                        <div class="flex items-center space-x-1 justify-center sm:justify-start">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                class="lucide lucide-clock w-4 h-4">
-                                                <circle cx="12" cy="12" r="10"></circle>
-                                                <polyline points="12 6 12 12 16 14"></polyline>
-                                            </svg><span>{{ __('Expires') }} {{ $campaig_->end_date_formatted }}</span>
-                                        </div>
-                                    </div>
-                                    <div class="mb-4">
-                                        <div class="flex items-center justify-between text-sm mb-2"><span
-                                                class="text-slate-400">{{ __('Budget used:') }}
-                                                {{ $campaig_->credits_spent }} /
-                                                {{ $campaig_->budget_credits }}
-                                                {{ __('credits') }}</span><span class="text-orange-500 font-medium">
-                                                {{ $campaig_->budget_credits > 0 ? number_format(($campaig_->credits_spent / $campaig_->budget_credits) * 100, 2) : 0 }}%</span>
-                                        </div>
-                                        <div class="w-full bg-orange-600/20 rounded-full h-2">
-                                            <div class="bg-gradient-to-r from-orange-500 to-orange-600 h-2 rounded-full transition-all duration-300"
-                                                style="width: {{ $campaig_->budget_credits > 0 ? ($campaig_->credits_spent / $campaig_->budget_credits) * 100 : 0 }}%;">
+                {{-- <div class="flex justify-between">
+                    <div class="w-full px-4">
+                        <div class=" rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                            <div class="p-6 sm:p-8 ">
+                                <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                                    <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+                                        <img src="{{ soundcloud_image($campaig_->music?->artwork_url) }}"
+                                            alt="{{ $campaig_->music?->title }}"
+                                            class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
+                                        <div class="flex-1">
+                                            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-3 mb-2">
+                                                <h3
+                                                    class=" text-black dark:text-gray-100 font-semibold text-lg text-center sm:text-left">
+                                                    {{ $campaig_->title }}
+                                                </h3>
+                                                <span>
+                                                    <x-lucide-edit class="w-5 h-5" />
+                                                </span>
+                                            </div>
+
+                                            <div class="mb-4">
+                                                <div class="flex items-center justify-between text-sm mb-2"><span
+                                                        class="text-slate-400">{{ __('Budget used:') }}
+                                                        {{ $campaig_->credits_spent }} /
+                                                        {{ $campaig_->budget_credits }}
+                                                        {{ __('credits') }}</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="flex flex-col lg:flex-column sm:items-center sm:space-x-2 gap-2">
 
-                                {{-- Add Credits Button --}}
-                                <button wire:click="openAddCreditModal({{ $campaig_->id }})"
-                                    class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                                    {{ __('Add Credits') }}
-                                </button>
+                                    <div>
+                                        <div class="flex items-center justify-center mb-2">
+                                            <x-lucide-smile class="w-5 h-5 mx-2" />
+                                            <span
+                                                class="text-2xl font-bold text-green-600 dark:text-gray-100">{{ $campaig_->completed_reposts ?? 0 }}</span>
+                                        </div>
+                                        <p class="text-slate-400 text-sm">{{ __('Start 2 Aug 2025') }}</p>
+                                        <div class="flex items-center justify-center mb-2 block">
+                                            Stop<span class="block"> <x-lucide-smile class="w-5 h-5 mx-2" /></span>
+                                            <span> <x-lucide-smile class="w-5 h-5 mx-2" /></span>Edit
+                                        </div>
 
 
-                                <div x-data="{ open: false }"
-                                    class="relative text-left bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors flex justify-center">
-                                    <button @click="open = !open"
-                                        class="p-2 hover:bg-slate-600 text-white px-3 aline-center py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-offset-2 bg-slate-700 dark:bg-gray-700 left-4">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="lucide lucide-more-horizontal text-white w-5 h-5 text-gray-700 dark:text-gray-200"
-                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <circle cx="12" cy="12" r="1"></circle>
-                                            <circle cx="19" cy="12" r="1"></circle>
-                                            <circle cx="5" cy="12" r="1"></circle>
-                                        </svg>
-                                    </button>
-
-                                    <div x-show="open" @click.outside="open = false" x-transition x-cloak
-                                        class="absolute right-11 mt-5 w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50 overflow-hidden">
-                                        <ul class="p-0 text-sm text-gray-700 dark:text-gray-200">
-
-                                            <li>
-                                                <button wire:click="openEditCampaignModal({{ $campaig_->id }})"
-                                                    @click="open = false"
-                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 w-full">{{ __('Edit') }}</button>
-                                            </li>
-
-                                            {{-- cancel Button --}}
-                                            <li>
-                                                <button wire:click="openCancelWarningModal({{ $campaig_->id }})"
-                                                    @click="open = false"
-                                                    class="block px-4 py-2 text-red-600 hover:bg-red-100  dark:hover:bg-red-950/50 w-full">{{ __('Cancel') }}</button>
-                                            </li>
-
-                                        </ul>
                                     </div>
 
-                                </div>
-                                <button wire:click="openViewDetailsModal({{ $campaig_->id }})"
-                                    class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2">
-                                    <x-lucide-eye class="w-5 h-5" />
-                                    <span>{{ __('View Details') }}</span>
-                                </button>
 
-                            </div>
-                        </div>
-                        <div class="divider bg-orange-600/30 h-auto"></div>
-                        <div class="grid grid-cols-3 gap-6">
-                            <div class="text-center">
-                                <div class="flex items-center justify-center mb-2"><svg
-                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="lucide  lucide-trending-up w-5 h-5 text-orange-500 mr-2">
-                                        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
-                                        <polyline points="16 7 22 7 22 13"></polyline>
-                                    </svg><span
-                                        class="text-2xl font-bold   text-black dark:text-gray-100">{{ $campaig_->completed_reposts ?? 0 }}</span>
                                 </div>
-                                <p class="text-slate-400 text-sm">{{ __('Reposts') }}</p>
-                            </div>
-                            <div class="text-center">
-                                <div class="flex items-center justify-center mb-2"><svg
-                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="lucide lucide-eye w-5 h-5 text-blue-500 mr-2">
-                                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-                                        <circle cx="12" cy="12" r="3"></circle>
-                                    </svg><span
-                                        class="text-2xl font-bold text-black dark:text-gray-100">{{ $campaig_->playback_count ?? 0 }}</span>
+
+                                <div class="divider bg-orange-600/30 h-auto"></div>
+                                <div class="flex gap-12">
+                                    <div class="text-center">
+                                        <div class="flex items-center justify-center mb-2">
+                                            <x-lucide-smile class="w-5 h-5 mx-2" />
+                                            <span
+                                                class="text-2xl font-bold   text-black dark:text-gray-100">{{ $campaig_->completed_reposts ?? 0 }}</span>
+                                        </div>
+                                        <p class="text-slate-400 text-sm">{{ __('Reposts') }}</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="flex items-center justify-center mb-2">
+                                            <x-lucide-smile class="w-5 h-5 mx-2" />
+                                            <span
+                                                class="text-2xl font-bold   text-black dark:text-gray-100">{{ $campaig_->completed_reposts ?? 0 }}</span>
+                                        </div>
+                                        <p class="text-slate-400 text-sm">{{ __('Reposts') }}</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="flex items-center justify-center mb-2">
+                                            <x-lucide-smile class="w-5 h-5 mx-2" />
+                                            <span
+                                                class="text-2xl font-bold text-black dark:text-gray-100">{{ $campaig_->playback_count ?? 0 }}</span>
+                                        </div>
+                                        <p class="text-slate-400 text-sm">{{ __('Plays') }}</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="flex items-center justify-center mb-2">
+                                            <x-lucide-smile class="w-5 h-5 mx-2" />
+                                            <span
+                                                class="text-2xl font-bold text-black dark:text-gray-100">{{ $campaig_->music?->likes_count ?? 0 }}</span>
+                                        </div>
+                                        <p class="text-slate-400 text-sm">{{ __('Likes') }}</p>
+
+                                    </div>
+
+                                    <div class="text-center">
+                                        <div class="flex items-center justify-center mb-2">
+                                            <x-lucide-smile class="w-5 h-5 mx-2" />
+                                            <span
+                                                class="text-2xl font-bold text-black dark:text-gray-100">{{ $campaig_->music?->likes_count ?? 0 }}</span>
+                                        </div>
+                                        <p class="text-slate-400 text-sm">{{ __('Likes') }}</p>
+                                    </div>
+                                    <span class="text-orange-500 font-medium">
+                                        Show All</span>
+
+                                    <div class="flex items-center space-x-4">
+
+                                        <button
+                                            class="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-sm text-sm font-semibold hover:bg-gray-100 transition-colors">
+                                            Set featured
+                                        </button>
+                                        <button
+                                            class="bg-red-500 text-white py-2 px-4 rounded-lg text-sm font-semibold shadow-sm hover:bg-red-600 transition-colors">
+                                            Boost campaign
+
+                                        </button>
+                                    </div>
                                 </div>
-                                <p class="text-slate-400 text-sm">{{ __('Plays') }}</p>
-                            </div>
-                            <div class="text-center">
-                                <div class="flex items-center justify-center mb-2"><svg
-                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="lucide lucide-trending-up w-5 h-5 text-green-500 mr-2">
-                                        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
-                                        <polyline points="16 7 22 7 22 13"></polyline>
-                                    </svg><span
-                                        class="text-2xl font-bold text-black dark:text-gray-100">{{ $campaig_->music?->likes_count ?? 0 }}</span>
-                                </div>
-                                <p class="text-slate-400 text-sm">{{ __('Likes') }}</p>
                             </div>
                         </div>
                     </div>
+
+
+                    <div>
+                        <!-- Sidebar - Right Column -->
+                        <aside class="lg:w-1/3 space-y-6">
+                            <!-- Tools and FAQs Section -->
+                            <div class="bg-white rounded-sm  p-6">
+                                <h2 class="text-lg font-bold text-gray-800 mb-4">Tools and FAQs</h2>
+                                <ul class="space-y-3">
+                                    <li><a href="#" class="text-red-500 hover:underline">What is a
+                                            campaign?</a></li>
+                                    <li><a href="#" class="text-red-500 hover:underline">How do I get
+                                            the best out of my campaigns?</a>
+                                    </li>
+                                    <li><a href="#" class="text-red-500 hover:underline">Why did my
+                                            campaign finish so quickly?</a></li>
+                                    <li><a href="#" class="text-red-500 hover:underline">Why is my
+                                            campaign running slowly?</a></li>
+                                </ul>
+                            </div>
+
+                            <!-- Reach more people Section -->
+                            <div class="bg-white dark:bg-slate-400 rounded-sm  p-6">
+                                <h2 class="text-lg font-bold text-gray-800 mb-4">Reach more people</h2>
+                                <hr class="text-red-500">
+                                <div class="separator-line mb-4"></div>
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <img src="https://i1.sndcdn.com/artworks-ZmemRDWSfmXwMCWO-xZp0wA-t500x500.jpg"
+                                        alt="Reach people icon" class="w-16 h-16 rounded-lg object-cover">
+                                    <div>
+                                        <p class="font-bold text-gray-800">Feature your campaign and reach more
+                                            people</p>
+                                        <p class="text-gray-500 text-sm">ALL_BLACK_.75</p>
+                                    </div>
+                                </div>
+                                <button
+                                    class="mx-auto block  bg-red-500 text-white py-2 px-4 rounded-sm font-semibold hover:bg-red-600 transition-colors">
+                                    Get featured
+                                </button>
+                            </div>
+                        </aside>
+                    </div>
+                </div> --}}
+                <div class="flex flex-col lg:flex-row justify-between gap-6 px-4">
+                    <!-- Main Content -->
+                    <div class="w-full">
+                        <div class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                            <div class="p-4 sm:p-6">
+                                <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
+                                    <div class="flex flex-col sm:flex-row gap-4">
+                                        <img src="https://i1.sndcdn.com/avatars-000006220351-r38vu9-t120x120.jpg"
+                                            alt="Sample Track 3" class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
+                                        <div class="flex-1">
+                                            <div
+                                                class="flex flex-col sm:flex-row sm:items-center sm:space-x-3 mb-2 text-center sm:text-left">
+                                                <h3 class="text-black dark:text-gray-100 font-semibold text-lg">
+                                                    Boost Track Campaign
+                                                </h3>
+                                                <span>
+                                                    <!-- Pencil Icon -->
+                                                    <svg class="w-5 h-5 inline-block text-black dark:text-gray-100"
+                                                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                        fill="none" stroke="currentColor" stroke-width="2"
+                                                        stroke-linecap="round" stroke-linejoin="round">
+                                                        <path
+                                                            d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                        <path
+                                                            d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                    </svg>
+                                                </span>
+                                            </div>
+
+                                            <div class="mb-4 text-sm text-center sm:text-left text-slate-400">
+                                                Budget used: 50.00 / 500.00 credits
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Right Stats Block -->
+                                    <div class="text-center sm:text-right">
+                                        <div class="flex items-center justify-center sm:justify-end mb-2 ">
+                                            <x-lucide-trending-up class="m-2 w-5 h-5  text-green-600" />
+                                            <span class=" text-green-600 dark:text-gray-100"> Running</span>
+                                        </div>
+                                        <p class="text-slate-400 text-sm">Start 2 Aug 2025</p>
+                                        <div class="flex flex-wrap justify-center sm:justify-end items-center mt-2">
+                                            <x-lucide-ban class="w-5 h-5 m-2 dark:text-white text-black" />
+                                            <span class="text-slate-500">Stop</span>
+                                            <x-lucide-square-pen class="w-5 h-5 m-2 dark:text-white text-black" />
+                                            <span class=" font-medium cursor-pointer">Edit</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr class="my-6 border-orange-600/30" />
+
+                                <!-- Stats -->
+                                <div class="flex justify-between gap-6 mb-2">
+                                    <div class="flex gap-6">
+                                        <div class="text-center">
+                                            <div class="flex items-center justify-center mb-2">
+
+                                                <x-lucide-repeat class="w-5 h-5 m-2 dark:text-white text-black" />
+                                                <span class=" text-black dark:text-white">22</span>
+                                            </div>
+
+                                        </div>
+                                        <!-- Repeat block with different data -->
+                                        <div class="text-center">
+                                            <div class="flex items-center justify-center mb-2">
+                                                <x-lucide-user-plus class="w-5 h-5 m-2 dark:text-white text-black" />
+                                                <span class=" text-black dark:text-gray-100">8</span>
+                                            </div>
+
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="flex items-center justify-center mb-2">
+                                                <x-lucide-heart class="w-5 h-5 m-2 dark:text-white text-black" />
+                                                <span class=" text-black dark:text-gray-100">17</span>
+                                            </div>
+
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="flex items-center justify-center mb-2">
+                                                <x-lucide-mail class="w-5 h-5 m-2 dark:text-white text-black" />
+                                                <span class=" text-black dark:text-gray-100">6</span>
+                                            </div>
+
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="flex items-center justify-center mb-2">
+                                                <x-lucide-smile class="w-5 h-5 m-2 dark:text-white text-black" />
+                                                <span class=" text-black dark:text-gray-100">0</span>
+                                            </div>
+
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="flex items-center justify-center mb-2">
+
+                                                <span class="text-orange-500 items-end font-medium mt-2">Show
+                                                    All</span>
+                                            </div>
+
+                                        </div>
+                                        <!-- Add more blocks if needed -->
+                                    </div>
+
+                                    <div>
+                                        <p class="text-slate-400 text-sm">Start 2 Aug 2025</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-col sm:flex-row sm:justify-between items-center gap-4">
+                                    <span></span>
+
+                                    <div class="flex flex-wrap justify-center sm:justify-end gap-4">
+                                        <button
+                                            class="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-sm text-sm font-semibold hover:bg-gray-100 transition-colors">
+                                            Set featured
+                                        </button>
+                                        <button
+                                            class="bg-red-500 text-white py-2 px-4 rounded-sm text-sm font-semibold shadow-sm hover:bg-red-600 transition-colors">
+                                            Boost campaign
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <aside class="lg:w-1/3 space-y-6 bg-white dark:bg-slate-800 rounded-sm lg:mt-0">
+                        <!-- Tools Section -->
+                        <div class=" dark:bg-slate-400 rounded-sm p-6">
+                            <h2 class="text-lg font-bold text-gray-800 mb-4 text-black dark:text-gray-100">Tools and
+                                FAQs</h2>
+                            <ul class="space-y-3">
+                                <li><a href="#" class="text-red-500 hover:underline">What is a campaign?</a>
+                                </li>
+                                <li><a href="#" class="text-red-500 hover:underline">How do I get the best out
+                                        of my campaigns?</a></li>
+                                <li><a href="#" class="text-red-500 hover:underline">Why did my campaign finish
+                                        so quickly?</a></li>
+                                <li><a href="#" class="text-red-500 hover:underline">Why is my campaign running
+                                        slowly?</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Reach More Section -->
+                        <div class="dark:bg-slate-400 rounded-sm p-6 text-black dark:text-gray-100">
+                            <h2 class="text-lg font-bold text-gray-800 mb-4 text-black dark:text-gray-100">Reach more
+                                people</h2>
+                            <hr class="text-red-500 mb-4">
+                            <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
+                                <img src="https://i1.sndcdn.com/artworks-ZmemRDWSfmXwMCWO-xZp0wA-t500x500.jpg"
+                                    alt="Reach people icon" class="w-16 h-16 rounded-lg object-cover">
+                                <div>
+                                    <p class="font-bold text-gray-800 text-black dark:text-gray-100">Feature your
+                                        campaign and reach more people</p>
+                                    <p class="text-gray-500 text-sm">ALL_BLACK_.75</p>
+                                </div>
+                            </div>
+                            <button
+                                class="mx-auto block bg-red-500 text-white py-2 px-4 rounded-sm font-semibold hover:bg-red-600 transition-colors">
+                                Get featured
+                            </button>
+                        </div>
+                    </aside>
                 </div>
+
             @empty
                 @if ($activeMainTab === 'all')
                     <div
@@ -201,6 +372,7 @@
                         <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3">
                             {{ __('No active campaigns found') }}
                         </h3>
+
                         <p class="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
                             {{ __('Looks like there are no active campaigns right now. Why not start a new one and watch it grow?') }}
                         </p>
