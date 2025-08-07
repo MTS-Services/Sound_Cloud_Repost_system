@@ -13,9 +13,8 @@
             </div>
         </div>
 
-        <div
-            class="grid grid-cols-1 gap-4 sm:grid-cols-1 {{ isset($documentation) && $documentation ? 'md:grid-cols-7' : '' }}">
-            <div class="glass-card rounded-2xl p-6 md:col-span-5">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-7">
+            <div class="glass-card rounded-2xl p-6 md:col-span-7">
                 <form action="{{ route('pm.plan.update', encrypt($plan->id)) }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
@@ -36,8 +35,6 @@
                             </div>
 
                             <div class="px-3 py-6">
-                                {{-- The @php block is removed from here --}}
-
                                 @forelse ($featureCategories as $category)
                                     <div class="mb-8 last:mb-0">
                                         <div class="flex items-center mb-4">
@@ -50,10 +47,10 @@
                                         <div
                                             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
                                             @forelse ($category->features as $feature)
-                                                <div x-data="{ checked: {{ isset($planFeatures[$feature->id]) ? 'true' : 'false' }} }">
-                                                    <input type="checkbox" name="features[]"
-                                                        value="{{ $feature->id }}" id="feature_{{ $feature->id }}"
-                                                        x-model="checked" class="hidden">
+                                                <div x-data="{ checked: {{ in_array($feature->id, $plan->featureRelations()->pluck('feature_id')->toArray()) ? 'true' : 'false' }} }">
+                                                    <input type="checkbox" name="features[]" value="{{ $feature->id }}"
+                                                        id="feature_{{ $feature->id }}" x-model="checked"
+                                                        class="hidden">
 
                                                     <template x-if="checked">
                                                         <input type="hidden"
@@ -86,18 +83,14 @@
                                                             </p>
                                                         </label>
 
-                                                        {{-- Input field for the feature value, displayed only if checked. --}}
                                                         <template x-if="checked">
                                                             <div class="w-full mt-2">
                                                                 <select name="feature_values[{{ $feature->id }}]"
-                                                                    class="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-800 dark:text-white">
-                                                                    <option value="" disabled
-                                                                        {{ old('feature_values.' . $feature->id, $featureValues[$feature->id] ?? null) === null ? 'selected' : '' }}>
-                                                                        Select a value
-                                                                    </option>
+                                                                    class="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-800 dark:text-white"
+                                                                    @click.stop>
                                                                     @foreach ($feature->feature_values as $value)
                                                                         <option value="{{ $value }}"
-                                                                            {{ old('feature_values.' . $feature->id, $featureValues[$feature->id] ?? null) === $value ? 'selected' : '' }}>
+                                                                            {{ old('feature_values.' . $feature->id, $feature->featureRelations?->value) === $value ? 'selected' : '' }}>
                                                                             {{ $value }}
                                                                         </option>
                                                                     @endforeach
@@ -105,7 +98,6 @@
                                                                 <x-input-error class="mt-2" :messages="$errors->get(
                                                                     'feature_values.' . $feature->id,
                                                                 )" />
-
                                                             </div>
                                                         </template>
                                                     </div>
@@ -135,28 +127,23 @@
                                         </p>
                                     </div>
                                 @endforelse
-
                             </div>
                         </div>
 
-
-                        {{-- name --}}
+                        {{-- Plan Details --}}
                         <div class="space-y-2">
                             <x-inputs.input name="name" label="{{ __('Name') }}" placeholder="Enter Plan Name"
                                 value="{{ old('name', $plan->name) }}" :messages="$errors->get('name')" />
                         </div>
-                        {{-- slug --}}
                         <div class="space-y-2">
                             <x-inputs.input name="slug" label="{{ __('Slug') }}" placeholder="Enter plan slug"
                                 value="{{ old('slug', $plan->slug) }}" :messages="$errors->get('slug')" />
                         </div>
-                        {{-- monthly price --}}
                         <div class="space-y-2">
                             <x-inputs.input name="price_monthly" label="{{ __('Monthly Price') }}"
                                 placeholder="Enter Price Monthly"
                                 value="{{ old('price_monthly', $plan->price_monthly) }}" :messages="$errors->get('price_monthly')" />
                         </div>
-                        {{-- yearly price --}}
                         <div class="space-y-2">
                             <x-inputs.input name="price_monthly_yearly" label="{{ __('Yearly Price') }}"
                                 placeholder="Enter Price Monthly Yearly"
@@ -167,32 +154,24 @@
                         <div class="space-y-2 col-span-2 py-3" x-data="{ selectedTag: '{{ old('tag', $plan->tag) }}' }">
                             <label
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Plan Tag') }}</label>
-
                             <div class="flex gap-6 mt-2 flex-wrap">
                                 @foreach (\App\Models\Plan::getTagList() as $tagValue => $tagLabel)
                                     <label class="inline-flex items-center cursor-pointer space-x-2"
                                         @click="selectedTag = '{{ $tagValue }}'">
                                         <div class="w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all duration-150"
-                                            :class="selectedTag == '{{ $tagValue }}' ?
-                                                'border-blue-600' :
+                                            :class="selectedTag == '{{ $tagValue }}' ? 'border-blue-600' :
                                                 'border-gray-400 dark:border-gray-600'">
                                             <div class="w-2.5 h-2.5 rounded-full"
-                                                :class="selectedTag == '{{ $tagValue }}' ?
-                                                    'bg-blue-600' :
-                                                    'bg-transparent'">
+                                                :class="selectedTag == '{{ $tagValue }}' ? 'bg-blue-600' : 'bg-transparent'">
                                             </div>
                                         </div>
-
-                                        <span class="text-sm text-gray-800 dark:text-gray-200">
-                                            {{ $tagLabel }}
-                                        </span>
-
+                                        <span
+                                            class="text-sm text-gray-800 dark:text-gray-200">{{ $tagLabel }}</span>
                                         <input type="radio" name="tag" value="{{ $tagValue }}"
                                             class="hidden" x-model="selectedTag">
                                     </label>
                                 @endforeach
                             </div>
-
                             @error('tag')
                                 <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
                             @enderror
@@ -207,9 +186,6 @@
                     </div>
                 </form>
             </div>
-
         </div>
     </section>
-    @push('js')
-    @endpush
 </x-admin::layout>

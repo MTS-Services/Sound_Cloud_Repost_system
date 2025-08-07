@@ -23,7 +23,7 @@ class FeatureCategory extends BaseModel
     {
         return $this->hasMany(Feature::class);
     }
-    public function featureValues():HasMany
+    public function featureRelations():HasMany
     {
         return $this->hasMany(FeatureRelation::class);
     }

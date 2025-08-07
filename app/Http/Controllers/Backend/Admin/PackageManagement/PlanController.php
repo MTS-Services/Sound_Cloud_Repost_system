@@ -79,7 +79,7 @@ class PlanController extends Controller implements HasMiddleware
                     $menuItems = $this->menuItems($feature);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action','tag' , 'created_by', 'created_at', 'status'])
+                ->rawColumns(['action', 'tag', 'created_by', 'created_at', 'status'])
                 ->make(true);
         }
         return view('backend.admin.package_management.plans.index');
@@ -161,13 +161,11 @@ class PlanController extends Controller implements HasMiddleware
     // /**
     //  * Show the form for editing the specified resource.
     //  */
+
     public function edit(string $encryptedId): View
     {
-        $data['plan'] = $this->planService->getPlan($encryptedId);
-
-        $data['featureCategories'] = $this->featureCategoryService->getFeatureCategories()->with('features')->get();
-        $data['featureValues '] = $data['plan']->features->pluck('pivot.value', 'id')->toArray();
-        $data['planFeatureCategoryIds'] = $data['plan']->features->pluck('pivot.feature_category_id', 'id')->toArray();
+        $data['plan'] = $this->planService->getPlan($encryptedId)->load('featureRelations');
+        $data['featureCategories'] = $this->featureCategoryService->getFeatureCategories()->get();
 
         return view('backend.admin.package_management.plans.edit', $data);
     }
@@ -225,7 +223,7 @@ class PlanController extends Controller implements HasMiddleware
                     $menuItems = $this->trashedMenuItems($permission);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['status','tag','deleted_by', 'deleted_at', 'action'])
+                ->rawColumns(['status', 'tag', 'deleted_by', 'deleted_at', 'action'])
                 ->make(true);
         }
         return view('backend.admin.package_management.plans.trash');

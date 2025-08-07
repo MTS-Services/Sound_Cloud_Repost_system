@@ -25,6 +25,7 @@ class PlanService
     {
         return Plan::findOrFail(decrypt($encryptedId));
     }
+    
     public function getDeletedPlan(string $encryptedId): Plan
     {
         return Plan::onlyTrashed()->findOrFail(decrypt($encryptedId));

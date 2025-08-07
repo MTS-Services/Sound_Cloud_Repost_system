@@ -26,6 +26,8 @@ return new class extends Migration
             $table->foreign('feature_category_id')->references('id')->on('feature_categories')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('feature_id')->references('id')->on('features')->onDelete('cascade')->onUpdate('cascade');
 
+            $table->unique(['package_id', 'feature_id']);
+
             $table->timestamps();
             $table->softDeletes();
             $this->addAdminAuditColumns($table);
