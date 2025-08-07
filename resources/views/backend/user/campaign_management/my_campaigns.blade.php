@@ -630,7 +630,7 @@
                     <div>
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="text-md font-medium text-gray-900">Selected Track</h3>
-                            <button
+                            <button x-on:click="showSubmitModal = false"
                                 class="bg-gray-100 dark:bg-slate-700 py-1.5 px-3 rounded-xl text-orange-500 text-sm font-medium hover:text-orange-600">Edit</button>
                         </div>
                         <div
