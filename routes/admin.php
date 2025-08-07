@@ -73,6 +73,13 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         Route::resource('feature', FeatureController::class);
         Route::controller(FeatureController::class)->name('feature.')->prefix('feature')->group(function () {});
         Route::resource('plan', PlanController::class);
+        Route::controller(PlanController::class)->name('plan.')->prefix('plan')->group(function () {
+            Route::post('/show/{plan}', 'show')->name('show');
+            Route::get('/status/{plan}', 'status')->name('status');
+            Route::get('/trash/bin', 'trash')->name('trash');
+            Route::get('/restore/{plan}', 'restore')->name('restore');
+            Route::delete('/permanent-delete/{plan}', 'permanentDelete')->name('permanent-delete');
+        });
 
         // Credit Routes
         Route::resource('credit', CreditController::class);

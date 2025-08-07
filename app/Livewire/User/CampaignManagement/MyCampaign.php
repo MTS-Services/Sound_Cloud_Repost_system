@@ -82,10 +82,10 @@ class MyCampaign extends Component
     public $genres =[]; 
     public $commentable = false;
     public $likeable = false;
-    public $isFeatureEnabled = false;
-    public $maxFollower = 0;
-    public $maxRepostLast24h = 0;
-    public $maxRepostsPerDay = 0;
+    public $proFeatureEnabled = false;
+    public $maxFollower = null;
+    public $maxRepostLast24h = null;
+    public $maxRepostsPerDay = null;
     public $anyGenre = '';
     public $trackGenre = '';
     public $targetGenre = '';
@@ -102,7 +102,8 @@ class MyCampaign extends Component
     protected function rules()
     {
         $rules = [
-            'credit' => 'required|integer|min:0',
+            'credit' => 'required|integer|min:100',
+            'maxFollower' => 'required|integer|min:0',
             // 'title' => 'required|string|max:255',
             // 'description' => 'required|string|max:1000',
             // 'endDate' => 'required|date|after_or_equal:today',
@@ -140,33 +141,35 @@ class MyCampaign extends Component
     /**
      * Custom validation messages
      */
-    // protected function messages()
-    // {
-    //     return [
-    //         'musicId.required' => 'Please select a track for your campaign.',
-    //         'title.required' => 'Campaign name is required.',
-    //         'title.max' => 'Campaign name cannot exceed 255 characters.',
-    //         'description.required' => 'Campaign description is required.',
-    //         'description.max' => 'Description cannot exceed 1000 characters.',
-    //         'endDate.required' => 'Please select an expiration date.',
-    //         'endDate.after_or_equal' => 'Expiration date must be today or later.',
-    //         'targetReposts.required' => 'Target repost count is required.',
-    //         'targetReposts.min' => 'Target reposts must be at least 1.',
-    //         'costPerRepost.required' => 'Budget per repost is required.',
-    //         'costPerRepost.min' => 'Budget per repost must be at least 1 credit.',
+    protected function messages()
+    {
+        return [
+            'credit.required' => 'Minimum credit is 100.',
+            'maxFollower.required' => 'Max follower is required.',
+            // 'musicId.required' => 'Please select a track for your campaign.',
+            // 'title.required' => 'Campaign name is required.',
+            // 'title.max' => 'Campaign name cannot exceed 255 characters.',
+            // 'description.required' => 'Campaign description is required.',
+            // 'description.max' => 'Description cannot exceed 1000 characters.',
+            // 'endDate.required' => 'Please select an expiration date.',
+            // 'endDate.after_or_equal' => 'Expiration date must be today or later.',
+            // 'targetReposts.required' => 'Target repost count is required.',
+            // 'targetReposts.min' => 'Target reposts must be at least 1.',
+            // 'costPerRepost.required' => 'Budget per repost is required.',
+            // 'costPerRepost.min' => 'Budget per repost must be at least 1 credit.',
 
-    //         // Edit specific messages
-    //         'editTitle.required' => 'Campaign name is required.',
-    //         'editDescription.required' => 'Campaign description is required.',
-    //         'editEndDate.required' => 'Campaign expiration date is required.',
-    //         'editTargetReposts.required' => 'Target repost count is required.',
-    //         'editCostPerRepost.required' => 'Cost per repost is required.',
+            // // Edit specific messages
+            // 'editTitle.required' => 'Campaign name is required.',
+            // 'editDescription.required' => 'Campaign description is required.',
+            // 'editEndDate.required' => 'Campaign expiration date is required.',
+            // 'editTargetReposts.required' => 'Target repost count is required.',
+            // 'editCostPerRepost.required' => 'Cost per repost is required.',
 
-    //         // Add credit specific messages
-    //         'addCreditCostPerRepost.required' => 'Cost per repost is required.',
-    //         'addCreditCostPerRepost.min' => 'Cost per repost must be at least 1 credit.',
-    //     ];
-    // }
+            // // Add credit specific messages
+            // 'addCreditCostPerRepost.required' => 'Cost per repost is required.',
+            // 'addCreditCostPerRepost.min' => 'Cost per repost must be at least 1 credit.',
+        ];
+    }
 
     /**
      * Watch for changes in campaign creation form to validate budget
@@ -488,15 +491,13 @@ class MyCampaign extends Component
 
         try {
             if ($type === 'track') {
-                $track = Track::findOrFail($id);
-
-                if (!$track->urn || !$track->title) {
+               $this->track = Track::findOrFail($id);
+                if (!$this->track->urn || !$this->track->title) {
                     throw new \Exception('Track data is incomplete');
                 }
-
-                $this->musicId = $track->id;
+                $this->musicId = $this->track->id;
                 $this->musicType = Track::class;
-                $this->title = $track->title . ' Campaign';
+                $this->title = $this->track->title . ' Campaign';
             } elseif ($type === 'playlist') {
                 $playlist = Playlist::findOrFail($id);
 
@@ -637,50 +638,50 @@ class MyCampaign extends Component
         $this->validate();
 
         try {
-            if (!$this->musicId) {
-                throw new \Exception('Please select a track for your campaign.');
-            }
+            // if (!$this->musicId) {
+            //     throw new \Exception('Please select a track for your campaign.');
+            // }
 
-            if ($this->costPerRepost <= 0 || $this->targetReposts <= 0) {
-                throw new \Exception('Cost per repost and target reposts must be greater than 0.');
-            }
+            // if ($this->costPerRepost <= 0 || $this->targetReposts <= 0) {
+            //     throw new \Exception('Cost per repost and target reposts must be greater than 0.');
+            // }
 
             $totalBudget = $this->credit; //($this->costPerRepost * $this->targetReposts);
 
             // Final budget check before submission
-            if ($totalBudget > userCredits()) {
-                $shortage = $totalBudget - userCredits();
-                throw new \Exception("You need {$shortage} more credits to create this campaign.");
-            }
+            // if ($totalBudget > userCredits()) {
+            //     $shortage = $totalBudget - userCredits();
+            //     throw new \Exception("You need {$shortage} more credits to create this campaign.");
+            // }
 
-            if ($this->costPerRepost >= 1) {
-                $this->minFollowers = $this->costPerRepost * 100;
-                $this->maxFollowers = $this->minFollowers + 99;
-            }
+            // if ($this->costPerRepost >= 1) {
+            //     $this->minFollowers = $this->costPerRepost * 100;
+            //     $this->maxFollowers = $this->minFollowers + 99;
+            // }
 
             DB::transaction(function () use ($totalBudget) {
+                $commentable= $this->commentable ? 1 : 0;
+                $likeable = $this->likeable ? 1 : 0;
+                $proFeatureEnabled = $this->proFeatureEnabled ? 1 : 0;
+                    // dd($this->commentable, $this->likeable, $this->proFeatureEnabled, $this->maxRepostLast24h, $this->maxRepostsPerDay, $this->targetGenre, $this->maxFollower);
                 $campaign = Campaign::create([
                     'music_id' => $this->musicId,
                     'music_type' => $this->musicType,
                     'title' => $this->title,
                     'description' => $this->description,
-                    'target_reposts' => $this->targetReposts,
-                    'cost_per_repost' => $this->costPerRepost,
+                    'cost_per_repost' => 0,
                     'budget_credits' => $totalBudget,
-                    'end_date' => $this->endDate,
                     'user_urn' => user()->urn,
                     'status' => Campaign::STATUS_OPEN,
-                    'min_followers' => $this->minFollowers,
                     'max_followers' => $this->maxFollower,
                     'creater_id' => user()->id,
                     'creater_type' => get_class(user()),
-                    'commentable' => $this->commentable,
-                    'likeable' => $this->likeable,
-                    'is_featured' => $this->isFeatureEnabled,
+                    'comentable' => 1,
+                    'likeable' => $likeable,
+                    'pro_feature' => $proFeatureEnabled,
                     'max_repost_last_24h' => $this->maxRepostLast24h,
                     'max_reposts_per_day' => $this->maxRepostsPerDay,
                     'target_genre' => $this->targetGenre,
-                    ''
                 ]);
                 CreditTransaction::create([
                     'receiver_urn' => user()->urn,
@@ -698,7 +699,7 @@ class MyCampaign extends Component
                         'start_date' => now(),
                     ],
                     'created_id' => user()->id,
-                    'created_type' => get_class(user())
+                    'creater_type' => get_class(user())
                 ]);
             });
 
@@ -725,7 +726,14 @@ class MyCampaign extends Component
                 'maxFollowers',
                 'showBudgetWarning',
                 'budgetWarningMessage',
-                'canSubmit'
+                'canSubmit',
+                'commentable',
+                'likeable',
+                'proFeatureEnabled',
+                'maxRepostLast24h',
+                'maxRepostsPerDay',
+                'targetGenre',
+                'maxFollower'
             ]);
 
             $this->resetValidation();
@@ -738,7 +746,6 @@ class MyCampaign extends Component
                 'user_urn' => user()->urn ?? 'unknown',
                 'title' => $this->title,
                 'total_budget' => $totalBudget ?? 0,
-                'target_reposts' => $this->targetReposts
             ]);
         }
     }

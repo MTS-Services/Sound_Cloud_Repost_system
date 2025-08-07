@@ -2,11 +2,14 @@
 
 namespace App\Livewire\User\CampaignManagement;
 
+use App\Models\Campaign as ModelsCampaign;
+use App\Models\CreditTransaction;
 use App\Models\Playlist;
 use App\Models\Repost;
 use App\Models\Track;
 use App\Services\TrackService;
 use App\Services\User\CampaignManagement\CampaignService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -64,6 +67,64 @@ class Campaign extends Component
         'audioTimeUpdate' => 'handleAudioTimeUpdate',
         'audioEnded' => 'handleAudioEnded'
     ];
+    ############################## Campaign Creation ##########################
+    public $tracks = [];
+    public $playlists = [];
+    public $playlistTracks = [];
+    public $activeModalTab = 'tracks';
+
+    
+
+    public $track = null;
+    public $credit = 100;
+    public $commentable = false;
+    public $likeable = false;
+    public $proFeatureEnabled = false;
+    public $maxFollower = null;
+    public $maxRepostLast24h = null;
+    public $maxRepostsPerDay = null;
+    public $anyGenre = '';
+    public $trackGenre = '';
+    public $targetGenre = '';
+
+    public $musicId = null;
+    public $musicType = null;
+    public $title = null;
+    public $description = null;
+    public $playlistId = null;
+
+    // Properties for Add Credit functionality
+    public $addCreditCampaignId = null;
+    public int $addCreditCostPerRepost;
+    public $addCreditCurrentBudget = null;
+    public $addCreditTargetReposts = null;
+    public $addCreditCreditsNeeded = 0;
+
+    // Properties for Edit functionality
+    public $editingCampaignId = null;
+    public $editTitle = null;
+    public $editDescription = null;
+    public $editEndDate = null;
+    public $editTargetReposts = null;
+    public int $editCostPerRepost;
+    public $editOriginalBudget = null; // Track original budget to prevent decreases
+
+    // Properties for Delete functionality
+    public $campaignToDeleteId = null;
+    public $refundAmount = 0;
+
+    // Properties to track budget warnings and validation
+    public $showBudgetWarning = false;
+    public $budgetWarningMessage = '';
+    public $canSubmit = false;
+
+    public $showSubmitModal = false;
+    public $showCampaignsModal = false;
+    public bool $showAddCreditModal = false;
+    public bool $showEditCampaignModal = false;
+    public bool $showCancelWarningModal = false;
+
+    ############################## Campaign Creation ##########################
     public function boot(CampaignService $campaignService, TrackService $trackService)
     {
         $this->campaignService = $campaignService;
@@ -74,6 +135,25 @@ class Campaign extends Component
     public function mount()
     {
         $this->loadInitialData();
+    }
+    protected function rules()
+    {
+        $rules = [
+            'credit' => 'required|integer|min:100',
+            'maxFollower' => 'required|integer|min:0',
+        ];
+        return $rules;
+    }
+
+    /**
+     * Custom validation messages
+     */
+    protected function messages()
+    {
+        return [
+            'credit.required' => 'Minimum credit is 100.',
+            'maxFollower.required' => 'Max follower is required.',
+        ];
     }
     public function updatedSearch()
     {
@@ -281,14 +361,6 @@ class Campaign extends Component
             ->values()
             ->toArray();
     }
-    public function getAllGenres()
-    {
-        $this->genres = $this->trackService->getTracks()
-            ->pluck('genre')
-            ->unique()
-            ->values()
-            ->toArray();
-    }
     public function selectTrackType($type)
     {
         $this->selectedTrackType = $type;
@@ -302,6 +374,306 @@ class Campaign extends Component
     /**
      *  ###########################################
      * ******* End Tabs Events ********
+     * ###########################################
+     */
+    /**
+     *  ###########################################
+     * ******* Start Campaign Create Events ********
+     * ###########################################
+     */
+    public function selectModalTab($tab = 'tracks')
+    {
+        $this->activeModalTab = $tab;
+
+        if ($tab === 'tracks') {
+            $this->fetchTracks();
+        } elseif ($tab === 'playlists') {
+            $this->fetchPlaylists();
+        }
+    }
+    public function fetchTracks()
+    {
+        try {
+            $this->tracks = Track::where('user_urn', user()->urn)
+                ->latest()
+                ->get();
+        } catch (\Exception $e) {
+            $this->tracks = collect();
+            session()->flash('error', 'Failed to load tracks: ' . $e->getMessage());
+        }
+    }
+
+    public function fetchPlaylists()
+    {
+        try {
+            $this->playlists = Playlist::where('user_urn', user()->urn)
+                ->latest()
+                ->get();
+        } catch (\Exception $e) {
+            $this->playlists = collect();
+            session()->flash('error', 'Failed to load playlists: ' . $e->getMessage());
+        }
+    }
+
+    public function fetchPlaylistTracks()
+    {
+        if (!$this->playlistId) {
+            $this->playlistTracks = [];
+            return;
+        }
+
+        try {
+            $playlist = Playlist::findOrFail($this->playlistId);
+
+            if (!$playlist->soundcloud_urn) {
+                $this->playlistTracks = [];
+                session()->flash('error', 'Playlist SoundCloud URN is missing.');
+                return;
+            }
+
+            $response = Http::timeout(30)
+                ->withHeaders([
+                    'Authorization' => 'OAuth ' . user()->token,
+                ])
+                ->get('https://api.soundcloud.com/playlists/' . $playlist->soundcloud_urn . '/tracks');
+
+            if ($response->successful()) {
+                $tracks = $response->json();
+
+                if (is_array($tracks)) {
+                    $this->playlistTracks = collect($tracks)->filter(function ($track) {
+                        return is_array($track) &&
+                            isset($track['urn']) &&
+                            isset($track['title']) &&
+                            isset($track['user']) &&
+                            is_array($track['user']) &&
+                            isset($track['user']['username']);
+                    })->values()->toArray();
+                } else {
+                    $this->playlistTracks = [];
+                }
+            } else {
+                $this->playlistTracks = [];
+                session()->flash('error', 'Failed to load playlist tracks from SoundCloud: ' . $response->status());
+            }
+        } catch (\Exception $e) {
+            $this->playlistTracks = [];
+            session()->flash('error', 'Failed to fetch playlist tracks: ' . $e->getMessage());
+            Log::error('Playlist tracks fetch error: ' . $e->getMessage(), [
+                'playlist_id' => $this->playlistId,
+                'user_urn' => user()->urn ?? 'unknown'
+            ]);
+        }
+    }
+    public function toggleCampaignsModal()
+    {
+        // Reset all form data and validation
+        $this->reset([
+            'title',
+            'description',
+            'showAddCreditModal',
+            'addCreditCampaignId',
+            'addCreditCostPerRepost',
+            'addCreditCurrentBudget',
+            'addCreditTargetReposts',
+            'addCreditCreditsNeeded',
+            'showEditCampaignModal',
+            'editingCampaignId',
+            'editTitle',
+            'editDescription',
+            'editEndDate',
+            'editTargetReposts',
+            'editCostPerRepost',
+            'editOriginalBudget',
+            'showCancelWarningModal',
+            'campaignToDeleteId',
+            'refundAmount',
+            'showBudgetWarning',
+            'budgetWarningMessage',
+            'canSubmit'
+        ]);
+
+        // Set default values
+        $this->activeModalTab = 'tracks';
+        $this->tracks = collect();
+        $this->playlists = collect();
+        $this->playlistTracks = [];
+
+        $this->showCampaignsModal = !$this->showCampaignsModal;
+
+        if ($this->showCampaignsModal) {
+            $this->selectModalTab('tracks');
+        }
+    }
+    public function toggleSubmitModal($type, $id)
+    {
+
+        // Reset form fields
+        $this->reset([
+            'title',
+            'description',
+            'showAddCreditModal',
+            'addCreditCampaignId',
+            'addCreditCostPerRepost',
+            'addCreditCurrentBudget',
+            'addCreditTargetReposts',
+            'addCreditCreditsNeeded',
+            'showEditCampaignModal',
+            'editingCampaignId',
+            'editTitle',
+            'editDescription',
+            'editEndDate',
+            'editTargetReposts',
+            'editCostPerRepost',
+            'editOriginalBudget',
+            'showCancelWarningModal',
+            'campaignToDeleteId',
+            'refundAmount',
+            'showBudgetWarning',
+            'budgetWarningMessage',
+            'canSubmit',
+        ]);
+
+        $this->showSubmitModal = true;
+
+        try {
+            if ($type === 'track') {
+                $this->track = Track::findOrFail($id);
+                if (!$this->track->urn || !$this->track->title) {
+                    throw new \Exception('Track data is incomplete');
+                }
+                $this->musicId = $this->track->id;
+                $this->musicType = Track::class;
+                $this->title = $this->track->title . ' Campaign';
+            } elseif ($type === 'playlist') {
+                $playlist = Playlist::findOrFail($id);
+
+                if (!$playlist->title) {
+                    throw new \Exception('Playlist data is incomplete');
+                }
+
+                $this->playlistId = $id;
+                $this->title = $playlist->title . ' Campaign';
+                $this->musicType = Playlist::class;
+
+                $this->fetchPlaylistTracks();
+                $this->musicId = null;
+            }
+        } catch (\Exception $e) {
+            session()->flash('error', 'Failed to load content: ' . $e->getMessage());
+            $this->showSubmitModal = false;
+            $this->showCampaignsModal = true;
+
+            Log::error('Toggle submit modal error: ' . $e->getMessage(), [
+                'type' => $type,
+                'id' => $id,
+                'user_urn' => user()->urn ?? 'unknown'
+            ]);
+        }
+    }
+
+    public function getAllGenres()
+    {
+        $this->genres = $this->trackService->getTracks()->where('user_urn', user()->urn)->pluck('genre')->unique()->values()->toArray();
+    }
+    public function createCampaign()
+    {
+        $this->validate();
+
+        try {
+            $totalBudget = $this->credit;
+
+            DB::transaction(function () use ($totalBudget) {
+                $commentable = $this->commentable ? 1 : 0;
+                $likeable = $this->likeable ? 1 : 0;
+                $proFeatureEnabled = $this->proFeatureEnabled ? 1 : 0;
+                $campaign = ModelsCampaign::create([
+                    'music_id' => $this->musicId,
+                    'music_type' => $this->musicType,
+                    'title' => $this->title,
+                    'description' => $this->description,
+                    'cost_per_repost' => 0,
+                    'budget_credits' => $totalBudget,
+                    'user_urn' => user()->urn,
+                    'status' => ModelsCampaign::STATUS_OPEN,
+                    'max_followers' => $this->maxFollower,
+                    'creater_id' => user()->id,
+                    'creater_type' => get_class(user()),
+                    'comentable' => $commentable,
+                    'likeable' => $likeable,
+                    'pro_feature' => $proFeatureEnabled,
+                    'max_repost_last_24h' => $this->maxRepostLast24h,
+                    'max_reposts_per_day' => $this->maxRepostsPerDay,
+                    'target_genre' => $this->targetGenre,
+                ]);
+                CreditTransaction::create([
+                    'receiver_urn' => user()->urn,
+                    'calculation_type' => CreditTransaction::CALCULATION_TYPE_CREDIT,
+                    'source_id' => $campaign->id,
+                    'source_type' => ModelsCampaign::class,
+                    'transaction_type' => CreditTransaction::TYPE_SPEND,
+                    'status' => 'succeeded',
+                    'credits' => $totalBudget,
+                    'description' => 'Spent on campaign creation',
+                    'metadata' => [
+                        'campaign_id' => $campaign->id,
+                        'music_id' => $this->musicId,
+                        'music_type' => $this->musicType,
+                        'start_date' => now(),
+                    ],
+                    'created_id' => user()->id,
+                    'creater_type' => get_class(user())
+                ]);
+            });
+
+            session()->flash('message', 'Campaign created successfully!');
+            $this->dispatch('campaignCreated');
+
+            // Close modal and complete reset
+            $this->showCampaignsModal = false;
+            $this->showSubmitModal = false;
+
+            $this->reset([
+                'musicId',
+                'title',
+                'description',
+                'playlistId',
+                'playlistTracks',
+                'activeModalTab',
+                'tracks',
+                'track',
+                'playlists',
+                'maxFollower',
+                'showBudgetWarning',
+                'budgetWarningMessage',
+                'canSubmit',
+                'commentable',
+                'likeable',
+                'proFeatureEnabled',
+                'maxRepostLast24h',
+                'maxRepostsPerDay',
+                'targetGenre',
+                'maxFollower',
+                'proFeatureEnabled',
+            ]);
+
+            $this->resetValidation();
+            $this->resetErrorBag();
+            session()->flash('message', 'Campaign created successfully!');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Failed to create campaign: ' . $e->getMessage());
+
+            Log::error('Campaign creation error: ' . $e->getMessage(), [
+                'music_id' => $this->musicId,
+                'user_urn' => user()->urn ?? 'unknown',
+                'title' => $this->title,
+                'total_budget' => $totalBudget ?? 0,
+            ]);
+        }
+    }
+    /**
+     *  ###########################################
+     * ******* End Campaign Create Events ********
      * ###########################################
      */
 
