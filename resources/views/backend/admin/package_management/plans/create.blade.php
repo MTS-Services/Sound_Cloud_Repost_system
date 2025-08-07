@@ -88,7 +88,6 @@
                                                                 {{ $feature->features_name }}
                                                             </p>
                                                         </label>
-                                                        {{-- @dd($feature->feature_values) --}}
                                                         <!-- Dynamic Input Based on Feature Type -->
                                                         <template x-if="checked">
                                                             <div class="w-full mt-2">
