@@ -58,18 +58,18 @@ class PlanService
                 //     'created_by'          => admin()->id,
                 // ]);
 
-                FeatureRelation::updateOrCreate([
+                FeatureRelation::updateOrCreate(
                     [
                         'package_id'          => $plan->id,
                         'package_type'        => Plan::class,
-                        'feature_id' => $featureId
+                        'feature_id'          => $featureId,
                     ],
                     [
                         'feature_category_id' => $categoryIds[$featureId] ?? null,
                         'value'               => $featureValues[$featureId] ?? null,
                         'created_by'          => admin()->id,
                     ]
-                ]);
+                );
             }
 
 
@@ -106,18 +106,18 @@ class PlanService
                 //     'updated_by' => admin()->id,
                 // ]);
 
-                FeatureRelation::updateOrCreate([
+                FeatureRelation::updateOrCreate(
                     [
                         'package_id'          => $plan->id,
                         'package_type'        => Plan::class,
-                        'feature_id' => $featureId
+                        'feature_id'          => $featureId,
                     ],
                     [
                         'feature_category_id' => $categoryIds[$featureId] ?? null,
                         'value'               => $featureValues[$featureId] ?? null,
                         'updated_by'          => admin()->id,
                     ]
-                ]);
+                );
             }
 
             return $plan;
