@@ -20,8 +20,8 @@ return new class extends Migration
             $table->unsignedBigInteger('sort_order')->default(0);
             $table->unsignedBigInteger('feature_category_id')->index();
 
-            $table->string('name')->unique();
-            $table->tinyInteger('key')->nullable()->unique();
+            $table->string('name')->nullable()->unique();
+            $table->tinyInteger('key')->unique();
             $table->tinyInteger('type')->default(Feature::TYPE_STRING)->comment(Feature::TYPE_STRING .': string', Feature::TYPE_BOOLEAN .': boolean');
             
             $table->foreign('feature_category_id')->references('id')->on('feature_categories')->onDelete('cascade')->onUpdate('cascade');

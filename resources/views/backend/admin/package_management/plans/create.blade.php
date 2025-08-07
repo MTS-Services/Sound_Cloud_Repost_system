@@ -85,30 +85,31 @@
                                                             </div>
                                                             <p
                                                                 class="text-sm font-medium text-gray-800 dark:text-gray-200 select-none">
-                                                                {{ $feature->name }}
+                                                                {{ $feature->features_name }}
                                                             </p>
                                                         </label>
-
+                                                        {{-- @dd($feature->feature_values) --}}
                                                         <!-- Dynamic Input Based on Feature Type -->
                                                         <template x-if="checked">
                                                             <div class="w-full mt-2">
-                                                                @if ($feature->type == \App\Models\Feature::TYPE_STRING)
-                                                                    <input type="text"
-                                                                        name="feature_values[{{ $feature->id }}]"
-                                                                        placeholder="Enter value for this feature"
-                                                                        class="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:text-white"
-                                                                        @click.stop />
-                                                                @elseif ($feature->type == \App\Models\Feature::TYPE_BOOLEAN)
-                                                                    <select name="feature_values[{{ $feature->id }}]"
-                                                                        class="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:text-white"
-                                                                        @click.stop>
-                                                                        <option value="True">{{ __('True') }}
+                                                                <select name="feature_values[{{ $feature->id }}]"
+                                                                    class="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:text-white"
+                                                                    @click.stop>
+                                                                    <option value="" disabled selected>Select a
+                                                                        value</option>
+                                                                    @foreach ($feature->feature_values as $value)
+                                                                        <option value="{{ $value }}"
+                                                                            {{ old('feature_values') == $value ? 'selected' : '' }}>
+                                                                            {{ $value }}
                                                                         </option>
-                                                                        <option value="False">{{ __('False') }}
-                                                                        </option>
-                                                                    </select>
-                                                                @endif
+                                                                    @endforeach
+                                                                </select>
+
+                                                                <x-input-error class="mt-2" :messages="$errors->get(
+                                                                    'feature_values.' . $feature->id,
+                                                                )" />
                                                             </div>
+
                                                         </template>
                                                     </div>
                                                 </div>

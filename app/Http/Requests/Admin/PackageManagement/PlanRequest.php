@@ -44,7 +44,7 @@ class PlanRequest extends FormRequest
     protected function store(): array
     {
         return [
-            'slug' => ['required', 'string', 'slug', Rule::unique('plans', 'slug')],
+            'slug' => ['required', 'string', Rule::unique('plans', 'slug')],
         ];
     }
     protected function update(): array

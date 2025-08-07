@@ -14,6 +14,7 @@ class Feature extends BaseModel
         'feature_category_id',
         'name',
         'type',
+        'key',
 
         'created_by',
         'updated_by',
@@ -30,8 +31,9 @@ class Feature extends BaseModel
         parent::__construct($attributes);
         $this->appends = array_merge(parent::getAppends(), [
 
-           
+            'features_name',
             'type_name',
+            'feature_values',
         ]);
     }
 
@@ -52,6 +54,7 @@ class Feature extends BaseModel
     {
         return self::getTypes()[$this->type];
     }
+
 
     /////////////////////////////////////
     ////////// Feature Keys /////////////
@@ -77,7 +80,7 @@ class Feature extends BaseModel
     public const FEATURE_KEY_SPONSORED_FOLLOW_CAMPAIGNS        = 19;
     public const FEATURE_KEY_WAVEPLAYER_ARTWORK                = 20;
 
-    public static function getKeys(): array
+    public static function getFeaturedNames(): array
     {
         return [
             self::FEATURE_KEY_AUTOBOOST                         => 'Autoboost',
@@ -103,4 +106,53 @@ class Feature extends BaseModel
         ];
     }
 
+    public function getFeatureValues(): array
+    {
+        return [
+            // Core Features
+            self::FEATURE_KEY_OPEN_DIRECT_REQUESTS            => ['25', '50', '100', '500', '1000'],
+            self::FEATURE_KEY_SIMULTANEOUS_CAMPAIGNS          => ['1', '2', '3', '10', '20'],
+            self::FEATURE_KEY_FREE_BOOSTS_PER_CAMPAIGN        => ['false', '5', '10', '15', '20'],
+            self::FEATURE_KEY_PRIORITY_DIRECT_REPOST_REQUESTS => ['false', 'true'],
+            self::FEATURE_KEY_PRIORITY_CAMPAIGN_VISIBILITY    => [false, true],
+            self::FEATURE_KEY_CAMPAIGN_TARGETING              => [false, true],
+            self::FEATURE_KEY_AUTOBOOST                       => [false, false, true, true, true],
+            self::FEATURE_KEY_SOUNDCLOUD_CHART_NOTIFIER       => [false, false, true, true, true],
+            self::FEATURE_KEY_POWER_HOUR_MULTIPLIER           => ['1x', '1.5x', '2x', '2x', '2x'],
+            self::FEATURE_KEY_PROMOTE_MULTIPLE_SC_ACCOUNTS    => [false, '3/month', '15/month', 'Unlimited'],
+            self::FEATURE_KEY_SITEWIDE_DISCOUNT               => [false, false, false, '10%', '20%'],
+
+            // Campaign Features
+            self::FEATURE_KEY_FEATURED_CAMPAIGNS              => [false, false, '1', '3', '5'],
+            self::FEATURE_KEY_MAX_CAMPAIGN_BUDGET             => ['1000', '2500', '5000', '10000', '25000'],
+            self::FEATURE_KEY_SORT_CAMPAIGNS_BY_RATING        => [false, false, true, true, true],
+            self::FEATURE_KEY_SPONSORED_FOLLOW_CAMPAIGNS      => [false, false, true, true, true],
+            self::FEATURE_KEY_MANAGED_CAMPAIGNS               => [false, false, true, true, true],
+
+            // Other Features
+            self::FEATURE_KEY_WAVEPLAYER_ARTWORK              => [false, false, true, true, true],
+            self::FEATURE_KEY_MONITOR_AND_REMOVE_REPOSTS      => [false, false, true, true, true],
+            self::FEATURE_KEY_PROMOTE_OTHER_SOCIALS           => [false, false, true, true, true],
+            self::FEATURE_KEY_EXEMPT_FROM_INACTIVITY_DEDUCTION => [false, false, true, true, true],
+        ];
+    }
+
+
+    public function getFeaturesNameAttribute(): string // Renamed method
+    {
+        return self::getFeaturedNames()[$this->key];
+    }
+    public function getFeatureValuesAttribute()
+    {
+        $values = self::getFeatureValues()[$this->key] ?? [];
+
+        return array_map(function ($val) {
+            if ($val === true) {
+                return 'true';
+            } elseif ($val === false) {
+                return 'false';
+            }
+            return $val;
+        }, $values);
+    }
 }

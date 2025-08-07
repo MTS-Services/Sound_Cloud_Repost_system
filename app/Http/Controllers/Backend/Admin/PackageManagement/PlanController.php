@@ -79,7 +79,7 @@ class PlanController extends Controller implements HasMiddleware
                     $menuItems = $this->menuItems($feature);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action', 'created_by', 'created_at', 'status'])
+                ->rawColumns(['action','tag' , 'created_by', 'created_at', 'status'])
                 ->make(true);
         }
         return view('backend.admin.package_management.plans.index');
@@ -125,6 +125,7 @@ class PlanController extends Controller implements HasMiddleware
     public function create(): View
     {
         $data['feature_categories'] = $this->featureCategoryService->getFeatureCategories()->with('features')->get();
+        // dd($data);
         return view('backend.admin.package_management.plans.create', $data);
     }
 

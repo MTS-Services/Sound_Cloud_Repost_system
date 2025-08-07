@@ -52,6 +52,9 @@ class FeatureController extends Controller
         if ($request->ajax()) {
             $query = $this->featureService->getFeatures();
             return DataTables::eloquent($query)
+                ->editColumn('key', function ($feature) {
+                    return $feature->features_name;
+                })
                 ->editColumn('type', function ($feature) {
                     return $feature->type_name;
                 })
@@ -68,7 +71,7 @@ class FeatureController extends Controller
                     $menuItems = $this->menuItems($feature);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action' ,'feature_category_id', 'created_by', 'created_at'])
+                ->rawColumns(['action', 'type', 'key', 'feature_category_id', 'created_by', 'created_at'])
                 ->make(true);
         }
         return view('backend.admin.package_management.features.index');
@@ -111,9 +114,9 @@ class FeatureController extends Controller
         $validated = $request->validate(
             [
                 'feature_category_id' => 'required|exists:feature_categories,id',
-                // 'name' => 'required|unique:features,name',
+                'name' => 'required|unique:features,name',
                 // 'key' => 'required|unique:features,key|in:' . Feature::getKeys(),
-                'name' => 'required|unique:features,name|in:' . implode(',', array_keys(Feature::getKeys())),
+                'key' => 'required|unique:features,key|in:' . implode(',', array_keys(Feature::getKeys())),
                 'type' => 'required|in:' . implode(',', array_keys(Feature::getTypes())),
             ]
         );
@@ -148,8 +151,8 @@ class FeatureController extends Controller
         $validated = $request->validate(
             [
                 'feature_category_id' => 'required|exists:feature_categories,id',
-                // 'name' => 'required|unique:features,name,' . decrypt($id),
-                'name' => 'required|unique:features,name,' . decrypt($id) . ',id|in:' . implode(',', array_keys(Feature::getKeys())),
+                'name' => 'required|unique:features,name,' . decrypt($id),
+                'key' => 'required|unique:features,key,' . decrypt($id) . ',id|in:' . implode(',', array_keys(Feature::getKeys())),
                 'type' => 'required|in:' . implode(',', array_keys(Feature::getTypes())),
             ]
         );
