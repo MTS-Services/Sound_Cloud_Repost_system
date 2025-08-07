@@ -169,7 +169,7 @@
                 <span class="font-semibold text-sm md:text-base">Premium Plan</span>
             </div>
             <p class="text-xs md:text-sm text-orange-100 mb-2 md:mb-3">Get your music in front of more people</p>
-            <a href="{{ route('user.pkm.plan') }}"
+            <a href="{{ route('user.pkm.pricing') }}"
                 class="w-full! bg-white text-orange-600 text-sm md:text-base font-semibold py-1.5 md:py-2 px-3 md:px-4 rounded-lg hover:bg-orange-50 transition-colors">Upgrade</a>
         </div>
     </div>

@@ -24,8 +24,7 @@
                     <tr>
                         <th width="5%">{{ __('SL') }}</th>
                         <th>{{ __('Name') }}</th>
-                        <th>{{ __('Monthly Price') }}</th>
-                        <th>{{ __('Yearly Price') }}</th>
+                        <th>{{ __('Yearly Save Price') }}</th>
                         <th>{{ __('Tag') }}</th>
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('Created By') }}</th>
@@ -48,8 +47,7 @@
                 let table_columns = [
                     //name and data, orderable, searchable
                     ['name', true, true],
-                    ['price_monthly', true, true],
-                    ['price_monthly_yearly', true, true],
+                    ['yearly_price_save', true, true],
                     ['tag', true, true],
                     ['status', true, true],
                     ['created_by', true, true],
@@ -95,12 +93,8 @@
                             label_color: 'status_color',
                             type: 'badge'
                         },{
-                            label:'{{ __('Monthly Price') }}',
-                            key:'price_monthly',
-                        },
-                        {
-                            label:'{{ __('Yearly Price') }}',
-                            key:'price_monthly_yearly',
+                            label:'{{ __('Yearly Save Price') }}',
+                            key:'yearly_price_save',
                         },
                         {
                             label:'{{ __('Tag') }}',

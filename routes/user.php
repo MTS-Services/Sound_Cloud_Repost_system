@@ -16,7 +16,7 @@ use App\Http\Controllers\ProfileController;
 use App\Livewire\User\HelpAndSupport;
 use App\Livewire\User\MemberManagement\Member;
 use App\Livewire\User\MemberManagement\RepostRequest;
-use App\Livewire\User\PackageManagement\Plan;
+use App\Livewire\User\PackageManagement\Pricing;
 use App\Livewire\User\ProfileManagement\MyAccount;
 use Illuminate\Validation\Rules\Unique;
 use PHPUnit\TextUI\Help;
@@ -48,7 +48,7 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
         Route::get('/campaigns', Campaign::class)->name('campaigns');
     });
     Route::group(['as' => 'pkm.', 'prefix' => 'package-management'], function () {
-        Route::get('/plan', Plan::class)->name('plan');
+        Route::get('/pricing', Pricing::class)->name('pricing');
     });
     // Member Management
     Route::group(['as' => 'mm.', 'prefix' => 'member-management'], function () {

@@ -140,18 +140,12 @@
                                 value="{{ old('slug', $plan->slug) }}" :messages="$errors->get('slug')" />
                         </div>
                         <div class="space-y-2">
-                            <x-inputs.input name="price_monthly" label="{{ __('Monthly Price') }}"
+                            <x-inputs.input name="yearly_price_save" label="{{ __('Yearly Save Price') }}"
                                 placeholder="Enter Price Monthly"
-                                value="{{ old('price_monthly', $plan->price_monthly) }}" :messages="$errors->get('price_monthly')" />
-                        </div>
-                        <div class="space-y-2">
-                            <x-inputs.input name="price_monthly_yearly" label="{{ __('Yearly Price') }}"
-                                placeholder="Enter Price Monthly Yearly"
-                                value="{{ old('price_monthly_yearly', $plan->price_monthly_yearly) }}"
-                                :messages="$errors->get('price_monthly_yearly')" />
+                                value="{{ old('yearly_price_save', $plan->yearly_price_save) }}" :messages="$errors->get('yearly_price_save')" />
                         </div>
                         {{-- Tag Selection (Styled as Radio Buttons) --}}
-                        <div class="space-y-2 col-span-2 py-3" x-data="{ selectedTag: '{{ old('tag', $plan->tag) }}' }">
+                        <div class="space-y-2 cpy-3" x-data="{ selectedTag: '{{ old('tag', $plan->tag) }}' }">
                             <label
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Plan Tag') }}</label>
                             <div class="flex gap-6 mt-2 flex-wrap">
@@ -177,7 +171,7 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="space-y-2 sm:col-span-2">
+                    <div class="space-y-2 pt-3 sm:col-span-2">
                         <x-inputs.textarea name="notes" label="{{ __('Notes') }}" placeholder="Enter notes"
                             value="{{ old('notes', $plan->notes) }}" :messages="$errors->get('notes')" />
                     </div>

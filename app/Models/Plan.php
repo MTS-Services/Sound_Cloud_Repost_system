@@ -12,8 +12,7 @@ class Plan extends BaseModel
     protected $fillable = [
         'name',
         'slug',
-        'price_monthly',
-        'price_monthly_yearly',
+        'yearly_price_save',
         'tag',
         'status',
         'notes',
