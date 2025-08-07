@@ -33,7 +33,7 @@ class PlanRequest extends FormRequest
             'features' => ['nullable', 'array'],
             'features.*' => ['integer', 'exists:features,id'],
 
-            'feature_values' => ['nullable', 'array'],
+            'feature_values' => ['required', 'array'],
             'feature_values.*' => ['required', 'string', 'max:255'],
             'feature_category_ids' => ['nullable', 'array'],
             'feature_category_ids.*' => ['required', 'exists:feature_categories,id'],

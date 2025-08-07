@@ -104,9 +104,7 @@
                                                                     @endforeach
                                                                 </select>
 
-                                                                <x-input-error class="mt-2" :messages="$errors->get(
-                                                                    'feature_values.' 
-                                                                )" />
+                                                                <x-input-error class="mt-2" :messages="$errors->get('feature_values.')" />
                                                             </div>
 
                                                         </template>
@@ -138,6 +136,7 @@
                                         </p>
                                     </div>
                                 @endforelse
+                                <x-input-error class="mt-2" :messages="$errors->get('feature_values')" />
 
                             </div>
                         </div>
