@@ -627,7 +627,7 @@
                     <!-- Selected Track -->
                     <div>
                         <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-md font-medium text-gray-900">Selected Track</h3>
+                            <h3 class="text-md font-medium dark:text-white text-gray-900">Selected Track</h3>
                             <button
                                 class="bg-gray-100 dark:bg-slate-700 py-1.5 px-3 rounded-xl text-orange-500 text-sm font-medium hover:text-orange-600">Edit</button>
                         </div>
@@ -638,8 +638,9 @@
                                     class="w-12 h-12 rounded">
                             @endif
                             <div>
-                                <p class="text-sm text-gray-600">Hip-hop & Rap - Dilip Wannigamage</p>
-                                <p class="text-sm font-medium text-gray-900">Feel Alone - Dilip Wannigamage</p>
+                                <p class="text-sm text-gray-900 dark:text-white">Hip-hop & Rap - Dilip Wannigamage</p>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-300">Feel Alone - Dilip
+                                    Wannigamage</p>
                             </div>
                         </div>
                     </div>
@@ -647,7 +648,7 @@
                     <!-- Set Budget -->
                     <div>
                         <div class="flex items-center space-x-2 mb-2">
-                            <h3 class="text-sm font-medium text-gray-900">Set budget</h3>
+                            <h3 class="text-sm font-medium text-gray-900 dark:text-white">Set budget</h3>
                             <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
                                 <span class="text-white text-xs">i</span>
                             </div>
@@ -677,7 +678,7 @@
                         <input type="checkbox" wire:model="commentable"
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                         <div>
-                            <h4 class="text-sm font-medium text-gray-900">Enable CommentPlus</h4>
+                            <h4 class="text-sm font-medium dark:text-white">Enable CommentPlus</h4>
                             <p class="text-xs text-gray-500">Use budget to incentivise comments (2 credits per
                                 response)
                             </p>
@@ -689,8 +690,8 @@
                         <input type="checkbox" wire:model="likeable"
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                         <div>
-                            <h4 class="text-sm font-medium text-gray-900">Enable LikePlus <span
-                                    class="text-xs bg-gray-200 px-1 py-0.5 rounded">BETA</span></h4>
+                            <h4 class="text-sm font-medium dark:text-white">Enable LikePlus <span
+                                    class="text-xs bg-gray-400 text-white px-1 py-0.5 rounded">BETA</span></h4>
                             <p class="text-xs text-gray-500">Use budget to incentivise likes (2 credits per like)
                             </p>
                         </div>
@@ -702,7 +703,7 @@
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                         <div>
                             <div class="flex items-center space-x-2">
-                                <h4 class="text-sm font-medium text-gray-900">Enable Campaign Accelerator</h4>
+                                <h4 class="text-sm font-medium dark:text-white">Enable Campaign Accelerator</h4>
                                 <span class="text-xs bg-orange-500 text-white px-2 py-0.5 rounded">PRO PLAN
                                     FEATURE</span>
                                 <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
@@ -716,7 +717,7 @@
                     <!-- Campaign Targeting -->
                     <div class="border border-gray-200 rounded-lg p-4">
                         <div class="flex items-center space-x-2 mb-4">
-                            <h4 class="text-sm font-medium text-gray-900">Campaign Targeting</h4>
+                            <h4 class="text-sm font-medium dark:text-white">Campaign Targeting</h4>
                             <span class="text-xs bg-orange-500 text-white px-2 py-0.5 rounded">PRO PLAN
                                 FEATURE</span>
                         </div>
@@ -729,7 +730,7 @@
                                         class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
 
                                     <div class="flex items-center space-x-2">
-                                        <span class="text-sm text-gray-700">Limit max number of followers</span>
+                                        <span class="text-sm text-gray-500">Limit max number of followers</span>
                                         <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
                                             <span class="text-white text-xs">i</span>
                                         </div>
@@ -751,7 +752,7 @@
                                     <input type="checkbox" @change="showOptions = !showOptions"
                                         class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                                     <div class="flex items-center space-x-2">
-                                        <span class="text-sm text-gray-700">Limit max number of reposts (last
+                                        <span class="text-sm text-gray-500">Limit max number of reposts (last
                                             24h)</span>
                                         <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
                                             <span class="text-white text-xs">i</span>
@@ -772,7 +773,7 @@
                                     <input type="checkbox" @click="showRepostPerDay = !showRepostPerDay"
                                         class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                                     <div class="flex items-center space-x-2">
-                                        <span class="text-sm text-gray-700">Limit max number of reposts/day
+                                        <span class="text-sm text-gray-500">Limit max number of reposts/day
                                             (avg)</span>
                                         <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
                                             <span class="text-white text-xs">i</span>
@@ -792,19 +793,19 @@
 
                         <!-- Genre Selection -->
                         <div class="mt-6">
-                            <p class="text-sm text-gray-700 mb-3">Reposters must have the following genres:</p>
+                            <p class="text-sm text-dark mb-3">Reposters must have the following genres:</p>
                             <div class="space-y-2">
                                 <div class="flex items-center space-x-2">
                                     <input type="radio" name="genre" value="anyGenre"
                                         @click="showRadios = false" wire:model="anyGenre"
                                         class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
-                                    <span class="text-sm text-gray-700">Any genre</span>
+                                    <span class="text-sm text-gray-500">Any genre</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <input type="radio" name="genre" value="trackGenre"
                                         @click="showRadios = false" wire:model="trackGenre"
                                         class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
-                                    <span class="text-sm text-gray-700">The track genre - Hip-hop & Rap</span>
+                                    <span class="text-sm text-gray-500">The track genre - Hip-hop & Rap</span>
                                 </div>
                                 <div x-data="{ showRadios: false }" class="space-y-3">
 
@@ -813,7 +814,7 @@
                                         <input type="radio" name="genre" @click="showRadios = !showRadios"
                                             wire:click="getAllGenres"
                                             class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
-                                        <span class="text-sm text-gray-700">Limit profile genre options</span>
+                                        <span class="text-sm text-gray-500">Limit profile genre options</span>
                                     </div>
 
                                     <!-- Radio Options (Toggle area) -->
@@ -827,7 +828,7 @@
                                             </div>
                                         @empty
                                             <div class="">
-                                                <span class="text-sm text-gray-700">No genres found</span>
+                                                <span class="text-sm text-gray-300">No genres found</span>
                                             </div>
                                         @endforelse
                                     </div>
