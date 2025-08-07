@@ -30,8 +30,8 @@ class PlanRequest extends FormRequest
             'price_monthly_yearly' => ['nullable', 'numeric', 'min:0'],
             'notes' => ['nullable', 'string', 'max:1000'],
             'tag' => ['nullable', Rule::in(array_keys(Plan::getTagList()))],
-            'features' => ['nullable', 'array'],
-            'features.*' => ['integer', 'exists:features,id'],
+            'features' => ['required', 'array'],
+            'features.*' => ['nullable','integer', 'exists:features,id'],
 
             'feature_values' => ['required', 'array'],
             'feature_values.*' => ['required', 'string', 'max:255'],

@@ -25,7 +25,7 @@ class PlanService
     {
         return Plan::findOrFail(decrypt($encryptedId));
     }
-    
+
     public function getDeletedPlan(string $encryptedId): Plan
     {
         return Plan::onlyTrashed()->findOrFail(decrypt($encryptedId));
@@ -49,13 +49,26 @@ class PlanService
 
             foreach ($features as $featureId) {
 
-                FeatureRelation::create([
-                    'package_id'          => $plan->id,
-                    'package_type'        => Plan::class,
-                    'feature_category_id' => $categoryIds[$featureId] ?? null,
-                    'feature_id'          => $featureId,
-                    'value'               => $featureValues[$featureId] ?? null,
-                    'created_by'          => admin()->id,
+                // FeatureRelation::create([
+                //     'package_id'          => $plan->id,
+                //     'package_type'        => Plan::class,
+                //     'feature_category_id' => $categoryIds[$featureId] ?? null,
+                //     'feature_id'          => $featureId,
+                //     'value'               => $featureValues[$featureId] ?? null,
+                //     'created_by'          => admin()->id,
+                // ]);
+
+                FeatureRelation::updateOrCreate([
+                    [
+                        'package_id'          => $plan->id,
+                        'package_type'        => Plan::class,
+                        'feature_id' => $featureId
+                    ],
+                    [
+                        'feature_category_id' => $categoryIds[$featureId] ?? null,
+                        'value'               => $featureValues[$featureId] ?? null,
+                        'created_by'          => admin()->id,
+                    ]
                 ]);
             }
 
@@ -84,13 +97,26 @@ class PlanService
 
             // Re-create feature relations
             foreach ($features as $featureId) {
-                FeatureRelation::create([
-                    'package_id'          => $plan->id,
-                    'package_type'        => Plan::class,
-                    'feature_id' => $featureId,
-                    'feature_category_id' => $categoryIds[$featureId] ?? null,
-                    'value' => $featureValues[$featureId] ?? '',
-                    'updated_by' => admin()->id,
+                // FeatureRelation::create([
+                //     'package_id'          => $plan->id,
+                //     'package_type'        => Plan::class,
+                //     'feature_id' => $featureId,
+                //     'feature_category_id' => $categoryIds[$featureId] ?? null,
+                //     'value' => $featureValues[$featureId] ?? '',
+                //     'updated_by' => admin()->id,
+                // ]);
+
+                FeatureRelation::updateOrCreate([
+                    [
+                        'package_id'          => $plan->id,
+                        'package_type'        => Plan::class,
+                        'feature_id' => $featureId
+                    ],
+                    [
+                        'feature_category_id' => $categoryIds[$featureId] ?? null,
+                        'value'               => $featureValues[$featureId] ?? null,
+                        'updated_by'          => admin()->id,
+                    ]
                 ]);
             }
 

@@ -88,6 +88,7 @@
                                                                 {{ $feature->features_name }}
                                                             </p>
                                                         </label>
+                                                        {{-- <x-input-error class="mt-2" :messages="$errors->get('features')" /> --}}
                                                         <!-- Dynamic Input Based on Feature Type -->
                                                         <template x-if="checked">
                                                             <div class="w-full mt-2">
@@ -98,13 +99,12 @@
                                                                         value</option>
                                                                     @foreach ($feature->feature_values as $value)
                                                                         <option value="{{ $value }}"
-                                                                            {{ old('feature_values') == $value ? 'selected' : '' }}>
+                                                                            {{ in_array($value, old('feature_values', [])) ? 'selected' : '' }}>
                                                                             {{ $value }}
                                                                         </option>
                                                                     @endforeach
                                                                 </select>
 
-                                                                <x-input-error class="mt-2" :messages="$errors->get('feature_values.')" />
                                                             </div>
 
                                                         </template>
@@ -136,6 +136,7 @@
                                         </p>
                                     </div>
                                 @endforelse
+                                <x-input-error class="mt-2" :messages="$errors->get('features')" />
                                 <x-input-error class="mt-2" :messages="$errors->get('feature_values')" />
 
                             </div>
