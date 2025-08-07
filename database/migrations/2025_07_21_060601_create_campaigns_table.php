@@ -24,7 +24,6 @@ return new class extends Migration
 
             $table->boolean('comentable');
             $table->boolean('likeable');
-            $table->integer('max_followers')->nullable();
             $table->integer('max_repost_last_24_h')->nullable();
             $table->integer('max_repost_per_day')->nullable();
             $table->string('target_genre')->nullable();

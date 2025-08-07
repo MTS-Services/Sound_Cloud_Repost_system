@@ -15,8 +15,10 @@ use App\Http\Controllers\Backend\Admin\UserManagement\UserTracklistController;
 use App\Http\Controllers\Backend\Admin\OrderManagement\CreditTransactionController;
 use App\Http\Controllers\Backend\Admin\PackageManagement\FeatureCategoryController;
 use App\Http\Controllers\Backend\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Backend\Admin\Faq\FaqController;
 use App\Http\Controllers\Backend\Admin\RepostManagement\RepostController;
 use App\Http\Controllers\Backend\Admin\RepostManagement\RepostRequestController;
+use App\Models\Faq;
 
 Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], function () {
 
@@ -181,6 +183,20 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
          
             Route::get('/detail/{request}', 'detail')->name('detail');
 
+        });
+    });
+
+    Route::group(['as' => 'fm.', 'prefix' => 'faq-management'], function () {
+        // Song Routes
+        Route::resource('faq', FaqController::class);
+        Route::controller(FaqController::class)->name('faq.')->prefix('faq')->group(function () {
+            Route::get('/status/{faq}', 'status')->name('status');
+            Route::post('/show/{faq}', 'show')->name('show');
+            Route::get('/trash/bin', 'trash')->name('trash');
+            Route::get('/restore/{faq}', 'restore')->name('restore');
+            Route::delete('/permanent-delete/{faq}', 'permanentDelete')->name('permanent-delete');
+            Route::get('/detail/{faq}', 'detail')->name('detail');
+           
         });
     });
 });
