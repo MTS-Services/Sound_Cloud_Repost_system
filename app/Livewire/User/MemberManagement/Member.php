@@ -13,21 +13,16 @@ use App\Services\PlaylistService;
 use App\Services\TrackService;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
 use Livewire\Component;
 
 class Member extends Component
 {
-    // Remove the typed property declaration - use dependency injection instead
-
-    // page slug
     public $page_slug = 'members';
-    // Properties for filtering and search
     public $search = '';
     public $genreFilter = '';
     public $costFilter = '';
-
-    // Modal properties
     public $showModal = false;
     public $showRepostsModal = false;
     public $showPlaylistTracksModal = false;
@@ -35,8 +30,7 @@ class Member extends Component
     public $selectedUserUrn = null;
     public $selectedPlaylistId = null;
     public $selectedTrackId = null;
-
-    // Data properties
+    public $searchQuery = '';
     public $users;
     public $user;
     public $user_urn;
@@ -47,20 +41,26 @@ class Member extends Component
     public $tracks;
     public $track;
     public $credits_spent;
+    public $trackLimit = 4;
+    public $allTracks = [];
+    public $playlistLimit = 4;
+    public $allPlaylists = [];
+
+    // Assuming you have your SoundCloud client ID configured somewhere
+    private $soundcloudClientId = 'YOUR_SOUNDCLOUD_CLIENT_ID';
+    private $soundcloudApiUrl = 'https://api-v2.soundcloud.com';
 
     protected $listeners = ['refreshData' => 'loadData'];
 
-    // Services
     protected UserService $userService;
     protected TrackService $trackService;
     protected PlaylistService $playlistService;
 
-
-    public function boot(TrackService $trackService)
+    public function boot(TrackService $trackService, PlaylistService $playlistService)
     {
         $this->trackService = $trackService;
+        $this->playlistService = $playlistService;
     }
-
 
     public function mount()
     {
@@ -70,16 +70,11 @@ class Member extends Component
 
     public function loadData()
     {
-        // Load users (excluding current user)
         $query = User::where('urn', '!=', user()->urn);
-
         if ($this->search) {
             $query->where('name', 'like', '%' . $this->search . '%');
         }
-
         $this->users = $query->get();
-
-        // Load current user info
         $this->userinfo = UserInformation::where('user_urn', user()->urn)->first();
     }
 
@@ -87,68 +82,195 @@ class Member extends Component
     {
         $this->loadData();
     }
-
     public function updatedGenreFilter()
     {
         $this->loadData();
     }
-
     public function updatedCostFilter()
     {
         $this->loadData();
     }
 
-    public function openRepostsModal($trackId)
+    public function updatedSearchQuery()
     {
-        $this->reset(['track']);
-        $this->selectedTrackId = $trackId;
-
-        $this->track = Track::findOrFail($trackId);
-        $this->showRepostsModal = true;
+        $this->searchSoundcloud();
     }
 
-    public function closeRepostModal()
+    public function searchSoundcloud()
     {
-        $this->reset(['track',  'selectedTrackId', 'selectedPlaylistId', 'showRepostsModal']);
+        if (empty($this->searchQuery)) {
+            // Reset to local data if search query is empty
+            $this->allTracks = Track::where('user_urn', user()->urn)->get();
+            $this->tracks = $this->allTracks->take($this->trackLimit);
+            return;
+        }
+
+        // Check if the query is a SoundCloud permalink URL
+        if (preg_match('/^https?:\/\/(www\.)?soundcloud\.com\//', $this->searchQuery)) {
+            $this->resolveSoundcloudUrl();
+        } else {
+            // If not a URL, clear all search results
+            $this->allTracks = collect();
+            $this->tracks = collect();
+        }
     }
-    public function openPlaylistTracksModal($playlistId)
+
+    protected function resolveSoundcloudUrl()
     {
-        $this->showPlaylistTracksModal = true;
-        $this->selectedPlaylistId = $playlistId;
-        $this->selectedTrackId = null;
-        $this->playlistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()->get();
+        // Search the local database for matching permalink URLs first
+        $tracksFromDb = Track::where('user_urn', user()->urn)
+            ->where(function ($query) {
+                $query->where('permalink_url', $this->searchQuery)
+                    ->orWhere('author_soundcloud_permalink_url', $this->searchQuery);
+            })
+            ->get();
+
+        if ($tracksFromDb->isNotEmpty()) {
+            $this->activeTab = 'tracks';
+            $this->allTracks = $tracksFromDb;
+            $this->tracks = $this->allTracks->take($this->trackLimit);
+            return;
+        }
+
+        // If not found locally, use SoundCloud's API to resolve the URL
+        $response = Http::get("{$this->soundcloudApiUrl}/resolve", [
+            'url' => $this->searchQuery,
+            'client_id' => $this->soundcloudClientId,
+        ]);
+
+        if ($response->successful()) {
+            $resolvedData = $response->json();
+            $this->processResolvedData($resolvedData);
+        } else {
+            $this->allTracks = collect();
+            $this->tracks = collect();
+            session()->flash('error', 'Could not resolve the SoundCloud link. Please check the URL.');
+        }
     }
-    public function closePlaylistTracksModal()
+
+
+    protected function processResolvedData($data)
     {
-        $this->reset(['selectedPlaylistId', 'playlistTracks']);
-        $this->showPlaylistTracksModal = false;
+        switch ($data['kind']) {
+            case 'track':
+                $this->activeTab = 'tracks';
+                $this->allTracks = collect([$data]);
+                $this->tracks = $this->allTracks->take($this->trackLimit);
+                break;
+            case 'user':
+                $this->activeTab = 'tracks';
+                $this->fetchUserTracks($data['id']);
+                break;
+            default:
+                $this->allTracks = collect();
+                $this->tracks = collect();
+                session()->flash('error', 'The provided URL is not a track or user profile.');
+                break;
+        }
     }
+    protected function fetchUserTracks($userId)
+    {
+        $response = Http::get("{$this->soundcloudApiUrl}/users/{$userId}/tracks", [
+            'client_id' => $this->soundcloudClientId,
+            // The API returns all tracks by default, so we don't need a limit here unless we want to paginate.
+        ]);
+
+        if ($response->successful()) {
+            $this->allTracks = collect($response->json());
+            $this->tracks = $this->allTracks->take($this->trackLimit);
+        } else {
+            $this->allTracks = collect();
+            $this->tracks = collect();
+        }
+    }
+
 
     public function openModal($userUrn)
     {
-        $this->reset(['showModal', 'user', 'selectedPlaylistId', 'selectedTrackId', 'activeTab', 'tracks', 'playlists']);
+        $this->reset([
+            'showModal',
+            'user',
+            'selectedPlaylistId',
+            'selectedTrackId',
+            'activeTab',
+            'tracks',
+            'playlists',
+            'trackLimit',
+            'playlistLimit',
+            'searchQuery'
+        ]);
         $this->selectedUserUrn = $userUrn;
         $this->showModal = true;
         $this->activeTab = 'tracks';
         $this->user = User::where('urn', $this->selectedUserUrn)->with('userInfo')->first();
         $this->user_urn = $this->user->urn;
-        $this->tracks = Track::where('user_urn', user()->urn)->get();
+        $this->allTracks = Track::where('user_urn', user()->urn)->get();
+        $this->tracks = $this->allTracks->take($this->trackLimit);
+        $this->allPlaylists = Playlist::where('user_urn', user()->urn)->get();
+        $this->playlists = $this->allPlaylists->take($this->playlistLimit);
     }
 
     public function closeModal()
     {
-        $this->reset(['showModal', 'user', 'selectedUserUrn', 'selectedPlaylistId', 'selectedTrackId', 'activeTab', 'tracks', 'playlists']);
+        $this->reset([
+            'showModal',
+            'user',
+            'selectedUserUrn',
+            'selectedPlaylistId',
+            'selectedTrackId',
+            'activeTab',
+            'tracks',
+            'playlists',
+            'trackLimit',
+            'playlistLimit',
+            'searchQuery'
+        ]);
     }
 
     public function setActiveTab($tab)
     {
         $this->reset(['selectedPlaylistId', 'selectedTrackId']);
         $this->activeTab = $tab;
+        $this->searchSoundcloud();
+    }
 
-        if ($tab === 'playlists') {
-            $this->playlists = Playlist::where('user_urn', user()->urn)->get();
+    public function openRepostsModal($trackId)
+    {
+        $this->reset(['track']);
+        $this->selectedTrackId = $trackId;
+        $trackData = Track::find($trackId);
+        if ($trackData) {
+            $this->track = $trackData;
+        } else {
+            
+        }
+        $this->showRepostsModal = true;
+    }
+
+    public function closeRepostModal()
+    {
+        $this->reset(['track', 'selectedTrackId', 'selectedPlaylistId', 'showRepostsModal']);
+    }
+
+    public function openPlaylistTracksModal($playlistId)
+    {
+        $this->showPlaylistTracksModal = true;
+        $this->selectedPlaylistId = $playlistId;
+        $this->selectedTrackId = null;
+        $playlist = $this->allPlaylists->firstWhere('id', $playlistId);
+        if ($playlist) {
+            $this->playlistTracks = collect($playlist['tracks']);
+        } else {
+            $this->playlistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()->get();
         }
     }
+
+    public function closePlaylistTracksModal()
+    {
+        $this->reset(['selectedPlaylistId', 'playlistTracks']);
+        $this->showPlaylistTracksModal = false;
+    }
+
     public function createRepostsRequest()
     {
         try {
@@ -207,6 +329,18 @@ class Member extends Component
             // Log the actual error for debugging
             logger()->error('Repost request failed', ['error' => $e->getMessage()]);
         }
+    }
+
+    public function loadMoreTracks()
+    {
+        $this->trackLimit += 4;
+        $this->tracks = $this->allTracks->take($this->trackLimit);
+    }
+
+    public function loadMorePlaylists()
+    {
+        $this->playlistLimit += 4;
+        $this->playlists = $this->allPlaylists->take($this->playlistLimit);
     }
 
     public function render()

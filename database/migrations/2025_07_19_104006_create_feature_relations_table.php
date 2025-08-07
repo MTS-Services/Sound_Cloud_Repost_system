@@ -19,10 +19,14 @@ return new class extends Migration
             $table->unsignedBigInteger('sort_order')->default(0);
             $table->unsignedBigInteger('package_id')->index();
             $table->unsignedBigInteger('feature_id')->index();
+            $table->unsignedBigInteger('feature_category_id')->nullable();
             $table->string('package_type')->index();
             $table->string('value');
-
+            
+            $table->foreign('feature_category_id')->references('id')->on('feature_categories')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('feature_id')->references('id')->on('features')->onDelete('cascade')->onUpdate('cascade');
+
+            $table->unique(['package_id','package_type', 'feature_id']);
 
             $table->timestamps();
             $table->softDeletes();

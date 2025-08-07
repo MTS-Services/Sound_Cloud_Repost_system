@@ -2,7 +2,7 @@
     showModal: @entangle('showModal').live,
     showRepostsModal: @entangle('showRepostsModal').live
 }">
-    {{-- @dd($this->all()); --}}
+
     <!-- Header -->
     <div class="mb-8">
         <h1 class="text-2xl md:text-3xl font-bold mb-2 dark:text-white">Browse Members</h1>
@@ -147,11 +147,12 @@
         <div
             class="w-full max-w-3xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col max-h-[80vh] overflow-hidden">
 
+            {{-- HEADER --}}
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                        <i data-lucide="music" class="w-5 h-5 text-white"></i>
+                    <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                        <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                         {{ __('Choose a track or playlist') }}
@@ -159,11 +160,12 @@
                 </div>
                 <button x-on:click="showModal = false"
                     class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    <x-heroicon-s-x-mark  class="w-5 h-5"/>
                 </button>
             </div>
 
             @if ($showModal)
+                {{-- TABS --}}
                 <div class="flex border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
                     <button wire:click="setActiveTab('tracks')"
                         class="flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeTab === 'tracks' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
@@ -181,129 +183,116 @@
                     </button>
                 </div>
 
-                <!-- Search option -->
-                <div class="h-full overflow-y-auto">
-                    <div class="p-4 sm:p-8 bg-white dark:bg-slate-800 flex flex-col items-center ">
-                        <label for="track-link" class="mb-2 text-gray-700  dark:text-white font-semibold text-lg">
-                            Paste a SoundCloud profile or track link
-                        </label>
-
-                        <div class="flex  max-w-xl w-full shadow-md rounded-lg overflow-hidden">
-                            <input type="text" id="track-link"
-                                placeholder="Paste a SoundCloud profile or track link"
-                                class="flex-grow p-4 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200">
-
-                            <button type="submit"
-                                class="bg-orange-500 text-white p-4 w-16 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
-                            </button>
+                {{-- SEARCH & CONTENT --}}
+                <div class="w-full max-w-2xl mx-auto mt-6 flex flex-col overflow-hidden">
+                    @if ($activeTab === 'tracks')
+                        {{-- SEARCH BAR --}}
+                        <div class="p-4">
+                            <label for="track-link-search"
+                                class="text-xl font-semibold text-gray-700 dark:text-gray-200">
+                                Paste a SoundCloud profile or track link
+                            </label>
+                            <div class="flex w-full mt-2">
+                                <input wire:model.live.debounce.500ms="searchQuery" type="text"
+                                    id="track-link-search" placeholder="Paste a SoundCloud profile or track link"
+                                    class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 border border-gray-300 dark:border-gray-600 ">
+                                <button wire:click="searchSoundcloud" type="button"
+                                    class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200 ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <!-- Content -->
-                    <div class="p-6 ">
-                        @if ($activeTab === 'tracks')
-                            <!-- Tracks Content -->
-                            <div class="space-y-4">
-                                @forelse ($tracks as $track_)
-                                    <div wire:click="openRepostsModal({{ $track_->id }})"
-                                        class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
-                                        <div class="flex-shrink-0">
-                                            <img class="h-14 w-14 rounded-xl object-cover shadow-md"
-                                                src="{{ soundcloud_image($track_->artwork_url) }}"
-                                                alt="{{ $track_->title }}" />
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <p
-                                                class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                                                {{ $track_->title }}
-                                            </p>
-                                            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                                by
-                                                <strong
-                                                    class="text-orange-600 dark:text-orange-400">{{ $track_->author_username }}</strong>
-                                                <span class="ml-2 text-xs text-gray-400">{{ $track_->genre }}</span>
-                                            </p>
-                                            <span
-                                                class="inline-block bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono">{{ $track_->isrc }}</span>
-                                        </div>
-                                        <div class="flex-shrink-0">
-                                            <i data-lucide="chevron-right"
-                                                class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <div class="text-center py-16 text-gray-500 dark:text-gray-400">
-                                        <div
-                                            class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                            <i data-lucide="music" class="w-8 h-8 text-orange-500"></i>
-                                        </div>
-                                        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">No
-                                            tracks
-                                            found</h3>
-                                        <p class="text-gray-500 dark:text-gray-400">Try uploading one first to get
-                                            started.
-                                        </p>
-                                    </div>
-                                @endforelse
-                            </div>
-                            <div class="text-center mt-6">
+                    @endif
 
-                            </div>
-                        @else
-                            <!-- Playlists Content -->
-                            <div class="space-y-4">
-                                @forelse ($playlists as $playlist_)
-                                    <div wire:click='openPlaylistTracksModal({{ $playlist_->id }})'
-                                        class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
-                                        <div class="flex-shrink-0">
-                                            <img class="h-14 w-14 rounded-xl object-cover shadow-md"
-                                                src="{{ soundcloud_image($playlist_->artwork_url) }}"
-                                                alt="{{ $playlist_->title }}" />
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <p
-                                                class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                                                {{ $playlist_->title }}
-                                            </p>
-                                            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                                {{ $playlist_->track_count }} {{ __('tracks') }}
-                                            </p>
-                                        </div>
-                                        <div class="flex-shrink-0">
-                                            <i data-lucide="chevron-right"
-                                                class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
-                                        </div>
+                    {{-- TRACKS OR PLAYLISTS --}}
+                    <div class="h-full overflow-y-auto px-4 pb-6 space-y-1">
+                        @if ($activeTab === 'tracks')
+                            @forelse ($tracks as $track_)
+                                <div wire:click="openRepostsModal({{ $track_->id }})"
+                                    class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">
+                                    <div class="flex-shrink-0">
+                                        <img class="h-12 w-12 rounded object-cover shadow"
+                                            src="{{ soundcloud_image($track_->artwork_url) }}"
+                                            alt="{{ $track_->title }}" />
                                     </div>
-                                @empty
-                                    <div class="text-center py-16 text-gray-500 dark:text-gray-400">
-                                        <div
-                                            class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                            <i data-lucide="list-music" class="w-8 h-8 text-orange-500"></i>
-                                        </div>
-                                        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">No
-                                            playlists found</h3>
-                                        <p class="text-gray-500 dark:text-gray-400">Try creating one first to get
-                                            started.
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                            {{ $track_->type }} • {{ $track_->author_username }}
+                                        </p>
+                                        <p class="font-semibold text-gray-800 dark:text-white truncate">
+                                            {{ $track_->title }}
                                         </p>
                                     </div>
-                                @endforelse
-                            </div>
+                                    <div class="flex-shrink-0">
+                                        <i data-lucide="chevron-right"
+                                            class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center py-12 text-gray-500 dark:text-gray-400">
+                                    <i data-lucide="music"
+                                        class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-3"></i>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">No tracks found
+                                    </h3>
+                                    <p>No matching tracks found for your search.</p>
+                                </div>
+                            @endforelse
+
+                            @if (count($tracks) < count($allTracks))
+                                <div class="text-center mt-6">
+                                    <button wire:click="loadMoreTracks"
+                                        class="font-semibold text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 transition-colors duration-200">
+                                        Load more
+                                    </button>
+                                </div>
+                            @endif
+                        @else
+                            @forelse ($playlists as $playlist_)
+                                <div wire:click="openPlaylistTracksModal({{ $playlist_->id }})"
+                                    class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">
+                                    <div class="flex-shrink-0">
+                                        <img class="h-12 w-12 rounded object-cover shadow"
+                                            src="{{ soundcloud_image($playlist_->artwork_url) }}"
+                                            alt="{{ $playlist_->title }}" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="font-semibold text-gray-800 dark:text-white truncate">
+                                            {{ $playlist_->title }}
+                                        </p>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                            {{ $playlist_->track_count }} {{ __('tracks') }}
+                                        </p>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                        <i data-lucide="chevron-right"
+                                            class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center py-12 text-gray-500 dark:text-gray-400">
+                                    <i data-lucide="list-music"
+                                        class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-3"></i>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">No playlists
+                                        found</h3>
+                                    <p>No matching playlists found for your search.</p>
+                                </div>
+                            @endforelse
+
+                            @if (count($playlists) < count($allPlaylists))
+                                <div class="text-center mt-6">
+                                    <button wire:click="loadMorePlaylists"
+                                        class="font-semibold text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 transition-colors duration-200">
+                                        Load more
+                                    </button>
+                                </div>
+                            @endif
                         @endif
                     </div>
-
-                    <div class="text-center mt-6 mb-10">
-                        <button {{-- wire:click="loadMore" --}}
-                            class="px-6 py-2 text-sm font-semibold  text-orange-600 dark:text-orange-400  border-orange-600 dark:border-orange-400   transition-colors duration-200">
-                            Load More
-                        </button>
-                    </div>
-
                 </div>
-
             @endif
         </div>
     </div>
@@ -320,16 +309,16 @@
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                        <i data-lucide="music" class="w-5 h-5 text-white"></i>
-                    </div>
+                   <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                    <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
+                </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                         {{ __('Playlist Tracks') }}
                     </h2>
                 </div>
                 <button x-on:click="showPlaylistTracksModal= false"
                     class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    <x-heroicon-s-x-mark  class="w-5 h-5"/>
                 </button>
             </div>
 
@@ -382,8 +371,8 @@
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                        <i data-lucide="music" class="w-5 h-5 text-white"></i>
+                    <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                        <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                         {{ __('Requesting Reposts') }}
@@ -391,7 +380,7 @@
                 </div>
                 <button x-on:click="showRepostsModal= false"
                     class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    <x-heroicon-s-x-mark  class="w-5 h-5"/>
                 </button>
             </div>
 

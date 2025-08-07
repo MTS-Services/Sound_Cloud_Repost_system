@@ -11,6 +11,8 @@ class FeatureRelation extends BaseModel
         'package_type',
         'feature_id',
         'value',
+        'feature_category_id',
+        
         'created_by',
         'updated_by',
         'deleted_by'
@@ -24,5 +26,9 @@ class FeatureRelation extends BaseModel
     public function feature()
     {
         return $this->belongsTo(Feature::class);
+    }
+    public function featureCategory()
+    {
+        return $this->belongsTo(FeatureCategory::class);
     }
 }

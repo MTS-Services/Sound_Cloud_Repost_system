@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('sort_order')->default(0);
             $table->unsignedBigInteger('feature_category_id')->index();
 
-            $table->string('name')->unique();
+            $table->string('name')->nullable()->unique();
             $table->tinyInteger('key')->unique();
             $table->tinyInteger('type')->default(Feature::TYPE_STRING)->comment(Feature::TYPE_STRING .': string', Feature::TYPE_BOOLEAN .': boolean');
             

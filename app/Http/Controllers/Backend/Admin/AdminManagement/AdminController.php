@@ -158,11 +158,7 @@ class AdminController extends Controller implements HasMiddleware
     {
         try {
             $admin = $this->adminService->getAdmin($id);
-            // if role id is super admin and admin is not super admin then can not update
-            if ($admin->role_id == 1 && admin()->role_id != 1) {
-                session()->flash('error', "You don't have permission to update Super Admin! Stay away from here!");
-                return $this->redirectIndex();
-            }
+           
             $validated = $request->validated();
             $validated['role_id'] = $request->role;
             $this->adminService->updateAdmin($admin, $validated, $request->file('image'));

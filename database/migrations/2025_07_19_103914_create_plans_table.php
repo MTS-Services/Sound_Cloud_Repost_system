@@ -20,8 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('sort_order')->default(0);
             $table->string('name')->unique();
             $table->string('slug')->unique();
-            $table->decimal('price_monthly', 10, 2);
-            $table->decimal('price_monthly_yearly', 10, 2);
+            $table->integer('yearly_price_save')->nullable()->default(0);
             $table->tinyInteger('tag')->nullable()->comment(Plan::TAG_MOST_POPULAR .': Most popular', Plan::TAG_PRO .': Pro plans');
             $table->tinyInteger('status')->default(Plan::STATUS_ACTIVE)->comment(Plan::STATUS_ACTIVE .': active', Plan::STATUS_INACTIVE .': inactive');
             $table->text('notes')->nullable();

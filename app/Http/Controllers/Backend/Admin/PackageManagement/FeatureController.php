@@ -23,12 +23,12 @@ class FeatureController extends Controller
     }
 
     protected FeatureSevice $featureService;
-    protected FeatureCategorySevice $featureCategoryService;
+    protected FeatureCategorySevice $FeatureCategorySevice;
 
-    public function __construct(FeatureSevice $featureService, FeatureCategorySevice $featureCategoryService)
+    public function __construct(FeatureSevice $featureService, FeatureCategorySevice $FeatureCategorySevice)
     {
         $this->featureService = $featureService;
-        $this->featureCategoryService = $featureCategoryService;
+        $this->FeatureCategorySevice = $FeatureCategorySevice;
     }
 
     public static function middleware(): array
@@ -53,7 +53,7 @@ class FeatureController extends Controller
             $query = $this->featureService->getFeatures();
             return DataTables::eloquent($query)
                 ->editColumn('key', function ($feature) {
-                    return $feature->key_name;
+                    return $feature->features_name;
                 })
                 ->editColumn('type', function ($feature) {
                     return $feature->type_name;
@@ -71,7 +71,7 @@ class FeatureController extends Controller
                     $menuItems = $this->menuItems($feature);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action', 'feature_category_id', 'created_by', 'created_at'])
+                ->rawColumns(['action', 'type', 'key', 'feature_category_id', 'created_by', 'created_at'])
                 ->make(true);
         }
         return view('backend.admin.package_management.features.index');
@@ -102,7 +102,7 @@ class FeatureController extends Controller
      */
     public function create()
     {
-        $data['feature_categories'] = $this->featureCategoryService->getFeatureCategories()->select(['id', 'name'])->get();
+        $data['feature_categories'] = $this->FeatureCategorySevice->getFeatureCategories()->select(['id', 'name'])->get();
         return view('backend.admin.package_management.features.create', $data);
     }
 
@@ -139,7 +139,7 @@ class FeatureController extends Controller
     public function edit(string $id)
     {
         $data['feature'] = $this->featureService->getFeature($id);
-        $data['feature_categories'] = $this->featureCategoryService->getFeatureCategories()->select(['id', 'name'])->get();
+        $data['feature_categories'] = $this->FeatureCategorySevice->getFeatureCategories()->select(['id'])->get();
         return view('backend.admin.package_management.features.edit', $data);
     }
 
