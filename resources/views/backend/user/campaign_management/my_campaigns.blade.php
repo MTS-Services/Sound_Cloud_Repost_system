@@ -10,7 +10,7 @@
             <button wire:click="toggleCampaignsModal" x-on:click="showCampaignsModal = true"
                 class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 rounded-xl flex items-center gap-3 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                 <x-lucide-plus class="w-5 h-5" />
-                {{ __('New Campaign') }}
+                {{ __('Start a new campaign') }}
             </button>
         </div>
 
