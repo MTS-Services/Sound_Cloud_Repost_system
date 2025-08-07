@@ -140,7 +140,6 @@ class Campaign extends Component
     {
         $rules = [
             'credit' => 'required|integer|min:100',
-            'maxFollower' => 'required|integer|min:0',
         ];
         return $rules;
     }

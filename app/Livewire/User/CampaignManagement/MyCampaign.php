@@ -103,7 +103,6 @@ class MyCampaign extends Component
     {
         $rules = [
             'credit' => 'required|integer|min:100',
-            'maxFollower' => 'required|integer|min:0',
             // 'title' => 'required|string|max:255',
             // 'description' => 'required|string|max:1000',
             // 'endDate' => 'required|date|after_or_equal:today',

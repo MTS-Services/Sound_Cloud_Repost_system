@@ -746,10 +746,10 @@
                         </div>
 
                         <div class="space-y-3 ml-4">
-                            <div x-data="{ showOptions: true }" class="flex flex-col space-y-2">
+                            <div x-data="{ showOptions: false }" class="flex flex-col space-y-2">
                                 <!-- Checkbox + Label -->
                                 <div class="flex items-start space-x-3">
-                                    <input type="checkbox" @change="showOptions = !showOptions" checked
+                                    <input type="checkbox" @change="showOptions = !showOptions"
                                         class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
 
                                     <div class="flex items-center space-x-2">
@@ -780,7 +780,7 @@
                                     <input type="checkbox" @change="showOptions = !showOptions"
                                         class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                                     <div class="flex items-center space-x-2">
-                                        <span class="text-sm text-gray-700">Lxclude users who repost too often (last
+                                        <span class="text-sm text-gray-700">Exclude users who repost too often (last
                                             24h)</span>
                                     </div>
                                 </div>
@@ -812,7 +812,8 @@
                                 </div>
                             </div>
                         </div>
-
+                    </div>
+                    <div class="border border-gray-200 rounded-lg p-4">
                         <!-- Genre Selection -->
                         <div class="mt-6">
                             <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Genre Preferences for
