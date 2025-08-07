@@ -508,8 +508,8 @@
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                        <x-lucide-music class="w-5 h-5 text-white" />
+                    <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                        <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                         {{ __('Choose a track or playlist') }}
