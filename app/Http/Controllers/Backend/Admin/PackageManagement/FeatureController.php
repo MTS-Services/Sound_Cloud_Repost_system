@@ -23,12 +23,12 @@ class FeatureController extends Controller
     }
 
     protected FeatureSevice $featureService;
-    protected FeatureCategorySevice $featureCategoryService;
+    protected FeatureCategorySevice $FeatureCategorySevice;
 
-    public function __construct(FeatureSevice $featureService, FeatureCategorySevice $featureCategoryService)
+    public function __construct(FeatureSevice $featureService, FeatureCategorySevice $FeatureCategorySevice)
     {
         $this->featureService = $featureService;
-        $this->featureCategoryService = $featureCategoryService;
+        $this->FeatureCategorySevice = $FeatureCategorySevice;
     }
 
     public static function middleware(): array
@@ -102,7 +102,7 @@ class FeatureController extends Controller
      */
     public function create()
     {
-        $data['feature_categories'] = $this->featureCategoryService->getFeatureCategories()->select(['id', 'name'])->get();
+        $data['feature_categories'] = $this->FeatureCategorySevice->getFeatureCategories()->select(['id', 'name'])->get();
         return view('backend.admin.package_management.features.create', $data);
     }
 
@@ -139,7 +139,7 @@ class FeatureController extends Controller
     public function edit(string $id)
     {
         $data['feature'] = $this->featureService->getFeature($id);
-        $data['feature_categories'] = $this->featureCategoryService->getFeatureCategories()->select(['id'])->get();
+        $data['feature_categories'] = $this->FeatureCategorySevice->getFeatureCategories()->select(['id'])->get();
         return view('backend.admin.package_management.features.edit', $data);
     }
 

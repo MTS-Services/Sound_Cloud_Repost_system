@@ -31,12 +31,12 @@ class PlanController extends Controller implements HasMiddleware
     }
 
     protected PlanService $planService;
-    protected FeatureCategorySevice $featureCategoryService;
+    protected FeatureCategorySevice $FeatureCategorySevice;
 
-    public function __construct(PlanService $planService, FeatureCategorySevice $featureCategoryService)
+    public function __construct(PlanService $planService, FeatureCategorySevice $FeatureCategorySevice)
     {
         $this->planService = $planService;
-        $this->featureCategoryService = $featureCategoryService;
+        $this->FeatureCategorySevice = $FeatureCategorySevice;
     }
 
     public static function middleware(): array
@@ -124,7 +124,7 @@ class PlanController extends Controller implements HasMiddleware
      */
     public function create(): View
     {
-        $data['feature_categories'] = $this->featureCategoryService->getFeatureCategories()->with('features')->get();
+        $data['feature_categories'] = $this->FeatureCategorySevice->getFeatureCategories()->with('features')->get();
         // dd($data);
         return view('backend.admin.package_management.plans.create', $data);
     }
@@ -165,7 +165,7 @@ class PlanController extends Controller implements HasMiddleware
     public function edit(string $encryptedId): View
     {
         $data['plan'] = $this->planService->getPlan($encryptedId)->load('featureRelations');
-        $data['featureCategories'] = $this->featureCategoryService->getFeatureCategories()->get();
+        $data['featureCategories'] = $this->FeatureCategorySevice->getFeatureCategories()->get();
 
         return view('backend.admin.package_management.plans.edit', $data);
     }
