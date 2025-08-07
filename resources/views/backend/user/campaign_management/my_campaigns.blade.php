@@ -196,7 +196,7 @@
                 </div> --}}
             <div class="flex flex-col lg:flex-row justify-between gap-6 px-4">
                 <!-- Main Content -->
-                <div class="w-full">
+                <div class="w-full flex flex-col gap-6">
                     @forelse ($campaigns as $campaig_)
                         <div class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
                             <div class="p-4 sm:p-6">
@@ -668,11 +668,17 @@
                             </div>
                             <span class="text-2xl font-bold text-orange-500">{{ $credit }}</span>
                         </div>
+                        {{-- Error Message --}}
+                        @if ($errors->has('credit'))
+                            <p class="text-xs text-red-500 mb-4">
+                                {{ $errors->first('credit') }}
+                            </p>
+                        @endif
 
                         <!-- Slider -->
                         <div class="relative">
                             <input type="range" x-data x-on:input="$wire.set('credit', $event.target.value)"
-                                min="100" max="500" value="{{ $credit }}"
+                                min="0" max="500" value="{{ $credit }}"
                                 class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
                         </div>
 
@@ -708,7 +714,7 @@
 
                     <!-- Enable Campaign Accelerator -->
                     <div class="flex items-start space-x-3">
-                        <input type="checkbox" wire:model="isFeatureEnabled"
+                        <input type="checkbox" wire:model="proFeatureEnabled"
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                         <div>
                             <div class="flex items-center space-x-2">
@@ -749,8 +755,12 @@
                                 <div x-show="showOptions" x-transition class="ml-7 p-3">
                                     <div class=" items-center space-x-3">
                                         <!-- Number Input -->
-                                        <input type="number" placeholder="Max follow" wire:model="maxFollower"
+                                        <input type="number" placeholder="Max follow" wire:model="maxFollower" checked
                                             class="block w-48 px-3 py-1 border rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
+                                        {{-- Error Message --}}
+                                        @error('maxFollower')
+                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                 </div>
 
