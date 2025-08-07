@@ -34,154 +34,156 @@
 
             <!-- Pricing Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-16">
-                <!-- Free Forever Plan -->
-                <div class="relative bg-white rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
-                    x-intersect="$el.classList.add('fade-in-up')" x-intersect:leave="$el.classList.remove('fade-in-up')"
-                    :style="`transition-delay: ${100}ms`" @mouseenter="hoveredCard = 'free'"
-                    @mouseleave="hoveredCard = null">
-                    <div class="text-center p-6 pb-4">
-                        <div class="mx-auto mb-4 p-3 bg-slate-100 rounded-full w-fit transition-all duration-300"
-                            :class="{ 'scale-110': hoveredCard === 'free' }">
-                            <i data-lucide="star" class="h-6 w-6 text-slate-700"></i>
+                
+                    <!-- Free Forever Plan -->
+                    <div class="relative bg-white rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
+                        x-intersect="$el.classList.add('fade-in-up')"
+                        x-intersect:leave="$el.classList.remove('fade-in-up')" :style="`transition-delay: ${100}ms`"
+                        @mouseenter="hoveredCard = 'free'" @mouseleave="hoveredCard = null">
+                        <div class="text-center p-6 pb-4">
+                            <div class="mx-auto mb-4 p-3 bg-slate-100 rounded-full w-fit transition-all duration-300"
+                                :class="{ 'scale-110': hoveredCard === 'free' }">
+                                <i data-lucide="star" class="h-6 w-6 text-slate-700"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">{{$plans[0]->name}}</h3>
+                            <p class="text-sm text-slate-600 mb-4">{{$plans[0]->description}}</p>
+                            <div class="mt-4">
+                                <span class="text-3xl font-bold text-slate-900">${{$plans[0]->monthly_price}}</span>
+                                <span class="text-slate-600">/forever</span>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-bold mb-2">Free Forever</h3>
-                        <p class="text-sm text-slate-600 mb-4">Perfect for getting started</p>
-                        <div class="mt-4">
-                            <span class="text-3xl font-bold text-slate-900">$0</span>
-                            <span class="text-slate-600">/forever</span>
+                        <div class="p-6 pt-0">
+                            <button
+                                class="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02]"
+                                @click="showPlanDetails('free')">
+                                Get Started
+                            </button>
                         </div>
                     </div>
-                    <div class="p-6 pt-0">
-                        <button
-                            class="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02]"
-                            @click="showPlanDetails('free')">
-                            Get Started
-                        </button>
-                    </div>
-                </div>
 
-                <!-- Artist Plan -->
-                <div class="relative bg-white rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
-                    x-intersect="$el.classList.add('fade-in-up')" x-intersect:leave="$el.classList.remove('fade-in-up')"
-                    :style="`transition-delay: ${200}ms`" @mouseenter="hoveredCard = 'artist'"
-                    @mouseleave="hoveredCard = null">
-                    <div class="text-center p-6 pb-4">
-                        <div class="mx-auto mb-4 p-3 bg-slate-100 rounded-full w-fit transition-all duration-300"
-                            :class="{ 'scale-110': hoveredCard === 'artist' }">
-                            <i data-lucide="users" class="h-6 w-6 text-slate-700"></i>
+                    <!-- Artist Plan -->
+                    <div class="relative bg-white rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
+                        x-intersect="$el.classList.add('fade-in-up')"
+                        x-intersect:leave="$el.classList.remove('fade-in-up')" :style="`transition-delay: ${200}ms`"
+                        @mouseenter="hoveredCard = 'artist'" @mouseleave="hoveredCard = null">
+                        <div class="text-center p-6 pb-4">
+                            <div class="mx-auto mb-4 p-3 bg-slate-100 rounded-full w-fit transition-all duration-300"
+                                :class="{ 'scale-110': hoveredCard === 'artist' }">
+                                <i data-lucide="users" class="h-6 w-6 text-slate-700"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Artist</h3>
+                            <p class="text-sm text-slate-600 mb-4">For individual artists</p>
+                            <div class="mt-4">
+                                <span class="text-3xl font-bold text-slate-900"
+                                    x-text="annualBilling ? '$12' : '$15'"></span>
+                                <span class="text-slate-600">/month</span>
+                                <div x-show="annualBilling" class="text-xs text-slate-500 mt-1">billed annually</div>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-bold mb-2">Artist</h3>
-                        <p class="text-sm text-slate-600 mb-4">For individual artists</p>
-                        <div class="mt-4">
-                            <span class="text-3xl font-bold text-slate-900"
-                                x-text="annualBilling ? '$12' : '$15'"></span>
-                            <span class="text-slate-600">/month</span>
-                            <div x-show="annualBilling" class="text-xs text-slate-500 mt-1">billed annually</div>
+                        <div class="p-6 pt-0">
+                            <button
+                                class="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02]"
+                                @click="showPlanDetails('artist')">
+                                Choose Plan
+                            </button>
                         </div>
                     </div>
-                    <div class="p-6 pt-0">
-                        <button
-                            class="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02]"
-                            @click="showPlanDetails('artist')">
-                            Choose Plan
-                        </button>
-                    </div>
-                </div>
 
-                <!-- Network Plan (Most Popular) -->
-                <div class="relative bg-white rounded-xl shadow-xl ring-2 ring-orange-500 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
-                    x-intersect="$el.classList.add('fade-in-up')" x-intersect:leave="$el.classList.remove('fade-in-up')"
-                    :style="`transition-delay: ${300}ms`" @mouseenter="hoveredCard = 'network'"
-                    @mouseleave="hoveredCard = null">
-                    <div
-                        class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold animate-pulse">
-                        Most Popular
-                    </div>
-                    <div class="text-center p-6 pb-4">
-                        <div class="mx-auto mb-4 p-3 bg-orange-100 rounded-full w-fit transition-all duration-300"
-                            :class="{ 'scale-110': hoveredCard === 'network' }">
-                            <i data-lucide="zap" class="h-6 w-6 text-orange-600"></i>
+                    <!-- Network Plan (Most Popular) -->
+                    <div class="relative bg-white rounded-xl shadow-xl ring-2 ring-orange-500 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+                        x-intersect="$el.classList.add('fade-in-up')"
+                        x-intersect:leave="$el.classList.remove('fade-in-up')" :style="`transition-delay: ${300}ms`"
+                        @mouseenter="hoveredCard = 'network'" @mouseleave="hoveredCard = null">
+                        <div
+                            class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold animate-pulse">
+                            Most Popular
                         </div>
-                        <h3 class="text-xl font-bold mb-2">Network</h3>
-                        <p class="text-sm text-slate-600 mb-4">For growing networks</p>
-                        <div class="mt-4">
-                            <span class="text-3xl font-bold text-slate-900"
-                                x-text="annualBilling ? '$24' : '$30'"></span>
-                            <span class="text-slate-600">/month</span>
-                            <div x-show="annualBilling" class="text-xs text-slate-500 mt-1">billed annually</div>
+                        <div class="text-center p-6 pb-4">
+                            <div class="mx-auto mb-4 p-3 bg-orange-100 rounded-full w-fit transition-all duration-300"
+                                :class="{ 'scale-110': hoveredCard === 'network' }">
+                                <i data-lucide="zap" class="h-6 w-6 text-orange-600"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Network</h3>
+                            <p class="text-sm text-slate-600 mb-4">For growing networks</p>
+                            <div class="mt-4">
+                                <span class="text-3xl font-bold text-slate-900"
+                                    x-text="annualBilling ? '$24' : '$30'"></span>
+                                <span class="text-slate-600">/month</span>
+                                <div x-show="annualBilling" class="text-xs text-slate-500 mt-1">billed annually</div>
+                            </div>
+                        </div>
+                        <div class="p-6 pt-0">
+                            <button
+                                class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02] shadow-lg shadow-orange-500/20"
+                                @click="showPlanDetails('network')">
+                                Choose Plan
+                            </button>
                         </div>
                     </div>
-                    <div class="p-6 pt-0">
-                        <button
-                            class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02] shadow-lg shadow-orange-500/20"
-                            @click="showPlanDetails('network')">
-                            Choose Plan
-                        </button>
-                    </div>
-                </div>
 
-                <!-- Promoter Plan -->
-                <div class="relative bg-white rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
-                    x-intersect="$el.classList.add('fade-in-up')" x-intersect:leave="$el.classList.remove('fade-in-up')"
-                    :style="`transition-delay: ${400}ms`" @mouseenter="hoveredCard = 'promoter'"
-                    @mouseleave="hoveredCard = null">
-                    <div class="text-center p-6 pb-4">
-                        <div class="mx-auto mb-4 p-3 bg-slate-100 rounded-full w-fit transition-all duration-300"
-                            :class="{ 'scale-110': hoveredCard === 'promoter' }">
-                            <i data-lucide="crown" class="h-6 w-6 text-slate-700"></i>
+                    <!-- Promoter Plan -->
+                    <div class="relative bg-white rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
+                        x-intersect="$el.classList.add('fade-in-up')"
+                        x-intersect:leave="$el.classList.remove('fade-in-up')" :style="`transition-delay: ${400}ms`"
+                        @mouseenter="hoveredCard = 'promoter'" @mouseleave="hoveredCard = null">
+                        <div class="text-center p-6 pb-4">
+                            <div class="mx-auto mb-4 p-3 bg-slate-100 rounded-full w-fit transition-all duration-300"
+                                :class="{ 'scale-110': hoveredCard === 'promoter' }">
+                                <i data-lucide="crown" class="h-6 w-6 text-slate-700"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Promoter</h3>
+                            <p class="text-sm text-slate-600 mb-4">For professional promoters</p>
+                            <div class="mt-4">
+                                <span class="text-3xl font-bold text-slate-900"
+                                    x-text="annualBilling ? '$100' : '$125'"></span>
+                                <span class="text-slate-600">/month</span>
+                                <div x-show="annualBilling" class="text-xs text-slate-500 mt-1">billed annually</div>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-bold mb-2">Promoter</h3>
-                        <p class="text-sm text-slate-600 mb-4">For professional promoters</p>
-                        <div class="mt-4">
-                            <span class="text-3xl font-bold text-slate-900"
-                                x-text="annualBilling ? '$100' : '$125'"></span>
-                            <span class="text-slate-600">/month</span>
-                            <div x-show="annualBilling" class="text-xs text-slate-500 mt-1">billed annually</div>
+                        <div class="p-6 pt-0">
+                            <button
+                                class="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02]"
+                                @click="showPlanDetails('promoter')">
+                                Choose Plan
+                            </button>
                         </div>
                     </div>
-                    <div class="p-6 pt-0">
-                        <button
-                            class="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02]"
-                            @click="showPlanDetails('promoter')">
-                            Choose Plan
-                        </button>
-                    </div>
-                </div>
 
-                <!-- Ultimate Plan -->
-                <div class="relative bg-white rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
-                    x-intersect="$el.classList.add('fade-in-up')"
-                    x-intersect:leave="$el.classList.remove('fade-in-up')" :style="`transition-delay: ${500}ms`"
-                    @mouseenter="hoveredCard = 'ultimate'" @mouseleave="hoveredCard = null">
-                    <div class="text-center p-6 pb-4">
-                        <div class="mx-auto mb-4 p-3 bg-slate-100 rounded-full w-fit transition-all duration-300"
-                            :class="{ 'scale-110': hoveredCard === 'ultimate' }">
-                            <i data-lucide="infinity" class="h-6 w-6 text-slate-700"></i>
+                    <!-- Ultimate Plan -->
+                    <div class="relative bg-white rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
+                        x-intersect="$el.classList.add('fade-in-up')"
+                        x-intersect:leave="$el.classList.remove('fade-in-up')" :style="`transition-delay: ${500}ms`"
+                        @mouseenter="hoveredCard = 'ultimate'" @mouseleave="hoveredCard = null">
+                        <div class="text-center p-6 pb-4">
+                            <div class="mx-auto mb-4 p-3 bg-slate-100 rounded-full w-fit transition-all duration-300"
+                                :class="{ 'scale-110': hoveredCard === 'ultimate' }">
+                                <i data-lucide="infinity" class="h-6 w-6 text-slate-700"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Ultimate</h3>
+                            <p class="text-sm text-slate-600 mb-4">For enterprise solutions</p>
+                            <div class="mt-4">
+                                <span class="text-3xl font-bold text-slate-900"
+                                    x-text="annualBilling ? '$240' : '$300'"></span>
+                                <span class="text-slate-600">/month</span>
+                                <div x-show="annualBilling" class="text-xs text-slate-500 mt-1">billed annually</div>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-bold mb-2">Ultimate</h3>
-                        <p class="text-sm text-slate-600 mb-4">For enterprise solutions</p>
-                        <div class="mt-4">
-                            <span class="text-3xl font-bold text-slate-900"
-                                x-text="annualBilling ? '$240' : '$300'"></span>
-                            <span class="text-slate-600">/month</span>
-                            <div x-show="annualBilling" class="text-xs text-slate-500 mt-1">billed annually</div>
+                        <div class="p-6 pt-0">
+                            <button
+                                class="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02]"
+                                @click="showPlanDetails('ultimate')">
+                                Choose Plan
+                            </button>
                         </div>
                     </div>
-                    <div class="p-6 pt-0">
-                        <button
-                            class="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02]"
-                            @click="showPlanDetails('ultimate')">
-                            Choose Plan
-                        </button>
-                    </div>
-                </div>
+                
             </div>
 
             <!-- Feature Comparison Table -->
-            <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-16 transition-all duration-300 hover:shadow-2xl"
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-16  p-4 transition-all duration-300 hover:shadow-2xl"
                 x-intersect="$el.classList.add('fade-in-up')">
                 <div class="bg-slate-50 px-6 py-4 border-b">
-                    <h3 class="text-2xl font-bold text-slate-900">Feature Comparison</h3>
+                    <h3 class="text-3xl font-bold text-slate-900">Feature Comparison</h3>
                     <p class="text-slate-600">Compare all features across our plans</p>
                 </div>
 

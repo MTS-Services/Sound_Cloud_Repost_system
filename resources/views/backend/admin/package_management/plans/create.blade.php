@@ -153,6 +153,12 @@
                             <x-inputs.input name="slug" label="{{ __('Slug') }}" placeholder="Enter plan slug"
                                 value="{{ old('slug') }}" :messages="$errors->get('slug')" />
                         </div>
+                         {{-- monthly price --}}
+                        <div class="space-y-2">
+                            <x-inputs.input name="monthly_price" label="{{ __('Monthly Price') }}"
+                                placeholder="Enter Price Monthly" value="{{ old('monthly_price') }}"
+                                :messages="$errors->get('monthly_price')" />
+                        </div>
                         {{-- yearly save price --}}
                         <div class="space-y-2">
                             <x-inputs.input name="yearly_price_save" label="{{ __('Yearly Save Price') }}"

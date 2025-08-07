@@ -20,7 +20,7 @@
                         <th width="5%">{{ __('SL') }}</th>
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Monthly Price') }}</th>
-                        <th>{{ __('Yearly Price') }}</th>
+                        <th>{{ __('Yearly Save Price') }}</th>
                         <th>{{ __('Tag') }}</th>
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('Deleted By') }}</th>
@@ -39,8 +39,8 @@
             document.addEventListener('DOMContentLoaded', () => {
                 let table_columns = [
                     ['name', true, true],
-                    ['price_monthly', true, true],
-                    ['price_monthly_yearly', true, true],
+                    ['monthly_price', true, true],
+                    ['yearly_price_save', true, true],
                     ['tag', true, true],
                     ['status', true, true],
                     ['deleted_by', true, true],

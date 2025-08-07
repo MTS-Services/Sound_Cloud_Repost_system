@@ -15,22 +15,39 @@ class PlanSeeder extends Seeder
     {
         $plans = [
             [
-                'name' => 'Basic Plan',
+                'name' => 'Free Forever',
+                'monthly_price' => 0,
+                'yearly_price_save' => 0,
+                'tag' => null,
+                'notes' => 'Free plan',
+            ],
+            [
+                'name' => 'Artist',
+                'monthly_price' => 10,
                 'yearly_price_save' => 20,
                 'tag' => null,
-                'notes' => 'Entry level features',
+                'notes' => 'Perfect for individual creators',
             ],
             [
-                'name' => 'Pro Plan',
-                'yearly_price_save' => 20,
+                'name' => 'Network',
+                'monthly_price' => 20,
+                'yearly_price_save' => 25,
                 'tag' => 1,
-                'notes' => 'Professional tools and reports',
+                'notes' => 'For small teams and collaborations',
             ],
             [
-                'name' => 'Enterprise Plan',
-               'yearly_price_save' => 30,
+                'name' => 'Promoter',
+                'monthly_price' => 30,
+                'yearly_price_save' => 30,
                 'tag' => 2,
-                'notes' => 'Best for companies and teams',
+                'notes' => 'Promote content effectively',
+            ],
+            [
+                'name' => 'Ultimate',
+                'monthly_price' => 50,
+                'yearly_price_save' => 50,
+                'tag' => 3,
+                'notes' => 'All-inclusive premium features',
             ],
         ];
 
@@ -48,7 +65,7 @@ class PlanSeeder extends Seeder
                     'package_id' => $plan->id,
                     'package_type' => Plan::class,
                     'feature_id' => $feature->id,
-                    'value' => $feature->type === 1 ? '1' : 'Unlimited', // if boolean type, set "1"
+                    'value' => $feature->type === 1 ? '1' : 'Unlimited',
                 ]);
             }
         }
