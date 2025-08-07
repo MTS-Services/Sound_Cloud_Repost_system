@@ -72,6 +72,9 @@ class PlanController extends Controller implements HasMiddleware
                 ->editColumn('created_by', function ($feature) {
                     return $this->creater_name($feature);
                 })
+                ->editColumn('yearly_save_percentage', function ($feature) {
+                    return $feature->yearly_save_percentage . '%';
+                })
                 ->editColumn('created_at', function ($feature) {
                     return $feature->created_at_formatted;
                 })
@@ -79,7 +82,7 @@ class PlanController extends Controller implements HasMiddleware
                     $menuItems = $this->menuItems($feature);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action', 'tag', 'created_by', 'created_at', 'status'])
+                ->rawColumns(['action', 'tag', 'yearly_save_percentage', 'created_by', 'created_at', 'status'])
                 ->make(true);
         }
         return view('backend.admin.package_management.plans.index');

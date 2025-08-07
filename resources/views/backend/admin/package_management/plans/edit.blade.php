@@ -145,9 +145,10 @@
                                 value="{{ old('monthly_price', $plan->monthly_price) }}" :messages="$errors->get('monthly_price')" />
                         </div>
                         <div class="space-y-2">
-                            <x-inputs.input name="yearly_price_save" label="{{ __('Yearly Save Price') }}"
-                                placeholder="Enter Price Monthly"
-                                value="{{ old('yearly_price_save', $plan->yearly_price_save) }}" :messages="$errors->get('yearly_price_save')" />
+                            <x-inputs.input name="yearly_save_percentage" label="{{ __('Yearly Save Percentage') }}"
+                                placeholder="Enter Yearly Save Percentage"
+                                value="{{ old('yearly_save_percentage', $plan->yearly_save_percentage) }}"
+                                :messages="$errors->get('yearly_save_percentage')" />
                         </div>
                         {{-- Tag Selection (Styled as Radio Buttons) --}}
                         <div class="space-y-2 cpy-3" x-data="{ selectedTag: '{{ old('tag', $plan->tag) }}' }">

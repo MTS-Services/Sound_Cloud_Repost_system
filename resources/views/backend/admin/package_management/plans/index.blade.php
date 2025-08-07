@@ -8,8 +8,7 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Plans List') }}</h2>
                 <div class="flex items-center gap-2">
-                    <x-button href="{{ route('pm.plan.trash') }}" icon="trash-2" type='secondary'
-                        permission="admin-trash">
+                    <x-button href="{{ route('pm.plan.trash') }}" icon="trash-2" type='secondary' permission="admin-trash">
                         {{ __('Trash') }}
                     </x-button>
                     <x-button href="{{ route('pm.plan.create') }}" icon="user-plus" permission="admin-create">
@@ -25,7 +24,8 @@
                         <th width="5%">{{ __('SL') }}</th>
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Monthly Price') }}</th>
-                        <th>{{ __('Yearly Save Price') }}</th>
+                        <th>{{ __('Yearly Price') }}</th>
+                        <th>{{ __('Yearly Save Percentage') }}</th>
                         <th>{{ __('Tag') }}</th>
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('Created By') }}</th>
@@ -49,7 +49,8 @@
                     //name and data, orderable, searchable
                     ['name', true, true],
                     ['monthly_price', true, true],
-                    ['yearly_price_save', true, true],
+                    ['yearly_price', true, true],
+                    ['yearly_save_percentage', true, true],
                     ['tag', true, true],
                     ['status', true, true],
                     ['created_by', true, true],
@@ -100,12 +101,12 @@
                             key: 'monthly_price',
                         },
                         {
-                            label:'{{ __('Yearly Save Price') }}',
-                            key:'yearly_price_save',
+                            label: '{{ __('Yearly Save Percentage') }}',
+                            key: 'yearly_save_percentage',
                         },
                         {
-                            label:'{{ __('Tag') }}',
-                            key:'tag',
+                            label: '{{ __('Tag') }}',
+                            key: 'tag',
                         }
                     ];
 
