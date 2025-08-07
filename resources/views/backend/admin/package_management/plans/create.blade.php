@@ -105,7 +105,7 @@
                                                                 </select>
 
                                                                 <x-input-error class="mt-2" :messages="$errors->get(
-                                                                    'feature_values.' . $feature->id,
+                                                                    'feature_values.' 
                                                                 )" />
                                                             </div>
 

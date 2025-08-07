@@ -166,7 +166,7 @@ class PlanController extends Controller implements HasMiddleware
         $data['plan'] = $this->planService->getPlan($encryptedId);
 
         $data['featureCategories'] = $this->featureCategoryService->getFeatureCategories()->with('features')->get();
-        $data['planFeatures'] = $data['plan']->features->pluck('pivot.value', 'id')->toArray();
+        $data['featureValues '] = $data['plan']->features->pluck('pivot.value', 'id')->toArray();
         $data['planFeatureCategoryIds'] = $data['plan']->features->pluck('pivot.feature_category_id', 'id')->toArray();
 
         return view('backend.admin.package_management.plans.edit', $data);

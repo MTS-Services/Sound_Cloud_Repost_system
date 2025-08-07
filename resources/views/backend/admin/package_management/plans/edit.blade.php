@@ -16,7 +16,8 @@
         <div
             class="grid grid-cols-1 gap-4 sm:grid-cols-1 {{ isset($documentation) && $documentation ? 'md:grid-cols-7' : '' }}">
             <div class="glass-card rounded-2xl p-6 md:col-span-5">
-                <form action="{{ route('pm.plan.update', encrypt($plan->id)) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('pm.plan.update', encrypt($plan->id)) }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -81,36 +82,30 @@
                                                             </div>
                                                             <p
                                                                 class="text-sm font-medium text-gray-800 dark:text-gray-200 select-none">
-                                                                {{ $feature->name }}
+                                                                {{ $feature->features_name }}
                                                             </p>
                                                         </label>
 
                                                         {{-- Input field for the feature value, displayed only if checked. --}}
                                                         <template x-if="checked">
                                                             <div class="w-full mt-2">
-                                                                @if ($feature->type == \App\Models\Feature::TYPE_STRING)
-                                                                    {{-- Text input for string type features. --}}
-                                                                    <input type="text"
-                                                                        name="feature_values[{{ $feature->id }}]"
-                                                                        placeholder="Enter value for this feature"
-                                                                        value="{{ old('feature_values.' . $feature->id, $planFeatures[$feature->id] ?? '') }}"
-                                                                        class="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:text-white"
-                                                                        @click.stop />
-                                                                @elseif ($feature->type == \App\Models\Feature::TYPE_BOOLEAN)
-                                                                    {{-- Select dropdown for boolean type features. --}}
-                                                                    <select name="feature_values[{{ $feature->id }}]"
-                                                                        class="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:text-white"
-                                                                        @click.stop>
-                                                                        <option value="True"
-                                                                            @if (old('feature_values.' . $feature->id, $planFeatures[$feature->id] ?? '') == 'True') selected @endif>
-                                                                            {{ __('True') }}
+                                                                <select name="feature_values[{{ $feature->id }}]"
+                                                                    class="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-800 dark:text-white">
+                                                                    <option value="" disabled
+                                                                        {{ old('feature_values.' . $feature->id, $featureValues[$feature->id] ?? null) === null ? 'selected' : '' }}>
+                                                                        Select a value
+                                                                    </option>
+                                                                    @foreach ($feature->feature_values as $value)
+                                                                        <option value="{{ $value }}"
+                                                                            {{ old('feature_values.' . $feature->id, $featureValues[$feature->id] ?? null) === $value ? 'selected' : '' }}>
+                                                                            {{ $value }}
                                                                         </option>
-                                                                        <option value="False"
-                                                                            @if (old('feature_values.' . $feature->id, $planFeatures[$feature->id] ?? '') == 'False') selected @endif>
-                                                                            {{ __('False') }}
-                                                                        </option>
-                                                                    </select>
-                                                                @endif
+                                                                    @endforeach
+                                                                </select>
+                                                                <x-input-error class="mt-2" :messages="$errors->get(
+                                                                    'feature_values.' . $feature->id,
+                                                                )" />
+
                                                             </div>
                                                         </template>
                                                     </div>
