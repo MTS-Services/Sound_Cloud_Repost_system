@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Http\Traits\AuditColumnsTrait;
-use App\Models\FAQ;
+use App\Models\Faq;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 return new class extends Migration
@@ -15,13 +15,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('f_a_q_s', function (Blueprint $table) {
+        Schema::create('faqs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('sort_order')->default(0);
             $table->string('question');
             $table->string('description');
             $table->tinyInteger('key');
-            $table->tinyInteger('status')->default(FAQ::STATUS_ACTIVE)->index();
+            $table->tinyInteger('status')->default(Faq::STATUS_ACTIVE)->index();
 
 
             $table->timestamps();
