@@ -192,59 +192,52 @@
                                 <th
                                     class="text-left p-4 font-semibold text-slate-900 min-w-[200px] sticky left-0 bg-white z-10">
                                     Features</th>
-                                @foreach ($plans as $plan )
-                                    <th class="text-center p-4 font-semibold text-slate-900 min-w-[120px]">{{$plan->name}}
-                                </th>
+                                @foreach ($plans as $plan)
+                                    <th class="text-center p-4 font-semibold text-slate-900 min-w-[120px]">
+                                        {{ $plan->name }}
+                                    </th>
                                 @endforeach
-                                {{-- <th class="text-center p-4 font-semibold text-slate-900 min-w-[120px]">Artist</th> --}}
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Core Features -->
-                            <tr class="bg-slate-100">
-                                @foreach ( $featureCategories as $category )
-                                    <td colspan="6"
+                            @foreach ($featureCategories as $category)
+                                {{-- Category Header Row --}}
+                                <tr class="bg-slate-100">
+                                    <td colspan="{{ count($plans) + 1 }}"
                                         class="p-4 font-semibold text-slate-800 text-sm uppercase tracking-wide sticky left-0 z-10">
                                         {{ $category->name }}
                                     </td>
+                                </tr>
+                                @foreach ($category->features as $feature)
+                                    <tr class="border-b hover:bg-slate-50 transition-colors">
+                                        <td class="p-4 font-medium text-slate-700">
+                                            {{ $feature->name }}
+                                        </td>
+
+                                        @foreach ($plans as $plan)
+                                            @php
+                                                $relation = $plan->featureRelations->firstWhere(
+                                                    'feature_id',
+                                                    $feature->id,
+                                                );
+                                                $value = $relation?->value ?? null;
+                                            @endphp
+
+                                            <td class="p-4 text-center">
+                                                @if ($value === 'true' || $value === true)
+                                                    <i data-lucide="check" class="h-5 w-5 text-green-500 mx-auto"></i>
+                                                @elseif ($value === 'false' || $value === false || is_null($value) || $value === '0' || $value === 0)
+                                                    <i data-lucide="x" class="h-5 w-5 text-slate-400 mx-auto"></i>
+                                                @else
+                                                    <span class="text-sm font-medium">{{ $value }}</span>
+                                                @endif
+                                            </td>
+                                        @endforeach
+                                    </tr>
                                 @endforeach
-                            </tr>
-                            <tr class="border-b hover:bg-slate-50 transition-colors" x-data="{ expanded: false }"
-                                @click="expanded = !expanded">
-                                <td class="p-4 font-medium text-slate-700 flex items-center">
-                                    <span>Monthly Reposts</span>
-                                    <i :class="expanded ? 'rotate-180' : ''" class="ml-2 h-4 w-4 transition-transform"
-                                        data-lucide="chevron-down"></i>
-                                </td>
-                                <td class="p-4 text-center"><span class="text-sm font-medium">5</span></td>
-                                <td class="p-4 text-center"><span class="text-sm font-medium">25</span></td>
-                                <td class="p-4 text-center"><span class="text-sm font-medium">50</span></td>
-                                <td class="p-4 text-center"><span class="text-sm font-medium">100</span></td>
-                                <td class="p-4 text-center"><span class="text-sm font-medium">500</span></td>
-                            </tr>
-                            <tr class="border-b hover:bg-slate-50 transition-colors">
-                                <td class="p-4 font-medium text-slate-700">Simultaneous Campaigns</td>
-                                <td class="p-4 text-center"><span class="text-sm font-medium">1</span></td>
-                                <td class="p-4 text-center"><span class="text-sm font-medium">2</span></td>
-                                <td class="p-4 text-center"><span class="text-sm font-medium">3</span></td>
-                                <td class="p-4 text-center"><span class="text-sm font-medium">5</span></td>
-                                <td class="p-4 text-center"><span class="text-sm font-medium">10</span></td>
-                            </tr>
-                            <tr class="border-b hover:bg-slate-50 transition-colors">
-                                <td class="p-4 font-medium text-slate-700">Free Boost on Campaign</td>
-                                <td class="p-4 text-center"><i data-lucide="check"
-                                        class="h-5 w-5 text-green-500 mx-auto"></i></td>
-                                <td class="p-4 text-center"><i data-lucide="check"
-                                        class="h-5 w-5 text-green-500 mx-auto"></i></td>
-                                <td class="p-4 text-center"><i data-lucide="check"
-                                        class="h-5 w-5 text-green-500 mx-auto"></i></td>
-                                <td class="p-4 text-center"><i data-lucide="check"
-                                        class="h-5 w-5 text-green-500 mx-auto"></i></td>
-                                <td class="p-4 text-center"><i data-lucide="check"
-                                        class="h-5 w-5 text-green-500 mx-auto"></i></td>
-                            </tr>
-                            <!-- More rows... -->
+                            @endforeach
                         </tbody>
+
                     </table>
                 </div>
             </div>
