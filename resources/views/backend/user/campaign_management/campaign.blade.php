@@ -12,7 +12,7 @@
                         <button
                             class="tab-button @if ($activeMainTab === 'recommended_pro') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 pb-1 px-2 text-md font-semibold transition-all duration-200"
                             wire:click="setActiveTab('recommended_pro')">
-                            {{ __('Recomended Pro') }} <span class="text-xs ml-2">{{ __('20') }}</span>
+                            {{ __('Recommended Pro') }} <span class="text-xs ml-2">{{ __('20') }}</span>
                         </button>
                         <button
                             class="tab-button @if ($activeMainTab === 'recommended') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 pb-1 px-2 text-md font-semibold transition-all duration-200"
@@ -28,10 +28,10 @@
                 </div>
             </div>
 
-            <a href="{{ route('user.cm.my-campaigns') }}" wire:navigate
+            <buuton wire:click="toggleCampaignsModal" x-on:click="showCampaignsModal = true"
                 class="bg-orange-600 text-white px-3 sm:px-5 py-2 mb-2 rounded hover:bg-orange-700 transition w-full sm:w-auto text-center">
                 Start a new campaign
-            </a>
+            </buuton>
         </div>
     </div>
 
@@ -473,7 +473,412 @@
             </div>
         @endif
     </div>
+    {{-- ================================ Modals ================================ --}}
 
+    {{-- Choose a track or playlist Modal --}}
+    <div x-data="{ showCampaignsModal: @entangle('showCampaignsModal').live }" x-show="showCampaignsModal" x-cloak
+        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+
+        <div
+            class="w-full max-w-3xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col max-h-[80vh] overflow-hidden">
+            <div
+                class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
+                <div class="flex items-center gap-3">
+                    <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                        <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                        {{ __('Choose a track or playlist') }}
+                    </h2>
+                </div>
+                <button x-on:click="showCampaignsModal = false"
+                    class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
+                    <x-lucide-x class="w-5 h-5" />
+                </button>
+            </div>
+
+            @if ($showCampaignsModal)
+                <div class="flex border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                    <button wire:click="selectModalTab('tracks')"
+                        class="flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeModalTab === 'tracks' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
+                        <div class="flex items-center justify-center gap-2">
+                            <x-lucide-music class="w-4 h-4" />
+                            {{ __('Tracks') }}
+                        </div>
+                    </button>
+                    <button wire:click="selectModalTab('playlists')"
+                        class="flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeModalTab === 'playlists' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
+                        <div class="flex items-center justify-center gap-2">
+                            <x-lucide-list-music class="w-4 h-4" />
+                            {{ __('Playlists') }}
+                        </div>
+                    </button>
+                </div>
+
+                <div class="flex-grow overflow-y-auto p-6">
+                    @if ($activeModalTab === 'tracks')
+                        <div class="space-y-3">
+                            @forelse ($tracks as $track_)
+                                <div wire:click="toggleSubmitModal('track', {{ $track_->id }})"
+                                    class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
+                                    <div class="flex-shrink-0">
+                                        <img class="h-14 w-14 rounded-xl object-cover shadow-md"
+                                            src="{{ soundcloud_image($track_->artwork_url) }}"
+                                            alt="{{ $track_->title }}" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p
+                                            class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                            {{ $track_->title }}
+                                        </p>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                            {{ __('by') }}
+                                            <strong
+                                                class="text-orange-600 dark:text-orange-400">{{ $track_->author_username }}</strong>
+                                            <span class="ml-2 text-xs text-gray-400">{{ $track_->genre }}</span>
+                                        </p>
+                                        <span
+                                            class="bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono flex items-start justify-center w-fit gap-3">
+                                            <x-lucide-audio-lines class="w-4 h-4" />
+                                            {{ $track_->playback_count }}</span>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                        <x-lucide-chevron-right
+                                            class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors" />
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center py-16 text-gray-500 dark:text-gray-400">
+                                    <div
+                                        class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <x-lucide-music class="w-8 h-8 text-orange-500" />
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                        {{ __('No playlists found') }}
+                                    </h3>
+                                    <p class="text-gray-500 dark:text-gray-400">
+                                        {{ __('Add one to get started with campaigns.') }}
+                                    </p>
+                                </div>
+                            @endforelse
+                        </div>
+                    @elseif($activeModalTab === 'playlists')
+                        <div class="space-y-3">
+                            @forelse ($playlist_s as $playlist_)
+                                <div wire:click="toggleSubmitModal('playlist', {{ $playlist_->id }})"
+                                    class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
+                                    <div class="flex-shrink-0">
+                                        <img class="h-14 w-14 rounded-xl object-cover shadow-md"
+                                            src="{{ soundcloud_image($playlist_->artwork_url) }}"
+                                            alt="{{ $playlist_->title }}" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p
+                                            class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                            {{ $playlist_->title }}
+                                        </p>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                            {{ $playlist_->track_count }} {{ __('tracks') }}
+                                        </p>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                        <x-lucide-chevron-right
+                                            class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors" />
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center py-16 text-gray-500 dark:text-gray-400">
+                                    <div
+                                        class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <x-lucide-list-music class="w-8 h-8 text-orange-500" />
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                        {{ __('No playlists found') }}
+                                    </h3>
+                                    <p class="text-gray-500 dark:text-gray-400">
+                                        {{ __('Add one to get started with campaigns.') }}
+                                    </p>
+                                </div>
+                            @endforelse
+                        </div>
+                    @endif
+                </div>
+            @endif
+        </div>
+    </div>
+    {{-- Create campaign (submit) Modal --}}
+    <div x-data="{ showSubmitModal: @entangle('showSubmitModal').live }" x-show="showSubmitModal" x-cloak
+        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+
+        <div
+            class="w-full max-w-4xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col max-h-[85vh] overflow-hidden">
+            <div
+                class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
+                <div class="flex items-center gap-3">
+                    <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                        <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                        {{ __('Create a campaign') }}
+                    </h2>
+                </div>
+                <button x-on:click="showSubmitModal = false"
+                    class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
+                    <x-lucide-x class="w-5 h-5" />
+                </button>
+            </div>
+
+            <div class="flex-grow overflow-y-auto p-6">
+                <form wire:submit.prevent="createCampaign" class="space-y-6">
+                    <!-- Selected Track -->
+                    @if ($track)
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-md font-medium text-gray-900">Selected Track</h3>
+                                <button x-on:click="showSubmitModal = false"
+                                    class="bg-gray-100 dark:bg-slate-700 py-1.5 px-3 rounded-xl text-orange-500 text-sm font-medium hover:text-orange-600">Edit</button>
+                            </div>
+                            <div
+                                class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
+                                @if ($track)
+                                    <img src="{{ soundcloud_image($track->artwork_url) }}" alt="Album cover"
+                                        class="w-12 h-12 rounded">
+                                @endif
+                                <div>
+                                    <p class="text-sm text-gray-600">{{ $track->type }} -
+                                        {{ $track->author_username }}</p>
+                                    <p class="text-sm font-medium text-gray-900">{{ $track->title }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Set Budget -->
+                    <div>
+                        <div class="flex items-center space-x-2 mb-2">
+                            <h3 class="text-sm font-medium text-gray-900">Set budget</h3>
+                            <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
+                                <span class="text-white text-xs">i</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-4">A potential 10,000 people reached per campaign</p>
+
+                        <!-- Budget Display -->
+                        <div class="flex items-center justify-center space-x-2 mb-4">
+                            <div class="w-6 h-6 border-2 border-orange-500 rounded flex items-center justify-center">
+                                <span class="text-orange-500 text-xs">$</span>
+                            </div>
+                            <span class="text-2xl font-bold text-orange-500">{{ $credit }}</span>
+                        </div>
+                        {{-- Error Message --}}
+                        @if ($errors->has('credit'))
+                            <p class="text-xs text-red-500 mb-4">
+                                {{ $errors->first('credit') }}
+                            </p>
+                        @endif
+
+                        <!-- Slider -->
+                        <div class="relative">
+                            <input type="range" x-data x-on:input="$wire.set('credit', $event.target.value)"
+                                min="0" max="500" value="{{ $credit }}"
+                                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                        </div>
+
+
+                    </div>
+
+                    <!-- Enable CommentPlus -->
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mt-4">Campaign Settings</h2>
+                        <p class="text-sm text-gray-700 mb-4 mt-2">Select amount of credits to be spent</p>
+                        <div class="flex items-start space-x-3">
+                            <input type="checkbox" wire:model="commentable"
+                                class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-900">Activate Feedback</h4>
+                                <p class="text-xs text-gray-500">Encourage listeners to comment on your track (2
+                                    credits
+                                    per comment).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enable LikePlus -->
+                    <div class="flex items-start space-x-3">
+                        <input type="checkbox" wire:model="likeable"
+                            class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-900">Activate HeartPush</h4>
+                            <p class="text-xs text-gray-500">Motivate real users to like your track (2 credits per
+                                like).</p>
+                        </div>
+                    </div>
+
+                    <!-- Enable Campaign Accelerator -->
+                    <div class="flex items-start space-x-3">
+                        <input type="checkbox" wire:model="proFeatureEnabled"
+                            class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <h4 class="text-sm font-medium text-gray-900">{{ __('Turn on Momentum+ (') }}
+                                    <span class="text-md font-semibold">PRO</span>{{ __(')') }}
+                                </h4>
+                                <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
+                                    <span class="text-white text-xs">i</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500">Use Campaign Accelerator (+50 credits)</p>
+                        </div>
+                    </div>
+
+                    <!-- Campaign Targeting -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class=" mb-4">
+                            <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                                {{ __('Audience Filtering (PRO Feature)') }}</h4>
+                            <p class="text-sm text-gray-700 mb-4 mt-2">Fine-tune who can support your track:</p>
+                        </div>
+
+                        <div class="space-y-3 ml-4">
+                            <div x-data="{ showOptions: true }" class="flex flex-col space-y-2">
+                                <!-- Checkbox + Label -->
+                                <div class="flex items-start space-x-3">
+                                    <input type="checkbox" @change="showOptions = !showOptions" checked
+                                        class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-sm text-gray-700">Limit to users with max follower
+                                            count</span>
+                                        {{-- <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
+                                            <span class="text-white text-xs">i</span>
+                                        </div> --}}
+                                    </div>
+                                </div>
+
+                                <!-- Toggle Options (Hidden by default) -->
+                                <div x-show="showOptions" x-transition class="ml-7 p-3">
+                                    <div class=" items-center space-x-3">
+                                        <!-- Number Input -->
+                                        <input type="number" placeholder="Max follow" wire:model="maxFollower"
+                                            class="block w-48 px-3 py-1 border rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
+                                        {{-- Error Message --}}
+                                        @error('maxFollower')
+                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div x-data="{ showOptions: false }" class="flex flex-col space-y-2">
+                                <div class="flex items-start space-x-3">
+                                    <input type="checkbox" @change="showOptions = !showOptions"
+                                        class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-sm text-gray-700">Lxclude users who repost too often (last
+                                            24h)</span>
+                                    </div>
+                                </div>
+                                <div x-show="showOptions" x-transition class="ml-7 p-3">
+                                    <div class=" items-center space-x-3">
+                                        <!-- Number Input -->
+                                        <input type="number" placeholder="Max Repost" wire:model="maxRepostLast24h"
+                                            class="block w-48 px-3 py-1 border rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div x-data="{ showRepostPerDay: false }" class="flex flex-col space-y-2">
+                                <div class="flex items-start space-x-3">
+                                    <input type="checkbox" @click="showRepostPerDay = !showRepostPerDay"
+                                        class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-sm text-gray-700">Limit average repost frequency per
+                                            day</span>
+                                    </div>
+                                </div>
+                                <div x-show="showRepostPerDay" x-transition class="ml-7 p-3">
+                                    <div class=" items-center space-x-3">
+                                        <!-- Number Input -->
+                                        <input type="number" placeholder="Max Repost per day"
+                                            wire:model="maxRepostsPerDay"
+                                            class="block w-48 px-3 py-1 border rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Genre Selection -->
+                        <div class="mt-6">
+                            <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Genre Preferences for
+                                Sharers</h2>
+                            <p class="text-sm text-gray-700 mb-3 mt-2">Reposters must have the following genres:</p>
+                            <div class="space-y-2 ml-4">
+                                <div class="flex items-center space-x-2">
+                                    <input type="radio" name="genre" value="anyGenre"
+                                        @click="showGenreRadios = false" wire:model="anyGenre"
+                                        class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
+                                    <span class="text-sm text-gray-700">Open to all music types</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <input type="radio" name="genre" value="trackGenre"
+                                        @click="showGenreRadios = false" wire:model="trackGenre"
+                                        class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
+                                    <span class="text-sm text-gray-700">Match track genre – Hip-hop & Rap</span>
+                                </div>
+                                <div x-data="{ showGenreRadios: false }" class="space-y-3">
+
+                                    <!-- Toggle Checkbox -->
+                                    <div class="flex items-center space-x-2">
+                                        <input type="radio" name="genre"
+                                            @click="showGenreRadios = !showGenreRadios" wire:click="getAllGenres"
+                                            class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
+                                        <span class="text-sm text-gray-700">Match one of your profile’s chosen
+                                            genres</span>
+                                    </div>
+
+                                    <!-- Radio Options (Toggle area) -->
+                                    <div x-show="showGenreRadios" x-transition class="ml-6 space-y-2">
+                                        @forelse ($genres as $genre)
+                                            <div class="flex items-center space-x-2">
+                                                <input type="radio" name="genre" wire:model="targetGenre"
+                                                    value="{{ $genre }}"
+                                                    class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
+                                                <span class="text-sm text-gray-700">{{ $genre }}</span>
+                                            </div>
+                                        @empty
+                                            <div class="">
+                                                <span class="text-sm text-gray-700">No genres found</span>
+                                            </div>
+                                        @endforelse
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- submit button here --}}
+                    <div class="pt-4">
+                        <button type="submit"
+                            class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-4 px-6 rounded-xl {{ !$canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }}">
+
+                            <span wire:loading.remove wire:target="createCampaign">
+                                {{ __('Create Campaign') }}
+                            </span>
+                            <span wire:loading wire:target="createCampaign">
+                                {{ __('Creating...') }}
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <!-- Simple Livewire-SoundCloud Bridge Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
