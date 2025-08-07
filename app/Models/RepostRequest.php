@@ -51,7 +51,7 @@ class RepostRequest extends BaseModel
 
     public function track(): BelongsTo
     {
-        return $this->belongsTo(Track::class, 'track_urn', 'urn','soundcloud_urn');
+        return $this->belongsTo(Track::class, 'track_urn', 'urn', 'soundcloud_urn');
     }
 
     public function reposts(): HasMany
@@ -69,7 +69,7 @@ class RepostRequest extends BaseModel
         return $this->hasMany(CreditTransaction::class);
     }
 
-    
+
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
@@ -80,6 +80,7 @@ class RepostRequest extends BaseModel
         parent::__construct($attributes);
         $this->appends = array_merge(parent::getAppends(), [
             'status_label',
+            'status_color',
             'repost_at_formatted',
             'pending_to_declined',
         ]);
@@ -100,6 +101,22 @@ class RepostRequest extends BaseModel
             self::STATUS_EXPIRED => 'Expired',
             self::STATUS_COMPLETED => 'Completed',
         ];
+    }
+
+    public static function getStatusLabelColor(): array
+    {
+        return [
+            self::STATUS_PENDING => 'badge-warning',
+            self::STATUS_APPROVED => 'badge-success',
+            self::STATUS_DECLINE => 'badge-error',
+            self::STATUS_EXPIRED => 'badge-danger',
+            self::STATUS_COMPLETED => 'badge-info',
+        ];
+    }
+
+    public function getStatusColorAttribute()
+    {
+        return self::getStatusLabelColor()[$this->status] ?? 'badge-secondary';
     }
 
     public function getStatusLabelAttribute()

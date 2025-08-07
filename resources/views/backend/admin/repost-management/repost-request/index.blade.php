@@ -3,7 +3,7 @@
     <x-slot name="breadcrumb">{{ __('Repost Request List') }}</x-slot>
     <x-slot name="page_slug">repost_request</x-slot>
 
-<section>
+    <section>
 
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
@@ -14,11 +14,11 @@
                         {{ __('Trash') }}
                     </x-button>
                      --}}
-                      {{-- <x-button href="{{ route('rrm.request.index') }}"  type='secondary'
+                    {{-- <x-button href="{{ route('rrm.request.index') }}"  type='secondary'
                         permission="order-trash">
                         {{ __('Back') }}
                     </x-button> --}}
-                    
+
                 </div>
             </div>
         </div>
@@ -26,17 +26,18 @@
             <table class="table datatable table-zebra">
                 <thead>
                     <tr>
-                        <th >{{ __('SL') }}</th>
+                        <th>{{ __('SL') }}</th>
                         <th>{{ __('Requester Name') }}</th>
-                    
+
                         <th>{{ __('Reposter Name') }}</th>
+                        <th>{{ __('Status') }}</th>
                         <th>{{ __('Credits') }}</th>
                         <th>{{ __('Requested At') }}</th>
                         <th>{{ __('Created Date') }}</th>
-                        <th >{{ __('Action') }}</th>
+                        <th>{{ __('Action') }}</th>
                     </tr>
                 </thead>
-                
+
             </table>
         </div>
     </section>
@@ -51,12 +52,13 @@
             document.addEventListener('DOMContentLoaded', () => {
                 let table_columns = [
                     //name and data, orderable, searchable
-                   
+
                     ['name', true, true],
-                  
-                    ['title', true, true],                 
+
+                    ['title', true, true],
+                    ['status', true, true],
                     ['credits_spent', true, true],
-                    ['requested_at', true, true],                  
+                    ['requested_at', true, true],
                     ['created_at', true, true],
                     ['action', false, false],
                 ];
@@ -66,7 +68,7 @@
                     displayLength: 10,
                     main_route: "{{ route('rrm.request.index') }}",
                     order_route: "{{ route('update.sort.order') }}",
-                    export_columns: [0, 1, 2, 3,4],
+                    export_columns: [0, 1, 2, 3, 4],
                     model: 'RepostRequest',
                 };
                 // initializeDataTable(details);
@@ -74,20 +76,19 @@
                 initializeDataTable(details);
             })
         </script>
-         <script>
+        <script>
             document.addEventListener('DOMContentLoaded', () => {
 
                 $(document).on('click', '.view', function() {
                     const id = $(this).data('id');
                     const route = "{{ route('rrm.request.show', ':id') }}";
 
-                    const details = [
-                        {
+                    const details = [{
                             label: '{{ __('requester') }}',
                             key: 'name',
                         },
-                       
-                       
+
+
                         {
                             label: '{{ __('Camping Title') }}',
                             key: 'title',
@@ -96,12 +97,12 @@
                             label: '{{ __('Target User') }}',
                             key: 'target_user_urn',
                         },
-                         {
+                        {
                             label: '{{ __('Track') }}',
                             key: 'track_urn',
                         },
-                        
-                       
+
+
                         {
                             label: '{{ __('Credits') }}',
                             key: 'credits_spent',
@@ -140,7 +141,7 @@
                 });
             });
         </script>
-@endpush
+    @endpush
 
 
 </x-admin::layout>

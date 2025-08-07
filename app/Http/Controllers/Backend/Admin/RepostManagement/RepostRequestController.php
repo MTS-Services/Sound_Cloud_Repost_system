@@ -35,7 +35,7 @@ class RepostRequestController extends Controller implements HasMiddleware
     {
         $this->RepostRequestService = $RepostRequestService;
     }
-    
+
     public static function middleware(): array
     {
         return [
@@ -60,17 +60,20 @@ class RepostRequestController extends Controller implements HasMiddleware
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = $this->RepostRequestService->getRepostRequests()->with('requester','campaign');
+            $query = $this->RepostRequestService->getRepostRequests()->with('requester', 'campaign');
             return DataTables::eloquent($query)
-              ->editColumn('name', function ($repost) {
+                ->editColumn('name', function ($repost) {
                     return $repost->requester->name;
                 })
-            ->editColumn('title', function ($repost) {
+                ->editColumn('title', function ($repost) {
                     return $repost->campaign->title ?? '';
                 })
-                 ->editColumn('created_by', function ($admin) {
-                    
+                ->editColumn('created_by', function ($admin) {
+
                     return $this->creater_name($admin);
+                })
+                ->editColumn('status', function ($repost) {
+                    return "<span class='badge badge-soft {$repost->status_color}'>{$repost->status_label}</span>";
                 })
                 ->editColumn('created_at', function ($admin) {
                     return $admin->created_at_formatted;
@@ -79,7 +82,7 @@ class RepostRequestController extends Controller implements HasMiddleware
                     $menuItems = $this->menuItems($service);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['name','title','created_by', 'created_at', 'action'])
+                ->rawColumns(['name', 'title', 'status', 'created_by', 'created_at', 'action'])
                 ->make(true);
         }
         return view('backend.admin.repost-management.repost-request.index');
@@ -95,8 +98,8 @@ class RepostRequestController extends Controller implements HasMiddleware
                 'label' => ' Details',
                 'permissions' => ['req-detail']
             ],
-             
-           
+
+
 
         ];
     }
@@ -104,7 +107,7 @@ class RepostRequestController extends Controller implements HasMiddleware
     public function detail($id)
     {
         $data['requests'] = RepostRequest::where('id', decrypt($id))->first();
-        return view('backend.admin.repost-management.repost-request.detail',$data);
+        return view('backend.admin.repost-management.repost-request.detail', $data);
     }
 
     /**
@@ -117,5 +120,4 @@ class RepostRequestController extends Controller implements HasMiddleware
         $data['title'] = $data->campaign->title ?? '';
         return response()->json($data);
     }
-
 }
