@@ -491,15 +491,13 @@ class MyCampaign extends Component
 
         try {
             if ($type === 'track') {
-                $track = Track::findOrFail($id);
-
-                if (!$track->urn || !$track->title) {
+               $this->track = Track::findOrFail($id);
+                if (!$this->track->urn || !$this->track->title) {
                     throw new \Exception('Track data is incomplete');
                 }
-
-                $this->musicId = $track->id;
+                $this->musicId = $this->track->id;
                 $this->musicType = Track::class;
-                $this->title = $track->title . ' Campaign';
+                $this->title = $this->track->title . ' Campaign';
             } elseif ($type === 'playlist') {
                 $playlist = Playlist::findOrFail($id);
 

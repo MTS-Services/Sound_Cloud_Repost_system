@@ -467,29 +467,29 @@
                 <div class="flex-grow overflow-y-auto p-6">
                     @if ($activeModalTab === 'tracks')
                         <div class="space-y-3">
-                            @forelse ($tracks as $track)
-                                <div wire:click="toggleSubmitModal('track', {{ $track->id }})"
+                            @forelse ($tracks as $track_)
+                                <div wire:click="toggleSubmitModal('track', {{ $track_->id }})"
                                     class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
                                     <div class="flex-shrink-0">
                                         <img class="h-14 w-14 rounded-xl object-cover shadow-md"
-                                            src="{{ soundcloud_image($track->artwork_url) }}"
-                                            alt="{{ $track->title }}" />
+                                            src="{{ soundcloud_image($track_->artwork_url) }}"
+                                            alt="{{ $track_->title }}" />
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p
                                             class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                                            {{ $track->title }}
+                                            {{ $track_->title }}
                                         </p>
                                         <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
                                             {{ __('by') }}
                                             <strong
-                                                class="text-orange-600 dark:text-orange-400">{{ $track->author_username }}</strong>
-                                            <span class="ml-2 text-xs text-gray-400">{{ $track->genre }}</span>
+                                                class="text-orange-600 dark:text-orange-400">{{ $track_->author_username }}</strong>
+                                            <span class="ml-2 text-xs text-gray-400">{{ $track_->genre }}</span>
                                         </p>
                                         <span
                                             class="bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono flex items-start justify-center w-fit gap-3">
                                             <x-lucide-audio-lines class="w-4 h-4" />
-                                            {{ $track->playback_count }}</span>
+                                            {{ $track_->playback_count }}</span>
                                     </div>
                                     <div class="flex-shrink-0">
                                         <x-lucide-chevron-right
@@ -737,10 +737,10 @@
                         </div>
 
                         <div class="space-y-3 ml-4">
-                            <div x-data="{ showOptions: false }" class="flex flex-col space-y-2">
+                            <div x-data="{ showOptions: true }" class="flex flex-col space-y-2">
                                 <!-- Checkbox + Label -->
                                 <div class="flex items-start space-x-3">
-                                    <input type="checkbox" @change="showOptions = !showOptions"
+                                    <input type="checkbox" @change="showOptions = !showOptions" checked
                                         class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
 
                                     <div class="flex items-center space-x-2">
@@ -755,7 +755,7 @@
                                 <div x-show="showOptions" x-transition class="ml-7 p-3">
                                     <div class=" items-center space-x-3">
                                         <!-- Number Input -->
-                                        <input type="number" placeholder="Max follow" wire:model="maxFollower" checked
+                                        <input type="number" placeholder="Max follow" wire:model="maxFollower"
                                             class="block w-48 px-3 py-1 border rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
                                         {{-- Error Message --}}
                                         @error('maxFollower')
