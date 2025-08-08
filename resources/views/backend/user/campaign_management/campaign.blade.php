@@ -557,7 +557,7 @@
                                         <x-lucide-music class="w-8 h-8 text-orange-500" />
                                     </div>
                                     <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                        {{ __('No playlists found') }}
+                                        {{ __('No tracks found') }}
                                     </h3>
                                     <p class="text-gray-500 dark:text-gray-400">
                                         {{ __('Add one to get started with campaigns.') }}
