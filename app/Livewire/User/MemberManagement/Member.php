@@ -308,6 +308,7 @@ class Member extends Component
 
     public function openPlaylistTracksModal($playlistId)
     {
+
         $this->showPlaylistTracksModal = true;
         $this->selectedPlaylistId = $playlistId;
         $this->selectedTrackId = null;
@@ -319,6 +320,7 @@ class Member extends Component
             $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()->get();
             $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
         }
+        $this->searchSoundcloud();
     }
 
     public function closePlaylistTracksModal()
