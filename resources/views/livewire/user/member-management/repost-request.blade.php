@@ -124,7 +124,7 @@
                     class="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
                     <div class="flex flex-col md:flex-row gap-4">
                         <!-- Track Details -->
-                        <div class="flex-1 flex flex-col justify-between p-2 relative">
+                        <div class="flex-1 flex flex-col justify-between relative">
                             <!-- SoundCloud Player with Audio Events -->
                             <div id="soundcloud-player-{{ $repostRequest->id }}"
                                 data-request-id="{{ $repostRequest->id }}" wire:ignore>
@@ -144,7 +144,7 @@
 
                             {{-- <!-- Play Progress Bar -->
                             <div class="absolute bottom-2 left-2 right-2 bg-gray-200 dark:bg-gray-600 rounded-full h-1.5">
-                                <div class="bg-blue-500 h-1.5 rounded-full transition-all duration-300" 
+                                <div class="bg-blue-500 h-1.5 rounded-full transition-all duration-300"
                                      style="width: {{ min(100, ($this->getPlayTime($repostRequest->id) / 5) * 100) }}%"></div>
                             </div> --}}
                         </div>
@@ -249,15 +249,15 @@
                                 <!-- Manual Play Controls (for testing) -->
                                 {{-- @if (app()->environment('local'))
                                     <div class="flex gap-1">
-                                        <button wire:click="startPlaying('{{ $repostRequest->id }}')" 
+                                        <button wire:click="startPlaying('{{ $repostRequest->id }}')"
                                                 class="text-xs bg-green-500 text-white px-2 py-1 rounded">
                                             ▶
                                         </button>
-                                        <button wire:click="stopPlaying('{{ $repostRequest->id }}')" 
+                                        <button wire:click="stopPlaying('{{ $repostRequest->id }}')"
                                                 class="text-xs bg-red-500 text-white px-2 py-1 rounded">
                                             ⏸
                                         </button>
-                                        <button wire:click="simulateAudioProgress('{{ $repostRequest->id }}', 1)" 
+                                        <button wire:click="simulateAudioProgress('{{ $repostRequest->id }}', 1)"
                                                 class="text-xs bg-blue-500 text-white px-2 py-1 rounded">
                                             +1s
                                         </button>
