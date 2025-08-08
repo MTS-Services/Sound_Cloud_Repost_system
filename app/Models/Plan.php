@@ -16,6 +16,7 @@ class Plan extends BaseModel
         'tag',
         'status',
         'notes',
+        'monthly_price',
 
         'created_by',
         'updated_by',
