@@ -168,6 +168,17 @@
                 :page_slug="$active" permission="payment-list" />
             <x-admin.navlink type="single" icon="credit-card" name="Credit Transactions" :route="route('om.credit-transaction.index')"
                 active="credit-transaction" :page_slug="$active" permission="transaction-list" />
+
+                 <x-admin.navlink type="dropdown" icon="rocket" name="Faq Management" :page_slug="$active"
+                :items="[
+                    [
+                        'name' => 'Faq',
+                        'route' => route('fm.faq.index'),
+                        'icon' => 'megaphone',
+                        'active' => 'faq',
+                        'permission' => 'faq-list',
+                    ],
+                ]" />
         </nav>
     </div>
 </aside>
