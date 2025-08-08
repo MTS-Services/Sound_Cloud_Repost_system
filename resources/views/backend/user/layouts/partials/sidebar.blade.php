@@ -142,7 +142,7 @@
                 <span class="text-xs md:text-sm">Settings</span>
             </a>
 
-            <a href="{{route('user.help-support')}}" wire:navigate
+            <a href="{{ route('user.help-support') }}" wire:navigate
                 class="flex items-center px-2 py-1.5 md:px-3 md:py-2 rounded-lg transition-colors
                 text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'help') active sidebar-item @endif">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" fill="none"
@@ -170,7 +170,7 @@
             </div>
             <p class="text-xs md:text-sm text-orange-100 mb-2 md:mb-3">Get your music in front of more people</p>
             <a href="{{ route('user.pkm.pricing') }}"
-                class="w-full! bg-white text-orange-600 text-sm md:text-base font-semibold py-1.5 md:py-2 px-3 md:px-4 rounded-lg hover:bg-orange-50 transition-colors">Upgrade</a>
+                class="w-full! bg-white text-orange-600 text-sm md:text-base font-semibold py-1.5 md:py-2 px-3 md:px-4 rounded-lg hover:bg-orange-50 transition-colors">{{ __('Upgrade') }}</a>
         </div>
     </div>
 </div>

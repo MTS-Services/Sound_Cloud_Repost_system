@@ -8,12 +8,13 @@ use App\Http\Traits\AuditRelationTraits;
 use App\Models\Feature;
 use App\Services\Admin\PackageManagement\FeatureCategorySevice;
 use App\Services\Admin\PackageManagement\FeatureSevice;
-use GuzzleHttp\Middleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Yajra\DataTables\Facades\DataTables;
 
-class FeatureController extends Controller
+class FeatureController extends Controller implements HasMiddleware
 {
     use AuditRelationTraits;
 

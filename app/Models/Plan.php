@@ -35,6 +35,7 @@ class Plan extends BaseModel
             'status_btn_color',
             'tag_label',
             'yearly_price',
+            'yearly_save_price',
         ]);
     }
 
@@ -93,7 +94,11 @@ class Plan extends BaseModel
 
     public function getYearlyPriceAttribute(): float|int
     {
-        return ($this->monthly_price * 12) * 100 / (100 - $this->yearly_save_percentage);
+        return ($this->monthly_price * 12) * (100 - $this->yearly_save_percentage) / 100;
+    }
+    public function getYearlySavePriceAttribute(): float|int
+    {
+        return ($this->monthly_price * 12) - $this->yearly_price;
     }
 
 }

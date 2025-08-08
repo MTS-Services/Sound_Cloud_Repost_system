@@ -33,8 +33,8 @@
         <div class="flex items-center space-x-1 md:space-x-2">
             <!-- Navigation items - hide on mobile -->
             <nav class="hidden lg:flex items-center space-x-2 md:space-x-4 text-sm" x-data="{ activeButton: '' }">
-                <a class="text-orange-500 hover:text-orange-400 font-medium" href="#"wire:navigate
-                    data-discover="true">Upgrade My Plan</a>
+                <a class="text-orange-500 hover:text-orange-400 font-medium" href="{{ route('user.pkm.pricing') }}"
+                    wire:navigate data-discover="true">{{ __('Upgrade My Plan') }}</a>
 
                 <a x-bind:class="{ 'text-orange-500': activeButton === 'charts', 'hover:text-orange-400': activeButton !== 'charts' }"
                     class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"

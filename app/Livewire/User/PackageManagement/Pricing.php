@@ -12,6 +12,7 @@ class Pricing extends Component
     public $pricing;
     public $plans;
     public $featureCategories;
+    public $yearly_plan = 0;
 
     protected PlanService $planService;
     protected FeatureCategorySevice $FeatureCategorySevice;
@@ -25,8 +26,13 @@ class Pricing extends Component
     public function pricing()
     {
         $data['plans'] = $this->planService->getPlans()->with('featureRelations')->get();
-        $data['featureCategories'] = $this->FeatureCategorySevice->getFeatureCategories()->get();
+        $data['featureCategories'] = $this->FeatureCategorySevice->getFeatureCategories()->with('features')->get();
         return $data;
+    }
+
+    public function switchPlan()
+    {
+        $this->yearly_plan = $this->yearly_plan == 0 ? 1 : 0;
     }
 
     public function mount()

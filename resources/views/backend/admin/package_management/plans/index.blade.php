@@ -97,12 +97,20 @@
                             type: 'badge'
                         },
                         {
-                            label: '{{ __('Price Monthly') }}',
-                            key: 'monthly_price',
+                            label: '{{ __('Monthly Price') }}',
+                            key: 'monthly_price_string',
+                        },
+                        {
+                            label: '{{ __('Yearly Price') }}',
+                            key: 'yearly_price_string',
+                        },
+                        {
+                            label: '{{ __('Yearly Save Price') }}',
+                            key: 'yearly_save_price_string',
                         },
                         {
                             label: '{{ __('Yearly Save Percentage') }}',
-                            key: 'yearly_save_percentage',
+                            key: 'yearly_save_percentage_string',
                         },
                         {
                             label: '{{ __('Tag') }}',

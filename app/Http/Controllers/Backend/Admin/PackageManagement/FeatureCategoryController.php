@@ -1,17 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Backend\Admin\PackageManagement;;
+namespace App\Http\Controllers\Backend\Admin\PackageManagement;
+;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PackageManagement\FeatureCategoryRequest;
 use App\Http\Traits\AuditRelationTraits;
 use App\Services\Admin\PackageManagement\FeatureCategorySevice;
-use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Yajra\DataTables\Facades\DataTables;
 
-class FeatureCategoryController extends Controller
+class FeatureCategoryController extends Controller implements HasMiddleware
 {
     use AuditRelationTraits;
 

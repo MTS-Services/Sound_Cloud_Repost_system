@@ -25,7 +25,7 @@ class PlanRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'monthly_price' => ['required', 'integer'],
+            'monthly_price' => ['required', 'numeric', 'min:0'],
             'yearly_save_percentage' => ['nullable', 'integer', 'min:0', 'max:100'],
             'notes' => ['nullable', 'string', 'max:1000'],
             'tag' => ['nullable', Rule::in(array_keys(Plan::getTagList()))],
