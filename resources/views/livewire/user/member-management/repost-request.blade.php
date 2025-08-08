@@ -267,7 +267,7 @@
                         </div>
 
                         <!-- Track Info -->
-                        <div class="mb-4">
+                        <div class="mb-2">
                             <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">
                                 {{ $repostRequest->track->title ?? 'Unknown Track' }}
                             </h3>
