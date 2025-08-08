@@ -5,24 +5,23 @@
     <section class="container mx-auto px-4 py-16">
         <div class="text-center mb-12" x-intersect="$el.classList.add('fade-in-up')">
             <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
-                Choose Your Perfect Plan
+                {{ __('Choose Your Perfect Plan') }}
             </h2>
             <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-                Pro Plans unlock the full potential of RepostExchange with exclusive features designed to
-                supercharge your music promotion.
+                {{ __('Pro Plans unlock the full potential of RepostExchange with exclusive features designed to supercharge your music promotion.') }}
             </p>
 
             <div class="mt-8 flex items-center justify-center">
-                <span class="mr-4 font-medium text-slate-700 dark:text-slate-300">Billed Monthly</span>
+                <span class="mr-4 font-medium text-slate-700 dark:text-slate-300">{{ __('Billed Monthly') }}</span>
                 <button wire:click='switchPlan()' type="button"
                     class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200"
                     :class="{{ $yearly_plan }} ? 'bg-orange-500' : 'bg-slate-300 dark:bg-slate-700'" role="switch"
                     aria-checked="false">
-                    <span class="sr-only">Toggle billing</span>
+                    <span class="sr-only">{{ __('Toggle billing') }}</span>
                     <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200"
                         :class="{{ $yearly_plan }} ? 'translate-x-6' : 'translate-x-1'"></span>
                 </button>
-                <span class="ml-4 font-medium text-slate-700 dark:text-slate-300">Billed Annually</span>
+                <span class="ml-4 font-medium text-slate-700 dark:text-slate-300">{{ __('Billed Annually') }}</span>
             </div>
         </div>
 
@@ -75,8 +74,8 @@
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden mb-16 p-4 transition-all duration-300 hover:shadow-2xl"
             x-intersect="$el.classList.add('fade-in-up')">
             <div class="bg-slate-50 dark:bg-slate-700 px-6 py-4 border-b dark:border-slate-600">
-                <h3 class="text-3xl font-bold text-slate-900 dark:text-white">Feature Comparison</h3>
-                <p class="text-slate-600 dark:text-slate-400">Compare all features across our plans</p>
+                <h3 class="text-3xl font-bold text-slate-900 dark:text-white">{{ __('Feature Comparison') }}</h3>
+                <p class="text-slate-600 dark:text-slate-400">{{ __('Compare all features across our plans') }}</p>
             </div>
 
             <div class="overflow-x-auto">
@@ -85,7 +84,7 @@
                         <tr class="border-b bg-slate-50 dark:bg-slate-700 dark:border-slate-600">
                             <th
                                 class="p-4 text-left font-bold text-slate-800 dark:text-white text-sm uppercase tracking-wide sticky left-0 z-10">
-                                Features</th>
+                                {{ __('Features') }}</th>
                             @foreach ($plans as $plan)
                                 <th class="text-center p-4 font-semibold text-slate-900 dark:text-white min-w-[120px]">
                                     {{ $plan->name }}
@@ -146,10 +145,10 @@
                     class="mx-auto mb-4 p-3 bg-blue-100 dark:bg-blue-900 rounded-full w-fit transition-all duration-300 hover:scale-110">
                     <x-lucide-users class="h-8 w-8 text-blue-600 dark:text-blue-400" />
                 </div>
-                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Free Boosts</h3>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">{{ __('Free Boosts') }}</h3>
                 <p class="text-slate-600 dark:text-slate-400">
-                    Boost your campaigns to get more exposure from the community. The more you engage with the
-                    community, the more boosts you'll receive.
+                    {{ __('Boost your campaigns to get more exposure from the community. The more you engage with the
+                                                                                                                                                                                                        community, the more boosts you\'ll receive.') }}
                 </p>
             </div>
 
@@ -159,10 +158,10 @@
                     class="mx-auto mb-4 p-3 bg-green-100 dark:bg-green-900 rounded-full w-fit transition-all duration-300 hover:scale-110">
                     <x-lucide-zap class="h-8 w-8 text-green-600 dark:text-green-400" />
                 </div>
-                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Simultaneous Campaigns</h3>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">{{ __('Simultaneous Campaigns') }}
+                </h3>
                 <p class="text-slate-600 dark:text-slate-400">
-                    Run multiple campaigns at once to maximize your reach. Each campaign can target different
-                    audiences and goals.
+                    {{ __('Run multiple campaigns at once to maximize your reach. Each campaign can target different audiences and goals.') }}
                 </p>
             </div>
 
@@ -172,10 +171,10 @@
                     class="mx-auto mb-4 p-3 bg-purple-100 dark:bg-purple-900 rounded-full w-fit transition-all duration-300 hover:scale-110">
                     <x-lucide-crown class="h-8 w-8 text-purple-600 dark:text-purple-400" />
                 </div>
-                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Priority Direct Requests</h3>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">{{ __('Priority Direct Requests') }}
+                </h3>
                 <p class="text-slate-600 dark:text-slate-400">
-                    Get direct requests and special treatment from our network. Increase visibility and build
-                    relationships with other artists.
+                    {{ __('Get direct requests and special treatment from our network. Increase visibility and build relationships with other artists.') }}
                 </p>
             </div>
         </div>
