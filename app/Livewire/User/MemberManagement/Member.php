@@ -101,13 +101,18 @@ class Member extends Component
     public function searchSoundcloud()
     {
         if (empty($this->searchQuery)) {
-            if ($this->activeTab == 'tracks') {
-                $this->allTracks = Track::where('user_urn', user()->urn)->get();
-                $this->tracks = $this->allTracks->take($this->trackLimit);
-            }
-            if ($this->activeTab == 'playlists') {
-                $this->allPlaylists = Playlist::where('user_urn', user()->urn)->get();
-                $this->playlists = $this->allPlaylists->take($this->playlistLimit);
+            if ($this->showPlaylistTracksModal == true) {
+                $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()->get();
+                $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
+            } else {
+                if ($this->activeTab == 'tracks') {
+                    $this->allTracks = Track::where('user_urn', user()->urn)->get();
+                    $this->tracks = $this->allTracks->take($this->trackLimit);
+                }
+                if ($this->activeTab == 'playlists') {
+                    $this->allPlaylists = Playlist::where('user_urn', user()->urn)->get();
+                    $this->playlists = $this->allPlaylists->take($this->playlistLimit);
+                }
             }
             // Reset to local data if search query is empty
 
@@ -121,6 +126,10 @@ class Member extends Component
             // If not a URL, clear all search results
             $this->allTracks = collect();
             $this->tracks = collect();
+            $this->allPlaylists = collect();
+            $this->playlists = collect();
+            $this->allPlaylistTracks = collect();
+            $this->playlistTracks = collect();
         }
     }
 
@@ -130,11 +139,11 @@ class Member extends Component
 
 
         if ($this->showPlaylistTracksModal == true) {
-            $tracksFromDb = $this->allPlaylistTracks
+            $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                 ->where(function ($query) {
                     $query->where('permalink_url', $this->searchQuery)
                         ->orWhere('author_soundcloud_permalink_url', $this->searchQuery);
-                });
+                })->get();
 
             if ($tracksFromDb->isNotEmpty()) {
                 $this->allPlaylistTracks = $tracksFromDb;
@@ -388,6 +397,11 @@ class Member extends Component
     {
         $this->playlistLimit += 4;
         $this->playlists = $this->allPlaylists->take($this->playlistLimit);
+    }
+    public function loadMorePlaylistTracks()
+    {
+        $this->playlistTrackLimit += 4;
+        $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
     }
 
     public function render()
