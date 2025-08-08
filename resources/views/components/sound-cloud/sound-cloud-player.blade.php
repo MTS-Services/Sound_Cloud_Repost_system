@@ -28,8 +28,8 @@
 @if ($track && isset($track->permalink_url) && isset($track->id))
     <div class="soundcloud-embed-container" data-track-id="{{ $track->id }}">
         <iframe id="sc-player-{{ $track->id }}" {{-- Unique ID for each iframe --}} width="100%" height="{{ $height }}"
-            style="border-top: 2px solid #ff5500; border-radius: 4px;" {{-- This will be 166 when visual is false --}} scrolling="no"
-            frameborder="no" allow="autoplay" {{-- This attribute is correctly present --}} src="{{ $getEmbedSrc() }}"> {{-- This will include &visual=false --}}
+            style="border-top: 2px solid #ff5500;" {{-- This will be 166 when visual is false --}} scrolling="no" frameborder="no" allow="autoplay"
+            {{-- This attribute is correctly present --}} src="{{ $getEmbedSrc() }}"> {{-- This will include &visual=false --}}
         </iframe style="pointer-events: none;">
         {{-- <div
             style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;">

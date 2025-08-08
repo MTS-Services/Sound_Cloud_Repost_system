@@ -192,7 +192,7 @@
                             class="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
                             <div class="flex flex-col md:flex-row gap-4">
                                 <!-- Track Details -->
-                                <div class="flex-1 flex flex-col justify-between p-2 relative">
+                                <div class="flex-1 flex flex-col justify-between relative">
                                     <!-- Your Original SoundCloud Player -->
                                     <div id="soundcloud-player-{{ $campaign->id }}"
                                         data-campaign-id="{{ $campaign->id }}" wire:ignore>
@@ -308,7 +308,7 @@
                                 <div class="mt-auto">
                                     <span
                                         class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
-                                        {{ $campaign->music->genre ?? 'Unknown Genre' }}
+                                        {{ $campaign->music?->genre ?? 'Unknown Genre' }}
                                     </span>
                                 </div>
                             </div>
