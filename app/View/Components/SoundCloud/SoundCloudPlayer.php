@@ -97,7 +97,7 @@ class SoundCloudPlayer extends Component
             'show_user' => $this->showUser ? 'true' : 'false',
             'show_reposts' => $this->showReposts ? 'true' : 'false',
             'show_teaser' => $this->showTeaser ? 'true' : 'false',
-            'visual' => $this->visual ? 'true' : 'false',
+            'visual' => false,
         ];
 
         // Ensure 'url' parameter is URL-encoded separately
