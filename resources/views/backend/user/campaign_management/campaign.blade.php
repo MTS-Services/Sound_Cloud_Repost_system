@@ -29,8 +29,8 @@
             </div>
 
             <buuton wire:click="toggleCampaignsModal" x-on:click="showCampaignsModal = true"
-                class="bg-orange-600 text-white px-3 sm:px-5 py-2 mb-2 rounded hover:bg-orange-700 transition w-full sm:w-auto text-center">
-                Start a new campaign
+                class="bg-orange-600 text-white px-3 sm:px-5 py-2 mb-2 cursor-pointer rounded hover:bg-orange-700 transition w-full sm:w-auto text-center">
+                {{ __('Start a new campaign') }}
             </buuton>
         </div>
     </div>
@@ -495,7 +495,7 @@
                     </h2>
                 </div>
                 <button x-on:click="showCampaignsModal = false"
-                    class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
+                    class="cursor-pointer w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
                     <x-lucide-x class="w-5 h-5" />
                 </button>
             </div>
@@ -503,14 +503,14 @@
             @if ($showCampaignsModal)
                 <div class="flex border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
                     <button wire:click="selectModalTab('tracks')"
-                        class="flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeModalTab === 'tracks' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
+                        class="cursor-pointer flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeModalTab === 'tracks' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
                         <div class="flex items-center justify-center gap-2">
                             <x-lucide-music class="w-4 h-4" />
                             {{ __('Tracks') }}
                         </div>
                     </button>
                     <button wire:click="selectModalTab('playlists')"
-                        class="flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeModalTab === 'playlists' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
+                        class="cursor-pointer flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeModalTab === 'playlists' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
                         <div class="flex items-center justify-center gap-2">
                             <x-lucide-list-music class="w-4 h-4" />
                             {{ __('Playlists') }}
@@ -567,7 +567,7 @@
                         </div>
                     @elseif($activeModalTab === 'playlists')
                         <div class="space-y-3">
-                            @forelse ($playlist_s as $playlist_)
+                            @forelse ($playlists as $playlist_)
                                 <div wire:click="toggleSubmitModal('playlist', {{ $playlist_->id }})"
                                     class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
                                     <div class="flex-shrink-0">
