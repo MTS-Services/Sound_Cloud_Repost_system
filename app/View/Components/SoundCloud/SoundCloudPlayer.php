@@ -92,13 +92,22 @@ class SoundCloudPlayer extends Component
             'url' => $soundcloudApiUrl,
             'color' => str_replace('#', '%23', $this->color), // URL encode #
             'auto_play' => $this->autoPlay ? 'true' : 'false',
-            'hide_related' => $this->hideRelated ? 'true' : 'false',
-            'show_comments' => $this->showComments ? 'true' : 'false',
-            'show_user' => $this->showUser ? 'true' : 'false',
-            'show_reposts' => $this->showReposts ? 'true' : 'false',
-            'show_teaser' => $this->showTeaser ? 'true' : 'false',
+            // 'hide_related' => $this->hideRelated ? 'true' : 'false',
+            // 'show_comments' => $this->showComments ? 'true' : 'false',
+            // 'show_user' => $this->showUser ? 'true' : 'false',
+            // 'show_reposts' => $this->showReposts ? 'true' : 'false',
+            // 'show_teaser' => $this->showTeaser ? 'true' : 'false',
             // 'visual' => $this->visual ? 'true' : 'false',
             // 'show_teaser' => 'false',
+
+            'show_comments' => 'false',
+            'show_user' => 'false',
+            'show_reposts' => 'false',
+            'show_teaser' => 'false',
+            'buying' => 'false',
+            'sharing' => 'false',
+            'download' => 'false',
+            'hide_related' => 'true',
             'visual' => 'false',
         ];
 
