@@ -152,7 +152,7 @@
                 </div>
 
                 <!-- Right Column - Request Info -->
-                <div class="w-full lg:w-1/2 p-4">
+                <div class="w-full lg:w-1/2 p-3">
                     <div class="flex flex-col h-full justify-between">
                         <!-- Avatar + Title + User Info -->
                         <div
