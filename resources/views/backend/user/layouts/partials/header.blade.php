@@ -78,23 +78,24 @@
                         <ul class="p-0 text-sm text-gray-700 dark:text-gray-200">
                             <li>
                                 <a href="#"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Getting Started</a>
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Getting Started') }}</a>
                             </li>
                             <li>
                                 <a href="#"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Contact Support</a>
-                            </li>
-                            <li>
-                                <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Help
-                                    Center</a>
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Contact Support') }}</a>
                             </li>
                             <li>
                                 <a href="#"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Pricing</a>
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Help
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Center') }}</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('user.pkm.pricing') }}" wire:navigate
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Pricing') }}</a>
                             </li>
                             <li>
                                 <a href="#"
-                                    class="block px-4 py-2   hover:bg-red-100  dark:hover:bg-gray-700">FAQs</a>
+                                    class="block px-4 py-2   hover:bg-red-100  dark:hover:bg-gray-700">{{ __('FAQs') }}</a>
                             </li>
                         </ul>
                     </div>
@@ -179,9 +180,9 @@
                             <span>Current Plan</span>
                         </div>
                         <div class="text-sm flex justify-between items-center">
-                            <span class="font-semibold text-slate-800 dark:text-white">Free Plan</span>
-                            <a href="#" class="text-orange-500 text-xs hover:underline" wire:navigate>View All
-                                Plans</a>
+                            <span class="font-semibold text-slate-800 dark:text-white">{{ __('Free Plan') }}</span>
+                            <a href="{{ route('user.pkm.pricing') }}" wire:navigate
+                                class="text-orange-500 text-xs hover:underline">{{ __('View All Plans') }}</a>
                         </div>
                     </li>
 
