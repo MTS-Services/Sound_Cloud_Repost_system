@@ -117,7 +117,7 @@
             }
      </script>
 
-      
+
     @else
         <section class="flex-1 overflow-auto">
             <div class="min-h-screen bg-white dark:bg-slate-900">
@@ -566,7 +566,7 @@
                                             <!-- Track Card 1 -->
                                             @foreach ($tracks as $track)
                                                 <div
-                                                    class="bg-gray-100 dark:bg-slate-800 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-slate-700">
+                                                    class="bg-gray-100 dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700">
                                                     <div id="soundcloud-player-{{ $track->id }}"
                                                         data-campaign-id="{{ $track->id }}" wire:ignore>
                                                         <x-sound-cloud.sound-cloud-player :track="$track"
