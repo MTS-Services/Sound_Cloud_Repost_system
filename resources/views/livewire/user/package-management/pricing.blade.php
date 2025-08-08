@@ -61,7 +61,7 @@
                             </span>
                             <span
                                 class="text-slate-600 dark:text-slate-400">/{{ $plan->monthly_price == 0 ? 'Forever' : ($yearly_plan ? 'Year' : 'Month') }}</span>
-                            @if ($yearly_plan)
+                            @if (!$yearly_plan)
                                 <div
                                     class="card bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white p-2 rounded-lg text-xs mt-2">
                                     {{ __("Save {$plan->yearly_save_percentage}% yearly") }}
@@ -156,7 +156,7 @@
                 <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">{{ __('Free Boosts') }}</h3>
                 <p class="text-slate-600 dark:text-slate-400">
                     {{ __('Boost your campaigns to get more exposure from the community. The more you engage with the
-                                                                                                                                                                                                        community, the more boosts you\'ll receive.') }}
+                                                                                                                                                                                                                                                                    community, the more boosts you\'ll receive.') }}
                 </p>
             </div>
 

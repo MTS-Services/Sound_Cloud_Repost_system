@@ -25,7 +25,7 @@ class Pricing extends Component
 
     public function pricing()
     {
-        $data['plans'] = $this->planService->getPlans()->with('featureRelations')->get();
+        $data['plans'] = $this->planService->getPlans('monthly_price', 'asc')->with('featureRelations')->get();
         $data['featureCategories'] = $this->FeatureCategorySevice->getFeatureCategories()->with('features')->get();
         return $data;
     }
