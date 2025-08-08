@@ -160,7 +160,7 @@
                 </div>
                 <button x-on:click="showModal = false"
                     class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                    <x-heroicon-s-x-mark  class="w-5 h-5"/>
+                    <x-heroicon-s-x-mark class="w-5 h-5" />
                 </button>
             </div>
 
@@ -168,14 +168,14 @@
                 {{-- TABS --}}
                 <div class="flex border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
                     <button wire:click="setActiveTab('tracks')"
-                        class="flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeTab === 'tracks' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
+                        class="cursor-pointer flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeTab === 'tracks' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
                         <div class="flex items-center justify-center gap-2">
                             <i data-lucide="music" class="w-4 h-4"></i>
                             {{ __('Tracks') }}
                         </div>
                     </button>
                     <button wire:click="setActiveTab('playlists')"
-                        class="flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeTab === 'playlists' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
+                        class="cursor-pointer flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeTab === 'playlists' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
                         <div class="flex items-center justify-center gap-2">
                             <i data-lucide="list-music" class="w-4 h-4"></i>
                             {{ __('Playlists') }}
@@ -185,28 +185,28 @@
 
                 {{-- SEARCH & CONTENT --}}
                 <div class="w-full max-w-2xl mx-auto mt-6 flex flex-col overflow-hidden">
-                    @if ($activeTab === 'tracks')
-                        {{-- SEARCH BAR --}}
-                        <div class="p-4">
-                            <label for="track-link-search"
-                                class="text-xl font-semibold text-gray-700 dark:text-gray-200">
-                                Paste a SoundCloud profile or track link
-                            </label>
-                            <div class="flex w-full mt-2">
-                                <input wire:model.live.debounce.500ms="searchQuery" type="text"
-                                    id="track-link-search" placeholder="Paste a SoundCloud profile or track link"
-                                    class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 border border-gray-300 dark:border-gray-600 ">
-                                <button wire:click="searchSoundcloud" type="button"
-                                    class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200 ">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
-                                </button>
-                            </div>
+                    {{-- @if ($activeTab === 'tracks') --}}
+                    {{-- SEARCH BAR --}}
+                    <div class="p-4">
+                        <label for="track-link-search" class="text-xl font-semibold text-gray-700 dark:text-gray-200">
+                            Paste a SoundCloud profile or {{ $activeTab === 'tracks' ? 'track' : 'playlist' }} link
+                        </label>
+                        <div class="flex w-full mt-2">
+                            <input wire:model.live.debounce.500ms="searchQuery" type="text" id="track-link-search"
+                                placeholder="Paste a SoundCloud profile or {{ $activeTab === 'tracks' ? 'track' : 'playlist' }} link"
+                                class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 border border-gray-300 dark:border-gray-600 ">
+                            <button wire:click="searchSoundcloud" type="button"
+                                class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200 ">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </button>
                         </div>
-                    @endif
+                    </div>
+                    {{-- @endif --}}
+
 
                     {{-- TRACKS OR PLAYLISTS --}}
                     <div class="h-full overflow-y-auto px-4 pb-6 space-y-1">
@@ -309,16 +309,16 @@
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
-                   <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                    <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
-                </div>
+                    <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                        <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
+                    </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                         {{ __('Playlist Tracks') }}
                     </h2>
                 </div>
                 <button x-on:click="showPlaylistTracksModal= false"
                     class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                    <x-heroicon-s-x-mark  class="w-5 h-5"/>
+                    <x-heroicon-s-x-mark class="w-5 h-5" />
                 </button>
             </div>
 
@@ -380,7 +380,7 @@
                 </div>
                 <button x-on:click="showRepostsModal= false"
                     class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                    <x-heroicon-s-x-mark  class="w-5 h-5"/>
+                    <x-heroicon-s-x-mark class="w-5 h-5" />
                 </button>
             </div>
 
