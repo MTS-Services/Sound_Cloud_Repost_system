@@ -28,11 +28,19 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-16">
             @foreach ($plans as $plan)
-                <div class="relative bg-white dark:bg-slate-800 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
-                    x-intersect="$el.classList.add('fade-in-up')" x-intersect:leave="$el.classList.remove('fade-in-up')"
+                <div class="relative bg-white dark:bg-slate-800 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:border-orange-500 hover:border-1"
+                    x-intersect="$el.classList.add('fade-in-up ')"
+                    x-intersect:leave="$el.classList.remove('fade-in-up')"
                     :style="`transition-delay: {{ $loop->index * 100 }}ms`"
                     @mouseenter="hoveredCard = '{{ $plan->name }}'" @mouseleave="hoveredCard = null">
                     <div class="text-center p-6 pb-4">
+                        @if ($plan->tag !== null)
+                            <div
+                                class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold ">
+                                {{ $plan->tag_label }}
+                            </div>
+                        @endif
+
                         <div
                             class="mx-auto mb-4 p-3 bg-slate-100 dark:bg-slate-700 rounded-full w-fit transition-all duration-300">
                             @if ($plan->monthly_price != 0)
