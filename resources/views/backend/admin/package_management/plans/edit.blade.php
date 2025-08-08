@@ -24,12 +24,14 @@
 
                         {{-- Plan Details --}}
                         <div class="space-y-2">
-                            <x-inputs.input name="name" label="{{ __('Name') }}" placeholder="Enter Plan Name"
-                                value="{{ old('name', $plan->name) }}" :messages="$errors->get('name')" />
+                            <x-inputs.input name="name" id="title" label="{{ __('Name') }}"
+                                placeholder="Enter Plan Name" value="{{ old('name', $plan->name) }}"
+                                :messages="$errors->get('name')" />
                         </div>
                         <div class="space-y-2">
-                            <x-inputs.input name="slug" label="{{ __('Slug') }}" placeholder="Enter plan slug"
-                                value="{{ old('slug', $plan->slug) }}" :messages="$errors->get('slug')" />
+                            <x-inputs.input name="slug" id="slug" label="{{ __('Slug') }}"
+                                placeholder="Enter plan slug" value="{{ old('slug', $plan->slug) }}"
+                                :messages="$errors->get('slug')" />
                         </div>
                         <div class="space-y-2">
                             <x-inputs.input name="monthly_price" label="{{ __('Monthly Price') }}"
