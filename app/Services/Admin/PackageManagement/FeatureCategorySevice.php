@@ -14,11 +14,9 @@ class FeatureCategorySevice
         //
     }
 
-    public function getFeatureCategories($orderBy = 'name', $order = 'asc')
+    public function getFeatureCategories($orderBy = 'sort_order', $order = 'asc')
     {
-        $feature_categories = FeatureCategory::orderBy($orderBy, $order)->latest();
-
-        return $feature_categories;
+        return  FeatureCategory::orderBy($orderBy, $order)->latest();
     }
     public function getFeatureCategory(string $encryptedId)
     {

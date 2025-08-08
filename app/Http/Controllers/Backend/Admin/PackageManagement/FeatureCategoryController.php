@@ -20,11 +20,11 @@ class FeatureCategoryController extends Controller
         return redirect()->route('pm.feature-category.index');
     }
 
-    protected FeatureCategorySevice $featureCategoryService;
+    protected FeatureCategorySevice $FeatureCategorySevice;
 
-    public function __construct(FeatureCategorySevice $featureCategoryService)
+    public function __construct(FeatureCategorySevice $FeatureCategorySevice)
     {
-        $this->featureCategoryService = $featureCategoryService;
+        $this->FeatureCategorySevice = $FeatureCategorySevice;
     }
 
     public static function middleware(): array
@@ -47,7 +47,7 @@ class FeatureCategoryController extends Controller
     {
 
         if ($request->ajax()) {
-            $query = $this->featureCategoryService->getFeatureCategories();
+            $query = $this->FeatureCategorySevice->getFeatureCategories();
             return DataTables::eloquent($query)
                 ->editColumn('created_by', function ($credit) {
                     return $this->creater_name($credit);
@@ -100,7 +100,7 @@ class FeatureCategoryController extends Controller
     {
         try {
             $validated = $request->validated();
-            $this->featureCategoryService->createFeatureCategory($validated);
+            $this->FeatureCategorySevice->createFeatureCategory($validated);
             session()->flash('success', 'Feature Category created successfully!');
         } catch (\Throwable $e) {
             session()->flash('error', 'Feature Category create failed!');
@@ -115,7 +115,7 @@ class FeatureCategoryController extends Controller
      */
     public function edit(string $id)
     {
-        $data['feature_category'] = $this->featureCategoryService->getFeatureCategory($id);
+        $data['feature_category'] = $this->FeatureCategorySevice->getFeatureCategory($id);
         return view('backend.admin.package_management.feature_category.edit', $data);
     }
 
@@ -126,8 +126,8 @@ class FeatureCategoryController extends Controller
     {
         try {
             $validated = $request->validated();
-            $featrue_category = $this->featureCategoryService->getFeatureCategory($id);
-            $this->featureCategoryService->updateFeatureCategory($validated, $featrue_category);
+            $featrue_category = $this->FeatureCategorySevice->getFeatureCategory($id);
+            $this->FeatureCategorySevice->updateFeatureCategory($validated, $featrue_category);
             session()->flash('success', 'Feature Category updated successfully!');
         } catch (\Throwable $e) {
             session()->flash('error', 'Feature Category update failed!');
@@ -142,7 +142,7 @@ class FeatureCategoryController extends Controller
     public function destroy(string $id)
     {
         try {
-            $this->featureCategoryService->deleteFeatureCategory($id);
+            $this->FeatureCategorySevice->deleteFeatureCategory($id);
             session()->flash('success', 'Feature Category deleted successfully!');
         } catch (\Throwable $e) {
             session()->flash('error', 'Feature Category delete failed!');

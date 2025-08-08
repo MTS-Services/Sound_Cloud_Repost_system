@@ -3,14 +3,16 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Plan extends BaseModel
 {
     protected $fillable = [
         'name',
         'slug',
-        'price_monthly',
-        'price_monthly_yearly',
+        'yearly_price_save',
         'tag',
         'status',
         'notes',
@@ -20,12 +22,9 @@ class Plan extends BaseModel
         'deleted_by'
     ];
 
-    public function features()
-    {
-        return $this->morphMany(FeatureRelation::class, 'package');
-    }
 
-      public function __construct(array $attributes = [])
+
+    public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
         $this->appends = array_merge(parent::getAppends(), [
@@ -83,4 +82,12 @@ class Plan extends BaseModel
     {
         return $this->status == self::STATUS_ACTIVE ? 'btn-error' : 'btn-success';
     }
+
+    public function featureRelations(): MorphMany
+    {
+        return $this->morphMany(FeatureRelation::class, 'package');
+    }
+
+    // In Plan.php model
+
 }

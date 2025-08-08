@@ -8,24 +8,31 @@
         <a href="{{ route('user.mm.members.index') }}" wire:navigate
             class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 rounded-xl flex items-center gap-3 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
             <x-lucide-plus class="w-5 h-5" />
-            {{ __('Send Request') }}
+            {{ __('Send Repost') }}
         </a>
     </div>
-   
+
     <div class="mb-8">
         <div class="border-b border-gray-200 dark:border-gray-700">
             <nav class="-mb-px flex space-x-8">
-                <button
-                    class="tab-button @if ($activeMainTab === 'incoming_request') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                    wire:click="setActiveTab('incoming_request')">
-                    {{ __('Incoming requests') }}
-                </button>
+                <div>
+
+                    <!-- Incoming Request Tab Button -->
+                    <button
+                        class="tab-button @if ($activeMainTab === 'incoming_request') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
+                        wire:click="setActiveTab('incoming_request')">
+                        {{ __('Incoming requests') }}
+                    </button>
+
+
+                </div>
+
                 <button
                     class="tab-button @if ($activeMainTab === 'outgoing_request') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
                     wire:click="setActiveTab('outgoing_request')">
                     {{ __('Outgoing request') }}
                 </button>
-                 <button
+                <button
                     class="tab-button @if ($activeMainTab === 'previously_reposted') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
                     wire:click="setActiveTab('previously_reposted')">
                     {{ __('Previously Reposted') }}
@@ -37,7 +44,8 @@
 
     <!-- Repost Requests -->
     @if ($activeMainTab)
-        <div class="flex flex-col md:flex-row md:items-start md:space-x-3 p-4  rounded bg-gray-100 dark:bg-gray-800 mb-8 gap-8">
+        <div
+            class="flex flex-col md:flex-row md:items-start md:space-x-3 p-4  rounded bg-gray-100 dark:bg-gray-800 mb-8 gap-8">
             <!-- Left Icon and "Quick Tip" -->
             <div class="flex items-top space-x-2 mb-2 md:mb-0 ">
                 <!-- Lightbulb Icon -->
@@ -48,7 +56,6 @@
                 <!-- Quick Tip Text -->
                 <span class="text-sm font-medium text-gray-700 dark:text-white">Quick Tip</span>
             </div>
-
             <!-- Content -->
             <div class="flex-1 flex flex-col space-y-2">
                 <!-- Message Text -->
@@ -56,15 +63,14 @@
                     Your response rate could be better! Improve your response rate and get more requests by accepting OR
                     declining requests quickly.
                 </p>
-
                 <!-- Response Rate -->
                 <div class="flex items-center space-x-1">
-                  <div class="w-4 h-4 rounded-full bg-orange-500"></div>
+                    <div class="w-4 h-4 rounded-full bg-orange-500"></div>
 
-                    <span class="text-xs text-orange-600 font-semibold">64% <span class="text-gray-900 dark:text-white">Response rate.</span></span>
+                    <span class="text-xs text-orange-600 font-semibold">64% <span
+                            class="text-gray-900 dark:text-white">Response rate.</span></span>
                     <a href="#" class="text-xs text-red-500 underline">Reset</a>
                 </div>
-
                 <!-- Toggle -->
                 <label class="inline-flex items-center cursor-pointer">
                     <input type="checkbox" checked class="sr-only peer mb-3">
@@ -79,12 +85,11 @@
                         <!-- Label -->
                         <span id="toggleLabel" class="text-sm text-gray-700 dark:text-white">Accepting Requests</span>
                     </div>
-                    
                 </label>
             </div>
         </div>
 
-   {{-- <script>
+        {{-- <script>
     document.addEventListener('DOMContentLoaded', function () {
         const toggleSwitch = document.getElementById('toggleSwitch');
         const toggleCircle = document.getElementById('toggleCircle');
@@ -110,7 +115,7 @@
         });
     });
 </script> --}}
-  @endif
+    @endif
     @foreach ($repostRequests as $repostRequest)
         <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm">
             <div class="flex flex-col lg:flex-row" wire:key="request-{{ $repostRequest->id }}">
@@ -298,7 +303,7 @@
                             </span> --}}
                             @if ($repostRequest->status == App\Models\RepostRequest::STATUS_PENDING)
                                 <button wire:click="declineRepostRequest({{ $repostRequest->id }})"
-                                class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">{{ $repostRequest->pending_to_declined }}</button>
+                                    class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">{{ $repostRequest->pending_to_declined }}</button>
                             @endif
                         </div>
                     </div>

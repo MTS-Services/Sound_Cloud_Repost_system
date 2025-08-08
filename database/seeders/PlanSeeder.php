@@ -16,22 +16,19 @@ class PlanSeeder extends Seeder
         $plans = [
             [
                 'name' => 'Basic Plan',
-                'price_monthly' => 9.99,
-                'price_monthly_yearly' => 99.99,
+                'yearly_price_save' => 20,
                 'tag' => null,
                 'notes' => 'Entry level features',
             ],
             [
                 'name' => 'Pro Plan',
-                'price_monthly' => 19.99,
-                'price_monthly_yearly' => 199.99,
+                'yearly_price_save' => 20,
                 'tag' => 1,
                 'notes' => 'Professional tools and reports',
             ],
             [
                 'name' => 'Enterprise Plan',
-                'price_monthly' => 49.99,
-                'price_monthly_yearly' => 499.99,
+               'yearly_price_save' => 30,
                 'tag' => 2,
                 'notes' => 'Best for companies and teams',
             ],

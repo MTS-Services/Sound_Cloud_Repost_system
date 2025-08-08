@@ -106,13 +106,13 @@
                         'active' => 'feature',
                         'permission' => 'features-list',
                     ],
-                    // [
-                    //     'name' => 'Plans',
-                    //     'route' => route('pm.plan.index'),
-                    //     'icon' => 'megaphone',
-                    //     'active' => 'plan',
-                    //     'permission' => 'plan-list',
-                    // ],
+                    [
+                        'name' => 'Plans',
+                        'route' => route('pm.plan.index'),
+                        'icon' => 'shopping-bag',
+                        'active' => 'plan',
+                        'permission' => 'plan-list',
+                    ],
                     [
                         'name' => 'Credit',
                         'route' => route('pm.credit.index'),
@@ -169,6 +169,17 @@
                 :page_slug="$active" permission="payment-list" />
             <x-admin.navlink type="single" icon="credit-card" name="Credit Transactions" :route="route('om.credit-transaction.index')"
                 active="credit-transaction" :page_slug="$active" permission="transaction-list" />
+
+                 <x-admin.navlink type="dropdown" icon="rocket" name="Faq Management" :page_slug="$active"
+                :items="[
+                    [
+                        'name' => 'Faq',
+                        'route' => route('fm.faq.index'),
+                        'icon' => 'megaphone',
+                        'active' => 'faq',
+                        'permission' => 'faq-list',
+                    ],
+                ]" />
         </nav>
     </div>
 </aside>

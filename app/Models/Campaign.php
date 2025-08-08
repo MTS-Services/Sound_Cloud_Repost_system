@@ -31,6 +31,7 @@ class Campaign extends BaseModel
         'start_date',
         'end_date',
         'refund_credits',
+        'pro_feature',
 
         'creater_id',
         'updater_id',

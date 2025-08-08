@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             OrderSeeder::class,
             UserInformationSeeder::class,
             RepostSeeder::class,
+            FaqSeeder::class
         ]);
     }
 }

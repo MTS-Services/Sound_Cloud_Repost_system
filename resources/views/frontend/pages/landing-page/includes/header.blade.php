@@ -1,14 +1,12 @@
  <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent backdrop-blur-sm">
      <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-         <div class="flex items-center">
-             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                 class="h-8 w-8 text-primary mr-2">
-                 <path d="M9 18V5l12-2v13"></path>
-                 <circle cx="6" cy="18" r="3"></circle>
-                 <circle cx="18" cy="16" r="3"></circle>
-             </svg>
-             <span class="text-xl font-bold">RepostChain</span>
+         <div class="flex gap-2 items-center">
+             <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                 <span class="text-slate-100 dark:text-black font-bold text-md md:text-lg">R</span>
+             </div>
+             <span class="text-slate-100 dark:text-black font-bold text-lg md:text-xl hidden sm:block">
+                 REPOST<span class="text-orange-500">CHAIN</span>
+             </span>
          </div>
 
          <nav class="hidden md:flex items-center space-x-8">
@@ -32,7 +30,8 @@
                 </button> --}}
 
              @if (Auth::check())
-             <a href="{{ route('user.dashboard') }}" class="bg-orange-600 rounded-md  px-3 py-1 text-white hover:bg-orange-700 transition-colors">{{ __('Dashboard') }}</a>
+                 <a href="{{ route('user.dashboard') }}"
+                     class="bg-orange-600 rounded-md  px-3 py-1 text-white hover:bg-orange-700 transition-colors">{{ __('Dashboard') }}</a>
              @else
                  <a href="{{ route('soundcloud.redirect') }}"
                      class="w-fit px-2 py-1 flex gap-2 items-center justify-center border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">

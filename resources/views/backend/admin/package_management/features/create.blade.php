@@ -21,14 +21,14 @@
                     @csrf
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
 
-                        <div class="space-y-2">
+                        {{-- <div class="space-y-2">
                             <x-inputs.input name="name" label="{{ __('Name') }}" placeholder="Enter Credit Name"
                                 value="{{ old('name') }}" :messages="$errors->get('name')" />
-                        </div>
+                        </div> --}}
                         <div class="space-y-2">
-                            <x-inputs.select name="key" label="{{ __('Feature Key') }}" icon="shield"
-                                placeholder="{{ __('Select a Feature Key') }}" :options="App\Models\Feature::getKeys()" :selected="old('key')"
-                                :messages="$errors->get('key')" />
+                            <x-inputs.select name="name" label="{{ __('Feature Name') }}" icon="shield"
+                                placeholder="{{ __('Select a Feature Name') }}" :options="App\Models\Feature::getKeys()" :selected="old('name')"
+                                :messages="$errors->get('name')" />
                         </div>
                         <div class="space-y-2">
                             <x-inputs.select name="feature_category_id" label="{{ __('Feature Category') }}" icon="shield"
