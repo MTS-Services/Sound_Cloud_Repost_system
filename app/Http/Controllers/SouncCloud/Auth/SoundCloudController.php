@@ -176,7 +176,7 @@ class SoundCloudController extends Controller
                     'nickname' => $soundCloudUser->getNickname(),
                     'avatar' => $soundCloudUser->getAvatar(),
                     'token' => $soundCloudUser->token,
-                     'soundcloud_permalink_url' => $soundCloudUser->getRaw()['permalink_url'] ?? null,
+                     'soundcloud_permalink_url' => $soundCloudUser->getRaw()['soundcloud_permalink_url'] ?? null,
                     'refresh_token' => $soundCloudUser->refreshToken,
                     'expires_in' => $soundCloudUser->expiresIn,
                     'last_synced_at' => now(),
