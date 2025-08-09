@@ -19,40 +19,39 @@ class CreditTransactionController extends Controller
 {
     protected CreditTransactionService  $creditTransactionService;
     protected PaymentService $paymentService;
-     
+
 
     public function __construct(CreditTransactionService $creditTransactionService, PaymentService $paymentService)
     {
         $this->creditTransactionService = $creditTransactionService;
         $this->paymentService = $paymentService;
-  
     }
-    public function index( Request $request)
+    public function index(Request $request)
     {
-       
-      
-          if ($request->ajax()) {
-             $query = $this->creditTransactionService->getTransactions();
+
+
+        if ($request->ajax()) {
+            $query = $this->creditTransactionService->getTransactions();
             return DataTables::eloquent($query)
                 ->editColumn('name', function ($credit) {
                     return $credit->receiver->name;
                 })
-                 ->editColumn('credit', function ($credit) {
+                ->editColumn('credit', function ($credit) {
                     return $credit->credit;
                 })
-                 ->editColumn('amount', function ($credit) {   
-                    return $credit->amount;
+                ->editColumn('amount', function ($credit) {
+                    return '$' . number_format($credit->amount, 2);
+                })
+                ->editColumn('credits', function ($credit) {
+                    return number_format($credit->credits, 2);
                 })
                 ->editColumn('status', fn($credit) => "<span class='badge badge-soft {$credit->status_color}'>{$credit->status_label}</span>")
-
-                ->editColumn('created_at', function ($credit) {
-                    return $credit->created_at_formatted;
-                })
+                ->editColumn('calculation_type', fn($credit) => "<span class='badge badge-soft {$credit->calculation_type_color}'>{$credit->calculation_type_name}</span>")
                 ->editColumn('action', function ($credit) {
                     $menuItems = $this->creditmeniItems($credit);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['name','credit', 'amount', 'status','created_by','status', 'created_at', 'action'])
+                ->rawColumns(['name', 'credit', 'amount', 'credits', 'status', 'calculation_type', 'action'])
                 ->make(true);
         }
         return view('backend.admin.order-management.transactions.index');
@@ -75,13 +74,13 @@ class CreditTransactionController extends Controller
             //     'label' => 'Details',
             //     'permissions' => ['creditTransaction-list',]
             // ],
-            
+
         ];
     }
     public function detail($id)
-    { 
+    {
         $data['transactions'] = Payment::where('id', decrypt($id))->first();
-        return view('backend.admin.order-management.transactions.detail',$data);
+        return view('backend.admin.order-management.transactions.detail', $data);
     }
 
     public function show(string $id)
@@ -89,7 +88,6 @@ class CreditTransactionController extends Controller
         $data = $this->creditTransactionService->getTransaction($id);
         $data['user_urn'] = $data->user?->name;
         return response()->json($data);
-       
     }
 
     public function status(Request $request, string $id)
@@ -212,8 +210,8 @@ class CreditTransactionController extends Controller
         ];
     }
     public function paymentDetails($id)
-    { 
+    {
         $data['payments'] = Payment::where('id', decrypt($id))->first();
-        return view('backend.admin.order-management.payments.detail',$data);
+        return view('backend.admin.order-management.payments.detail', $data);
     }
 }

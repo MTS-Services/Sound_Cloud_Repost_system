@@ -28,8 +28,8 @@
                     <tr>
                         <th >{{ __('SL') }}</th>
                         <th>{{ __('Requester Name') }}</th>
-                    
-                        <th>{{ __('Reposter Name') }}</th>
+                        <th>{{ __('Request To') }}</th>
+                        <th>{{ __('Status') }}</th>
                         <th>{{ __('Credits') }}</th>
                         <th>{{ __('Requested At') }}</th>
                         <th>{{ __('Created Date') }}</th>
@@ -53,8 +53,8 @@
                     //name and data, orderable, searchable
                    
                     ['name', true, true],
-                  
-                    ['title', true, true],                 
+                    ['requester_to', true, true], 
+                    ['status', true, true],                
                     ['credits_spent', true, true],
                     ['requested_at', true, true],                  
                     ['created_at', true, true],

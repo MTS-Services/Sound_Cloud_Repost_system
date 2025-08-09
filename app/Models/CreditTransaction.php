@@ -42,31 +42,33 @@ class CreditTransaction extends BaseModel
     protected $casts = [
         'metadata' => 'array',
     ];
-     public function getAppends()
-     {
-         return['status_label', 'status_color', 'status_btn_label', 'status_btn_color',
-         
+    public function getAppends()
+    {
+        return [
+            'status_label',
+            'status_color',
+            'status_btn_label',
+            'status_btn_color',
+
         ];
+    }
 
-
-     }
-     
-     public function getStatusLabelAttribute(): string
-     {
-         return $this->status == self::STATUS_PENDING ? 'Pending' : 'Completed';
-     }
-     public function getStatusColorAttribute(): string
-     {
-         return $this->status == self::STATUS_PENDING ? 'Green' : 'success';
-     }
-     public function getStatusBtnLabelAttribute(): string
-     {
-         return $this->status == self::STATUS_PENDING ? 'Pending' : 'Completed' ;
-     }
-     public function getStatusBtnColorAttribute(): string
-     {
-         return $this->status == self::STATUS_PENDING ? 'btn-warning' : 'btn-success';
-     }
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->status == self::STATUS_PENDING ? 'Pending' : 'Completed';
+    }
+    public function getStatusColorAttribute(): string
+    {
+        return $this->status == self::STATUS_PENDING ? 'Green' : 'success';
+    }
+    public function getStatusBtnLabelAttribute(): string
+    {
+        return $this->status == self::STATUS_PENDING ? 'Pending' : 'Completed';
+    }
+    public function getStatusBtnColorAttribute(): string
+    {
+        return $this->status == self::STATUS_PENDING ? 'btn-warning' : 'btn-success';
+    }
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                     Start of RELATIONSHIPS
@@ -87,7 +89,7 @@ class CreditTransaction extends BaseModel
         return $this->belongsTo(Campaign::class);
     }
 
-   
+
     // public function repostRequest()
     // {
     //     return $this->belongsTo(RepostRequest::class);
@@ -101,6 +103,15 @@ class CreditTransaction extends BaseModel
                     End of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->appends = array_merge(parent::getAppends(), [
+            'calculation_type_name',
+            'calculation_type_color',
+        ]);
+    }
+
 
     public const CALCULATION_TYPE_DEBIT = 0; // ADDITION
     public const CALCULATION_TYPE_CREDIT = 1; // SUBTRACTION
@@ -108,9 +119,20 @@ class CreditTransaction extends BaseModel
     public static function getCalculationTypes()
     {
         return [
-            self::CALCULATION_TYPE_DEBIT => 'Debit / Addition',
-            self::CALCULATION_TYPE_CREDIT => 'Credit / Subtraction',
+            self::CALCULATION_TYPE_DEBIT => 'Debit',
+            self::CALCULATION_TYPE_CREDIT => 'Credit',
         ];
+    }
+    public function getCalculationTypeNameAttribute(): string
+    {
+        return self::getCalculationTypes()[$this->calculation_type] ?? 'Unknown';
+    }
+    public function getCalculationTypeColorAttribute(): string
+    {
+        return [
+            self::CALCULATION_TYPE_DEBIT => 'badge-error',
+            self::CALCULATION_TYPE_CREDIT => 'badge-success',
+        ] [$this->calculation_type] ?? 'badge-secondary';
     }
 
     // Scope 
@@ -122,11 +144,6 @@ class CreditTransaction extends BaseModel
     public function scopeSubtraction()
     {
         return $this->where('calculation_type', '=', self::CALCULATION_TYPE_CREDIT);
-    }
-
-    public function getCalculationTypeNameAttribute(): string
-    {
-        return self::getCalculationTypes()[$this->calculation_type];
     }
 
 

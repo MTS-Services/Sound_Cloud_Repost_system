@@ -80,6 +80,8 @@ class RepostRequest extends BaseModel
         parent::__construct($attributes);
         $this->appends = array_merge(parent::getAppends(), [
             'status_label',
+            'status_color',
+            'status_btn_label',
             'repost_at_formatted',
             'pending_to_declined',
         ]);
@@ -104,7 +106,21 @@ class RepostRequest extends BaseModel
 
     public function getStatusLabelAttribute()
     {
+        return self::getStatusList()[$this->status] ?? 'Unknown';
+    }
+    public function getStatusBtnLabelAttribute()
+    {
         return self::getStatusList()[$this->status];
+    }
+    public function getStatusColorAttribute()
+    {
+        return [
+            self::STATUS_PENDING => 'badge-warning',
+            self::STATUS_APPROVED => 'badge-success',
+            self::STATUS_DECLINE => 'badge-error',
+            self::STATUS_EXPIRED => 'badge-error',
+            self::STATUS_COMPLETED => 'badge-info',
+        ] [$this->status] ?? 'badge-warning';
     }
     // pending thakle decline button show korbe
     public function getPendingToDeclinedAttribute()

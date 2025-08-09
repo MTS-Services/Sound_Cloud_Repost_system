@@ -27,13 +27,9 @@
                     <tr>
                         <th>{{ __('SL') }}</th>
                         <th>{{ __('Title') }}</th>
-                        <th>{{ __('Tag List') }}</th>
                         <th>{{ __('User Name') }}</th>
-                        <th>{{ __('Label Name') }}</th>
                         <th>{{ __('Likes') }}</th>
-                        <th>{{ __('Playlist Type') }}</th>
                         <th>{{ __('Tracks') }}</th>
-                        <th>{{ __('Purchased') }}</th>
                         <th>{{ __('Release Month') }}</th>
                         <th>{{ __('Action') }}</th>
                     </tr>
@@ -55,13 +51,9 @@
             document.addEventListener('DOMContentLoaded', () => {
                 let table_columns = [
                     ['title', true, true],
-                    ['tag_list', true, true],
                     ['user_name', true, true],
-                    ['label_name', true, true],
                     ['likes_count', true, false],
-                    ['playlist_type', true, true],
                     ['track_count', true, true],
-                    ['purchase_title', true, true],
                     ['release_month', true, true],
                     ['action', false, false],
                 ];

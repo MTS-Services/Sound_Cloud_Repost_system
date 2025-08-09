@@ -201,7 +201,7 @@ class UserController extends Controller implements HasMiddleware
             [
                 'routeName' => 'um.user.playlist.details',
                 'params' => encrypt($model->id),
-                'label' => ' details',
+                'label' => ' Details',
                 'permissions' => ['permissions-list']
             ],
             

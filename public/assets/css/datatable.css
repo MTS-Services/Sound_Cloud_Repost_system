@@ -85,3 +85,13 @@ html.dark .dt-container .dt-paging .dt-paging-button.current {
 html.dark .dt-container .dt-column-title {
     color: white !important;
 }
+
+table.dataTable th.dt-type-numeric {
+    text-align: left !important;
+}
+table.dataTable td.dt-type-numeric {
+    text-align: center !important;
+}
+table.dataTable th.dt-type-numeric div.dt-column-header {
+    flex-direction: row !important;
+}

@@ -22,6 +22,7 @@
                         <th>{{ __('Amount') }}</th>
                         <th>{{ __('Credits') }}</th>
                         <th>{{ __('Status') }}</th>
+                        <th>{{ __('Type') }}</th>
                         <th>{{ __('Created Date') }}</th>
                         <th>{{ __('Action') }}</th>
                     </tr>
@@ -46,7 +47,8 @@
                     ['amount', true, true],
                     ['credits', true, true],
                     ['status', true, true],
-                    ['created_at', true, true],
+                    ['calculation_type', true, true],
+                    ['created_at_formatted', true, true],
                     ['action', false, false],
                 ];
                 const details = {
