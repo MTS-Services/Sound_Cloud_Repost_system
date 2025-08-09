@@ -374,13 +374,13 @@ class RepostRequest extends Component
 
         switch ($this->activeMainTab) {
             case 'incoming_request':
-                $query->where('target_user_urn', user()->urn)->where('status', ModelsRepostRequest::STATUS_PENDING);
+                $query->where('requester_urn', user()->urn)->where('status', ModelsRepostRequest::STATUS_PENDING);
                 break;
             case 'outgoing_request':
                 $query->where('requester_urn', user()->urn)->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED)->where('status', '!=', ModelsRepostRequest::STATUS_DECLINE);
                 break;
             case 'previously_reposted' || 'accept_requests':
-                $query->where('target_user_urn', user()->urn)->Where('campaign_id', null)->where('status',ModelsRepostRequest::STATUS_APPROVED);
+                $query->where('requester_urn', user()->urn)->Where('campaign_id', null)->where('status',ModelsRepostRequest::STATUS_APPROVED);
                 break;
                 
         }
