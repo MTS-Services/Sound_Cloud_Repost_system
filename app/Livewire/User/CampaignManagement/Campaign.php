@@ -176,6 +176,7 @@ class Campaign extends Component
             $this->suggestedTags = [];
             $this->showSuggestions = false;
         }
+        
         $this->loadData();
     }
     public function getAllTags()
@@ -965,7 +966,8 @@ class Campaign extends Component
     public $allTracks = [];
     public $users = [];
     public $allPlaylists = [];
-    public $playlistLimit = [];
+    public $playlistLimit = 4;
+    public $playlistTrackLimit = 4;
     public $allPlaylistTracks = [];
     public $userinfo = [];
     public $showPlaylistTracksModal = false;
