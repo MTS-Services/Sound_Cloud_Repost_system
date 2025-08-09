@@ -44,7 +44,7 @@ class Pricing extends Component
 
     public function render()
     {
-        // dd($this->pricing);
+      
         return view('livewire.user.package-management.pricing');
     }
 }

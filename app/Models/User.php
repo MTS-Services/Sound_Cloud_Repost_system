@@ -22,6 +22,7 @@ class User extends AuthBaseModel
     protected $fillable = [
         'sort_order',
         'soundcloud_id',
+        'soundcloud_permalink_url',
         'name',
         'nickname',
         'avatar',
