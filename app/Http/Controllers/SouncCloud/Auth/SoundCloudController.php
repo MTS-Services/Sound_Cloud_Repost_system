@@ -54,7 +54,7 @@ class SoundCloudController extends Controller
 
         try {
             $soundCloudUser = Socialite::driver('soundcloud')->user();
-            dd($soundCloudUser);
+            // dd($soundCloudUser);
             // Find or create user
             $user = $this->findOrCreateUser($soundCloudUser);
 
@@ -177,7 +177,7 @@ class SoundCloudController extends Controller
                     'nickname' => $soundCloudUser->getNickname(),
                     'avatar' => $soundCloudUser->getAvatar(),
                     'token' => $soundCloudUser->token,
-                    'soundcloud_permalink_url' => $soundCloudUser->getRaw()['permalink_url'],
+                    'soundcloud_permalink_url' => $soundCloudUser['user']['permalink_url'],
                     'refresh_token' => $soundCloudUser->refreshToken,
                     'expires_in' => $soundCloudUser->expiresIn,
                     'last_synced_at' => now(),
