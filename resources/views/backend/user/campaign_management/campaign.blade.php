@@ -521,11 +521,15 @@
                 <div class="flex-grow overflow-y-auto p-6">
                     <div class="p-4">
                         <label for="track-link-search" class="text-xl font-semibold text-gray-700 dark:text-gray-200">
-                            Paste a SoundCloud profile or {{ $activeModalTab === 'tracks' ? 'track' : 'playlist' }} link
+                            @if ($activeModalTab === 'tracks')
+                                Paste a SoundCloud profile or track link
+                            @else
+                                Paste a SoundCloud playlist link
+                            @endif
                         </label>
                         <div class="flex w-full mt-2">
                             <input wire:model.live.debounce.500ms="searchQuery" type="text" id="track-link-search"
-                                placeholder="Paste a SoundCloud  {{ $activeModalTab === 'tracks' ? 'track' : 'playlist' }} link"
+                                placeholder="{{ $activeModalTab === 'tracks'? 'Paste a SoundCloud profile or track link': 'Paste a SoundCloud playlist link' }}"
                                 class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 border border-gray-300 dark:border-gray-600 ">
                             <button wire:click="searchSoundcloud" type="button"
                                 class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200 ">

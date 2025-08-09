@@ -8,6 +8,7 @@ use App\Models\Playlist;
 use App\Models\Repost;
 use App\Models\Track;
 use App\Models\User;
+use App\Models\UserInformation;
 use App\Services\TrackService;
 use App\Services\User\CampaignManagement\CampaignService;
 use Illuminate\Support\Facades\DB;
@@ -126,7 +127,7 @@ class Campaign extends Component
     public bool $showEditCampaignModal = false;
     public bool $showCancelWarningModal = false;
     ################################loadmore########################################
-   
+
     // Properties for "Load More"
     public $tracksPage = 1;
     public $playlistsPage = 1;
@@ -959,19 +960,20 @@ class Campaign extends Component
             return;
         }
     }
-
+       
     public $searchQuery = '';
     public $allTracks = [];
     public $users = [];
     public $allPlaylists = [];
     public $playlistLimit = [];
     public $allPlaylistTracks = [];
+    public $userinfo = [];
     public $showPlaylistTracksModal = false;
     public $trackLimit = 4;
     private $soundcloudClientId = 'YOUR_SOUNDCLOUD_CLIENT_ID';
     private $soundcloudApiUrl = 'https://api-v2.soundcloud.com';
 
-    
+
 
     // This method is triggered when the `activeModalTab` property is updated
     public function updatedActiveModalTab($tab)
@@ -987,11 +989,12 @@ class Campaign extends Component
 
     public function loadData()
     {
-        $query = User::where('urn', '!=', user()->urn);
+         $query = User::where('urn', '!=', user()->urn);
         if ($this->search) {
             $query->where('name', 'like', '%' . $this->search . '%');
         }
         $this->users = $query->get();
+        $this->userinfo = UserInformation::where('user_urn', user()->urn)->first();
     }
 
     // public function updatedSearch()
@@ -1038,8 +1041,7 @@ class Campaign extends Component
             if ($this->showPlaylistTracksModal == true) {
                 $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                     ->where(function ($query) {
-                        $query->Where('permalink_url', 'like', '%' . $this->searchQuery . '%')
-                        ->orWhere('author_soundcloud_permalink_url', 'like', '%' . $this->searchQuery . '%');
+                        $query->Where('permalink_url', 'like', '%' . $this->searchQuery . '%');
                     })
                     ->get();
                 $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
@@ -1048,15 +1050,14 @@ class Campaign extends Component
                     $this->allTracks = Track::where('user_urn', user()->urn)
                         ->where(function ($query) {
                             $query->where('permalink_url', 'like', '%' . $this->searchQuery . '%')
-                            ->orWhere('author_soundcloud_permalink_url', 'like', '%' . $this->searchQuery . '%');
+                                ->orWhere('author_soundcloud_permalink_url', 'like', '%' . $this->searchQuery . '%');
                         })
                         ->get();
                     $this->tracks = $this->allTracks->take($this->trackLimit);
                 } elseif ($this->activeModalTab === 'playlists') {
                     $this->allPlaylists = Playlist::where('user_urn', user()->urn)
                         ->where(function ($query) {
-                            $query->where('permalink_url', 'like', '%' . $this->searchQuery . '%')
-                            ->orWhere('author_soundcloud_permalink_url', 'like', '%' . $this->searchQuery . '%');
+                            $query->where('permalink_url', 'like', '%' . $this->searchQuery . '%');
                         })
                         ->get();
                     $this->playlists = $this->allPlaylists->take($this->playlistLimit);
@@ -1072,7 +1073,6 @@ class Campaign extends Component
         if ($this->showPlaylistTracksModal == true) {
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                 ->where('permalink_url', $this->searchQuery)
-                ->orWhere('author_soundcloud_permalink_url', $this->searchQuery)
                 ->get();
             if ($tracksFromDb->isNotEmpty()) {
                 $this->allPlaylistTracks = $tracksFromDb;
@@ -1096,7 +1096,6 @@ class Campaign extends Component
             if ($this->activeModalTab == 'playlists') {
                 $playlistsFromDb = Playlist::where('user_urn', user()->urn)
                     ->where('permalink_url', $this->searchQuery)
-                    ->orWhere('author_soundcloud_permalink_url', $this->searchQuery)
                     ->get();
 
                 if ($playlistsFromDb->isNotEmpty()) {
@@ -1132,6 +1131,10 @@ class Campaign extends Component
                 $this->activeModalTab = 'tracks';
                 $this->allTracks = collect([$data]);
                 $this->tracks = $this->allTracks->take($this->trackLimit);
+                break;
+            case 'user':
+                $this->activeTab = 'tracks';
+                $this->fetchUserTracks($data['id']);
                 break;
             default:
                 $this->allTracks = collect();
