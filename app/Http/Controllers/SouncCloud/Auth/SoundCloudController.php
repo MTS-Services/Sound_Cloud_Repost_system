@@ -90,6 +90,7 @@ class SoundCloudController extends Controller
                 'soundcloud_id' => null,
                 'nickname' => null,
                 'avatar' => null,
+                'soundcloud_permalink_url' => null,
                 'soundcloud_followings_count' => 0,
                 'soundcloud_followers_count' => 0,
                 'token' => null,
