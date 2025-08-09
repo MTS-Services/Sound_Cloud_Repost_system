@@ -7,6 +7,7 @@ use App\Models\CreditTransaction;
 use App\Models\Playlist;
 use App\Models\Repost;
 use App\Models\Track;
+use App\Models\User;
 use App\Services\TrackService;
 use App\Services\User\CampaignManagement\CampaignService;
 use Illuminate\Support\Facades\DB;
@@ -142,6 +143,7 @@ class Campaign extends Component
 
     public function mount()
     {
+        $this->loadData();
         $this->loadInitialData();
     }
     protected function rules()
@@ -173,6 +175,7 @@ class Campaign extends Component
             $this->suggestedTags = [];
             $this->showSuggestions = false;
         }
+        $this->loadData();
     }
     public function getAllTags()
     {
@@ -672,6 +675,7 @@ class Campaign extends Component
             // Close modal and complete reset
             $this->showCampaignsModal = false;
             $this->showSubmitModal = false;
+            $this->showPlaylistTracksModal = false;
 
             $this->reset([
                 'musicId',
@@ -958,9 +962,17 @@ class Campaign extends Component
 
     public $searchQuery = '';
     public $allTracks = [];
+    public $users = [];
     public $allPlaylists = [];
+    public $allPlaylistTracks = [];
+    public $showPlaylistTracksModal = false;
+    public $trackLimit = 4;
+    private $soundcloudClientId = 'YOUR_SOUNDCLOUD_CLIENT_ID';
+    private $soundcloudApiUrl = 'https://api-v2.soundcloud.com';
 
-    // [On('tabChanged')]
+    
+
+    // This method is triggered when the `activeModalTab` property is updated
     public function updatedActiveModalTab($tab)
     {
         $this->activeModalTab = $tab;
@@ -972,74 +984,158 @@ class Campaign extends Component
         }
     }
 
+    public function loadData()
+    {
+        $query = User::where('urn', '!=', user()->urn);
+        if ($this->search) {
+            $query->where('name', 'like', '%' . $this->search . '%');
+        }
+        $this->users = $query->get();
+    }
+
+    // public function updatedSearch()
+    // {
+    //     $this->loadData();
+    // }
+
+    public function updatedGenreFilter()
+    {
+        $this->loadData();
+    }
+
+    public function updatedCostFilter()
+    {
+        $this->loadData();
+    }
+
+    // Main search method for SoundCloud tracks and playlists
     public function searchSoundcloud()
     {
-        // Reset tracks and playlists
-        $this->tracks = [];
-        $this->playlists = [];
-
-        // Check if the search query is a valid URL
-        if (filter_var($this->searchQuery, FILTER_VALIDATE_URL)) {
-            // It's a URL, so we can try to fetch data from SoundCloud
-            $response = Http::withHeaders([
-                'Authorization' => 'OAuth ' . user()->token,
-            ])->get("{$this->baseUrl}/resolve", [
-                'url' => $this->searchQuery,
-            ]);
-
-            if ($response->successful()) {
-                $item = $response->json();
-                if (isset($item['kind'])) {
-                    if ($item['kind'] === 'track' && $this->activeModalTab === 'tracks') {
-                        // Handle single track
-                        $track = Track::create([
-                            'user_urn' => user()->urn,
-                            'title' => $item['title'],
-                            'urn' => $item['urn'],
-                            'artwork_url' => $item['artwork_url'],
-                            'author_username' => $item['user']['username'] ?? 'N/A',
-                            'type' => $item['type'] ?? 'N/A',
-                        ]);
-                        $this->tracks = [$track];
-                        $this->hasMoreTracks = false;
-                    } elseif ($item['kind'] === 'playlist' && $this->activeModalTab === 'playlists') {
-                        // Handle single playlist
-                        $playlist = Playlist::create([
-                            'user_urn' => user()->urn,
-                            'title' => $item['title'],
-                            'soundcloud_urn' => $item['urn'],
-                            'artwork_url' => $item['artwork_url'],
-                            'track_count' => $item['track_count'] ?? 0,
-                        ]);
-                        $this->playlists = [$playlist];
-                        $this->hasMorePlaylists = false;
-                    } elseif ($item['kind'] === 'user') {
-                        // Handle user profile (fetch their tracks or playlists)
-                        // For now, let's just show an error message
-                        session()->flash('error', 'Searching for a user profile is not supported yet.');
-                    } else {
-                        session()->flash('error', 'The provided link does not match the active tab.');
-                    }
-                }
+        // If the search query is empty, reset to local data
+        if (empty($this->searchQuery)) {
+            if ($this->showPlaylistTracksModal == true) {
+                $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()->get();
+                $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
             } else {
-                session()->flash('error', 'Could not resolve the SoundCloud link. Please check the URL.');
+                if ($this->activeTab == 'tracks') {
+                    $this->allTracks = Track::where('user_urn', user()->urn)->get();
+                    $this->tracks = $this->allTracks->take($this->trackLimit);
+                }
+                if ($this->activeTab == 'playlists') {
+                    $this->allPlaylists = Playlist::where('user_urn', user()->urn)->get();
+                    $this->playlists = $this->allPlaylists->take($this->playlistLimit);
+                }
             }
+            return;
+        }
+
+        // Check if the query is a SoundCloud permalink URL
+        if (preg_match('/^https?:\/\/(www\.)?soundcloud\.com\//', $this->searchQuery)) {
+            $this->resolveSoundcloudUrl();
         } else {
-            // It's a search query, perform a text search
-            if ($this->activeModalTab === 'tracks') {
-                $this->allTracks = Track::where('user_urn', user()->urn)
+            // If not a URL, perform a text-based "as-like" search on the local database
+            if ($this->showPlaylistTracksModal == true) {
+                $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                     ->where(function ($query) {
-                        $query->where('title', 'like', '%' . $this->searchQuery . '%')
-                            ->orWhere('author_username', 'like', '%' . $this->searchQuery . '%');
+                        $query->Where('permalink_url', 'like', '%' . $this->searchQuery . '%');
                     })
                     ->get();
-                $this->tracks = $this->allTracks->take($this->perPage);
-            } elseif ($this->activeModalTab === 'playlists') {
-                $this->allPlaylists = Playlist::where('user_urn', user()->urn)
-                    ->where('title', 'like', '%' . $this->searchQuery . '%')
-                    ->get();
-                $this->playlists = $this->allPlaylists->take($this->perPage);
+                $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
+            } else {
+                if ($this->activeTab === 'tracks') {
+                    $this->allTracks = Track::where('user_urn', user()->urn)
+                        ->where(function ($query) {
+                            $query->where('permalink_url', 'like', '%' . $this->searchQuery . '%');
+                        })
+                        ->get();
+                    $this->tracks = $this->allTracks->take($this->trackLimit);
+                } elseif ($this->activeTab === 'playlists') {
+                    $this->allPlaylists = Playlist::where('user_urn', user()->urn)
+                        ->where(function ($query) {
+                            $query->where('permalink_url', 'like', '%' . $this->searchQuery . '%');
+                        })
+                        ->get();
+                    $this->playlists = $this->allPlaylists->take($this->playlistLimit);
+                }
             }
+        }
+    }
+
+    // Resolves a SoundCloud URL to find the corresponding track or playlist
+    protected function resolveSoundcloudUrl()
+    {
+        // Search the local database for matching permalink URLs first
+        if ($this->showPlaylistTracksModal == true) {
+            $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
+                ->where('permalink_url', $this->searchQuery)
+                ->get();
+            if ($tracksFromDb->isNotEmpty()) {
+                $this->allPlaylistTracks = $tracksFromDb;
+                $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
+                return;
+            }
+        } else {
+            if ($this->activeTab == 'tracks') {
+                $tracksFromDb = Track::where('user_urn', user()->urn)
+                    ->where('permalink_url', $this->searchQuery)
+                    ->get();
+                if ($tracksFromDb->isNotEmpty()) {
+                    $this->activeTab = 'tracks';
+                    $this->allTracks = $tracksFromDb;
+                    $this->tracks = $this->allTracks->take($this->trackLimit);
+                    return;
+                }
+            }
+
+            if ($this->activeTab == 'playlists') {
+                $playlistsFromDb = Playlist::where('user_urn', user()->urn)
+                    ->where('permalink_url', $this->searchQuery)
+                    ->get();
+
+                if ($playlistsFromDb->isNotEmpty()) {
+                    $this->activeTab = 'playlists';
+                    $this->allPlaylists = $playlistsFromDb;
+                    $this->playlists = $this->allPlaylists->take($this->playlistLimit);
+                    return;
+                }
+            }
+        }
+
+        // If not found locally, use SoundCloud's API to resolve the URL
+        $response = Http::get("{$this->soundcloudApiUrl}/resolve", [
+            'url' => $this->searchQuery,
+            'client_id' => $this->soundcloudClientId,
+        ]);
+
+        if ($response->successful()) {
+            $resolvedData = $response->json();
+            $this->processResolvedData($resolvedData);
+        } else {
+            $this->allTracks = collect();
+            $this->tracks = collect();
+            session()->flash('error', 'Could not resolve the SoundCloud link. Please check the URL.');
+        }
+    }
+
+    // Processes the data returned from the SoundCloud API
+    protected function processResolvedData($data)
+    {
+        switch ($data['kind']) {
+            case 'track':
+                $this->activeTab = 'tracks';
+                $this->allTracks = collect([$data]);
+                $this->tracks = $this->allTracks->take($this->trackLimit);
+                break;
+            case 'playlist':
+                $this->activeTab = 'playlists';
+                $this->allPlaylists = collect([$data]);
+                $this->playlists = $this->allPlaylists->take($this->playlistLimit);
+                break;
+            default:
+                $this->allTracks = collect();
+                $this->tracks = collect();
+                session()->flash('error', 'The provided URL is not a track or playlist.');
+                break;
         }
     }
 
