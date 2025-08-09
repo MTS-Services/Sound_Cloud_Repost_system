@@ -133,13 +133,13 @@
                             <div class="flex flex-col items-start gap-0">
                                 <div class="flex items-center gap-2">
                                     <img class="w-12 h-12 rounded-full object-cover"
-                                        src="{{ auth_storage_url($repostRequest->requester->avatar) }}"
-                                        alt="{{ $repostRequest->requester->name }} avatar">
+                                        src="{{ auth_storage_url($repostRequest->targetUser->avatar) }}"
+                                        alt="{{ $repostRequest->targetUser->name }} avatar">
                                     <div x-data="{ open: false }" class="inline-block text-left">
                                         <div @click="open = !open" @click.outside="open = false"
                                             class="flex items-center gap-1 cursor-pointer">
                                             <span
-                                                class="text-slate-700 dark:text-gray-300 font-medium">{{ $repostRequest->requester->name }}</span>
+                                                class="text-slate-700 dark:text-gray-300 font-medium">{{ $repostRequest->targetUser->name }}</span>
                                             <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none"
                                                 viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -149,8 +149,8 @@
 
                                         <!-- Rating Stars -->
                                         <div class="flex items-center mt-1">
-                                            @for ($i = 1; $i <= 4; $i++)
-                                                <svg class="w-4 h-4 {{ $i <= ($repostRequest->requester->rating ?? 0) ? 'text-yellow-400' : 'text-gray-300' }}"
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <svg class="w-4 h-4 {{ $i <= ($repostRequest->targetUser->rating ?? 4) ? 'text-yellow-400' : 'text-gray-300' }}"
                                                     fill="currentColor" viewBox="0 0 20 20">
                                                     <path
                                                         d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
@@ -162,10 +162,10 @@
                                         <div x-show="open" x-transition.opacity
                                             class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
                                             x-cloak>
-                                            <a href="{{ $repostRequest->requester->soundcloud_url ?? '#' }}"
+                                            <a href="{{ $repostRequest->targetUser->soundcloud_url ?? '#' }}"
                                                 target="_blank" class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                 SoundCloud Profile</a>
-                                            <a href="{{ route('user.profile', $repostRequest->requester->username ?? $repostRequest->requester->id) }}"
+                                            <a href="{{ route('user.profile', $repostRequest->targetUser->username ?? $repostRequest->targetUser->id) }}"
                                                 wire:navigate class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                 RepostChain Profile</a>
                                         </div>
@@ -202,18 +202,18 @@
                                         </div>
                                         <div class="flex justify-end gap-3">
                                             <img class="w-10 h-10 rounded-full object-cover"
-                                                src="{{ auth_storage_url($repostRequest->targetUser->avatar) }}"
-                                                alt="{{ $repostRequest->targetUser->name }} avatar">
+                                                src="{{ auth_storage_url($repostRequest->requester->avatar) }}"
+                                                alt="{{ $repostRequest->requester->name }} avatar">
                                             <div x-data="{ open: false }" class="inline-block text-left">
                                                 <div class="flex items-center gap-1 cursor-pointer">
                                                     <span
-                                                        class="text-slate-700 dark:text-gray-300 font-medium">{{ $repostRequest->targetUser->name }}</span>
+                                                        class="text-slate-700 dark:text-gray-300 font-medium">{{ $repostRequest->requester->name }}</span>
                                                 </div>
 
                                                 <!-- Rating Stars -->
                                                 <div class="flex items-center mt-1">
-                                                    @for ($i = 1; $i <= 4; $i++)
-                                                        <svg class="w-4 h-4 {{ $i <= ($repostRequest->targetUser->rating ?? 0) ? 'text-yellow-400' : 'text-gray-300' }}"
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        <svg class="w-4 h-4 {{ $i <= ($repostRequest->requester->rating ?? 4) ? 'text-yellow-400' : 'text-gray-300' }}"
                                                             fill="currentColor" viewBox="0 0 20 20">
                                                             <path
                                                                 d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
@@ -225,11 +225,11 @@
                                                 <div x-show="open" x-transition.opacity
                                                     class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
                                                     x-cloak>
-                                                    <a href="{{ $repostRequest->targetUser->soundcloud_url ?? '#' }}"
+                                                    <a href="{{ $repostRequest->requester->soundcloud_url ?? '#' }}"
                                                         target="_blank"
                                                         class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                         SoundCloud Profile</a>
-                                                    <a href="{{ route('user.profile', $repostRequest->targetUser->username ?? $repostRequest->targetUser->id) }}"
+                                                    <a href="{{ route('user.profile', $repostRequest->requester->username ?? $repostRequest->requester->id) }}"
                                                         wire:navigate
                                                         class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                         RepostChain Profile</a>
