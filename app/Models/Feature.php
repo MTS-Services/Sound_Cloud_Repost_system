@@ -16,6 +16,7 @@ class Feature extends BaseModel
         'name',
         'type',
         'key',
+        'note',
 
         'created_by',
         'updated_by',
@@ -119,7 +120,7 @@ class Feature extends BaseModel
             self::FEATURE_KEY_CAMPAIGN_TARGETING => ['true', 'false'],
             self::FEATURE_KEY_AUTOBOOST => ['true', 'false'],
             self::FEATURE_KEY_SOUNDCLOUD_CHART_NOTIFIER => ['true', 'false'],
-            self::FEATURE_KEY_POWER_HOUR_MULTIPLIER => ['1x', '1.5x', '2x', '2x', '2x'],
+            self::FEATURE_KEY_POWER_HOUR_MULTIPLIER => ['1x', '1.5x', '2x',],
             self::FEATURE_KEY_PROMOTE_MULTIPLE_SC_ACCOUNTS => ['false', '3/month', '15/month', 'Unlimited'],
             self::FEATURE_KEY_SITEWIDE_DISCOUNT => ['10%', 'false', '20%'],
 
@@ -146,15 +147,16 @@ class Feature extends BaseModel
     public function getFeatureValuesAttribute()
     {
         $values = self::getFeatureValues()[$this->key] ?? [];
+        return $values;
 
-        return array_map(function ($val) {
-            if ($val === true) {
-                return 'true';
-            } elseif ($val === false) {
-                return 'false';
-            }
-            return $val;
-        }, $values);
+        // return array_map(function ($val) {
+        //     if ($val === true) {
+        //         return 'true';
+        //     } elseif ($val === false) {
+        //         return 'false';
+        //     }
+        //     return $val;
+        // }, $values);
     }
 
 

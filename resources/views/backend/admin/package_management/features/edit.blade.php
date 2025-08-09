@@ -21,7 +21,7 @@
                     enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
-                    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                    <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
 
                         {{-- <div class="space-y-2">
                             <x-inputs.input name="name" label="{{ __('Name') }}" placeholder="Enter Credit Name"
@@ -29,22 +29,26 @@
                         </div> --}}
                         <div class="space-y-2">
                             <x-inputs.select name="name" label="{{ __('Feature Name') }}" icon="shield"
-                                placeholder="{{ __('Select a Feature Name') }}" :options="$feature->getKeys()" :selected="$feature->name"
+                                placeholder="{{ __('Select a Feature Name') }}" :options="$feature->getFeaturedNames()" :selected="$feature->key"
                                 :messages="$errors->get('name')" />
                         </div>
                         <div class="space-y-2">
-                            <x-inputs.select name="feature_category_id" label="{{ __('Feature Category') }}" icon="shield"
-                                placeholder="{{ __('Select a Feature Category') }}" :options="$feature_categories->pluck('name', 'id')->toArray()" :selected="$feature->feature_category_id"
-                                :messages="$errors->get('feature_category_id')" />
+                            <x-inputs.select name="feature_category_id" label="{{ __('Feature Category') }}"
+                                icon="shield" placeholder="{{ __('Select a Feature Category') }}" :options="$feature_categories->pluck('name', 'id')->toArray()"
+                                :selected="$feature->featureCategory->id" :messages="$errors->get('feature_category_id')" />
                         </div>
                         <div class="space-y-2">
                             <x-inputs.select name="type" label="{{ __('Type') }}" icon="shield"
-                                placeholder="{{ __('Select a Type') }}" :options="$feature->getTypes()" :selected="old('type')"
+                                placeholder="{{ __('Select a Type') }}" :options="$feature->getTypes()" :selected="$feature->type"
                                 :messages="$errors->get('type')" />
+                        </div>
+                        <div class="space-y-2 sm:col-span-3">
+                            <x-inputs.textarea name="note" label="{{ __('Note') }}" placeholder="Enter Note"
+                                value="{{ $feature->note }}" :messages="$errors->get('note')" />
                         </div>
                     </div>
 
-                    
+
 
                     <div class="flex justify-end mt-5">
                         <x-button type="accent" :button="true" icon="save">{{ __('Update') }}</x-button>
