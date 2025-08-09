@@ -24,13 +24,14 @@
     <p>SoundCloud track data not available.</p>
 @endif --}}
 
+
 @if ($track && isset($track->permalink_url) && isset($track->id))
     <div class="soundcloud-embed-container" data-track-id="{{ $track->id }}">
         <iframe id="sc-player-{{ $track->id }}" {{-- Unique ID for each iframe --}} width="100%" height="{{ $height }}"
-            {{-- This will be 166 when visual is false --}} scrolling="no" frameborder="no" allow="autoplay" {{-- This attribute is correctly present --}}
-            src="{{ $getEmbedSrc() }}"> {{-- This will include &visual=false --}}
-        </iframe>
-        <div
+            style="border-top: 2px solid #ff5500;" {{-- This will be 166 when visual is false --}} scrolling="no" frameborder="no" allow="autoplay"
+            {{-- This attribute is correctly present --}} src="{{ $getEmbedSrc() }}"> {{-- This will include &visual=false --}}
+        </iframe style="pointer-events: none;">
+        {{-- <div
             style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;">
             @if (isset($track->author_soundcloud_permalink_url) && isset($track->author_username))
                 <a href="{{ $track->author_soundcloud_permalink_url }}" title="{{ $track->author_username }}"
@@ -45,7 +46,7 @@
                     {{ $track->title }}
                 </a>
             @endif
-        </div>
+        </div> --}}
     </div>
 
     {{-- Script to initialize SoundCloud Widget API and send messages --}}

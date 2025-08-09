@@ -12,10 +12,11 @@ class Plan extends BaseModel
     protected $fillable = [
         'name',
         'slug',
-        'yearly_price_save',
+        'yearly_save_percentage',
         'tag',
         'status',
         'notes',
+        'monthly_price',
 
         'created_by',
         'updated_by',
@@ -34,6 +35,8 @@ class Plan extends BaseModel
             'status_btn_label',
             'status_btn_color',
             'tag_label',
+            'yearly_price',
+            'yearly_save_price',
         ]);
     }
 
@@ -89,5 +92,14 @@ class Plan extends BaseModel
     }
 
     // In Plan.php model
+
+    public function getYearlyPriceAttribute(): float|int
+    {
+        return ($this->monthly_price * 12) * (100 - $this->yearly_save_percentage) / 100;
+    }
+    public function getYearlySavePriceAttribute(): float|int
+    {
+        return ($this->monthly_price * 12) - $this->yearly_price;
+    }
 
 }

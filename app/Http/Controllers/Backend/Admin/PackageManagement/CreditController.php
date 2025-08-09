@@ -63,6 +63,7 @@ class CreditController extends Controller implements HasMiddleware
             $query = $this->creditService->getCredits();
             return DataTables::eloquent($query)
                 ->editColumn('status', fn($credit) => "<span class='badge badge-soft {$credit->status_color}'>{$credit->status_label}</span>")
+                ->editColumn('price', fn($credit) => "$" . $credit->price)
                 ->editColumn('created_by', fn($credit) => $this->creater_name($credit))
                 ->editColumn('created_at', fn($credit) => $credit->created_at_formatted)
                 ->editColumn('action', fn($credit) => view('components.action-buttons', ['menuItems' => $this->menuItems($credit)])->render())
@@ -106,7 +107,7 @@ class CreditController extends Controller implements HasMiddleware
 
     public function detail($id)
     {
-        $data['credits'] = Credit::where('id',decrypt($id))->first();
+        $data['credits'] = Credit::where('id', decrypt($id))->first();
         return view('backend.admin.package_management.credit.detail', $data);
     }
     /**
@@ -124,7 +125,7 @@ class CreditController extends Controller implements HasMiddleware
     {
         try {
             $validated = $request->validated();
-           $this->creditService->createCredit($validated);
+            $this->creditService->createCredit($validated);
             session()->flash('success', "Credit created successfully");
         } catch (\Throwable $e) {
             session()->flash('Credit creation failed');
@@ -190,7 +191,7 @@ class CreditController extends Controller implements HasMiddleware
         if ($request->ajax()) {
             $query = $this->creditService->getCredits()->onlyTrashed();
             return DataTables::eloquent($query)
-               ->editColumn('status', fn($credit) => "<span class='badge badge-soft {$credit->status_color}'>{$credit->status_label}</span>")
+                ->editColumn('status', fn($credit) => "<span class='badge badge-soft {$credit->status_color}'>{$credit->status_label}</span>")
                 ->editColumn('deleted_by', fn($credit) => $this->deleter_name($credit))
                 ->editColumn('deleted_at', fn($credit) => $credit->deleted_at_formatted)
                 ->editColumn('action', function ($credit) {

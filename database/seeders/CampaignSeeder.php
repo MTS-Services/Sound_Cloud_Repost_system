@@ -39,6 +39,7 @@ class CampaignSeeder extends Seeder
             'target_genre' => 'Pop',
             'description' => 'A campaign to promote this track.',
             'target_reposts' => 1000,
+            'description' => 'A campaign to promote this track.',
             'completed_reposts' => 100,
             'cost_per_repost' => 0.50,
             'budget_credits' => 500.00,

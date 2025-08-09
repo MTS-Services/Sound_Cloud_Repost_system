@@ -22,8 +22,8 @@ return new class extends Migration
 
             $table->string('name')->nullable()->unique();
             $table->tinyInteger('key')->unique();
-            $table->tinyInteger('type')->default(Feature::TYPE_STRING)->comment(Feature::TYPE_STRING .': string', Feature::TYPE_BOOLEAN .': boolean');
-            
+            $table->tinyInteger('type')->default(Feature::TYPE_STRING)->comment(Feature::TYPE_STRING .': string'. Feature::TYPE_BOOLEAN .': boolean');
+
             $table->foreign('feature_category_id')->references('id')->on('feature_categories')->onDelete('cascade')->onUpdate('cascade');
 
             $table->timestamps();

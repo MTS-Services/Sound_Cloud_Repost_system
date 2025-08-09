@@ -72,6 +72,15 @@ class PlanController extends Controller implements HasMiddleware
                 ->editColumn('created_by', function ($feature) {
                     return $this->creater_name($feature);
                 })
+                ->editColumn('yearly_save_percentage', function ($feature) {
+                    return $feature->yearly_save_percentage . '%';
+                })
+                ->editColumn('monthly_price', function ($feature) {
+                    return '$' . $feature->monthly_price;
+                })
+                ->editColumn('yearly_price', function ($feature) {
+                    return '$' . $feature->yearly_price;
+                })
                 ->editColumn('created_at', function ($feature) {
                     return $feature->created_at_formatted;
                 })
@@ -79,12 +88,11 @@ class PlanController extends Controller implements HasMiddleware
                     $menuItems = $this->menuItems($feature);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action', 'tag', 'created_by', 'created_at', 'status'])
+                ->rawColumns(['action', 'tag', 'yearly_save_percentage', 'monthly_price', 'yearly_price', 'created_by', 'created_at', 'status'])
                 ->make(true);
         }
         return view('backend.admin.package_management.plans.index');
     }
-
 
     protected function menuItems($model): array
     {
@@ -155,6 +163,10 @@ class PlanController extends Controller implements HasMiddleware
         $data = $this->planService->getPlan($id);
         $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
+        $data['yearly_save_percentage_string'] = $data->yearly_save_percentage . '%';
+        $data['monthly_price_string'] = '$' . $data->monthly_price;
+        $data['yearly_price_string'] = '$' . $data->yearly_price;
+        $data['yearly_save_price_string'] = '$' . $data->yearly_save_price;
         return response()->json($data);
     }
 
