@@ -9,6 +9,7 @@ use App\Models\Repost;
 use App\Models\Track;
 use App\Models\User;
 use App\Models\UserInformation;
+use App\Services\PlaylistService;
 use App\Services\TrackService;
 use App\Services\User\CampaignManagement\CampaignService;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +24,7 @@ class Campaign extends Component
 {
     protected ?CampaignService $campaignService = null;
     protected ?TrackService $trackService = null;
+    protected ?PlaylistService $playlistService = null;
     public $featuredCampaigns;
     public $campaigns;
     #[Locked]
@@ -36,6 +38,8 @@ class Campaign extends Component
     public $showSuggestions = false;
     public $showSelectedTags = false;
     public $isLoading = false;
+    public $selectedTrackId;
+    public $selectedPlaylistId = null;
 
     // Properties for track type filtering
     public $selectedTrackTypes = [];
@@ -134,8 +138,9 @@ class Campaign extends Component
     public $perPage = 4; // Number of items to load per page
     public $hasMoreTracks = false;
     public $hasMorePlaylists = false;
+
     ############################## Campaign Creation ##########################
-    public function boot(CampaignService $campaignService, TrackService $trackService)
+    public function boot(CampaignService $campaignService, TrackService $trackService, PlaylistService $playlistService)
     {
         $this->campaignService = $campaignService;
         $this->trackService = $trackService;
@@ -176,7 +181,7 @@ class Campaign extends Component
             $this->suggestedTags = [];
             $this->showSuggestions = false;
         }
-        
+
         $this->loadData();
     }
     public function getAllTags()
@@ -374,6 +379,7 @@ class Campaign extends Component
             ->values()
             ->toArray();
     }
+
     public function selectTrackType($type)
     {
         $this->selectedTrackType = $type;
@@ -405,8 +411,6 @@ class Campaign extends Component
         }
 
         $this->reset(['searchQuery']);
-
-
     }
     public function fetchTracks()
     {
@@ -965,7 +969,7 @@ class Campaign extends Component
             return;
         }
     }
-       
+
     public $searchQuery = '';
     public $allTracks = [];
     public $users = [];
@@ -995,7 +999,7 @@ class Campaign extends Component
 
     public function loadData()
     {
-         $query = User::where('urn', '!=', user()->urn);
+        $query = User::where('urn', '!=', user()->urn);
         if ($this->search) {
             $query->where('name', 'like', '%' . $this->search . '%');
         }
@@ -1156,8 +1160,38 @@ class Campaign extends Component
     }
     public function openPlaylistTracksModal($playlistId)
     {
-        $this->toggleSubmitModal('playlist', $playlistId);
+        $this->showPlaylistTracksModal = true;
+        $this->selectedPlaylistId = $playlistId;
+        $this->selectedTrackId = null;
+
+        $playlist = $this->allPlaylists->where('id', $playlistId)->first();
+
+        if ($playlist) {
+            $this->allPlaylistTracks = collect($playlist->tracks); // or $playlist->tracks()->get();
+        } else {
+            $this->allPlaylistTracks = Playlist::findOrFail($playlistId)->tracks()->get();
+        }
+
+        $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
+
+        $this->searchSoundcloud();
     }
+
+    public function showPlaylistTracks($playlistId)
+    {
+        $this->selectedPlaylistId = $playlistId;
+        $playlist = Playlist::with('tracks')->find($playlistId);
+        if ($playlist) {
+            $this->allTracks = $playlist->tracks;
+            $this->tracks = $this->allTracks->take($this->trackLimit);
+            $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+        } else {
+            $this->tracks = collect();
+            $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+        }
+        $this->activeModalTab = 'tracks';
+    }
+
     public function render()
     {
         return view('backend.user.campaign_management.campaign');

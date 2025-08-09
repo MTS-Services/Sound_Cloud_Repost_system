@@ -529,7 +529,7 @@
                         </label>
                         <div class="flex w-full mt-2">
                             <input wire:model.live.debounce.500ms="searchQuery" type="text" id="track-link-search"
-                                placeholder="{{ $activeModalTab === 'tracks'? 'Paste a SoundCloud profile or track link': 'Paste a SoundCloud playlist link' }}"
+                                placeholder="{{ $activeModalTab === 'tracks' ? 'Paste a SoundCloud profile or track link' : 'Paste a SoundCloud playlist link' }}"
                                 class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 border border-gray-300 dark:border-gray-600 ">
                             <button wire:click="searchSoundcloud" type="button"
                                 class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200 ">
@@ -605,7 +605,7 @@
                     @elseif($activeModalTab === 'playlists')
                         <div class="space-y-3">
                             @forelse ($playlists as $playlist_)
-                                <div wire:click="toggleSubmitModal('playlist', {{ $playlist_->id }})"
+                                <div wire:click="showPlaylistTracks({{ $playlist_->id }})"
                                     class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
                                     <div class="flex-shrink-0">
                                         <img class="h-14 w-14 rounded-xl object-cover shadow-md"
