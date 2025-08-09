@@ -59,8 +59,12 @@ class RepostRequestController extends Controller implements HasMiddleware
      */
     public function index(Request $request)
     {
+        // dd(decrypt($request->requester_urn));
         if ($request->ajax()) {
             $query = $this->RepostRequestService->getRepostRequests()->with('requester','campaign');
+            if($request->has('requester_urn')){
+                $query->where('requester_urn', decrypt($request->requester_urn));
+            }
             return DataTables::eloquent($query)
               ->editColumn('name', function ($repost) {
                     return $repost->requester->name;

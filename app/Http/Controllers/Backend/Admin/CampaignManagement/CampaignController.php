@@ -58,9 +58,11 @@ class CampaignController extends Controller implements HasMiddleware
      */
     public function index(Request $request)
     {
-
         if ($request->ajax()) {
             $query = $this->campaignService->getCampaigns();
+            if($request->has('user_urn')){
+                $query->where('user_urn', decrypt($request->user_urn));
+            }
             return DataTables::eloquent($query)
                 ->editColumn('user_urn', function ($campaign) {
                     return $campaign->user->name;

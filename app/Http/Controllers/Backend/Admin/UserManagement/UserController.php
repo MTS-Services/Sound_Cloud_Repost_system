@@ -116,6 +116,24 @@ class UserController extends Controller implements HasMiddleware
                 'permissions' => ['permission-tracklist']
             ],
             [
+                'routeName' => 'cm.campaign.index',
+                'params' => ['user_urn' => encrypt($model->urn)],
+                'label' => 'Campaigns',
+                'permissions' => ['campaign-list']
+            ],
+            [
+                'routeName' => 'rrm.request.index',
+                'params' => ['requester_urn' => encrypt($model->urn)],
+                'label' => 'Repost Requests',
+                'permissions' => ['repost-request-list']
+            ],
+            [
+                'routeName' => 'rm.repost.index',
+                'params' => ['reposter_urn' => encrypt($model->urn)],
+                'label' => 'Reposts',
+                'permissions' => ['repost-list']
+            ],
+            [
                 'routeName' => 'um.user.status',
                 'params' => [encrypt($model->id)],
                 'label' => $model->status_btn_label,
