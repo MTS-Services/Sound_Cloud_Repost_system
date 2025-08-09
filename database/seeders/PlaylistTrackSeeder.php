@@ -19,8 +19,8 @@ class PlaylistTrackSeeder extends Seeder
         DB::table('playlist_tracks')->truncate();
 
         // Get some playlists and tracks
-        $playlists = Playlist::limit(5)->pluck('soundcloud_urn');
-        $tracks = Track::limit(10)->pluck('urn');
+        $playlists = Playlist::limit(20)->pluck('soundcloud_urn');
+        $tracks = Track::limit(50)->pluck('urn');
 
         // For demo: assign first 2 tracks to each playlist
         foreach ($playlists as $playlistUrn) {
