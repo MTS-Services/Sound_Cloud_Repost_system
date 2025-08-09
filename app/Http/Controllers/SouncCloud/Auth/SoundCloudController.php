@@ -45,6 +45,7 @@ class SoundCloudController extends Controller
 
     public function callback(SoundCloudAuthRequest $request): RedirectResponse
     {
+
         // Check for error from SoundCloud
         if ($request->has('error')) {
             return redirect()->route('login')
@@ -53,7 +54,7 @@ class SoundCloudController extends Controller
 
         try {
             $soundCloudUser = Socialite::driver('soundcloud')->user();
-
+            dd($soundCloudUser);
             // Find or create user
             $user = $this->findOrCreateUser($soundCloudUser);
 
