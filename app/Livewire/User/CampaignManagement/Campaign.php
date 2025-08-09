@@ -123,7 +123,8 @@ class Campaign extends Component
     public bool $showAddCreditModal = false;
     public bool $showEditCampaignModal = false;
     public bool $showCancelWarningModal = false;
-
+    ################################loadmore########################################
+    public $activeTab = 'tracks';
     ############################## Campaign Creation ##########################
     public function boot(CampaignService $campaignService, TrackService $trackService)
     {
