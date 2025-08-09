@@ -20,7 +20,7 @@
                     class="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 dark:bg-slate-800 dark:hover:bg-slate-700 text-white dark:text-gray-200 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer w-full sm:w-auto justify-center">
                     <span class="flex items-center gap-1 text-base sm:text-sm">
                         💰
-                        <a href="{{ route('user.cm.my-campaigns') }}" wire:navigate
+                        <a href="{{ route('user.cm.campaigns') }}" wire:navigate
                             class="hover:underline text-white dark:text-gray-200 text-base sm:text-sm">
                             {{ __('Earn Credits') }}
                         </a>
@@ -146,10 +146,9 @@
                     <div class="h-60 sm:h-96 flex flex-col justify-between">
                         <div class="flex-grow flex items-center justify-center my-4">
                             <div
-                                class="bg-slate-700/50 rounded-full w-36 h-36 sm:w-40 sm:h-40 flex items-center justify-center">
+                                class="bg-slate-700/50 rounded-sm w-max h-max sm:w-40 sm:h-40 flex items-center justify-center">
                                 <p class="text-slate-500 text-sm">
-                                    <img src="
-                                    https://imgs.search.brave.com/2rHUZ109YlFZLs4tiya8jxlxjLsE_WEUoUMpvFfZANQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NzFRTnBFbDhjckwu/anBn"
+                                    <img src="https://xlr8r.com/wp-content/uploads/2019/06/soundcloud_logo1.jpg"
                                         alt="">
                                 </p>
                             </div>
@@ -183,8 +182,8 @@
         </main>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 p-2 dark:text-white">
-        <div class="lg:col-span-2  rounded-lg lg-px-4 lg-py-6 lg-ml-6 border border-slate-700 m-4 my-2">
+    <div class="grid grid-cols-1 lg:grid-cols-3 dark:text-white">
+        <div class="lg:col-span-2  rounded-lg lg-px-4 lg-py-6 lg-ml-6 border border-slate-700 m-2 my-2">
             <div class="flex items-center justify-between lg-mb-6 p-4">
                 <div>
                     <h3 class="dark:text-white dark:text-black  text-lg font-semibold">Recent Tracks</h3>
@@ -222,8 +221,7 @@
                     Campaign</a>
             </div>
         </div>
-        <div
-            class=" rounded-lg  border border-slate-700 lg:ml-8 ml-0 lg:mr-6 mr-6 lg:p-4 p-4 lg:mt-3 mt-3 lg:mb-2 mb-2">
+        <div class="rounded-lg border border-slate-700 lg:ml-8 ml-2 lg:mr-8 mr-2 mt-2 mb-2">
             <div class="flex items-center justify-between lg-mb-6 p-2">
                 <div>
                     <h3 class=" text-lg font-semibold dark:text-white">Latest Repost Requests

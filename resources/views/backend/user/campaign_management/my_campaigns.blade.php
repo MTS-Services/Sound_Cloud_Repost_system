@@ -453,9 +453,9 @@
                 </div>
 
                 <!-- Sidebar -->
-                <aside class="lg:w-1/3 space-y-6 bg-white dark:bg-slate-800 rounded-sm lg:mt-0">
+                <aside class="lg:w-1/3 space-y-6 bg-white dark:bg-slate-800 rounded-sm lg:mt-0 ">
                     <!-- Tools Section -->
-                    <div class=" dark:bg-slate-400 rounded-sm p-6">
+                    <div class=" dark:bg-slate-100 rounded-sm p-6">
                         <h2 class="text-lg font-bold text-gray-800 mb-4 text-black dark:text-gray-100">Tools and
                             FAQs</h2>
                         <ul class="space-y-3">
@@ -471,7 +471,7 @@
                     </div>
 
                     <!-- Reach More Section -->
-                    <div class="dark:bg-slate-400 rounded-sm p-6 text-black dark:text-gray-100">
+                    <div class="dark:bg-slate-100 rounded-sm p-6 text-black dark:text-gray-100">
                         <h2 class="text-lg font-bold text-gray-800 mb-4 text-black dark:text-gray-100">Reach more
                             people</h2>
                         <hr class="text-red-500 mb-4">
