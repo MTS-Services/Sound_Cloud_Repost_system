@@ -524,110 +524,7 @@ class MyCampaign extends Component
         }
     }
 
-    // public function submitCampaign()
-    // {
-    //     $this->validate();
-
-    //     try {
-    //         if (!$this->musicId) {
-    //             throw new \Exception('Please select a track for your campaign.');
-    //         }
-
-    //         if ($this->costPerRepost <= 0 || $this->targetReposts <= 0) {
-    //             throw new \Exception('Cost per repost and target reposts must be greater than 0.');
-    //         }
-
-    //         $totalBudget = ($this->costPerRepost * $this->targetReposts);
-
-    //         // Final budget check before submission
-    //         if ($totalBudget > userCredits()) {
-    //             $shortage = $totalBudget - userCredits();
-    //             throw new \Exception("You need {$shortage} more credits to create this campaign.");
-    //         }
-
-    //         if ($this->costPerRepost >= 1) {
-    //             $this->minFollowers = $this->costPerRepost * 100;
-    //             $this->maxFollowers = $this->minFollowers + 99;
-    //         }
-
-    //         DB::transaction(function () use ($totalBudget) {
-    //             $campaign = Campaign::create([
-    //                 'music_id' => $this->musicId,
-    //                 'music_type' => $this->musicType,
-    //                 'title' => $this->title,
-    //                 'description' => $this->description,
-    //                 'target_reposts' => $this->targetReposts,
-    //                 'cost_per_repost' => $this->costPerRepost,
-    //                 'budget_credits' => $totalBudget,
-    //                 'end_date' => $this->endDate,
-    //                 'user_urn' => user()->urn,
-    //                 'status' => Campaign::STATUS_OPEN,
-    //                 'min_followers' => $this->minFollowers,
-    //                 'max_followers' => $this->maxFollowers,
-    //                 'creater_id' => user()->id,
-    //                 'creater_type' => get_class(user())
-    //             ]);
-
-    //             CreditTransaction::create([
-    //                 'receiver_urn' => user()->urn,
-    //                 'calculation_type' => CreditTransaction::CALCULATION_TYPE_CREDIT,
-    //                 'source_id' => $campaign->id,
-    //                 'source_type' => Campaign::class,
-    //                 'transaction_type' => CreditTransaction::TYPE_SPEND,
-    //                 'status' => 'succeeded',
-    //                 'credits' => $totalBudget,
-    //                 'description' => 'Spent on campaign creation',
-    //                 'metadata' => [
-    //                     'campaign_id' => $campaign->id,
-    //                     'music_id' => $this->musicId,
-    //                     'music_type' => $this->musicType,
-    //                     'start_date' => now(),
-    //                 ],
-    //                 'created_id' => user()->id,
-    //                 'created_type' => get_class(user())
-    //             ]);
-    //         });
-
-    //         session()->flash('message', 'Campaign created successfully!');
-    //         $this->dispatch('campaignCreated');
-
-    //         // Close modal and complete reset
-    //         $this->showCampaignsModal = false;
-    //         $this->showSubmitModal = false;
-
-    //         $this->reset([
-    //             'musicId',
-    //             'title',
-    //             'description',
-    //             'endDate',
-    //             'targetReposts',
-    //             'costPerRepost',
-    //             'playlistId',
-    //             'playlistTracks',
-    //             'activeModalTab',
-    //             'tracks',
-    //             'playlists',
-    //             'minFollowers',
-    //             'maxFollowers',
-    //             'showBudgetWarning',
-    //             'budgetWarningMessage',
-    //             'canSubmit'
-    //         ]);
-
-    //         $this->resetValidation();
-    //         $this->resetErrorBag();
-    //     } catch (\Exception $e) {
-    //         session()->flash('error', 'Failed to create campaign: ' . $e->getMessage());
-
-    //         Log::error('Campaign creation error: ' . $e->getMessage(), [
-    //             'music_id' => $this->musicId,
-    //             'user_urn' => user()->urn ?? 'unknown',
-    //             'title' => $this->title,
-    //             'total_budget' => $totalBudget ?? 0,
-    //             'target_reposts' => $this->targetReposts
-    //         ]);
-    //     }
-    // }
+  
     public function getAllGenres()
     {
         $this->genres = $this->trackService->getTracks()->where('user_urn', user()->urn)->pluck('genre')->unique()->values()->toArray();
@@ -637,26 +534,10 @@ class MyCampaign extends Component
         $this->validate();
 
         try {
-            // if (!$this->musicId) {
-            //     throw new \Exception('Please select a track for your campaign.');
-            // }
-
-            // if ($this->costPerRepost <= 0 || $this->targetReposts <= 0) {
-            //     throw new \Exception('Cost per repost and target reposts must be greater than 0.');
-            // }
-
+           
             $totalBudget = $this->credit; //($this->costPerRepost * $this->targetReposts);
 
-            // Final budget check before submission
-            // if ($totalBudget > userCredits()) {
-            //     $shortage = $totalBudget - userCredits();
-            //     throw new \Exception("You need {$shortage} more credits to create this campaign.");
-            // }
-
-            // if ($this->costPerRepost >= 1) {
-            //     $this->minFollowers = $this->costPerRepost * 100;
-            //     $this->maxFollowers = $this->minFollowers + 99;
-            // }
+           
 
             DB::transaction(function () use ($totalBudget) {
                 $commentable= $this->commentable ? 1 : 0;
