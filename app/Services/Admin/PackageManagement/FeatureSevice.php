@@ -27,12 +27,16 @@ class FeatureSevice
     public function createFeature(array $data)
     {
         $data['created_by'] = admin()->id;
+        $data['key'] = $data['name'];
+        $data['name'] = Feature::getFeaturedNames()[$data['name']];
         $feature = Feature::create($data);
         return $feature;
     }
     public function updateFeature(array $data, Feature $feature)
     {
         $data['updated_by'] = admin()->id;
+        $data['key'] = $data['name'];
+        $data['name'] = Feature::getFeaturedNames()[$data['name']];
         $feature->update($data);
         return $feature;
     }

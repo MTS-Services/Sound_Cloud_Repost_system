@@ -12,7 +12,7 @@
                 <p class="text-slate-400 text-[10px] md:text-xs">{{ userCredits() }} Credits</p>
             </div>
         </div>
-        <a href="{{ route('user.add-credits') }}" wire:navigate
+        {{-- <a href="{{ route('user.add-credits') }}" wire:navigate
             class="w-full bg-orange-500 hover:bg-orange-600 text-white text-sm md:text-base py-1.5 md:py-2 px-3 md:px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -21,7 +21,7 @@
                 <path d="M12 5v14"></path>
             </svg>
             <span class="text-xs md:text-sm">Add Credits</span>
-        </a>
+        </a> --}}
     </div>
 
     <!-- Nav Section -->
