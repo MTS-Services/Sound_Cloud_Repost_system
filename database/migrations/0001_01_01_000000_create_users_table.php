@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->string('email')->unique()->nullable();
             $table->string('password')->nullable();
             $table->unsignedBigInteger('soundcloud_id')->unique();
+            $table->string('soundcloud_permalink_url')->nullable()->unique();
             $table->string('name')->index();
             $table->string('nickname')->nullable()->index();
 

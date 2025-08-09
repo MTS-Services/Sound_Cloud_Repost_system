@@ -45,6 +45,7 @@ class SoundCloudController extends Controller
 
     public function callback(SoundCloudAuthRequest $request): RedirectResponse
     {
+
         // Check for error from SoundCloud
         if ($request->has('error')) {
             return redirect()->route('login')
@@ -53,7 +54,7 @@ class SoundCloudController extends Controller
 
         try {
             $soundCloudUser = Socialite::driver('soundcloud')->user();
-
+            // dd($soundCloudUser);
             // Find or create user
             $user = $this->findOrCreateUser($soundCloudUser);
 
@@ -87,11 +88,12 @@ class SoundCloudController extends Controller
         try {
             // Clear SoundCloud data
             $user->update([
-                'soundcloud_id' => null,
-                'nickname' => null,
-                'avatar' => null,
-                'soundcloud_followings_count' => 0,
-                'soundcloud_followers_count' => 0,
+                // 'soundcloud_id' => null,
+                // 'nickname' => null,
+                // 'avatar' => null,
+                // 'soundcloud_permalink_url' => null,
+                // 'soundcloud_followings_count' => 0,
+                // 'soundcloud_followers_count' => 0,
                 'token' => null,
                 'refresh_token' => null,
                 'expires_in' => null,
@@ -175,6 +177,7 @@ class SoundCloudController extends Controller
                     'nickname' => $soundCloudUser->getNickname(),
                     'avatar' => $soundCloudUser->getAvatar(),
                     'token' => $soundCloudUser->token,
+                    'soundcloud_permalink_url' => $soundCloudUser->getRaw()['permalink_url'] ,
                     'refresh_token' => $soundCloudUser->refreshToken,
                     'expires_in' => $soundCloudUser->expiresIn,
                     'last_synced_at' => now(),
