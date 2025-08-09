@@ -87,12 +87,12 @@ class SoundCloudController extends Controller
         try {
             // Clear SoundCloud data
             $user->update([
-                'soundcloud_id' => null,
-                'nickname' => null,
-                'avatar' => null,
-                'soundcloud_permalink_url' => null,
-                'soundcloud_followings_count' => 0,
-                'soundcloud_followers_count' => 0,
+                // 'soundcloud_id' => null,
+                // 'nickname' => null,
+                // 'avatar' => null,
+                // 'soundcloud_permalink_url' => null,
+                // 'soundcloud_followings_count' => 0,
+                // 'soundcloud_followers_count' => 0,
                 'token' => null,
                 'refresh_token' => null,
                 'expires_in' => null,
@@ -176,6 +176,7 @@ class SoundCloudController extends Controller
                     'nickname' => $soundCloudUser->getNickname(),
                     'avatar' => $soundCloudUser->getAvatar(),
                     'token' => $soundCloudUser->token,
+                    'soundcloud_permalink_url' => $soundCloudUser->getPermalinkUrl(),
                     'refresh_token' => $soundCloudUser->refreshToken,
                     'expires_in' => $soundCloudUser->expiresIn,
                     'last_synced_at' => now(),
