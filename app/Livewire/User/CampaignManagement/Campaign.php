@@ -403,6 +403,10 @@ class Campaign extends Component
         } elseif ($tab === 'playlists') {
             $this->fetchPlaylists();
         }
+
+        $this->reset(['searchQuery']);
+
+
     }
     public function fetchTracks()
     {
