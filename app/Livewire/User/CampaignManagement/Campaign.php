@@ -15,6 +15,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Throwable;
 use Illuminate\Support\Facades\Http;
+use Livewire\Attributes\On;
 
 class Campaign extends Component
 {
@@ -362,6 +363,7 @@ class Campaign extends Component
     public function getAllTrackTypes()
     {
         $this->selectedTrackTypes = $this->trackService->getTracks()
+            ->where('user_urn', user()->urn)
             ->pluck('type')
             ->unique()
             ->values()
@@ -954,6 +956,101 @@ class Campaign extends Component
         }
     }
 
+    public $searchQuery = '';
+    public $allTracks = [];
+    public $allPlaylists = [];
+
+    // [On('tabChanged')]
+    public function updatedActiveModalTab($tab)
+    {
+        $this->activeModalTab = $tab;
+        $this->searchQuery = '';
+        if ($tab === 'tracks') {
+            $this->fetchTracks();
+        } elseif ($tab === 'playlists') {
+            $this->fetchPlaylists();
+        }
+    }
+
+    public function searchSoundcloud()
+    {
+        // Reset tracks and playlists
+        $this->tracks = [];
+        $this->playlists = [];
+
+        // Check if the search query is a valid URL
+        if (filter_var($this->searchQuery, FILTER_VALIDATE_URL)) {
+            // It's a URL, so we can try to fetch data from SoundCloud
+            $response = Http::withHeaders([
+                'Authorization' => 'OAuth ' . user()->token,
+            ])->get("{$this->baseUrl}/resolve", [
+                'url' => $this->searchQuery,
+            ]);
+
+            if ($response->successful()) {
+                $item = $response->json();
+                if (isset($item['kind'])) {
+                    if ($item['kind'] === 'track' && $this->activeModalTab === 'tracks') {
+                        // Handle single track
+                        $track = Track::create([
+                            'user_urn' => user()->urn,
+                            'title' => $item['title'],
+                            'urn' => $item['urn'],
+                            'artwork_url' => $item['artwork_url'],
+                            'author_username' => $item['user']['username'] ?? 'N/A',
+                            'type' => $item['type'] ?? 'N/A',
+                        ]);
+                        $this->tracks = [$track];
+                        $this->hasMoreTracks = false;
+                    } elseif ($item['kind'] === 'playlist' && $this->activeModalTab === 'playlists') {
+                        // Handle single playlist
+                        $playlist = Playlist::create([
+                            'user_urn' => user()->urn,
+                            'title' => $item['title'],
+                            'soundcloud_urn' => $item['urn'],
+                            'artwork_url' => $item['artwork_url'],
+                            'track_count' => $item['track_count'] ?? 0,
+                        ]);
+                        $this->playlists = [$playlist];
+                        $this->hasMorePlaylists = false;
+                    } elseif ($item['kind'] === 'user') {
+                        // Handle user profile (fetch their tracks or playlists)
+                        // For now, let's just show an error message
+                        session()->flash('error', 'Searching for a user profile is not supported yet.');
+                    } else {
+                        session()->flash('error', 'The provided link does not match the active tab.');
+                    }
+                }
+            } else {
+                session()->flash('error', 'Could not resolve the SoundCloud link. Please check the URL.');
+            }
+        } else {
+            // It's a search query, perform a text search
+            if ($this->activeModalTab === 'tracks') {
+                $this->allTracks = Track::where('user_urn', user()->urn)
+                    ->where(function ($query) {
+                        $query->where('title', 'like', '%' . $this->searchQuery . '%')
+                            ->orWhere('author_username', 'like', '%' . $this->searchQuery . '%');
+                    })
+                    ->get();
+                $this->tracks = $this->allTracks->take($this->perPage);
+            } elseif ($this->activeModalTab === 'playlists') {
+                $this->allPlaylists = Playlist::where('user_urn', user()->urn)
+                    ->where('title', 'like', '%' . $this->searchQuery . '%')
+                    ->get();
+                $this->playlists = $this->allPlaylists->take($this->perPage);
+            }
+        }
+    }
+
+    public function openRepostsModal($trackId)
+    {
+        $this->toggleSubmitModal('track', $trackId);
+    }
+    public function openPlaylistTracksModal($playlistId)
+    {
+        $this->toggleSubmitModal('playlist', $playlistId);
+    }
     public function render()
     {
         return view('backend.user.campaign_management.campaign');
