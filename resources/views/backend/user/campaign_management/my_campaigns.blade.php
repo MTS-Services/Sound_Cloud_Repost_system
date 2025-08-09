@@ -739,7 +739,13 @@
                         <!-- Budget Display -->
                         <div class="flex items-center justify-center space-x-2 mb-4">
                             <div class="w-6 h-6 border-2 border-orange-500 rounded flex items-center justify-center">
-                                <span class="text-orange-500 text-xs">$</span>
+                                <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="1" y="1" width="24" height="16" rx="3" fill="none"
+                                        stroke="currentColor" stroke-width="2" />
+                                    <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
+                                        stroke-width="2" />
+                                </svg>
                             </div>
                             <span class="text-2xl font-bold text-orange-500">{{ $credit }}</span>
                         </div>
