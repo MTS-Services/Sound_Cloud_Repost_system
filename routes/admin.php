@@ -15,6 +15,7 @@ use App\Http\Controllers\Backend\Admin\UserManagement\UserTracklistController;
 use App\Http\Controllers\Backend\Admin\OrderManagement\CreditTransactionController;
 use App\Http\Controllers\Backend\Admin\PackageManagement\FeatureCategoryController;
 use App\Http\Controllers\Backend\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Backend\Admin\Faq\FaqCategotyController;
 use App\Http\Controllers\Backend\Admin\Faq\FaqController;
 use App\Http\Controllers\Backend\Admin\RepostManagement\RepostController;
 use App\Http\Controllers\Backend\Admin\RepostManagement\RepostRequestController;
@@ -202,8 +203,12 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{faq}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{faq}', 'permanentDelete')->name('permanent-delete');
-            Route::get('/detail/{faq}', 'detail')->name('detail');
-           
         });
+        Route::resource('faq-category', FaqCategotyController::class);
+        Route::get('status/{faq_category}', [FaqCategotyController::class, 'status'])->name('faq-category.status');
+        Route::post('show/{faq_category}', [FaqCategotyController::class, 'show'])->name('faq-category.show');
+        Route::get('trash/bin', [FaqCategotyController::class, 'trash'])->name('faq-category.trash');
+        Route::get('restore/{faq_category}', [FaqCategotyController::class, 'restore'])->name('faq-category.restore');
+        Route::delete('permanent-delete/{faq_category}', [FaqCategotyController::class, 'permanentDelete'])->name('faq-category.permanent-delete');
     });
 });

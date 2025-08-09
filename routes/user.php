@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Backend\User\Faq\FaqController;
 use App\Http\Controllers\Backend\User\DashboardController;
 use App\Http\Controllers\Backend\Admin\OrderManagement\OrderController as UserOrderController;
 use App\Http\Controllers\Backend\User\AddCaeditsController;
 use App\Http\Controllers\Backend\User\AnalyticsController;
+use App\Http\Controllers\Backend\User\FaqManagement\FaqController as FaqManagementFaqController;
 use App\Livewire\User\CampaignManagement\Campaign;
 use App\Livewire\User\CampaignManagement\MyCampaign;
 use App\Http\Controllers\Backend\User\Members\MemberController;
@@ -31,6 +33,7 @@ Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
 // Dashboard and other routes
 Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+  
 
 
     Route::get('/user-profile', [ProfileController::class, 'profile'])->name('profile');
@@ -49,7 +52,10 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     });
     Route::group(['as' => 'pkm.', 'prefix' => 'package-management'], function () {
         Route::get('/pricing', Pricing::class)->name('pricing');
+
     });
+
+   
     // Member Management
     Route::group(['as' => 'mm.', 'prefix' => 'member-management'], function () {
         // Member Routes
@@ -71,7 +77,13 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
 
     // Help Support
     Route::get('/help-support', HelpAndSupport::class)->name('help-support');
+
+  
 });
+
+ //Faq Management
+
+    Route::get('/faq', [FaqManagementFaqController::class, 'index'])->name('faq.index'); 
 
 
 

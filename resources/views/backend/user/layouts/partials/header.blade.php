@@ -94,7 +94,7 @@
                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Pricing') }}</a>
                             </li>
                             <li>
-                                <a href="#"
+                                <a href="{{ route('faq.index') }}"
                                     class="block px-4 py-2   hover:bg-red-100  dark:hover:bg-gray-700">{{ __('FAQs') }}</a>
                             </li>
                         </ul>

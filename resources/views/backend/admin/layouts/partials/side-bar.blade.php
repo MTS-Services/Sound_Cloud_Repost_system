@@ -178,6 +178,13 @@
                         'active' => 'faq',
                         'permission' => 'faq-list',
                     ],
+                     [
+                        'name' => 'Faq-Category',
+                        'route' => route('fm.faq-category.index'),
+                        'icon' => 'megaphone',
+                        'active' => 'faq_category',
+                        'permission' => 'faqCategory-list',
+                    ],
                 ]" />
         </nav>
     </div>

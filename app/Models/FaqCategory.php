@@ -4,19 +4,17 @@ namespace App\Models;
 
 use App\Models\BaseModel;
 
-class Faq extends BaseModel
+class FaqCategory extends BaseModel
 {
     //
 
-
     protected $fillable = [
-        'sort_order',
-        'question',
-        'description',
-        'key',
-        'status',
+    'sort_order',
+     'name',
+     'slug',
+     'status',
 
-        'created_by',
+       'created_by',
         'updated_by',
         'deleted_by',
     ];
@@ -38,7 +36,6 @@ class Faq extends BaseModel
             //
         ]);
     }
-
     public const STATUS_ACTIVE = 1;
     public const STATUS_INACTIVE = 0;
 
@@ -49,7 +46,6 @@ class Faq extends BaseModel
             self::STATUS_INACTIVE => 'Inactive',
         ];
     }
-
 
     public function getStatusLabelAttribute()
     {
@@ -75,50 +71,9 @@ class Faq extends BaseModel
         return $this->status == self::STATUS_INACTIVE ? 'btn-error' : 'btn-primary';
     }
 
-    public const KEY_CAMPAIGN = 0;
-    public const KEY_REPOST = 1;
-    public const KEY_DIRECT_REPOST = 2;
-
-    public static function keyLists()
+    public function faqs()
     {
-        return [
-            self::KEY_CAMPAIGN => "Campaign",
-            self::KEY_REPOST => "Repost",
-            self::KEY_DIRECT_REPOST => "Direct Repost",
-        ];
-    }
-    public function getKeyLabelAttribute()
-    {
-        return self::keyLists()[$this->key];
+        return $this->hasMany(Faq::class);
     }
 
-    public function getKeyColorAttribute()
-    {
-        return $this->key == self::KEY_CAMPAIGN ? 'badge-primary' : '';
-    }
-
-
-    public function getKeyBtnLabelAttribute()
-    {
-        return $this->key == self::KEY_CAMPAIGN ? self::keyLists()[self::KEY_REPOST] : self::keyLists()[self::KEY_DIRECT_REPOST];
-    }
-
-    public function getKeyBtnColorAttribute()
-    {
-        return $this->key == self::KEY_CAMPAIGN ? 'btn-primary' : 'btn-error';
-    }   
-    public function getKeyBtnClassAttribute()
-    {
-        return $this->key == self::KEY_CAMPAIGN ? 'btn-primary' : 'btn-error';
-    }
-
-    public function scopeFaqBy($query, $userId)
-    {
-        return $query->where('created_by', $userId);
-    }
-
-    public function faqCategory()
-    {
-        return $this->belongsTo(FaqCategory::class);
-    }
 }
