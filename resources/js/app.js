@@ -8,6 +8,8 @@ import './toastr';
 import './filepond';
 import './ckeditor5';
 
+import './echo';
+
 import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;
@@ -20,4 +22,3 @@ Alpine.start();
  * allow your team to quickly build robust real-time web applications.
  */
 
-import './echo';

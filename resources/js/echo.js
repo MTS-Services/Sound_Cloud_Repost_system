@@ -13,3 +13,4 @@ window.Echo = new Echo({
     wssPort: import.meta.env.VITE_PUSHER_PORT,
     enabledTransports: ["ws", "wss"],
 });
+console.log(window.Echo);
