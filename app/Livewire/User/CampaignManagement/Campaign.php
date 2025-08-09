@@ -7,6 +7,8 @@ use App\Models\CreditTransaction;
 use App\Models\Playlist;
 use App\Models\Repost;
 use App\Models\Track;
+use App\Models\User;
+use App\Models\UserInformation;
 use App\Services\TrackService;
 use App\Services\User\CampaignManagement\CampaignService;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +17,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Throwable;
 use Illuminate\Support\Facades\Http;
+use Livewire\Attributes\On;
 
 class Campaign extends Component
 {
@@ -73,7 +76,7 @@ class Campaign extends Component
     public $playlistTracks = [];
     public $activeModalTab = 'tracks';
 
-    
+
 
     public $track = null;
     public $credit = 100;
@@ -123,7 +126,14 @@ class Campaign extends Component
     public bool $showAddCreditModal = false;
     public bool $showEditCampaignModal = false;
     public bool $showCancelWarningModal = false;
+    ################################loadmore########################################
 
+    // Properties for "Load More"
+    public $tracksPage = 4;
+    public $playlistsPage = 4;
+    public $perPage = 4; // Number of items to load per page
+    public $hasMoreTracks = false;
+    public $hasMorePlaylists = false;
     ############################## Campaign Creation ##########################
     public function boot(CampaignService $campaignService, TrackService $trackService)
     {
@@ -134,6 +144,7 @@ class Campaign extends Component
 
     public function mount()
     {
+        $this->loadData();
         $this->loadInitialData();
     }
     protected function rules()
@@ -165,6 +176,8 @@ class Campaign extends Component
             $this->suggestedTags = [];
             $this->showSuggestions = false;
         }
+        
+        $this->loadData();
     }
     public function getAllTags()
     {
@@ -348,13 +361,14 @@ class Campaign extends Component
     // }
 
     /**
-     *  ###########################################
+     * ###########################################
      * ******* Start Tabs Events ********
      * ###########################################
      */
     public function getAllTrackTypes()
     {
         $this->selectedTrackTypes = $this->trackService->getTracks()
+            ->where('user_urn', user()->urn)
             ->pluck('type')
             ->unique()
             ->values()
@@ -365,18 +379,18 @@ class Campaign extends Component
         $this->selectedTrackType = $type;
         $this->loadInitialData();
     }
-    public function setActiveTab($tab)
+    public function setactiveModalTab($tab)
     {
         $this->activeMainTab = $tab;
     }
 
     /**
-     *  ###########################################
+     * ###########################################
      * ******* End Tabs Events ********
      * ###########################################
      */
     /**
-     *  ###########################################
+     * ###########################################
      * ******* Start Campaign Create Events ********
      * ###########################################
      */
@@ -389,29 +403,65 @@ class Campaign extends Component
         } elseif ($tab === 'playlists') {
             $this->fetchPlaylists();
         }
+
+        $this->reset(['searchQuery']);
+
+
     }
     public function fetchTracks()
     {
         try {
+            $this->tracksPage = 1; // Reset page on initial fetch
             $this->tracks = Track::where('user_urn', user()->urn)
                 ->latest()
+                ->take($this->perPage)
                 ->get();
+            $this->hasMoreTracks = $this->tracks->count() === $this->perPage;
         } catch (\Exception $e) {
             $this->tracks = collect();
             session()->flash('error', 'Failed to load tracks: ' . $e->getMessage());
         }
     }
 
+    public function loadMoreTracks()
+    {
+        $this->tracksPage++;
+        $newTracks = Track::where('user_urn', user()->urn)
+            ->latest()
+            ->skip(($this->tracksPage - 1) * $this->perPage)
+            ->take($this->perPage)
+            ->get();
+
+        $this->tracks = $this->tracks->concat($newTracks);
+        $this->hasMoreTracks = $newTracks->count() === $this->perPage;
+    }
+
     public function fetchPlaylists()
     {
         try {
+            $this->playlistsPage = 1; // Reset page on initial fetch
             $this->playlists = Playlist::where('user_urn', user()->urn)
                 ->latest()
+                ->take($this->perPage)
                 ->get();
+            $this->hasMorePlaylists = $this->playlists->count() === $this->perPage;
         } catch (\Exception $e) {
             $this->playlists = collect();
             session()->flash('error', 'Failed to load playlists: ' . $e->getMessage());
         }
+    }
+
+    public function loadMorePlaylists()
+    {
+        $this->playlistsPage++;
+        $newPlaylists = Playlist::where('user_urn', user()->urn)
+            ->latest()
+            ->skip(($this->playlistsPage - 1) * $this->perPage)
+            ->take($this->perPage)
+            ->get();
+
+        $this->playlists = $this->playlists->concat($newPlaylists);
+        $this->hasMorePlaylists = $newPlaylists->count() === $this->perPage;
     }
 
     public function fetchPlaylistTracks()
@@ -631,6 +681,7 @@ class Campaign extends Component
             // Close modal and complete reset
             $this->showCampaignsModal = false;
             $this->showSubmitModal = false;
+            $this->showPlaylistTracksModal = false;
 
             $this->reset([
                 'musicId',
@@ -671,14 +722,14 @@ class Campaign extends Component
         }
     }
     /**
-     *  ###########################################
+     * ###########################################
      * ******* End Campaign Create Events ********
      * ###########################################
      */
 
 
     /**
-     *  ###########################################
+     * ###########################################
      * ******* Start Audio Player Events ********
      * ###########################################
      */
@@ -914,7 +965,199 @@ class Campaign extends Component
             return;
         }
     }
+       
+    public $searchQuery = '';
+    public $allTracks = [];
+    public $users = [];
+    public $allPlaylists = [];
+    public $playlistLimit = 4;
+    public $playlistTrackLimit = 4;
+    public $allPlaylistTracks = [];
+    public $userinfo = [];
+    public $showPlaylistTracksModal = false;
+    public $trackLimit = 4;
+    private $soundcloudClientId = 'YOUR_SOUNDCLOUD_CLIENT_ID';
+    private $soundcloudApiUrl = 'https://api-v2.soundcloud.com';
 
+
+
+    // This method is triggered when the `activeModalTab` property is updated
+    public function updatedActiveModalTab($tab)
+    {
+        $this->activeModalTab = $tab;
+        $this->searchQuery = '';
+        if ($tab === 'tracks') {
+            $this->fetchTracks();
+        } elseif ($tab === 'playlists') {
+            $this->fetchPlaylists();
+        }
+    }
+
+    public function loadData()
+    {
+         $query = User::where('urn', '!=', user()->urn);
+        if ($this->search) {
+            $query->where('name', 'like', '%' . $this->search . '%');
+        }
+        $this->users = $query->get();
+        $this->userinfo = UserInformation::where('user_urn', user()->urn)->first();
+    }
+
+    // public function updatedSearch()
+    // {
+    //     $this->loadData();
+    // }
+
+    public function updatedGenreFilter()
+    {
+        $this->loadData();
+    }
+
+    public function updatedCostFilter()
+    {
+        $this->loadData();
+    }
+
+    // Main search method for SoundCloud tracks and playlists
+    public function searchSoundcloud()
+    {
+        // If the search query is empty, reset to local data
+        if (empty($this->searchQuery)) {
+            if ($this->showPlaylistTracksModal == true) {
+                $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()->get();
+                $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
+            } else {
+                if ($this->activeModalTab == 'tracks') {
+                    $this->allTracks = Track::where('user_urn', user()->urn)->get();
+                    $this->tracks = $this->allTracks->take($this->trackLimit);
+                }
+                if ($this->activeModalTab == 'playlists') {
+                    $this->allPlaylists = Playlist::where('user_urn', user()->urn)->get();
+                    $this->playlists = $this->allPlaylists->take($this->playlistLimit);
+                }
+            }
+            return;
+        }
+
+        // Check if the query is a SoundCloud permalink URL
+        if (preg_match('/^https?:\/\/(www\.)?soundcloud\.com\//', $this->searchQuery)) {
+            $this->resolveSoundcloudUrl();
+        } else {
+            // If not a URL, perform a text-based "as-like" search on the local database
+            if ($this->showPlaylistTracksModal == true) {
+                $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
+                    ->where(function ($query) {
+                        $query->Where('permalink_url', 'like', '%' . $this->searchQuery . '%');
+                    })
+                    ->get();
+                $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
+            } else {
+                if ($this->activeModalTab === 'tracks') {
+                    $this->allTracks = Track::where('user_urn', user()->urn)
+                        ->where(function ($query) {
+                            $query->where('permalink_url', 'like', '%' . $this->searchQuery . '%')
+                                ->orWhere('author_soundcloud_permalink_url', 'like', '%' . $this->searchQuery . '%');
+                        })
+                        ->get();
+                    $this->tracks = $this->allTracks->take($this->trackLimit);
+                } elseif ($this->activeModalTab === 'playlists') {
+                    $this->allPlaylists = Playlist::where('user_urn', user()->urn)
+                        ->where(function ($query) {
+                            $query->where('permalink_url', 'like', '%' . $this->searchQuery . '%');
+                        })
+                        ->get();
+                    $this->playlists = $this->allPlaylists->take($this->playlistLimit);
+                }
+            }
+        }
+    }
+
+    // Resolves a SoundCloud URL to find the corresponding track or playlist
+    protected function resolveSoundcloudUrl()
+    {
+        // Search the local database for matching permalink URLs first
+        if ($this->showPlaylistTracksModal == true) {
+            $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
+                ->where('permalink_url', $this->searchQuery)
+                ->get();
+            if ($tracksFromDb->isNotEmpty()) {
+                $this->allPlaylistTracks = $tracksFromDb;
+                $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
+                return;
+            }
+        } else {
+            if ($this->activeModalTab == 'tracks') {
+                $tracksFromDb = Track::where('user_urn', user()->urn)
+                    ->where('permalink_url', $this->searchQuery)
+                    ->orWhere('author_soundcloud_permalink_url', $this->searchQuery)
+                    ->get();
+                if ($tracksFromDb->isNotEmpty()) {
+                    $this->activeModalTab = 'tracks';
+                    $this->allTracks = $tracksFromDb;
+                    $this->tracks = $this->allTracks->take($this->trackLimit);
+                    return;
+                }
+            }
+
+            if ($this->activeModalTab == 'playlists') {
+                $playlistsFromDb = Playlist::where('user_urn', user()->urn)
+                    ->where('permalink_url', $this->searchQuery)
+                    ->get();
+
+                if ($playlistsFromDb->isNotEmpty()) {
+                    $this->activeModalTab = 'playlists';
+                    $this->allPlaylists = $playlistsFromDb;
+                    $this->playlists = $this->allPlaylists->take($this->playlistLimit);
+                    return;
+                }
+            }
+        }
+
+        // If not found locally, use SoundCloud's API to resolve the URL
+        $response = Http::get("{$this->soundcloudApiUrl}/resolve", [
+            'url' => $this->searchQuery,
+            'client_id' => $this->soundcloudClientId,
+        ]);
+
+        if ($response->successful()) {
+            $resolvedData = $response->json();
+            $this->processResolvedData($resolvedData);
+        } else {
+            $this->allTracks = collect();
+            $this->tracks = collect();
+            session()->flash('error', 'Could not resolve the SoundCloud link. Please check the URL.');
+        }
+    }
+
+    // Processes the data returned from the SoundCloud API
+    protected function processResolvedData($data)
+    {
+        switch ($data['kind']) {
+            case 'track':
+                $this->activeModalTab = 'tracks';
+                $this->allTracks = collect([$data]);
+                $this->tracks = $this->allTracks->take($this->trackLimit);
+                break;
+            case 'user':
+                $this->activeTab = 'tracks';
+                $this->fetchUserTracks($data['id']);
+                break;
+            default:
+                $this->allTracks = collect();
+                $this->tracks = collect();
+                session()->flash('error', 'The provided URL is not a track or playlist.');
+                break;
+        }
+    }
+
+    public function openRepostsModal($trackId)
+    {
+        $this->toggleSubmitModal('track', $trackId);
+    }
+    public function openPlaylistTracksModal($playlistId)
+    {
+        $this->toggleSubmitModal('playlist', $playlistId);
+    }
     public function render()
     {
         return view('backend.user.campaign_management.campaign');
