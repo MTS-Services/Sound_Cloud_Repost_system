@@ -126,7 +126,7 @@ class Campaign extends Component
     public bool $showEditCampaignModal = false;
     public bool $showCancelWarningModal = false;
     ################################loadmore########################################
-    public $activeTab = 'tracks';
+   
     // Properties for "Load More"
     public $tracksPage = 1;
     public $playlistsPage = 1;
@@ -377,7 +377,7 @@ class Campaign extends Component
         $this->selectedTrackType = $type;
         $this->loadInitialData();
     }
-    public function setActiveTab($tab)
+    public function setactiveModalTab($tab)
     {
         $this->activeMainTab = $tab;
     }
@@ -964,6 +964,7 @@ class Campaign extends Component
     public $allTracks = [];
     public $users = [];
     public $allPlaylists = [];
+    public $playlistLimit = [];
     public $allPlaylistTracks = [];
     public $showPlaylistTracksModal = false;
     public $trackLimit = 4;
@@ -1017,11 +1018,11 @@ class Campaign extends Component
                 $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()->get();
                 $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
             } else {
-                if ($this->activeTab == 'tracks') {
+                if ($this->activeModalTab == 'tracks') {
                     $this->allTracks = Track::where('user_urn', user()->urn)->get();
                     $this->tracks = $this->allTracks->take($this->trackLimit);
                 }
-                if ($this->activeTab == 'playlists') {
+                if ($this->activeModalTab == 'playlists') {
                     $this->allPlaylists = Playlist::where('user_urn', user()->urn)->get();
                     $this->playlists = $this->allPlaylists->take($this->playlistLimit);
                 }
@@ -1037,22 +1038,25 @@ class Campaign extends Component
             if ($this->showPlaylistTracksModal == true) {
                 $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                     ->where(function ($query) {
-                        $query->Where('permalink_url', 'like', '%' . $this->searchQuery . '%');
+                        $query->Where('permalink_url', 'like', '%' . $this->searchQuery . '%')
+                        ->orWhere('author_soundcloud_permalink_url', 'like', '%' . $this->searchQuery . '%');
                     })
                     ->get();
                 $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
             } else {
-                if ($this->activeTab === 'tracks') {
+                if ($this->activeModalTab === 'tracks') {
                     $this->allTracks = Track::where('user_urn', user()->urn)
                         ->where(function ($query) {
-                            $query->where('permalink_url', 'like', '%' . $this->searchQuery . '%');
+                            $query->where('permalink_url', 'like', '%' . $this->searchQuery . '%')
+                            ->orWhere('author_soundcloud_permalink_url', 'like', '%' . $this->searchQuery . '%');
                         })
                         ->get();
                     $this->tracks = $this->allTracks->take($this->trackLimit);
-                } elseif ($this->activeTab === 'playlists') {
+                } elseif ($this->activeModalTab === 'playlists') {
                     $this->allPlaylists = Playlist::where('user_urn', user()->urn)
                         ->where(function ($query) {
-                            $query->where('permalink_url', 'like', '%' . $this->searchQuery . '%');
+                            $query->where('permalink_url', 'like', '%' . $this->searchQuery . '%')
+                            ->orWhere('author_soundcloud_permalink_url', 'like', '%' . $this->searchQuery . '%');
                         })
                         ->get();
                     $this->playlists = $this->allPlaylists->take($this->playlistLimit);
@@ -1068,6 +1072,7 @@ class Campaign extends Component
         if ($this->showPlaylistTracksModal == true) {
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                 ->where('permalink_url', $this->searchQuery)
+                ->orWhere('author_soundcloud_permalink_url', $this->searchQuery)
                 ->get();
             if ($tracksFromDb->isNotEmpty()) {
                 $this->allPlaylistTracks = $tracksFromDb;
@@ -1075,25 +1080,27 @@ class Campaign extends Component
                 return;
             }
         } else {
-            if ($this->activeTab == 'tracks') {
+            if ($this->activeModalTab == 'tracks') {
                 $tracksFromDb = Track::where('user_urn', user()->urn)
                     ->where('permalink_url', $this->searchQuery)
+                    ->orWhere('author_soundcloud_permalink_url', $this->searchQuery)
                     ->get();
                 if ($tracksFromDb->isNotEmpty()) {
-                    $this->activeTab = 'tracks';
+                    $this->activeModalTab = 'tracks';
                     $this->allTracks = $tracksFromDb;
                     $this->tracks = $this->allTracks->take($this->trackLimit);
                     return;
                 }
             }
 
-            if ($this->activeTab == 'playlists') {
+            if ($this->activeModalTab == 'playlists') {
                 $playlistsFromDb = Playlist::where('user_urn', user()->urn)
                     ->where('permalink_url', $this->searchQuery)
+                    ->orWhere('author_soundcloud_permalink_url', $this->searchQuery)
                     ->get();
 
                 if ($playlistsFromDb->isNotEmpty()) {
-                    $this->activeTab = 'playlists';
+                    $this->activeModalTab = 'playlists';
                     $this->allPlaylists = $playlistsFromDb;
                     $this->playlists = $this->allPlaylists->take($this->playlistLimit);
                     return;
@@ -1122,14 +1129,9 @@ class Campaign extends Component
     {
         switch ($data['kind']) {
             case 'track':
-                $this->activeTab = 'tracks';
+                $this->activeModalTab = 'tracks';
                 $this->allTracks = collect([$data]);
                 $this->tracks = $this->allTracks->take($this->trackLimit);
-                break;
-            case 'playlist':
-                $this->activeTab = 'playlists';
-                $this->allPlaylists = collect([$data]);
-                $this->playlists = $this->allPlaylists->take($this->playlistLimit);
                 break;
             default:
                 $this->allTracks = collect();
