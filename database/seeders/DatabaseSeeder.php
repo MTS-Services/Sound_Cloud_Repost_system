@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
             FaqSeeder::class,
             FaqCategorySeeder::class
            
+            PlaylistTrackSeeder::class
         ]);
     }
 }

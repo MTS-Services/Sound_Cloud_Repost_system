@@ -81,15 +81,15 @@
 
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden mb-16 p-4 transition-all duration-300 hover:shadow-2xl"
             x-intersect="$el.classList.add('fade-in-up')">
-            <div class="bg-slate-50 dark:bg-slate-700 px-6 py-4 border-b dark:border-slate-600">
+            <div class="bg-slate-50 dark:bg-slate-700 px-6 py-4  dark:border-slate-600">
                 <h3 class="text-3xl font-bold text-slate-900 dark:text-white">{{ __('Feature Comparison') }}</h3>
                 <p class="text-slate-600 dark:text-slate-400">{{ __('Compare all features across our plans') }}</p>
             </div>
 
             <div class="overflow-x-auto">
-                <table class="w-full">
+                <table class="w-full table-zebra">
                     <thead>
-                        <tr class="border-b bg-slate-50 dark:bg-slate-700 dark:border-slate-600">
+                        <tr class="bg-slate-50 dark:bg-slate-700 dark:border-slate-600">
                             <th
                                 class="p-4 text-left font-bold text-slate-800 dark:text-white text-sm uppercase tracking-wide sticky left-0 z-10">
                                 {{ __('Features') }}</th>
@@ -100,24 +100,35 @@
                             @endforeach
                         </tr>
                     </thead>
-                    <tbody class="last:border-b-0">
+                    <tbody>
                         @foreach ($featureCategories as $category)
                             {{-- Category Header Row --}}
-                            <tr class="bg-slate-100 dark:bg-slate-900">
+                            <tr class="border-b">
                                 <td colspan="{{ count($plans) + 1 }}"
                                     class="p-4 font-bold text-slate-800 dark:text-white text-sm uppercase tracking-wide sticky left-0 z-10">
                                     {{ $category->name }}
                                 </td>
                             </tr>
                             @foreach ($category->features as $feature)
-                                @php
-                                    $isLastCategory = $loop->parent->last;
-                                    $isLastFeature = $loop->last;
-                                @endphp
                                 <tr
-                                    class="border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors {{ $isLastCategory && $isLastFeature ? 'border-b-0' : '' }}">
+                                    class=" dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
                                     <td class="p-4 font-medium text-slate-700 dark:text-slate-300  ">
-                                        {{ $feature->name }}
+                                        <div class="relative">
+                                            <span>{{ $feature->name }}</span>
+                                            @if (!empty($feature->note))
+                                                <span class="group relative inline-block ml-1">
+                                                    <x-heroicon-o-information-circle
+                                                        class="w-4 h-4 text-slate-600 dark:text-slate-400 cursor-pointer" />
+
+                                                    {{-- Tooltip --}}
+                                                    <div
+                                                        class="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 hidden group-hover:block
+                            bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-10">
+                                                        {{ $feature->note }}
+                                                    </div>
+                                                </span>
+                                            @endif
+                                        </div>
                                     </td>
 
                                     @foreach ($plans as $plan)
@@ -155,8 +166,7 @@
                 </div>
                 <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">{{ __('Free Boosts') }}</h3>
                 <p class="text-slate-600 dark:text-slate-400">
-                    {{ __('Boost your campaigns to get more exposure from the community. The more you engage with the
-                                                                                                                                                                                                                                                                    community, the more boosts you\'ll receive.') }}
+                    {{ __('Boost your campaigns to get more exposure from the community. The more you engage with the community, the more boosts you\'ll receive.') }}
                 </p>
             </div>
 

@@ -16,7 +16,7 @@ class PlaylistSeeder extends Seeder
     public function run(): void
     {
 
-        for ($i = 1; $i <= 6; $i++) {
+        for ($i = 1; $i <= 12; $i++) {
             Playlist::create([
                 'sort_order' => $i,
                 'user_urn' => User::class::first()->urn,

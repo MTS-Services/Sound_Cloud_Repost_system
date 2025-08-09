@@ -116,13 +116,11 @@ class FeatureController extends Controller implements HasMiddleware
             [
                 'feature_category_id' => 'required|exists:feature_categories,id',
                 'name' => 'required|unique:features,name',
-                // 'key' => 'required|unique:features,key|in:' . Feature::getKeys(),
-                'key' => 'required|unique:features,key|in:' . implode(',', array_keys(Feature::getKeys())),
                 'type' => 'required|in:' . implode(',', array_keys(Feature::getTypes())),
+                'note' => 'nullable|string',
             ]
         );
         try {
-
             // $validated = $request->validated();
             $this->featureService->createFeature($validated);
             session()->flash('success', 'Feature created successfully!');
@@ -140,7 +138,7 @@ class FeatureController extends Controller implements HasMiddleware
     public function edit(string $id)
     {
         $data['feature'] = $this->featureService->getFeature($id);
-        $data['feature_categories'] = $this->FeatureCategorySevice->getFeatureCategories()->select(['id'])->get();
+        $data['feature_categories'] = $this->FeatureCategorySevice->getFeatureCategories()->select(['name', 'id'])->get();
         return view('backend.admin.package_management.features.edit', $data);
     }
 
@@ -153,8 +151,8 @@ class FeatureController extends Controller implements HasMiddleware
             [
                 'feature_category_id' => 'required|exists:feature_categories,id',
                 'name' => 'required|unique:features,name,' . decrypt($id),
-                'key' => 'required|unique:features,key,' . decrypt($id) . ',id|in:' . implode(',', array_keys(Feature::getKeys())),
                 'type' => 'required|in:' . implode(',', array_keys(Feature::getTypes())),
+                'note' => 'nullable|string',
             ]
         );
         try {
