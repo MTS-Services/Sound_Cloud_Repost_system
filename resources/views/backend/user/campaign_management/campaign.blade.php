@@ -145,7 +145,7 @@
                         class="flex-1 min-w-0 border-0 outline-none focus:ring-0 p-1" autocomplete="off"> --}}
             </div>
         </div>
-        {{-- <!-- Suggestions Dropdown -->
+        <!-- Suggestions Dropdown -->
         @if ($showSuggestions && !empty($suggestedTags))
             <div
                 class="flex flex-wrap absolute right-0 mt-20 z-50 w-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto py-2">
@@ -164,7 +164,7 @@
                     </span>
                 @endforeach
             </div>
-        @endif --}}
+        @endif
     </div>
 
     <div class="container mx-auto px-4 py-6">
@@ -724,7 +724,13 @@
                         <!-- Budget Display -->
                         <div class="flex items-center justify-center space-x-2 mb-4">
                             <div class="w-6 h-6 border-2 border-orange-500 rounded flex items-center justify-center">
-                                <span class="text-orange-500 text-xs">$</span>
+                                <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="1" y="1" width="24" height="16" rx="3" fill="none"
+                                        stroke="currentColor" stroke-width="2" />
+                                    <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
+                                        stroke-width="2" />
+                                </svg>
                             </div>
                             <span class="text-2xl font-bold text-orange-500">{{ $credit }}</span>
                         </div>
