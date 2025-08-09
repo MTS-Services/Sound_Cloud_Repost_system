@@ -485,7 +485,7 @@
         <div
             class="w-full max-w-3xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col max-h-[80vh] overflow-hidden">
             <div
-                class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
+                class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
                     <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
                         <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
@@ -518,8 +518,8 @@
                     </button>
                 </div>
 
-                <div class="flex-grow overflow-y-auto p-6">
-                    <div class="p-4">
+                <div class="flex-grow overflow-y-auto p-4">
+                    <div class="p-1">
                         <label for="track-link-search" class="text-xl font-semibold text-gray-700 dark:text-gray-200">
                             @if ($activeModalTab === 'tracks')
                                 Paste a SoundCloud profile or track link
@@ -545,7 +545,7 @@
                         <div class="space-y-3">
                             @forelse ($tracks as $track_)
                                 <div wire:click="toggleSubmitModal('track', {{ $track_->id }})"
-                                    class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
+                                    class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
                                     <div class="flex-shrink-0">
                                         <img class="h-14 w-14 rounded-xl object-cover shadow-md"
                                             src="{{ soundcloud_image($track_->artwork_url) }}"

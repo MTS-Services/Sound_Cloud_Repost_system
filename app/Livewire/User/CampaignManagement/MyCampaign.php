@@ -103,37 +103,10 @@ class MyCampaign extends Component
     {
         $rules = [
             'credit' => 'required|integer|min:100',
-            // 'title' => 'required|string|max:255',
-            // 'description' => 'required|string|max:1000',
-            // 'endDate' => 'required|date|after_or_equal:today',
-            // 'targetReposts' => 'required|integer|min:1',
-            // 'costPerRepost' => 'required|integer|min:1',
-            // 'musicId' => 'required|integer',
-            // 'commentable' => 'required|boolean',
-            // 'likeable' => 'required|boolean',
-            // 'maxFollowers' => 'required|integer|min:0',
-            // 'maxRepostLast24h' => 'required|integer|min:0',
-            // 'targetGenre' => '|integer|min:0',
+          
         ];
 
-        // // Rules for editing a campaign
-        // if ($this->showEditCampaignModal) {
-        //     $rules = [
-        //         'editTitle' => 'required|string|max:255',
-        //         'editDescription' => 'required|string|max:1000',
-        //         'editEndDate' => 'required|date|after_or_equal:today',
-        //         'editTargetReposts' => 'required|integer|min:1',
-        //         'editCostPerRepost' => 'required|integer|min:1',
-        //     ];
-        // }
-
-        // // Rules for adding credits
-        // if ($this->showAddCreditModal) {
-        //     $rules = [
-        //         'addCreditCostPerRepost' => 'required|integer|min:' . $this->addCreditCurrentBudget,
-        //     ];
-        // }
-
+       
         return $rules;
     }
 
@@ -145,28 +118,7 @@ class MyCampaign extends Component
         return [
             'credit.required' => 'Minimum credit is 100.',
             'maxFollower.required' => 'Max follower is required.',
-            // 'musicId.required' => 'Please select a track for your campaign.',
-            // 'title.required' => 'Campaign name is required.',
-            // 'title.max' => 'Campaign name cannot exceed 255 characters.',
-            // 'description.required' => 'Campaign description is required.',
-            // 'description.max' => 'Description cannot exceed 1000 characters.',
-            // 'endDate.required' => 'Please select an expiration date.',
-            // 'endDate.after_or_equal' => 'Expiration date must be today or later.',
-            // 'targetReposts.required' => 'Target repost count is required.',
-            // 'targetReposts.min' => 'Target reposts must be at least 1.',
-            // 'costPerRepost.required' => 'Budget per repost is required.',
-            // 'costPerRepost.min' => 'Budget per repost must be at least 1 credit.',
-
-            // // Edit specific messages
-            // 'editTitle.required' => 'Campaign name is required.',
-            // 'editDescription.required' => 'Campaign description is required.',
-            // 'editEndDate.required' => 'Campaign expiration date is required.',
-            // 'editTargetReposts.required' => 'Target repost count is required.',
-            // 'editCostPerRepost.required' => 'Cost per repost is required.',
-
-            // // Add credit specific messages
-            // 'addCreditCostPerRepost.required' => 'Cost per repost is required.',
-            // 'addCreditCostPerRepost.min' => 'Cost per repost must be at least 1 credit.',
+            
         ];
     }
 

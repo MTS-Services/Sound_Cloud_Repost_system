@@ -38,235 +38,6 @@
 
         <div class="space-y-6" id="campaigns-list">
 
-
-
-
-            {{-- <div class="flex flex-col lg:flex-row justify-between gap-6 px-4">
-                <!-- Main Content -->
-                <div class="w-full flex flex-col gap-6">
-                    @forelse ($campaigns as $campaig_)
-                        <div class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-                            <div class="p-4 sm:p-6">
-                                <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
-                                    <div class="flex flex-col sm:flex-row gap-4">
-                                        <img src="{{ soundcloud_image($campaig_->music?->artwork_url) }}"
-                                            alt="Sample Track 3" class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
-                                        <div class="flex-1">
-                                            <div
-                                                class="flex flex-col sm:flex-row sm:items-center sm:space-x-3 mb-2 text-center sm:text-left">
-                                                <h3 class="text-black dark:text-gray-100 font-semibold text-lg">
-                                                    {{ $campaig_->title }}
-                                                </h3>
-                                                <span>
-                                                    <!-- Pencil Icon -->
-                                                    <svg class="w-5 h-5 inline-block text-black dark:text-gray-100"
-                                                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                                        fill="none" stroke="currentColor" stroke-width="2"
-                                                        stroke-linecap="round" stroke-linejoin="round">
-                                                        <path
-                                                            d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                                        <path
-                                                            d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                                    </svg>
-                                                </span>
-                                            </div>
-
-                                            <div class="mb-4 text-sm text-center sm:text-left text-slate-400">
-                                                Budget used: {{ number_format($campaig_->credits_spent) }} /
-                                                {{ number_format($campaig_->buget_credits) }} credits
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Right Stats Block -->
-                                    <div class="text-center sm:text-right">
-                                        <div class="flex items-center justify-center sm:justify-end mb-2 ">
-                                            <x-lucide-trending-up class="m-2 w-5 h-5  text-green-600" />
-                                            <span class=" text-green-600 dark:text-gray-100"> Running</span>
-                                        </div>
-                                        <p class="text-slate-400 text-sm">{{ $campaig_->start_date_formatted }}</p>
-                                        <div class="flex flex-wrap justify-center sm:justify-end items-center mt-2">
-                                            <x-lucide-ban class="w-5 h-5 m-2 dark:text-white text-black" />
-                                            <span class="text-slate-500">Stop</span>
-                                            <x-lucide-square-pen class="w-5 h-5 m-2 dark:text-white text-black" />
-                                            <span class=" font-medium cursor-pointer">Edit</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <hr class="my-6 border-orange-600/30" />
-
-                                <!-- Stats -->
-                                <div class="flex justify-between gap-6 mb-2">
-                                    <div class="flex gap-6">
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center mb-2">
-
-                                                <x-lucide-repeat class="w-5 h-5 m-2 dark:text-gray-300 text-gray-500" />
-                                                <span class=" text-black dark:text-white">22</span>
-                                            </div>
-
-                                        </div>
-                                        <!-- Repeat block with different data -->
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center mb-2">
-                                                <x-lucide-user-plus
-                                                    class="w-5 h-5 m-2 dark:text-gray-300 text-gray-500" />
-                                                <span class=" text-black dark:text-gray-100">8</span>
-                                            </div>
-
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center mb-2">
-                                                <x-lucide-heart class="w-5 h-5 m-2 dark:text-gray-300 text-gray-500" />
-                                                <span class=" text-black dark:text-gray-100">17</span>
-                                            </div>
-
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center mb-2">
-                                                <x-lucide-mail class="w-5 h-5 m-2 dark:text-gray-300 text-gray-500" />
-                                                <span class=" text-black dark:text-gray-100">6</span>
-                                            </div>
-
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center mb-2">
-                                                <x-lucide-smile class="w-5 h-5 m-2 dark:text-gray-300 text-gray-500" />
-                                                <span class=" text-black dark:text-gray-100">0</span>
-                                            </div>
-
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center mb-2">
-
-                                                <span class="text-orange-500 items-end font-medium mt-2">Show
-                                                    All</span>
-                                            </div>
-
-                                        </div>
-                                        <!-- Add more blocks if needed -->
-                                    </div>
-
-                                    <div>
-                                        <p class="text-slate-400 text-sm">-.- avg. rating</p>
-                                    </div>
-                                </div>
-
-                                <div class="flex flex-col sm:flex-row sm:justify-between items-center gap-4">
-                                    <span></span>
-
-                                    <div class="flex flex-wrap justify-center sm:justify-end gap-4">
-                                        <button
-                                            class="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-sm text-sm font-semibold hover:bg-gray-100 transition-colors">
-                                            Set featured
-                                        </button>
-                                        <button
-                                            class="bg-red-500 text-white py-2 px-4 rounded-sm text-sm font-semibold shadow-sm hover:bg-red-600 transition-colors">
-                                            Boost campaign
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @empty
-                        @if ($activeMainTab === 'all')
-                            <div
-                                class="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
-                                <div
-                                    class="w-20 h-20 bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/20 dark:to-orange-800/20 rounded-full flex items-center justify-center mb-6">
-                                    <x-lucide-megaphone class="w-10 h-10 text-orange-600 dark:text-orange-400" />
-                                </div>
-                                <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3">
-                                    {{ __('No active campaigns found') }}
-                                </h3>
-
-                                <p class="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
-                                    {{ __('Looks like there are no active campaigns right now. Why not start a new one and watch it grow?') }}
-                                </p>
-                                <button wire:click="toggleCampaignsModal" x-on:click="showCampaignsModal = true"
-                                    class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all duration-300 shadow-lg hover:shadow-xl">
-                                    <x-lucide-plus class="w-5 h-5" />
-                                    {{ __('Create Your First Campaign') }}
-                                </button>
-                            </div>
-                        @elseif ($activeMainTab === 'active')
-                            <div
-                                class="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
-                                <div
-                                    class="w-20 h-20 bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/20 dark:to-orange-800/20 rounded-full flex items-center justify-center mb-6">
-                                    <x-lucide-megaphone class="w-10 h-10 text-orange-600 dark:text-orange-400" />
-                                </div>
-                                <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3">
-                                    {{ __('No active campaigns found') }}
-                                </h3>
-                                <p class="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
-                                    {{ __("You haven't started any active campaigns yet. You can create new campaigns or view active campaigns.") }}
-                                </p>
-                            </div>
-                        @elseif ($activeMainTab === 'completed')
-                            <div
-                                class="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
-                                <div
-                                    class="w-20 h-20 bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/20 dark:to-orange-800/20 rounded-full flex items-center justify-center mb-6">
-                                    <x-lucide-megaphone class="w-10 h-10 text-orange-600 dark:text-orange-400" />
-                                </div>
-                                <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3">
-                                    {{ __('Oops! No completed campaigns yet.') }}
-                                </h3>
-                                <p class="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
-                                    {{ __('It looks like there are no completed campaigns at the moment. Start a campaign today and track your progress!') }}
-                                </p>
-                            </div>
-                        @endif
-                    @endforelse
-                </div>
-
-                <!-- Sidebar -->
-                <aside class="lg:w-1/3 space-y-6 bg-white dark:bg-slate-800 rounded-sm lg:mt-0">
-                    <!-- Tools Section -->
-                    <div class=" dark:bg-slate-400 rounded-sm p-6">
-                        <h2 class="text-lg font-bold text-gray-800 mb-4 text-black dark:text-gray-100">Tools and
-                            FAQs</h2>
-                        <ul class="space-y-3">
-                            <li><a href="#" class="text-red-500 hover:underline">What is a campaign?</a>
-                            </li>
-                            <li><a href="#" class="text-red-500 hover:underline">How do I get the best out
-                                    of my campaigns?</a></li>
-                            <li><a href="#" class="text-red-500 hover:underline">Why did my campaign finish
-                                    so quickly?</a></li>
-                            <li><a href="#" class="text-red-500 hover:underline">Why is my campaign running
-                                    slowly?</a></li>
-                        </ul>
-                    </div>
-
-                    <!-- Reach More Section -->
-                    <div class="dark:bg-slate-400 rounded-sm p-6 text-black dark:text-gray-100">
-                        <h2 class="text-lg font-bold text-gray-800 mb-4 text-black dark:text-gray-100">Reach more
-                            people</h2>
-                        <hr class="text-red-500 mb-4">
-                        <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
-                            <img src="https://i1.sndcdn.com/artworks-ZmemRDWSfmXwMCWO-xZp0wA-t500x500.jpg"
-                                alt="Reach people icon" class="w-16 h-16 rounded-lg object-cover">
-                            <div>
-                                <p class="font-bold text-gray-800 text-black dark:text-gray-100">Feature your
-                                    campaign and reach more people</p>
-                                <p class="text-gray-500 text-sm">ALL_BLACK_.75</p>
-                            </div>
-                        </div>
-                        <button
-                            class="mx-auto block bg-red-500 text-white py-2 px-4 rounded-sm font-semibold hover:bg-red-600 transition-colors">
-                            Get featured
-                        </button>
-                    </div>
-                </aside>
-            </div> --}}
-
-
-
-
-
-
             <div class="flex flex-col lg:flex-row justify-between gap-6 px-4">
                 <!-- Main Content -->
                 <div class="w-full flex flex-col gap-6">
@@ -540,6 +311,24 @@
                 </div>
 
                 <div class="flex-grow overflow-y-auto p-6">
+                    <div class="p-4">
+                        <label for="track-link-search" class="text-xl font-semibold text-gray-700 dark:text-gray-200">
+                            Paste a SoundCloud profile or {{ $activeModalTab === 'tracks' ? 'track' : 'playlist' }} link
+                        </label>
+                        <div class="flex w-full mt-2">
+                            <input wire:model.live.debounce.500ms="searchQuery" type="text" id="track-link-search"
+                                placeholder="Paste a SoundCloud profile or {{ $activeModalTab === 'tracks' ? 'track' : 'playlist' }} link"
+                                class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 border border-gray-300 dark:border-gray-600 ">
+                            <button wire:click="searchSoundcloud" type="button"
+                                class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200 ">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                     @if ($activeModalTab === 'tracks')
                         <div class="space-y-3">
                             @forelse ($tracks as $track_)
