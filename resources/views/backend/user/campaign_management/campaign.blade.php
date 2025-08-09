@@ -521,7 +521,8 @@
                 <div class="flex-grow overflow-y-auto p-6">
                     <div class="p-4">
                         <label for="track-link-search" class="text-xl font-semibold text-gray-700 dark:text-gray-200">
-                            Paste a SoundCloud profile or {{ $activeTab === 'tracks' ? 'track' : 'playlist' }} link
+                            Paste a SoundCloud profile or {{ $activeModalTab === 'tracks' ? 'track' : 'playlist' }}
+                            link
                         </label>
                         <div class="flex w-full mt-2">
                             <input type="text" id="track-link-search"
@@ -582,6 +583,21 @@
                                     </p>
                                 </div>
                             @endforelse
+
+                            {{-- Load More Button for Tracks --}}
+                            @if ($hasMoreTracks)
+                                <div class="text-center mt-4">
+                                    <button wire:click="loadMoreTracks" wire:loading.attr="disabled"
+                                        class="bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors duration-200 disabled:bg-orange-300 disabled:cursor-not-allowed">
+                                        <span wire:loading.remove wire:target="loadMoreTracks">
+                                            Load More
+                                        </span>
+                                        <span wire:loading wire:target="loadMoreTracks">
+                                            Loading...
+                                        </span>
+                                    </button>
+                                </div>
+                            @endif
                         </div>
                     @elseif($activeModalTab === 'playlists')
                         <div class="space-y-3">
@@ -621,6 +637,21 @@
                                     </p>
                                 </div>
                             @endforelse
+
+                            {{-- Load More Button for Playlists --}}
+                            @if ($hasMorePlaylists)
+                                <div class="text-center mt-4">
+                                    <button wire:click="loadMorePlaylists" wire:loading.attr="disabled"
+                                        class="bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors duration-200 disabled:bg-orange-300 disabled:cursor-not-allowed">
+                                        <span wire:loading.remove wire:target="loadMorePlaylists">
+                                            Load More
+                                        </span>
+                                        <span wire:loading wire:target="loadMorePlaylists">
+                                            Loading...
+                                        </span>
+                                    </button>
+                                </div>
+                            @endif
                         </div>
                     @endif
                 </div>

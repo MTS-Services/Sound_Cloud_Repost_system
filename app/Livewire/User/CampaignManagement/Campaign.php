@@ -73,7 +73,7 @@ class Campaign extends Component
     public $playlistTracks = [];
     public $activeModalTab = 'tracks';
 
-    
+
 
     public $track = null;
     public $credit = 100;
@@ -125,6 +125,12 @@ class Campaign extends Component
     public bool $showCancelWarningModal = false;
     ################################loadmore########################################
     public $activeTab = 'tracks';
+    // Properties for "Load More"
+    public $tracksPage = 1;
+    public $playlistsPage = 1;
+    public $perPage = 4; // Number of items to load per page
+    public $hasMoreTracks = false;
+    public $hasMorePlaylists = false;
     ############################## Campaign Creation ##########################
     public function boot(CampaignService $campaignService, TrackService $trackService)
     {
@@ -349,7 +355,7 @@ class Campaign extends Component
     // }
 
     /**
-     *  ###########################################
+     * ###########################################
      * ******* Start Tabs Events ********
      * ###########################################
      */
@@ -372,12 +378,12 @@ class Campaign extends Component
     }
 
     /**
-     *  ###########################################
+     * ###########################################
      * ******* End Tabs Events ********
      * ###########################################
      */
     /**
-     *  ###########################################
+     * ###########################################
      * ******* Start Campaign Create Events ********
      * ###########################################
      */
@@ -394,25 +400,57 @@ class Campaign extends Component
     public function fetchTracks()
     {
         try {
+            $this->tracksPage = 1; // Reset page on initial fetch
             $this->tracks = Track::where('user_urn', user()->urn)
                 ->latest()
+                ->take($this->perPage)
                 ->get();
+            $this->hasMoreTracks = $this->tracks->count() === $this->perPage;
         } catch (\Exception $e) {
             $this->tracks = collect();
             session()->flash('error', 'Failed to load tracks: ' . $e->getMessage());
         }
     }
 
+    public function loadMoreTracks()
+    {
+        $this->tracksPage++;
+        $newTracks = Track::where('user_urn', user()->urn)
+            ->latest()
+            ->skip(($this->tracksPage - 1) * $this->perPage)
+            ->take($this->perPage)
+            ->get();
+
+        $this->tracks = $this->tracks->concat($newTracks);
+        $this->hasMoreTracks = $newTracks->count() === $this->perPage;
+    }
+
     public function fetchPlaylists()
     {
         try {
+            $this->playlistsPage = 1; // Reset page on initial fetch
             $this->playlists = Playlist::where('user_urn', user()->urn)
                 ->latest()
+                ->take($this->perPage)
                 ->get();
+            $this->hasMorePlaylists = $this->playlists->count() === $this->perPage;
         } catch (\Exception $e) {
             $this->playlists = collect();
             session()->flash('error', 'Failed to load playlists: ' . $e->getMessage());
         }
+    }
+
+    public function loadMorePlaylists()
+    {
+        $this->playlistsPage++;
+        $newPlaylists = Playlist::where('user_urn', user()->urn)
+            ->latest()
+            ->skip(($this->playlistsPage - 1) * $this->perPage)
+            ->take($this->perPage)
+            ->get();
+
+        $this->playlists = $this->playlists->concat($newPlaylists);
+        $this->hasMorePlaylists = $newPlaylists->count() === $this->perPage;
     }
 
     public function fetchPlaylistTracks()
@@ -672,14 +710,14 @@ class Campaign extends Component
         }
     }
     /**
-     *  ###########################################
+     * ###########################################
      * ******* End Campaign Create Events ********
      * ###########################################
      */
 
 
     /**
-     *  ###########################################
+     * ###########################################
      * ******* Start Audio Player Events ********
      * ###########################################
      */
