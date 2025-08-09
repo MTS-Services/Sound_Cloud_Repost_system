@@ -54,7 +54,7 @@ class SoundCloudController extends Controller
 
         try {
             $soundCloudUser = Socialite::driver('soundcloud')->user();
-            dd($soundCloudUser);
+            // dd($soundCloudUser);
             // Find or create user
             $user = $this->findOrCreateUser($soundCloudUser);
 
