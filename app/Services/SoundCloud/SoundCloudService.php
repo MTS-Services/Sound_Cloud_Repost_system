@@ -178,6 +178,7 @@ class SoundCloudService
                     'license' => $trackData['license'] ?? null,
                     'uri' => $trackData['uri'] ?? null,
                     'permalink_url' => $trackData['permalink_url'] ?? null,
+                    'soundcloud_permalink_url' => $trackData['soundcloud_permalink_url'] ?? null,
                     'artwork_url' => $trackData['artwork_url'] ?? null,
                     'stream_url' => $trackData['stream_url'] ?? null,
                     'download_url' => $trackData['download_url'] ?? null,
