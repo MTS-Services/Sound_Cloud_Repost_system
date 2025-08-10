@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -12,6 +13,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class AuthBaseModel extends Authenticatable
 {
     use HasFactory, Notifiable, SoftDeletes;
+
+    /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
+                Start of RELATIONSHIPS
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
     public function creater_admin()
     {
@@ -43,12 +48,33 @@ class AuthBaseModel extends Authenticatable
         return $this->morphTo();
     }
 
+    public function senderNotifications()
+    {
+        return $this->morphMany(CustomNotification::class, 'sender');
+    }
+
+    // A user can be the receiver of many notifications
+    public function receiverNotifications()
+    {
+        return $this->morphMany(CustomNotification::class, 'receiver');
+    }
+
+    // A user has many statuses for notifications they have received
+    public function notificationStatuses()
+    {
+        return $this->morphMany(CustomNotificationStatus::class, 'user');
+    }
+
+    /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
+            End of RELATIONSHIPS
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
+
     protected $appends = [
         'modified_image',
 
         'verify_label',
         'verify_color',
-        
+
         'created_at_human',
         'updated_at_human',
         'deleted_at_human',
