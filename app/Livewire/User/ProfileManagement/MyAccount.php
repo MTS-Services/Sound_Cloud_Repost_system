@@ -18,14 +18,22 @@ class MyAccount extends Component
     public $transactions;
     public $activeTab = 'insights';
     public $showEditProfileModal = false;
+    
+    // New properties for playlist functionality
+    public $selectedPlaylist = null;
+    public $playlistTracks = [];
+    public $showPlaylistTracks = false;
 
     protected $creditTransactionService;
     protected $userService;
 
-
     public function setActiveTab(string $tab): void
     {
         $this->activeTab = $tab;
+        // Reset playlist view when switching tabs
+        if ($tab !== 'playlists') {
+            $this->resetPlaylistView();
+        }
     }
 
     public function getTracks(): void
@@ -37,6 +45,7 @@ class MyAccount extends Component
     {
         $this->playlists = Playlist::where('user_urn', user()->urn)->get();
     }
+
     public function getRecentReposts(): void
     {
         $this->reposts = Repost::with([
@@ -55,6 +64,7 @@ class MyAccount extends Component
                 return $repost;
             });
     }
+
     public function getTransactions(): void
     {
         $this->transactions = $this->creditTransactionService->getUserTransactions()->where('status', 'succeeded')
@@ -70,7 +80,34 @@ class MyAccount extends Component
     public function profileUpdated($propertyName)
     {
         $this->showEditProfileModal = true;
-        
+    }
+
+    // New method to handle playlist selection
+    public function selectPlaylist($playlistId)
+    {
+        $playlist = Playlist::where('id', $playlistId)
+            ->where('user_urn', user()->urn)
+            ->first();
+            
+        if ($playlist) {
+            $this->selectedPlaylist = $playlist;
+            $this->playlistTracks = $playlist->tracks; // Using the hasManyThrough relationship
+            $this->showPlaylistTracks = true;
+        }
+    }
+
+    // Method to go back to playlists view
+    public function backToPlaylists()
+    {
+        $this->resetPlaylistView();
+    }
+
+    // Helper method to reset playlist view
+    private function resetPlaylistView()
+    {
+        $this->selectedPlaylist = null;
+        $this->playlistTracks = [];
+        $this->showPlaylistTracks = false;
     }
 
     public function loadAll()
@@ -91,7 +128,6 @@ class MyAccount extends Component
 
     public function render()
     {
-
         return view('backend.user.profile-management.my-account');
     }
 }

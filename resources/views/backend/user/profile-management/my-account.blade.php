@@ -44,7 +44,8 @@
                                 <div class="text-center sm:text-left dark:text-white">
                                     <h2 class="text-2xl font-bold text-white mb-1">{{ user()->name }}</h2>
                                     <p class="text-primary-100">{{ user()->email }}</p>
-                                    <p class="text-primary-200 text-sm mt-1">Joined {{ user()->created_at->diffForHumans() }}</p>
+                                    <p class="text-primary-200 text-sm mt-1">Joined
+                                        {{ user()->created_at->diffForHumans() }}</p>
                                 </div>
                             </div>
                         </div>
@@ -54,7 +55,8 @@
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                                 <!-- Personal Information Section -->
                                 <div class="lg:col-span-2">
-                                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
+                                    <h3
+                                        class="text-xl font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
                                         <svg class="w-5 h-5 mr-2 text-primary-500" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -67,7 +69,8 @@
 
                                 <!-- First Name -->
                                 <div class="space-y-2">
-                                    <label for="firstName" class="block text-sm font-medium text-gray-700 dark:text-white">First
+                                    <label for="firstName"
+                                        class="block text-sm font-medium text-gray-700 dark:text-white">First
                                         Name</label>
                                     <input type="text" id="firstName" name="firstName" value="John"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-gray-400">
@@ -75,7 +78,8 @@
 
                                 <!-- Last Name -->
                                 <div class="space-y-2">
-                                    <label for="lastName" class="block text-sm font-medium text-gray-700 dark:text-white">Last
+                                    <label for="lastName"
+                                        class="block text-sm font-medium text-gray-700 dark:text-white">Last
                                         Name</label>
                                     <input type="text" id="lastName" name="lastName" value="Doe"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-gray-400">
@@ -83,7 +87,8 @@
 
                                 <!-- Email -->
                                 <div class="space-y-2">
-                                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-white">Email
+                                    <label for="email"
+                                        class="block text-sm font-medium text-gray-700 dark:text-white">Email
                                         Address</label>
                                     <input type="email" id="email" name="email" value="john.doe@example.com"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-gray-400">
@@ -115,9 +120,7 @@
                 };
                 reader.readAsDataURL(event.target.files[0]);
             }
-     </script>
-
-
+        </script>
     @else
         <section class="flex-1 overflow-auto">
             <div class="min-h-screen bg-white dark:bg-slate-900">
@@ -578,62 +581,173 @@
                                     </div>
                                     <!-- Playlists Tab -->
                                     <div class="tab-panel mt-4" x-show="activeTab === 'playlists'" x-transition>
-                                        <div
-                                            class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6">
-                                            <h2
-                                                class="text-gray-900 dark:text-white text-lg sm:text-xl font-semibold mb-2 sm:mb-0">
-                                                New & popular playlists from <span
-                                                    class="text-orange-500 dark:text-orange-400 hover:text-orange-400/90 dark:hover:text-orange-300">{{ user()->name }}</span>
-                                            </h2>
-                                            <a href="#"
-                                                class="text-orange-500 dark:text-orange-400 hover:text-orange-400/90 dark:hover:text-orange-300 text-xs sm:text-sm flex items-center space-x-1">
-                                                <span>Show all tracks on Soundcloud</span>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="lucide lucide-external-link w-4 h-4">
-                                                    <path d="M15 3h6v6"></path>
-                                                    <path d="M10 14 21 3"></path>
-                                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6">
-                                                    </path>
-                                                </svg>
-                                            </a>
-                                        </div>
-                                        <div
-                                            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                            <!-- Playlist  -->
-                                            @foreach ($playlists as $playlist)
-                                                <div
-                                                    class="group bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-gray-100">
-                                                    <div class="relative">
-                                                        <img src="{{ soundcloud_image($playlist->artwork_url) }}"
-                                                            alt="Playlist cover"
-                                                            class="w-full h-48 object-cover rounded-t-lg">
-                                                        <button
-                                                            class="absolute bottom-3 right-3 bg-orange-500 text-white w-12 h-12 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-orange-600">
-                                                            <svg class="w-5 h-5" fill="currentColor"
-                                                                viewBox="0 0 20 20">
-                                                                <path fill-rule="evenodd"
-                                                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-                                                                    clip-rule="evenodd"></path>
-                                                            </svg>
-                                                        </button>
+                                        @if (!$showPlaylistTracks)
+                                            <!-- Playlists Grid View -->
+                                            <div
+                                                class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6">
+                                                <h2
+                                                    class="text-gray-900 dark:text-white text-lg sm:text-xl font-semibold mb-2 sm:mb-0">
+                                                    New & popular playlists from
+                                                    <span
+                                                        class="text-orange-500 dark:text-orange-400 hover:text-orange-400/90 dark:hover:text-orange-300">
+                                                        {{ user()->name }}
+                                                    </span>
+                                                </h2>
+                                                <a href="#"
+                                                    class="text-orange-500 dark:text-orange-400 hover:text-orange-400/90 dark:hover:text-orange-300 text-xs sm:text-sm flex items-center space-x-1">
+                                                    <span>Show all playlists on Soundcloud</span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                        height="24" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        class="lucide lucide-external-link w-4 h-4">
+                                                        <path d="M15 3h6v6"></path>
+                                                        <path d="M10 14 21 3"></path>
+                                                        <path
+                                                            d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6">
+                                                        </path>
+                                                    </svg>
+                                                </a>
+                                            </div>
+
+                                            <div
+                                                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                                @foreach ($playlists as $playlist)
+                                                    <div class="group bg-white dark:bg-slate-800 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-gray-100 dark:border-slate-700"
+                                                        wire:click="selectPlaylist({{ $playlist->id }})">
+                                                        <div class="relative">
+                                                            <img src="{{ soundcloud_image($playlist->artwork_url) }}"
+                                                                alt="Playlist cover"
+                                                                class="w-full h-48 object-cover rounded-t-lg">
+                                                            <button
+                                                                class="absolute bottom-3 right-3 bg-orange-500 text-white w-12 h-12 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-orange-600">
+                                                                <svg class="w-5 h-5" fill="currentColor"
+                                                                    viewBox="0 0 20 20">
+                                                                    <path fill-rule="evenodd"
+                                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                                                                        clip-rule="evenodd"></path>
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                        <div class="p-4">
+                                                            <h3
+                                                                class="font-semibold text-gray-900 dark:text-white mb-1 truncate">
+                                                                {{ $playlist->title }}
+                                                            </h3>
+                                                            <p
+                                                                class="text-gray-500 dark:text-slate-400 text-sm mb-2 line-clamp-2">
+                                                                {{ $playlist->description }}
+                                                            </p>
+                                                            <div
+                                                                class="flex items-center justify-between text-xs text-gray-400 dark:text-slate-500">
+                                                                <span>{{ $playlist->track_count }} tracks</span>
+                                                                <span>{{ $playlist->genre }}</span>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div class="p-4">
-                                                        <h3 class="font-semibold text-gray-900 mb-1 truncate">
-                                                            {{ $playlist->title }}
-                                                        </h3>
-                                                        <p class="text-gray-500 text-sm mb-2 line-clamp-2">
-                                                            {{ $playlist->description }}</p>
-                                                        <div
-                                                            class="flex items-center justify-between text-xs text-gray-400">
-                                                            <span>{{ $playlist->track_count }} tracks</span>
-                                                            <span>{{ $playlist->genre }}</span>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <!-- Playlist Tracks View -->
+                                            <div class="mb-6">
+                                                <!-- Back Button and Playlist Header -->
+                                                <div class="flex items-center mb-4">
+                                                    <button wire:click="backToPlaylists"
+                                                        class="flex items-center text-orange-500 dark:text-orange-400 hover:text-orange-600 dark:hover:text-orange-300 transition-colors mr-4">
+                                                        <svg class="w-5 h-5 mr-2" fill="none"
+                                                            stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                                                            </path>
+                                                        </svg>
+                                                        Back to Playlists
+                                                    </button>
+                                                </div>
+
+                                                <!-- Playlist Info Header -->
+                                                <div
+                                                    class="bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg p-6 mb-6">
+                                                    <div class="flex flex-col sm:flex-row items-start gap-4">
+                                                        <img src="{{ soundcloud_image($selectedPlaylist->artwork_url) }}"
+                                                            alt="{{ $selectedPlaylist->title }}"
+                                                            class="w-24 h-24 sm:w-32 sm:h-32 rounded-lg shadow-lg object-cover">
+                                                        <div class="flex-1 text-white">
+                                                            <h1 class="text-2xl sm:text-3xl font-bold mb-2">
+                                                                {{ $selectedPlaylist->title }}</h1>
+                                                            <p class="text-orange-100 mb-2">
+                                                                {{ $selectedPlaylist->description }}</p>
+                                                            <div
+                                                                class="flex items-center gap-4 text-sm text-orange-200">
+                                                                <span>{{ $selectedPlaylist->track_count }}
+                                                                    tracks</span>
+                                                                <span>{{ $selectedPlaylist->genre }}</span>
+                                                                <span>Created
+                                                                    {{ $selectedPlaylist->created_at->diffForHumans() }}</span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            @endforeach
-                                        </div>
+                                            </div>
+
+                                            <!-- Playlist Tracks Header -->
+                                            <div
+                                                class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6">
+                                                <h2
+                                                    class="text-gray-900 dark:text-white text-lg sm:text-xl font-semibold mb-2 sm:mb-0">
+                                                    Tracks from playlist <span
+                                                        class="text-orange-500 dark:text-orange-400 hover:text-orange-400/90 dark:hover:text-orange-300">{{ $selectedPlaylist->title }}</span>
+                                                </h2>
+                                                <a href="{{ $selectedPlaylist->permalink_url ?? '#' }}"
+                                                    target="_blank"
+                                                    class="text-orange-500 dark:text-orange-400 hover:text-orange-400/90 dark:hover:text-orange-300 text-xs sm:text-sm flex items-center space-x-1">
+                                                    <span>Open playlist on Soundcloud</span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                        height="24" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        class="lucide lucide-external-link w-4 h-4">
+                                                        <path d="M15 3h6v6"></path>
+                                                        <path d="M10 14 21 3"></path>
+                                                        <path
+                                                            d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6">
+                                                        </path>
+                                                    </svg>
+                                                </a>
+                                            </div>
+
+                                            <!-- Playlist Tracks List -->
+                                            <div class="space-y-3 sm:space-y-4">
+                                                @if ($playlistTracks && count($playlistTracks) > 0)
+                                                    @foreach ($playlistTracks as $track)
+                                                        <div
+                                                            class="bg-gray-100 dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700">
+                                                            <div id="soundcloud-player-playlist-{{ $track->id }}"
+                                                                data-campaign-id="{{ $track->id }}" wire:ignore>
+                                                                <x-sound-cloud.sound-cloud-player :track="$track"
+                                                                    :visual="false" />
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                @else
+                                                    <div class="text-center py-8">
+                                                        <div class="text-gray-400 dark:text-slate-500 mb-2">
+                                                            <svg class="w-12 h-12 mx-auto mb-4" fill="none"
+                                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3">
+                                                                </path>
+                                                            </svg>
+                                                        </div>
+                                                        <h3
+                                                            class="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                                                            No tracks found</h3>
+                                                        <p class="text-gray-500 dark:text-slate-400">This playlist
+                                                            doesn't have any tracks yet.</p>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @endif
                                     </div>
                                     <!-- Reposts Tab -->
                                     <div class="tab-panel mt-4" x-show="activeTab === 'reposts'" x-transition>
@@ -754,6 +868,7 @@
     {{-- TAB FUNCTIONALITY --}}
     @push('js')
         <script>
+            // Updated JavaScript section for SoundCloud Widget integration
             document.addEventListener('DOMContentLoaded', function() {
                 // Initialize SoundCloud Widget API integration with Livewire
                 function initializeSoundCloudWidgets() {
@@ -762,6 +877,7 @@
                         return;
                     }
 
+                    // Handle both regular track players and playlist track players
                     const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
 
                     playerContainers.forEach(container => {
@@ -793,8 +909,13 @@
                     });
                 }
 
-                // Initialize widgets
+                // Initialize widgets on page load
                 initializeSoundCloudWidgets();
+
+                // Re-initialize widgets when Livewire updates the DOM (for playlist tracks)
+                document.addEventListener('livewire:update', function() {
+                    setTimeout(initializeSoundCloudWidgets, 100);
+                });
             });
         </script>
     @endpush
