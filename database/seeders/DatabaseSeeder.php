@@ -31,8 +31,8 @@ class DatabaseSeeder extends Seeder
             OrderSeeder::class,
             UserInformationSeeder::class,
             RepostSeeder::class,
+            FaqCategorySeeder::class,
             FaqSeeder::class,
-            FaqCategorySeeder::class
            
             PlaylistTrackSeeder::class
         ]);

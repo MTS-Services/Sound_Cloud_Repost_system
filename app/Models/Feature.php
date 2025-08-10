@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -38,6 +39,43 @@ class Feature extends BaseModel
             'feature_values',
         ]);
     }
+
+   
+   public const STATUS_ACTIVE = 1;
+    public const STATUS_INACTIVE = 0;
+
+    public static function statusList(): array
+    {
+        return [
+            self::STATUS_ACTIVE => 'Active',
+            self::STATUS_INACTIVE => 'Inactive',
+        ];
+    }
+
+    public function getStatusLabelAttribute()
+    {
+        return self::statusList()[$this->status];
+    }
+
+    public function getStatusColorAttribute()
+    {
+        return $this->status == self::STATUS_ACTIVE ? 'badge-success' : '';
+    }
+
+    public function getStatusBtnLabelAttribute()
+    {
+        return $this->status == self::STATUS_ACTIVE ? self::statusList()[self::STATUS_INACTIVE] : self::statusList();
+    }
+
+    public function getStatusBtnColorAttribute()
+    {
+        return $this->status == self::STATUS_ACTIVE ? 'btn-error' : 'btn-success';
+    }
+    public function getStatusBtnClassAttribute()
+    {
+        return $this->status == self::STATUS_INACTIVE ? 'btn-error' : 'btn-primary';
+    }
+
 
     /////////////////////////////////////
     ////////// Feature Types /////////////
@@ -161,5 +199,16 @@ class Feature extends BaseModel
 
 
     // In Plan.php model
+
+
+    public function scopeActive(Builder $query) : Builder
+    {
+        return $query->where('status', self::STATUS_ACTIVE);
+    }
+
+    public function scopeInactive(Builder $query) : Builder
+    {
+        return $query->where('status', self::STATUS_INACTIVE);
+    }
 
 }

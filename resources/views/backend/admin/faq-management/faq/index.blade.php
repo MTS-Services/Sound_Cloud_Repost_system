@@ -24,8 +24,9 @@
                 <thead>
                     <tr>
                         <th>{{ __('SL') }}</th>
+                        <th>{{__('Faq Category')}}</th>
                         <th>{{ __('Question') }}</th>
-                        <th>{{ __('Key') }}</th>
+                      
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('Created Date') }}</th>   
                         <th>{{ __('Action') }}</th>
@@ -47,8 +48,10 @@
             document.addEventListener('DOMContentLoaded', () => {
                 let table_columns = [
                     //name and data, orderable, searchable
+                    
+                    ['faq_category_id', true, true],
                     ['question', true, true],
-                    ['key', true, true],
+                    
                     ['status', true, true],                 
                     ['created_at', true, true],
                     ['action', false, false],
@@ -76,7 +79,14 @@
                     const id = $(this).data('id');
                     const route = "{{ route('fm.faq.show', ':id') }}";
 
-                    const details = [{
+                    const details = [
+                        
+                        {
+                            label: '{{ __('Faq Category') }}',
+                            key: 'faq_category_id',
+                        },
+                        {
+
                        
                             label: '{{ __('Question') }}',
                             key: 'question',
@@ -85,10 +95,7 @@
                             label: '{{ __('Description') }}',
                             key: 'description',
                         },
-                        {
-                            label: '{{ __('key') }}',
-                            key: 'key',
-                        },
+                       
                         {
                             label: '{{ __('Status') }}',
                             key: 'status',

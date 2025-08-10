@@ -37,7 +37,7 @@
         </div>
     </section>
 
-
+   <x-admin.details-modal />
     @push('js')
         <script src="{{ asset('assets/js/details-modal.js') }}"></script>
         <script src="{{ asset('assets/js/datatable.js') }}"></script>
@@ -91,14 +91,7 @@
 
                            
                         },
-                        {
-                            label: '{{ __('Created By') }}',
-                            key: 'created_by',
-                        },
-                        {
-                            label: '{{ __('Created Date') }}',
-                            key: 'created_at',
-                        }
+                       
                     ];
 
                     showDetailsModal(route, id, '{{ __('Faq Category Details') }}', details);

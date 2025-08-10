@@ -53,6 +53,9 @@ class FeatureController extends Controller implements HasMiddleware
         if ($request->ajax()) {
             $query = $this->featureService->getFeatures();
             return DataTables::eloquent($query)
+
+             ->editColumn('status', fn($feature) => "<span class='badge badge-soft {$feature->status_color}'>{$feature->status_label}</span>")
+            
                 ->editColumn('key', function ($feature) {
                     return $feature->features_name;
                 })
@@ -72,7 +75,7 @@ class FeatureController extends Controller implements HasMiddleware
                     $menuItems = $this->menuItems($feature);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action', 'type', 'key', 'feature_category_id', 'created_by', 'created_at'])
+                ->rawColumns(['status', 'action', 'type', 'key', 'feature_category_id', 'created_by', 'created_at'])
                 ->make(true);
         }
         return view('backend.admin.package_management.features.index');
@@ -86,6 +89,13 @@ class FeatureController extends Controller implements HasMiddleware
                 'params' => [encrypt($model->id)],
                 'label' => 'Edit',
                 'permissions' => ['feature-edit']
+            ],
+            [
+                'routeName' => 'pm.feature.status',
+                'params' => [encrypt($model->id)],
+                'label' => $model->status ? 'Deactivate' : 'Activate',
+                'status' => true,
+                'permissions' => ['permission-status']
             ],
 
             [
@@ -103,7 +113,7 @@ class FeatureController extends Controller implements HasMiddleware
      */
     public function create()
     {
-        $data['feature_categories'] = $this->FeatureCategorySevice->getFeatureCategories()->select(['id', 'name'])->get();
+        $data['feature_categories'] = $this->FeatureCategorySevice->getFeatureCategories()->active()->select(['id', 'name'])->get();
         return view('backend.admin.package_management.features.create', $data);
     }
 
@@ -138,7 +148,7 @@ class FeatureController extends Controller implements HasMiddleware
     public function edit(string $id)
     {
         $data['feature'] = $this->featureService->getFeature($id);
-        $data['feature_categories'] = $this->FeatureCategorySevice->getFeatureCategories()->select(['name', 'id'])->get();
+        $data['feature_categories'] = $this->FeatureCategorySevice->getFeatureCategories()->active()->select(['name', 'id'])->get();
         return view('backend.admin.package_management.features.edit', $data);
     }
 
@@ -166,6 +176,13 @@ class FeatureController extends Controller implements HasMiddleware
         return $this->redirectIndex();
     }
 
+    public function status(Request $request, string $id)
+    {
+        $featrue = Feature::findOrFail(decrypt($id));
+        $featrue->update(['status' => !$featrue->status, 'updated_by' => admin()->id]);
+        session()->flash('success', 'Feature  status updated successfully!');
+        return redirect()->route('pm.feature-category.index');
+    }
     /**
      * Remove the specified resource from storage.
      */

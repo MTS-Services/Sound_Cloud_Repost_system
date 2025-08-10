@@ -14,15 +14,18 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Yajra\DataTables\Facades\DataTables;
+use App\Services\Admin\Faq\FaqCategoryService;
 
 
 class FaqController extends Controller implements HasMiddleware
 {
     protected FaqService $faqService;
+     protected FaqCategoryService $faqCategoryService;
     use AuditRelationTraits;
-    public function __construct(FaqService $faqService)
+    public function __construct(FaqService $faqService, FaqCategoryService $faqCategoryService)
     {
         $this->faqService = $faqService;
+        $this->faqCategoryService = $faqCategoryService;
     }
     protected function redirectIndex(): RedirectResponse
     {
@@ -68,11 +71,13 @@ class FaqController extends Controller implements HasMiddleware
             $query = $this->faqService->getFaqs();
             return DataTables::eloquent($query)
 
+                ->editColumn('faq_category_id', function ($faq) {
+                    return $faq->faqCategory->name;
+                })
 
                 ->editColumn('status', fn($faq) => "<span class='badge badge-soft {$faq->status_color}'>{$faq->status_label}</span>")
 
-                ->editColumn('key', fn($faq) => "<span class='badge badge-soft {$faq->key_color}'>{$faq->key_label}</span>")
-
+            
                 ->editColumn('created_by', function ($faq) {
                     // return $faq->creater_name;
                     return $this->creater_name($faq);
@@ -84,7 +89,7 @@ class FaqController extends Controller implements HasMiddleware
                     $menuItems = $this->menuItems($faq);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['key', 'status', 'created_by', 'created_at', 'action'])
+                ->rawColumns(['faq_category_id',  'status', 'created_by', 'created_at', 'action'])
                 ->make(true);
         }
         return view('backend.admin.faq-management.faq.index');
@@ -132,6 +137,7 @@ class FaqController extends Controller implements HasMiddleware
     public function create(): View
     {
         $data['faq'] = Faq::where('status', 1)->get();
+        $data['faq_categories'] = $this->faqCategoryService->getFaqCategories()->select(['id', 'name'])->get();
 
         return view('backend.admin.faq-management.faq.create', $data);
     }
@@ -168,25 +174,27 @@ class FaqController extends Controller implements HasMiddleware
     public function edit($id): View
     {
         $data['faq'] = $this->faqService->getFaq($id);
+        $data['faq_categories'] = $this->faqCategoryService->getFaqCategories()->select(['id', 'name'])->get();
         return view('backend.admin.faq-management.faq.edit', $data);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(FaqRequest $request,$faq, string $id)
+   public function update(FaqRequest $request, string $id)
     {
         try {
             $validated = $request->validated();
             $faq = $this->faqService->getFaq($id);
             $this->faqService->updateFaq($validated, $faq);
-            session()->flash('success', 'Faq Category updated successfully!');
+            session()->flash('success', 'Faq  updated successfully!');
         } catch (\Throwable $e) {
-            session()->flash('error', 'Faq Category update failed!');
+            session()->flash('error', 'Faq  update failed!');
             throw $e;
         }
         return $this->redirectIndex();
     }
+
 
     public function status(Request $request, string $id)
     {
@@ -251,21 +259,7 @@ class FaqController extends Controller implements HasMiddleware
             ]
 
         ];
-    }
-
-    //  public function restore(Faq $faq, $id,$encryptedId)
-    // {
-    //      try {
-    //     $faq = Faq::onlyTrashed()->find(decrypt($id));
-    //     $faq->update(['updated_by' => admin()->id]);
-    //     $faq->restore();
-    //         session()->flash('success', "Faq restored successfully");
-    //     } catch (\Throwable $e) {
-    //         session()->flash('success', 'Faq restored successfully!');
-    //         throw $e;
-    //     }
-    //     return $this->redirectTrashed();
-    // }
+    } 
     public function restore(string $id): RedirectResponse
     {
         try {

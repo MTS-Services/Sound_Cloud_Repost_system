@@ -20,6 +20,7 @@
                     <tr>
                         <th width="5%">{{ __('SL') }}</th>
                         <th>{{ __('Name') }}</th>
+                        <th>{{ __('Status') }}</th>
                         <th>{{ __('Created By') }}</th>
                         <th>{{ __('Created Date') }}</th>
                         <th width="10%">{{ __('Action') }}</th>
@@ -40,6 +41,7 @@
                 let table_columns = [
                     //name and data, orderable, searchable
                     ['name', true, true],
+                    ['status', true, true],
                     ['created_by', true, true],
                     ['created_at', true, true],
                     ['action', false, false],

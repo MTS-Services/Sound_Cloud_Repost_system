@@ -70,9 +70,12 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         // Feature Category Routes
         Route::resource('feature-category', FeatureCategoryController::class);
         Route::controller(FeatureCategoryController::class)->name('feature-category.')->prefix('feature-category')->group(function () {});
+        Route::get('status/{feature_category}', [FeatureCategoryController::class, 'status'])->name('feature-category.status');
         // Feature Routes
         Route::resource('feature', FeatureController::class);
         Route::controller(FeatureController::class)->name('feature.')->prefix('feature')->group(function () {});
+        Route::get('status/{feature}', [FeatureController::class, 'status'])->name('feature.status');
+        // Plan Routes
         Route::resource('plan', PlanController::class);
         Route::controller(PlanController::class)->name('plan.')->prefix('plan')->group(function () {
             Route::post('/show/{plan}', 'show')->name('show');

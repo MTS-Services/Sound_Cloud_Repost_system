@@ -76,4 +76,8 @@ class FaqCategory extends BaseModel
         return $this->hasMany(Faq::class);
     }
 
+    public function scopeFaqCategoryBy($query, $userId)
+    {
+        return $query->where('created_by', $userId);
+    }
 }

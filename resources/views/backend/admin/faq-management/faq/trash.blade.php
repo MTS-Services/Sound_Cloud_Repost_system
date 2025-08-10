@@ -9,10 +9,7 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Faq Trash') }}</h2>
                 <div class="flex items-center gap-2">
-                <x-button href="{{ route('fm.faq-category.trash') }}" icon="trash-2" type='secondary'
-                        permission="Faq-trash">
-                        {{ __('Trash') }}
-                    </x-button>
+               
                     <x-button href="{{ route('fm.faq.index') }}" icone="back" permission="Faq-create">
                         {{ __('Back') }}
                     </x-button>
@@ -25,7 +22,7 @@
                     <tr>
                         <th>{{ __('SL') }}</th>
                         <th>{{ __('Question') }}</th>
-                        <th>{{ __('Key') }}</th>
+                       
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('Created By') }}</th>
                         <th>{{ __('Created Date') }}</th>   
@@ -49,7 +46,7 @@
                 let table_columns = [
                     //name and data, orderable, searchable
                     ['question', true, true],
-                    ['key', true, true],
+                   
                     ['status', true, true],    
                     ['created_by', true, true],             
                     ['created_at', true, true],
