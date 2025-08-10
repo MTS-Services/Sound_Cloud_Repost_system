@@ -20,6 +20,10 @@ class CustomNotification extends BaseModel
         'message_data',
     ];
 
+    protected $casts = [
+        'message_data' => 'array',
+    ];
+
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 Start of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
