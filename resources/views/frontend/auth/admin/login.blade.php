@@ -35,10 +35,7 @@
                             <div
                                 class="w-16 h-16 bg-gradient-to-br from-orange-600 to-orange-400 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(255,85,0,0.4),_0_0_40px_rgba(255,85,0,0.15)]">
                                 <a href="{{ route('f.landing') }}" class="p-3 animate-[float_6s_ease-in-out_infinite]">
-                                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                        <path
-                                            d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v6.114A4.369 4.369 0 005 11c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
-                                    </svg>
+                                    <span class="text-white font-bold text-xl md:text-3xl">R</span>
                                 </a>
                             </div>
                             <div class="absolute inset-0 rounded-xl border-2 border-orange-500/30 animate-ping"></div>
