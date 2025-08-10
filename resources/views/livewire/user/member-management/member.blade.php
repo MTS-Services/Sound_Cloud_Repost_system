@@ -1,7 +1,5 @@
-<div x-data="{
-    showModal: @entangle('showModal').live,
-    showRepostsModal: @entangle('showRepostsModal').live
-}">
+<div>
+    <x-slot name="page_slug">members</x-slot>
 
     <!-- Header -->
     <div class="mb-8">
@@ -57,7 +55,7 @@
     </div>
 
     <!-- Success/Error Messages -->
-    @if (session()->has('success'))
+    {{-- @if (session()->has('success'))
         <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
             {{ session('success') }}
         </div>
@@ -67,7 +65,7 @@
         <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
             {{ session('error') }}
         </div>
-    @endif
+    @endif --}}
 
     <!-- Member Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-3 gap-6">
@@ -187,13 +185,17 @@
                 <div class="w-full max-w-2xl mx-auto mt-6 flex flex-col overflow-hidden">
                     {{-- @if ($activeTab === 'tracks') --}}
                     {{-- SEARCH BAR --}}
-                    <div class="p-4">
+                    <div class="p-1">
                         <label for="track-link-search" class="text-xl font-semibold text-gray-700 dark:text-gray-200">
-                            Paste a SoundCloud profile or {{ $activeTab === 'tracks' ? 'track' : 'playlist' }} link
+                            @if ($activeTab === 'tracks')
+                                Paste a SoundCloud profile or track link
+                            @else
+                                Paste a SoundCloud playlist link
+                            @endif
                         </label>
                         <div class="flex w-full mt-2">
                             <input wire:model.live.debounce.500ms="searchQuery" type="text" id="track-link-search"
-                                placeholder="Paste a SoundCloud profile or {{ $activeTab === 'tracks' ? 'track' : 'playlist' }} link"
+                                placeholder="{{ $activeTab === 'tracks' ? 'Paste a SoundCloud profile or track link' : 'Paste a SoundCloud playlist link' }}"
                                 class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 border border-gray-300 dark:border-gray-600 ">
                             <button wire:click="searchSoundcloud" type="button"
                                 class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200 ">
@@ -210,7 +212,7 @@
 
                     {{-- TRACKS OR PLAYLISTS --}}
                     <div class="h-full overflow-y-auto px-4 pb-6 space-y-1">
-                        @if ($activeTab === 'tracks')
+                        @if ($activeTab === 'tracks' || $playListTrackShow == true)
                             @forelse ($tracks as $track_)
                                 <div wire:click="openRepostsModal({{ $track_->id }})"
                                     class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">
@@ -233,12 +235,17 @@
                                     </div>
                                 </div>
                             @empty
-                                <div class="text-center py-12 text-gray-500 dark:text-gray-400">
-                                    <i data-lucide="music"
-                                        class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-3"></i>
-                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">No tracks found
+                                <div class="text-center py-16 text-gray-500 dark:text-gray-400">
+                                    <div
+                                        class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <x-lucide-music class="w-8 h-8 text-orange-500" />
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                        {{ __('No tracks found') }}
                                     </h3>
-                                    <p>No matching tracks found for your search.</p>
+                                    <p class="text-gray-500 dark:text-gray-400">
+                                        {{ __('Add one to get started with campaigns.') }}
+                                    </p>
                                 </div>
                             @endforelse
 
@@ -250,7 +257,7 @@
                                     </button>
                                 </div>
                             @endif
-                        @else
+                        @elseif($activeTab === 'playlists')
                             @forelse ($playlists as $playlist_)
                                 <div wire:click="showPlaylistTracks({{ $playlist_->id }})"
                                     class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">
@@ -273,12 +280,17 @@
                                     </div>
                                 </div>
                             @empty
-                                <div class="text-center py-12 text-gray-500 dark:text-gray-400">
-                                    <i data-lucide="list-music"
-                                        class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-3"></i>
-                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">No playlists
-                                        found</h3>
-                                    <p>No matching playlists found for your search.</p>
+                                <div class="text-center py-16 text-gray-500 dark:text-gray-400">
+                                    <div
+                                        class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <x-lucide-list-music class="w-8 h-8 text-orange-500" />
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                        {{ __('No playlists found') }}
+                                    </h3>
+                                    <p class="text-gray-500 dark:text-gray-400">
+                                        {{ __('Add one to get started with campaigns.') }}
+                                    </p>
                                 </div>
                             @endforelse
 
