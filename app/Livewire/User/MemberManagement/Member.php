@@ -296,7 +296,6 @@ class Member extends Component
         if ($trackData) {
             $this->track = $trackData;
         } else {
-
         }
         $this->showRepostsModal = true;
     }
@@ -306,27 +305,39 @@ class Member extends Component
         $this->reset(['track', 'selectedTrackId', 'selectedPlaylistId', 'showRepostsModal']);
     }
 
-    public function openPlaylistTracksModal($playlistId)
-    {
+    // public function openPlaylistTracksModal($playlistId)
+    // {
 
-        $this->showPlaylistTracksModal = true;
-        $this->selectedPlaylistId = $playlistId;
-        $this->selectedTrackId = null;
-        $playlist = $this->allPlaylists->firstWhere('id', $playlistId);
-        if ($playlist) {
-            $this->allPlaylistTracks = collect($playlist['tracks']);
-            $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
-        } else {
-            $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()->get();
-            $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
-        }
-        $this->searchSoundcloud();
-    }
+    //     $this->showPlaylistTracksModal = true;
+    //     $this->selectedPlaylistId = $playlistId;
+    //     $this->selectedTrackId = null;
+    //     $playlist = $this->allPlaylists->firstWhere('id', $playlistId);
+    //     if ($playlist) {
+    //         $this->allPlaylistTracks = collect($playlist['tracks']);
+    //         $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
+    //     } else {
+    //         $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()->get();
+    //         $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
+    //     }
+    //     $this->searchSoundcloud();
+    // }
 
+    // public function showPlaylistTracks($playlistId)
+    // {
+    //     $this->selectedPlaylistId = $playlistId;
+    //     $playlist = Playlist::with('tracks')->find($playlistId);
+    //     if ($playlist) {
+    //         $this->allTracks = $playlist->tracks;
+    //         $this->tracks = $this->allTracks->take($this->trackLimit);
+    //     } else {
+    //         $this->tracks = collect();
+    //     }
+    //     $this->activeTab = 'tracks';
+    // }
     public function closePlaylistTracksModal()
     {
         $this->reset(['selectedPlaylistId', 'playlistTracks']);
-        $this->showPlaylistTracksModal = false;
+        // $this->showPlaylistTracksModal = false;
     }
 
     public function createRepostsRequest()
