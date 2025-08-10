@@ -54,7 +54,7 @@ class Campaign extends BaseModel
         'max_followers' => 'integer',
         'is_featured' => 'boolean',
         'status' => 'integer',
-        'playback_count' => 'integer',        
+        'playback_count' => 'integer',
     ];
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
@@ -98,7 +98,7 @@ class Campaign extends BaseModel
         $this->appends = array_merge(parent::getAppends(), [
             'status_label',
             'status_color',
-            // 'status_btn_label',
+            'status_btn_label',
             'status_btn_color',
             'start_date_formatted',
             'end_date_formatted',
@@ -126,10 +126,18 @@ class Campaign extends BaseModel
     {
         return self::getStatusList()[$this->status] ?? 'Unknown';
     }
-    // public function getStatusBtnLabelAttribute()
-    // {
-    //     return $this->status == self::STATUS_OPEN ? self::getStatuses()[self::STATUS_PAUSED] : self::getStatuses()[self::STATUS_OPEN];
-    // }
+    public function getStatusBtnLabelAttribute()
+    {
+        $status = self::getStatusList()[$this->status];
+
+        if ($status === 'Open') {
+            return 'Pause';
+        } elseif ($status === 'Paused') {
+            return 'Open';
+        } else {
+            return $status;
+        }
+    }
 
     public function getStatusColorAttribute()
     {
