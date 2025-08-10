@@ -11,7 +11,7 @@
                     <x-button href="{{ route('pm.plan.trash') }}" icon="trash-2" type='secondary' permission="admin-trash">
                         {{ __('Trash') }}
                     </x-button>
-                    <x-button href="{{ route('pm.plan.create') }}" icon="plus-circle" permission="admin-create">
+                    <x-button href="{{ route('pm.plan.create') }}" icon="plus" permission="admin-create">
                         {{ __('Add') }}
                     </x-button>
                 </div>

@@ -12,7 +12,7 @@
                         permission="Faq-trash">
                         {{ __('Trash') }}
                     </x-button>
-                    <x-button href="{{ route('fm.faq-category.create') }}" icon="plus-circle" permission="faq_category-create">
+                    <x-button href="{{ route('fm.faq-category.create') }}" icon="plus" permission="faq_category-create">
                         {{ __('Add') }}
                     </x-button>
                 </div>
