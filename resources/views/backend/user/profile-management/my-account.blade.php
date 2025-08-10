@@ -762,7 +762,7 @@
 
                                         @foreach ($reposts as $repost)
                                             <div
-                                                class="bg-gray-100 mb-2 dark:bg-slate-800 rounded-lg p-4 border border-gray-200 dark:border-slate-700 sm:flex sm:gap-4 space-y-4 sm:space-y-0">
+                                                class="bg-gray-200 mb-2 dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 sm:flex  space-y-4 sm:space-y-0">
 
                                                 <!-- SoundCloud Player -->
                                                 <div class="sm:w-1/2 w-full">
@@ -779,41 +779,108 @@
                                                 </div>
 
                                                 <!-- Info Block -->
-                                                <div class="w-full sm:w-1/2 h-40">
+                                                <div class="w-full sm:w-1/2">
                                                     <div
-                                                        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 h-full bg-gray-100/70 dark:bg-slate-800 rounded-xl shadow border border-gray-200 dark:border-slate-700">
-                                                        <div class="flex-1 grid sm:grid-cols-2 gap-4">
+                                                        class="flex flex-col sm:flex-row sm:items-center p-4 sm:justify-between gap-4 h-full bg-gray-100/70 dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
+                                                        <div class="flex-1 grid sm:grid-cols-2 gap-4 relative">
 
-                                                            <!-- Track Info -->
-                                                            <div class="space-y-2">
-                                                                <h3
-                                                                    class="text-base font-semibold text-gray-900 dark:text-white truncate">
-                                                                    <a href="#"
-                                                                        class="hover:text-orange-500 dark:hover:text-orange-400">{{ $repost->source->title ?? 'Untitled Track' }}</a>
-                                                                </h3>
-                                                                <p
-                                                                    class="text-sm text-gray-500 dark:text-slate-400 truncate">
-                                                                    <a href="#"
-                                                                        class="hover:text-orange-500 dark:hover:text-orange-400">{{ $repost->source->artist ?? 'Unknown Artist' }}</a>
-                                                                </p>
-                                                                <p class="text-xs text-gray-400 dark:text-slate-500">
-                                                                    Reposted at:
-                                                                    {{ $repost->reposted_at?->format('M d, Y H:i') }}
-                                                                </p>
+                                                            <!-- Left: Track Info -->
+                                                            <div class="flex flex-col items-start gap-2">
+                                                                <!-- Avatar -->
+                                                                <div class="flex items-center gap-2">
+                                                                    <img src="{{ soundcloud_image($repost->source->artwork_url) }}"
+                                                                        class="w-12 h-12 rounded-full object-cover"
+                                                                        alt="Track artwork">
+                                                                    <div x-data="{ open: false }"
+                                                                        class=" inline-block text-left">
+                                                                        <div class="flex items-center gap-1 cursor-pointer"
+                                                                            @click="open = !open"
+                                                                            @click.outside="open = false">
+                                                                            <span
+                                                                                class="text-slate-700 dark:text-gray-300 font-medium">
+                                                                                {{ $repost->source->user->name ?? 'Unknown User' }}
+                                                                            </span>
+                                                                            <svg class="w-4 h-4 text-gray-500"
+                                                                                fill="currentColor"
+                                                                                viewBox="0 0 20 20">
+                                                                                <path fill-rule="evenodd"
+                                                                                    d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
+                                                                                    clip-rule="evenodd" />
+                                                                            </svg>
+                                                                        </div>
+
+                                                                        <!-- Rating Stars -->
+                                                                        <div class="flex items-center mt-1">
+                                                                            @for ($i = 1; $i <= 5; $i++)
+                                                                                <svg class="w-4 h-4 {{ $i <= ($repost->source->user->rating ?? 4) ? 'text-yellow-400' : 'text-gray-300' }}"
+                                                                                    fill="currentColor"
+                                                                                    viewBox="0 0 20 20">
+                                                                                    <path
+                                                                                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                                                                                </svg>
+                                                                            @endfor
+                                                                        </div>
+
+                                                                        <!-- Dropdown Menu -->
+                                                                        <div x-show="open" x-transition.opacity
+                                                                            class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
+                                                                            x-cloak>
+                                                                            <a href="{{ $repost->source->user->soundcloud_url ?? '#' }}"
+                                                                                target="_blank"
+                                                                                class="block hover:bg-gray-800 px-3 py-1 rounded">
+                                                                                Visit SoundCloud Profile
+                                                                            </a>
+                                                                            <a href="{{ route('user.profile', $repost->source->user->username ?? $repost->source->user->id) }}"
+                                                                                wire:navigate
+                                                                                class="block hover:bg-gray-800 px-3 py-1 rounded">
+                                                                                Visit RepostChain Profile
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="flex-1">
+                                                                    <!-- Track Title -->
+                                                                    <h3
+                                                                        class="text-base font-semibold text-gray-900 dark:text-white mt-1 truncate">
+                                                                        <a href="#"
+                                                                            class="hover:text-orange-500 dark:hover:text-orange-400">
+                                                                            {{ $repost->source->title ?? 'Untitled Track' }}
+                                                                        </a>
+                                                                    </h3>
+
+                                                                    {{-- <!-- Description -->
+                                                                    <p
+                                                                        class="text-sm text-gray-500 dark:text-slate-400 truncate">
+                                                                        {{ $repost->source->description ?? '' }}
+                                                                    </p> --}}
+
+                                                                    <!-- Genre -->
+                                                                    <div class="flex flex-wrap gap-2 mt-1">
+                                                                        @foreach (array_slice(explode(',', $repost->source->genre ?? 'Unknown Genre'), 0, 3) as $genre)
+                                                                            <span
+                                                                                class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
+                                                                                {{ trim($genre) }}
+                                                                            </span>
+                                                                        @endforeach
+                                                                    </div>
+
+                                                                </div>
                                                             </div>
 
-                                                            <!-- Status Info -->
+                                                            <!-- Right: Status Info -->
                                                             <div
                                                                 class="flex flex-col sm:items-end gap-2 text-xs text-gray-400 dark:text-slate-500">
                                                                 <p>{{ $repost->source_type }}</p>
-                                                                <p>💰 Credits Earned: <span
+                                                                <p>💰 Credits Earned:
+                                                                    <span
                                                                         class="font-semibold text-green-500">{{ $repost->credits_earned }}</span>
                                                                 </p>
                                                             </div>
-
                                                         </div>
                                                     </div>
                                                 </div>
+
                                             </div>
                                         @endforeach
 
