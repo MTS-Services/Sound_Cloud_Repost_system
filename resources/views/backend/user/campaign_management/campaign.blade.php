@@ -503,14 +503,14 @@
             @if ($showCampaignsModal)
                 <div class="flex border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
                     <button wire:click="selectModalTab('tracks')"
-                        class="cursor-pointer flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeModalTab === 'tracks' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
+                        class="cursor-pointer flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeTab === 'tracks' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
                         <div class="flex items-center justify-center gap-2">
                             <x-lucide-music class="w-4 h-4" />
                             {{ __('Tracks') }}
                         </div>
                     </button>
                     <button wire:click="selectModalTab('playlists')"
-                        class="cursor-pointer flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeModalTab === 'playlists' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
+                        class="cursor-pointer flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeTab === 'playlists' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
                         <div class="flex items-center justify-center gap-2">
                             <x-lucide-list-music class="w-4 h-4" />
                             {{ __('Playlists') }}
@@ -521,7 +521,7 @@
                 <div class="flex-grow overflow-y-auto p-4">
                     <div class="p-1">
                         <label for="track-link-search" class="text-xl font-semibold text-gray-700 dark:text-gray-200">
-                            @if ($activeModalTab === 'tracks')
+                            @if ($activeTab === 'tracks')
                                 Paste a SoundCloud profile or track link
                             @else
                                 Paste a SoundCloud playlist link
@@ -529,7 +529,7 @@
                         </label>
                         <div class="flex w-full mt-2">
                             <input wire:model.live.debounce.500ms="searchQuery" type="text" id="track-link-search"
-                                placeholder="{{ $activeModalTab === 'tracks' ? 'Paste a SoundCloud profile or track link' : 'Paste a SoundCloud playlist link' }}"
+                                placeholder="{{ $activeTab === 'tracks' ? 'Paste a SoundCloud profile or track link' : 'Paste a SoundCloud playlist link' }}"
                                 class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 border border-gray-300 dark:border-gray-600 ">
                             <button wire:click="searchSoundcloud" type="button"
                                 class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200 ">
@@ -602,7 +602,7 @@
                                 </div>
                             @endif
                         </div>
-                    @elseif($activeModalTab === 'playlists')
+                    @elseif($activeTab === 'playlists')
                         <div class="space-y-3">
                             @forelse ($playlists as $playlist_)
                                 <div wire:click="showPlaylistTracks({{ $playlist_->id }})"
