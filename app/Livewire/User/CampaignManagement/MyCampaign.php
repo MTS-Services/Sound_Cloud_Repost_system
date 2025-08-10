@@ -4,6 +4,7 @@ namespace App\Livewire\User\CampaignManagement;
 
 use App\Models\Campaign;
 use App\Models\CreditTransaction;
+use App\Models\Faq;
 use App\Models\Track;
 use App\Models\Playlist;
 use App\Services\TrackService;
@@ -21,6 +22,7 @@ class MyCampaign extends Component
 
     public $campaigns;
     public $campaign;
+    public $faqs;
 
     public bool $showCampaignsModal = false;
     public bool $showSubmitModal = false;
@@ -922,10 +924,19 @@ class MyCampaign extends Component
             session()->flash('error', 'Failed to refresh campaigns: ' . $e->getMessage());
         }
     }
+    public function getFaqs($categoryId = null)
+{
+    return Faq::when($categoryId, function($query) use ($categoryId) {
+        $query->where('faq_category_id', $categoryId);
+    })->get();
+}
 
-    public function mount()
+
+    public function mount($categoryId = null)
     {
         $this->refreshCampaigns();
+        $this->faqs = $this->getFaqs($categoryId);
+
     }
 
     public function render()

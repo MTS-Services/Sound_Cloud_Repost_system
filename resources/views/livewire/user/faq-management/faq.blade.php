@@ -49,7 +49,7 @@
     </section>
 
     <!-- Category Buttons -->
-    <section class="relative z-10 py-8 bg-white/40 dark:bg-slate-800 backdrop-blur-md border-y border-white/30">
+    <section class="relative z-10 py-8 bg-white/60 dark:bg-slate-800 backdrop-blur-md border-y border-white/30">
         <div class="container mx-auto px-4">
             <div class="flex flex-wrap justify-center gap-4">
                 <!-- All Button -->
@@ -88,7 +88,7 @@
                         <div class="grid gap-4 ">
                             @foreach ($category->faqs as $faq)
                                 <div
-                                    class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden">
+                                    class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden" id="faq-{{ $faq->id }}">
                                     <button
                                         class="faq-question w-full text-left p-6 flex items-center justify-between  transition-colors dark:bg-gray-900">
                                         <span class="font-samibold text-slate-800 pr-4 text-xl dark:text-white ">{{ $faq->question }}</span>
