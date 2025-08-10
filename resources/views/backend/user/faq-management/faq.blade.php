@@ -73,19 +73,6 @@
                 </p>
             </div>
 
-            <!-- Search Bar -->
-            <div class="max-w-2xl mx-auto mb-12 animate-fade-in" style="animation-delay: 0.2s;">
-                <div class="relative">
-                    <input type="text" id="searchInput" placeholder="Search for answers..."
-                        class="w-full px-6 py-4 pl-14 text-lg bg-white/80 backdrop-blur-md border border-white/30 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent search-glow transition-all duration-300">
-                    <i data-lucide="search"
-                        class="absolute left-5 top-1/2 transform -translate-y-1/2 h-6 w-6 text-slate-400"></i>
-                    <div id="searchResults"
-                        class="absolute top-full left-0 right-0 bg-white rounded-xl shadow-xl mt-2 hidden z-50 max-h-96 overflow-y-auto">
-                    </div>
-                </div>
-            </div>
-
             <!-- Quick Stats -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto animate-fade-in"
                 style="animation-delay: 0.4s;">
@@ -109,456 +96,60 @@
     <!-- Category Navigation -->
     <section
         class="relative z-10 py-8 bg-white/40 dark:bg-slate-800 bark:text-white backdrop-blur-md border-y border-white/30">
+
         <div class="container mx-auto px-4">
+
+
             <div class="flex flex-wrap justify-center gap-4" id="categoryNav">
-                <button
-                    class="category-btn active px-6 py-3 rounded-full bg-primary-500 text-white font-medium transition-all duration-300 hover:bg-primary-600 hover:scale-105"
-                    data-category="all">
-                    All Categories
-                </button>
-                <button
-                    class="category-btn px-6 py-3 rounded-full bg-white/60 text-slate-700 font-medium transition-all duration-300 hover:bg-white hover:scale-105"
-                    data-category="getting-started">
-                    Getting Started
-                </button>
-                <button
-                    class="category-btn px-6 py-3 rounded-full bg-white/60 text-slate-700 font-medium transition-all duration-300 hover:bg-white hover:scale-105"
-                    data-category="account">
-                    Account & Billing
-                </button>
-                <button
-                    class="category-btn px-6 py-3 rounded-full bg-white/60 text-slate-700 font-medium transition-all duration-300 hover:bg-white hover:scale-105"
-                    data-category="features">
-                    Features
-                </button>
-                <button
-                    class="category-btn px-6 py-3 rounded-full bg-white/60 text-slate-700 font-medium transition-all duration-300 hover:bg-white hover:scale-105"
-                    data-category="technical">
-                    Technical
-                </button>
-                <button
-                    class="category-btn px-6 py-3 rounded-full bg-white/60 text-slate-700 font-medium transition-all duration-300 hover:bg-white hover:scale-105"
-                    data-category="security">
-                    Security
-                </button>
-                <button
-                    class="category-btn px-6 py-3 rounded-full bg-white/60 text-slate-700 font-medium transition-all duration-300 hover:bg-white hover:scale-105"
-                    data-category="integrations">
-                    Integrations
-                </button>
-                <button
-                    class="category-btn px-6 py-3 rounded-full bg-white/60 text-slate-700 font-medium transition-all duration-300 hover:bg-white hover:scale-105"
-                    data-category="troubleshooting">
-                    Troubleshooting
-                </button>
-                <button
-                    class="category-btn px-6 py-3 rounded-full bg-white/60 text-slate-700 font-medium transition-all duration-300 hover:bg-white hover:scale-105"
-                    data-category="policies">
-                    Policies
-                </button>
+                @foreach ($faqCategories as $faqCategory)
+                    <button 
+                        class="category-btn active px-6 py-3 rounded-full bg-primary-500 text- font-medium   hover:bg-primary-600 "
+                        data-category="{{ $faqCategory->slug }}">
+                        {{ $faqCategory->name }}
+                    </button>
+                @endforeach
             </div>
+
         </div>
+
     </section>
 
     <!-- FAQ Content -->
     <main class="relative z-10 py-16">
         <div class="container mx-auto px-4">
             <!-- Getting Started Category -->
-            <div class="faq-category mb-16" data-category="getting-started">
-                <div class="flex items-center mb-8">
-                    <div
-                        class="w-12 h-12 bg-gradient-to-r from-green-400 to-green-600 bg-green-600 rounded-xl flex items-center justify-center mr-4">
-                        <i data-lucide="play-circle" class="h-6 w-6 text-white"></i>
+            
+            @foreach ($faqCategories as $category)
+                @if ($category->faqs_count > 0)
+                    <div class="faq-category mb-16" data-category="{{ $category->slug }}">
+                    <div class="flex items-center mb-8">
+                        <div
+                            class="w-12 h-12 bg-gradient-to-r from-green-400 to-green-600 bg-green-600 rounded-xl flex items-center justify-center mr-4">
+                            <i data-lucide="play-circle" class="h-6 w-6 text-white"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold text-slate-800">{{ $category->name }}</h2>
+                        </div>
                     </div>
-                    <div>
-                        <h2 class="text-3xl font-bold text-slate-800">Getting Started</h2>
-                        <p class="text-slate-600">Everything you need to know to begin your journey</p>
+                    <div class="grid gap-4">
+                        @foreach ($category->faqs as $faq)
+                            <div
+                            class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
+                            <button
+                                class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
+                                <span class="font-semibold text-slate-800 pr-4">{{ $faq->question }}</span>
+                                <i data-lucide="chevron-down"
+                                    class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
+                            </button>
+                            <div class="faq-content px-6 text-slate-600 leading-relaxed">
+                                <p>{{ $faq->description }}</p>
+                            </div>
+                        </div>
+                        @endforeach
                     </div>
                 </div>
-                <div class="grid gap-4">
-                    <div
-                        class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
-                        <button
-                            class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
-                            <span class="font-semibold text-slate-800 pr-4">How do I create my first account?</span>
-                            <i data-lucide="chevron-down"
-                                class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
-                        </button>
-                        <div class="faq-content px-6 text-slate-600 leading-relaxed">
-                            <p>Creating your account is simple and takes just a few minutes. Click the "Sign Up" button
-                                in the top right corner, enter your email address, create a secure password, and verify
-                                your email. You'll be guided through a quick onboarding process to set up your profile
-                                and preferences.</p>
-                        </div>
-                    </div>
-                    <div
-                        class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
-                        <button
-                            class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
-                            <span class="font-semibold text-slate-800 pr-4">What information do I need to provide during
-                                registration?</span>
-                            <i data-lucide="chevron-down"
-                                class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
-                        </button>
-                        <div class="faq-content px-6 text-slate-600 leading-relaxed">
-                            <p>You'll need to provide a valid email address, create a password, and choose a username.
-                                Optionally, you can add your full name, profile picture, and company information. All
-                                personal information is encrypted and stored securely according to our privacy policy.
-                            </p>
-                        </div>
-                    </div>
-                    <div
-                        class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
-                        <button
-                            class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
-                            <span class="font-semibold text-slate-800 pr-4">How long does the setup process take?</span>
-                            <i data-lucide="chevron-down"
-                                class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
-                        </button>
-                        <div class="faq-content px-6 text-slate-600 leading-relaxed">
-                            <p>The basic setup takes about 2-3 minutes. This includes account creation, email
-                                verification, and basic profile setup. If you choose to configure advanced settings or
-                                integrations, it may take an additional 5-10 minutes depending on your needs.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Account & Billing Category -->
-            <div class="faq-category mb-16" data-category="account">
-                <div class="flex items-center mb-8">
-                    <div
-                        class="w-12 h-12 bg-gradient-to-r from-blue-400 to-blue-600 bg-blue-600 rounded-xl flex items-center justify-center mr-4">
-                        <i data-lucide="user-circle" class="h-6 w-6 text-white"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-3xl font-bold text-slate-800">Account & Billing</h2>
-                        <p class="text-slate-600">Manage your account settings and billing information</p>
-                    </div>
-                </div>
-                <div class="grid gap-4">
-                    <div
-                        class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
-                        <button
-                            class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
-                            <span class="font-semibold text-slate-800 pr-4">How do I update my billing
-                                information?</span>
-                            <i data-lucide="chevron-down"
-                                class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
-                        </button>
-                        <div class="faq-content px-6 text-slate-600 leading-relaxed">
-                            <p>Go to your Account Settings, click on "Billing & Payments," and select "Update Payment
-                                Method." You can add new credit cards, update existing ones, or change your billing
-                                address. All payment information is processed securely through our encrypted payment
-                                gateway.</p>
-                        </div>
-                    </div>
-                    <div
-                        class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
-                        <button
-                            class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
-                            <span class="font-semibold text-slate-800 pr-4">Can I change my subscription plan
-                                anytime?</span>
-                            <i data-lucide="chevron-down"
-                                class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
-                        </button>
-                        <div class="faq-content px-6 text-slate-600 leading-relaxed">
-                            <p>Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately
-                                for upgrades, while downgrades take effect at the end of your current billing cycle.
-                                You'll receive a prorated credit or charge based on the timing of your change.</p>
-                        </div>
-                    </div>
-                    <div
-                        class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
-                        <button
-                            class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
-                            <span class="font-semibold text-slate-800 pr-4">What payment methods do you accept?</span>
-                            <i data-lucide="chevron-down"
-                                class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
-                        </button>
-                        <div class="faq-content px-6 text-slate-600 leading-relaxed">
-                            <p>We accept all major credit cards (Visa, MasterCard, American Express, Discover), PayPal,
-                                Apple Pay, Google Pay, and bank transfers for enterprise accounts. All transactions are
-                                processed securely with 256-bit SSL encryption.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Features Category -->
-            <div class="faq-category mb-16" data-category="features">
-                <div class="flex items-center mb-8">
-                    <div
-                        class="w-12 h-12 bg-gradient-to-r from-purple-400 to-purple-600 bg-purple-600 rounded-xl flex items-center justify-center mr-4">
-                        <i data-lucide="zap" class="h-6 w-6 text-white"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-3xl font-bold text-slate-800">Features</h2>
-                        <p class="text-slate-600">Learn about our powerful features and capabilities</p>
-                    </div>
-                </div>
-                <div class="grid gap-4">
-                    <div
-                        class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
-                        <button
-                            class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
-                            <span class="font-semibold text-slate-800 pr-4">What's included in the free plan?</span>
-                            <i data-lucide="chevron-down"
-                                class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
-                        </button>
-                        <div class="faq-content px-6 text-slate-600 leading-relaxed">
-                            <p>The free plan includes up to 3 projects, 1GB storage, basic analytics, community support,
-                                and access to core features. You can upgrade anytime to unlock advanced features like
-                                unlimited projects, priority support, and advanced integrations.</p>
-                        </div>
-                    </div>
-                    <div
-                        class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
-                        <button
-                            class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
-                            <span class="font-semibold text-slate-800 pr-4">How do I enable two-factor
-                                authentication?</span>
-                            <i data-lucide="chevron-down"
-                                class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
-                        </button>
-                        <div class="faq-content px-6 text-slate-600 leading-relaxed">
-                            <p>Go to Security Settings in your account dashboard, click "Enable 2FA," and follow the
-                                setup wizard. You can use authenticator apps like Google Authenticator, Authy, or
-                                receive SMS codes. We highly recommend enabling 2FA for enhanced account security.</p>
-                        </div>
-                    </div>
-                    <div
-                        class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
-                        <button
-                            class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
-                            <span class="font-semibold text-slate-800 pr-4">Can I collaborate with team members?</span>
-                            <i data-lucide="chevron-down"
-                                class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
-                        </button>
-                        <div class="faq-content px-6 text-slate-600 leading-relaxed">
-                            <p>Yes! Pro and Enterprise plans include team collaboration features. You can invite team
-                                members, set permissions, share projects, and collaborate in real-time. Each team member
-                                gets their own account with customizable access levels.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Technical Category -->
-            <div class="faq-category mb-16" data-category="technical">
-                <div class="flex items-center mb-8">
-                    <div
-                        class="w-12 h-12 bg-gradient-to-r from-red-400 to-red-600 bg-red-600 rounded-xl flex items-center justify-center mr-4">
-                        <i data-lucide="settings" class="h-6 w-6 text-white"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-3xl font-bold text-slate-800">Technical</h2>
-                        <p class="text-slate-600">Technical specifications and requirements</p>
-                    </div>
-                </div>
-                <div class="grid gap-4">
-                    <div
-                        class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
-                        <button
-                            class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
-                            <span class="font-semibold text-slate-800 pr-4">What are the system requirements?</span>
-                            <i data-lucide="chevron-down"
-                                class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
-                        </button>
-                        <div class="faq-content px-6 text-slate-600 leading-relaxed">
-                            <p>Our platform works on any modern web browser (Chrome 90+, Firefox 88+, Safari 14+, Edge
-                                90+). For mobile, we support iOS 13+ and Android 8+. A stable internet connection is
-                                required, with minimum 1 Mbps for basic features and 5 Mbps for video features.</p>
-                        </div>
-                    </div>
-                    <div
-                        class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
-                        <button
-                            class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
-                            <span class="font-semibold text-slate-800 pr-4">Do you have an API for developers?</span>
-                            <i data-lucide="chevron-down"
-                                class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
-                        </button>
-                        <div class="faq-content px-6 text-slate-600 leading-relaxed">
-                            <p>Yes, we offer a comprehensive REST API with full documentation. Pro and Enterprise plans
-                                include API access with different rate limits. Visit our Developer Portal for API
-                                documentation, SDKs, and code examples in multiple programming languages.</p>
-                        </div>
-                    </div>
-                    <div
-                        class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
-                        <button
-                            class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
-                            <span class="font-semibold text-slate-800 pr-4">How do I export my data?</span>
-                            <i data-lucide="chevron-down"
-                                class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
-                        </button>
-                        <div class="faq-content px-6 text-slate-600 leading-relaxed">
-                            <p>You can export your data anytime from the Account Settings page. We support multiple
-                                formats including JSON, CSV, and XML. Large exports are processed in the background and
-                                you'll receive an email when ready for download. Data exports include all your projects,
-                                settings, and metadata.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Security Category -->
-            <div class="faq-category mb-16" data-category="security">
-                <div class="flex items-center mb-8">
-                    <div
-                        class="w-12 h-12 bg-gradient-to-r from-yellow-400 to-orange-500 bg-orange-600 rounded-xl flex items-center justify-center mr-4">
-                        <i data-lucide="shield" class="h-6 w-6 text-white"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-3xl font-bold text-slate-800">Security</h2>
-                        <p class="text-slate-600">Your security and privacy are our top priority</p>
-                    </div>
-                </div>
-                <div class="grid gap-4">
-                    <div
-                        class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
-                        <button
-                            class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
-                            <span class="font-semibold text-slate-800 pr-4">How is my data protected?</span>
-                            <i data-lucide="chevron-down"
-                                class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
-                        </button>
-                        <div class="faq-content px-6 text-slate-600 leading-relaxed">
-                            <p>We use enterprise-grade security including 256-bit SSL encryption, regular security
-                                audits, SOC 2 compliance, and data centers with 24/7 monitoring. All data is encrypted
-                                at rest and in transit. We never share your personal information with third parties
-                                without your consent.</p>
-                        </div>
-                    </div>
-                    <div
-                        class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
-                        <button
-                            class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
-                            <span class="font-semibold text-slate-800 pr-4">What happens if I forget my
-                                password?</span>
-                            <i data-lucide="chevron-down"
-                                class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
-                        </button>
-                        <div class="faq-content px-6 text-slate-600 leading-relaxed">
-                            <p>Click "Forgot Password" on the login page and enter your email address. You'll receive a
-                                secure reset link within minutes. The link expires after 24 hours for security. If you
-                                have 2FA enabled, you'll need access to your authenticator app to complete the reset
-                                process.</p>
-                        </div>
-                    </div>
-                    <div
-                        class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
-                        <button
-                            class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
-                            <span class="font-semibold text-slate-800 pr-4">Do you comply with GDPR and other privacy
-                                regulations?</span>
-                            <i data-lucide="chevron-down"
-                                class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
-                        </button>
-                        <div class="faq-content px-6 text-slate-600 leading-relaxed">
-                            <p>Yes, we are fully GDPR compliant and also adhere to CCPA, PIPEDA, and other major privacy
-                                regulations. You have full control over your data including the right to access, modify,
-                                or delete it. Our privacy policy details all data handling practices and your rights.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Additional categories would follow the same pattern... -->
-            <!-- For brevity, I'll add a few more key categories -->
-
-            <!-- Integrations Category -->
-            <div class="faq-category mb-16" data-category="integrations">
-                <div class="flex items-center mb-8">
-                    <div
-                        class="w-12 h-12 bg-gradient-to-r from-indigo-400 to-indigo-600 bg-indigo-600 rounded-xl flex items-center justify-center mr-4">
-                        <i data-lucide="link" class="h-6 w-6 text-white"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-3xl font-bold text-slate-800">Integrations</h2>
-                        <p class="text-slate-600">Connect with your favorite tools and services</p>
-                    </div>
-                </div>
-                <div class="grid gap-4">
-                    <div
-                        class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
-                        <button
-                            class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
-                            <span class="font-semibold text-slate-800 pr-4">Which third-party services do you integrate
-                                with?</span>
-                            <i data-lucide="chevron-down"
-                                class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
-                        </button>
-                        <div class="faq-content px-6 text-slate-600 leading-relaxed">
-                            <p>We integrate with 100+ popular services including Slack, Microsoft Teams, Google
-                                Workspace, Salesforce, HubSpot, Zapier, GitHub, Jira, and many more. New integrations
-                                are added regularly based on user feedback and demand.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Troubleshooting Category -->
-            <div class="faq-category mb-16" data-category="troubleshooting">
-                <div class="flex items-center mb-8">
-                    <div
-                        class="w-12 h-12 bg-gradient-to-r from-pink-400 to-pink-600 bg-pink-600 rounded-xl flex items-center justify-center mr-4">
-                        <i data-lucide="wrench" class="h-6 w-6 text-white"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-3xl font-bold text-slate-800">Troubleshooting</h2>
-                        <p class="text-slate-600">Common issues and their solutions</p>
-                    </div>
-                </div>
-                <div class="grid gap-4">
-                    <div
-                        class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
-                        <button
-                            class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
-                            <span class="font-semibold text-slate-800 pr-4">Why is the platform running slowly?</span>
-                            <i data-lucide="chevron-down"
-                                class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
-                        </button>
-                        <div class="faq-content px-6 text-slate-600 leading-relaxed">
-                            <p>Slow performance can be caused by browser cache, network connectivity, or high server
-                                load. Try clearing your browser cache, checking your internet connection, or switching
-                                to a different browser. If issues persist, check our status page or contact support.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Policies Category -->
-            <div class="faq-category mb-16" data-category="policies">
-                <div class="flex items-center mb-8">
-                    <div
-                        class="w-12 h-12 bg-gradient-to-r from-teal-400 to-teal-600 bg-teal-600 rounded-xl flex items-center justify-center mr-4">
-                        <i data-lucide="file-text" class="h-6 w-6 text-white"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-3xl font-bold text-slate-800">Policies</h2>
-                        <p class="text-slate-600">Terms, privacy, and usage policies</p>
-                    </div>
-                </div>
-                <div class="grid gap-4">
-                    <div
-                        class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
-                        <button
-                            class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
-                            <span class="font-semibold text-slate-800 pr-4">What is your refund policy?</span>
-                            <i data-lucide="chevron-down"
-                                class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
-                        </button>
-                        <div class="faq-content px-6 text-slate-600 leading-relaxed">
-                            <p>We offer a 30-day money-back guarantee for all paid plans. If you're not satisfied,
-                                contact our support team within 30 days of your purchase for a full refund. Refunds are
-                                processed within 5-7 business days to your original payment method.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                @endif
+            @endforeach
         </div>
     </main>
 

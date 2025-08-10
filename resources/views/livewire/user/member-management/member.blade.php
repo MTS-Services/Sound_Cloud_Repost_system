@@ -1,7 +1,6 @@
 <div x-data="{
     showModal: @entangle('showModal').live,
-    showRepostsModal: @entangle('showRepostsModal').live
-}">
+    showRepostsModal: @entangle('showRepostsModal').live}">
 
     <!-- Header -->
     <div class="mb-8">

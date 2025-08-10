@@ -23,6 +23,7 @@ class FaqRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'faq_category_id' => 'required|exists:faq_categories,id',
             'question' => 'required|string|max:255',
             'description' => 'required|string',
            

@@ -15,11 +15,13 @@ use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Livewire\User\FaqManagement\Faq;
 use App\Livewire\User\HelpAndSupport;
 use App\Livewire\User\MemberManagement\Member;
 use App\Livewire\User\MemberManagement\RepostRequest;
 use App\Livewire\User\PackageManagement\Pricing;
 use App\Livewire\User\ProfileManagement\MyAccount;
+use App\Models\Faq as ModelsFaq;
 use Illuminate\Validation\Rules\Unique;
 use PHPUnit\TextUI\Help;
 
@@ -83,7 +85,8 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
 
  //Faq Management
 
-    Route::get('/faq', [FaqManagementFaqController::class, 'index'])->name('faq.index'); 
+    // Route::get('/faq', FaqManagementFaqController::class, 'index')->name('faq.index'); 
+    Route::get('/frequently-asked-questions', Faq::class)->name('user.faq');
 
 
 

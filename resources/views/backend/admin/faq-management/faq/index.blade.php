@@ -26,7 +26,6 @@
                         <th>{{ __('SL') }}</th>
                         <th>{{__('Faq Category')}}</th>
                         <th>{{ __('Question') }}</th>
-                      
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('Created Date') }}</th>   
                         <th>{{ __('Action') }}</th>
@@ -51,7 +50,6 @@
                     
                     ['faq_category_id', true, true],
                     ['question', true, true],
-                    
                     ['status', true, true],                 
                     ['created_at', true, true],
                     ['action', false, false],

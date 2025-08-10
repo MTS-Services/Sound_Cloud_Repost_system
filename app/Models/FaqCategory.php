@@ -10,12 +10,12 @@ class FaqCategory extends BaseModel
     //
 
     protected $fillable = [
-    'sort_order',
-     'name',
-     'slug',
-     'status',
+        'sort_order',
+        'name',
+        'slug',
+        'status',
 
-       'created_by',
+        'created_by',
         'updated_by',
         'deleted_by',
     ];
@@ -24,7 +24,11 @@ class FaqCategory extends BaseModel
                 Start of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
-    //
+    public function faqs()
+    {
+        return $this->hasMany(Faq::class);
+    }
+
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
@@ -53,22 +57,15 @@ class FaqCategory extends BaseModel
         return self::statusList()[$this->status];
     }
 
-        public function getStatusColorAttribute()
-{
-    return $this->status == self::STATUS_ACTIVE 
-        ? 'badge-success' 
-        : 'badge-error';
-}
+    public function getStatusColorAttribute()
+    {
+        return $this->status == self::STATUS_ACTIVE
+            ? 'badge-success'
+            : 'badge-error';
+    }
     public function getStatusBtnLabelAttribute()
     {
         return $this->status == self::STATUS_ACTIVE ? self::statusList()[self::STATUS_INACTIVE] : self::statusList();
-    }
-
- 
-
-    public function faqs()
-    {
-        return $this->hasMany(Faq::class);
     }
 
     public function scopeFaqCategoryBy($query, $userId)
@@ -76,12 +73,12 @@ class FaqCategory extends BaseModel
         return $query->where('created_by', $userId);
     }
 
-    public function scopeActive(Builder $query) : Builder
+    public function scopeActive(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_ACTIVE);
     }
 
-    public function scopeInactive(Builder $query) : Builder
+    public function scopeInactive(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_INACTIVE);
     }

@@ -14,8 +14,8 @@ class Faq extends BaseModel
         'sort_order',
         'question',
         'description',
-        'key',
         'status',
+        'faq_category_id',
 
         'created_by',
         'updated_by',
@@ -26,7 +26,11 @@ class Faq extends BaseModel
                 Start of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
-    //
+    public function faqCategory()
+    {
+        return $this->belongsTo(FaqCategory::class);
+    }
+
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
@@ -94,11 +98,6 @@ class Faq extends BaseModel
     public function scopeFaqBy($query, $userId)
     {
         return $query->where('created_by', $userId);
-    }
-
-    public function faqCategory()
-    {
-        return $this->belongsTo(FaqCategory::class);
     }
 
     public function scopeActive(Builder $query): Builder

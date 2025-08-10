@@ -68,11 +68,11 @@ class FaqController extends Controller implements HasMiddleware
     {
 
         if ($request->ajax()) {
-            $query = $this->faqService->getFaqs();
+            $query = $this->faqService->getFaqs()->with('faqCategory');
             return DataTables::eloquent($query)
 
                 ->editColumn('faq_category_id', function ($faq) {
-                    return $faq->faqCategory->name;
+                    return $faq?->faqCategory?->name;
                 })
 
                 ->editColumn('status', fn($faq) => "<span class='badge badge-soft {$faq->status_color}'>{$faq->status_label}</span>")
