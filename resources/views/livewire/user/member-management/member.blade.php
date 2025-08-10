@@ -235,12 +235,17 @@
                                     </div>
                                 </div>
                             @empty
-                                <div class="text-center py-12 text-gray-500 dark:text-gray-400">
-                                    <i data-lucide="music"
-                                        class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-3"></i>
-                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">No tracks found
+                                <div class="text-center py-16 text-gray-500 dark:text-gray-400">
+                                    <div
+                                        class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <x-lucide-music class="w-8 h-8 text-orange-500" />
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                        {{ __('No tracks found') }}
                                     </h3>
-                                    <p>No matching tracks found for your search.</p>
+                                    <p class="text-gray-500 dark:text-gray-400">
+                                        {{ __('Add one to get started with campaigns.') }}
+                                    </p>
                                 </div>
                             @endforelse
 
@@ -275,12 +280,17 @@
                                     </div>
                                 </div>
                             @empty
-                                <div class="text-center py-12 text-gray-500 dark:text-gray-400">
-                                    <i data-lucide="list-music"
-                                        class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-3"></i>
-                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">No playlists
-                                        found</h3>
-                                    <p>No matching playlists found for your search.</p>
+                                <div class="text-center py-16 text-gray-500 dark:text-gray-400">
+                                    <div
+                                        class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <x-lucide-list-music class="w-8 h-8 text-orange-500" />
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                        {{ __('No playlists found') }}
+                                    </h3>
+                                    <p class="text-gray-500 dark:text-gray-400">
+                                        {{ __('Add one to get started with campaigns.') }}
+                                    </p>
                                 </div>
                             @endforelse
 
