@@ -1,7 +1,5 @@
-<div x-data="{
-    showModal: @entangle('showModal').live,
-    showRepostsModal: @entangle('showRepostsModal').live
-}">
+<div >
+    <x-slot name="page_slug">members</x-slot>
 
     <!-- Header -->
     <div class="mb-8">

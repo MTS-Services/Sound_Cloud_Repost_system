@@ -127,8 +127,7 @@ class Member extends Component
             if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
                 $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                     ->where(function ($query) {
-                        $query->Where('permalink_url', 'like', '%' . $this->searchQuery . '%')
-                            ->orWhere('author_soundcloud_permalink_url', 'like', '%' . $this->searchQuery . '%')
+                        $query->where('permalink_url', 'like', '%' . $this->searchQuery . '%')
                             ->orWhere('title', 'like', '%' . $this->searchQuery . '%'); // Added title search
                     })
                     ->get();
@@ -138,7 +137,6 @@ class Member extends Component
                     $this->allTracks = Track::where('user_urn', user()->urn)
                         ->where(function ($query) {
                             $query->where('permalink_url', 'like', '%' . $this->searchQuery . '%')
-                                ->orWhere('author_soundcloud_permalink_url', 'like', '%' . $this->searchQuery . '%')
                                 ->orWhere('title', 'like', '%' . $this->searchQuery . '%'); // Added title search
                         })
                         ->get();
@@ -163,7 +161,6 @@ class Member extends Component
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                 ->where('permalink_url', $this->searchQuery)
-                ->orWhere('author_soundcloud_permalink_url', $this->searchQuery)
                 ->get();
             if ($tracksFromDb->isNotEmpty()) {
                 $this->allPlaylistTracks = $tracksFromDb;
@@ -174,7 +171,6 @@ class Member extends Component
             if ($this->activeTab == 'tracks') {
                 $tracksFromDb = Track::where('user_urn', user()->urn)
                     ->where('permalink_url', $this->searchQuery)
-                    ->orWhere('author_soundcloud_permalink_url', $this->searchQuery)
                     ->get();
                 if ($tracksFromDb->isNotEmpty()) {
                     $this->activeTab = 'tracks';
@@ -286,7 +282,8 @@ class Member extends Component
             'playlists',
             'trackLimit',
             'playlistLimit',
-            'searchQuery'
+            'searchQuery',
+            'playListTrackShow'
         ]);
         $this->selectedUserUrn = $userUrn;
         $this->showModal = true;
@@ -312,13 +309,15 @@ class Member extends Component
             'playlists',
             'trackLimit',
             'playlistLimit',
-            'searchQuery'
+            'searchQuery',
+            'playListTrackShow'
+
         ]);
     }
 
      public function setActiveTab($tab)
     {
-        $this->reset(['selectedPlaylistId', 'selectedTrackId', 'playListTrackShow', 'searchQuery']);
+        $this->reset(['selectedPlaylistId', 'selectedTrackId', 'searchQuery']);
         $this->activeTab = $tab;
         $this->searchSoundcloud();
     }
