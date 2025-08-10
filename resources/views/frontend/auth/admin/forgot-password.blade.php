@@ -85,7 +85,7 @@
                     <form method="POST" action="{{ route('admin.password.email') }}" class="space-y-6">
                         @csrf
 
-                        <!-- Email Input -->
+                        {{-- <!-- Email Input -->
                         <div>
                             <label
                                 class="input px-0 pl-2 flex items-center border border-zinc-700 rounded-md bg-zinc-800">
@@ -100,6 +100,15 @@
                                     class="w-full bg-transparent focus:outline-none px-3 py-2 rounded-r-md text-white" />
                             </label>
                             <x-input-error class="mt-2 text-red-400" :messages="$errors->get('email')" />
+                        </div> --}}
+                        <!-- Email -->
+                        <div class="group">
+                            <label for="email"
+                                class="block text-sm font-medium text-gray-300 group-focus-within:text-orange-400 transition-colors duration-200">Email
+                                Address</label>
+                            <input type="email" name="email" id="email" required placeholder="Your Email"
+                                value="{{ old('email') }}" required autofocus
+                                class="mt-2 w-full px-4 py-3 rounded-lg bg-[#2A2A2A] border border-[#333] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition shadow-[0_0_0_2px_rgba(255,85,0,0.3)] focus:ring-offset-2 focus:ring-offset-[#1B1B1B] hover:border-orange-400">
                         </div>
 
                         <!-- Submit Button -->

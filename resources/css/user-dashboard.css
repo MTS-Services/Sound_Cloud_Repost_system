@@ -276,6 +276,9 @@
 
 }
 
+button{
+    @apply cursor-pointer;
+}
 
 
 @layer utilities {

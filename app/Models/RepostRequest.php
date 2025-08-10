@@ -68,6 +68,10 @@ class RepostRequest extends BaseModel
     {
         return $this->hasMany(CreditTransaction::class);
     }
+    public function directReposts()
+    {
+        return $this->where('campaign_id', null);
+    }
 
     
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
@@ -91,7 +95,7 @@ class RepostRequest extends BaseModel
     public const STATUS_APPROVED = 1;
     public const STATUS_DECLINE = 2;
     public const STATUS_EXPIRED = 3;
-    public const STATUS_COMPLETED = 4;
+    public const STATUS_CANCELLED = 5;
 
     public static function getStatusList(): array
     {
@@ -100,7 +104,7 @@ class RepostRequest extends BaseModel
             self::STATUS_APPROVED => 'Approved',
             self::STATUS_DECLINE => 'Decline',
             self::STATUS_EXPIRED => 'Expired',
-            self::STATUS_COMPLETED => 'Completed',
+            self::STATUS_CANCELLED => 'Cancelled',
         ];
     }
 
@@ -119,7 +123,6 @@ class RepostRequest extends BaseModel
             self::STATUS_APPROVED => 'badge-success',
             self::STATUS_DECLINE => 'badge-error',
             self::STATUS_EXPIRED => 'badge-error',
-            self::STATUS_COMPLETED => 'badge-info',
         ] [$this->status] ?? 'badge-warning';
     }
     // pending thakle decline button show korbe

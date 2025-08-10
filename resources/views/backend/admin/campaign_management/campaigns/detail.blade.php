@@ -1,15 +1,15 @@
 <x-admin::layout>
-    <x-slot name="title">{{ __('Create Credit') }}</x-slot>
-    <x-slot name="breadcrumb">{{ __('Create Credit') }}</x-slot>
-    <x-slot name="page_slug">Detail</x-slot>
+    <x-slot name="title">{{ __('Campaign Details') }}</x-slot>
+    <x-slot name="breadcrumb">{{ __('Campaign Details') }}</x-slot>
+    <x-slot name="page_slug">campaign</x-slot>
 
 
     <div class="glass-card rounded-2xl p-6 mb-6">
         <div class="flex items-center justify-between">
-            <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Detail List') }}</h2>
+            <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Details List') }}</h2>
             <div class="flex items-center gap-2">
 
-                <x-button href="{{ route('cm.campaign.index') }}" permission="credit-create">
+                <x-button href="{{ route('cm.campaign.index') }}" permission="campaign-view">
                     {{ __('Back') }}
                 </x-button>
             </div>
@@ -53,7 +53,7 @@
 
             <!-- Campaign Stats -->
             <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
+                {{-- <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Target Reposts</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
                         {{ $campaigns->target_reposts }}
@@ -64,7 +64,7 @@
                     <p class="text-xl font-bold text-black dark:text-white">
                         {{ $campaigns->completed_reposts }}
                     </p>
-                </div>
+                </div> --}}
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Playback Count</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
@@ -130,10 +130,12 @@
                             <span class="text-green-400 font-semibold">{{ $campaigns->status_label }}</span>
                         </p>
                         <!-- Buttons group (right side) -->
-                        <button
-                            class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-                            {{ $campaigns->status_label }}
-                        </button>
+                        @if ($campaigns->status == 1 || $campaigns->status == 2)
+                            <button
+                                class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+                                {{ $campaigns->status_btn_label }}
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>

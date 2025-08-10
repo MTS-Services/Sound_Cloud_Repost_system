@@ -10,11 +10,26 @@
                     <i data-lucide="menu" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
                 </button>
 
+                @php
+                    $hour = now()->format('H');
+                    if ($hour < 12) {
+                        $greeting = 'Good morning';
+                        $subText = "Here's what's happening this morning";
+                    } elseif ($hour < 17) {
+                        $greeting = 'Good afternoon';
+                        $subText = "Here's what's happening this afternoon";
+                    } else {
+                        $greeting = 'Good evening';
+                        $subText = "Here's what's happening tonight";
+                    }
+                @endphp
+
                 <div class="hidden sm:block">
-                    <h1 class="text-xl lg:text-2xl font-bold dark:text-text-white text-text-light-primary">Good morning,
-                        Alex!</h1>
-                    <p class="text-text-light-secondary dark:text-text-dark-primary text-sm">Here's what's happening
-                        today
+                    <h1 class="text-xl lg:text-2xl font-bold dark:text-text-white text-text-light-primary">
+                        {{ $greeting }}, {{ admin()->name }}!
+                    </h1>
+                    <p class="text-text-light-secondary dark:text-text-dark-primary text-sm">
+                        {{ $subText }}
                     </p>
                 </div>
             </div>
@@ -69,7 +84,8 @@
                         x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
                         class="hidden absolute right-0 mt-2 w-fit min-w-40 glass-card bg-bg-white dark:bg-bg-dark-tertiary rounded-xl shadow-lg py-2 z-50"
                         :class="open ? '!block' : '!hidden'">
-                        <x-admin.profile-navlink route="{{ route('admin.profile.index') }}" name="{{ __('Profile') }}" />
+                        <x-admin.profile-navlink route="{{ route('admin.profile.index') }}"
+                            name="{{ __('Profile') }}" />
                         <x-admin.profile-navlink route="#" name="{{ __('Settings') }}" />
                         <x-admin.profile-navlink route="{{ route('admin.logout') }}" logout='true'
                             name="{{ __('Sign Out') }}" />

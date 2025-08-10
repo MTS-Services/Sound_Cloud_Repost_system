@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User\MemberManagement;
 
+use App\Models\CreditTransaction;
 use App\Models\RepostRequest as ModelsRepostRequest;
 use App\Models\Repost;
 use App\Models\Track;
@@ -272,7 +273,7 @@ class RepostRequest extends Component
 
                 // Mark request as completed
                 $request->update([
-                    'status' => ModelsRepostRequest::STATUS_COMPLETED,
+                    'status' => ModelsRepostRequest::STATUS_APPROVED,
                     'completed_at' => now(),
                     'responded_at' => now(),
                 ]);
@@ -321,10 +322,51 @@ class RepostRequest extends Component
             session()->flash('error', 'Failed to decline repost request. Please try again.');
         }
     }
+    public function cancleRepostRequest($requestId)
+    {
+        try {
+            $request = ModelsRepostRequest::findOrFail($requestId);
+            $request->update([
+                'status' => ModelsRepostRequest::STATUS_CANCELLED,
+                'responded_at' => now(),
+            ]);
+                // Create credit transaction
+                $creditTransaction = new CreditTransaction();
+                $creditTransaction->receiver_urn = $request->target_user_urn;
+                $creditTransaction->sender_urn = $request->requester_urn;
+                $creditTransaction->transaction_type = CreditTransaction::TYPE_REFUND;
+                $creditTransaction->calculation_type = CreditTransaction::CALCULATION_TYPE_DEBIT;
+                $creditTransaction->source_id = $request->id;
+                $creditTransaction->source_type = RepostRequest::class;
+                $creditTransaction->amount = 0;
+                $creditTransaction->credits = $request->credits_spent;
+                $creditTransaction->description = 'Repost Request Refund';
+                $creditTransaction->metadata = [
+                    'request_type' => 'repost_request',
+                    'target_urn' => $request->requester_urn,
+                ];
+                $creditTransaction->status = 'succeeded';
+                $creditTransaction->save();
+            $this->dataLoad();
+            session()->flash('success', 'Repost request cancelled successfully.');
+        } catch (Throwable $e) {
+            Log::error("Error cancelling repost request: " . $e->getMessage(), [
+                'exception' => $e,
+                'request_id' => $requestId,
+                'user_urn' => user()->urn ?? 'N/A',
+            ]);
+            session()->flash('error', 'Failed to cancel repost request. Please try again.');
+        }
+    }
     public function setActiveTab($tab)
     {
-        $this->activeMainTab = $tab;
-        $this->dataLoad();
+        if ($this->activeMainTab == 'accept_requests') {
+            $this->activeMainTab = 'incoming_request';
+            $this->dataLoad();
+        }else{
+            $this->activeMainTab = $tab;
+            $this->dataLoad();
+        }
     }
     public function dataLoad()
     {
@@ -332,20 +374,15 @@ class RepostRequest extends Component
 
         switch ($this->activeMainTab) {
             case 'incoming_request':
-                $query->where('target_user_urn', user()->urn);
-                break;
-            case 'approved':
-                $query->where('status', ModelsRepostRequest::STATUS_APPROVED);
+                $query->where('requester_urn', user()->urn)->where('status', ModelsRepostRequest::STATUS_PENDING);
                 break;
             case 'outgoing_request':
-                $query->where('target_user_urn', user()->urn);
+                $query->where('requester_urn', user()->urn)->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED)->where('status', '!=', ModelsRepostRequest::STATUS_DECLINE);
                 break;
-            case 'previously_reposted':
-                $query->where('target_user_urn', user()->urn);
+            case 'previously_reposted' || 'accept_requests':
+                $query->where('requester_urn', user()->urn)->Where('campaign_id', null)->where('status',ModelsRepostRequest::STATUS_APPROVED);
                 break;
-            case 'completed':
-                $query->where('status', ModelsRepostRequest::STATUS_COMPLETED);
-                break;
+                
         }
 
         // Order by created_at desc and paginate
