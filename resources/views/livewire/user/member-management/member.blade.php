@@ -18,45 +18,43 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
-            <input type="text" placeholder="Name or sub-genre" wire:model.live="search"
+            <input type="text" placeholder="Search by soundcloud profile url or Name" wire:model.live="search"
                 class="w-full bg-card-blue border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-gray-900 dark:text-white dark:bg-gray-900 placeholder-text-gray focus:outline-none focus:border-orange-500">
         </div>
 
         <!-- Filter Buttons -->
         <div class="flex flex-col sm:flex-row gap-4">
-            <button
-                class="bg-card-blue border border-gray-600 rounded-lg px-4 py-3 text-text-gray dark:text-white hover:border-orange-500 transition-colors flex items-center gap-2 min-w-[160px] justify-between">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
-                    </path>
-                </svg>
-                Filter by track
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-            </button>
+            {{-- <select wire:model.live="trackFilter"
+                class="bg-card-blue border border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-4 py-3 text-text-gray hover:border-orange-500 transition-colors min-w-[160px] focus:outline-none focus:border-orange-500">
+                <option class="hidden" value="">Filter by track</option>
+                @forelse ($trackTypes as $trackType)
+                    <option value="{{ $trackType }}">{{ $trackType }}</option>
+                @empty
+                    <option value="">No tracks found</option>
+                @endforelse
+            </select> --}}
 
             <select wire:model.live="genreFilter"
                 class="bg-card-blue border border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-4 py-3 text-text-gray hover:border-orange-500 transition-colors min-w-[160px] focus:outline-none focus:border-orange-500">
-                <option value="">Filter by genre</option>
-                <option value="electronic">Electronic</option>
-                <option value="hip-hop">Hip-Hop</option>
-                <option value="pop">Pop</option>
-                <option value="rock">Rock</option>
+                <option class="hidden" value="">Filter by genre</option>
+                @forelse ($genres as $genre)
+                    <option value="{{ $genre }}">{{ $genre }}</option>
+                @empty
+                    <option value="">No genres found</option>
+                @endforelse
             </select>
 
             <select wire:model.live="costFilter"
                 class="bg-card-blue border border-gray-600 dark:text-white dark:bg-gray-900 rounded-lg px-4 py-3 text-text-gray hover:border-orange-500 transition-colors min-w-[160px] focus:outline-none focus:border-orange-500">
-                <option value="">Filter by cost</option>
-                <option value="low-high">Low to High</option>
-                <option value="high-low">High to Low</option>
+                <option class="hidden" value="">Filter by cost</option>
+                <option value="low_to_high">Low to High</option>
+                <option value="high_to_low">High to Low</option>
             </select>
         </div>
     </div>
 
     <!-- Success/Error Messages -->
-    @if (session()->has('success'))
+    {{-- @if (session()->has('success'))
         <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
             {{ session('success') }}
         </div>
@@ -66,7 +64,7 @@
         <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
             {{ session('error') }}
         </div>
-    @endif
+    @endif --}}
 
     <!-- Member Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-3 gap-6">
@@ -104,7 +102,7 @@
                 <div class="flex justify-between items-center w-full mb-4">
                     <p class="text-text-gray text-sm dark:text-white">Repost price:</p>
                     <p class="text-sm font-medium dark:text-white">
-                        {{ $credit }} Credit{{ $credit > 1 ? 's' : '' }}
+                        {{ repostPrice($user_) }} Credit{{ repostPrice($user_) > 1 ? 's' : '' }}
                     </p>
                 </div>
 
@@ -126,7 +124,7 @@
 
                 <!-- Request Button -->
                 <button wire:click="openModal('{{ $user_->urn }}')"
-                    class="w-full max-w-xs bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors dark:text-white">
+                    class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors dark:text-white">
                     Request
                 </button>
             </div>
@@ -186,13 +184,17 @@
                 <div class="w-full max-w-2xl mx-auto mt-6 flex flex-col overflow-hidden">
                     {{-- @if ($activeTab === 'tracks') --}}
                     {{-- SEARCH BAR --}}
-                    <div class="p-4">
+                    <div class="p-1">
                         <label for="track-link-search" class="text-xl font-semibold text-gray-700 dark:text-gray-200">
-                            Paste a SoundCloud profile or {{ $activeTab === 'tracks' ? 'track' : 'playlist' }} link
+                            @if ($activeTab === 'tracks')
+                                Paste a SoundCloud profile or track link
+                            @else
+                                Paste a SoundCloud playlist link
+                            @endif
                         </label>
                         <div class="flex w-full mt-2">
                             <input wire:model.live.debounce.500ms="searchQuery" type="text" id="track-link-search"
-                                placeholder="Paste a SoundCloud profile or {{ $activeTab === 'tracks' ? 'track' : 'playlist' }} link"
+                                placeholder="{{ $activeTab === 'tracks' ? 'Paste a SoundCloud profile or track link' : 'Paste a SoundCloud playlist link' }}"
                                 class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 border border-gray-300 dark:border-gray-600 ">
                             <button wire:click="searchSoundcloud" type="button"
                                 class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200 ">
@@ -209,7 +211,7 @@
 
                     {{-- TRACKS OR PLAYLISTS --}}
                     <div class="h-full overflow-y-auto px-4 pb-6 space-y-1">
-                        @if ($activeTab === 'tracks')
+                        @if ($activeTab === 'tracks' || $playListTrackShow == true)
                             @forelse ($tracks as $track_)
                                 <div wire:click="openRepostsModal({{ $track_->id }})"
                                     class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">
@@ -232,12 +234,17 @@
                                     </div>
                                 </div>
                             @empty
-                                <div class="text-center py-12 text-gray-500 dark:text-gray-400">
-                                    <i data-lucide="music"
-                                        class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-3"></i>
-                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">No tracks found
+                                <div class="text-center py-16 text-gray-500 dark:text-gray-400">
+                                    <div
+                                        class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <x-lucide-music class="w-8 h-8 text-orange-500" />
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                        {{ __('No tracks found') }}
                                     </h3>
-                                    <p>No matching tracks found for your search.</p>
+                                    <p class="text-gray-500 dark:text-gray-400">
+                                        {{ __('Add one to get started with campaigns.') }}
+                                    </p>
                                 </div>
                             @endforelse
 
@@ -249,7 +256,7 @@
                                     </button>
                                 </div>
                             @endif
-                        @else
+                        @elseif($activeTab === 'playlists')
                             @forelse ($playlists as $playlist_)
                                 <div wire:click="showPlaylistTracks({{ $playlist_->id }})"
                                     class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">
@@ -272,12 +279,17 @@
                                     </div>
                                 </div>
                             @empty
-                                <div class="text-center py-12 text-gray-500 dark:text-gray-400">
-                                    <i data-lucide="list-music"
-                                        class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-3"></i>
-                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">No playlists
-                                        found</h3>
-                                    <p>No matching playlists found for your search.</p>
+                                <div class="text-center py-16 text-gray-500 dark:text-gray-400">
+                                    <div
+                                        class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <x-lucide-list-music class="w-8 h-8 text-orange-500" />
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                        {{ __('No playlists found') }}
+                                    </h3>
+                                    <p class="text-gray-500 dark:text-gray-400">
+                                        {{ __('Add one to get started with campaigns.') }}
+                                    </p>
                                 </div>
                             @endforelse
 
@@ -331,7 +343,8 @@
                             </label>
                             <div class="flex w-full mt-2">
                                 <input wire:model.live.debounce.500ms="searchQuery" type="text"
-                                    id="playlist-track-link-search" placeholder="Paste a SoundCloud profile or track link"
+                                    id="playlist-track-link-search"
+                                    placeholder="Paste a SoundCloud profile or track link"
                                     class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 border border-gray-300 dark:border-gray-600 ">
                                 <button wire:click="searchSoundcloud" type="button"
                                     class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200 ">
