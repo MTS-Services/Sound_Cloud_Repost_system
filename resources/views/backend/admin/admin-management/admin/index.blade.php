@@ -12,7 +12,7 @@
                         permission="admin-trash">
                         {{ __('Trash') }}
                     </x-button>
-                    <x-button href="{{ route('am.admin.create') }}" icon="user-plus" permission="admin-create">
+                    <x-button href="{{ route('am.admin.create') }}" icon="plus-circle" permission="admin-create">
                         {{ __('Add') }}
                     </x-button>
                 </div>

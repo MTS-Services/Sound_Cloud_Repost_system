@@ -11,7 +11,7 @@
                     <x-button href="{{ route('am.role.trash') }}" icon="trash-2" type='secondary' permission="role-trash">
                         {{ __('Trash') }}
                     </x-button>
-                    <x-button href="{{ route('am.role.create') }}" icon="user-plus" permission="role-create">
+                    <x-button href="{{ route('am.role.create') }}" icon="plus-circle" permission="role-create">
                         {{ __('Add') }}
                     </x-button>
                 </div>

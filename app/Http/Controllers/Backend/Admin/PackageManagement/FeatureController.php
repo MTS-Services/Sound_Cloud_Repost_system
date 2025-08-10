@@ -181,7 +181,7 @@ class FeatureController extends Controller implements HasMiddleware
         $featrue = Feature::findOrFail(decrypt($id));
         $featrue->update(['status' => !$featrue->status, 'updated_by' => admin()->id]);
         session()->flash('success', 'Feature  status updated successfully!');
-        return redirect()->route('pm.feature-category.index');
+        return redirect()->route('pm.feature.index');
     }
     /**
      * Remove the specified resource from storage.

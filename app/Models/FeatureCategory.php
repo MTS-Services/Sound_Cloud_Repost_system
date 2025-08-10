@@ -44,24 +44,19 @@ class FeatureCategory extends BaseModel
         return self::statusList()[$this->status];
     }
 
-    public function getStatusColorAttribute()
-    {
-        return $this->status == self::STATUS_ACTIVE ? 'badge-success' : '';
-    }
+        public function getStatusColorAttribute()
+{
+    return $this->status == self::STATUS_ACTIVE 
+        ? 'badge-success' 
+        : 'badge-error';
+}
 
     public function getStatusBtnLabelAttribute()
     {
         return $this->status == self::STATUS_ACTIVE ? self::statusList()[self::STATUS_INACTIVE] : self::statusList();
     }
 
-    public function getStatusBtnColorAttribute()
-    {
-        return $this->status == self::STATUS_ACTIVE ? 'btn-error' : 'btn-success';
-    }
-    public function getStatusBtnClassAttribute()
-    {
-        return $this->status == self::STATUS_INACTIVE ? 'btn-error' : 'btn-primary';
-    }
+ 
 
     public function features():HasMany
     {

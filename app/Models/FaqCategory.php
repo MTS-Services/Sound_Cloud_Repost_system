@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Builder;
 
 class FaqCategory extends BaseModel
 {
@@ -52,24 +53,18 @@ class FaqCategory extends BaseModel
         return self::statusList()[$this->status];
     }
 
-    public function getStatusColorAttribute()
-    {
-        return $this->status == self::STATUS_ACTIVE ? 'badge-success' : '';
-    }
-
+        public function getStatusColorAttribute()
+{
+    return $this->status == self::STATUS_ACTIVE 
+        ? 'badge-success' 
+        : 'badge-error';
+}
     public function getStatusBtnLabelAttribute()
     {
         return $this->status == self::STATUS_ACTIVE ? self::statusList()[self::STATUS_INACTIVE] : self::statusList();
     }
 
-    public function getStatusBtnColorAttribute()
-    {
-        return $this->status == self::STATUS_ACTIVE ? 'btn-error' : 'btn-success';
-    }
-    public function getStatusBtnClassAttribute()
-    {
-        return $this->status == self::STATUS_INACTIVE ? 'btn-error' : 'btn-primary';
-    }
+ 
 
     public function faqs()
     {
@@ -79,5 +74,15 @@ class FaqCategory extends BaseModel
     public function scopeFaqCategoryBy($query, $userId)
     {
         return $query->where('created_by', $userId);
+    }
+
+    public function scopeActive(Builder $query) : Builder
+    {
+        return $query->where('status', self::STATUS_ACTIVE);
+    }
+
+    public function scopeInactive(Builder $query) : Builder
+    {
+        return $query->where('status', self::STATUS_INACTIVE);
     }
 }

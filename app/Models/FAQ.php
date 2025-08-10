@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Builder;
 
 class Faq extends BaseModel
 {
@@ -35,7 +36,10 @@ class Faq extends BaseModel
     {
         parent::__construct($attributes);
         $this->appends = array_merge(parent::getAppends(), [
-            //
+            'status_label',
+            'status_color',
+            'status_btn_label',
+            'status_btn_color',
         ]);
     }
 
@@ -58,59 +62,34 @@ class Faq extends BaseModel
 
     public function getStatusColorAttribute()
     {
-        return $this->status == self::STATUS_ACTIVE ? 'badge-success' : '';
+        return $this->status == self::STATUS_ACTIVE
+            ? 'badge-success'
+            : 'badge-error';
     }
 
     public function getStatusBtnLabelAttribute()
     {
-        return $this->status == self::STATUS_ACTIVE ? self::statusList()[self::STATUS_INACTIVE] : self::statusList();
+        return $this->status == self::STATUS_ACTIVE
+            ? self::statusList()[self::STATUS_INACTIVE]
+            : self::statusList()[self::STATUS_ACTIVE];
     }
+
+
 
     public function getStatusBtnColorAttribute()
     {
-        return $this->status == self::STATUS_ACTIVE ? 'btn-error' : 'btn-success';
+        return $this->status == self::STATUS_ACTIVE
+            ? 'btn-error'
+            : 'btn-success';
     }
+
     public function getStatusBtnClassAttribute()
     {
-        return $this->status == self::STATUS_INACTIVE ? 'btn-error' : 'btn-primary';
+        return $this->status == self::STATUS_ACTIVE
+            ? 'btn btn-error'
+            : 'btn btn-success';
     }
 
-    public const KEY_CAMPAIGN = 0;
-    public const KEY_REPOST = 1;
-    public const KEY_DIRECT_REPOST = 2;
-
-    public static function keyLists()
-    {
-        return [
-            self::KEY_CAMPAIGN => "Campaign",
-            self::KEY_REPOST => "Repost",
-            self::KEY_DIRECT_REPOST => "Direct Repost",
-        ];
-    }
-    public function getKeyLabelAttribute()
-    {
-        return self::keyLists()[$this->key];
-    }
-
-    public function getKeyColorAttribute()
-    {
-        return $this->key == self::KEY_CAMPAIGN ? 'badge-primary' : '';
-    }
-
-
-    public function getKeyBtnLabelAttribute()
-    {
-        return $this->key == self::KEY_CAMPAIGN ? self::keyLists()[self::KEY_REPOST] : self::keyLists()[self::KEY_DIRECT_REPOST];
-    }
-
-    public function getKeyBtnColorAttribute()
-    {
-        return $this->key == self::KEY_CAMPAIGN ? 'btn-primary' : 'btn-error';
-    }   
-    public function getKeyBtnClassAttribute()
-    {
-        return $this->key == self::KEY_CAMPAIGN ? 'btn-primary' : 'btn-error';
-    }
 
     public function scopeFaqBy($query, $userId)
     {
@@ -120,5 +99,14 @@ class Faq extends BaseModel
     public function faqCategory()
     {
         return $this->belongsTo(FaqCategory::class);
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_ACTIVE);
+    }
+    public function scopeInactive(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_INACTIVE);
     }
 }

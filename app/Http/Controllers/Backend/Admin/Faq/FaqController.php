@@ -137,7 +137,7 @@ class FaqController extends Controller implements HasMiddleware
     public function create(): View
     {
         $data['faq'] = Faq::where('status', 1)->get();
-        $data['faq_categories'] = $this->faqCategoryService->getFaqCategories()->select(['id', 'name'])->get();
+        $data['faq_categories'] = $this->faqCategoryService->getFaqCategories()->active()->select(['id', 'name'])->get();
 
         return view('backend.admin.faq-management.faq.create', $data);
     }

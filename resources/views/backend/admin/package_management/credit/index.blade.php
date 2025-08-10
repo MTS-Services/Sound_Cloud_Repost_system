@@ -12,7 +12,7 @@
                         permission="credit-trash">
                         {{ __('Trash') }}
                     </x-button>
-                    <x-button href="{{ route('pm.credit.create') }}" icon="user-plus" permission="credit-create">
+                    <x-button href="{{ route('pm.credit.create') }}" icon="plus-circle" permission="credit-create">
                         {{ __('Add') }}
                     </x-button>
                 </div>
