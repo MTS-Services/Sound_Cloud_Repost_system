@@ -1,4 +1,4 @@
-<div >
+<div>
     <x-slot name="page_slug">members</x-slot>
 
     <!-- Header -->
@@ -55,7 +55,7 @@
     </div>
 
     <!-- Success/Error Messages -->
-    @if (session()->has('success'))
+    {{-- @if (session()->has('success'))
         <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
             {{ session('success') }}
         </div>
@@ -65,7 +65,7 @@
         <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
             {{ session('error') }}
         </div>
-    @endif
+    @endif --}}
 
     <!-- Member Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-3 gap-6">
@@ -208,7 +208,7 @@
 
                     {{-- TRACKS OR PLAYLISTS --}}
                     <div class="h-full overflow-y-auto px-4 pb-6 space-y-1">
-                          @if ($activeTab === 'tracks' || $playListTrackShow == true)
+                        @if ($activeTab === 'tracks' || $playListTrackShow == true)
                             @forelse ($tracks as $track_)
                                 <div wire:click="openRepostsModal({{ $track_->id }})"
                                     class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">
@@ -248,7 +248,7 @@
                                     </button>
                                 </div>
                             @endif
-                        @else
+                        @elseif($activeTab === 'playlists')
                             @forelse ($playlists as $playlist_)
                                 <div wire:click="showPlaylistTracks({{ $playlist_->id }})"
                                     class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">

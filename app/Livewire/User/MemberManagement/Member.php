@@ -37,16 +37,16 @@ class Member extends Component
     public $user_urn;
     public $userinfo;
     public $playlists;
-    public $playlistTracks = [];
+    public $playlistTracks;
     public $playlistTrack;
     public $tracks;
     public $track;
     public $credits_spent;
     public $trackLimit = 4;
-    public $allTracks = [];
+    public $allTracks;
     public $playlistLimit = 4;
-    public $allPlaylists = [];
-    public $allPlaylistTracks = [];
+    public $allPlaylists;
+    public $allPlaylistTracks;
     public $playlistTrackLimit = 4;
 
     // Assuming you have your SoundCloud client ID configured somewhere

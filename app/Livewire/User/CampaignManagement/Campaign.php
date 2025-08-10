@@ -32,9 +32,9 @@ class Campaign extends Component
 
     // Properties for filtering and search
     public $search = '';
-    public $selectedTags = [];
-    public $selecteTags = [];
-    public $suggestedTags = [];
+    public $selectedTags;
+    public $selecteTags;
+    public $suggestedTags;
     public $showSuggestions = false;
     public $showSelectedTags = false;
     public $isLoading = false;
@@ -43,28 +43,28 @@ class Campaign extends Component
 
 
     // Properties for track type filtering
-    public $selectedTrackTypes = [];
+    public $selectedTrackTypes;
     public $selectedTrackType = 'all';
-    public $genres = [];
+    public $genres;
     public $activeMainTab = 'recommended_pro';
 
     public $showTrackTypes = false;
 
 
     // Track which campaigns are currently playing
-    public $playingCampaigns = [];
+    public $playingCampaigns;
 
     // Track play start times
-    public $playStartTimes = [];
+    public $playStartTimes;
 
     // Track total play time for each campaign
-    public $playTimes = [];
+    public $playTimes;
 
     // Track which campaigns have been played for 5+ seconds
-    public $playedCampaigns = [];
+    public $playedCampaigns;
 
     // Track which campaigns have been reposted
-    public $repostedCampaigns = [];
+    public $repostedCampaigns;
 
     public $playcount = false;
 
@@ -76,9 +76,9 @@ class Campaign extends Component
         'audioEnded' => 'handleAudioEnded'
     ];
     ############################## Campaign Creation ##########################
-    public $tracks = [];
-    public $playlists = [];
-    public $playlistTracks = [];
+    public $tracks;
+    public $playlists;
+    public $playlistTracks;
     public $activeModalTab = 'tracks';
 
 
@@ -174,12 +174,12 @@ class Campaign extends Component
     public function updatedSearch()
     {
         if (strlen($this->search) >= 0) {
-            $this->selectedTags = [];
-            $this->suggestedTags = [];
+            $this->selectedTags;
+            $this->suggestedTags;
             $this->loadTagSuggestions();
             $this->showSuggestions = true;
         } else {
-            $this->suggestedTags = [];
+            $this->suggestedTags;
             $this->showSuggestions = false;
         }
 
@@ -240,7 +240,7 @@ class Campaign extends Component
         if (!in_array($tag, $this->selectedTags)) {
             $this->selectedTags[] = $tag;
             $this->search = $tag; // Set search to the selected tag
-            $this->suggestedTags = [];
+            $this->suggestedTags;
             $this->showSuggestions = false;
             $this->searchByTags();
         }
@@ -298,7 +298,7 @@ class Campaign extends Component
         }
 
         $this->isLoading = false;
-        $this->selectedTags = [];
+        $this->selectedTags;
     }
 
     public function loadInitialData()
@@ -472,7 +472,7 @@ class Campaign extends Component
     public function fetchPlaylistTracks()
     {
         if (!$this->playlistId) {
-            $this->playlistTracks = [];
+            $this->playlistTracks;
             return;
         }
 
@@ -480,7 +480,7 @@ class Campaign extends Component
             $playlist = Playlist::findOrFail($this->playlistId);
 
             if (!$playlist->soundcloud_urn) {
-                $this->playlistTracks = [];
+                $this->playlistTracks;
                 session()->flash('error', 'Playlist SoundCloud URN is missing.');
                 return;
             }
@@ -504,14 +504,14 @@ class Campaign extends Component
                             isset($track['user']['username']);
                     })->values()->toArray();
                 } else {
-                    $this->playlistTracks = [];
+                    $this->playlistTracks;
                 }
             } else {
-                $this->playlistTracks = [];
+                $this->playlistTracks;
                 session()->flash('error', 'Failed to load playlist tracks from SoundCloud: ' . $response->status());
             }
         } catch (\Exception $e) {
-            $this->playlistTracks = [];
+            $this->playlistTracks;
             session()->flash('error', 'Failed to fetch playlist tracks: ' . $e->getMessage());
             Log::error('Playlist tracks fetch error: ' . $e->getMessage(), [
                 'playlist_id' => $this->playlistId,
@@ -551,7 +551,7 @@ class Campaign extends Component
         $this->activeModalTab = 'tracks';
         $this->tracks = collect();
         $this->playlists = collect();
-        $this->playlistTracks = [];
+        $this->playlistTracks;
 
         $this->showCampaignsModal = !$this->showCampaignsModal;
 
@@ -686,7 +686,7 @@ class Campaign extends Component
             // Close modal and complete reset
             $this->showCampaignsModal = false;
             $this->showSubmitModal = false;
-            $this->showPlaylistTracksModal = false;
+         
 
             $this->reset([
                 'musicId',
@@ -972,13 +972,13 @@ class Campaign extends Component
     }
 
     public $searchQuery = '';
-    public $allTracks = [];
-    public $users = [];
-    public $allPlaylists = [];
+    public $allTracks;
+    public $users;
+    public $allPlaylists;
     public $playlistLimit = 4;
     public $playlistTrackLimit = 4;
-    public $allPlaylistTracks = [];
-    public $userinfo = [];
+    public $allPlaylistTracks;
+    public $userinfo;
     public $trackLimit = 4;
     private $soundcloudClientId = 'YOUR_SOUNDCLOUD_CLIENT_ID';
     private $soundcloudApiUrl = 'https://api-v2.soundcloud.com';
@@ -1166,7 +1166,7 @@ class Campaign extends Component
                 }
                 break;
             case 'user':
-                $this->activeTab = 'tracks';
+                $this->activeModalTab = 'tracks';
                 $this->fetchUserTracks($data['id']);
                 break;
             default:
@@ -1197,42 +1197,7 @@ class Campaign extends Component
     {
         $this->toggleSubmitModal('track', $trackId);
     }
-    // public function openPlaylistTracksModal($playlistId)
-    // {
-    //     $this->showPlaylistTracksModal = true;
-    //     $this->selectedPlaylistId = $playlistId;
-    //     $this->selectedTrackId = null;
-
-    //     $playlist = $this->allPlaylists->where('id', $playlistId)->first();
-
-    //     if ($playlist) {
-    //         $this->allPlaylistTracks = collect($playlist->tracks); // or $playlist->tracks()->get();
-    //     } else {
-    //         $this->allPlaylistTracks = Playlist::findOrFail($playlistId)->tracks()->get();
-    //     }
-
-    //     $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
-
-    //     $this->searchSoundcloud();
-    // }
-
-    // public function showPlaylistTracks($playlistId)
-    // {
-    //     $this->selectedPlaylistId = $playlistId;
-    //     $playlist = Playlist::with('tracks')->find($playlistId);
-
-    //     if ($playlist) {
-    //         $this->allPlaylistTracks = $playlist->tracks;
-    //         $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
-    //         $this->hasMoreTracks = $this->playlistTracks->count() === $this->playlistTrackLimit;
-    //     } else {
-    //         $this->playlistTracks = collect();
-    //         $this->hasMoreTracks = false;
-    //     }
-
-    //     $this->activeModalTab = 'tracks';
-    //     $this->playListTrackShow = true;
-    // }
+  
 
 
     public function render()
