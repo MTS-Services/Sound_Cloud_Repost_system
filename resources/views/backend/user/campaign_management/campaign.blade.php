@@ -541,7 +541,7 @@
                             </button>
                         </div>
                     </div>
-                    @if ($activeModalTab === 'tracks')
+                    @if ($activeTab === 'tracks' || $playListTrackShow == true)
                         <div class="space-y-3">
                             @forelse ($tracks as $track_)
                                 <div wire:click="toggleSubmitModal('track', {{ $track_->id }})"

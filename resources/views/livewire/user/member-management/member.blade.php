@@ -210,7 +210,7 @@
 
                     {{-- TRACKS OR PLAYLISTS --}}
                     <div class="h-full overflow-y-auto px-4 pb-6 space-y-1">
-                        @if ($activeTab === 'tracks')
+                          @if ($activeTab === 'tracks' || $playListTrackShow == true)
                             @forelse ($tracks as $track_)
                                 <div wire:click="openRepostsModal({{ $track_->id }})"
                                     class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">

@@ -24,7 +24,7 @@ class Member extends Component
     public $genreFilter = '';
     public $costFilter = '';
     public $showModal = false;
-     public $playListShow = false;
+     public $playListTrackShow = false;
     public $showRepostsModal = false;
     public $showPlaylistTracksModal = false;
     public $activeTab = 'tracks';
@@ -103,7 +103,7 @@ class Member extends Component
     {
         // If the search query is empty, reset to local data
         if (empty($this->searchQuery)) {
-            if ($this->playListShow == true && $this->activeTab === 'tracks') {
+            if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
                 $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()->get();
                 $this->tracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
             } else {
@@ -124,7 +124,7 @@ class Member extends Component
             $this->resolveSoundcloudUrl();
         } else {
             // If not a URL, perform a text-based "as-like" search on the local database
-            if ($this->playListShow == true && $this->activeTab === 'tracks') {
+            if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
                 $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                     ->where(function ($query) {
                         $query->Where('permalink_url', 'like', '%' . $this->searchQuery . '%')
@@ -160,7 +160,7 @@ class Member extends Component
     protected function resolveSoundcloudUrl()
     {
         // Search the local database for matching permalink URLs first
-        if ($this->playListShow == true && $this->activeTab === 'tracks') {
+        if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                 ->where('permalink_url', $this->searchQuery)
                 ->orWhere('author_soundcloud_permalink_url', $this->searchQuery)
@@ -220,7 +220,7 @@ class Member extends Component
         switch ($data['kind']) {
             case 'track':
                 $this->activeTab = 'tracks';
-                if ($this->playListShow && $this->selectedPlaylistId) {
+                if ($this->playListTrackShow && $this->selectedPlaylistId) {
                     $playlistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()->get();
                     // Check if the resolved track exists in the current playlist
                     $this->allPlaylistTracks = $playlistTracks->filter(function ($track) use ($data) {
@@ -255,7 +255,7 @@ class Member extends Component
             $this->tracks = collect();
         }
         $this->activeTab = 'tracks';
-        $this->playListShow = true;
+        $this->playListTrackShow = true;
     }
     protected function fetchUserTracks($userId)
     {
@@ -316,9 +316,9 @@ class Member extends Component
         ]);
     }
 
-    public function setActiveTab($tab)
+     public function setActiveTab($tab)
     {
-        $this->reset(['selectedPlaylistId', 'selectedTrackId']);
+        $this->reset(['selectedPlaylistId', 'selectedTrackId', 'playListTrackShow', 'searchQuery']);
         $this->activeTab = $tab;
         $this->searchSoundcloud();
     }
@@ -340,35 +340,6 @@ class Member extends Component
         $this->reset(['track', 'selectedTrackId', 'selectedPlaylistId', 'showRepostsModal']);
     }
 
-    // public function openPlaylistTracksModal($playlistId)
-    // {
-
-    //     $this->showPlaylistTracksModal = true;
-    //     $this->selectedPlaylistId = $playlistId;
-    //     $this->selectedTrackId = null;
-    //     $playlist = $this->allPlaylists->firstWhere('id', $playlistId);
-    //     if ($playlist) {
-    //         $this->allPlaylistTracks = collect($playlist['tracks']);
-    //         $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
-    //     } else {
-    //         $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()->get();
-    //         $this->playlistTracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
-    //     }
-    //     $this->searchSoundcloud();
-    // }
-
-    // public function showPlaylistTracks($playlistId)
-    // {
-    //     $this->selectedPlaylistId = $playlistId;
-    //     $playlist = Playlist::with('tracks')->find($playlistId);
-    //     if ($playlist) {
-    //         $this->allTracks = $playlist->tracks;
-    //         $this->tracks = $this->allTracks->take($this->trackLimit);
-    //     } else {
-    //         $this->tracks = collect();
-    //     }
-    //     $this->activeTab = 'tracks';
-    // }
     public function closePlaylistTracksModal()
     {
         $this->reset(['selectedPlaylistId', 'playlistTracks']);
