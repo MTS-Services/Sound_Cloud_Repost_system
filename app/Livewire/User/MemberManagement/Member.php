@@ -48,6 +48,8 @@ class Member extends Component
     public $allPlaylists;
     public $allPlaylistTracks;
     public $playlistTrackLimit = 4;
+    public $genres = [];
+    public $trackTypes = [];
 
     // Assuming you have your SoundCloud client ID configured somewhere
     private $soundcloudClientId = 'YOUR_SOUNDCLOUD_CLIENT_ID';
@@ -69,16 +71,68 @@ class Member extends Component
     {
         $this->loadData();
         $this->page_slug = 'members';
+        $this->getAllGenres();
     }
+
 
     public function loadData()
     {
-        $query = User::where('urn', '!=', user()->urn);
-        if ($this->search) {
-            $query->where('name', 'like', '%' . $this->search . '%');
+        if ($this->genreFilter) {
+            // When filtering by genre, get tracks and their users
+            $users = $this->trackService->getTracks()
+                ->where('user_urn', '!=', user()->urn)
+                ->where('genre', 'like', '%' . $this->genreFilter . '%')
+                ->with('user.userInfo')
+                ->get()
+                ->pluck('user')
+                ->unique('urn')
+                ->values();
+        } else {
+            // When not filtering by genre, query users directly
+            $query = User::where('urn', '!=', user()->urn)
+                ->with('userInfo');
+
+            if ($this->search) {
+                $query->where(function ($q) {
+                    $q->where('name', 'like', '%' . $this->search . '%')
+                        ->orWhereHas('userInfo', function ($q2) {
+                            $q2->where('soundcloud_uri', 'like', '%' . $this->search . '%');
+                        });
+                });
+            }
+
+            $users = $query->get();
         }
-        $this->users = $query->get();
+
+        // Apply search filter if we got users from genre filtering
+        if ($this->genreFilter && $this->search) {
+            $users = $users->filter(function ($user) {
+                return stripos($user->name, $this->search) !== false;
+            });
+        }
+
+        // Apply cost sorting
+        if ($this->costFilter) {
+            $users = $users->map(function ($user) {
+                $user->repost_cost = repostPrice($user);
+                return $user;
+            });
+
+            if ($this->costFilter === 'low_to_high') {
+                $users = $users->sortBy('repost_cost');
+            } elseif ($this->costFilter === 'high_to_low') {
+                $users = $users->sortByDesc('repost_cost');
+            }
+
+            $users = $users->values(); // Reset array keys
+        }
+
+        $this->users = $users;
         $this->userinfo = UserInformation::where('user_urn', user()->urn)->first();
+    }
+    public function getAllGenres()
+    {
+        $this->genres = $this->trackService->getTracks()->where('user_urn', '!=', user()->urn)->pluck('genre')->unique()->values()->toArray();
     }
 
     public function updatedSearch()
