@@ -15,17 +15,16 @@
                     <div class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
                         <i data-lucide="users" class="w-6 h-6 text-blue-400"></i>
                     </div>
-                    <div class="text-green-400 text-sm font-medium flex items-center gap-1">
+                    {{-- <div class="text-green-400 text-sm font-medium flex items-center gap-1">
                         <i data-lucide="trending-up" class="w-3 h-3"></i>
                         
-                    </div>
+                    </div> --}}
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">
+                        {{ $user }}
+                    </h3>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1"
-                   >
-                    {{ $user}}
-                   </h3>
                 <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Total Users</p>
-                
+
             </div>
 
             <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0.2s;"
@@ -34,14 +33,16 @@
                     <div class="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
                         <i data-lucide="trending-up" class="w-6 h-6 text-green-400"></i>
                     </div>
-                    <div class="text-green-400 text-sm font-medium flex items-center gap-1">
+                    {{-- <div class="text-green-400 text-sm font-medium flex items-center gap-1">
                         <i data-lucide="trending-up" class="w-3 h-3"></i>
                         +23%
-                    </div>
+                    </div> --}}
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">
+                        <span>{{ $track }}</span>
+                    </h3>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1"><span>{{$track}}</span></h3>
-                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Total Tracks</p>
-               
+                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm ">Total Tracks</p>
+
             </div>
 
             <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0.4s;"
@@ -50,15 +51,15 @@
                     <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
                         <i data-lucide="shopping-bag" class="w-6 h-6 text-purple-400"></i>
                     </div>
-                    <div class="text-red-400 text-sm font-medium flex items-center gap-1">
+                    {{-- <div class="text-red-400 text-sm font-medium flex items-center gap-1">
                         <i data-lucide="trending-down" class="w-3 h-3"></i>
                         -5%
-                    </div>
+                    </div> --}}
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1 ">
+                        {{ $order }}</h3>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">
-                    {{$order}}</h3>
-                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Total Orders</p>
-                
+                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm ">Total Orders</p>
+
             </div>
 
             <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0.6s;"
@@ -67,15 +68,13 @@
                     <div class="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center">
                         <i data-lucide="activity" class="w-6 h-6 text-yellow-400"></i>
                     </div>
-                    <div class="text-yellow-400 text-sm font-medium flex items-center gap-1">
+                    {{-- <div class="text-yellow-400 text-sm font-medium flex items-center gap-1">
                         <div class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
                         Live
-                    </div>
+                    </div> --}}
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">{{ $total_payment }}</h3>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1"
-                    >{{$total_payment}}</h3>
-                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Active Users</p>
-                
+                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm ">Active Users</p>
             </div>
         </div>
 
