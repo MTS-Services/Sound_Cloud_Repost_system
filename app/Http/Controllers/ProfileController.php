@@ -34,7 +34,7 @@ class ProfileController extends Controller
         $data['tracks'] = $this->trackService->getTracks()->where('user_urn', user()->urn)->count();
         $data['gevened_repostRequests'] = $this->RepostRequestService->getRepostRequests()->where('requester_urn', user()->urn)->count();
         $data['received_repostRequests'] = $this->RepostRequestService->getRepostRequests()->where('target_user_urn', user()->urn)->count();
-        $data['credit_transactions'] = $this->creditTransactionService->getUserTransactions()->where('receiver_urn', user()->urn);
+        $data['credit_transactions'] = $this->creditTransactionService->getUserTransactions()->where('receiver_urn', user()->urn)->load('sender');
         $data['total_erned_credits'] = $data['credit_transactions']->where('transaction_type', CreditTransaction::TYPE_EARN)->sum('credits');
         $data['completed_reposts'] = $this->RepostRequestService->getRepostRequests()->where('requester_urn', user()->urn)->where('status', ModelsRepostRequest::STATUS_APPROVED)->count();
         $data['reposted_genres'] = $this->trackService->getTracks()->where('user_urn', user()->urn)->pluck('genre')->unique()->values()->count();
