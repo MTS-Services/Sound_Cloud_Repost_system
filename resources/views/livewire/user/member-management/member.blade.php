@@ -252,7 +252,7 @@
                             @endif
                         @else
                             @forelse ($playlists as $playlist_)
-                                <div wire:click="openPlaylistTracksModal({{ $playlist_->id }})"
+                                <div wire:click="showPlaylistTracks({{ $playlist_->id }})"
                                     class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">
                                     <div class="flex-shrink-0">
                                         <img class="h-12 w-12 rounded object-cover shadow"
@@ -297,7 +297,7 @@
         </div>
     </div>
     {{-- Playlist Tracks Modal --}}
-    <div x-data="{ showPlaylistTracksModal: @entangle('showPlaylistTracksModal').live }" x-show="showPlaylistTracksModal" x-cloak
+    {{-- <div x-data="{ showPlaylistTracksModal: @entangle('showPlaylistTracksModal').live }" x-show="showPlaylistTracksModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
@@ -346,32 +346,7 @@
                         </div>
                     @endif
                     @forelse ($playlistTracks as $playlistTrack)
-                        {{-- <div wire:click="openRepostsModal({{ $playlistTrack->id }})"
-                                class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
-                                <div class="flex-shrink-0">
-                                    <img class="h-14 w-14 rounded-xl object-cover shadow-md"
-                                        src="{{ storage_url($playlistTrack->artwork_url) }}"
-                                        alt="{{ $playlistTrack->title }}" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p
-                                        class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                                        {{ $playlistTrack->title }}
-                                    </p>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                        by
-                                        <strong
-                                            class="text-orange-600 dark:text-orange-400">{{ $playlistTrack->author_username }}</strong>
-                                        <span class="ml-2 text-xs text-gray-400">{{ $playlistTrack->genre }}</span>
-                                    </p>
-                                    <span
-                                        class="inline-block bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono">{{ $playlistTrack->isrc }}</span>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <i data-lucide="chevron-right"
-                                        class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
-                                </div>
-                            </div> --}}
+                        
 
                         <div wire:click="openRepostsModal({{ $playlistTrack->id }})"
                             class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">
@@ -415,7 +390,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
     {{-- Reposts Modal --}}
     <div x-data="{ showRepostsModal: @entangle('showRepostsModal').live }" x-show="showRepostsModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
