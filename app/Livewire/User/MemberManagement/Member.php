@@ -132,7 +132,7 @@ class Member extends Component
     }
     public function getAllGenres()
     {
-        $this->genres = $this->trackService->getTracks()->where('user_urn', '!=', user()->urn)->pluck('genre')->unique()->values()->toArray();
+        $this->genres = $this->trackService->getTracks()->where('user_urn', '!=', user()->urn)->pluck('genre')->filter()->unique()->values()->toArray();
     }
 
     public function updatedSearch()
