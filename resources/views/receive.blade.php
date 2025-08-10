@@ -26,14 +26,29 @@
                     showNotification(e.message);
                     // alert(e.message);
                 });
+            window.Echo.channel('say-hi')
+                .listen('.say-hi', (e) => {
+                    console.log('Notification received:', e);
+                    showNotification(e.message);
+                    // alert(e.message);
+                });
 
             // Listen to private channel (for authenticated users)
             @auth
-            window.Echo.private('user.{{ auth()->id() }}')
-                .listen('.notification.sent', (e) => {
-                    console.log('Private notification received:', e);
-                    showNotification(e.message);
-                });
+                window.Echo.private('user.{{ auth()->id() }}')
+                    .listen('.notification.sent', (e) => {
+                        console.log('Private notification received:', e);
+                        showNotification(e.message);
+                    });
+
+                window.Echo.private('user.{{ auth()->id() }}')
+                    .listen('.private-message.sent', (e) => {
+                        console.log('New private message received:', e);
+                        // Now you can access the data from the broadcastWith() method.
+                        // For example:
+                        showNotification(`New message from ${e.sender}: ${e.message}`);
+                        // alert(`New message from ${e.sender}: ${e.message}`); // Do not use alerts.
+                    });
             @endauth
 
             function showNotification(message) {
@@ -45,9 +60,9 @@
 
 
                 // Auto-hide after 5 seconds
-                setTimeout(() => {
-                    notification.remove();
-                }, 5000);
+                // setTimeout(() => {
+                //     notification.remove();
+                // }, 5000);
             }
         });
     </script>

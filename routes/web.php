@@ -19,9 +19,6 @@ require __DIR__ . '/admin.php';
 require __DIR__ . '/user.php';
 require __DIR__ . '/frontend.php';
 
-Broadcast::routes();
-
-
 Route::get('/receive', function () {
     return view('receive');
 });
@@ -29,3 +26,13 @@ Route::get('/send', function () {
     return view('send');
 });
 Route::post('/send-notification', [App\Http\Controllers\TestController::class, 'sendNotification'])->name('send-notification');
+Route::get('/say-hi', [App\Http\Controllers\TestController::class, 'sayHi'])->name('say-hi');
+// Route to show the form for sending private notifications
+Route::get('/send-private-message', function () {
+    // We'll create a new blade file for this form.
+    return view('send-private-message');
+})->name('send-private-message.form');
+
+// Route to handle the form submission and dispatch the event
+// This route will call a method in your controller.
+Route::post('/send-private-message', [App\Http\Controllers\TestController::class, 'sendPrivateMessage'])->name('send-private-message.send');
