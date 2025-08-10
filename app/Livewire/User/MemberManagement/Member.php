@@ -133,7 +133,6 @@ class Member extends Component
                     })
                     ->get();
                 $this->tracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
-                $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
             } else {
                 if ($this->activeTab === 'tracks') {
                     $this->allTracks = Track::where('user_urn', user()->urn)
@@ -144,7 +143,6 @@ class Member extends Component
                         })
                         ->get();
                     $this->tracks = $this->allTracks->take($this->trackLimit);
-                    $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
                 } elseif ($this->activeTab === 'playlists') {
                     $this->allPlaylists = Playlist::where('user_urn', user()->urn)
                         ->where(function ($query) {
@@ -153,7 +151,6 @@ class Member extends Component
                         })
                         ->get();
                     $this->playlists = $this->allPlaylists->take($this->playlistLimit);
-                    $this->hasMorePlaylists = $this->playlists->count() === $this->playlistLimit;
                 }
             }
         }
@@ -171,7 +168,6 @@ class Member extends Component
             if ($tracksFromDb->isNotEmpty()) {
                 $this->allPlaylistTracks = $tracksFromDb;
                 $this->tracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
-                $this->hasMoreTracks = false; // No more to load when a specific URL is found
                 return;
             }
         } else {
@@ -184,7 +180,6 @@ class Member extends Component
                     $this->activeTab = 'tracks';
                     $this->allTracks = $tracksFromDb;
                     $this->tracks = $this->allTracks->take($this->trackLimit);
-                    $this->hasMoreTracks = false;
                     return;
                 }
             }
@@ -198,7 +193,6 @@ class Member extends Component
                     $this->activeTab = 'playlists';
                     $this->allPlaylists = $playlistsFromDb;
                     $this->playlists = $this->allPlaylists->take($this->playlistLimit);
-                    $this->hasMorePlaylists = false;
                     return;
                 }
             }
@@ -233,11 +227,9 @@ class Member extends Component
                         return $track->urn === $data['urn'];
                     });
                     $this->tracks = $this->allPlaylistTracks->take($this->trackLimit);
-                    $this->hasMoreTracks = false;
                 } else {
                     $this->allTracks = collect([$data]);
                     $this->tracks = $this->allTracks->take($this->trackLimit);
-                    $this->hasMoreTracks = false;
                 }
                 break;
             case 'user':
@@ -259,10 +251,8 @@ class Member extends Component
         if ($playlist) {
             $this->allTracks = $playlist->tracks;
             $this->tracks = $this->allTracks->take($this->trackLimit);
-            $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
         } else {
             $this->tracks = collect();
-            $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
         }
         $this->activeTab = 'tracks';
         $this->playListShow = true;
