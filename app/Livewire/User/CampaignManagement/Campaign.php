@@ -388,7 +388,7 @@ class Campaign extends Component
     }
     public function setactiveTab($tab)
     {
-        $this->activeMainTab = $tab;
+        $this->activeTab = $tab;
     }
 
     /**
@@ -408,6 +408,12 @@ class Campaign extends Component
         if ($tab === 'tracks') {
             $this->fetchTracks();
         } elseif ($tab === 'playlists') {
+            // Reset playlist track show when switching to playlists tab
+            $this->playListTrackShow = false;
+            $this->allPlaylistTracks = collect();
+            $this->tracks = collect();
+            $this->selectedPlaylistId = null;
+
             $this->fetchPlaylists();
         }
 

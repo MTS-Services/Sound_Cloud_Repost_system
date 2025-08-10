@@ -333,6 +333,12 @@ class Member extends Component
     public function setActiveTab($tab)
     {
         $this->reset(['selectedPlaylistId', 'selectedTrackId', 'searchQuery']);
+        if ($tab === 'playlists') {
+            $this->playListTrackShow = false;
+            $this->allPlaylistTracks = collect();
+            $this->tracks = collect();
+        }
+
         $this->activeTab = $tab;
         $this->searchSoundcloud();
     }
