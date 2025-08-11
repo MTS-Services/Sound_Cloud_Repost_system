@@ -46,8 +46,8 @@
             <div class="flex flex-col h-full">
                 <div class="flex-1 overflow-y-auto p-4 space-y-3">
                     @forelse($notifications as $notification)
-                        <livewire:user.notification.notification-card :notification="$notification" :compact="true" :show-actions="false"
-                            :key="'panel-notification-' . $notification->id" />
+                        <livewire:user.notification.notification-card :notification="$notification" :compact="true"
+                            :show-actions="false" :key="'panel-notification-' . $notification->id" />
                     @empty
                         <div class="text-center py-8">
                             <div
@@ -70,7 +70,7 @@
                         </button>
                     @endif
 
-                    <a href="{{ route('user.notifications.index') }}"
+                    <a href="{{ route('user.notifications.index') }}" wire:navigate
                         class="btn btn-sm w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-none">
                         <i class="fas fa-list mr-2"></i>
                         View All Notifications

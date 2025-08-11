@@ -20,9 +20,20 @@ class CustomNotificationFactory extends Factory
      */
     public function definition(): array
     {
+        $isPublic = $this->faker->boolean(25); // 25% chance of being a public notification
+
+        if ($isPublic) {
+            $receiverId = null;
+            $receiverType = null;
+        } else {
+            $user = User::inRandomOrder()->first();
+            $receiverId = $user ? $user->id : null;
+            $receiverType = $user ? get_class($user) : null;
+        }
+
         return [
-            'receiver_id' => User::inRandomOrder()->first()->id,
-            'receiver_type' => User::class,
+            'receiver_id' => $receiverId,
+            'receiver_type' => $receiverType,
             'type' => CustomNotification::TYPE_USER,
             'message_data' => [
                 'title' => $this->faker->sentence(3),

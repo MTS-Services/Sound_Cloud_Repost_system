@@ -64,17 +64,17 @@ class NotificationPanel extends Component
     public function getUnreadCountProperty()
     {
         return CustomNotification::where(function ($query) {
-            // Condition one for private messages
-            $query->where('receiver_id', $this->currentUserId)
-                ->where('receiver_type', $this->currentUserType);
-        })
-            ->orWhere(function ($query) {
-                // Condition two for public messages
-                $query->where('receiver_id', null)
-                    ->where('type', CustomNotification::TYPE_USER);
+            $query->where(function ($q) {
+                $q->where('receiver_id', $this->currentUserId)
+                    ->where('receiver_type', $this->currentUserType);
             })
-            ->whereDoesntHave('statuses', function ($query) {
-                $query->where('user_id', $this->currentUserId)
+                ->orWhere(function ($q) {
+                    $q->where('receiver_id', null)
+                        ->where('type', CustomNotification::TYPE_USER);
+                });
+        })
+            ->whereDoesntHave('statuses', function ($q) {
+                $q->where('user_id', $this->currentUserId)
                     ->where('user_type', $this->currentUserType)
                     ->whereNotNull('read_at');
             })

@@ -27,20 +27,20 @@ class NotificationCard extends Component
     public function toggleRead()
     {
         $status = $this->getOrCreateStatus();
-        
+
         if ($status->read_at) {
             $status->update(['read_at' => null]);
         } else {
             $status->update(['read_at' => now()]);
         }
-        
+
         $this->dispatch('notification-updated', $this->notification->id);
     }
 
     public function markAsRead()
     {
         $status = $this->getOrCreateStatus();
-        
+
         if (!$status->read_at) {
             $status->update(['read_at' => now()]);
             $this->dispatch('notification-updated', $this->notification->id);
@@ -57,9 +57,9 @@ class NotificationCard extends Component
     {
         $this->markAsRead();
         if ($this->notification->url) {
-            return redirect($this->notification->url);
+            return $this->redirect($this->notification->url, navigate: true);
         }
-        return to_route('user.notifications.show', $this->notification->id);
+        return $this->redirect(route('user.notifications.show', $this->notification->id), navigate: true);
     }
 
     private function getOrCreateStatus()
@@ -77,7 +77,7 @@ class NotificationCard extends Component
             ->where('user_id', $this->currentUserId)
             ->where('user_type', $this->currentUserType)
             ->first();
-            
+
         return $status && $status->read_at;
     }
 

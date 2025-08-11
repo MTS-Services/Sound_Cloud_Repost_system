@@ -1,6 +1,6 @@
 <div>
 
-        <x-slot name="page_slug">notifications</x-slot>
+    <x-slot name="page_slug">notifications</x-slot>
 
     {{-- Enhanced Stats Bar --}}
     <div class="bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg">
@@ -29,8 +29,8 @@
     </div>
 
     {{-- Filter and Search Bar --}}
-    <livewire:user.notification.notification-filter :filter="$filter" :search="$search" :sort="$sort" :total-count="$totalCount"
-        :unread-count="$unreadCount" :read-count="$readCount" />
+    <livewire:user.notification.notification-filter :filter="$filter" :search="$search" :sort="$sort"
+        :total-count="$totalCount" :unread-count="$unreadCount" :read-count="$readCount" />
 
     {{-- Main Content --}}
     <main class="container mx-auto px-4 py-8">
@@ -72,7 +72,8 @@
             {{-- Notifications List --}}
             <div class="space-y-4" wire:loading.class="opacity-50">
                 @forelse($notifications as $notification)
-                    <livewire:user.notification.notification-card :notification="$notification" :show-actions="true" :key="'notification-' . $notification->id" />
+                    <livewire:user.notification.notification-card :notification="$notification" :show-actions="true"
+                        :key="'notification-' . $notification->id" />
                 @empty
                     {{-- Empty State --}}
                     <div class="text-center py-16">
@@ -115,6 +116,7 @@
             @if ($notifications->hasPages())
                 <div class="flex justify-center mt-12">
                     {{ $notifications->links() }}
+                    {{-- {{ $notifications->links('components.pagination.wire-navigate') }} --}}
                 </div>
             @endif
         </div>

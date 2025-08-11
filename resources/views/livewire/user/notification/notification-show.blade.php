@@ -4,7 +4,7 @@
     <div class="max-w-4xl mx-auto">
         {{-- Back Button --}}
         <div class="mb-6">
-            <a href="{{ route('user.notifications.index') }}" 
+            <a href="{{ route('user.notifications.index') }}"  wire:navigate
                class="btn btn-outline border-orange-300 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Back to Notifications
