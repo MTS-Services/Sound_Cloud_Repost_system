@@ -77,7 +77,7 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     // Notification Routes 
     Route::name('notifications.')->prefix('notifications')->group(function () {
         Route::get('/', NotificationList::class)->name('index');
-        Route::get('/{customNotification}', NotificationShow::class)->name('show');
+        Route::get('/{encryptedId}', NotificationShow::class)->name('show');
     });
 });
 

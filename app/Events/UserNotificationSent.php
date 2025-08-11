@@ -11,40 +11,40 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class SayHi implements ShouldBroadcast, ShouldQueue
+class UserNotificationSent implements ShouldBroadcast, ShouldQueue
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public $title;
     public $message;
+    public $userId;
 
-    public function __construct($message)
+    public function __construct(string $title, string $message, $userId = null)
     {
+        $this->title = $title;
         $this->message = $message;
+        $this->userId = $userId;
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
-    public function broadcastOn(): array
+
+    public function broadcastOn()
+    {
+        if ($this->userId) {
+            return new PrivateChannel('user.' . $this->userId);
+        }
+        return new Channel('users');
+    }
+    public function broadcastAs()
+    {
+        return 'notification.sent';
+    }
+
+    public function broadcastWith()
     {
         return [
-            // new PrivateChannel('channel-name'),
-            new Channel('say-hi'),
-        ];
-    }
-
-    public function broadcastAs(): string
-    {
-        return 'say-hi';
-    }
-
-    public function broadcastWith(): array
-    {
-        return [
+            'title' => $this->title,
             'message' => $this->message,
-            'timestamp' => now()->toISOString(),
+            'timestamp' => timeFormatHuman(now()),
         ];
     }
 }

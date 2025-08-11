@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Events\NotificationSent;
-use App\Events\PrivateMessageSent;
-use App\Events\SayHi;
+use App\Events\UserNotificationSent;
 use App\Models\CustomNotification;
 use App\Models\User;
 
@@ -14,41 +12,21 @@ class TestController extends Controller
     public function sendNotification(Request $request)
     {
         $message = $request->input('message', 'Hello from Laravel!');
-        $userId = $request->input('user_id'); // Optional for private notifica
-        // Broadcast the event
-        broadcast(new NotificationSent($message, $userId));
-
-        return redirect()->back()->with('success', 'Notification sent successfully!');
-    }
-
-    public function sayHi()
-    {
-        event(new SayHi('Hello from Laravel!'));
-        return redirect()->back()->with('success', 'Notification sent successfully!');
-    }
-
-    public function sendPrivateMessage(Request $request)
-    {
-        // Assuming you have a way to get the sender's name (e.g., from the authenticated user).
-        // $senderName = auth()->user()->name;
-        $message = $request->input('message');
-        $recipientId = $request->input('recipient_id');
+        $userId = $request->input('user_id') ? $request->input('user_id') : null;
 
         CustomNotification::create([
             'type' => CustomNotification::TYPE_USER,
-            'receiver_id' => $recipientId,
-            'receiver_type' => User::class,
+            'receiver_id' => $userId,
+            'receiver_type' => $userId ? User::class : null,
             'message_data' => [
-                'title' => 'Private Message',
+                'title' => 'Public Notification',
                 'message' => $message,
                 'icon' => 'envelope',
             ],
         ]);
 
-        // Dispatch the new event with the data.
-        // The event will handle building the channel and payload for us.
-        event(new PrivateMessageSent($message, $recipientId));
+        broadcast(new UserNotificationSent('Public Notification', $message, $userId));
 
-        return response()->json(['status' => 'Message sent!']);
+        return redirect()->back()->with('success', 'Notification sent successfully!');
     }
 }

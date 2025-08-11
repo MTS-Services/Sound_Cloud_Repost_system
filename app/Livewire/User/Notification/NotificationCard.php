@@ -59,7 +59,7 @@ class NotificationCard extends Component
         if ($this->notification->url) {
             return $this->redirect($this->notification->url, navigate: true);
         }
-        return $this->redirect(route('user.notifications.show', $this->notification->id), navigate: true);
+        return $this->redirect(route('user.notifications.show', encrypt($this->notification->id)), navigate: true);
     }
 
     private function getOrCreateStatus()
