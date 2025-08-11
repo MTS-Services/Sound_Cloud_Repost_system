@@ -166,7 +166,7 @@ class CreditTransaction extends BaseModel
             self::TYPE_MANUAL => 'Manual',
         ];
     }
-    public function getTypeNameAttribute(): string
+    public function getTransactionTypeNameAttribute(): string
     {
         return $this->transaction_type ? self::getTypes()[$this->transaction_type] : 'Unknown';
     }

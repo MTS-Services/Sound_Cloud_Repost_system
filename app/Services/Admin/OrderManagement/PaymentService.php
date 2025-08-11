@@ -2,7 +2,11 @@
 
 namespace App\Services\Admin\OrderManagement;
 
+use App\Models\CreditTransaction;
+use App\Models\Order;
 use App\Models\Payment;
+use App\Models\UserPlan;
+use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\F;
 
 class PaymentService
@@ -25,7 +29,7 @@ class PaymentService
     }
     public function createPayment(array $data)
     {
-       
+
         $data['creater_id'] = user()->id;
         return Payment::create($data);
     }
@@ -43,5 +47,8 @@ class PaymentService
             'updater_type' => get_class(admin())
         ]);
     }
+
+
+
 
 }

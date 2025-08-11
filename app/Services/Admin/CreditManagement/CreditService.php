@@ -9,13 +9,14 @@ use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CreditService
 {
-    public function buyCredit(array $data): void
+    public function buyCredit(array $data): Payment|null
     {
-        DB::transaction(function () use ($data) {
-            try {
+        try {
+            return DB::transaction(function () use ($data) {
                 $order = Order::create([
                     'user_urn' => $data['receiver_urn'],
                     'order_id' => generateOrderID(),
@@ -32,8 +33,8 @@ class CreditService
                     'receiver_urn' => $data['receiver_urn'],
                     'sender_urn' => $data['sender_urn'] ?? null,
                     'calculation_type' => $data['calculation_type'],
-                    'source_id' => $data['source_id'],
-                    'source_type' => $data['source_type'],
+                    'source_id' => $order->id,
+                    'source_type' => Order::class,
                     'transaction_type' => $data['transaction_type'],
                     'amount' => $data['amount'],
                     'credits' => $data['credits'],
@@ -43,7 +44,7 @@ class CreditService
 
                 ]);
 
-                Payment::create([
+                $Payment = Payment::create([
                     'name' => $data['paid_by'] ?? 'System',
                     'email_address' => $data['email_address'] ?? null,
                     'address' => $data['address'] ?? null,
@@ -67,11 +68,15 @@ class CreditService
                     'creater_type' => $data['creater_type'],
 
                 ]);
-            } catch (\Exception $e) {
-                DB::rollBack();
-                throw $e;
-            }
-        });
+
+                return $Payment;
+            });
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage());
+            return null;
+        }
+
 
 
 

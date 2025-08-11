@@ -8,12 +8,10 @@ use App\Http\Traits\AuditRelationTraits;
 use App\Models\CreditTransaction;
 use App\Models\Order;
 use App\Models\Payment;
-use App\Models\CustomNotification;
+
 use App\Models\Playlist;
-use App\Models\Track;
-use App\Models\User;
-use App\Models\UserInformation;
 use App\Services\Admin\CreditManagement\CreditService;
+use App\Services\Admin\OrderManagement\PaymentService;
 use App\Services\Admin\UserManagement\UserService;
 use App\Services\PlaylistService;
 use App\Services\TrackService;
@@ -22,6 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 
 
@@ -34,6 +33,7 @@ class UserController extends Controller implements HasMiddleware
     protected PlaylistService $playlistService;
     protected TrackService $trackService;
     protected CreditService $creditService;
+    protected PaymentService $paymentService;
 
     protected function redirectIndex(): RedirectResponse
     {
@@ -47,12 +47,13 @@ class UserController extends Controller implements HasMiddleware
 
 
 
-    public function __construct(UserService $userService, PlaylistService $playlistService, TrackService $trackService, CreditService $creditService)
+    public function __construct(UserService $userService, PlaylistService $playlistService, TrackService $trackService, CreditService $creditService, PaymentService $paymentService)
     {
         $this->userService = $userService;
         $this->playlistService = $playlistService;
         $this->trackService = $trackService;
         $this->creditService = $creditService;
+        $this->paymentService = $paymentService;
     }
 
     public static function middleware(): array
@@ -383,14 +384,17 @@ class UserController extends Controller implements HasMiddleware
         $data['processed_at'] = now();
         DB::transaction(function () use ($data) {
             try {
-                $this->creditService->buyCredit($data);
-                 broadcast(new UserNotificationSent($notification));
+               $this->creditService->buyCredit($data);
+                //  broadcast(new UserNotificationSent($notification));
                 session()->flash('success', 'Credit added successfully.');
             } catch (\Throwable $th) {
                 session()->flash('error', 'Error adding credit.');
+                Log::info("message:" . $th->getMessage());
                 throw $th;
 
             }
         });
+
+        return redirect()->route('um.user.index');
     }
 }

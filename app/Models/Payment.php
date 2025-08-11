@@ -52,8 +52,8 @@ class Payment extends BaseModel
         $this->appends = array_merge(parent::getAppends(), [
             'status_label',
             'status_color',
-            'payment_method_label',
-            'payment_method_color',
+            'payment_gateway_label',
+            'payment_gateway_color',
         ]);
     }
 
@@ -78,7 +78,24 @@ class Payment extends BaseModel
             self::STATUS_FAILED => 'secondary',
         ];
     }
+    public function getStatusList(): array
+    {
+        return [
+            self::STATUS_REQUIRES_PAYMENT_METHOD => 'Requires Payment Method',
+            self::STATUS_REQUIRES_CONFIRMATION => 'Requires Confirmation',
+            self::STATUS_REQUIRES_ACTION => 'Requires Action',
+            self::STATUS_PROCESSING => 'Processing',
+            self::STATUS_SUCCEEDED => 'Succeeded',
+            self::STATUS_CANCELED => 'Canceled',
+            self::STATUS_FAILED => 'Failed',
+        ];
+    }
 
+
+    public function getStatusLabelAttribute()
+    {
+        return $this->status ? $this->getStatusList()[$this->status] : 'Unknown';
+    }
     public function getStatusColorAttribute()
     {
         return $this->status ? $this->getStatusColorList()[$this->status] : 'gray';
@@ -89,7 +106,7 @@ class Payment extends BaseModel
     public const PAYMENT_GATEWAY_PAYPAL = 2;
     public const PAYMENT_GATEWAY_UNKNOWN = 3;
 
-    public function getPaymentMethods(): array
+    public function getPaymentGateways(): array
     {
         return [
             self::PAYMENT_GATEWAY_STRIPE => 'Stripe',
@@ -97,7 +114,7 @@ class Payment extends BaseModel
             self::PAYMENT_GATEWAY_UNKNOWN => 'Unknown',
         ];
     }
-    public function getPaymentMethodColors(): array
+    public function getPaymentGatewayColors(): array
     {
         return [
             self::PAYMENT_GATEWAY_STRIPE => 'blue',
@@ -106,19 +123,24 @@ class Payment extends BaseModel
         ];
     }
 
-    public function getPaymentMethodLabelAttribute()
+    public function getPaymentGatewayLabelAttribute()
     {
-        return $this->payment_method ? $this->getPaymentMethods()[$this->payment_method] : 'Unknown';
+        return $this->payment_method ? $this->getPaymentGateways()[$this->payment_method] : 'Unknown';
     }
 
-    public function getPaymentMethodColorAttribute()
+    public function getPaymentGatewayColorAttribute()
     {
-        return $this->payment_method ? $this->getPaymentMethods()[$this->payment_method] : 'Unknown';
+        return $this->payment_method ? $this->getPaymentGateways()[$this->payment_method] : 'Unknown';
     }
 
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class, 'order_id', 'id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_urn', 'urn');
     }
 
 
@@ -132,7 +154,6 @@ class Payment extends BaseModel
                         'status' => Order::STATUS_COMPLETED
                     ]);
                 }
-
             }
         });
 

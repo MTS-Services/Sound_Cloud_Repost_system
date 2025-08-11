@@ -19,6 +19,7 @@
                         <th>{{ __('Amount') }}</th>
                         <th>{{ __('Currency') }}</th>
                         <th>{{ __('Payment Gateway') }}</th>
+                        <th>{{ __('Status') }}</th>
                         <th>{{ __('Created Date') }}</th>
                         <th>{{ __('Action') }}</th>
                     </tr>
@@ -39,11 +40,12 @@
                 let table_columns = [
                     //name and data, Paymentsable, searchable
 
-                    ['user_urn', true, true],
+                    ['user.name', true, true],
                     ['order.order_id', true, true],
                     ['amount', true, true],
                     ['currency', true, true],
                     ['payment_gateway_label', true, true],
+                    ['status_label', true, true],
                     ['created_at', true, true],
                     ['action', false, false],
                 ];
