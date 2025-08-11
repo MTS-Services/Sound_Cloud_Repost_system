@@ -40,14 +40,14 @@
                         {{ $campaigns->description ?? 'No description provided' }}
                     </p>
 
-                    <div class="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg">
+                    {{-- <div class="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg">
                         <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">Repost Progress:</p>
                         <div class="w-full h-3 bg-gray-300 dark:bg-gray-700 rounded-full">
                             <div class="h-3 bg-orange-500 rounded-full"
                                 style="width: {{ ($campaigns->completed_reposts / $campaigns->target_reposts) * 100 }}%">
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
 
@@ -66,12 +66,6 @@
                     </p>
                 </div> --}}
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Playback Count</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $campaigns->cost_per_repost }}
-                    </p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Budget</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
                         {{ $campaigns->budget_credits }}</p>
@@ -80,11 +74,6 @@
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Credits Spent</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
                         {{ $campaigns->credits_spent }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Cost Per Repost</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $campaigns->cost_per_repost }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Max Followers</h4>

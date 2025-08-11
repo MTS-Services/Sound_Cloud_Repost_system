@@ -28,12 +28,13 @@ return new class extends Migration
             $table->integer('max_repost_per_day')->nullable();
             $table->string('target_genre')->nullable();
             $table->boolean('pro_feature')->default(false);
+            $table->integer('favorite_count')->nullable();
+            $table->integer('emoji_count')->nullable();
 
             $table->string('title');
             $table->text('description')->nullable();
-            $table->unsignedBigInteger('target_reposts')->default(0);
             $table->unsignedBigInteger('completed_reposts')->default(0);
-            $table->decimal('cost_per_repost', 8, 2)->index();
+            $table->decimal('momentum_price', 8, 2)->index()->nullable();
             $table->decimal('budget_credits', 10, 2);
             $table->decimal('credits_spent', 10, 2)->default(0.00);
             $table->decimal('refund_credits', 10, 2)->default(0.00);
