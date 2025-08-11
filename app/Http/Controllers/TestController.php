@@ -11,21 +11,25 @@ class TestController extends Controller
 {
     public function sendNotification(Request $request)
     {
-        $message = $request->input('message', 'Hello from Laravel!');
         $userId = $request->input('user_id') ? $request->input('user_id') : null;
+        $message = $request->input('message', 'Hello from Laravel!');
+        $description = $request->input('description', 'This is a ' . ($userId ? 'private' : 'public') . ' notification.');
 
-        CustomNotification::create([
+        $notification = CustomNotification::create([
             'type' => CustomNotification::TYPE_USER,
             'receiver_id' => $userId,
             'receiver_type' => $userId ? User::class : null,
             'message_data' => [
-                'title' => 'Public Notification',
+                'title' => $userId ? 'Private Notification' : 'Public Notification',
                 'message' => $message,
+                'description' => $description,
+                'url' => null,
+                'additional_data' => [],
                 'icon' => 'envelope',
             ],
         ]);
 
-        broadcast(new UserNotificationSent('Public Notification', $message, $userId));
+        broadcast(new UserNotificationSent($notification));
 
         return redirect()->back()->with('success', 'Notification sent successfully!');
     }

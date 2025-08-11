@@ -2,6 +2,8 @@
 
 namespace App\Events;
 
+use App\Models\CustomNotification;
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -15,24 +17,22 @@ class UserNotificationSent implements ShouldBroadcast, ShouldQueue
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $title;
-    public $message;
-    public $userId;
+    public CustomNotification $notification;
 
-    public function __construct(string $title, string $message, $userId = null)
+    public function __construct(CustomNotification $notification)
     {
-        $this->title = $title;
-        $this->message = $message;
-        $this->userId = $userId;
+        $this->notification = $notification;
     }
 
 
     public function broadcastOn()
     {
-        if ($this->userId) {
-            return new PrivateChannel('user.' . $this->userId);
+        if ($this->notification->receiver_id && $this->notification->receiver_type == User::class) {
+            return new PrivateChannel('user.' . $this->notification->receiver_id);
+        } elseif ($this->notification->receiver_id == null && $this->notification->type == CustomNotification::TYPE_USER) {
+            return new Channel('users');
         }
-        return new Channel('users');
+        return [];
     }
     public function broadcastAs()
     {
@@ -42,8 +42,12 @@ class UserNotificationSent implements ShouldBroadcast, ShouldQueue
     public function broadcastWith()
     {
         return [
-            'title' => $this->title,
-            'message' => $this->message,
+            'title' => $this->notification->message_data['title'],
+            'message' => $this->notification->message_data['message'],
+            'description' => $this->notification->message_data['description'],
+            'url' => $this->notification->message_data['url'] ?? null,
+            'icon' => $this->notification->message_data['icon'],
+            'additional_data' => $this->notification->message_data['additional_data'],
             'timestamp' => timeFormatHuman(now()),
         ];
     }
