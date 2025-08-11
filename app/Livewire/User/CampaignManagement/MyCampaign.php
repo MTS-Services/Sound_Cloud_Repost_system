@@ -430,7 +430,7 @@ class MyCampaign extends Component
         ]);
 
         // Check if user has minimum credits
-        if (userCredits() < 50) {
+        if (userCredits() < 100) {
             $this->showLowCreditWarningModal = true;
             $this->showSubmitModal = false;
             return;

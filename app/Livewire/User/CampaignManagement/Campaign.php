@@ -88,9 +88,9 @@ class Campaign extends Component
     public $commentable = false;
     public $likeable = false;
     public $proFeatureEnabled = false;
-    public $maxFollower = null;
-    public $maxRepostLast24h = null;
-    public $maxRepostsPerDay = null;
+    public $maxFollower = 0;
+    public $maxRepostLast24h = 0;
+    public $maxRepostsPerDay = 0;
     public $anyGenre = '';
     public $trackGenre = '';
     public $targetGenre = '';
@@ -100,6 +100,9 @@ class Campaign extends Component
     public $title = null;
     public $description = null;
     public $playlistId = null;
+
+    // Toatal budget credits
+    public $total_budget_credits = 0;
 
     // Properties for Add Credit functionality
     public $addCreditCampaignId = null;
@@ -131,6 +134,7 @@ class Campaign extends Component
     public bool $showAddCreditModal = false;
     public bool $showEditCampaignModal = false;
     public bool $showCancelWarningModal = false;
+    public bool $showLowCreditWarningModal = false;
     ################################loadmore########################################
 
     // Properties for "Load More"
@@ -155,9 +159,22 @@ class Campaign extends Component
     }
     protected function rules()
     {
+        // $rules = [
+        //     'credit' => 'required|integer|min:100',
+        // ];
         $rules = [
-            'credit' => 'required|integer|min:100',
+            'credit' => [
+                'required',
+                'integer',
+                'min:100',
+                function ($attribute, $value, $fail) {
+                    if ($value > userCredits()) {
+                        $fail('The credit is not available.');
+                    }
+                },
+            ],
         ];
+
         return $rules;
     }
 
@@ -263,7 +280,7 @@ class Campaign extends Component
             $this->loadInitialData();
         } else {
             $this->featuredCampaigns = $this->campaignService->getCampaigns()
-                ->where('cost_per_repost', repostPrice(user()))
+                ->where('budget_credits', '>=', repostPrice(user()))
                 ->featured()
                 ->withoutSelf()
                 ->with(['music.user.userInfo', 'reposts'])
@@ -280,7 +297,7 @@ class Campaign extends Component
                 ->get();
 
             $this->campaigns = $this->campaignService->getCampaigns()
-                ->where('cost_per_repost', repostPrice(user()))
+                ->where('budget_credits', '>=', repostPrice(user()))
                 ->notFeatured()
                 ->withoutSelf()
                 ->with(['music.user.userInfo', 'reposts'])
@@ -306,7 +323,7 @@ class Campaign extends Component
 
         $allowed_target_credits = repostPrice(user());
         $this->featuredCampaigns = $this->campaignService->getCampaigns()
-            ->where('cost_per_repost', $allowed_target_credits)
+            ->where('budget_credits', '>=', $allowed_target_credits)
             ->featured()
             ->withoutSelf()
             ->with(['music.user.userInfo', 'reposts'])
@@ -314,9 +331,10 @@ class Campaign extends Component
                 $query->where('reposter_urn', user()->urn);
             })
             ->get();
+        // dd($this->featuredCampaigns);
 
         $this->campaigns = $this->campaignService->getCampaigns()
-            ->where('cost_per_repost', $allowed_target_credits)
+            ->where('budget_credits', '>=', $allowed_target_credits)
             ->notFeatured()
             ->withoutSelf()
             ->with(['music.user.userInfo', 'reposts'])
@@ -339,7 +357,7 @@ class Campaign extends Component
     {
         $this->selectedTags = $tags;
         $this->featuredCampaigns = $this->campaignService->getCampaigns()
-            ->where('cost_per_repost', repostPrice(user()))
+            ->where('budget_credits', '>=', repostPrice(user()))
             ->featured()
             ->withoutSelf()
             ->with(['music.user.userInfo', 'reposts'])
@@ -350,7 +368,7 @@ class Campaign extends Component
             ->get();
 
         $this->campaigns = $this->campaignService->getCampaigns()
-            ->where('cost_per_repost', repostPrice(user()))
+            ->where('budget_credits', '>=', repostPrice(user()))
             ->notFeatured()
             ->withoutSelf()
             ->with(['music.user.userInfo', 'reposts'])
@@ -593,6 +611,14 @@ class Campaign extends Component
             'budgetWarningMessage',
             'canSubmit',
         ]);
+        // Check if user has minimum credits
+        if (userCredits() < 100) {
+            $this->showLowCreditWarningModal = true;
+            $this->showSubmitModal = false;
+            return;
+        } else {
+            $this->showLowCreditWarningModal = false;
+        }
 
         $this->showSubmitModal = true;
 
@@ -652,7 +678,6 @@ class Campaign extends Component
                     'music_type' => $this->musicType,
                     'title' => $this->title,
                     'description' => $this->description,
-                    'cost_per_repost' => 0,
                     'budget_credits' => $totalBudget,
                     'user_urn' => user()->urn,
                     'status' => ModelsCampaign::STATUS_OPEN,
