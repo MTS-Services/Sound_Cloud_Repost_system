@@ -6,6 +6,7 @@ use DateTime;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Track extends BaseModel
@@ -131,5 +132,10 @@ class Track extends BaseModel
             return $date->format('M'); // Formats to 'Jan', 'Feb', etc.
         }
         return 'Invalid';
+    }
+
+    public function scopeSelf(Builder $query): Builder
+    {
+        return $query->where('user_urn', user()->urn);
     }
 }
