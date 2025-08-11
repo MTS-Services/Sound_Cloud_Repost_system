@@ -6,7 +6,7 @@ use Livewire\Component;
 use Livewire\Attributes\On;
 use App\Models\CustomNotification;
 use App\Models\CustomNotificationStatus;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class NotificationPanel extends Component
 {
@@ -18,8 +18,8 @@ class NotificationPanel extends Component
 
     public function mount()
     {
-        $this->currentUserId = Auth::id();
-        $this->currentUserType = Auth::user() ? get_class(Auth::user()) : null;
+        $this->currentUserId = user()->id;
+        $this->currentUserType = User::class;
         $this->loadNotifications();
     }
 
@@ -36,8 +36,16 @@ class NotificationPanel extends Component
             $query->where('user_id', $this->currentUserId)
                 ->where('user_type', $this->currentUserType);
         }])
-            ->where('receiver_id', $this->currentUserId)
-            ->where('receiver_type', $this->currentUserType)
+            ->where(function ($query) {
+                // Condition one for private messages
+                $query->where('receiver_id', $this->currentUserId)
+                    ->where('receiver_type', $this->currentUserType);
+            })
+            ->orWhere(function ($query) {
+                // Condition two for public messages
+                $query->where('receiver_id', null)
+                    ->where('type', CustomNotification::TYPE_USER);
+            })
             ->latest()
             ->take($this->maxDisplay)
             ->get();
@@ -55,8 +63,16 @@ class NotificationPanel extends Component
 
     public function getUnreadCountProperty()
     {
-        return CustomNotification::where('receiver_id', $this->currentUserId)
-            ->where('receiver_type', $this->currentUserType)
+        return CustomNotification::where(function ($query) {
+            // Condition one for private messages
+            $query->where('receiver_id', $this->currentUserId)
+                ->where('receiver_type', $this->currentUserType);
+        })
+            ->orWhere(function ($query) {
+                // Condition two for public messages
+                $query->where('receiver_id', null)
+                    ->where('type', CustomNotification::TYPE_USER);
+            })
             ->whereDoesntHave('statuses', function ($query) {
                 $query->where('user_id', $this->currentUserId)
                     ->where('user_type', $this->currentUserType)
