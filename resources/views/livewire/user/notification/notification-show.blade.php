@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 <div class="container mx-auto px-4 py-8">
     <x-slot name="page_slug">notification</x-slot>
 
@@ -5,20 +7,20 @@
         {{-- Back Button --}}
         <div class="mb-6">
             <a href="{{ route('user.notifications.index') }}" 
-               class="btn btn-outline border-orange-300 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500">
+               class="btn btn-outline border-orange-300 text-white bg-orange-500 hover:bg-orange-600 hover:text-white hover:border-orange-500">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Back to Notifications
             </a>
         </div>
 
         {{-- Notification Detail Card --}}
-        <div class="card bg-white/90 dark:bg-gray-800/90 shadow-xl">
+        <div class="card bg-white/90  dark:bg-gray-800/90 shadow-xl">
             <div class="card-body p-8">
                 {{-- Header --}}
                 <div class="flex items-start justify-between mb-6">
                     <div class="flex items-start gap-4">
-                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg {{ $this->getTypeColor() }}">
-                            <i class="{{ $this->getNotificationIcon() }} text-2xl"></i>
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg bg-orange-500">
+                             <x-lucide-home class="w-6 h-6 bg-orange-500"/>
                         </div>
                         <div>
                             <h1 class="text-3xl font-bold mb-2 text-gray-800 dark:text-gray-200">
@@ -42,7 +44,7 @@
                     {{-- Actions --}}
                     <div class="dropdown dropdown-end">
                         <div tabindex="0" role="button" class="btn btn-ghost">
-                            <i class="fas fa-ellipsis-vertical"></i>
+                            <i class="fas fa-ellipsis-v"></i>
                         </div>
                         <ul tabindex="0" class="dropdown-content menu bg-white dark:bg-gray-800 rounded-box z-[1] w-52 p-2 shadow-xl border border-gray-200 dark:border-gray-700">
                             <li>
@@ -99,8 +101,8 @@
                 </div>
 
                 {{-- Metadata --}}
-                <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 bg-ora">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm home">
                         <div>
                             <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-2">Notification Details</h4>
                             <div class="space-y-1 text-gray-600 dark:text-gray-400">

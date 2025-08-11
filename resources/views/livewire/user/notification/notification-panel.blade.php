@@ -1,7 +1,7 @@
 <div class="relative">
     {{-- Notification Button --}}
     <button wire:click="togglePanel"
-        class="btn btn-ghost btn-circle relative hover:bg-orange-100 dark:hover:bg-orange-900/30 text-orange-600">
+        class="btn btn-ghost btn-circle relative hover:bg-orange-100 dark:hover:bg-orange-900/30 text-orange-500">
         <x-lucide-bell class="w-6 h-6" />
         @if ($this->unreadCount > 0)
             <span
@@ -37,8 +37,8 @@
                         <span class="ml-2 badge bg-white/20 text-white border-none">{{ $this->unreadCount }} new</span>
                     @endif
                 </h2>
-                <button wire:click="closePanel" class="btn btn-ghost btn-sm text-white hover:bg-white/20 border-none">
-                    <i class="fas fa-times"></i>
+                <button wire:click="closePanel" class="btn btn-ghost btn-sm text-white hover:bg-white/20 bg-white/20 border-none">
+                    <i class="fas fa-items">x</i>
                 </button>
             </div>
 
@@ -60,22 +60,26 @@
                 </div>
 
                 {{-- Panel Footer --}}
-                <div
-                    class="p-4 border-t border-orange-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-gray-800 dark:to-gray-700 space-y-2">
-                    @if ($this->unreadCount > 0)
-                        <button wire:click="markAllAsRead"
-                            class="btn btn-outline btn-sm w-full border-orange-300 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500">
-                            <i class="fas fa-check-circle mr-2"></i>
-                            Mark All as Read
-                        </button>
-                    @endif
+               <div
+    class="flex items-center justify-between p-4 border-t border-orange-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-gray-800 dark:to-gray-700 space-x-4 mb-15">
+    
+    @if ($this->unreadCount > 0)
+        <button wire:click="markAllAsRead"
+            class="btn btn-outline btn-sm border-orange-300 text-white bg-orange-500 hover:bg-orange-600 hover:text-white hover:border-orange-500 flex-1 max-w-xs">
+            <i class="fas fa-check-circle mr-2"></i>
+            Mark All as Read
+        </button>
+    @else
+        <div></div> 
+    @endif
 
-                    <a href="{{ route('user.notifications.index') }}"
-                        class="btn btn-sm w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-none">
-                        <i class="fas fa-list mr-2"></i>
-                        View All Notifications
-                    </a>
-                </div>
+    <a href="{{ route('user.notifications.index') }}"
+        class="btn btn-sm bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-none flex-1 max-w-xs text-center">
+        <i class="fas fa-list mr-2"></i>
+        View All 
+    </a>
+</div>
+
             </div>
         </div>
     @endif

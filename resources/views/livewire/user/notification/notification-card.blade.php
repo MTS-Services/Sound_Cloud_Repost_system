@@ -1,4 +1,6 @@
 <div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     @if ($compact)
         {{-- Compact Card for Sidebar --}}
         <div class="card bg-white/90 dark:bg-gray-800/90 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer {{ $this->isRead ? 'opacity-75' : 'ring-2 ring-orange-200 dark:ring-orange-700' }}"
@@ -41,10 +43,10 @@
                     </div>
 
                     {{-- Icon --}}
-                    <div class="flex-shrink-0">
+                    <div class="flex-shrink-0 bg-orange-500 rounded-full">
                         <div
-                            class="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg {{ $this->getTypeColor() }}">
-                            <i class="{{ $this->getNotificationIcon() }} text-lg"></i>
+                            class="w-12 h-12  rounded-2xl flex items-center justify-center shadow-lg  bg-orange-500">
+                            <x-lucide-home class="w-6 h-6 bg-orange-500"/>
                         </div>
                     </div>
 
@@ -75,7 +77,8 @@
                                 <div class="flex-shrink-0" wire:click.stop>
                                     <div class="dropdown dropdown-end">
                                         <div tabindex="0" role="button" class="btn btn-ghost btn-sm">
-                                            <i class="fas fa-ellipsis-vertical"></i>
+                                          <i class="fas fa-ellipsis-v"></i>
+
                                         </div>
                                         <ul tabindex="0"
                                             class="dropdown-content menu bg-white dark:bg-gray-800 rounded-box z-[1] w-52 p-2 shadow-xl border border-gray-200 dark:border-gray-700">
