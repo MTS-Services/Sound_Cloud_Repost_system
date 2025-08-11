@@ -786,7 +786,7 @@
 
                     <!-- Enable Campaign Accelerator -->
                     <div class="flex items-start space-x-3">
-                        <input type="checkbox" wire:model="proFeatureEnabled"
+                        <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                         <div>
                             <div class="flex items-center space-x-2">
@@ -956,15 +956,16 @@
                         <button type="submit"
                             class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-4 px-6 rounded-xl {{ !$canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }}">
                             <span>
-                                <svg class="w-8 h-8 text-white" width="26" height="18"
-                                    viewBox="0 0 26 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <svg class="w-8 h-8 text-white" width="26" height="18" viewBox="0 0 26 18"
+                                    fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <rect x="1" y="1" width="24" height="16" rx="3" fill="none"
                                         stroke="currentColor" stroke-width="2" />
                                     <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
                                         stroke-width="2" />
                                 </svg>
                             </span>
-                            <span>{{ $credit }}</span>
+
+                            <span>{{ $proFeatureEnabled ? $credit * 1.5 : $credit }}</span>
                             <span wire:loading.remove wire:target="createCampaign">
                                 {{ __('Create Campaign') }}
                             </span>
@@ -1007,7 +1008,7 @@
                     <x-lucide-wallet class="w-10 h-10 text-red-600 dark:text-red-400" />
                 </div>
                 <p class="text-lg text-gray-700 dark:text-gray-300 mb-4">
-                    {{ __('You need a minimum of 50 credits to create a campaign.') }}
+                    {{ __('You need a minimum of 100 credits to create a campaign.') }}
                 </p>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
                     {{ __('Please add more credits to your account to proceed with campaign creation.') }}
