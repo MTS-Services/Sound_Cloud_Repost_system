@@ -751,10 +751,8 @@
                         <div class="relative">
                             <input type="range" x-data x-on:input="$wire.set('credit', $event.target.value)"
                                 min="0" max="500" value="{{ $credit }}"
-                                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                                class="w-full h-2 border-0 cursor-pointer">
                         </div>
-
-
                     </div>
 
                     <!-- Enable CommentPlus -->
@@ -807,7 +805,7 @@
                                 class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
 
                             <div class="flex items-center space-x-2">
-                                <span class="text-sm text-gray-700">Limit to users with max follower
+                                <span class="text-sm font-medium text-gray-900">Limit to users with max follower
                                     count</span>
                                 {{-- <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
                                             <span class="text-white text-xs">i</span>
@@ -822,7 +820,7 @@
                                     <input type="range" x-data
                                         x-on:input="$wire.set('maxFollower', $event.target.value)" min="0"
                                         max="500" value="{{ $maxFollower }}"
-                                        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                                        class="w-full h-2  cursor-pointer">
                                 </div>
                                 <div
                                     class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
@@ -859,7 +857,7 @@
                                             <input type="range" x-data
                                                 x-on:input="$wire.set('maxRepostLast24h', $event.target.value)"
                                                 min="0" max="50" value="{{ $maxRepostLast24h }}"
-                                                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                                                class="w-full h-2  cursor-pointer">
                                         </div>
                                         <div
                                             class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
@@ -887,7 +885,7 @@
                                             <input type="range" x-data
                                                 x-on:input="$wire.set('maxRepostsPerDay', $event.target.value)"
                                                 min="0" max="100" value="{{ $maxRepostsPerDay }}"
-                                                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                                                class="w-full h-2  cursor-pointer">
                                         </div>
                                         <div
                                             class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
