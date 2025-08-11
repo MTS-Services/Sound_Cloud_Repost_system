@@ -34,4 +34,4 @@ Broadcast::channel('notifications', function ($user) {
 // This prevents one user from listening to another user's private channel.
 Broadcast::channel('user.{userId}', function ($user, $userId) {
     return (int) $user->id === (int) $userId;
-});
+}, ['guards' => ['web']]);

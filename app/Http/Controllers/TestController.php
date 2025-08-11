@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Events\NotificationSent;
 use App\Events\PrivateMessageSent;
 use App\Events\SayHi;
+use App\Models\CustomNotification;
+use App\Models\User;
 
 class TestController extends Controller
 {
@@ -31,6 +33,17 @@ class TestController extends Controller
         // $senderName = auth()->user()->name;
         $message = $request->input('message');
         $recipientId = $request->input('recipient_id');
+
+        CustomNotification::create([
+            'type' => CustomNotification::TYPE_USER,
+            'receiver_id' => $recipientId,
+            'receiver_type' => User::class,
+            'message_data' => [
+                'title' => 'Private Message',
+                'message' => $message,
+                'icon' => 'envelope',
+            ],
+        ]);
 
         // Dispatch the new event with the data.
         // The event will handle building the channel and payload for us.

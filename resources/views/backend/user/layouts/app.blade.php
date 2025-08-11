@@ -70,12 +70,25 @@
     {{-- <script src="{{ asset('assets/frontend/js/custome.js') }}"></script> --}}
     <script>
         document.addEventListener('alpine:init', () => {
-            console.log('Alpine has initialized');
             lucide.createIcons();
         })
     </script>
-    @stack('js')
     @livewireScripts()
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            window.Echo.private('user.{{ auth()->id() }}')
+                .listen('.private-message.sent', (e) => {
+                    console.log('New private message received:', e);
+                    console.log(e);
+                    Livewire.dispatch('notification-updated');
+                });
+
+        });
+    </script>
+    @stack('js')
+
+
 </body>
 
 </html>
