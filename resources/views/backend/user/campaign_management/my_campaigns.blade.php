@@ -162,10 +162,10 @@
                                             class="bg-white border border-gray-300 text-gray-700 py-2 px-2 rounded-sm text-sm font-semibold hover:bg-gray-100 transition-colors">
                                             Set featured
                                         </button>
-                                        <button
+                                        {{-- <button
                                             class="bg-red-500 text-white py-2 px-4 rounded-sm text-sm font-semibold shadow-sm hover:bg-red-600 transition-colors">
                                             Boost campaign
-                                        </button>
+                                        </button> --}}
                                     </div>
                                 </div>
                             </div>
@@ -1194,24 +1194,19 @@
                                 {{ $campaign->description ?? 'No description provided' }}
                             </p>
 
-                            <div class="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg">
+                            {{-- <div class="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg">
                                 <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">Repost Progress:</p>
                                 <div class="w-full h-3 bg-gray-300 dark:bg-gray-700 rounded-full">
                                     <div class="h-3 bg-orange-500 rounded-full"
                                         style="width: {{ ($campaign->completed_reposts / $campaign->target_reposts) * 100 }}%">
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
 
                     <!-- Campaign Stats -->
                     <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
-                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Target Reposts</h4>
-                            <p class="text-xl font-bold text-black dark:text-white">{{ $campaign->target_reposts }}
-                            </p>
-                        </div>
                         <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
                             <h4 class="text-gray-600 dark:text-gray-400 text-sm">Completed Reposts</h4>
                             <p class="text-xl font-bold text-black dark:text-white">
@@ -1232,11 +1227,6 @@
                             <h4 class="text-gray-600 dark:text-gray-400 text-sm">Credits Spent</h4>
                             <p class="text-xl font-bold text-black dark:text-white">
                                 {{ number_format($campaign->credits_spent) }}</p>
-                        </div>
-                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
-                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Cost Per Repost</h4>
-                            <p class="text-xl font-bold text-black dark:text-white">
-                                {{ number_format($campaign->cost_per_repost) }}</p>
                         </div>
                     </div>
 

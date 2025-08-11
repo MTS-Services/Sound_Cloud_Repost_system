@@ -468,16 +468,16 @@
                                     </div>
 
                                     {{-- Add an anchor to scroll back to after page change --}}
-                                    <div id="my-account-top"></div>
+                                    {{-- <div id="my-account-top"></div> --}}
 
                                     {{-- Alpine handler to scroll to the top after Livewire SPA navigation completes --}}
-                                    <div
+                                    {{-- <div
                                         x-data
                                         x-init="document.addEventListener('livewire:navigated', () => {
                                             const el = document.getElementById('my-account-top');
                                             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
                                         });"
-                                    ></div>
+                                    ></div> --}}
 
                                     {{-- Tracks Tab --}}
                                     <div class="tab-panel mt-4" x-show="activeTab === 'tracks'" x-transition>
