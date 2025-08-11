@@ -9,7 +9,7 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Transaction List') }}</h2>
                 <div class="flex items-center gap-2">
-                    
+
                 </div>
             </div>
         </div>
@@ -18,9 +18,10 @@
                 <thead>
                     <tr>
                         <th>{{ __('SL') }}</th>
-                        <th>{{ __('Name') }}</th>
+                        <th>{{ __('Receiver') }}</th>
                         <th>{{ __('Amount') }}</th>
                         <th>{{ __('Credits') }}</th>
+                        <th>{{ __('Source') }}</th>
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('Type') }}</th>
                         <th>{{ __('Created Date') }}</th>
@@ -33,7 +34,7 @@
         </div>
     </section>
 
-     {{-- Details Modal --}}
+    {{-- Details Modal --}}
     <x-admin.details-modal />
 
     @push('js')
@@ -46,6 +47,7 @@
                     ['name', true, true],
                     ['amount', true, true],
                     ['credits', true, true],
+                    ['source_type', true, true],
                     ['status', true, true],
                     ['calculation_type', true, true],
                     ['created_at_formatted', true, true],
@@ -57,7 +59,7 @@
                     displayLength: 10,
                     main_route: "{{ route('om.credit-transaction.index') }}",
                     order_route: "{{ route('update.sort.order') }}",
-                    export_columns: [0, 1,2,3,4,5],
+                    export_columns: [0, 1, 2, 3, 4, 5],
                     model: 'CreditTransaction',
                 };
                 // initializeDataTable(details);
@@ -108,7 +110,7 @@
                             label_color: 'status_color',
                             type: 'badge'
                         },
-                       
+
                         {
                             label: '{{ __('Credits') }}',
                             key: 'credits',
@@ -117,7 +119,7 @@
                             label: '{{ __('Metadata') }}',
                             key: 'metadata',
                         },
-                         {
+                        {
                             label: '{{ __('Date') }}',
                             key: 'created_at',
                         },

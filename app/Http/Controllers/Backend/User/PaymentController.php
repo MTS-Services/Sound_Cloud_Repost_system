@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Backend\Admin;
+namespace App\Http\Controllers\Backend\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\CreditTransaction;
+use App\Models\Order;
 use App\Models\Payment;
 use App\Services\Admin\OrderManagement\OrderService;
 use App\Services\Payments\StripeService;
@@ -68,8 +69,8 @@ class PaymentController extends Controller
                     'amount' => $order->amount,
                     'credits' => $order->credits,
                     'metadata' => $paymentIntent->metadata->toArray(),
-                    'source_type' => 'test',
-                    'source_id' => 000
+                    'source_type' => Order::class,
+                    'source_id' => $order->id,
                 ]);
 
                 Payment::create([
@@ -113,7 +114,7 @@ class PaymentController extends Controller
         try {
             $decryptedId = Crypt::decryptString($request->pid);
             $paymentIntent = $this->stripeService->retrievePaymentIntent($decryptedId);
-        
+
             // Update payment record
             $payment = Payment::where('payment_intent_id', $paymentIntent->id)->first();
             if ($payment) {
@@ -124,7 +125,7 @@ class PaymentController extends Controller
                 ]);
             }
             // Update credit transaction
-            $credidTransaction = CreditTransaction::where('id', $payment->credit_transaction_id )->first();
+            $credidTransaction = CreditTransaction::where('id', $payment->credit_transaction_id)->first();
             if ($credidTransaction) {
                 $credidTransaction->update([
                     'status' => $paymentIntent->status

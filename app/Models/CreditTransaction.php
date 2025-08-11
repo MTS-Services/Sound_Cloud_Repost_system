@@ -49,6 +49,7 @@ class CreditTransaction extends BaseModel
             'status_color',
             'status_btn_label',
             'status_btn_color',
+            'type_name',
 
         ];
     }
@@ -132,10 +133,10 @@ class CreditTransaction extends BaseModel
         return [
             self::CALCULATION_TYPE_DEBIT => 'badge-error',
             self::CALCULATION_TYPE_CREDIT => 'badge-success',
-        ] [$this->calculation_type] ?? 'badge-secondary';
+        ][$this->calculation_type] ?? 'badge-secondary';
     }
 
-    // Scope 
+    // Scope
     public function scopeAddition()
     {
         return $this->where('calculation_type', '=', self::CALCULATION_TYPE_DEBIT);

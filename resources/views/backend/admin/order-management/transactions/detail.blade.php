@@ -21,7 +21,7 @@
         <div class="p-6 text-center">
             <div class="flex flex-col md:flex-row gap-6">
                 <div class="flex-1">
-                    <h2 class="text-3xl font-bold mb-2 text-gray-900 dark:text-white">Name:
+                    <h2 class="text-3xl font-bold mb-2 text-gray-900 dark:text-white">Receiver:
                         {{ $transactions->receiver?->name ?? '' }}</h2>
                 </div>
             </div>
@@ -29,42 +29,38 @@
             <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
 
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Sender URN</h4>
+                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Sender</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $transactions->sender_urn ?? 'N/A' }}
+                        {{ $transactions->sernder->name ?? 'System' }}
                     </p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Calculation Type</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $transactions->calculation_type ?? 'N/A' }}
+                        <span
+                            class='badge badge-soft {{ $transactions->calculation_type_color }}'>{{ $transactions->calculation_type_name }}</span>
                     </p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Source ID</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $transactions->source_id ?? 'N/A' }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Source Type</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $transactions->source_type ?? 'N/A' }}</p>
+                        {{ $transactions->source_type ? SouceClassName($transactions->source_type) : 'N/A' }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Transaction Type</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $transactions->transaction_type ?? 'N/A' }}</p>
+                        {{ $transactions->type_name }}</p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Status</h4>
                     <p
-                        class="text-xl font-bold 
-                        @if ($transactions->status == 'Success') text-green-500 
-                        @elseif($transactions->status == 'Pending') text-yellow-500 
-                        @elseif($transactions->status == 'Failed') text-red-500 
-                        @else  @endif
+                        class="text-xl font-bold
+                        @if ($transactions->status == 'succeeded') text-green-500
+                        @elseif($transactions->status == 'pending') text-yellow-500
+                        @elseif($transactions->status == 'failed') text-red-500
+                        @else @endif
                         ">
-                        {{ $transactions->status  }}
+                        {{ $transactions->status }}
                     </p>
                 </div>
 
@@ -95,12 +91,12 @@
                         @endif
                     </p>
                 </div>
-                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
+                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Created At</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
                         {{ $transactions->created_at ?? 'N/A' }}</p>
                 </div>
-                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
+                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">updated_at</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
                         {{ $transactions->updated_at ?? 'N/A' }}</p>

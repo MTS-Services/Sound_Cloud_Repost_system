@@ -17,7 +17,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CreditTransactionController extends Controller
 {
-    protected CreditTransactionService  $creditTransactionService;
+    protected CreditTransactionService $creditTransactionService;
     protected PaymentService $paymentService;
 
 
@@ -31,13 +31,16 @@ class CreditTransactionController extends Controller
 
 
         if ($request->ajax()) {
-            $query = $this->creditTransactionService->getTransactions();
+            $query = $this->creditTransactionService->getTransactions()->with(['receiver', 'source', 'sender']);
             return DataTables::eloquent($query)
                 ->editColumn('name', function ($credit) {
                     return $credit->receiver->name;
                 })
                 ->editColumn('credit', function ($credit) {
                     return $credit->credit;
+                })
+                ->editColumn('source_type', function ($credit) {
+                    return $credit->source_type ? SouceClassName($credit->source_type) : 'N/A';
                 })
                 ->editColumn('amount', function ($credit) {
                     return '$' . number_format($credit->amount, 2);
@@ -79,7 +82,7 @@ class CreditTransactionController extends Controller
     }
     public function detail($id)
     {
-        $data['transactions'] = Payment::where('id', decrypt($id))->first();
+        $data['transactions'] = CreditTransaction::where('id', decrypt($id))->first();
         return view('backend.admin.order-management.transactions.detail', $data);
     }
 

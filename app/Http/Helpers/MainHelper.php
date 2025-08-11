@@ -209,3 +209,9 @@ function userCredits($user = null)
     $credit = $user->creditTransactions->sum('credits');
     return $debit - $credit;
 }
+
+function SouceClassName($className)
+{
+    $className = basename(str_replace('\\', '/', $className));
+    return trim(preg_replace('/(?<!\ )[A-Z]/', ' $0', $className));
+}

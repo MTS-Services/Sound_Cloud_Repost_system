@@ -27,30 +27,30 @@ class PaypalController extends Controller
         DB::transaction(function () use (&$payment, $orderId, $amount, $credit, $reference) {
             // ✅ 1. Create CreditTransaction first
             $creditTransaction = CreditTransaction::create([
-                'receiver_urn'      => user()->urn,
-                'transaction_type'  => CreditTransaction::TYPE_PURCHASE,
-                'calculation_type'  => CreditTransaction::CALCULATION_TYPE_DEBIT,
-                'status'           => 'processing',
-                'amount'            => $amount,
-                'credits'           => $credit,
-                'metadata'          => json_encode(['via' => 'PayPal']),
-                'source_type'       => 'paypal',
-                'source_id'         => 0, // placeholder
+                'receiver_urn' => user()->urn,
+                'transaction_type' => CreditTransaction::TYPE_PURCHASE,
+                'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
+                'status' => 'processing',
+                'amount' => $amount,
+                'credits' => $credit,
+                'metadata' => json_encode(['via' => 'PayPal']),
+                'source_type' => Order::class,
+                'source_id' => $orderId, // placeholder
             ]);
 
             // ✅ 2. Create Payment linked to that CreditTransaction
             $payment = Payment::create([
-                'user_urn'              => user()->urn,
-                'payment_method'        => 'PayPal',
-                'payment_gateway'       => Payment::PAYMENT_METHOD_PAYPAL,
-                'amount'                => $amount,
-                'currency'              => 'USD',
-                'credits_purchased'     => $credit,
-                'status'                => 'processing',
-                'reference'             => $reference,
-                'processed_at'          => now(),
+                'user_urn' => user()->urn,
+                'payment_method' => 'PayPal',
+                'payment_gateway' => Payment::PAYMENT_METHOD_PAYPAL,
+                'amount' => $amount,
+                'currency' => 'USD',
+                'credits_purchased' => $credit,
+                'status' => 'processing',
+                'reference' => $reference,
+                'processed_at' => now(),
                 'credit_transaction_id' => $creditTransaction->id,
-                'order_id'              => $orderId, // if you have this in DB
+                'order_id' => $orderId, // if you have this in DB
             ]);
         });
 
@@ -71,7 +71,7 @@ class PaypalController extends Controller
                 [
                     "amount" => [
                         "currency_code" => "USD",
-                        "value"         => $amount
+                        "value" => $amount
                     ]
                 ]
             ]
@@ -99,7 +99,7 @@ class PaypalController extends Controller
             $paymentProviderId = $order['id'] ?? null;
 
             $payment = Payment::where('reference', $reference)->where('status', 'processing')->first();
-            if (! $payment) {
+            if (!$payment) {
                 Log::warning('Payment not found for reference.', ['reference' => $reference]);
                 session()->flash('error', "Payment not found.");
                 return redirect(route('user.add-credits'));
@@ -112,32 +112,32 @@ class PaypalController extends Controller
                 $order['status'] === 'COMPLETED' &&
                 isset($order['purchase_units'][0]['payments']['captures'][0])
             ) {
-                $capture         = $order['purchase_units'][0]['payments']['captures'][0];
-                $amount          = $capture['amount']['value'] ?? null;
-                $currency        = $capture['amount']['currency_code'] ?? 'USD';
-                $receiptUrl      = $capture['links'][0]['href'] ?? null;
-                $payer           = $order['payer'] ?? [];
-                $payerName       = ($payer['name']['given_name'] ?? '') . ' ' . ($payer['name']['surname'] ?? '');
-                $payerEmail      = $payer['email_address'] ?? null;
+                $capture = $order['purchase_units'][0]['payments']['captures'][0];
+                $amount = $capture['amount']['value'] ?? null;
+                $currency = $capture['amount']['currency_code'] ?? 'USD';
+                $receiptUrl = $capture['links'][0]['href'] ?? null;
+                $payer = $order['payer'] ?? [];
+                $payerName = ($payer['name']['given_name'] ?? '') . ' ' . ($payer['name']['surname'] ?? '');
+                $payerEmail = $payer['email_address'] ?? null;
                 $shippingAddress = $order['purchase_units'][0]['shipping']['address'] ?? [];
-                $address         = $shippingAddress['address_line_1'] ?? null;
-                $postalCode      = $shippingAddress['postal_code'] ?? null;
+                $address = $shippingAddress['address_line_1'] ?? null;
+                $postalCode = $shippingAddress['postal_code'] ?? null;
 
 
                 $creditTransaction->update([
-                    'status'    => 'succeeded',
+                    'status' => 'succeeded',
                 ]);
 
                 $payment->update([
                     'payment_provider_id' => $paymentProviderId,
-                    'status'              => 'succeeded',
-                    'payment_intent_id'   => $paymentProviderId,
-                    'receipt_url'         => $receiptUrl,
-                    'name'                => $payerName,
-                    'email_address'       => $payerEmail,
-                    'address'             => $address,
-                    'postal_code'         => $postalCode,
-                    'metadata'            => json_encode($order),
+                    'status' => 'succeeded',
+                    'payment_intent_id' => $paymentProviderId,
+                    'receipt_url' => $receiptUrl,
+                    'name' => $payerName,
+                    'email_address' => $payerEmail,
+                    'address' => $address,
+                    'postal_code' => $postalCode,
+                    'metadata' => json_encode($order),
                 ]);
 
                 Log::info('Payment and credit transaction updated', ['reference' => $reference]);
