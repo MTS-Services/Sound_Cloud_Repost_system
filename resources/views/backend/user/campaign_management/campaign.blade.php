@@ -144,27 +144,35 @@
                         wire:blur="hideSuggestions" placeholder="Type to search tags..."
                         class="flex-1 min-w-0 border-0 outline-none focus:ring-0 p-1" autocomplete="off"> --}}
             </div>
-        </div>
-        <!-- Suggestions Dropdown -->
-        @if ($showSuggestions && !empty($suggestedTags))
-            <div
-                class="flex flex-wrap absolute right-0 mt-20 z-50 w-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto py-2">
-                @foreach ($suggestedTags as $index => $tag)
-                    <span wire:click="selectTag('{{ $tag }}')"
-                        class="inline-flex items-center px-3 py-1 rounded-sm text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 ml-2 cursor-default">
-                        {{ $tag }}
-                        <button type="button"
-                            class="ml-2 text-blue-600 hover:text-blue-800 focus:outline-none cursor-pointer"
-                            onclick="event.stopPropagation(); @this.call('removeTag', {{ $index }})">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </span>
-                @endforeach
+            <div x-show="showInput" x-transition:enter="transition ease-out duration-100"
+                x-transition:enter-start="transform opacity-0 scale-95"
+                x-transition:enter-end="transform opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-75"
+                x-transition:leave-start="transform opacity-100 scale-100"
+                x-transition:leave-end="transform opacity-0 scale-95"
+                class="absolute left-0 mt-12 w-56 rounded-md shadow-lg z-100">
+                <!-- Suggestions Dropdown -->
+                @if ($showSuggestions && !empty($suggestedTags))
+                    <div
+                        class="w-96 flex flex-wrap gap-2 absolute left-0 top-full z-50 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto py-2">
+                        @foreach ($suggestedTags as $index => $tag)
+                            <span wire:click="selectTag('{{ $tag }}')"
+                                class="inline-flex items-center px-3 py-1 rounded-sm text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 ml-2 cursor-default">
+                                {{ $tag }}
+                                <button type="button"
+                                    class=" text-blue-600 hover:text-blue-800 focus:outline-none cursor-pointer"
+                                    onclick="event.stopPropagation(); @this.call('removeTag', {{ $index }})">
+                                    {{-- <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg> --}}
+                                </button>
+                            </span>
+                        @endforeach
+                    </div>
+                @endif
             </div>
-        @endif
+        </div>
     </div>
 
     <div class="container mx-auto px-4 py-6">

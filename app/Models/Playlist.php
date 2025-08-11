@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\BaseModel;
 use Carbon\Carbon;
 use DateTime;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -119,5 +120,8 @@ class Playlist extends BaseModel
         return 'Invalid';
     }
 
-
+    public function scopeSelf(Builder $query): Builder
+    {
+        return $query->where('user_urn', user()->urn);
+    }
 }

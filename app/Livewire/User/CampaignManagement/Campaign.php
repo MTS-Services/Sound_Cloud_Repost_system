@@ -280,7 +280,7 @@ class Campaign extends Component
             $this->loadInitialData();
         } else {
             $this->featuredCampaigns = $this->campaignService->getCampaigns()
-                ->where('budget_credits', '>=', repostPrice(user()))
+                ->where('budget_credits','>=', repostPrice(user()))
                 ->featured()
                 ->withoutSelf()
                 ->with(['music.user.userInfo', 'reposts'])
@@ -297,7 +297,7 @@ class Campaign extends Component
                 ->get();
 
             $this->campaigns = $this->campaignService->getCampaigns()
-                ->where('budget_credits', '>=', repostPrice(user()))
+                ->where('budget_credits','>=', repostPrice(user()))
                 ->notFeatured()
                 ->withoutSelf()
                 ->with(['music.user.userInfo', 'reposts'])
@@ -322,8 +322,9 @@ class Campaign extends Component
     {
 
         $allowed_target_credits = repostPrice(user());
+        // dd($allowed_target_credits);
         $this->featuredCampaigns = $this->campaignService->getCampaigns()
-            ->where('budget_credits', '>=', $allowed_target_credits)
+            ->where('budget_credits','>=',$allowed_target_credits)
             ->featured()
             ->withoutSelf()
             ->with(['music.user.userInfo', 'reposts'])
@@ -331,10 +332,10 @@ class Campaign extends Component
                 $query->where('reposter_urn', user()->urn);
             })
             ->get();
-        // dd($this->featuredCampaigns);
+            // dd($this->featuredCampaigns);
 
         $this->campaigns = $this->campaignService->getCampaigns()
-            ->where('budget_credits', '>=', $allowed_target_credits)
+            ->where('budget_credits','>=', $allowed_target_credits)
             ->notFeatured()
             ->withoutSelf()
             ->with(['music.user.userInfo', 'reposts'])
@@ -357,7 +358,7 @@ class Campaign extends Component
     {
         $this->selectedTags = $tags;
         $this->featuredCampaigns = $this->campaignService->getCampaigns()
-            ->where('budget_credits', '>=', repostPrice(user()))
+            ->where('budget_credits','>=', repostPrice(user()))
             ->featured()
             ->withoutSelf()
             ->with(['music.user.userInfo', 'reposts'])
@@ -368,7 +369,7 @@ class Campaign extends Component
             ->get();
 
         $this->campaigns = $this->campaignService->getCampaigns()
-            ->where('budget_credits', '>=', repostPrice(user()))
+            ->where('budget_credits','>=', repostPrice(user()))
             ->notFeatured()
             ->withoutSelf()
             ->with(['music.user.userInfo', 'reposts'])
