@@ -88,7 +88,7 @@ class MyCampaign extends Component
     public int $addCreditCostPerRepost = 0;
     public $addCreditCurrentBudget = null;
     public $addCreditTargetReposts = null;
-    public $addCreditCreditsNeeded = 0;
+    public int $addCreditCreditsNeeded = 0;
 
     // Form fields - Edit Campaign
     public $editingCampaignId = null;
@@ -122,7 +122,8 @@ class MyCampaign extends Component
     private const ITEMS_PER_PAGE = 2;
 
     // Search and pagination properties
-    public $searchQuery = '';
+    #[Url(as: 'q', except: '')]
+    public string $searchQuery = '';
     public $selectedPlaylistId = null;
     public $allTracks;
     public $users;
@@ -882,6 +883,7 @@ class MyCampaign extends Component
             'user_urn' => user()->urn ?? 'unknown'
         ], $context));
     }
+    
 
     // This method is triggered when the `activeTab` property is updated
     public function updatedactiveTab($tab)
