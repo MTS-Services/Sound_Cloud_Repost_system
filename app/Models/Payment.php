@@ -94,11 +94,11 @@ class Payment extends BaseModel
 
     public function getStatusLabelAttribute()
     {
-        return $this->status ? $this->getStatusList()[$this->status] : 'Unknown';
+        return isset($this->status) ? $this->getStatusList()[$this->status] : 'Unknown';
     }
     public function getStatusColorAttribute()
     {
-        return $this->status ? $this->getStatusColorList()[$this->status] : 'gray';
+        return isset($this->status) ? $this->getStatusColorList()[$this->status] : 'gray';
     }
 
 
@@ -125,12 +125,12 @@ class Payment extends BaseModel
 
     public function getPaymentGatewayLabelAttribute()
     {
-        return $this->payment_method ? $this->getPaymentGateways()[$this->payment_method] : 'Unknown';
+        return isset($this->payment_method) ? $this->getPaymentGateways()[$this->payment_method] : 'Unknown';
     }
 
     public function getPaymentGatewayColorAttribute()
     {
-        return $this->payment_method ? $this->getPaymentGateways()[$this->payment_method] : 'Unknown';
+        return isset($this->payment_method) ? $this->getPaymentGateways()[$this->payment_method] : 'Unknown';
     }
 
     public function order(): BelongsTo

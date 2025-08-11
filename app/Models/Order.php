@@ -106,12 +106,12 @@ class Order extends BaseModel
 
     public function getTypeLabelAttribute()
     {
-        return $this->type ? self::getTypeList()[$this->type] : 'Unknown';
+        return isset($this->type) ? self::getTypeList()[$this->type] : 'Unknown';
     }
 
     public function getTypeColorAttribute()
     {
-        return $this->type ? self::getTypeColorList()[$this->type] : 'primary';
+        return isset($this->type) ? self::getTypeColorList()[$this->type] : 'primary';
     }
     public static function getStatusColorList(): array
     {
@@ -125,12 +125,12 @@ class Order extends BaseModel
     }
     public function getStatusLabelAttribute()
     {
-        return $this->status ? self::getStatusList()[$this->status] : 'Unknown';
+        return isset($this->status) ? self::getStatusList()[$this->status] : 'Unknown';
     }
 
     public function getStatusColorAttribute()
     {
-        return $this->status ? self::getStatusColorList()[$this->status] : 'primary';
+        return isset($this->status) ? self::getStatusColorList()[$this->status] : 'primary';
     }
 
     public function scopePending(Builder $query): Builder

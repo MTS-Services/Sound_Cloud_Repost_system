@@ -79,11 +79,11 @@ class CreditTransaction extends BaseModel
 
     public function getStatusLabelAttribute(): string
     {
-        return $this->status ? $this->getStatusList()[$this->status] : 'Unknown';
+        return isset($this->status) ? $this->getStatusList()[$this->status] : 'Unknown';
     }
     public function getStatusColorAttribute(): string
     {
-        return $this->status ? $this->getStatusClassList()[$this->status] : 'primary';
+        return isset($this->status) ? $this->getStatusClassList()[$this->status] : 'primary';
     }
 
 
@@ -124,11 +124,11 @@ class CreditTransaction extends BaseModel
     }
     public function getCalculationTypeNameAttribute(): string
     {
-        return $this->calculation_type ? self::getCalculationTypes()[$this->calculation_type] : 'Unknown';
+        return isset($this->calculation_type) ? self::getCalculationTypes()[$this->calculation_type] : 'Unknown';
     }
     public function getCalculationTypeColorAttribute(): string
     {
-        return $this->calculation_type ? [
+        return isset($this->calculation_type) ? [
             self::CALCULATION_TYPE_DEBIT => 'badge-error',
             self::CALCULATION_TYPE_CREDIT => 'badge-success',
         ][$this->calculation_type] : 'badge-secondary';
@@ -168,7 +168,7 @@ class CreditTransaction extends BaseModel
     }
     public function getTransactionTypeNameAttribute(): string
     {
-        return $this->transaction_type ? self::getTypes()[$this->transaction_type] : 'Unknown';
+        return isset($this->transaction_typ) ? self::getTypes()[$this->transaction_type] : 'Unknown';
     }
 
 
