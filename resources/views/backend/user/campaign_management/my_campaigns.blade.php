@@ -224,7 +224,7 @@
                     @if ($campaigns->hasPages())
                         <div class="mt-6">
                             {{ $campaigns->links('components.pagination.wire-navigate', [
-                                'pageName' =>  $activeMainTab . 'Page',
+                                'pageName' => $activeMainTab . 'Page',
                                 'keep' => ['tab' => $activeMainTab],
                             ]) }}
                         </div>
@@ -318,15 +318,18 @@
                     </button>
                 </div>
 
-                <div class="flex-grow overflow-y-auto p-6">
-                    <div class="p-4">
+                <div class="flex-grow overflow-y-auto p-4">
+                    <div class="p-1">
                         <label for="track-link-search" class="text-xl font-semibold text-gray-700 dark:text-gray-200">
-                            Paste a SoundCloud profile or {{ $activeModalTab === 'tracks' ? 'track' : 'playlist' }}
-                            link
+                            @if ($activeModalTab === 'tracks')
+                                Paste a SoundCloud track link
+                            @else
+                                Paste a SoundCloud playlist link
+                            @endif
                         </label>
                         <div class="flex w-full mt-2">
                             <input wire:model.live.debounce.500ms="searchQuery" type="text" id="track-link-search"
-                                placeholder="Paste a SoundCloud profile or {{ $activeModalTab === 'tracks' ? 'track' : 'playlist' }} link"
+                                placeholder="{{ $activeModalTab === 'tracks' ? 'Paste a SoundCloud track link' : 'Paste a SoundCloud playlist link' }}"
                                 class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 border border-gray-300 dark:border-gray-600 ">
                             <button wire:click="searchSoundcloud" type="button"
                                 class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200 ">
@@ -338,11 +341,11 @@
                             </button>
                         </div>
                     </div>
-                    @if ($activeModalTab === 'tracks')
+                    @if ($activeModalTab === 'tracks' || $playListTrackShow == true)
                         <div class="space-y-3">
                             @forelse ($tracks as $track_)
                                 <div wire:click="toggleSubmitModal('track', {{ $track_->id }})"
-                                    class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
+                                    class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
                                     <div class="flex-shrink-0">
                                         <img class="h-14 w-14 rounded-xl object-cover shadow-md"
                                             src="{{ soundcloud_image($track_->artwork_url) }}"
@@ -376,31 +379,46 @@
                                         <x-lucide-music class="w-8 h-8 text-orange-500" />
                                     </div>
                                     <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                        {{ __('No playlists found') }}
+                                        {{ __('No tracks found') }}
                                     </h3>
                                     <p class="text-gray-500 dark:text-gray-400">
                                         {{ __('Add one to get started with campaigns.') }}
                                     </p>
                                 </div>
                             @endforelse
+
+                            {{-- Load More Button for Tracks --}}
+                            @if ($hasMoreTracks)
+                                <div class="text-center mt-4">
+                                    <button wire:click="loadMoreTracks" wire:loading.attr="disabled"
+                                        class="bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors duration-200 disabled:bg-orange-300 disabled:cursor-not-allowed">
+                                        <span wire:loading.remove wire:target="loadMoreTracks">
+                                            Load More
+                                        </span>
+                                        <span wire:loading wire:target="loadMoreTracks">
+                                            Loading...
+                                        </span>
+                                    </button>
+                                </div>
+                            @endif
                         </div>
                     @elseif($activeModalTab === 'playlists')
                         <div class="space-y-3">
-                            @forelse ($playlists as $playlist)
-                                <div wire:click="toggleSubmitModal('playlist', {{ $playlist->id }})"
+                            @forelse ($playlists as $playlist_)
+                                <div wire:click="showPlaylistTracks({{ $playlist_->id }})"
                                     class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
                                     <div class="flex-shrink-0">
                                         <img class="h-14 w-14 rounded-xl object-cover shadow-md"
-                                            src="{{ soundcloud_image($playlist->artwork_url) }}"
-                                            alt="{{ $playlist->title }}" />
+                                            src="{{ soundcloud_image($playlist_->artwork_url) }}"
+                                            alt="{{ $playlist_->title }}" />
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p
                                             class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                                            {{ $playlist->title }}
+                                            {{ $playlist_->title }}
                                         </p>
                                         <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                            {{ $playlist->track_count }} {{ __('tracks') }}
+                                            {{ $playlist_->track_count }} {{ __('tracks') }}
                                         </p>
                                     </div>
                                     <div class="flex-shrink-0">
@@ -422,6 +440,21 @@
                                     </p>
                                 </div>
                             @endforelse
+
+                            {{-- Load More Button for Playlists --}}
+                            @if ($hasMorePlaylists)
+                                <div class="text-center mt-4">
+                                    <button wire:click="loadMorePlaylists" wire:loading.attr="disabled"
+                                        class="bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors duration-200 disabled:bg-orange-300 disabled:cursor-not-allowed">
+                                        <span wire:loading.remove wire:target="loadMorePlaylists">
+                                            Load More
+                                        </span>
+                                        <span wire:loading wire:target="loadMorePlaylists">
+                                            Loading...
+                                        </span>
+                                    </button>
+                                </div>
+                            @endif
                         </div>
                     @endif
                 </div>
