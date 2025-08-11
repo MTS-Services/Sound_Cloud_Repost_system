@@ -221,6 +221,14 @@
                             </div>
                         @endif
                     @endforelse
+                    @if ($campaigns->hasPages())
+                        <div class="mt-6">
+                            {{ $campaigns->links('components.pagination.wire-navigate', [
+                                'pageName' =>  $activeMainTab . 'Page',
+                                'keep' => ['tab' => $activeMainTab],
+                            ]) }}
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Sidebar -->
