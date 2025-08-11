@@ -144,27 +144,35 @@
                         wire:blur="hideSuggestions" placeholder="Type to search tags..."
                         class="flex-1 min-w-0 border-0 outline-none focus:ring-0 p-1" autocomplete="off"> --}}
             </div>
-        </div>
-        <!-- Suggestions Dropdown -->
-        @if ($showSuggestions && !empty($suggestedTags))
-            <div
-                class="flex flex-wrap absolute right-0 mt-20 z-50 w-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto py-2">
-                @foreach ($suggestedTags as $index => $tag)
-                    <span wire:click="selectTag('{{ $tag }}')"
-                        class="inline-flex items-center px-3 py-1 rounded-sm text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 ml-2 cursor-default">
-                        {{ $tag }}
-                        <button type="button"
-                            class="ml-2 text-blue-600 hover:text-blue-800 focus:outline-none cursor-pointer"
-                            onclick="event.stopPropagation(); @this.call('removeTag', {{ $index }})">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </span>
-                @endforeach
+            <div x-show="showInput" x-transition:enter="transition ease-out duration-100"
+                x-transition:enter-start="transform opacity-0 scale-95"
+                x-transition:enter-end="transform opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-75"
+                x-transition:leave-start="transform opacity-100 scale-100"
+                x-transition:leave-end="transform opacity-0 scale-95"
+                class="absolute left-0 mt-12 w-56 rounded-md shadow-lg z-100">
+                <!-- Suggestions Dropdown -->
+                @if ($showSuggestions && !empty($suggestedTags))
+                    <div
+                        class="w-96 flex flex-wrap gap-2 absolute left-0 top-full z-50 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto py-2">
+                        @foreach ($suggestedTags as $index => $tag)
+                            <span wire:click="selectTag('{{ $tag }}')"
+                                class="inline-flex items-center px-3 py-1 rounded-sm text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 ml-2 cursor-default">
+                                {{ $tag }}
+                                <button type="button"
+                                    class=" text-blue-600 hover:text-blue-800 focus:outline-none cursor-pointer"
+                                    onclick="event.stopPropagation(); @this.call('removeTag', {{ $index }})">
+                                    {{-- <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg> --}}
+                                </button>
+                            </span>
+                        @endforeach
+                    </div>
+                @endif
             </div>
-        @endif
+        </div>
     </div>
 
     <div class="container mx-auto px-4 py-6">
@@ -723,15 +731,13 @@
 
                         <!-- Budget Display -->
                         <div class="flex items-center justify-center space-x-2 mb-4">
-                            <div class="w-6 h-6 border-2 border-orange-500 rounded flex items-center justify-center">
-                                <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="1" y="1" width="24" height="16" rx="3" fill="none"
-                                        stroke="currentColor" stroke-width="2" />
-                                    <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
-                                        stroke-width="2" />
-                                </svg>
-                            </div>
+                            <svg class="w-8 h-8 text-orange-500" width="26" height="18" viewBox="0 0 26 18"
+                                fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="1" y="1" width="24" height="16" rx="3" fill="none"
+                                    stroke="currentColor" stroke-width="2" />
+                                <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
+                                    stroke-width="2" />
+                            </svg>
                             <span class="text-2xl font-bold text-orange-500">{{ $credit }}</span>
                         </div>
                         {{-- Error Message --}}
@@ -745,10 +751,8 @@
                         <div class="relative">
                             <input type="range" x-data x-on:input="$wire.set('credit', $event.target.value)"
                                 min="0" max="500" value="{{ $credit }}"
-                                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                                class="w-full h-2 border-0 cursor-pointer">
                         </div>
-
-
                     </div>
 
                     <!-- Enable CommentPlus -->
@@ -780,7 +784,7 @@
 
                     <!-- Enable Campaign Accelerator -->
                     <div class="flex items-start space-x-3">
-                        <input type="checkbox" wire:model="proFeatureEnabled"
+                        <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                         <div>
                             <div class="flex items-center space-x-2">
@@ -794,6 +798,40 @@
                             <p class="text-xs text-gray-500">Use Campaign Accelerator (+50 credits)</p>
                         </div>
                     </div>
+                    <div x-data="{ showOptions: false }" class="flex flex-col space-y-2">
+                        <!-- Checkbox + Label -->
+                        <div class="flex items-start space-x-3">
+                            <input type="checkbox" @change="showOptions = !showOptions"
+                                class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm font-medium text-gray-900">Limit to users with max follower
+                                    count</span>
+                                {{-- <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
+                                            <span class="text-white text-xs">i</span>
+                                        </div> --}}
+                            </div>
+                        </div>
+
+                        <!-- Toggle Options (Hidden by default) -->
+                        <div x-show="showOptions" x-transition class="p-3">
+                            <div class="flex justify-between items-center gap-4">
+                                <div class="w-full relative">
+                                    <input type="range" x-data
+                                        x-on:input="$wire.set('maxFollower', $event.target.value)" min="0"
+                                        max="500" value="{{ $maxFollower }}"
+                                        class="w-full h-2  cursor-pointer">
+                                </div>
+                                <div
+                                    class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
+                                    <span>{{ $maxFollower }}</span>
+                                </div>
+                                @error('maxFollower')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Campaign Targeting -->
                     <div class="border border-gray-200 rounded-lg p-4">
@@ -805,35 +843,6 @@
 
                         <div class="space-y-3 ml-4">
                             <div x-data="{ showOptions: false }" class="flex flex-col space-y-2">
-                                <!-- Checkbox + Label -->
-                                <div class="flex items-start space-x-3">
-                                    <input type="checkbox" @change="showOptions = !showOptions"
-                                        class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-
-                                    <div class="flex items-center space-x-2">
-                                        <span class="text-sm text-gray-700">Limit to users with max follower
-                                            count</span>
-                                        {{-- <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
-                                            <span class="text-white text-xs">i</span>
-                                        </div> --}}
-                                    </div>
-                                </div>
-
-                                <!-- Toggle Options (Hidden by default) -->
-                                <div x-show="showOptions" x-transition class="ml-7 p-3">
-                                    <div class=" items-center space-x-3">
-                                        <!-- Number Input -->
-                                        <input type="number" placeholder="Max follow" wire:model="maxFollower"
-                                            class="block w-48 px-3 py-1 border rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
-                                        {{-- Error Message --}}
-                                        @error('maxFollower')
-                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div x-data="{ showOptions: false }" class="flex flex-col space-y-2">
                                 <div class="flex items-start space-x-3">
                                     <input type="checkbox" @change="showOptions = !showOptions"
                                         class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
@@ -842,11 +851,21 @@
                                             24h)</span>
                                     </div>
                                 </div>
-                                <div x-show="showOptions" x-transition class="ml-7 p-3">
-                                    <div class=" items-center space-x-3">
-                                        <!-- Number Input -->
-                                        <input type="number" placeholder="Max Repost" wire:model="maxRepostLast24h"
-                                            class="block w-48 px-3 py-1 border rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
+                                <div x-show="showOptions" x-transition class="p-3">
+                                    <div class="flex justify-between items-center gap-4">
+                                        <div class="w-full relative">
+                                            <input type="range" x-data
+                                                x-on:input="$wire.set('maxRepostLast24h', $event.target.value)"
+                                                min="0" max="50" value="{{ $maxRepostLast24h }}"
+                                                class="w-full h-2  cursor-pointer">
+                                        </div>
+                                        <div
+                                            class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
+                                            <span>{{ $maxRepostLast24h }}</span>
+                                        </div>
+                                        @error('maxRepostLast24h')
+                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -860,12 +879,21 @@
                                             day</span>
                                     </div>
                                 </div>
-                                <div x-show="showRepostPerDay" x-transition class="ml-7 p-3">
-                                    <div class=" items-center space-x-3">
-                                        <!-- Number Input -->
-                                        <input type="number" placeholder="Max Repost per day"
-                                            wire:model="maxRepostsPerDay"
-                                            class="block w-48 px-3 py-1 border rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
+                                <div x-show="showRepostPerDay" x-transition class="p-3">
+                                    <div class="flex justify-between items-center gap-4">
+                                        <div class="w-full relative">
+                                            <input type="range" x-data
+                                                x-on:input="$wire.set('maxRepostsPerDay', $event.target.value)"
+                                                min="0" max="100" value="{{ $maxRepostsPerDay }}"
+                                                class="w-full h-2  cursor-pointer">
+                                        </div>
+                                        <div
+                                            class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
+                                            <span>{{ $maxRepostsPerDay }}</span>
+                                        </div>
+                                        @error('maxRepostsPerDay')
+                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -925,7 +953,17 @@
                     <div class="pt-4">
                         <button type="submit"
                             class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-4 px-6 rounded-xl {{ !$canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }}">
+                            <span>
+                                <svg class="w-8 h-8 text-white" width="26" height="18" viewBox="0 0 26 18"
+                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="1" y="1" width="24" height="16" rx="3" fill="none"
+                                        stroke="currentColor" stroke-width="2" />
+                                    <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
+                                        stroke-width="2" />
+                                </svg>
+                            </span>
 
+                            <span>{{ $proFeatureEnabled ? $credit * 1.5 : $credit }}</span>
                             <span wire:loading.remove wire:target="createCampaign">
                                 {{ __('Create Campaign') }}
                             </span>
@@ -935,6 +973,49 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+    <div x-data="{ showLowCreditWarningModal: @entangle('showLowCreditWarningModal').live }" x-show="showLowCreditWarningModal" x-cloak
+        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+
+        <div
+            class="w-full max-w-md mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
+            <div
+                class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center">
+                        <x-lucide-triangle-alert class="w-5 h-5 text-white" />
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                        {{ __('Low Credit Warning') }}
+                    </h2>
+                </div>
+                <button x-on:click="showLowCreditWarningModal = false"
+                    class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
+                    <x-lucide-x class="w-5 h-5" />
+                </button>
+            </div>
+
+            <div class="p-6 text-center">
+                <div
+                    class="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <x-lucide-wallet class="w-10 h-10 text-red-600 dark:text-red-400" />
+                </div>
+                <p class="text-lg text-gray-700 dark:text-gray-300 mb-4">
+                    {{ __('You need a minimum of 100 credits to create a campaign.') }}
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                    {{ __('Please add more credits to your account to proceed with campaign creation.') }}
+                </p>
+                <a href="{{ route('user.add-credits') }}" wire:navigate
+                    class="inline-flex items-center justify-center w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                    <x-lucide-plus class="w-5 h-5 inline mr-2" />
+                    {{ __('Buy Credits Now') }}
+                </a>
             </div>
         </div>
     </div>

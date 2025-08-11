@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Backend\Admin\UserManagement;
 
+use App\Events\UserNotificationSent;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
 use App\Models\CreditTransaction;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\CustomNotification;
 use App\Models\Playlist;
 use App\Models\Track;
 use App\Models\User;
@@ -15,11 +17,11 @@ use App\Services\Admin\CreditManagement\CreditService;
 use App\Services\Admin\UserManagement\UserService;
 use App\Services\PlaylistService;
 use App\Services\TrackService;
-use DB;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 
@@ -382,6 +384,7 @@ class UserController extends Controller implements HasMiddleware
         DB::transaction(function () use ($data) {
             try {
                 $this->creditService->buyCredit($data);
+                 broadcast(new UserNotificationSent($notification));
                 session()->flash('success', 'Credit added successfully.');
             } catch (\Throwable $th) {
                 session()->flash('error', 'Error adding credit.');
@@ -389,6 +392,5 @@ class UserController extends Controller implements HasMiddleware
 
             }
         });
-        return $this->redirectIndex();
     }
 }

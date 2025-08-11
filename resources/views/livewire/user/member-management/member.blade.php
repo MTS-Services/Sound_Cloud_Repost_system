@@ -52,18 +52,7 @@
         </div>
     </div>
 
-    <!-- Success/Error Messages -->
-    {{-- @if (session()->has('success'))
-        <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-            {{ session('success') }}
-        </div>
-    @endif
 
-    @if (session()->has('error'))
-        <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-            {{ session('error') }}
-        </div>
-    @endif --}}
 
     <!-- Member Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-3 gap-6">
@@ -132,7 +121,13 @@
                 <p class="text-text-gray dark:text-white">No members found.</p>
             </div>
         @endforelse
+
     </div>
+    @if ($users->hasPages())
+        <div class="mt-6">
+            {{ $users->links('components.pagination.wire-navigate') }}
+        </div>
+    @endif
 
     <div x-data="{ showModal: @entangle('showModal').live }" x-show="showModal" x-cloak x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"

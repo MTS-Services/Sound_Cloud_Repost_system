@@ -4,6 +4,7 @@ namespace App\Services\Admin\UserManagement;
 
 use App\Http\Traits\FileManagementTrait;
 use App\Models\CreditTransaction;
+use App\Models\CustomNotification;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -64,8 +65,10 @@ class UserService
     public function restore(string $encryptedId): void
     {
         $user = $this->getDeletedUser($encryptedId);
-        $user->update(['updater_id' => admin()->id],
-            ['updater_type' => get_class(admin())]);
+        $user->update(
+            ['updater_id' => admin()->id],
+            ['updater_type' => get_class(admin())]
+        );
         $user->restore();
     }
 
@@ -84,20 +87,36 @@ class UserService
         ]);
     }
 
-    // public function addCredit(User $user, array $data): void
+    // public function addCredit(User $user, array $data)
     // {
-    //     $credit['transaction_type'] = CreditTransaction::TYPE_MANUAL;
-    //     $credit['calculation_type'] = CreditTransaction::CALCULATION_TYPE_DEBIT;
-    //     $credit['receiver_urn'] = $user->urn;
-    //     $credit['credits'] = $data['credit'];
-    //     $credit['amount'] = 0;
-    //     $credit['status'] = 'succeeded';
-    //     $credit['creater_id'] = admin()->id;
-    //     $credit['creater_type'] = get_class(admin());
-    //     $credit['description'] = $data['description'] ?? 'Manual credit addition by '.admin()->name;
-    //     $credit['source_id'] = admin()->id;
-    //     $credit['source_type'] = get_class(admin());
-    //     CreditTransaction::create($credit);
+    //     return DB::transaction(function () use ($user, $data) {
+    //         $credit['transaction_type'] = CreditTransaction::TYPE_MANUAL;
+    //         $credit['calculation_type'] = CreditTransaction::CALCULATION_TYPE_DEBIT;
+    //         $credit['receiver_urn'] = $user->urn;
+    //         $credit['credits'] = $data['credit'];
+    //         $credit['amount'] = 0;
+    //         $credit['status'] = 'succeeded';
+    //         $credit['creater_id'] = admin()->id;
+    //         $credit['creater_type'] = get_class(admin());
+    //         $credit['description'] = $data['description'] ?? 'Manual credit addition by ' . admin()->name;
+    //         $credit['source_id'] = admin()->id;
+    //         $credit['source_type'] = get_class(admin());
+    //         CreditTransaction::create($credit);
 
+    //         return CustomNotification::create([
+    //             'type' => CustomNotification::TYPE_USER,
+    //             'sender_id' => admin()->id,
+    //             'sender_type' => get_class(admin()),
+    //             'receiver_id' => $user->id,
+    //             'receiver_type' => User::class,
+    //             'message_data' => [
+    //                 'title' => 'Credit Added',
+    //                 'message' => 'Credit added successfully!',
+    //                 'description' => 'You have received ' . $data['credit'] . ' credits from ' . admin()->name,
+    //                 'icon' => 'currency-dollar',
+    //                 'additional_data' => []
+    //             ]
+    //         ]);
+    //     });
     // }
 }

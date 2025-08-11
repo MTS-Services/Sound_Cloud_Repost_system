@@ -189,15 +189,20 @@ function isImage($path)
 
 function repostPrice($user = null)
 {
+
+    $commentPrice = 2;
+    $likePrice = 2;
+
+    $total = $commentPrice + $likePrice;
     if (!$user) {
         $user = user();
     }
     $user->load('userInfo');
     $followers_count = $user?->userInfo?->followers_count;
     if ($followers_count === null) {
-        return 1; // Default to 1 if followers count is not available
+        return 1 + $total ; // Default to 1 if followers count is not available
     }
-    return ceil($followers_count / 100) ?: 1; // Ensure at least 1 credit
+    return ceil($followers_count / 100) + $total ?: 1 + $total; // Ensure at least 1 credit
 }
 
 function userCredits($user = null)

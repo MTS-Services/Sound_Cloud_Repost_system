@@ -4,7 +4,7 @@
                 CK Editor 5 CSS
  =============================================================*/
 .ck.ck-editor__top .ck-sticky-panel .ck-sticky-panel__content .ck-toolbar {
-    background: transparent;
+  background: transparent;
 }
 
 /* .ck.ck-editor__editable.ck-focused:not(.ck-editor__nested-editable) {
@@ -48,3 +48,13 @@ input[type="range"]::-moz-range-thumb {
   border-radius: 50%;
   border: none;
 } */
+
+
+/* CSS to change the progress (filled part) color */
+input[type="range"]::-webkit-slider-runnable-track {
+  background: linear-gradient(to right, orange 0%, orange var(--value), #ddd var(--value), #ddd 100%);
+}
+
+input[type="range"]:active::-webkit-slider-runnable-track {
+  background: linear-gradient(to right, orange 0%, orange var(--value), #ddd var(--value), #ddd 100%);
+}

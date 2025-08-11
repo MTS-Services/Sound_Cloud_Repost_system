@@ -210,7 +210,7 @@
                         <thead class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white text-xs sm:text-sm">
                             <tr>
                                 <th class="w-10 px-2 py-3">ID</th>
-                                <th class="w-28 px-2 py-3">Receiver</th>
+                                <th class="w-28 px-2 py-3">Sender Name</th>
                                 <th class="w-20 px-2 py-3">Amount</th>
                                 <th class="w-20 px-2 py-3">Credit</th>
                                 <th class="w-24 px-2 py-3">Type</th>
@@ -221,7 +221,7 @@
                             @foreach ($credit_transactions as $transaction)
                                 <tr class="odd:bg-gray-800 even:bg-gray-900">
                                     <td class="px-4 py-3 font-semibold">{{ $loop->iteration }}</td>
-                                    <td class="px-4 py-3">{{ $transaction->receiver_urn }}</td>
+                                    <td class="px-4 py-3">{{ $transaction->sender->name ?? 'System' }}</td>
                                     <td class="px-4 py-3">{{ $transaction->amount }}</td>
                                     <td class="px-4 py-3">{{ $transaction->credits }}</td>
                                     <td class="px-4 py-3">{{ $transaction->type_name }}</td>

@@ -4,45 +4,138 @@ namespace App\Livewire\User\ProfileManagement;
 
 use App\Models\Playlist;
 use App\Models\Repost;
+use App\Models\Track;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
-use App\Models\User;
 use App\Services\Admin\UserManagement\UserService;
+use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class MyAccount extends Component
 {
-    public $user;
-    public $tracks;
-    public $playlists;
-    public $reposts;
-    public $transactions;
-    public $activeTab = 'insights';
-    public $showEditProfileModal = false;
+    use WithPagination;
 
-    protected $creditTransactionService;
-    protected $userService;
+    // UI state
+    #[Url(as: 'tab', except: 'insights')]
+    public string $activeTab = 'insights';
 
+    public bool $showEditProfileModal = false;
+
+    // Playlist detail state
+    #[Url(as: 'selectedPlaylistId')]
+    public ?int $selectedPlaylistId = null;
+
+    public bool $showPlaylistTracks = false;
+
+    // Independent pagination page numbers in query string
+    #[Url(as: 'tracksPage')]
+    public ?int $tracksPage = 1;
+
+    #[Url(as: 'playlistsPage')]
+    public ?int $playlistsPage = 1;
+
+    #[Url(as: 'playlistTracksPage')]
+    public ?int $playlistTracksPage = 1;
+
+    // Dependencies (non-serializable) — keep private
+    private UserService $userService;
+    private CreditTransactionService $creditTransactionService;
+
+    // Livewire v3: boot runs on every request (initial + subsequent)
+    public function boot(UserService $userService, CreditTransactionService $creditTransactionService): void
+    {
+        $this->userService = $userService;
+        $this->creditTransactionService = $creditTransactionService;
+    }
+
+    public function mount(): void
+    {
+        // If a playlist is in the URL, ensure we land on the right tab/view
+        if ($this->selectedPlaylistId) {
+            $this->activeTab = 'playlists';
+            $this->showPlaylistTracks = true;
+        }
+    }
 
     public function setActiveTab(string $tab): void
     {
         $this->activeTab = $tab;
+
+        if ($tab !== 'playlists') {
+            $this->resetPlaylistView();
+        }
+
+        // Reset the relevant pager when switching tabs
+        if ($tab === 'tracks') {
+            $this->resetPage('tracksPage');
+        } elseif ($tab === 'playlists') {
+            $this->resetPage('playlistsPage');
+        }
     }
 
-    public function getTracks(): void
+    public function selectPlaylist(int $playlistId): void
     {
-        $this->tracks = $this->creditTransactionService->getUserTracks();
+        $exists = Playlist::where('id', $playlistId)
+            ->where('user_urn', user()->urn)
+            ->exists();
+
+        if ($exists) {
+            $this->selectedPlaylistId = $playlistId;
+            $this->showPlaylistTracks = true;
+            $this->resetPage('playlistTracksPage');
+        }
     }
 
-    public function getPlaylists(): void
+    public function backToPlaylists(): void
     {
-        $this->playlists = Playlist::where('user_urn', user()->urn)->get();
+        $this->resetPlaylistView();
     }
-    public function getRecentReposts(): void
+
+    private function resetPlaylistView(): void
     {
-        $this->reposts = Repost::with([
-            'campaign.music',
-            'request.track',
-        ])
+        $this->selectedPlaylistId = null;
+        $this->showPlaylistTracks = false;
+        $this->resetPage('playlistTracksPage');
+    }
+
+    public function profileUpdated($payload = null): void
+    {
+        $this->showEditProfileModal = true;
+    }
+
+    public function render()
+    {
+        $user = $this->userService->getMyAccountUser();
+
+        // Tracks pagination
+        $tracks = Track::where('user_urn', user()->urn)
+            ->latest('created_at')
+            ->paginate(6, ['*'], 'tracksPage', $this->tracksPage);
+
+        // Playlists pagination
+        $playlists = Playlist::where('user_urn', user()->urn)
+            ->latest('created_at')
+            ->paginate(8, ['*'], 'playlistsPage', $this->playlistsPage);
+
+        // Playlist detail + tracks pagination
+        $selectedPlaylist = null;
+        $playlistTracks = null;
+
+        if ($this->showPlaylistTracks && $this->selectedPlaylistId) {
+            $selectedPlaylist = Playlist::where('id', $this->selectedPlaylistId)
+                ->where('user_urn', user()->urn)
+                ->first();
+
+            if ($selectedPlaylist) {
+                // Make sure you have a proper relationship method `tracks()` on Playlist
+                $playlistTracks = $selectedPlaylist->tracks()
+                    ->latest('created_at')
+                    ->paginate(6, ['*'], 'playlistTracksPage', $this->playlistTracksPage);
+            }
+        }
+
+        // Recent reposts (not paginated here)
+        $reposts = Repost::with(['campaign.music', 'request.track'])
             ->where('reposter_urn', user()->urn)
             ->orderByDesc('reposted_at')
             ->take(10)
@@ -54,44 +147,23 @@ class MyAccount extends Component
                 $repost->source_type = $repost->campaign ? '📢 From Campaign' : ($repost->request ? '🤝 From Request' : '');
                 return $repost;
             });
-    }
-    public function getTransactions(): void
-    {
-        $this->transactions = $this->creditTransactionService->getUserTransactions()->where('status', 'succeeded')
+
+        // Transactions (top 10)
+        $transactions = $this->creditTransactionService->getUserTransactions()
+            ->where('status', 'succeeded')
             ->sortByDesc('created_at')
             ->take(10);
-    }
 
-    public function getMyUser()
-    {
-        $this->user = $this->userService->getMyAccountUser();
-    }
-
-    public function profileUpdated($propertyName)
-    {
-        $this->showEditProfileModal = true;
-        
-    }
-
-    public function loadAll()
-    {
-        $this->getPlaylists();
-        $this->getMyUser();
-        $this->getTracks();
-        $this->getRecentReposts();
-        $this->getTransactions();
-    }
-
-    public function mount(CreditTransactionService $creditTransactionService, UserService $userService): void
-    {
-        $this->userService = $userService;
-        $this->creditTransactionService = $creditTransactionService;
-        $this->loadAll();
-    }
-
-    public function render()
-    {
-
-        return view('backend.user.profile-management.my-account');
+        return view('backend.user.profile-management.my-account', [
+            'user' => $user,
+            'tracks' => $tracks,
+            'playlists' => $playlists,
+            'selectedPlaylist' => $selectedPlaylist,
+            'playlistTracks' => $playlistTracks,
+            'reposts' => $reposts,
+            'transactions' => $transactions,
+            // Also pass down flags used in Blade
+            'showPlaylistTracks' => $this->showPlaylistTracks,
+        ]);
     }
 }

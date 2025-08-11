@@ -16,6 +16,8 @@ use App\Http\Controllers\ProfileController;
 use App\Livewire\User\HelpAndSupport;
 use App\Livewire\User\MemberManagement\Member;
 use App\Livewire\User\MemberManagement\RepostRequest;
+use App\Livewire\User\Notification\NotificationList;
+use App\Livewire\User\Notification\NotificationShow;
 use App\Livewire\User\PackageManagement\Pricing;
 use App\Livewire\User\ProfileManagement\MyAccount;
 use Illuminate\Validation\Rules\Unique;
@@ -71,6 +73,12 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
 
     // Help Support
     Route::get('/help-support', HelpAndSupport::class)->name('help-support');
+
+    // Notification Routes 
+    Route::name('notifications.')->prefix('notifications')->group(function () {
+        Route::get('/', NotificationList::class)->name('index');
+        Route::get('/{encryptedId}', NotificationShow::class)->name('show');
+    });
 });
 
 

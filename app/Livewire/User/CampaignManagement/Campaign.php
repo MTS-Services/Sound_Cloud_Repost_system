@@ -34,6 +34,8 @@ class Campaign extends Component
     public $search = '';
     public $selectedTags = [];
     public $selecteTags = [];
+    public $selectedGenre = [];
+    public $searchtTrackType = [];
     public $suggestedTags = [];
     public $showSuggestions = false;
     public $showSelectedTags = false;
@@ -88,9 +90,10 @@ class Campaign extends Component
     public $commentable = false;
     public $likeable = false;
     public $proFeatureEnabled = false;
-    public $maxFollower = null;
-    public $maxRepostLast24h = null;
-    public $maxRepostsPerDay = null;
+    public $proFeatureValue = 1;
+    public $maxFollower = 0;
+    public $maxRepostLast24h = 0;
+    public $maxRepostsPerDay = 0;
     public $anyGenre = '';
     public $trackGenre = '';
     public $targetGenre = '';
@@ -131,6 +134,7 @@ class Campaign extends Component
     public bool $showAddCreditModal = false;
     public bool $showEditCampaignModal = false;
     public bool $showCancelWarningModal = false;
+    public bool $showLowCreditWarningModal = false;
     ################################loadmore########################################
 
     // Properties for "Load More"
@@ -152,12 +156,26 @@ class Campaign extends Component
     {
         $this->loadData();
         $this->loadInitialData();
+        $this->getAllGenres();
     }
     protected function rules()
     {
+        // $rules = [
+        //     'credit' => 'required|integer|min:100',
+        // ];
         $rules = [
-            'credit' => 'required|integer|min:100',
+            'credit' => [
+                'required',
+                'integer',
+                'min:100',
+                function ($attribute, $value, $fail) {
+                    if ($value > userCredits()) {
+                        $fail('The credit is not available.');
+                    }
+                },
+            ],
         ];
+
         return $rules;
     }
 
@@ -245,6 +263,16 @@ class Campaign extends Component
             $this->searchByTags();
         }
     }
+    public function filterByGenre($genre)
+    {
+        $this->selectedGenre = $genre;
+        $this->searchByTags();
+    }
+    public function filterByTrackType($trackType)
+    {
+        $this->searchtTrackType = $trackType;
+        $this->searchByTags();
+    }
     public function removeTag($tag)
     {
         unset($this->selecteTags[$tag]);
@@ -259,54 +287,79 @@ class Campaign extends Component
     {
         $this->isLoading = true;
 
-        if (empty($this->selectedTags)) {
+        if (empty($this->selectedTags) || empty($this->selectedGenre) || empty($this->searchtTrackType)) {
             $this->loadInitialData();
-        } else {
-            $this->featuredCampaigns = $this->campaignService->getCampaigns()
-                ->where('cost_per_repost', repostPrice(user()))
-                ->featured()
-                ->withoutSelf()
-                ->with(['music.user.userInfo', 'reposts'])
-                ->whereDoesntHave('reposts', function ($query) {
-                    $query->where('reposter_urn', user()->urn);
-                })
-                ->whereHas('music', function ($query) {
-                    $query->where(function ($q) {
-                        foreach ($this->selectedTags as $tag) {
-                            $q->orWhere('tag_list', 'LIKE', "%$tag%");
-                        }
-                    });
-                })
-                ->get();
-
-            $this->campaigns = $this->campaignService->getCampaigns()
-                ->where('cost_per_repost', repostPrice(user()))
-                ->notFeatured()
-                ->withoutSelf()
-                ->with(['music.user.userInfo', 'reposts'])
-                ->whereDoesntHave('reposts', function ($query) {
-                    $query->where('reposter_urn', user()->urn);
-                })
-                ->whereHas('music', function ($query) {
-                    $query->where(function ($q) {
-                        foreach ($this->selectedTags as $tag) {
-                            $q->orWhere('tag_list', 'LIKE', "%$tag%");
-                        }
-                    });
-                })
-                ->get();
         }
+        $this->featuredCampaigns = $this->campaignService->getCampaigns()
+            ->where('budget_credits', '>=', repostPrice(user()))
+            ->featured()
+            ->withoutSelf()
+            ->with(['music.user.userInfo', 'reposts'])
+            ->whereDoesntHave('reposts', function ($query) {
+                $query->where('reposter_urn', user()->urn);
+            });
+            $this->campaigns = $this->campaignService->getCampaigns()
+            ->where('budget_credits', '>=', repostPrice(user()))
+            ->notFeatured()
+            ->withoutSelf()
+            ->with(['music.user.userInfo', 'reposts'])
+            ->whereDoesntHave('reposts', function ($query) {
+                $query->where('reposter_urn', user()->urn);
+            });
+        if ($this->selectedTags) {
+            $this->featuredCampaigns->whereHas('music', function ($query) {
+                $query->where(function ($q) {
+                    foreach ($this->selectedTags as $tag) {
+                        $q->orWhere('tag_list', 'LIKE', "%$tag%");
+                    }
+                });
+            });
+            $this->campaigns->whereHas('music', function ($query) {
+                $query->where(function ($q) {
+                    foreach ($this->selectedTags as $tag) {
+                        $q->orWhere('tag_list', 'LIKE', "%$tag%");
+                    }
+                });
+            });
+        }
+        if ($this->selectedGenre) {
+            $this->featuredCampaigns->whereHas('music', function ($query) {
+                $query->where('genre', $this->selectedGenre);
+            });
+            $this->campaigns->whereHas('music', function ($query) {
+                $query->where('genre', $this->selectedGenre);
+            });
+        }
+        if($this->searchtTrackType){
+            $this->featuredCampaigns->whereHas('music', function ($query) {
+                $query->where('type', $this->searchtTrackType);
+            });
+            $this->campaigns->whereHas('music', function ($query) {
+                $query->where('type', $this->searchtTrackType);
+            });
+        }if ($this->searchtTrackType == 'all') {
+            $this->featuredCampaigns->whereHas('music', function ($query) {
+                $query->where('type', '!=', 'all');
+            });
+            $this->campaigns->whereHas('music', function ($query) {
+                $query->where('type', '!=', 'all');
+            });
+        }
+        
+        $this->featuredCampaigns = $this->featuredCampaigns->get();
+        $this->campaigns = $this->campaigns->get();
+
 
         $this->isLoading = false;
-        $this->selectedTags;
     }
 
     public function loadInitialData()
     {
 
         $allowed_target_credits = repostPrice(user());
+        // dd($allowed_target_credits);
         $this->featuredCampaigns = $this->campaignService->getCampaigns()
-            ->where('cost_per_repost', $allowed_target_credits)
+            ->where('budget_credits', '>=', $allowed_target_credits)
             ->featured()
             ->withoutSelf()
             ->with(['music.user.userInfo', 'reposts'])
@@ -314,9 +367,10 @@ class Campaign extends Component
                 $query->where('reposter_urn', user()->urn);
             })
             ->get();
+        // dd($this->featuredCampaigns);
 
         $this->campaigns = $this->campaignService->getCampaigns()
-            ->where('cost_per_repost', $allowed_target_credits)
+            ->where('budget_credits', '>=', $allowed_target_credits)
             ->notFeatured()
             ->withoutSelf()
             ->with(['music.user.userInfo', 'reposts'])
@@ -333,32 +387,6 @@ class Campaign extends Component
         foreach ($this->campaigns as $campaign) {
             $this->playTimes[$campaign->id] = 0;
         }
-    }
-
-    public function searchTags($tags)
-    {
-        $this->selectedTags = $tags;
-        $this->featuredCampaigns = $this->campaignService->getCampaigns()
-            ->where('cost_per_repost', repostPrice(user()))
-            ->featured()
-            ->withoutSelf()
-            ->with(['music.user.userInfo', 'reposts'])
-            ->whereDoesntHave('reposts', function ($query) {
-                $query->where('reposter_urn', user()->urn);
-            })
-            ->filterByTags($this->selectedTags)
-            ->get();
-
-        $this->campaigns = $this->campaignService->getCampaigns()
-            ->where('cost_per_repost', repostPrice(user()))
-            ->notFeatured()
-            ->withoutSelf()
-            ->with(['music.user.userInfo', 'reposts'])
-            ->whereDoesntHave('reposts', function ($query) {
-                $query->where('reposter_urn', user()->urn);
-            })
-            ->filterByTags($this->selectedTags)
-            ->get();
     }
     // public function hideSuggestions()
     // {
@@ -593,6 +621,14 @@ class Campaign extends Component
             'budgetWarningMessage',
             'canSubmit',
         ]);
+        // Check if user has minimum credits
+        if (userCredits() < 100) {
+            $this->showLowCreditWarningModal = true;
+            $this->showSubmitModal = false;
+            return;
+        } else {
+            $this->showLowCreditWarningModal = false;
+        }
 
         $this->showSubmitModal = true;
 
@@ -634,7 +670,13 @@ class Campaign extends Component
 
     public function getAllGenres()
     {
-        $this->genres = $this->trackService->getTracks()->where('user_urn', user()->urn)->pluck('genre')->unique()->values()->toArray();
+        $this->genres = $this->trackService->getTracks()->where('user_urn','!=', user()->urn)->pluck('genre')->unique()->values()->toArray();
+    }
+
+    public function profeature($isChecked)
+    {
+        $this->proFeatureEnabled = $isChecked ? true : false;
+        $this->proFeatureValue = $isChecked ? 0 : 1;
     }
     public function createCampaign()
     {
@@ -642,6 +684,13 @@ class Campaign extends Component
 
         try {
             $totalBudget = $this->credit;
+            if ($this->anyGenre == 'anyGenre') {
+                $this->targetGenre = $this->anyGenre;
+            }
+            if ($this->trackGenre == 'trackGenre') {
+                $this->targetGenre = $this->trackGenre;
+            }
+
 
             DB::transaction(function () use ($totalBudget) {
                 $commentable = $this->commentable ? 1 : 0;
@@ -652,18 +701,17 @@ class Campaign extends Component
                     'music_type' => $this->musicType,
                     'title' => $this->title,
                     'description' => $this->description,
-                    'cost_per_repost' => 0,
                     'budget_credits' => $totalBudget,
                     'user_urn' => user()->urn,
                     'status' => ModelsCampaign::STATUS_OPEN,
                     'max_followers' => $this->maxFollower,
                     'creater_id' => user()->id,
                     'creater_type' => get_class(user()),
-                    'comentable' => $commentable,
+                    'commentable' => $commentable,
                     'likeable' => $likeable,
                     'pro_feature' => $proFeatureEnabled,
-                    'max_repost_last_24h' => $this->maxRepostLast24h,
-                    'max_reposts_per_day' => $this->maxRepostsPerDay,
+                    'max_repost_last_24_h' => $this->maxRepostLast24h,
+                    'max_repost_per_day' => $this->maxRepostsPerDay,
                     'target_genre' => $this->targetGenre,
                 ]);
                 CreditTransaction::create([
@@ -714,6 +762,8 @@ class Campaign extends Component
                 'maxRepostLast24h',
                 'maxRepostsPerDay',
                 'targetGenre',
+                'anyGenre',
+                'trackGenre',
                 'maxFollower',
                 'proFeatureEnabled',
             ]);
