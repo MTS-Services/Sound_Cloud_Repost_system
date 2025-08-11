@@ -30,6 +30,13 @@ class Campaign extends BaseModel
         'end_date',
         'refund_credits',
         'pro_feature',
+        'commentable',
+        'likeable',
+        'max_repost_last_24_h',
+        'max_repost_per_day',
+        'target_genre',
+        'favorite_count',
+        'emoji_count',
 
         'creater_id',
         'updater_id',
