@@ -31,12 +31,12 @@
                                     <i class="fas fa-clock mr-1"></i>
                                     {{ $customNotification->created_at_human }}
                                 </span>
-                                <span class="badge badge-outline {{ $customNotification->type === \App\Models\CustomNotification::TYPE_ADMIN ? 'text-red-600 border-red-300' : 'text-blue-600 border-blue-300' }}">
+                                {{-- <span class="badge badge-outline {{ $customNotification->type === \App\Models\CustomNotification::TYPE_ADMIN ? 'text-red-600 border-red-300' : 'text-blue-600 border-blue-300' }}">
                                     {{ $this->getTypeLabel() }}
                                 </span>
                                 <span class="badge {{ $isRead ? 'bg-green-100 text-green-800 border-green-300' : 'bg-red-100 text-red-800 border-red-300' }}">
                                     {{ $isRead ? 'Read' : 'Unread' }}
-                                </span>
+                                </span> --}}
                             </div>
                         </div>
                     </div>
