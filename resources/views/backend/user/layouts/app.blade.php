@@ -95,14 +95,14 @@
 
             window.Echo.channel('users')
                 .listen('.notification.sent', (e) => {
-                    // console.log(e);
+                    console.log(e);
                     showNotification('New message received.');
                     Livewire.dispatch('notification-updated');
                 });
 
             window.Echo.private('user.{{ auth()->id() }}')
                 .listen('.notification.sent', (e) => {
-                    // console.log(e);
+                    console.log(e);
                     showNotification('New message received.');
                     Livewire.dispatch('notification-updated');
                 });
