@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Order;
 use App\Models\Permission;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -214,4 +215,15 @@ function SouceClassName($className)
 {
     $className = basename(str_replace('\\', '/', $className));
     return trim(preg_replace('/(?<!\ )[A-Z]/', ' $0', $className));
+}
+
+
+function generateOrderID($length = 10)
+{
+    $orderID = Str::random($length);
+    $order = Order::where('order_id', $orderID)->first();
+    if ($order) {
+        return generateOrderID($length);
+    }
+    return $orderID;
 }

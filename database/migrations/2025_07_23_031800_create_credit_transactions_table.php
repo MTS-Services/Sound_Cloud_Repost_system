@@ -16,12 +16,12 @@ return new class extends Migration {
     {
         Schema::create('credit_transactions', function (Blueprint $table) {
             $table->id();
-
+            $table->unsignedBigInteger('sort_order')->default(0);
             $table->string('receiver_urn')->index();
             $table->string('sender_urn')->index()->nullable();
             $table->tinyInteger('calculation_type')->comment(
-                CreditTransaction::CALCULATION_TYPE_DEBIT . ': Debit / Addition' .
-                CreditTransaction::CALCULATION_TYPE_CREDIT . ': Credit / Subtraction'
+                CreditTransaction::CALCULATION_TYPE_DEBIT . ': Debit' .
+                CreditTransaction::CALCULATION_TYPE_CREDIT . ': Credit'
             );
 
             $table->unsignedBigInteger('source_id')->index();
@@ -33,9 +33,11 @@ return new class extends Migration {
                 CreditTransaction::TYPE_REFUND . ': Refund' .
                 CreditTransaction::TYPE_PURCHASE . ': Purchase' .
                 CreditTransaction::TYPE_PENALTY . ': Penalty' .
-                CreditTransaction::TYPE_BONUS . ': Bonus'
+                CreditTransaction::TYPE_BONUS . ': Bonus' .
+                CreditTransaction::TYPE_MANUAL . ': Manual'
             );
-            $table->enum('status', [ 'processing','succeeded','canceled'])->default('processing');
+            // $table->enum('status', [ 'processing','succeeded','canceled'])->default('processing');
+            $table->tinyInteger('status')->default(CreditTransaction::STATUS_PROCESSING);
             $table->decimal('amount', 15, 2)->nullable();
             $table->decimal('credits', 15, 2);
 

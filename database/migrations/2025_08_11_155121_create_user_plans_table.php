@@ -1,0 +1,43 @@
+<?php
+
+use App\Models\UserPlan;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use App\Http\Traits\AuditColumnsTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+return new class extends Migration {
+    use AuditColumnsTrait, SoftDeletes;
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('user_plans', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('sort_order')->default(0);
+            $table->string('user_urn');
+            $table->foreign('user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->unsignedBigInteger('plan_id');
+            $table->foreign('plan_id')->references('id')->on('plans')->onDelete('cascade')->onUpdate('cascade');
+            $table->unsignedBigInteger('order_id')->unique();
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade')->onUpdate('cascade');
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->decimal('price', 10, 2)->default(0.00);
+            $table->tinyInteger('status')->default(UserPlan::STATUS_PENDING)->index();
+            $table->timestamps();
+            $table->softDeletes();
+            $this->addMorphedAuditColumns($table);
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('user_plans');
+    }
+};

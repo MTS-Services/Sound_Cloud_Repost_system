@@ -169,6 +169,9 @@ class CreditTransactionController extends Controller
                 ->editColumn('created_at', function ($payment) {
                     return $payment->created_at_formatted;
                 })
+                ->editColumn('user_urn', function ($payment) {
+                    return $payment->user?->name;
+                })
                 ->editColumn('action', function ($payment) {
                     $menuItems = $this->paymentMenuItems($payment);
                     return view('components.action-buttons', compact('menuItems'))->render();

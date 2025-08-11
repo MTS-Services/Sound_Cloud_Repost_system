@@ -7,8 +7,7 @@ use App\Http\Traits\AuditColumnsTrait;
 use App\Models\Payment;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-return new class extends Migration
-{
+return new class extends Migration {
     use AuditColumnsTrait, SoftDeletes;
     /**
      * Run the migrations.
@@ -24,12 +23,13 @@ return new class extends Migration
             $table->string('postal_code')->nullable();
             $table->string('reference')->unique()->nullable();
             $table->string('user_urn');
-            $table->unsignedBigInteger('credit_transaction_id')->nullable();
+            $table->unsignedBigInteger('order_id');
+
 
             $table->string('payment_method')->nullable();
             $table->tinyInteger('payment_gateway');
             $table->string('payment_provider_id')->index()->nullable();
-            $table->decimal('amount', 10, 2);
+            $table->decimal('amount', 10, 2)->default(0.00);
             $table->string('currency', 3)->default('USD');
             $table->decimal('credits_purchased', 10, 2)->nullable();
             $table->decimal('exchange_rate', 10, 6)->nullable();
@@ -49,13 +49,13 @@ return new class extends Migration
 
             $table->timestamp('processed_at')->index()->nullable();
 
-            $table->foreign('credit_transaction_id')->references('id')->on('credit_transactions')->cascadeOnDelete();
+            $table->foreign('order_id')->references('id')->on('orders')->cascadeOnDelete();
             $table->foreign('user_urn')->references('urn')->on('users')->cascadeOnDelete();
 
 
             $table->timestamps();
             $table->softDeletes();
-            $this->addAdminAuditColumns($table);
+            $this->addMorphedAuditColumns($table);
         });
     }
 

@@ -28,7 +28,6 @@ class DatabaseSeeder extends Seeder
             PlaylistSeeder::class,
             TrackSeeder::class,
             CreditSeeder::class,
-            OrderSeeder::class,
             UserInformationSeeder::class,
             RepostSeeder::class,
             FaqSeeder::class,

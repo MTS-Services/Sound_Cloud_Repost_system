@@ -84,20 +84,20 @@ class UserService
         ]);
     }
 
-    public function addCredit(User $user, array $data): void
-    {
-        $credit['transaction_type'] = CreditTransaction::TYPE_MANUAL;
-        $credit['calculation_type'] = CreditTransaction::CALCULATION_TYPE_DEBIT;
-        $credit['receiver_urn'] = $user->urn;
-        $credit['credits'] = $data['credit'];
-        $credit['amount'] = 0;
-        $credit['status'] = 'succeeded';
-        $credit['creater_id'] = admin()->id;
-        $credit['creater_type'] = get_class(admin());
-        $credit['description'] = $data['description'] ?? 'Manual credit addition by '.admin()->name;
-        $credit['source_id'] = admin()->id;
-        $credit['source_type'] = get_class(admin());
-        CreditTransaction::create($credit);
-       
-    }
+    // public function addCredit(User $user, array $data): void
+    // {
+    //     $credit['transaction_type'] = CreditTransaction::TYPE_MANUAL;
+    //     $credit['calculation_type'] = CreditTransaction::CALCULATION_TYPE_DEBIT;
+    //     $credit['receiver_urn'] = $user->urn;
+    //     $credit['credits'] = $data['credit'];
+    //     $credit['amount'] = 0;
+    //     $credit['status'] = 'succeeded';
+    //     $credit['creater_id'] = admin()->id;
+    //     $credit['creater_type'] = get_class(admin());
+    //     $credit['description'] = $data['description'] ?? 'Manual credit addition by '.admin()->name;
+    //     $credit['source_id'] = admin()->id;
+    //     $credit['source_type'] = get_class(admin());
+    //     CreditTransaction::create($credit);
+
+    // }
 }

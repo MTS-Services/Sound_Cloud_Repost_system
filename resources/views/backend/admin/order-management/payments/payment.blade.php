@@ -13,17 +13,17 @@
             <table class="table datatable table-zebra">
                 <thead>
                     <tr>
-                        <th >{{ __('SL') }}</th>
-                        <th>{{ __('Name') }}</th>
-                        <th>{{ __('Email') }}</th>    
+                        <th>{{ __('SL') }}</th>
+                        <th>{{ __('User') }}</th>
+                        <th>{{ __('Order ID') }}</th>
                         <th>{{ __('Amount') }}</th>
-                        <th>{{ __('Transaction ID') }}</th>
-                        <th>{{ __('currency') }}</th>
+                        <th>{{ __('Currency') }}</th>
+                        <th>{{ __('Payment Gateway') }}</th>
                         <th>{{ __('Created Date') }}</th>
-                        <th >{{ __('Action') }}</th>
+                        <th>{{ __('Action') }}</th>
                     </tr>
                 </thead>
-                
+
             </table>
         </div>
     </section>
@@ -38,12 +38,12 @@
             document.addEventListener('DOMContentLoaded', () => {
                 let table_columns = [
                     //name and data, Paymentsable, searchable
-                 
-                    ['name', true, true],
-                    ['email_address', true, true],
+
+                    ['user_urn', true, true],
+                    ['order.order_id', true, true],
                     ['amount', true, true],
-                    ['payment_provider_id', true, true],
                     ['currency', true, true],
+                    ['payment_gateway_label', true, true],
                     ['created_at', true, true],
                     ['action', false, false],
                 ];
@@ -53,7 +53,7 @@
                     displayLength: 10,
                     main_route: "{{ route('om.credit-transaction.payments') }}",
                     order_route: "{{ route('update.sort.order') }}",
-                    export_columns: [0, 1, 2, 3,5,6],
+                    export_columns: [0, 1, 2, 3, 5, 6],
                     model: 'payment',
                 };
 
@@ -76,8 +76,8 @@
                             label: '{{ __('User') }}',
                             key: 'user_urn',
                         },
-                       
-                       
+
+
                         {
                             label: '{{ __('Cradits') }}',
                             key: 'credits',
@@ -86,8 +86,8 @@
                             label: '{{ __('Amount') }}',
                             key: 'amount',
                         },
-                        
-                       
+
+
                          {
                             label: '{{ __('Status') }}',
                             key: 'status_label',

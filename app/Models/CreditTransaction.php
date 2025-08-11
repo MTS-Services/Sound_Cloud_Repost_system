@@ -4,25 +4,24 @@ namespace App\Models;
 
 use App\Models\BaseModel;
 use Faker\Core\Color;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CreditTransaction extends BaseModel
 {
     protected $fillable = [
+        'sort_order',
         'receiver_urn',
         'sender_urn',
         'calculation_type',
         'source_id',
         'source_type',
         'transaction_type',
-        'calculation_type',
-        'source_id',
-        'source_type',
+        'status',
         'amount',
         'credits',
         'description',
         'metadata',
-        'status',
 
         'creater_id',
         'updater_id',
@@ -32,44 +31,61 @@ class CreditTransaction extends BaseModel
         'deleter_type',
     ];
 
-    public const STATUS_PENDING = 0;
-    public const STATUS_COMPLETED = 1;
+
+
+    public const STATUS_PROCESSING = 0;
+    public const STATUS_SUCCEEDED = 1;
     public const STATUS_FAILED = 2;
     public const STATUS_REFUNDED = 3;
-    public const STATUS_DISPUTED = 4;
+    public const STATUS_CANCELED = 4;
 
 
     protected $casts = [
         'metadata' => 'array',
     ];
-    public function getAppends()
+
+    public function __construct(array $attributes = [])
     {
-        return [
+        parent::__construct($attributes);
+        $this->appends = array_merge(parent::getAppends(), [
+            'calculation_type_name',
+            'calculation_type_color',
             'status_label',
             'status_color',
-            'status_btn_label',
-            'status_btn_color',
-            'type_name',
+            'transaction_type_name',
+        ]);
+    }
 
+    public function getStatusList(): array
+    {
+        return [
+            self::STATUS_PROCESSING => 'Processing',
+            self::STATUS_SUCCEEDED => 'Succeeded',
+            self::STATUS_FAILED => 'Failed',
+            self::STATUS_REFUNDED => 'Refunded',
+            self::STATUS_CANCELED => 'Canceled',
+        ];
+    }
+    public function getStatusClassList(): array
+    {
+        return [
+            self::STATUS_PROCESSING => 'warning',
+            self::STATUS_SUCCEEDED => 'success',
+            self::STATUS_FAILED => 'secondary',
+            self::STATUS_REFUNDED => 'info',
+            self::STATUS_CANCELED => 'error',
         ];
     }
 
     public function getStatusLabelAttribute(): string
     {
-        return $this->status == self::STATUS_PENDING ? 'Pending' : 'Completed';
+        return $this->status ? $this->getStatusList()[$this->status] : 'Unknown';
     }
     public function getStatusColorAttribute(): string
     {
-        return $this->status == self::STATUS_PENDING ? 'Green' : 'success';
+        return $this->status ? $this->getStatusClassList()[$this->status] : 'primary';
     }
-    public function getStatusBtnLabelAttribute(): string
-    {
-        return $this->status == self::STATUS_PENDING ? 'Pending' : 'Completed';
-    }
-    public function getStatusBtnColorAttribute(): string
-    {
-        return $this->status == self::STATUS_PENDING ? 'btn-warning' : 'btn-success';
-    }
+
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                     Start of RELATIONSHIPS
@@ -85,17 +101,6 @@ class CreditTransaction extends BaseModel
         return $this->belongsTo(User::class, 'sender_urn', 'urn');
     }
 
-    public function campaign()
-    {
-        return $this->belongsTo(Campaign::class);
-    }
-
-
-    // public function repostRequest()
-    // {
-    //     return $this->belongsTo(RepostRequest::class);
-    // }
-
     public function source()
     {
         return $this->morphTo();
@@ -104,14 +109,7 @@ class CreditTransaction extends BaseModel
                     End of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-        $this->appends = array_merge(parent::getAppends(), [
-            'calculation_type_name',
-            'calculation_type_color',
-        ]);
-    }
+
 
 
     public const CALCULATION_TYPE_DEBIT = 0; // ADDITION
@@ -126,23 +124,23 @@ class CreditTransaction extends BaseModel
     }
     public function getCalculationTypeNameAttribute(): string
     {
-        return self::getCalculationTypes()[$this->calculation_type] ?? 'Unknown';
+        return $this->calculation_type ? self::getCalculationTypes()[$this->calculation_type] : 'Unknown';
     }
     public function getCalculationTypeColorAttribute(): string
     {
-        return [
+        return $this->calculation_type ? [
             self::CALCULATION_TYPE_DEBIT => 'badge-error',
             self::CALCULATION_TYPE_CREDIT => 'badge-success',
-        ][$this->calculation_type] ?? 'badge-secondary';
+        ][$this->calculation_type] : 'badge-secondary';
     }
 
     // Scope
-    public function scopeAddition()
+    public function scopeDebit()
     {
         return $this->where('calculation_type', '=', self::CALCULATION_TYPE_DEBIT);
     }
 
-    public function scopeSubtraction()
+    public function scopeCredit()
     {
         return $this->where('calculation_type', '=', self::CALCULATION_TYPE_CREDIT);
     }
@@ -170,30 +168,80 @@ class CreditTransaction extends BaseModel
     }
     public function getTypeNameAttribute(): string
     {
-        return self::getTypes()[$this->transaction_type];
+        return $this->transaction_type ? self::getTypes()[$this->transaction_type] : 'Unknown';
     }
 
 
     #####################################
     ########### Type Scopes #############
     #####################################
-    public function scopeEarn()
+    public function scopeEarn(Builder $query): Builder
     {
-        return $this->where('transaction_type', '=', self::TYPE_EARN);
+        return $query->where('transaction_type', self::TYPE_EARN);
     }
 
-    public function scopeSpend()
+    public function scopeSpend(Builder $query): Builder
     {
-        return $this->where('transaction_type', '=', self::TYPE_SPEND);
+        return $query->where('transaction_type', self::TYPE_SPEND);
     }
 
-    public function scopeRefund()
+    public function scopeRefund(Builder $query): Builder
     {
-        return $this->where('transaction_type', '=', self::TYPE_REFUND);
+        return $query->where('transaction_type', self::TYPE_REFUND);
     }
 
-    public function scopePurchase()
+    public function scopePurchase(Builder $query): Builder
     {
-        return $this->where('transaction_type', '=', self::TYPE_PURCHASE);
+        return $query->where('transaction_type', self::TYPE_PURCHASE);
+    }
+    public function scopePenalty(Builder $query): Builder
+    {
+        return $query->where('transaction_type', self::TYPE_PENALTY);
+    }
+    public function scopeBonus(Builder $query): Builder
+    {
+        return $query->where('transaction_type', self::TYPE_BONUS);
+    }
+    public function scopeManual(Builder $query): Builder
+    {
+        return $query->where('transaction_type', self::TYPE_MANUAL);
+    }
+
+    public function scopeProcessing(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_PROCESSING);
+    }
+    public function scopeSucceeded(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_SUCCEEDED);
+    }
+    public function scopeFailed(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_FAILED);
+    }
+    public function scopeRefunded(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_REFUNDED);
+    }
+    public function scopeCanceled(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_CANCELED);
+    }
+
+    public function scopeSelf(Builder $query): Builder
+    {
+        return $query->where('sender_urn', user()->urn)->orWhere('receiver_urn', user()->urn);
+    }
+    public function scopeWithoutSelf(Builder $query): Builder
+    {
+        return $query->where('sender_urn', '!=', user()->urn)->orWhere('receiver_urn', '!=', user()->urn);
+    }
+    public function scopeSelfSend(Builder $query): Builder
+    {
+        return $query->where('sender_urn', user()->urn);
+    }
+    public function scopeSelfReceive(Builder $query): Builder
+    {
+        return $query->where('receiver_urn', user()->urn);
     }
 }

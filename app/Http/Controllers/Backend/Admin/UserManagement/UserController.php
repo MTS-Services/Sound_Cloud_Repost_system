@@ -4,13 +4,18 @@ namespace App\Http\Controllers\Backend\Admin\UserManagement;
 
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
+use App\Models\CreditTransaction;
+use App\Models\Order;
+use App\Models\Payment;
 use App\Models\Playlist;
 use App\Models\Track;
 use App\Models\User;
 use App\Models\UserInformation;
+use App\Services\Admin\CreditManagement\CreditService;
 use App\Services\Admin\UserManagement\UserService;
 use App\Services\PlaylistService;
 use App\Services\TrackService;
+use DB;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -26,6 +31,7 @@ class UserController extends Controller implements HasMiddleware
     protected UserService $userService;
     protected PlaylistService $playlistService;
     protected TrackService $trackService;
+    protected CreditService $creditService;
 
     protected function redirectIndex(): RedirectResponse
     {
@@ -39,11 +45,12 @@ class UserController extends Controller implements HasMiddleware
 
 
 
-    public function __construct(UserService $userService, PlaylistService $playlistService, TrackService $trackService)
+    public function __construct(UserService $userService, PlaylistService $playlistService, TrackService $trackService, CreditService $creditService)
     {
         $this->userService = $userService;
         $this->playlistService = $playlistService;
         $this->trackService = $trackService;
+        $this->creditService = $creditService;
     }
 
     public static function middleware(): array
@@ -84,7 +91,7 @@ class UserController extends Controller implements HasMiddleware
     protected function menuItems($model): array
     {
         return [
-            
+
             [
                 'routeName' => 'um.user.detail',
                 'params' => encrypt($model->id),
@@ -154,7 +161,7 @@ class UserController extends Controller implements HasMiddleware
     public function detail(Request $request, string $id)
     {
         $data['user'] = $this->userService->getUser($id)->load(['userInfo']);
-       $data['userinfo'] = $data['user']->userInfo;
+        $data['userinfo'] = $data['user']->userInfo;
         return view('backend.admin.user-management.user.detail', $data);
     }
     public function show(Request $request, string $id)
@@ -204,9 +211,9 @@ class UserController extends Controller implements HasMiddleware
                 'label' => ' Details',
                 'permissions' => ['permissions-list']
             ],
-            
-            
-              [
+
+
+            [
                 'routeName' => 'um.user.playlist.track-list',
                 ['user' => $model->urn],
                 'params' => [encrypt($model->soundcloud_urn), encrypt($model->id)],
@@ -218,15 +225,15 @@ class UserController extends Controller implements HasMiddleware
     }
 
     //palylest track
-     
+
 
     public function playlistDetail($id)
     {
-      $data['playlists'] = Playlist::with('user')->find(decrypt($id));
+        $data['playlists'] = Playlist::with('user')->find(decrypt($id));
         return view('backend.admin.user-management.playlists.details', $data);
     }
 
-    
+
     public function playlistTracks(Request $request, $playlistUrn)
     {
         $palaylistUrn = $playlistUrn;
@@ -313,12 +320,12 @@ class UserController extends Controller implements HasMiddleware
 
     public function tracklistDetail($trackUrn)
     {
-        $data['tracklists'] = $this->trackService->getTrack($trackUrn , 'urn')->load(['user']);
+        $data['tracklists'] = $this->trackService->getTrack($trackUrn, 'urn')->load(['user']);
         return view('backend.admin.user-management.tracklist.details', $data);
     }
-    public function playlistShow(string $soudcloud_urn,)
+    public function playlistShow(string $soudcloud_urn, )
     {
-        $data = $this->playlistService->getPlaylist($soudcloud_urn, 'soundcloud_urn',);
+        $data = $this->playlistService->getPlaylist($soudcloud_urn, 'soundcloud_urn', );
         $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
         return response()->json($data);
@@ -341,8 +348,47 @@ class UserController extends Controller implements HasMiddleware
         $data = $request->validate([
             'credit' => 'required|numeric|min:1',
         ]);
-        $this->userService->addCredit($user, $data);
-        session()->flash('success', 'Credit added successfully.');
+
+
+        $data['receiver_urn'] = $user->urn;
+        $data['sender_urn'] = null;
+        $data['description'] = 'Credit added by system';
+        $data['transaction_type'] = CreditTransaction::TYPE_MANUAL;
+        $data['calculation_type'] = CreditTransaction::CALCULATION_TYPE_DEBIT;
+        $data['credits'] = $data['credit'];
+        $data['amount'] = 0;
+        $data['payment_status'] = Payment::STATUS_SUCCEEDED;
+        $data['receiver_urn'] = $user->urn;
+        $data['creater_id'] = admin()->id;
+        $data['creater_type'] = get_class(admin());
+        $data['source_id'] = admin()->id;
+        $data['source_type'] = get_class(admin());
+        $data['order_type'] = Order::TYPE_CREDIT;
+        $data['paid_by'] = admin()->name;
+        $data['email_address'] = null;
+        $data['post_code'] = null;
+        $data['address'] = null;
+        $data['reference'] = null;
+        $data['payment_method'] = null;
+        $data['payment_gateway'] = Payment::PAYMENT_GATEWAY_UNKNOWN;
+        $data['payment_provider_id'] = null;
+        $data['currency'] = 'USD';
+        $data['exchange_rate'] = null;
+        $data['payment_intent_id'] = null;
+        $data['receipt_url'] = null;
+        $data['failure_reason'] = null;
+        $data['metadata'] = null;
+        $data['processed_at'] = now();
+        DB::transaction(function () use ($data) {
+            try {
+                $this->creditService->buyCredit($data);
+                session()->flash('success', 'Credit added successfully.');
+            } catch (\Throwable $th) {
+                session()->flash('error', 'Error adding credit.');
+                throw $th;
+
+            }
+        });
         return $this->redirectIndex();
     }
 }

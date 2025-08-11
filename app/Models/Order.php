@@ -3,17 +3,27 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Order extends BaseModel
 {
     //
 
     protected $fillable = [
+        'sort_order',
         'user_urn',
+        'source_id',
+        'source_type',
+        'order_id',
         'credits',
         'amount',
         'status',
+        'type',
 
         'creater_id',
         'updater_id',
@@ -32,9 +42,9 @@ class Order extends BaseModel
         return $this->belongsTo(User::class, 'user_urn', 'urn');
     }
 
-    public function creditTransaction(): BelongsTo
+    public function source(): MorphTo
     {
-        return $this->belongsTo(CreditTransaction::class);
+        return $this->morphTo();
     }
 
 
@@ -46,51 +56,192 @@ class Order extends BaseModel
     {
         parent::__construct($attributes);
         $this->appends = array_merge(parent::getAppends(), [
-            //
+            'status_label',
+            'status_color',
+            'type_label',
+            'type_color',
         ]);
     }
 
     // Constants for order status
-public const STATUS_PENDING   = 0;
-public const STATUS_SUCCESS   = 1;
-public const STATUS_CANCELLED = 2;
+    public const STATUS_PENDING = 0;
+    public const STATUS_COMPLETED = 1;
+    public const STATUS_FAILED = 2;
+    public const STATUS_REFUNDED = 3;
+    public const STATUS_CANCELED = 4;
 
-/**
- * List of status codes with their labels.
- */
+    public const TYPE_CREDIT = 1;
+    public const TYPE_PLAN = 2;
 
-    public static function statusList(): array
+    public static function getTypeList(): array
+    {
+        return [
+            self::TYPE_CREDIT => 'Credit',
+            self::TYPE_PLAN => 'Plan',
+        ];
+    }
+    public static function getTypeColorList(): array
+    {
+        return [
+            self::TYPE_CREDIT => 'primary',
+            self::TYPE_PLAN => 'info',
+        ];
+    }
+
+    /**
+     * List of status codes with their labels.
+     */
+
+    public static function getStatusList(): array
     {
         return [
             self::STATUS_PENDING => 'Pending',
-            self::STATUS_SUCCESS => 'Success',
-            self::STATUS_CANCELLED => 'Cancelled',
+            self::STATUS_COMPLETED => 'Completed',
+            self::STATUS_FAILED => 'Failed',
+            self::STATUS_REFUNDED => 'Refunded',
+            self::STATUS_CANCELED => 'Canceled',
+        ];
+    }
+
+    public function getTypeLabelAttribute()
+    {
+        return $this->type ? self::getTypeList()[$this->type] : 'Unknown';
+    }
+
+    public function getTypeColorAttribute()
+    {
+        return $this->type ? self::getTypeColorList()[$this->type] : 'primary';
+    }
+    public static function getStatusColorList(): array
+    {
+        return [
+            self::STATUS_PENDING => 'warning',
+            self::STATUS_COMPLETED => 'success',
+            self::STATUS_FAILED => 'secondary',
+            self::STATUS_REFUNDED => 'info',
+            self::STATUS_CANCELED => 'error',
         ];
     }
     public function getStatusLabelAttribute()
     {
-        return self::statusList()[$this->status];
+        return $this->status ? self::getStatusList()[$this->status] : 'Unknown';
     }
 
     public function getStatusColorAttribute()
     {
-        return $this->status == self::STATUS_PENDING ? 'badge-success' : 'badge-error';
+        return $this->status ? self::getStatusColorList()[$this->status] : 'primary';
     }
 
-    public function getStatusBtnLabelAttribute()
+    public function scopePending(Builder $query): Builder
     {
-        return $this->status == self::STATUS_PENDING ? self::statusList()[self::STATUS_SUCCESS] : self::statusList()[self::STATUS_CANCELLED];
+        return $query->where('status', self::STATUS_PENDING);
     }
 
-    public function getStatusBtnColorAttribute()
+    public function scopeCompleted(Builder $query): Builder
     {
-        return $this->status == self::STATUS_PENDING ? 'btn-error' : 'btn-success';
+        return $query->where('status', self::STATUS_COMPLETED);
     }
-    public function getStatusBtnClassAttribute()
+
+    public function scopeFailed(Builder $query): Builder
     {
-        return $this->status == self::STATUS_CANCELLED ? 'btn-error' : 'btn-success';
+        return $query->where('status', self::STATUS_FAILED);
     }
-    
+
+    public function scopeRefunded(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_REFUNDED);
+    }
+
+    public function scopeCanceled(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_CANCELED);
+    }
+    public function scopeTypeCredit(Builder $query): Builder
+    {
+        return $query->where('type', self::TYPE_CREDIT);
+    }
+
+    public function scopeTypePlan(Builder $query): Builder
+    {
+        return $query->where('type', self::TYPE_PLAN);
+    }
+
+    public function transactions(): MorphMany
+    {
+        return $this->morphMany(CreditTransaction::class, 'source');
+    }
+
+    public function transaction(): MorphOne
+    {
+        return $this->morphOne(CreditTransaction::class, 'source');
+    }
+
+    public function userPlan(): HasOne
+    {
+        return $this->hasOne(UserPlan::class, 'order_id', 'id');
+    }
+
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            if ($model->status == self::STATUS_COMPLETED) {
+                if ($model->transaction) {
+                    $model->transaction?->update([
+                        'status' => CreditTransaction::STATUS_SUCCEEDED
+                    ]);
+                }
+
+                if ($model->userPlan) {
+                    $model->userPlan?->update([
+                        'status' => UserPlan::STATUS_ACTIVE
+                    ]);
+                }
+            }
+        });
+
+        // When updating
+        static::updating(function ($model) {
+            if ($model->isDirty('status') && $model->status == self::STATUS_COMPLETED) {
+                if ($model->transaction) {
+                    $model->transaction?->update([
+                        'status' => CreditTransaction::STATUS_SUCCEEDED
+                    ]);
+                }
+                if ($model->userPlan) {
+                    $model->userPlan?->update([
+                        'status' => UserPlan::STATUS_ACTIVE
+                    ]);
+                }
+
+            }
+            if ($model->isDirty('status') && $model->status == self::STATUS_FAILED) {
+                if ($model->transaction) {
+                    $model->transaction?->update([
+                        'status' => CreditTransaction::STATUS_FAILED
+                    ]);
+                }
+            }
+            if ($model->isDirty('status') && $model->status == self::STATUS_CANCELED) {
+                if ($model->transaction) {
+                    $model->transaction?->update([
+                        'status' => CreditTransaction::STATUS_CANCELED
+                    ]);
+                }
+                if ($model->userPlan) {
+                    $model->userPlan?->update([
+                        'status' => UserPlan::STATUS_CANCELED
+                    ]);
+                }
+            }
+        });
+    }
+
+
+
+
+
 
 
 }
