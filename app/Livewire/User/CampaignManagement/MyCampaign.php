@@ -952,7 +952,7 @@ class MyCampaign extends Component
     private function getCampaignsQuery(): \Illuminate\Database\Eloquent\Builder
     {
         return Campaign::with(['music' => function ($query) {
-            $query->self();
+            $query;
         }]);
     }
 
@@ -1525,13 +1525,16 @@ class MyCampaign extends Component
                 'active' => $this->getCampaignsQuery()
                     ->Open()
                     ->latest()
+                    ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'activePage', $this->activePage),
                 'completed' => $this->getCampaignsQuery()
                     ->Completed()
                     ->latest()
+                    ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'completedPage', $this->completedPage),
                 default => $this->getCampaignsQuery()
                     ->latest()
+                    ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage)
             };
             
