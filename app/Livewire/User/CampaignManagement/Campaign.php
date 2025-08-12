@@ -107,9 +107,9 @@ class Campaign extends Component
     public $activeTab = 'tracks';
 
     public $track = null;
-    public $credit = 100;
-    public $commentable = false;
-    public $likeable = false;
+    public $credit = 50;
+    public $commentable = true;
+    public $likeable = true;
     public $proFeatureEnabled = false;
     public $proFeatureValue = 1;
     public $maxFollower = 0;
@@ -186,7 +186,7 @@ class Campaign extends Component
             'credit' => [
                 'required',
                 'integer',
-                'min:100',
+                'min:50',
                 function ($attribute, $value, $fail) {
                     if ($value > userCredits()) {
                         $fail('The credit is not available.');
