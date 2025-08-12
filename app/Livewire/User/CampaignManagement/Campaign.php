@@ -21,6 +21,7 @@ use Livewire\WithPagination;
 use Throwable;
 use Illuminate\Support\Facades\Http;
 use Livewire\Attributes\On;
+use Illuminate\Database\Eloquent\Builder;
 
 class Campaign extends Component
 {
@@ -29,7 +30,7 @@ class Campaign extends Component
     protected ?CampaignService $campaignService = null;
     protected ?TrackService $trackService = null;
     protected ?PlaylistService $playlistService = null;
-    
+
     #[Locked]
     protected string $baseUrl = 'https://api.soundcloud.com';
 
@@ -53,7 +54,7 @@ class Campaign extends Component
     // Properties for filtering and search
     #[Url(as: 'q', except: '')]
     public string $search = '';
-    
+
     public $selectedTags = [];
     public $selecteTags = [];
     public $selectedGenre = [];
@@ -89,7 +90,7 @@ class Campaign extends Component
     public $playcount = false;
 
     // Constants
-    private const ITEMS_PER_PAGE = 2;
+    private const ITEMS_PER_PAGE = 10;
 
     // Listeners for browser events
     protected $listeners = [
@@ -217,7 +218,6 @@ class Campaign extends Component
             'recommended_pro' => $this->resetPage('recommendedProPage'),
             'recommended' => $this->resetPage('recommendedPage'),
             'all' => $this->resetPage('allPage'),
-            'recent' => $this->resetPage('recentPage'),
             default => $this->resetPage('recommendedProPage')
         };
     }
@@ -225,10 +225,10 @@ class Campaign extends Component
     /**
      * Get the base campaigns query with common filters
      */
-    private function getCampaignsQuery(): \Illuminate\Database\Eloquent\Builder
+    private function getCampaignsQuery(): Builder
     {
         $allowedTargetCredits = repostPrice(user());
-        
+
         return $this->campaignService->getCampaigns()
             ->where('budget_credits', '>=', $allowedTargetCredits)
             ->withoutSelf()
@@ -241,13 +241,13 @@ class Campaign extends Component
     /**
      * Apply search and filter conditions to the query
      */
-    private function applyFilters(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    private function applyFilters(Builder $query): Builder
     {
         // Apply search filter
         if (!empty($this->search)) {
             $query->whereHas('music', function ($q) {
                 $q->where('title', 'like', '%' . $this->search . '%')
-                  ->orWhere('description', 'like', '%' . $this->search . '%');
+                    ->orWhere('description', 'like', '%' . $this->search . '%');
             });
         }
 
@@ -302,7 +302,6 @@ class Campaign extends Component
             'recommended_pro' => 'recommendedProPage',
             'recommended' => 'recommendedPage',
             'all' => 'allPage',
-            'recent' => 'recentPage',
             default => 'recommendedProPage'
         };
     }
@@ -650,7 +649,7 @@ class Campaign extends Component
     public function getAllGenres()
     {
         $this->genres = $this->trackService->getTracks()
-            ->where('user_urn','!=', user()->urn)
+            ->where('user_urn', '!=', user()->urn)
             ->pluck('genre')
             ->unique()
             ->values()
@@ -680,7 +679,7 @@ class Campaign extends Component
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
                 $proFeatureEnabled = $this->proFeatureEnabled ? 1 : 0;
-                
+
                 $campaign = ModelsCampaign::create([
                     'music_id' => $this->musicId,
                     'music_type' => $this->musicType,
@@ -699,7 +698,7 @@ class Campaign extends Component
                     'max_repost_per_day' => $this->maxRepostsPerDay,
                     'target_genre' => $this->targetGenre,
                 ]);
-                
+
                 CreditTransaction::create([
                     'receiver_urn' => user()->urn,
                     'calculation_type' => CreditTransaction::CALCULATION_TYPE_CREDIT,
@@ -890,7 +889,7 @@ class Campaign extends Component
                 session()->flash('error', 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
                 return;
             }
-            
+
             $currentUserUrn = user()->urn;
 
             if ($this->campaignService->getCampaigns()->where('id', $campaignId)->where('user_urn', $currentUserUrn)->exists()) {
@@ -1152,14 +1151,14 @@ class Campaign extends Component
     /**
      * Initialize play times for campaigns
      */
-    private function initializePlayTimes($campaigns)
-    {
-        foreach ($campaigns as $campaign) {
-            if (!isset($this->playTimes[$campaign->id])) {
-                $this->playTimes[$campaign->id] = 0;
-            }
-        }
-    }
+    // private function initializePlayTimes($campaigns)
+    // {
+    //     foreach ($campaigns as $campaign) {
+    //         if (!isset($this->playTimes[$campaign->id])) {
+    //             $this->playTimes[$campaign->id] = 0;
+    //         }
+    //     }
+    // }
 
     /**
      * Main render method with optimized data loading and pagination
@@ -1169,73 +1168,68 @@ class Campaign extends Component
         try {
             // Get base query
             $baseQuery = $this->getCampaignsQuery();
-            
+
             // Apply filters to the query
-            $filteredQuery = $this->applyFilters(clone $baseQuery);
+            $baseQuery = $this->applyFilters($baseQuery);
+            $campaigns = collect();
+            // dd($baseQuery->get());
+            // $filteredQuery = $this->applyFilters(clone $baseQuery);
 
             // Initialize campaigns variables
-            $featuredCampaigns = collect();
-            $campaigns = null;
-
+            // $featuredCampaigns = collect();
+            // $campaigns = null;
             // Get campaigns based on active tab with pagination
             switch ($this->activeMainTab) {
                 case 'recommended_pro':
+
                     // Get featured campaigns (no pagination for featured)
-                    $featuredCampaigns = $this->applyFilters(clone $baseQuery)
-                        ->featured()
-                        ->take(6)
-                        ->get();
+
 
                     // Get regular campaigns with pagination
-                    $campaigns = $filteredQuery
-                        ->notFeatured()
+                    // $campaigns = $filteredQuery
+                    //     ->NotFeatured()
+                    //     ->latest()
+                    //     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
+
+
+                    $campaigns  = $baseQuery->proFeatured()
                         ->latest()
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
                     break;
 
                 case 'recommended':
-                    $campaigns = $filteredQuery
-                        ->notFeatured()
+
+                    $campaigns  = $baseQuery->featured()
                         ->latest()
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
                     break;
 
                 case 'all':
-                    $campaigns = $filteredQuery
-                        ->latest()
+                    $campaigns = $baseQuery->latest()
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage);
                     break;
-
-                case 'recent':
-                    $campaigns = $filteredQuery
-                        ->where('created_at', '>=', now()->subDays(7))
-                        ->latest()
-                        ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recentPage', $this->recentPage);
-                    break;
-
                 default:
-                    // Default to recommended_pro
-                    $featuredCampaigns = $this->applyFilters(clone $baseQuery)
-                        ->featured()
-                        ->take(6)
-                        ->get();
-
-                    $campaigns = $filteredQuery
-                        ->notFeatured()
+                    $campaigns = $baseQuery->proFeatured()
                         ->latest()
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
                     break;
             }
+            // if ($campaigns && $campaigns->count() > 0) {
+            //     $this->initializePlayTimes($campaigns);
+            // }
+            return view('backend.user.campaign_management.campaign', [
+                // 'featuredCampaigns' => $featuredCampaigns,
+                'campaigns' => $campaigns
+            ]);
 
-            // Initialize play times for all campaigns
-            if ($featuredCampaigns->isNotEmpty()) {
-                $this->initializePlayTimes($featuredCampaigns);
-            }
-            
-            if ($campaigns && $campaigns->count() > 0) {
-                $this->initializePlayTimes($campaigns);
-            }
+            // // Initialize play times for all campaigns
+            // if ($featuredCampaigns->isNotEmpty()) {
+            //     $this->initializePlayTimes($featuredCampaigns);
+            // }
 
+            // if ($campaigns && $campaigns->count() > 0) {
+            //     $this->initializePlayTimes($campaigns);
+            // }
         } catch (\Exception $e) {
             // Handle errors gracefully
             Log::error('Failed to load campaigns: ' . $e->getMessage(), [
@@ -1243,22 +1237,21 @@ class Campaign extends Component
                 'active_tab' => $this->activeMainTab,
                 'exception' => $e
             ]);
-            
-            $featuredCampaigns = collect();
-            $campaigns = new \Illuminate\Pagination\LengthAwarePaginator(
-                collect(),
-                0,
-                self::ITEMS_PER_PAGE,
-                1,
-                ['path' => request()->url()]
-            );
-            
-            session()->flash('error', 'Failed to load campaigns. Please try again.');
-        }
+            $campaigns = collect();
 
-        return view('backend.user.campaign_management.campaign', [
-            'featuredCampaigns' => $featuredCampaigns,
-            'campaigns' => $campaigns,
-        ]);
+            // $featuredCampaigns = collect();
+            // $campaigns = new \Illuminate\Pagination\LengthAwarePaginator(
+            //     collect(),
+            //     0,
+            //     self::ITEMS_PER_PAGE,
+            //     1,
+            //     ['path' => request()->url()]
+            // );
+
+            session()->flash('error', 'Failed to load campaigns. Please try again.');
+            return view('backend.user.campaign_management.campaign', [
+                'campaigns' => $campaigns
+            ]);
+        }
     }
 }
