@@ -172,12 +172,20 @@
                  <x-admin.navlink type="dropdown" icon="rocket" name="Faq Management" :page_slug="$active"
                 :items="[
                     [
+                        'name' => 'Faq-Category',
+                        'route' => route('fm.faq-category.index'),
+                        'icon' => 'megaphone',
+                        'active' => 'faq_category',
+                        'permission' => 'faqCategory-list',
+                    ],
+                    [
                         'name' => 'Faq',
                         'route' => route('fm.faq.index'),
                         'icon' => 'megaphone',
                         'active' => 'faq',
                         'permission' => 'faq-list',
                     ],
+                     
                 ]" />
         </nav>
     </div>

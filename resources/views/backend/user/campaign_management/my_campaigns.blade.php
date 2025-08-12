@@ -237,7 +237,7 @@
                     <div class=" dark:bg-slate-800 rounded-sm p-6">
                         <h2 class="text-lg font-bold text-gray-800 mb-4 text-black dark:text-gray-100">Tools and
                             FAQs</h2>
-                        <ul class="space-y-3">
+                        {{-- <ul class="space-y-3">
                             <li><a href="#" class="text-red-500 hover:underline">What is a campaign?</a>
                             </li>
                             <li><a href="#" class="text-red-500 hover:underline">How do I get the best out
@@ -246,8 +246,14 @@
                                     so quickly?</a></li>
                             <li><a href="#" class="text-red-500 hover:underline">Why is my campaign running
                                     slowly?</a></li>
+                        </ul> --}}
+                        <ul class="space-y-3">
+                            @foreach ($faqs as $faq) 
+                                <li><a href="{{ route('user.faq')}}#faq-{{ $faq->id }}" class="text-red-500 hover:underline">{{ $faq->question }}</a>
+                                </li>
+                            @endforeach
                         </ul>
-                    </div>
+                    </div> 
 
                     <!-- Reach More Section -->
                     <div class="dark:bg-slate-800 rounded-sm p-6 text-black dark:text-gray-100">

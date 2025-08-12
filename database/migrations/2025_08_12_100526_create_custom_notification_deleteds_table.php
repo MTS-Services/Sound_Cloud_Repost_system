@@ -5,7 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Http\Traits\AuditColumnsTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\FeatureCategory;
 
 return new class extends Migration
 {
@@ -15,16 +14,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('feature_categories', function (Blueprint $table) {
+        Schema::create('custom_notification_deleteds', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('sort_order')->default(0);
-            $table->string('name')->unique();
-            $table->tinyInteger('status')->default(FeatureCategory::STATUS_ACTIVE)->index();
 
+            $table->unsignedBigInteger('sort_order')->default(0);
+
+            $table->unsignedBigInteger('user_id')->index();
+            $table->string('user_type')->index();
+
+            $table->unsignedBigInteger('notification_id')->index();
+            $table->foreign('notification_id')->references('id')->on('custom_notifications')->onDelete('cascade')->onUpdate('cascade');
 
             $table->timestamps();
             $table->softDeletes();
-            $this->addAdminAuditColumns($table);
+            $this->addMorphedAuditColumns($table);
         });
     }
 
@@ -33,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('feature_categories');
+        Schema::dropIfExists('custom_notification_deleteds');
     }
 };

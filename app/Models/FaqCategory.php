@@ -4,22 +4,34 @@ namespace App\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class FeatureCategory extends BaseModel
+class FaqCategory extends BaseModel
 {
-    use SoftDeletes;
 
     protected $fillable = [
         'sort_order',
         'name',
+        'slug',
         'status',
 
         'created_by',
         'updated_by',
         'deleted_by',
     ];
+
+    /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
+                Start of RELATIONSHIPS
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
+
+    public function faqs()
+    {
+        return $this->hasMany(Faq::class);
+    }
+
+
+    /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
+                End of RELATIONSHIPS
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
     public function __construct(array $attributes = [])
     {
@@ -44,34 +56,28 @@ class FeatureCategory extends BaseModel
         return self::statusList()[$this->status];
     }
 
-        public function getStatusColorAttribute()
-{
-    return $this->status == self::STATUS_ACTIVE 
-        ? 'badge-success' 
-        : 'badge-error';
-}
-
+    public function getStatusColorAttribute()
+    {
+        return $this->status == self::STATUS_ACTIVE
+            ? 'badge-success'
+            : 'badge-error';
+    }
     public function getStatusBtnLabelAttribute()
     {
         return $this->status == self::STATUS_ACTIVE ? self::statusList()[self::STATUS_INACTIVE] : self::statusList();
     }
 
- 
+    public function scopeFaqCategoryBy($query, $userId)
+    {
+        return $query->where('created_by', $userId);
+    }
 
-    public function features():HasMany
-    {
-        return $this->hasMany(Feature::class);
-    }
-    public function featureRelations():HasMany
-    {
-        return $this->hasMany(FeatureRelation::class);
-    }
-    public function scopeActive(Builder $query) : Builder
+    public function scopeActive(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_ACTIVE);
     }
 
-    public function scopeInactive(Builder $query) : Builder
+    public function scopeInactive(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_INACTIVE);
     }

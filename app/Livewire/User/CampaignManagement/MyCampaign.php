@@ -4,6 +4,7 @@ namespace App\Livewire\User\CampaignManagement;
 
 use App\Models\Campaign;
 use App\Models\CreditTransaction;
+use App\Models\Faq;
 use App\Models\Track;
 use App\Models\Playlist;
 use App\Models\User;
@@ -28,6 +29,8 @@ class MyCampaign extends Component
     // Pagination URL parameters
     #[Url(as: 'allPage')]
     public ?int $allPage = 1;
+    // public $campaigns;
+    public $faqs;
 
     #[Url(as: 'activePage')]
     public ?int $activePage = 1;
@@ -911,7 +914,7 @@ class MyCampaign extends Component
 
     private function performLocalSearch()
     {
-        if($this->activeModalTab === 'tracks' && $this->playListTrackShow === true) {
+        if ($this->activeModalTab === 'tracks' && $this->playListTrackShow === true) {
             $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                 ->where(function ($query) {
                     $query->where('permalink_url', $this->searchQuery)
@@ -920,8 +923,7 @@ class MyCampaign extends Component
                 ->get();
             $this->tracks = $this->allPlaylistTracks->take($this->perPage);
             $this->hasMoreTracks = $this->allPlaylistTracks->count() > $this->perPage;
-        }
-        elseif ($this->activeModalTab === 'tracks') {
+        } elseif ($this->activeModalTab === 'tracks') {
             $query = Track::self()
                 ->where(function ($q) {
                     $q->where('title', 'like', '%' . $this->searchQuery . '%')
@@ -947,13 +949,12 @@ class MyCampaign extends Component
             }
             $this->playlists = $this->allPlaylists->take($this->perPage);
             $this->hasMorePlaylists = $this->allPlaylists->count() > $this->perPage;
-
         }
     }
     private function isSoundcloudUrl()
-{
-    return preg_match('/^https?:\/\/(www\.)?soundcloud\.com\//', $this->searchQuery);
-}
+    {
+        return preg_match('/^https?:\/\/(www\.)?soundcloud\.com\//', $this->searchQuery);
+    }
 
     private function resetSearchData()
     {
@@ -1066,6 +1067,295 @@ class MyCampaign extends Component
         $this->playlists = $this->playlists->concat($newPlaylists);
         $this->hasMorePlaylists = $newPlaylists->count() === $this->perPage;
     }
+
+
+
+    // public function addCreditsToCampaign()
+    // {
+    //     $this->validate([
+    //         'addCreditCostPerRepost' => 'required|numeric|min:1',
+    //     ]);
+
+    //     try {
+    //         $campaign = Campaign::findOrFail($this->addCreditCampaignId);
+
+    //         $newTotalBudget = $this->addCreditCostPerRepost * $campaign->target_reposts;
+    //         $creditsNeeded = $newTotalBudget - $campaign->budget_credits;
+
+    //         if ($creditsNeeded <= 0) {
+    //             session()->flash('warning', 'Campaign budget cannot be reduced.');
+    //             $this->showAddCreditModal = false;
+    //             $this->refreshCampaigns();
+    //             return;
+    //         }
+
+    //         if ($creditsNeeded > userCredits()) {
+    //             session()->flash('error', 'You need ' . $creditsNeeded . ' more credits to update this campaign budget.');
+    //             $this->showLowCreditWarningModal = true;
+    //             $this->showAddCreditModal = false;
+    //             return;
+    //         }
+
+    //         DB::transaction(function () use ($campaign, $newTotalBudget, $creditsNeeded) {
+    //             $campaign->update([
+    //                 'budget_credits' => $newTotalBudget,
+    //                 'updater_id' => user()->id,
+    //                 'updater_type' => get_class(user())
+    //             ]);
+
+    //             CreditTransaction::create([
+    //                 'receiver_urn' => user()->urn,
+    //                 'calculation_type' => CreditTransaction::CALCULATION_TYPE_CREDIT,
+    //                 'source_id' => $campaign->id,
+    //                 'source_type' => Campaign::class,
+    //                 'transaction_type' => CreditTransaction::TYPE_SPEND,
+    //                 'status' => 'succeeded',
+    //                 'credits' => $creditsNeeded,
+    //                 'description' => 'Spent on campaign budget increase',
+    //                 'metadata' => [
+    //                     'campaign_id' => $campaign->id,
+    //                     'action' => 'add_credits',
+    //                     'updated_at' => now(),
+    //                 ],
+    //                 'created_id' => user()->id,
+    //                 'created_type' => get_class(user())
+    //             ]);
+    //         });
+
+    //         session()->flash('success', 'Campaign budget updated successfully!');
+    //         $this->showAddCreditModal = false;
+    //         $this->refreshCampaigns();
+    //     } catch (\Exception $e) {
+    //         session()->flash('error', 'Failed to add credits: ' . $e->getMessage());
+    //         Log::error('Add credit error: ' . $e->getMessage(), [
+    //             'campaign_id' => $this->addCreditCampaignId,
+    //             'user_urn' => user()->urn ?? 'unknown',
+    //         ]);
+    //     }
+    // }
+
+    // Methods for Edit functionality
+    // public function openEditCampaignModal(Campaign $campaign)
+    // {
+    //     $this->resetValidation();
+    //     $this->resetErrorBag();
+
+    //     if ($campaign->status === Campaign::STATUS_CANCELLED) {
+    //         $this->openAlreadyCancelledModal();
+    //         return;
+    //     }
+
+    //     $this->editingCampaignId = $campaign->id;
+    //     $this->editTitle = $campaign->title;
+    //     $this->editDescription = $campaign->description;
+    //     $this->editEndDate = $campaign->end_date->format('Y-m-d');
+    //     $this->editOriginalBudget = $campaign->budget_credits;
+
+    //     // Reset warning states
+    //     $this->showBudgetWarning = false;
+    //     $this->budgetWarningMessage = '';
+    //     $this->canSubmit = true; // Default to true for editing
+
+    //     $this->showEditCampaignModal = true;
+
+    //     // Close other modals
+    //     $this->showSubmitModal = false;
+    //     $this->showCampaignsModal = false;
+    //     $this->showAddCreditModal = false;
+    //     $this->showCancelWarningModal = false;
+    // }
+
+    // public function updateCampaign()
+    // {
+    //     $this->validate();
+
+    //     try {
+    //         $campaign = Campaign::findOrFail($this->editingCampaignId);
+
+    //         $newBudgetCredits = $this->editCostPerRepost * $this->editTargetReposts;
+    //         $creditDifference = $newBudgetCredits - $campaign->budget_credits;
+
+    //         // Prevent budget decrease
+    //         if ($creditDifference < 0) {
+    //             session()->flash('error', 'Campaign budget cannot be decreased.');
+    //             return;
+    //         }
+
+    //         // Check if user has enough credits for increase
+    //         if ($creditDifference > 0 && $creditDifference > userCredits()) {
+    //             session()->flash('error', 'You need ' . $creditDifference . ' more credits to update this campaign budget.');
+    //             $this->showLowCreditWarningModal = true;
+    //             $this->showEditCampaignModal = false;
+    //             return;
+    //         }
+
+    //         DB::transaction(function () use ($campaign, $newBudgetCredits, $creditDifference) {
+    //             $campaign->update([
+    //                 'title' => $this->editTitle,
+    //                 'description' => $this->editDescription,
+    //                 'end_date' => $this->editEndDate,
+    //                 'budget_credits' => $newBudgetCredits,
+    //                 'updater_id' => user()->id,
+    //                 'updater_type' => get_class(user())
+    //             ]);
+
+    //             // Create credit transaction only if budget increased
+    //             if ($creditDifference > 0) {
+    //                 CreditTransaction::create([
+    //                     'receiver_urn' => user()->urn,
+    //                     'calculation_type' => CreditTransaction::CALCULATION_TYPE_CREDIT,
+    //                     'source_id' => $campaign->id,
+    //                     'source_type' => Campaign::class,
+    //                     'transaction_type' => CreditTransaction::TYPE_SPEND,
+    //                     'status' => 'succeeded',
+    //                     'credits' => $creditDifference,
+    //                     'description' => 'Spent on campaign update',
+    //                     'metadata' => [
+    //                         'campaign_id' => $campaign->id,
+    //                         'action' => 'edit_campaign',
+    //                         'updated_at' => now(),
+    //                     ],
+    //                     'created_id' => user()->id,
+    //                     'created_type' => get_class(user())
+    //                 ]);
+    //             }
+    //         });
+
+    //         session()->flash('success', 'Campaign updated successfully!');
+    //         $this->showEditCampaignModal = false;
+    //         $this->refreshCampaigns();
+    //     } catch (\Exception $e) {
+    //         session()->flash('error', 'Failed to update campaign: ' . $e->getMessage());
+    //         Log::error('Campaign update error: ' . $e->getMessage(), [
+    //             'campaign_id' => $this->editingCampaignId,
+    //             'user_urn' => user()->urn ?? 'unknown',
+    //         ]);
+    //     }
+    // }
+
+    // Methods for Delete functionality
+    // public function openCancelWarningModal(Campaign $campaign)
+    // {
+    //     $this->resetValidation();
+    //     $this->resetErrorBag();
+
+    //     if ($campaign->status === Campaign::STATUS_CANCELLED) {
+    //         $this->openAlreadyCancelledModal();
+    //         return;
+    //     }
+
+    //     $this->campaignToDeleteId = $campaign->id;
+
+    //     // Calculate remaining budget and 50% refund
+    //     $remainingBudget = $campaign->budget_credits - $campaign->credits_spent;
+    //     $this->refundAmount = floor($remainingBudget * 0.5);
+
+    //     $this->showCancelWarningModal = true;
+
+    //     // Close other modals
+    //     $this->showSubmitModal = false;
+    //     $this->showCampaignsModal = false;
+    //     $this->showAddCreditModal = false;
+    //     $this->showEditCampaignModal = false;
+    // }
+
+    // public function cancelCampaign()
+    // {
+    //     try {
+    //         $campaign = Campaign::findOrFail($this->campaignToDeleteId);
+
+    //         DB::transaction(function () use ($campaign) {
+    //             // Refund 50% of remaining budget if any
+    //             if ($this->refundAmount > 0) {
+    //                 CreditTransaction::create([
+    //                     'receiver_urn' => user()->urn,
+    //                     'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
+    //                     'source_id' => $campaign->id,
+    //                     'source_type' => Campaign::class,
+    //                     'transaction_type' => CreditTransaction::TYPE_REFUND,
+    //                     'status' => 'succeeded',
+    //                     'credits' => $this->refundAmount,
+    //                     'description' => 'Refund for canceled campaign (50% of remaining budget)',
+    //                     'metadata' => [
+    //                         'campaign_id' => $campaign->id,
+    //                         'action' => 'campaign_canceled',
+    //                         'refund_percentage' => 50,
+    //                         'canceled_at' => now(),
+    //                     ],
+    //                     'created_id' => user()->id,
+    //                     'created_type' => get_class(user())
+    //                 ]);
+    //             }
+
+    //             // update the status of the campaign
+    //             $campaign->update([
+    //                 'status' => Campaign::STATUS_CANCELLED,
+    //                 'refund_credits' => $this->refundAmount,
+    //                 'updater_id' => user()->id,
+    //                 'updater_type' => get_class(user())
+    //             ]);
+    //         });
+
+    //         session()->flash('success', 'Campaign canceled successfully! ' . number_format($this->refundAmount) . ' credits refunded.');
+    //         $this->showCancelWarningModal = false;
+    //         $this->refreshCampaigns();
+    //     } catch (\Exception $e) {
+    //         session()->flash('error', 'Failed to delete campaign: ' . $e->getMessage());
+    //         Log::error('Campaign cancellation error: ' . $e->getMessage(), [
+    //             'campaign_id' => $this->campaignToDeleteId,
+    //             'user_urn' => user()->urn ?? 'unknown',
+    //         ]);
+    //     }
+    // }
+
+    // public $activeMainTab = 'all';
+
+    // public function setActiveTab($tab)
+    // {
+    //     $this->activeMainTab = $tab;
+    //     $this->refreshCampaigns();
+    // }
+
+    public function refreshCampaigns()
+    {
+        try {
+            if ($this->activeMainTab == 'all') {
+                $this->campaigns = Campaign::with(['music'])
+                    ->where('user_urn', user()->urn)
+                    ->latest()
+                    ->get();
+            } elseif ($this->activeMainTab == 'active') {
+                $this->campaigns = Campaign::with(['music'])
+                    ->where('user_urn', user()->urn)
+                    ->Open()
+                    ->latest()
+                    ->get();
+            } elseif ($this->activeMainTab == 'completed') {
+                $this->campaigns = Campaign::with(['music'])
+                    ->where('user_urn', user()->urn)
+                    ->Completed()
+                    ->latest()
+                    ->get();
+            }
+        } catch (\Exception $e) {
+            $this->campaigns = collect();
+            session()->flash('error', 'Failed to refresh campaigns: ' . $e->getMessage());
+        }
+    }
+    public function getFaqs($categoryId = null)
+    {
+        return Faq::when($categoryId, function ($query) use ($categoryId) {
+            $query->where('faq_category_id', $categoryId);
+        })->get();
+    }
+
+
+    public function mount($categoryId = null)
+    {
+        $this->refreshCampaigns();
+        $this->faqs = $this->getFaqs($categoryId);
+    }
+
     public function render()
     {
         try {

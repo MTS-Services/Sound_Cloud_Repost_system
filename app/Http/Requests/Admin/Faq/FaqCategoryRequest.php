@@ -2,10 +2,9 @@
 
 namespace App\Http\Requests\Admin\Faq;
 
-use App\Models\Faq;
 use Illuminate\Foundation\Http\FormRequest;
 
-class FaqRequest extends FormRequest
+class FaqCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,23 +22,21 @@ class FaqRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'faq_category_id' => 'required|exists:faq_categories,id',
-            'question' => 'required|string|max:255',
-            'description' => 'required|string',
-           
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255',
         ] + ($this->isMethod('POST') ? $this->store() : $this->update());
     }
 
     protected function store(): array
     {
         return [
-            
+            'slug' => 'required|string|max:255|unique:faq_categories,slug',
         ];
     }
     protected function update(): array
     {
         return [
-            
+            'slug' => 'required|string|max:255|unique:faq_categories,slug,' . $this->id,
         ];
     }
 }

@@ -16,16 +16,12 @@ class NotificationList extends Component
     use WithPagination;
 
     public $filter = 'all';
-    public $search = '';
-    public $sort = 'newest';
     public $perPage = 10;
     public $currentUserId;
     public $currentUserType;
 
     protected $queryString = [
         'filter' => ['except' => 'all'],
-        'search' => ['except' => ''],
-        'sort' => ['except' => 'newest'],
     ];
 
     public function mount()
@@ -45,20 +41,6 @@ class NotificationList extends Component
     public function updateFilter($filter)
     {
         $this->filter = $filter;
-        $this->resetPage();
-    }
-
-    #[On('search-changed')]
-    public function updateSearch($search)
-    {
-        $this->search = $search;
-        $this->resetPage();
-    }
-
-    #[On('sort-changed')]
-    public function updateSort($sort)
-    {
-        $this->sort = $sort;
         $this->resetPage();
     }
 
@@ -135,41 +117,7 @@ class NotificationList extends Component
                     ->whereNotNull('read_at');
             });
         }
-
-        // Apply search
-        if ($this->search) {
-            $query->where(function ($q) {
-                // Use `->` and a standard LIKE query to search within JSON string values
-                $q->where('message_data->title', 'like', '%' . $this->search . '%')
-                    ->orWhere('message_data->message', 'like', '%' . $this->search . '%')
-                    ->orWhere('type', 'like', '%' . $this->search . '%');
-            });
-        }
-
-        // Apply sorting
-        switch ($this->sort) {
-            case 'oldest':
-                $query->oldest();
-                break;
-            case 'unread':
-                // Join is necessary for sorting by unread status
-                $query->leftJoin('custom_notification_statuses', function ($join) {
-                    $join->on('custom_notifications.id', '=', 'custom_notification_statuses.notification_id')
-                        ->where('custom_notification_statuses.user_id', $this->currentUserId)
-                        ->where('custom_notification_statuses.user_type', $this->currentUserType);
-                })
-                    ->orderByRaw('custom_notification_statuses.read_at IS NULL DESC')
-                    ->orderBy('custom_notifications.created_at', 'desc')
-                    ->select('custom_notifications.*');
-                break;
-            case 'type':
-                $query->orderBy('type')->latest();
-                break;
-            default:
-                $query->latest();
-                break;
-        }
-
+      
         return $query;
     }
 
@@ -178,8 +126,6 @@ class NotificationList extends Component
         return $this->getNotificationsQuery()->paginate($this->perPage);
     }
 
-    // ADDED: The `where` and `orWhere` clauses are now nested correctly within a main `where` to ensure all conditions are applied correctly.
-    // The previous implementation was applying `whereDoesntHave` and `whereHas` after the `orWhere`, which would not apply to public notifications.
     public function getUnreadCountProperty()
     {
         return CustomNotification::where(function ($query) {
@@ -222,7 +168,6 @@ class NotificationList extends Component
 
     public function getTotalCountProperty()
     {
-        // This is a direct count of all notifications relevant to the user, with both private and public conditions.
         return CustomNotification::where(function ($query) {
             $query->where('receiver_id', $this->currentUserId)
                 ->where('receiver_type', $this->currentUserType);

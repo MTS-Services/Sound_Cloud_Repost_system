@@ -23,15 +23,17 @@ class FaqSeeder extends Seeder
         // }
         
         Faq::create([
+          'faq_category_id' => 1,
           'question' => 'What is Soundcloud?',
           'description' => 'Soundcloud is a social music platform ',
-          'key' => true,
+          
         ]);
 
         Faq::create([
+          'faq_category_id' => 2,
           'question' => ' Soundcloud?',
           'description' => ' a social music platform ',
-          'key' => true,
+         
         ]);
     }
 }
