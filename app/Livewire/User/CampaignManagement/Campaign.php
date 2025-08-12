@@ -667,7 +667,6 @@ class Campaign extends Component
         $this->validate();
 
         try {
-            $totalBudget = $this->credit;
             if ($this->anyGenre == 'anyGenre') {
                 $this->targetGenre = $this->anyGenre;
             }
@@ -675,7 +674,7 @@ class Campaign extends Component
                 $this->targetGenre = $this->trackGenre;
             }
 
-            DB::transaction(function () use ($totalBudget) {
+            DB::transaction(function () {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
                 $proFeatureEnabled = $this->proFeatureEnabled ? 1 : 0;
@@ -685,7 +684,7 @@ class Campaign extends Component
                     'music_type' => $this->musicType,
                     'title' => $this->title,
                     'description' => $this->description,
-                    'budget_credits' => $totalBudget,
+                    'budget_credits' => $this->credit,
                     'user_urn' => user()->urn,
                     'status' => ModelsCampaign::STATUS_OPEN,
                     'max_followers' => $this->maxFollower,
@@ -694,6 +693,7 @@ class Campaign extends Component
                     'commentable' => $commentable,
                     'likeable' => $likeable,
                     'pro_feature' => $proFeatureEnabled,
+                    'momentum_price' => $proFeatureEnabled == 1 ? $this->credit/2 : 0,
                     'max_repost_last_24_h' => $this->maxRepostLast24h,
                     'max_repost_per_day' => $this->maxRepostsPerDay,
                     'target_genre' => $this->targetGenre,
@@ -706,7 +706,7 @@ class Campaign extends Component
                     'source_type' => ModelsCampaign::class,
                     'transaction_type' => CreditTransaction::TYPE_SPEND,
                     'status' => 'succeeded',
-                    'credits' => $totalBudget,
+                    'credits' => ($campaign->budget_credits + $campaign->momentum_price),
                     'description' => 'Spent on campaign creation',
                     'metadata' => [
                         'campaign_id' => $campaign->id,
