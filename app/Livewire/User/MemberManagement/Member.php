@@ -22,7 +22,7 @@ class Member extends Component
 {
     use WithPagination;
 
-    public ?int $perPage = 6;
+    public ?int $perPage = 9;
     public string $page_slug = 'members';
     public string $search = '';
     public string $genreFilter = '';
