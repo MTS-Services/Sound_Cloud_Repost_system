@@ -54,13 +54,15 @@ class TestController extends Controller
                 break;
         }
 
+        $title = $request->input('title', ($receiverId ? 'Private Notification' : 'Public Notification'));
+
         // Create the notification record in the database
         $notification = CustomNotification::create([
             'type' => $type,
             'receiver_id' => $receiverId,
             'receiver_type' => $receiverType,
             'message_data' => [
-                'title' => $receiverId ? 'Private Notification' : 'Public Notification',
+                'title' => $title,
                 'icon' => 'bell-ring',
                 'message' => $message,
                 'description' => $description,
