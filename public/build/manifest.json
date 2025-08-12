@@ -1,26 +1,26 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-CiovjTkE.css",
+    "file": "assets/app-DbXXiacR.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/dashboard.css": {
-    "file": "assets/dashboard-CxopRF2D.css",
+    "file": "assets/dashboard-CyAJKtDf.css",
     "src": "resources/css/dashboard.css",
     "isEntry": true
   },
   "resources/css/frontend.css": {
-    "file": "assets/frontend-e76--PB7.css",
+    "file": "assets/frontend-cyhrsws-.css",
     "src": "resources/css/frontend.css",
     "isEntry": true
   },
   "resources/css/user-dashboard.css": {
-    "file": "assets/user-dashboard-OdzKpUzH.css",
+    "file": "assets/user-dashboard-BjaxFNmt.css",
     "src": "resources/css/user-dashboard.css",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-DAOcy8IH.js",
+    "file": "assets/app-C2L4GrMq.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -32,7 +32,7 @@
     ]
   },
   "resources/js/user-dashboard.js": {
-    "file": "assets/user-dashboard-CKUT_Lk3.js",
+    "file": "assets/user-dashboard-DWgYK1Ro.js",
     "name": "user-dashboard",
     "src": "resources/js/user-dashboard.js",
     "isEntry": true,
