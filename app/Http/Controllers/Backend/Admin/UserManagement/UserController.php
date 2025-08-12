@@ -384,7 +384,7 @@ class UserController extends Controller implements HasMiddleware
         $data['processed_at'] = now();
         DB::transaction(function () use ($data) {
             try {
-               $this->creditService->buyCredit($data);
+                $this->creditService->addCredit($data);
                 //  broadcast(new UserNotificationSent($notification));
                 session()->flash('success', 'Credit added successfully.');
             } catch (\Throwable $th) {

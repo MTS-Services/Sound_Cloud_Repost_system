@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 class CreditService
 {
-    public function buyCredit(array $data): Payment|null
+    public function addCredit(array $data): Payment|null
     {
         try {
             return DB::transaction(function () use ($data) {

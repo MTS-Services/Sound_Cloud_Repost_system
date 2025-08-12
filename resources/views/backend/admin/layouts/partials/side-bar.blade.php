@@ -139,13 +139,13 @@
                         'active' => 'order',
                         'permission' => 'order-list',
                     ],
-                    [
-                        'name' => 'Purchase History',
-                        'route' => route('om.credit-transaction.purchase'),
-                        'icon' => 'megaphone',
-                        'active' => 'purchase',
-                        'permission' => 'purchase-list',
-                    ],
+                    // [
+                    //     'name' => 'Purchase History',
+                    //     'route' => route('om.credit-transaction.purchase'),
+                    //     'icon' => 'megaphone',
+                    //     'active' => 'purchase',
+                    //     'permission' => 'purchase-list',
+                    // ],
                 ]" />
             <x-admin.navlink type="dropdown" icon="rocket" name="Repost Request Tracking" :page_slug="$active"
                 :items="[
@@ -169,7 +169,7 @@
             <x-admin.navlink type="single" icon="credit-card" name="Credit Transactions" :route="route('om.credit-transaction.index')"
                 active="credit-transaction" :page_slug="$active" permission="transaction-list" />
 
-                 <x-admin.navlink type="dropdown" icon="rocket" name="Faq Management" :page_slug="$active"
+            <x-admin.navlink type="dropdown" icon="rocket" name="Faq Management" :page_slug="$active"
                 :items="[
                     [
                         'name' => 'Faq',
