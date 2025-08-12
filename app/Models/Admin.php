@@ -18,7 +18,7 @@ class Admin extends AuthBaseModel implements MustVerifyEmail
     {
         $this->notify(new AdminResetPasswordNotification($token));
     }
-     public function sendEmailVerificationNotification()
+    public function sendEmailVerificationNotification()
     {
         $this->notify(new AdminVerifyEmail($this));
     }
@@ -47,10 +47,19 @@ class Admin extends AuthBaseModel implements MustVerifyEmail
         ];
     }
 
+    /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
+                Start of RELATIONSHIPS
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
+
+
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id')->select(['name', 'id']);
     }
+    
+    /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
+                End of RELATIONSHIPS
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);

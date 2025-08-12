@@ -6,9 +6,6 @@ use App\Models\BaseModel;
 
 class Faq extends BaseModel
 {
-    //
-
-
     protected $fillable = [
         'sort_order',
         'question',

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Backend\Admin\UserManagement;
 
+use App\Events\UserNotificationSent;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
+use App\Models\CustomNotification;
 use App\Models\Playlist;
 use App\Models\Track;
 use App\Models\User;
@@ -15,6 +17,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 
@@ -84,7 +87,7 @@ class UserController extends Controller implements HasMiddleware
     protected function menuItems($model): array
     {
         return [
-            
+
             [
                 'routeName' => 'um.user.detail',
                 'params' => encrypt($model->id),
@@ -154,7 +157,7 @@ class UserController extends Controller implements HasMiddleware
     public function detail(Request $request, string $id)
     {
         $data['user'] = $this->userService->getUser($id)->load(['userInfo']);
-       $data['userinfo'] = $data['user']->userInfo;
+        $data['userinfo'] = $data['user']->userInfo;
         return view('backend.admin.user-management.user.detail', $data);
     }
     public function show(Request $request, string $id)
@@ -204,9 +207,9 @@ class UserController extends Controller implements HasMiddleware
                 'label' => ' Details',
                 'permissions' => ['permissions-list']
             ],
-            
-            
-              [
+
+
+            [
                 'routeName' => 'um.user.playlist.track-list',
                 ['user' => $model->urn],
                 'params' => [encrypt($model->soundcloud_urn), encrypt($model->id)],
@@ -218,15 +221,15 @@ class UserController extends Controller implements HasMiddleware
     }
 
     //palylest track
-     
+
 
     public function playlistDetail($id)
     {
-      $data['playlists'] = Playlist::with('user')->find(decrypt($id));
+        $data['playlists'] = Playlist::with('user')->find(decrypt($id));
         return view('backend.admin.user-management.playlists.details', $data);
     }
 
-    
+
     public function playlistTracks(Request $request, $playlistUrn)
     {
         $palaylistUrn = $playlistUrn;
@@ -313,7 +316,7 @@ class UserController extends Controller implements HasMiddleware
 
     public function tracklistDetail($trackUrn)
     {
-        $data['tracklists'] = $this->trackService->getTrack($trackUrn , 'urn')->load(['user']);
+        $data['tracklists'] = $this->trackService->getTrack($trackUrn, 'urn')->load(['user']);
         return view('backend.admin.user-management.tracklist.details', $data);
     }
     public function playlistShow(string $soudcloud_urn,)
@@ -341,7 +344,11 @@ class UserController extends Controller implements HasMiddleware
         $data = $request->validate([
             'credit' => 'required|numeric|min:1',
         ]);
-        $this->userService->addCredit($user, $data);
+
+        $notification = $this->userService->addCredit($user, $data);
+
+        broadcast(new UserNotificationSent($notification));
+
         session()->flash('success', 'Credit added successfully.');
         return $this->redirectIndex();
     }
