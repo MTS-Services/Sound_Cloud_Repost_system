@@ -72,6 +72,8 @@ class UserPlan extends BaseModel
             self::STATUS_EXPIRED => 'secondary',
         ];
     }
+
+    
     public function getStatusLabelAttribute()
     {
         return $this->status ? self::getStatusList()[$this->status] : 'Unknown';
@@ -79,7 +81,21 @@ class UserPlan extends BaseModel
 
     public function getStatusColorAttribute()
     {
-        return $this->status ? self::getStatusColorList()[$this->status] : 'primary';
+         return $this->status == self::STATUS_ACTIVE ? 'badge-parimary' : '';
+    }
+
+    public function getStatusBtnLabelAttribute()
+    {
+        return $this->status == self::STATUS_PENDING ? self::statusList()[self::STATUS_ACTIVE] : self::statusList()[self::STATUS_INACTIVE];
+    }
+
+    public function getStatusBtnColorAttribute()
+    {
+        return $this->status == self::STATUS_ACTIVE ? 'btn-error' : 'btn-success';
+    }
+    public function getStatusBtnClassAttribute()
+    {
+        return $this->status == self::STATUS_INACTIVE ? 'btn-error' : 'btn-primary';
     }
 
     public function scopePending(Builder $query): Builder

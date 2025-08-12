@@ -19,6 +19,7 @@ use App\Http\Controllers\Backend\Admin\Faq\FaqCategotyController;
 use App\Http\Controllers\Backend\Admin\Faq\FaqController;
 use App\Http\Controllers\Backend\Admin\RepostManagement\RepostController;
 use App\Http\Controllers\Backend\Admin\RepostManagement\RepostRequestController;
+use App\Http\Controllers\Backend\Admin\UserManagement\UserPlaneController;
 use App\Models\Faq;
 
 Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], function () {
@@ -117,6 +118,12 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::post('/add-credit/{user_urn}', 'addCredit')->name('add-credit');
             Route::get('/detail/{user}', 'detail')->name('detail');
 
+        });
+
+        Route::resource('user-plane', UserPlaneController::class);
+        Route::controller(UserPlaneController::class)->name('user-plane.')->prefix('user-plane')->group(function () {
+            Route::post('/show/{user_plane}', 'show')->name('show');
+            Route::get('/status/{user_plane}', 'status')->name('status');
         });
 
         // Route::resource('playlist', UserPlaylistController::class);

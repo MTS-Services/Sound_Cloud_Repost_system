@@ -73,6 +73,13 @@
                         'active' => 'user',
                         'permission' => 'user-list',
                     ],
+
+                    [
+                        'name' => ' Users Plane',
+                        'route' => route('um.user-plane.index'),
+                        'icon' => 'user',
+                        'active' => 'users_plane',
+                        'permission' => 'user-plane-list',]
                     // [
                     //     'name' => 'Top Reposters',
                     //     'route' => '#',
