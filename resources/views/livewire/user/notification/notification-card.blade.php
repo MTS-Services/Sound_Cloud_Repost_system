@@ -1,6 +1,4 @@
 <div>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
     @if ($compact)
         {{-- Compact Card for Sidebar --}}
         <div class="card bg-white/90 dark:bg-gray-800/90 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer {{ $this->isRead ? 'opacity-75' : 'ring-2 ring-orange-200 dark:ring-orange-700' }}"
@@ -24,7 +22,7 @@
                         </div>
                     </div>
                     <div class="flex-shrink-0">
-                        <i class="{{ $this->getNotificationIcon() }} text-sm text-orange-500"></i>
+                        <x-lucide-home class="w-6 h-6" />                        
                     </div>
                 </div>
             </div>

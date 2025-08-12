@@ -31,7 +31,7 @@
             <div
                 class="flex items-center justify-between p-4 border-b border-orange-200 dark:border-gray-700 bg-gradient-to-r from-orange-500 to-amber-500 text-white">
                 <h2 class="text-xl font-bold text-white flex items-center">
-                    <i class="fas fa-bell mr-2"></i>
+                    <x-lucide-bell class="w-6 h-6 mr-2 text-white" />
                     Notifications
                     @if ($this->unreadCount > 0)
                         <span class="ml-2 badge bg-white/20 text-white border-none">{{ $this->unreadCount }} new</span>
@@ -39,7 +39,7 @@
                 </h2>
                 <button wire:click="closePanel"
                     class="btn btn-ghost btn-sm text-white hover:bg-white/20 bg-white/20 border-none">
-                    <i class="fas fa-items">x</i>
+                    <x-lucide-x class="w-6 h-6" />
                 </button>
             </div>
 
@@ -67,7 +67,7 @@
                     @if ($this->unreadCount > 0)
                         <button wire:click="markAllAsRead"
                             class="btn btn-outline btn-sm border-orange-300 text-white bg-orange-500 hover:bg-orange-600 hover:text-white hover:border-orange-500 flex-1 max-w-xs">
-                            <i class="fas fa-check-circle mr-2"></i>
+                            <x-lucide-check-circle class="w-5 h-5 mr-2" />
                             Mark All as Read
                         </button>
                     @else
@@ -76,16 +76,10 @@
 
                     <a href="{{ route('user.notifications.index') }}"
                         class="btn btn-sm bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-none flex-1 max-w-xs text-center">
-                        <i class="fas fa-list mr-2"></i>
+                        <x-lucide-list class="w-5 h-5 mr-2" />
                         View All
                     </a>
                 </div>
-
-                <a href="{{ route('user.notifications.index') }}" wire:navigate
-                    class="btn btn-sm w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-none">
-                    <i class="fas fa-list mr-2"></i>
-                    View All Notifications
-                </a>
             </div>
         </div>
 
