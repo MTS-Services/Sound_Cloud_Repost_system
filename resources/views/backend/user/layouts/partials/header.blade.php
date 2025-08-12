@@ -17,7 +17,7 @@
         </div>
 
         <div class="flex-1 flex justify-center px-2 md:px-4 lg:px-0 lg:ml-8">
-            <form class="relative w-full max-w-md items-center hidden sm:flex">
+            {{-- <form class="relative w-full max-w-md items-center hidden sm:flex">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-4">
 
                     <x-lucide-search class="w-5 h-5 text-slate-800 dark:text-slate-300" />
@@ -27,7 +27,8 @@
                     focus:border-[#F54A00]! dark:focus:border-[#F54A00]!
                     text-gray-900 dark:text-gray-200 dark:placeholder:text-slate-300
                     dark:shadow-sm outline-none transition" />
-            </form>
+            </form> --}}
+            <div class="gcse-search"></div>
         </div>
 
         <div class="flex items-center space-x-1 md:space-x-2">
@@ -87,7 +88,7 @@
                             <li>
                                 <a href="#"
                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Help
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Center') }}</a>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Center') }}</a>
                             </li>
                             <li>
                                 <a href="{{ route('user.pkm.pricing') }}" wire:navigate
@@ -155,8 +156,8 @@
                     <span
                         class="text-xs md:text-sm font-medium dark:text-slate-300 hidden sm:block">{{ user()->name ?? 'name' }}</span>
                     <svg class="dark:text-slate-300 w-3 h-3 md:w-4 md:h-4" xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
                         <path d="m6 9 6 6 6-6"></path>
                     </svg>
                 </div>

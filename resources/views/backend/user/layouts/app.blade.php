@@ -49,7 +49,8 @@
             @endif
         });
     </script>
-
+    <script async src="https://cse.google.com/cse.js?cx=23c01bcccd3964c56"></script>
+   
     @stack('cs')
     @livewireStyles()
 </head>

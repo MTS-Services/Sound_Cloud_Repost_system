@@ -89,7 +89,7 @@
                         </svg></div>
                 </div>
                 <div class="space-y-2">
-                    <p class="text-2xl  font-bold text-slate-700 dark:text-white">152</p>
+                    <p class="text-2xl  font-bold text-slate-700 dark:text-white">{{ ($totalCount) }}</p>
                     <p class="text-sm flex items-center space-x-1 text-green-400"><span>+8.5% from last week</span></p>
                 </div>
             </div>
@@ -276,96 +276,97 @@
     </div>
 
 
-    <script></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
+    @push('js')
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
 
-    <script>
-        const ctx = document.getElementById('campaignChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                datasets: [{
-                    label: 'Performance',
-                    data: [950, 1700, 2300, 2850, 2700, 3800],
-                    borderColor: '#f97316', // Orange-500
-                    backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                    pointBackgroundColor: '#f97316',
-                    pointBorderColor: '#ffffff',
-                    pointHoverRadius: 7,
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    borderWidth: 2.5,
-                    tension: 0.4,
-                    fill: true,
-                }, {
-                    label: 'Baseline',
-                    data: [100, 150, 120, 180, 250, 200],
-                    borderColor: '#22c55e', // Green-500
-                    backgroundColor: 'transparent',
-                    pointBackgroundColor: '#22c55e',
-                    borderWidth: 2,
-                    pointRadius: 5,
-                    tension: 0.4,
-                }]
-            },
-            options: {
-                responsive: true, // This is key for responsiveness
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            color: '#94a3b8', // slate-400
-                            font: {
-                                size: 10
-                            }
-                        },
-                        grid: {
-                            color: '#334155', // slate-700
-                            drawBorder: false,
-                        },
-                    },
-                    x: {
-                        ticks: {
-                            color: '#94a3b8', // slate-400
-                            font: {
-                                size: 10
-                            }
-                        },
-                        grid: {
-                            display: false,
-                        },
-                    }
+        <script>
+            const ctx = document.getElementById('campaignChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Performance',
+                        data: [950, 1700, 2300, 2850, 2700, 3800],
+                        borderColor: '#f97316', // Orange-500
+                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                        pointBackgroundColor: '#f97316',
+                        pointBorderColor: '#ffffff',
+                        pointHoverRadius: 7,
+                        pointHoverBorderWidth: 2,
+                        pointRadius: 5,
+                        borderWidth: 2.5,
+                        tension: 0.4,
+                        fill: true,
+                    }, {
+                        label: 'Baseline',
+                        data: [100, 150, 120, 180, 250, 200],
+                        borderColor: '#22c55e', // Green-500
+                        backgroundColor: 'transparent',
+                        pointBackgroundColor: '#22c55e',
+                        borderWidth: 2,
+                        pointRadius: 5,
+                        tension: 0.4,
+                    }]
                 },
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        align: 'end',
-                        labels: {
-                            color: '#e2e8f0', // slate-200
-                            boxWidth: 12,
-                            font: {
-                                size: 12
-                            }
+                options: {
+                    responsive: true, // This is key for responsiveness
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#94a3b8', // slate-400
+                                font: {
+                                    size: 10
+                                }
+                            },
+                            grid: {
+                                color: '#334155', // slate-700
+                                drawBorder: false,
+                            },
+                        },
+                        x: {
+                            ticks: {
+                                color: '#94a3b8', // slate-400
+                                font: {
+                                    size: 10
+                                }
+                            },
+                            grid: {
+                                display: false,
+                            },
                         }
                     },
-                    tooltip: {
-                        backgroundColor: '#0f172a', // slate-900
-                        titleColor: '#ffffff',
-                        bodyColor: '#cbd5e1', // slate-300
-                        borderColor: '#334155', // slate-700
-                        borderWidth: 1,
-                        padding: 12,
-                        cornerRadius: 8,
-                    }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index',
-                },
-            }
-        });
-    </script>
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            align: 'end',
+                            labels: {
+                                color: '#e2e8f0', // slate-200
+                                boxWidth: 12,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#0f172a', // slate-900
+                            titleColor: '#ffffff',
+                            bodyColor: '#cbd5e1', // slate-300
+                            borderColor: '#334155', // slate-700
+                            borderWidth: 1,
+                            padding: 12,
+                            cornerRadius: 8,
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index',
+                    },
+                }
+            });
+        </script>
+    @endpush
 </x-user::layout>
