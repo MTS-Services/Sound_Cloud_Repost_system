@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class FaqCategory extends BaseModel
 {
-    //
 
     protected $fillable = [
         'sort_order',

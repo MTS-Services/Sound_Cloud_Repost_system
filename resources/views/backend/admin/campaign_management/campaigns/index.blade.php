@@ -80,22 +80,6 @@
                     const route = "{{ route('cm.campaign.show', ':id') }}";
 
                     const details = [{
-                        // 'user_urn',
-        // 'music_id',
-        // 'music_type',
-        // 'title',
-        // 'description',
-        // 'target_reposts',
-        // 'completed_reposts',
-        // 'credits_per_repost',
-        // 'total_credits_budget',
-        // 'credits_spent',
-        // 'min_followers_required',
-        // 'max_followers_limit',
-        // 'status',
-        // 'start_date',
-        // 'end_date',
-        // 'auto_approve'
                             label: '{{ __('Title') }}',
                             key: 'title',
                         },
@@ -106,10 +90,6 @@
                         {
                             label: '{{ __('Description') }}',
                             key: 'description',
-                        },
-                        {
-                            label: '{{ __('Target Reposts') }}',
-                            key: 'target_reposts',
                         },
                         {
                             label: '{{ __('Completed Reposts') }}',
@@ -149,7 +129,7 @@
                             label_color: 'auto_approve_color',
                             type: 'badge'
                         },
-                         {
+                        {
                             label: '{{ __('Status') }}',
                             key: 'status_label',
                             label_color: 'status_color',

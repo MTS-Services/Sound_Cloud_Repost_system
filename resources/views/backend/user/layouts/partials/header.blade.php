@@ -87,7 +87,7 @@
                             <li>
                                 <a href="#"
                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Help
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Center') }}</a>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Center') }}</a>
                             </li>
                             <li>
                                 <a href="{{ route('user.pkm.pricing') }}" wire:navigate
@@ -129,11 +129,13 @@
             </div>
 
             <!-- Notification -->
-            <div class="relative ml-1 md:ml-1.5">
+            {{-- <div class="relative ml-1 md:ml-1.5">
                 <x-lucide-bell class="w-5 h-5 text-gray-800 dark:text-slate-300" />
                 <span
                     class="absolute -top-1.5 -right-1 bg-red-500 text-white text-[10px] md:text-xs rounded-full w-3 h-3 md:w-4 md:h-4 flex items-center justify-center">1</span>
-            </div>
+            </div> --}}
+            {{-- Notification Panel --}}
+            <livewire:user.notification.notification-panel />
 
             <!-- Theme toggle -->
             <button @click="$store.theme.toggleTheme()"

@@ -81,13 +81,14 @@ class MyCampaign extends Component
 
     public $track = null;
     public $credit = 100;
-    public $genres =[]; 
+    public $genres = [];
     public $commentable = false;
     public $likeable = false;
     public $proFeatureEnabled = false;
-    public $maxFollower = null;
-    public $maxRepostLast24h = null;
-    public $maxRepostsPerDay = null;
+    public $proFeatureValue = 1;
+    public $maxFollower = 0;
+    public $maxRepostLast24h = 0;
+    public $maxRepostsPerDay = 0;
     public $anyGenre = '';
     public $trackGenre = '';
     public $targetGenre = '';
@@ -105,10 +106,10 @@ class MyCampaign extends Component
     {
         $rules = [
             'credit' => 'required|integer|min:100',
-          
+
         ];
 
-       
+
         return $rules;
     }
 
@@ -120,7 +121,7 @@ class MyCampaign extends Component
         return [
             'credit.required' => 'Minimum credit is 100.',
             'maxFollower.required' => 'Max follower is required.',
-            
+
         ];
     }
 
@@ -432,7 +433,7 @@ class MyCampaign extends Component
         ]);
 
         // Check if user has minimum credits
-        if (userCredits() < 50) {
+        if (userCredits() < 100) {
             $this->showLowCreditWarningModal = true;
             $this->showSubmitModal = false;
             return;
@@ -444,7 +445,7 @@ class MyCampaign extends Component
 
         try {
             if ($type === 'track') {
-               $this->track = Track::findOrFail($id);
+                $this->track = Track::findOrFail($id);
                 if (!$this->track->urn || !$this->track->title) {
                     throw new \Exception('Track data is incomplete');
                 }
@@ -478,43 +479,50 @@ class MyCampaign extends Component
         }
     }
 
-  
+
     public function getAllGenres()
     {
         $this->genres = $this->trackService->getTracks()->where('user_urn', user()->urn)->pluck('genre')->unique()->values()->toArray();
     }
+    public function profeature($isChecked)
+    {
+        $this->proFeatureEnabled = $isChecked ? true : false;
+        $this->proFeatureValue = $isChecked ? 0 : 1;
+    }
     public function createCampaign()
-     {
+    {
         $this->validate();
 
         try {
-           
-            $totalBudget = $this->credit; //($this->costPerRepost * $this->targetReposts);
+            $totalBudget = $this->credit;
+            if ($this->anyGenre == 'anyGenre') {
+                $this->targetGenre = $this->anyGenre;
+            }
+            if ($this->trackGenre == 'trackGenre') {
+                $this->targetGenre = $this->trackGenre;
+            }
 
-           
 
             DB::transaction(function () use ($totalBudget) {
-                $commentable= $this->commentable ? 1 : 0;
+                $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
                 $proFeatureEnabled = $this->proFeatureEnabled ? 1 : 0;
-                    // dd($this->commentable, $this->likeable, $this->proFeatureEnabled, $this->maxRepostLast24h, $this->maxRepostsPerDay, $this->targetGenre, $this->maxFollower);
                 $campaign = Campaign::create([
                     'music_id' => $this->musicId,
                     'music_type' => $this->musicType,
                     'title' => $this->title,
                     'description' => $this->description,
-                    'cost_per_repost' => 0,
                     'budget_credits' => $totalBudget,
                     'user_urn' => user()->urn,
                     'status' => Campaign::STATUS_OPEN,
                     'max_followers' => $this->maxFollower,
                     'creater_id' => user()->id,
                     'creater_type' => get_class(user()),
-                    'comentable' => 1,
+                    'commentable' => $commentable,
                     'likeable' => $likeable,
                     'pro_feature' => $proFeatureEnabled,
-                    'max_repost_last_24h' => $this->maxRepostLast24h,
-                    'max_reposts_per_day' => $this->maxRepostsPerDay,
+                    'max_repost_last_24_h' => $this->maxRepostLast24h,
+                    'max_repost_per_day' => $this->maxRepostsPerDay,
                     'target_genre' => $this->targetGenre,
                 ]);
                 CreditTransaction::create([
@@ -544,20 +552,18 @@ class MyCampaign extends Component
             $this->showCampaignsModal = false;
             $this->showSubmitModal = false;
 
+
             $this->reset([
                 'musicId',
                 'title',
                 'description',
-                'endDate',
-                'targetReposts',
-                'costPerRepost',
                 'playlistId',
                 'playlistTracks',
-                'activeModalTab',
+                'activeTab',
                 'tracks',
+                'track',
                 'playlists',
-                'minFollowers',
-                'maxFollowers',
+                'maxFollower',
                 'showBudgetWarning',
                 'budgetWarningMessage',
                 'canSubmit',
@@ -567,11 +573,15 @@ class MyCampaign extends Component
                 'maxRepostLast24h',
                 'maxRepostsPerDay',
                 'targetGenre',
-                'maxFollower'
+                'anyGenre',
+                'trackGenre',
+                'maxFollower',
+                'proFeatureEnabled',
             ]);
 
             $this->resetValidation();
             $this->resetErrorBag();
+            session()->flash('message', 'Campaign created successfully!');
         } catch (\Exception $e) {
             session()->flash('error', 'Failed to create campaign: ' . $e->getMessage());
 
@@ -610,9 +620,7 @@ class MyCampaign extends Component
         }
 
         $this->addCreditCampaignId = $campaign->id;
-        $this->addCreditCostPerRepost = $campaign->cost_per_repost;
         $this->addCreditCurrentBudget = $campaign->budget_credits;
-        $this->addCreditTargetReposts = $campaign->target_reposts;
         $this->addCreditCreditsNeeded = 0;
 
         // Reset warning states
@@ -647,70 +655,70 @@ class MyCampaign extends Component
     }
 
 
-    public function addCreditsToCampaign()
-    {
-        $this->validate([
-            'addCreditCostPerRepost' => 'required|numeric|min:1',
-        ]);
 
-        try {
-            $campaign = Campaign::findOrFail($this->addCreditCampaignId);
+    // public function addCreditsToCampaign()
+    // {
+    //     $this->validate([
+    //         'addCreditCostPerRepost' => 'required|numeric|min:1',
+    //     ]);
 
-            $newTotalBudget = $this->addCreditCostPerRepost * $campaign->target_reposts;
-            $creditsNeeded = $newTotalBudget - $campaign->budget_credits;
+    //     try {
+    //         $campaign = Campaign::findOrFail($this->addCreditCampaignId);
 
-            if ($creditsNeeded <= 0) {
-                session()->flash('warning', 'Campaign budget cannot be reduced.');
-                $this->showAddCreditModal = false;
-                $this->refreshCampaigns();
-                return;
-            }
+    //         $newTotalBudget = $this->addCreditCostPerRepost * $campaign->target_reposts;
+    //         $creditsNeeded = $newTotalBudget - $campaign->budget_credits;
 
-            if ($creditsNeeded > userCredits()) {
-                session()->flash('error', 'You need ' . $creditsNeeded . ' more credits to update this campaign budget.');
-                $this->showLowCreditWarningModal = true;
-                $this->showAddCreditModal = false;
-                return;
-            }
+    //         if ($creditsNeeded <= 0) {
+    //             session()->flash('warning', 'Campaign budget cannot be reduced.');
+    //             $this->showAddCreditModal = false;
+    //             $this->refreshCampaigns();
+    //             return;
+    //         }
 
-            DB::transaction(function () use ($campaign, $newTotalBudget, $creditsNeeded) {
-                $campaign->update([
-                    'budget_credits' => $newTotalBudget,
-                    'cost_per_repost' => $this->addCreditCostPerRepost,
-                    'updater_id' => user()->id,
-                    'updater_type' => get_class(user())
-                ]);
+    //         if ($creditsNeeded > userCredits()) {
+    //             session()->flash('error', 'You need ' . $creditsNeeded . ' more credits to update this campaign budget.');
+    //             $this->showLowCreditWarningModal = true;
+    //             $this->showAddCreditModal = false;
+    //             return;
+    //         }
 
-                CreditTransaction::create([
-                    'receiver_urn' => user()->urn,
-                    'calculation_type' => CreditTransaction::CALCULATION_TYPE_CREDIT,
-                    'source_id' => $campaign->id,
-                    'source_type' => Campaign::class,
-                    'transaction_type' => CreditTransaction::TYPE_SPEND,
-                    'status' => 'succeeded',
-                    'credits' => $creditsNeeded,
-                    'description' => 'Spent on campaign budget increase',
-                    'metadata' => [
-                        'campaign_id' => $campaign->id,
-                        'action' => 'add_credits',
-                        'updated_at' => now(),
-                    ],
-                    'created_id' => user()->id,
-                    'created_type' => get_class(user())
-                ]);
-            });
+    //         DB::transaction(function () use ($campaign, $newTotalBudget, $creditsNeeded) {
+    //             $campaign->update([
+    //                 'budget_credits' => $newTotalBudget,
+    //                 'updater_id' => user()->id,
+    //                 'updater_type' => get_class(user())
+    //             ]);
 
-            session()->flash('success', 'Campaign budget updated successfully!');
-            $this->showAddCreditModal = false;
-            $this->refreshCampaigns();
-        } catch (\Exception $e) {
-            session()->flash('error', 'Failed to add credits: ' . $e->getMessage());
-            Log::error('Add credit error: ' . $e->getMessage(), [
-                'campaign_id' => $this->addCreditCampaignId,
-                'user_urn' => user()->urn ?? 'unknown',
-            ]);
-        }
-    }
+    //             CreditTransaction::create([
+    //                 'receiver_urn' => user()->urn,
+    //                 'calculation_type' => CreditTransaction::CALCULATION_TYPE_CREDIT,
+    //                 'source_id' => $campaign->id,
+    //                 'source_type' => Campaign::class,
+    //                 'transaction_type' => CreditTransaction::TYPE_SPEND,
+    //                 'status' => 'succeeded',
+    //                 'credits' => $creditsNeeded,
+    //                 'description' => 'Spent on campaign budget increase',
+    //                 'metadata' => [
+    //                     'campaign_id' => $campaign->id,
+    //                     'action' => 'add_credits',
+    //                     'updated_at' => now(),
+    //                 ],
+    //                 'created_id' => user()->id,
+    //                 'created_type' => get_class(user())
+    //             ]);
+    //         });
+
+    //         session()->flash('success', 'Campaign budget updated successfully!');
+    //         $this->showAddCreditModal = false;
+    //         $this->refreshCampaigns();
+    //     } catch (\Exception $e) {
+    //         session()->flash('error', 'Failed to add credits: ' . $e->getMessage());
+    //         Log::error('Add credit error: ' . $e->getMessage(), [
+    //             'campaign_id' => $this->addCreditCampaignId,
+    //             'user_urn' => user()->urn ?? 'unknown',
+    //         ]);
+    //     }
+    // }
 
     // Methods for Edit functionality
     public function openEditCampaignModal(Campaign $campaign)
@@ -727,8 +735,6 @@ class MyCampaign extends Component
         $this->editTitle = $campaign->title;
         $this->editDescription = $campaign->description;
         $this->editEndDate = $campaign->end_date->format('Y-m-d');
-        $this->editTargetReposts = $campaign->target_reposts;
-        $this->editCostPerRepost = $campaign->cost_per_repost;
         $this->editOriginalBudget = $campaign->budget_credits;
 
         // Reset warning states
@@ -774,8 +780,6 @@ class MyCampaign extends Component
                     'title' => $this->editTitle,
                     'description' => $this->editDescription,
                     'end_date' => $this->editEndDate,
-                    'target_reposts' => $this->editTargetReposts,
-                    'cost_per_repost' => $this->editCostPerRepost,
                     'budget_credits' => $newBudgetCredits,
                     'updater_id' => user()->id,
                     'updater_type' => get_class(user())

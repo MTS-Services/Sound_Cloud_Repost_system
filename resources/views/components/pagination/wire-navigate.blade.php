@@ -1,4 +1,3 @@
-
 @php
     // Name of the page query param (e.g. tracksPage, playlistsPage, playlistTracksPage)
     $pageParam = $pageName ?? $paginator->getPageName();

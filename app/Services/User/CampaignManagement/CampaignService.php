@@ -27,7 +27,6 @@ class CampaignService
 
                 $trackOwnerUrn = $campaign->music->user?->urn ?? $campaign->user_urn;
                 $trackOwnerName = $campaign->music->user?->name;
-                $creditsPerRepost = $campaign->cost_per_repost;
 
                 // Create the Repost record
                 $repost = Repost::create([
