@@ -15,23 +15,46 @@ use App\Services\User\CampaignManagement\CampaignService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\WithPagination;
 use Throwable;
 use Illuminate\Support\Facades\Http;
 use Livewire\Attributes\On;
+use Illuminate\Database\Eloquent\Builder;
 
 class Campaign extends Component
 {
+    use WithPagination;
+
     protected ?CampaignService $campaignService = null;
     protected ?TrackService $trackService = null;
     protected ?PlaylistService $playlistService = null;
-    public $featuredCampaigns;
-    public $campaigns;
+
     #[Locked]
     protected string $baseUrl = 'https://api.soundcloud.com';
 
+    // Pagination URL parameters
+    #[Url(as: 'recommendedProPage')]
+    public ?int $recommendedProPage = 1;
+
+    #[Url(as: 'recommendedPage')]
+    public ?int $recommendedPage = 1;
+
+    #[Url(as: 'allPage')]
+    public ?int $allPage = 1;
+
+    #[Url(as: 'recentPage')]
+    public ?int $recentPage = 1;
+
+    // Main tab state
+    #[Url(as: 'tab', except: 'recommended_pro')]
+    public string $activeMainTab = 'recommended_pro';
+
     // Properties for filtering and search
-    public $search = '';
+    #[Url(as: 'q', except: '')]
+    public string $search = '';
+
     public $selectedTags = [];
     public $selecteTags = [];
     public $selectedGenre = [];
@@ -43,15 +66,11 @@ class Campaign extends Component
     public $selectedTrackId;
     public $selectedPlaylistId = null;
 
-
     // Properties for track type filtering
     public $selectedTrackTypes = [];
     public $selectedTrackType = 'all';
     public $genres = [];
-    public $activeMainTab = 'recommended_pro';
-
     public $showTrackTypes = false;
-
 
     // Track which campaigns are currently playing
     public $playingCampaigns = [];
@@ -70,6 +89,9 @@ class Campaign extends Component
 
     public $playcount = false;
 
+    // Constants
+    private const ITEMS_PER_PAGE = 10;
+
     // Listeners for browser events
     protected $listeners = [
         'audioPlay' => 'handleAudioPlay',
@@ -77,13 +99,12 @@ class Campaign extends Component
         'audioTimeUpdate' => 'handleAudioTimeUpdate',
         'audioEnded' => 'handleAudioEnded'
     ];
+
     ############################## Campaign Creation ##########################
     public $tracks = [];
     public $playlists = [];
     public $playlistTracks = [];
     public $activeTab = 'tracks';
-
-
 
     public $track = null;
     public $credit = 100;
@@ -118,7 +139,7 @@ class Campaign extends Component
     public $editEndDate = null;
     public $editTargetReposts = null;
     public int $editCostPerRepost;
-    public $editOriginalBudget = null; // Track original budget to prevent decreases
+    public $editOriginalBudget = null;
 
     // Properties for Delete functionality
     public $campaignToDeleteId = null;
@@ -135,12 +156,13 @@ class Campaign extends Component
     public bool $showEditCampaignModal = false;
     public bool $showCancelWarningModal = false;
     public bool $showLowCreditWarningModal = false;
+
     ################################loadmore########################################
 
     // Properties for "Load More"
     public $tracksPage = 4;
     public $playlistsPage = 4;
-    public $perPage = 4; // Number of items to load per page
+    public $perPage = 4;
     public $hasMoreTracks = false;
     public $hasMorePlaylists = false;
 
@@ -149,28 +171,17 @@ class Campaign extends Component
     {
         $this->campaignService = $campaignService;
         $this->trackService = $trackService;
+        $this->playlistService = $playlistService;
     }
-
 
     public function mount()
     {
-        $this->loadData();
-        $this->loadInitialData();
         $this->getAllGenres();
-        // Initialize tracking arrays
-        foreach ($this->featuredCampaigns as $campaign) {
-            $this->playTimes[$campaign->id] = 0;
-        }
-
-        foreach ($this->campaigns as $campaign) {
-            $this->playTimes[$campaign->id] = 0;
-        }
+        // Initialize play tracking for campaigns (will be done in render method)
     }
+
     protected function rules()
     {
-        // $rules = [
-        //     'credit' => 'required|integer|min:100',
-        // ];
         $rules = [
             'credit' => [
                 'required',
@@ -187,9 +198,6 @@ class Campaign extends Component
         return $rules;
     }
 
-    /**
-     * Custom validation messages
-     */
     protected function messages()
     {
         return [
@@ -197,34 +205,119 @@ class Campaign extends Component
             'maxFollower.required' => 'Max follower is required.',
         ];
     }
+
+    /**
+     * Set the active main tab and reset pagination for that tab
+     */
+    public function setActiveMainTab(string $tab): void
+    {
+        $this->activeMainTab = $tab;
+
+        // Reset the relevant pager when switching tabs
+        match ($tab) {
+            'recommended_pro' => $this->resetPage('recommendedProPage'),
+            'recommended' => $this->resetPage('recommendedPage'),
+            'all' => $this->resetPage('allPage'),
+            default => $this->resetPage('recommendedProPage')
+        };
+    }
+
+    /**
+     * Get the base campaigns query with common filters
+     */
+    private function getCampaignsQuery(): Builder
+    {
+        $allowedTargetCredits = repostPrice(user());
+
+        return $this->campaignService->getCampaigns()
+            ->where('budget_credits', '>=', $allowedTargetCredits)
+            ->withoutSelf()
+            ->with(['music.user.userInfo', 'reposts'])
+            ->whereDoesntHave('reposts', function ($query) {
+                $query->where('reposter_urn', user()->urn);
+            });
+    }
+
+    /**
+     * Apply search and filter conditions to the query
+     */
+    private function applyFilters(Builder $query): Builder
+    {
+        // Apply search filter
+        if (!empty($this->search)) {
+            $query->whereHas('music', function ($q) {
+                $q->where('title', 'like', '%' . $this->search . '%')
+                    ->orWhere('description', 'like', '%' . $this->search . '%');
+            });
+        }
+
+        // Apply tag filters
+        if (!empty($this->selectedTags)) {
+            $query->whereHas('music', function ($q) {
+                $q->where(function ($tagQuery) {
+                    foreach ($this->selectedTags as $tag) {
+                        $tagQuery->orWhere('tag_list', 'LIKE', "%$tag%");
+                    }
+                });
+            });
+        }
+
+        // Apply genre filter
+        if (!empty($this->selectedGenre)) {
+            $query->whereHas('music', function ($q) {
+                $q->where('genre', $this->selectedGenre);
+            });
+        }
+
+        // Apply track type filter
+        if (!empty($this->searchtTrackType) && $this->searchtTrackType !== 'all') {
+            $query->whereHas('music', function ($q) {
+                $q->where('type', $this->searchtTrackType);
+            });
+        }
+
+        return $query;
+    }
+
     public function updatedSearch()
     {
         if (strlen($this->search) >= 0) {
-            $this->selectedTags;
-            $this->suggestedTags;
             $this->loadTagSuggestions();
             $this->showSuggestions = true;
         } else {
-            $this->suggestedTags;
+            $this->suggestedTags = [];
             $this->showSuggestions = false;
         }
 
-        $this->loadData();
+        // Reset pagination when search changes
+        $this->resetPage($this->getActivePageName());
     }
+
+    /**
+     * Get the current active page parameter name
+     */
+    private function getActivePageName(): string
+    {
+        return match ($this->activeMainTab) {
+            'recommended_pro' => 'recommendedProPage',
+            'recommended' => 'recommendedPage',
+            'all' => 'allPage',
+            default => 'recommendedProPage'
+        };
+    }
+
     public function getAllTags()
     {
         $this->showSelectedTags = true;
 
-        // Get all tag_list values from tracks
         $this->suggestedTags = $this->trackService->getTracks()
-            ->pluck('tag_list') // get all tag_list values
+            ->pluck('tag_list')
             ->flatten()
             ->map(function ($tagString) {
-                // Split comma-separated strings into arrays
                 return array_map('trim', explode(',', $tagString));
             })
-            ->flatten() // flatten the resulting array of arrays
-            ->unique() // remove duplicates
+            ->flatten()
+            ->unique()
             ->filter(function ($tag) {
                 return stripos($tag, $this->search) !== false && !in_array($tag, $this->selecteTags);
             })
@@ -235,14 +328,12 @@ class Campaign extends Component
 
     public function loadTagSuggestions()
     {
-        // Get unique tags from tracks table that match the search query
         $this->suggestedTags = $this->campaignService->getCampaigns()
             ->with('music')
             ->get()
             ->pluck('music.tag_list')
             ->flatten()
             ->map(function ($tagString) {
-                // Split comma-separated strings into arrays
                 return array_map('trim', explode(',', $tagString));
             })
             ->flatten()
@@ -253,157 +344,48 @@ class Campaign extends Component
             ->take(10)
             ->values()
             ->toArray();
-        // If no tags found, set showSuggestions to false
-        if (empty($this->suggestedTags)) {
-            $this->showSuggestions = false;
-        } else {
-            $this->showSuggestions = true;
-        }
+
+        $this->showSuggestions = !empty($this->suggestedTags);
     }
 
     public function selectTag($tag)
     {
         if (!in_array($tag, $this->selectedTags)) {
             $this->selectedTags[] = $tag;
-            $this->search = $tag; // Set search to the selected tag
-            $this->suggestedTags;
+            $this->search = $tag;
+            $this->suggestedTags = [];
             $this->showSuggestions = false;
-            $this->searchByTags();
+            $this->resetPage($this->getActivePageName());
         }
     }
+
     public function filterByGenre($genre)
     {
         $this->selectedGenre = $genre;
-        $this->searchByTags();
+        $this->resetPage($this->getActivePageName());
     }
+
     public function filterByTrackType($trackType)
     {
         $this->searchtTrackType = $trackType;
-        $this->searchByTags();
+        $this->resetPage($this->getActivePageName());
     }
+
     public function removeTag($tag)
     {
-        unset($this->selecteTags[$tag]);
-        $this->selecteTags = array_values($this->selecteTags);
-        // $this->searchByTags();
+        $key = array_search($tag, $this->selectedTags);
+        if ($key !== false) {
+            unset($this->selectedTags[$key]);
+            $this->selectedTags = array_values($this->selectedTags);
+            $this->resetPage($this->getActivePageName());
+        }
     }
+
     public function hideSuggestions()
     {
         $this->showSuggestions = false;
     }
-    public function setActiveMainTab($tab)
-    {
-        $this->activeMainTab = $tab;
-        $this->loadData();
-    }
-    public function searchByTags()
-    {
-        $this->isLoading = true;
 
-        if (empty($this->selectedTags) || empty($this->selectedGenre) || empty($this->searchtTrackType)) {
-            $this->loadInitialData();
-        }
-        $this->featuredCampaigns = $this->campaignService->getCampaigns()
-            ->where('budget_credits', '>=', repostPrice(user()))
-            ->featured()
-            ->withoutSelf()
-            ->with(['music.user.userInfo', 'reposts'])
-            ->whereDoesntHave('reposts', function ($query) {
-                $query->where('reposter_urn', user()->urn);
-            });
-        $this->campaigns = $this->campaignService->getCampaigns()
-            ->where('budget_credits', '>=', repostPrice(user()))
-            ->notFeatured()
-            ->withoutSelf()
-            ->with(['music.user.userInfo', 'reposts'])
-            ->whereDoesntHave('reposts', function ($query) {
-                $query->where('reposter_urn', user()->urn);
-            });
-        if ($this->selectedTags) {
-            $this->featuredCampaigns->whereHas('music', function ($query) {
-                $query->where(function ($q) {
-                    foreach ($this->selectedTags as $tag) {
-                        $q->orWhere('tag_list', 'LIKE', "%$tag%");
-                    }
-                });
-            });
-            $this->campaigns->whereHas('music', function ($query) {
-                $query->where(function ($q) {
-                    foreach ($this->selectedTags as $tag) {
-                        $q->orWhere('tag_list', 'LIKE', "%$tag%");
-                    }
-                });
-            });
-        }
-        if ($this->selectedGenre) {
-            $this->featuredCampaigns->whereHas('music', function ($query) {
-                $query->where('genre', $this->selectedGenre);
-            });
-            $this->campaigns->whereHas('music', function ($query) {
-                $query->where('genre', $this->selectedGenre);
-            });
-        }
-        if ($this->searchtTrackType) {
-            $this->featuredCampaigns->whereHas('music', function ($query) {
-                $query->where('type', $this->searchtTrackType);
-            });
-            $this->campaigns->whereHas('music', function ($query) {
-                $query->where('type', $this->searchtTrackType);
-            });
-        }
-        if ($this->searchtTrackType == 'all') {
-            $this->featuredCampaigns->whereHas('music', function ($query) {
-                $query->where('type', '!=', 'all');
-            });
-            $this->campaigns->whereHas('music', function ($query) {
-                $query->where('type', '!=', 'all');
-            });
-        }
-
-        $this->featuredCampaigns = $this->featuredCampaigns->get();
-        $this->campaigns = $this->campaigns->get();
-
-
-        $this->isLoading = false;
-    }
-
-    public function loadInitialData()
-    {
-
-        $allowed_target_credits = repostPrice(user());
-        $this->featuredCampaigns = $this->campaignService->getCampaigns()
-            ->where('budget_credits', '>=', $allowed_target_credits)
-            ->featured()
-            ->withoutSelf()
-            ->with(['music.user.userInfo', 'reposts'])
-            ->whereDoesntHave('reposts', function ($query) {
-                $query->where('reposter_urn', user()->urn);
-            })
-            ->get();
-
-        $this->campaigns = $this->campaignService->getCampaigns()
-            ->where('budget_credits', '>=', $allowed_target_credits)
-            ->notFeatured()
-            ->withoutSelf()
-            ->with(['music.user.userInfo', 'reposts'])
-            ->whereDoesntHave('reposts', function ($query) {
-                $query->where('reposter_urn', user()->urn);
-            })
-            ->get();
-
-
-    }
-    // public function hideSuggestions()
-    // {
-    //     // Delay hiding to allow click events on suggestions
-    //     $this->dispatchBrowserEvent('hide-suggestions-delayed');
-    // }
-
-    /**
-     * ###########################################
-     * ******* Start Tabs Events ********
-     * ###########################################
-     */
     public function getAllTrackTypes()
     {
         $this->selectedTrackTypes = $this->trackService->getTracks()
@@ -417,22 +399,16 @@ class Campaign extends Component
     public function selectTrackType($type)
     {
         $this->selectedTrackType = $type;
-        $this->loadInitialData();
+        $this->resetPage($this->getActivePageName());
     }
+
     public function setactiveTab($tab)
     {
         $this->activeTab = $tab;
     }
 
     /**
-     * ###########################################
-     * ******* End Tabs Events ********
-     * ###########################################
-     */
-    /**
-     * ###########################################
-     * ******* Start Campaign Create Events ********
-     * ###########################################
+     * Campaign Creation Methods
      */
     public function selectModalTab($tab = 'tracks')
     {
@@ -441,21 +417,20 @@ class Campaign extends Component
         if ($tab === 'tracks') {
             $this->fetchTracks();
         } elseif ($tab === 'playlists') {
-            // Reset playlist track show when switching to playlists tab
             $this->playListTrackShow = false;
             $this->allPlaylistTracks = collect();
             $this->tracks = collect();
             $this->selectedPlaylistId = null;
-
             $this->fetchPlaylists();
         }
 
         $this->reset(['searchQuery']);
     }
+
     public function fetchTracks()
     {
         try {
-            $this->tracksPage = 1; // Reset page on initial fetch
+            $this->tracksPage = 1;
             $this->tracks = Track::where('user_urn', user()->urn)
                 ->latest()
                 ->take($this->perPage)
@@ -483,7 +458,7 @@ class Campaign extends Component
     public function fetchPlaylists()
     {
         try {
-            $this->playlistsPage = 1; // Reset page on initial fetch
+            $this->playlistsPage = 1;
             $this->playlists = Playlist::where('user_urn', user()->urn)
                 ->latest()
                 ->take($this->perPage)
@@ -511,7 +486,7 @@ class Campaign extends Component
     public function fetchPlaylistTracks()
     {
         if (!$this->playlistId) {
-            $this->playlistTracks;
+            $this->playlistTracks = [];
             return;
         }
 
@@ -519,7 +494,7 @@ class Campaign extends Component
             $playlist = Playlist::findOrFail($this->playlistId);
 
             if (!$playlist->soundcloud_urn) {
-                $this->playlistTracks;
+                $this->playlistTracks = [];
                 session()->flash('error', 'Playlist SoundCloud URN is missing.');
                 return;
             }
@@ -543,14 +518,14 @@ class Campaign extends Component
                             isset($track['user']['username']);
                     })->values()->toArray();
                 } else {
-                    $this->playlistTracks;
+                    $this->playlistTracks = [];
                 }
             } else {
-                $this->playlistTracks;
+                $this->playlistTracks = [];
                 session()->flash('error', 'Failed to load playlist tracks from SoundCloud: ' . $response->status());
             }
         } catch (\Exception $e) {
-            $this->playlistTracks;
+            $this->playlistTracks = [];
             session()->flash('error', 'Failed to fetch playlist tracks: ' . $e->getMessage());
             Log::error('Playlist tracks fetch error: ' . $e->getMessage(), [
                 'playlist_id' => $this->playlistId,
@@ -558,9 +533,9 @@ class Campaign extends Component
             ]);
         }
     }
+
     public function toggleCampaignsModal()
     {
-        // Reset all form data and validation
         $this->reset([
             'title',
             'description',
@@ -586,11 +561,10 @@ class Campaign extends Component
             'canSubmit'
         ]);
 
-        // Set default values
         $this->activeTab = 'tracks';
         $this->tracks = collect();
         $this->playlists = collect();
-        $this->playlistTracks;
+        $this->playlistTracks = [];
 
         $this->showCampaignsModal = !$this->showCampaignsModal;
 
@@ -598,10 +572,9 @@ class Campaign extends Component
             $this->selectModalTab('tracks');
         }
     }
+
     public function toggleSubmitModal($type, $id)
     {
-
-        // Reset form fields
         $this->reset([
             'title',
             'description',
@@ -626,7 +599,7 @@ class Campaign extends Component
             'budgetWarningMessage',
             'canSubmit',
         ]);
-        // Check if user has minimum credits
+
         if (userCredits() < 100) {
             $this->showLowCreditWarningModal = true;
             $this->showSubmitModal = false;
@@ -675,7 +648,12 @@ class Campaign extends Component
 
     public function getAllGenres()
     {
-        $this->genres = $this->trackService->getTracks()->where('user_urn','!=', user()->urn)->pluck('genre')->unique()->values()->toArray();
+        $this->genres = $this->trackService->getTracks()
+            ->where('user_urn', '!=', user()->urn)
+            ->pluck('genre')
+            ->unique()
+            ->values()
+            ->toArray();
     }
 
     public function profeature($isChecked)
@@ -683,6 +661,7 @@ class Campaign extends Component
         $this->proFeatureEnabled = $isChecked ? true : false;
         $this->proFeatureValue = $isChecked ? 0 : 1;
     }
+
     public function createCampaign()
     {
         $this->validate();
@@ -696,11 +675,11 @@ class Campaign extends Component
                 $this->targetGenre = $this->trackGenre;
             }
 
-
             DB::transaction(function () use ($totalBudget) {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
                 $proFeatureEnabled = $this->proFeatureEnabled ? 1 : 0;
+
                 $campaign = ModelsCampaign::create([
                     'music_id' => $this->musicId,
                     'music_type' => $this->musicType,
@@ -719,6 +698,7 @@ class Campaign extends Component
                     'max_repost_per_day' => $this->maxRepostsPerDay,
                     'target_genre' => $this->targetGenre,
                 ]);
+
                 CreditTransaction::create([
                     'receiver_urn' => user()->urn,
                     'calculation_type' => CreditTransaction::CALCULATION_TYPE_CREDIT,
@@ -742,10 +722,8 @@ class Campaign extends Component
             session()->flash('message', 'Campaign created successfully!');
             $this->dispatch('campaignCreated');
 
-            // Close modal and complete reset
             $this->showCampaignsModal = false;
             $this->showSubmitModal = false;
-
 
             $this->reset([
                 'musicId',
@@ -775,7 +753,6 @@ class Campaign extends Component
 
             $this->resetValidation();
             $this->resetErrorBag();
-            session()->flash('message', 'Campaign created successfully!');
         } catch (\Exception $e) {
             session()->flash('error', 'Failed to create campaign: ' . $e->getMessage());
 
@@ -787,17 +764,9 @@ class Campaign extends Component
             ]);
         }
     }
-    /**
-     * ###########################################
-     * ******* End Campaign Create Events ********
-     * ###########################################
-     */
-
 
     /**
-     * ###########################################
-     * ******* Start Audio Player Events ********
-     * ###########################################
+     * Audio Player Event Handlers
      */
     public function handleAudioPlay($campaignId)
     {
@@ -805,9 +774,6 @@ class Campaign extends Component
         $this->playStartTimes[$campaignId] = now()->timestamp;
     }
 
-    /**
-     * Handle audio pause event
-     */
     public function handleAudioPause($campaignId)
     {
         $this->updatePlayTime($campaignId);
@@ -815,9 +781,6 @@ class Campaign extends Component
         unset($this->playStartTimes[$campaignId]);
     }
 
-    /**
-     * Handle audio time update event
-     */
     public function handleAudioTimeUpdate($campaignId, $currentTime)
     {
         if ($currentTime >= 5 && !in_array($campaignId, $this->playedCampaigns)) {
@@ -826,17 +789,11 @@ class Campaign extends Component
         }
     }
 
-    /**
-     * Handle audio ended event
-     */
     public function handleAudioEnded($campaignId)
     {
         $this->handleAudioPause($campaignId);
     }
 
-    /**
-     * Update play time for a campaign
-     */
     private function updatePlayTime($campaignId)
     {
         if (isset($this->playStartTimes[$campaignId])) {
@@ -850,9 +807,6 @@ class Campaign extends Component
         }
     }
 
-    /**
-     * Polling method to update play times for currently playing campaigns
-     */
     public function updatePlayingTimes()
     {
         foreach ($this->playingCampaigns as $campaignId => $isPlaying) {
@@ -868,25 +822,16 @@ class Campaign extends Component
         }
     }
 
-    /**
-     * Start playing a campaign manually
-     */
     public function startPlaying($campaignId)
     {
         $this->handleAudioPlay($campaignId);
     }
 
-    /**
-     * Stop playing a campaign manually
-     */
     public function stopPlaying($campaignId)
     {
         $this->handleAudioPause($campaignId);
     }
 
-    /**
-     * Simulate audio progress (for testing without actual audio)
-     */
     public function simulateAudioProgress($campaignId, $seconds = 1)
     {
         if (!isset($this->playTimes[$campaignId])) {
@@ -901,9 +846,6 @@ class Campaign extends Component
         }
     }
 
-    /**
-     * Check if campaign can be reposted
-     */
     public function canRepost($campaignId): bool
     {
         $canRepost = in_array($campaignId, $this->playedCampaigns) &&
@@ -912,22 +854,16 @@ class Campaign extends Component
         if ($canRepost && !$this->playcount) {
             $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
             $campaign->increment('playback_count');
-            $this->playcount = true; // Set playcount to true if repost is allowed
+            $this->playcount = true;
         }
         return $canRepost;
     }
 
-    /**
-     * Check if campaign is currently playing
-     */
     public function isPlaying($campaignId): bool
     {
         return isset($this->playingCampaigns[$campaignId]) && $this->playingCampaigns[$campaignId] === true;
     }
 
-    /**
-     * Get total play time for a campaign
-     */
     public function getPlayTime($campaignId): int
     {
         $baseTime = $this->playTimes[$campaignId] ?? 0;
@@ -940,18 +876,12 @@ class Campaign extends Component
         return $baseTime;
     }
 
-    /**
-     * Get remaining time until repost is enabled
-     */
     public function getRemainingTime($campaignId): int
     {
         $playTime = $this->getPlayTime($campaignId);
         return max(0, 5 - $playTime);
     }
 
-    /**
-     * Handle repost action
-     */
     public function repost($campaignId)
     {
         try {
@@ -959,29 +889,21 @@ class Campaign extends Component
                 session()->flash('error', 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
                 return;
             }
+
             $currentUserUrn = user()->urn;
 
-            // Check if the current user owns the campaign
             if ($this->campaignService->getCampaigns()->where('id', $campaignId)->where('user_urn', $currentUserUrn)->exists()) {
                 session()->flash('error', 'You cannot repost your own campaign.');
                 return;
             }
 
-            // Check if the user has already reposted this specific campaign
-            if (
-                Repost::where('reposter_urn', $currentUserUrn)
-                    ->where('campaign_id', $campaignId)
-                    ->exists()
-            ) {
+            if (Repost::where('reposter_urn', $currentUserUrn)->where('campaign_id', $campaignId)->exists()) {
                 session()->flash('error', 'You have already reposted this campaign.');
                 return;
             }
 
-            // Find the campaign and eager load its music and the music's user
-            // $campaign = Campaign::with('music.user')->findOrFail($campaignId);
             $campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
 
-            // Ensure music is associated with the campaign
             if (!$campaign->music) {
                 session()->flash('error', 'Track or Playlist not found for this campaign.');
                 return;
@@ -989,12 +911,10 @@ class Campaign extends Component
 
             $soundcloudRepostId = null;
 
-            // Prepare HTTP client with authorization header
             $httpClient = Http::withHeaders([
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
 
-            // Determine the SoundCloud API endpoint based on music type
             switch ($campaign->music_type) {
                 case Track::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
@@ -1008,12 +928,10 @@ class Campaign extends Component
             }
 
             if ($response->successful()) {
-                // If SoundCloud returns a repost ID, capture it (example, adjust based on actual SoundCloud API response)
                 $soundcloudRepostId = $response->json('id');
                 $this->campaignService->syncReposts($campaign, $currentUserUrn, $soundcloudRepostId);
                 session()->flash('success', 'Campaign music reposted successfully.');
             } else {
-                // Log the error response from SoundCloud for debugging
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [
                     'campaign_id' => $campaignId,
                     'user_urn' => $currentUserUrn,
@@ -1032,6 +950,7 @@ class Campaign extends Component
         }
     }
 
+    // Search and SoundCloud integration methods
     public $searchQuery = '';
     public $allTracks;
     public $users;
@@ -1045,9 +964,6 @@ class Campaign extends Component
     private $soundcloudApiUrl = 'https://api-v2.soundcloud.com';
     public $playListTrackShow = false;
 
-
-
-    // This method is triggered when the `activeTab` property is updated
     public function updatedactiveTab($tab)
     {
         $this->activeTab = $tab;
@@ -1059,69 +975,8 @@ class Campaign extends Component
         }
     }
 
-    public function loadData()
-    {
-        if ($this->activeMainTab === 'all') {
-            $this->loadInitialData();
-        }
-        $allowed_target_credits = repostPrice(user());
-        $quey = $this->campaignService->getCampaigns()
-            ->where('budget_credits', '>=', $allowed_target_credits)
-            ->featured()
-            ->withoutSelf()
-            ->with(['music.user.userInfo', 'reposts']);
-        switch ($this->activeMainTab) {
-            case 'recommended_pro':
-                $quey->whereDoesntHave('reposts', function ($qy) {
-                    $qy->where('reposter_urn', user()->urn);
-                });
-                break;
-            case 'recommended':
-                $quey->whereDoesntHave('reposts', function ($qy) {
-                    $qy->where('reposter_urn', user()->urn);
-                });
-                break;
-        }
-
-        $this->featuredCampaigns = $quey->get();
-
-        $this->campaigns = $this->campaignService->getCampaigns()
-            ->where('budget_credits', '>=', $allowed_target_credits)
-            ->notFeatured()
-            ->withoutSelf()
-            ->with(['music.user.userInfo', 'reposts'])
-            ->whereDoesntHave('reposts', function ($query) {
-                $query->where('reposter_urn', user()->urn);
-            })
-            ->get();
-
-        // $query = User::where('urn', '!=', user()->urn);
-        // if ($this->search) {
-        //     $query->where('name', 'like', '%' . $this->search . '%');
-        // }
-        // $this->users = $query->get();
-        // $this->userinfo = UserInformation::where('user_urn', user()->urn)->first();
-    }
-
-    // public function updatedSearch()
-    // {
-    //     $this->loadData();
-    // }
-
-    public function updatedGenreFilter()
-    {
-        $this->loadData();
-    }
-
-    public function updatedCostFilter()
-    {
-        $this->loadData();
-    }
-
-    // Main search method for SoundCloud tracks and playlists
     public function searchSoundcloud()
     {
-        // If the search query is empty, reset to local data
         if (empty($this->searchQuery)) {
             if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
                 $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()->get();
@@ -1139,16 +994,14 @@ class Campaign extends Component
             return;
         }
 
-        // Check if the query is a SoundCloud permalink URL
         if (preg_match('/^https?:\/\/(www\.)?soundcloud\.com\//', $this->searchQuery)) {
             $this->resolveSoundcloudUrl();
         } else {
-            // If not a URL, perform a text-based "as-like" search on the local database
             if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
                 $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                     ->where(function ($query) {
                         $query->where('permalink_url', 'like', '%' . $this->searchQuery . '%')
-                            ->orWhere('title', 'like', '%' . $this->searchQuery . '%'); // Added title search
+                            ->orWhere('title', 'like', '%' . $this->searchQuery . '%');
                     })
                     ->get();
                 $this->tracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
@@ -1157,7 +1010,7 @@ class Campaign extends Component
                     $this->allTracks = Track::where('user_urn', user()->urn)
                         ->where(function ($query) {
                             $query->where('permalink_url', 'like', '%' . $this->searchQuery . '%')
-                                ->orWhere('title', 'like', '%' . $this->searchQuery . '%'); // Added title search
+                                ->orWhere('title', 'like', '%' . $this->searchQuery . '%');
                         })
                         ->get();
                     $this->tracks = $this->allTracks->take($this->trackLimit);
@@ -1165,7 +1018,7 @@ class Campaign extends Component
                     $this->allPlaylists = Playlist::where('user_urn', user()->urn)
                         ->where(function ($query) {
                             $query->where('permalink_url', 'like', '%' . $this->searchQuery . '%')
-                                ->orWhere('title', 'like', '%' . $this->searchQuery . '%'); // Added title search
+                                ->orWhere('title', 'like', '%' . $this->searchQuery . '%');
                         })
                         ->get();
                     $this->playlists = $this->allPlaylists->take($this->playlistLimit);
@@ -1174,10 +1027,8 @@ class Campaign extends Component
         }
     }
 
-    // Resolves a SoundCloud URL to find the corresponding track or playlist
     protected function resolveSoundcloudUrl()
     {
-        // Search the local database for matching permalink URLs first
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                 ->where('permalink_url', $this->searchQuery)
@@ -1217,7 +1068,6 @@ class Campaign extends Component
             }
         }
 
-        // If not found locally, use SoundCloud's API to resolve the URL
         $response = Http::get("{$this->soundcloudApiUrl}/resolve", [
             'url' => $this->searchQuery,
             'client_id' => $this->soundcloudClientId,
@@ -1227,7 +1077,6 @@ class Campaign extends Component
             $resolvedData = $response->json();
             $this->processResolvedData($resolvedData);
         } else {
-            // Reset collections when no results found
             if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
                 $this->allPlaylistTracks = collect();
                 $this->tracks = collect();
@@ -1244,7 +1093,6 @@ class Campaign extends Component
         }
     }
 
-    // Processes the data returned from the SoundCloud API
     protected function processResolvedData($data)
     {
         switch ($data['kind']) {
@@ -1252,7 +1100,6 @@ class Campaign extends Component
                 $this->activeTab = 'tracks';
                 if ($this->playListTrackShow && $this->selectedPlaylistId) {
                     $playlistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()->get();
-                    // Check if the resolved track exists in the current playlist
                     $this->allPlaylistTracks = $playlistTracks->filter(function ($track) use ($data) {
                         return $track->urn === $data['urn'];
                     });
@@ -1301,10 +1148,110 @@ class Campaign extends Component
         $this->toggleSubmitModal('track', $trackId);
     }
 
+    /**
+     * Initialize play times for campaigns
+     */
+    // private function initializePlayTimes($campaigns)
+    // {
+    //     foreach ($campaigns as $campaign) {
+    //         if (!isset($this->playTimes[$campaign->id])) {
+    //             $this->playTimes[$campaign->id] = 0;
+    //         }
+    //     }
+    // }
 
-
+    /**
+     * Main render method with optimized data loading and pagination
+     */
     public function render()
     {
-        return view('backend.user.campaign_management.campaign');
+        try {
+            // Get base query
+            $baseQuery = $this->getCampaignsQuery();
+
+            // Apply filters to the query
+            $baseQuery = $this->applyFilters($baseQuery);
+            $campaigns = collect();
+            // dd($baseQuery->get());
+            // $filteredQuery = $this->applyFilters(clone $baseQuery);
+
+            // Initialize campaigns variables
+            // $featuredCampaigns = collect();
+            // $campaigns = null;
+            // Get campaigns based on active tab with pagination
+            switch ($this->activeMainTab) {
+                case 'recommended_pro':
+
+                    // Get featured campaigns (no pagination for featured)
+
+
+                    // Get regular campaigns with pagination
+                    // $campaigns = $filteredQuery
+                    //     ->NotFeatured()
+                    //     ->latest()
+                    //     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
+
+
+                    $campaigns  = $baseQuery->proFeatured()
+                        ->latest()
+                        ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
+                    break;
+
+                case 'recommended':
+
+                    $campaigns  = $baseQuery->featured()
+                        ->latest()
+                        ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
+                    break;
+
+                case 'all':
+                    $campaigns = $baseQuery->latest()
+                        ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage);
+                    break;
+                default:
+                    $campaigns = $baseQuery->proFeatured()
+                        ->latest()
+                        ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
+                    break;
+            }
+            // if ($campaigns && $campaigns->count() > 0) {
+            //     $this->initializePlayTimes($campaigns);
+            // }
+            return view('backend.user.campaign_management.campaign', [
+                // 'featuredCampaigns' => $featuredCampaigns,
+                'campaigns' => $campaigns
+            ]);
+
+            // // Initialize play times for all campaigns
+            // if ($featuredCampaigns->isNotEmpty()) {
+            //     $this->initializePlayTimes($featuredCampaigns);
+            // }
+
+            // if ($campaigns && $campaigns->count() > 0) {
+            //     $this->initializePlayTimes($campaigns);
+            // }
+        } catch (\Exception $e) {
+            // Handle errors gracefully
+            Log::error('Failed to load campaigns: ' . $e->getMessage(), [
+                'user_urn' => user()->urn ?? 'unknown',
+                'active_tab' => $this->activeMainTab,
+                'exception' => $e
+            ]);
+            $campaigns = collect();
+
+            // $featuredCampaigns = collect();
+            // $campaigns = new \Illuminate\Pagination\LengthAwarePaginator(
+            //     collect(),
+            //     0,
+            //     self::ITEMS_PER_PAGE,
+            //     1,
+            //     ['path' => request()->url()]
+            // );
+
+            session()->flash('error', 'Failed to load campaigns. Please try again.');
+            return view('backend.user.campaign_management.campaign', [
+                'campaigns' => $campaigns
+            ]);
+        }
     }
 }

@@ -235,3 +235,10 @@ function generateOrderID()
 
     return $prefix . $date . $time . mt_rand(10000, 99999);
 }
+function totalReposts($campaign = null)
+{
+    if (!$campaign) {
+        $campaign = 0;
+    }
+    return $campaign->reposts()->count();
+}

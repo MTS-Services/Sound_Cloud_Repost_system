@@ -52,7 +52,7 @@ class MyCampaign extends Component
     public bool $showAlreadyCancelledModal = false;
     public bool $showDetailsModal = false;
 
-    public $proFeatureValue = null;
+    public $proFeatureValue = 1;
 
     // Modal tab state
     public string $activeModalTab = 'tracks';
@@ -76,12 +76,12 @@ class MyCampaign extends Component
     public $track = null;
     public int $credit = 100;
     public array $genres = [];
-    public bool $commentable = false;
-    public bool $likeable = false;
+    public bool $commentable = true;
+    public bool $likeable = true;
     public bool $proFeatureEnabled = false;
-    public $maxFollower = null;
-    public $maxRepostLast24h = null;
-    public $maxRepostsPerDay = null;
+    public $maxFollower = 0;
+    public $maxRepostLast24h = 0;
+    public $maxRepostsPerDay = 0;
     public $anyGenre = '';
     public $trackGenre = '';
     public $targetGenre = '';
@@ -124,6 +124,10 @@ class MyCampaign extends Component
     private const REFUND_PERCENTAGE = 0.5;
     private const ITEMS_PER_PAGE = 2;
 
+    // Campaign edit 
+    public $isEditing = false;
+    public $editingCampaign = null;
+
     // Search and pagination properties
     #[Url(as: 'q', except: '')]
     public string $searchQuery = '';
@@ -154,9 +158,23 @@ class MyCampaign extends Component
 
     protected function rules(): array
     {
-        return [
-            'credit' => 'required|integer|min:' . self::MIN_CREDIT,
+        $rules = [
+            'credit' => [
+                'required',
+                'integer',
+                'min:100',
+                function ($attribute, $value, $fail) {
+                    if ($value > userCredits()) {
+                        $fail('The credit is not available.');
+                    }
+                    if($this->editingCampaign->budget_credits > $value){
+                        $fail('The credit is not available.');
+                    }
+                },
+            ],
         ];
+
+        return $rules;
     }
 
     protected function messages(): array
@@ -491,35 +509,179 @@ class MyCampaign extends Component
         ]);
     }
 
-    public function getAllGenres(): void
+    public function getAllGenres()
     {
-        $this->genres = $this->trackService->getTracks()
-            ->self()
-            ->pluck('genre')
-            ->unique()
-            ->values()
-            ->toArray();
+        $this->genres = $this->trackService->getTracks()->where('user_urn', '!=', user()->urn)->pluck('genre')->unique()->values()->toArray();
     }
 
-    public function createCampaign(): void
+    public function profeature($isChecked)
+    {
+        $this->proFeatureEnabled = $isChecked ? true : false;
+        $this->proFeatureValue = $isChecked ? 0 : 1;
+    }
+
+    public function createCampaign()
     {
         $this->validate();
 
         try {
-            $totalBudget = $this->credit;
-
+            if ($this->isEditing) {
+                $totalBudget = $this->editingCampaign->budget_credits - $this->credit;
+            } else {
+                $totalBudget = $this->credit;
+            }
+            if ($this->anyGenre == 'anyGenre') {
+                $this->targetGenre = $this->anyGenre;
+            }
+            if ($this->trackGenre == 'trackGenre') {
+                $this->targetGenre = $this->trackGenre;
+            }
             DB::transaction(function () use ($totalBudget) {
-                $campaign = $this->createCampaignRecord($totalBudget);
-                $this->createCreditTransaction($campaign, $totalBudget);
+                $commentable = $this->commentable ? 1 : 0;
+                $likeable = $this->likeable ? 1 : 0;
+                $proFeatureEnabled = $this->proFeatureEnabled ? 1 : 0;
+                $editingProFeature = $this->isEditing && $this->editingCampaign->pro_feature == 1 ? $this->editingCampaign->pro_feature : $proFeatureEnabled;
+                $campaign = [
+                    'music_id' => $this->musicId,
+                    'music_type' => $this->musicType,
+                    'title' => $this->title,
+                    'description' => $this->description,
+                    'budget_credits' => $this->credit,
+                    'user_urn' => user()->urn,
+                    'status' => Campaign::STATUS_OPEN,
+                    'max_followers' => $this->maxFollower,
+                    'creater_id' => user()->id,
+                    'creater_type' => get_class(user()),
+                    'commentable' => $commentable,
+                    'likeable' => $likeable,
+                    'pro_feature' => $this->isEditing && $this->editingCampaign ? $editingProFeature : $proFeatureEnabled,
+                    'max_repost_last_24_h' => $this->maxRepostLast24h,
+                    'max_repost_per_day' => $this->maxRepostsPerDay,
+                    'target_genre' => $this->targetGenre,
+                ];
+                if (!$this->isEditing) {
+                    $campaign = Campaign::create($campaign);
+                } else {
+                    $this->editingCampaign->update($campaign);
+                    $campaign = $this->editingCampaign;
+                }
+                CreditTransaction::create([
+                    'receiver_urn' => user()->urn,
+                    'calculation_type' => CreditTransaction::CALCULATION_TYPE_CREDIT,
+                    'source_id' => $campaign->id,
+                    'source_type' => Campaign::class,
+                    'transaction_type' => CreditTransaction::TYPE_SPEND,
+                    'status' => 'succeeded',
+                    'credits' => $totalBudget,
+                    'description' => 'Spent on campaign creation',
+                    'metadata' => [
+                        'campaign_id' => $campaign->id,
+                        'music_id' => $this->musicId,
+                        'music_type' => $this->musicType,
+                        'start_date' => now(),
+                    ],
+                    'created_id' => user()->id,
+                    'creater_type' => get_class(user())
+                ]);
             });
 
-            $this->handleSuccessfulCampaignCreation();
+            session()->flash('message', 'Campaign created successfully!');
+            $this->dispatch('campaignCreated');
+
+            // Close modal and complete reset
+            $this->showCampaignsModal = false;
+            $this->showSubmitModal = false;
+
+
+            $this->reset([
+                'musicId',
+                'title',
+                'description',
+                'playlistId',
+                'playlistTracks',
+                'activeTab',
+                'tracks',
+                'track',
+                'playlists',
+                'maxFollower',
+                'showBudgetWarning',
+                'budgetWarningMessage',
+                'canSubmit',
+                'commentable',
+                'likeable',
+                'proFeatureEnabled',
+                'maxRepostLast24h',
+                'maxRepostsPerDay',
+                'targetGenre',
+                'anyGenre',
+                'trackGenre',
+                'maxFollower',
+                'editingCampaign',
+                'isEditing'
+            ]);
+
+            $this->resetValidation();
+            $this->resetErrorBag();
+            session()->flash('message', 'Campaign created successfully!');
         } catch (\Exception $e) {
-            $this->handleError('Failed to create campaign', $e, [
+            session()->flash('error', 'Failed to create campaign: ' . $e->getMessage());
+
+            Log::error('Campaign creation error: ' . $e->getMessage(), [
                 'music_id' => $this->musicId,
+                'user_urn' => user()->urn ?? 'unknown',
                 'title' => $this->title,
                 'total_budget' => $totalBudget ?? 0,
             ]);
+        }
+    }
+    public function editCampaign($userId)
+    {
+        $this->editingCampaign = Campaign::where('id', $userId)
+            ->where('creater_id', user()->id)->open()
+            ->first();
+
+        if (!$this->editingCampaign) {
+            session()->flash('error', 'Campaign not found or cannot be edited.');
+            return;
+        }
+
+        // Load campaign data into component properties
+        $this->loadCampaignData();
+        $this->isEditing = true;
+        $this->showSubmitModal = true;
+    }
+
+    // Method to load campaign data into form fields
+    private function loadCampaignData()
+    {
+        if (!$this->editingCampaign) return;
+
+        $this->musicId = $this->editingCampaign->music_id;
+        $this->musicType = $this->editingCampaign->music_type;
+        $this->title = $this->editingCampaign->title;
+        $this->description = $this->editingCampaign->description;
+        $this->credit = $this->editingCampaign->budget_credits;
+        $this->maxFollower = $this->editingCampaign->max_followers;
+        $this->commentable = $this->editingCampaign->commentable;
+        $this->likeable = $this->editingCampaign->likeable;
+        $this->proFeatureEnabled = $this->editingCampaign->pro_feature;
+        $this->maxRepostLast24h = $this->editingCampaign->max_repost_last_24_h;
+        $this->maxRepostsPerDay = $this->editingCampaign->max_repost_per_day;
+        $this->targetGenre = $this->editingCampaign->target_genre;
+
+        // Set genre radio buttons based on target_genre
+        if ($this->targetGenre === 'anyGenre') {
+            $this->anyGenre = 'anyGenre';
+        } elseif ($this->targetGenre === 'trackGenre') {
+            $this->trackGenre = 'trackGenre';
+        }
+        $this->loadTrackData();
+    }
+    private function loadTrackData()
+    {
+        if ($this->musicType === 'track' && $this->musicId) {
+            // Assuming you have a method to get track data
+            $this->track = $this->getTrackById($this->musicId);
         }
     }
 
@@ -790,7 +952,7 @@ class MyCampaign extends Component
     private function getCampaignsQuery(): \Illuminate\Database\Eloquent\Builder
     {
         return Campaign::with(['music' => function ($query) {
-            $query->self();
+            $query;
         }]);
     }
 
@@ -1363,15 +1525,19 @@ class MyCampaign extends Component
                 'active' => $this->getCampaignsQuery()
                     ->Open()
                     ->latest()
+                    ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'activePage', $this->activePage),
                 'completed' => $this->getCampaignsQuery()
                     ->Completed()
                     ->latest()
+                    ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'completedPage', $this->completedPage),
                 default => $this->getCampaignsQuery()
                     ->latest()
+                    ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage)
             };
+            
         } catch (\Exception $e) {
             $campaigns = collect();
             $this->handleError('Failed to load campaigns', $e);
