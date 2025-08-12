@@ -48,9 +48,9 @@ class CustomNotificationStatus extends BaseModel
         return $query->where('user_id', user()->id)
             ->where('user_type', get_class(user()));
     }
-    public function scopeForAdmin(Builder $query): Builder
+    public function scopeForCurrentAdmin(Builder $query): Builder
     {
-        return $query->where('user_id', user()->id)
-            ->where('user_type', get_class(user()));
+        return $query->where('user_id', admin()->id)
+            ->where('user_type', get_class(admin()));
     }
 }

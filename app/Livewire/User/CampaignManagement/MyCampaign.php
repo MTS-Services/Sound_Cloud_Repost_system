@@ -2,8 +2,10 @@
 
 namespace App\Livewire\User\CampaignManagement;
 
+use App\Events\UserNotificationSent;
 use App\Models\Campaign;
 use App\Models\CreditTransaction;
+use App\Models\CustomNotification;
 use App\Models\Faq;
 use App\Models\Track;
 use App\Models\Playlist;
@@ -508,11 +510,30 @@ class MyCampaign extends Component
         try {
             $totalBudget = $this->credit;
 
-            DB::transaction(function () use ($totalBudget) {
+            $notification = DB::transaction(function () use ($totalBudget) {
                 $campaign = $this->createCampaignRecord($totalBudget);
                 $this->createCreditTransaction($campaign, $totalBudget);
+                $campaign->refresh();
+                $campaign->load('music');
+                return CustomNotification::create([
+                    'sender_id' => user()->id,
+                    'sender_type' => get_class(user()),
+                    'receiver_id' => user()->id,
+                    'receiver_type' => get_class(user()),
+                    'type' => CustomNotification::TYPE_USER,
+                    'message_data' => [
+                        'title' => 'Campaign Created',
+                        'message' => 'Your campaign has been created successfully',
+                        'description' => 'Your campaign has been created successfully',
+                        'additional_data' => [
+                            'Campaign Title' => $campaign?->music?->title,
+                            'Campaign ID' => $campaign?->id,
+                            'Total Budget Credits' => $campaign?->budget_credits
+                        ]
+                    ]
+                ]);
             });
-
+            dispatch(new UserNotificationSent($notification));
             $this->handleSuccessfulCampaignCreation();
         } catch (\Exception $e) {
             $this->handleError('Failed to create campaign', $e, [

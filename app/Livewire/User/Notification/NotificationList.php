@@ -121,7 +121,7 @@ class NotificationList extends Component
             });
         }
 
-        return $query;
+        return $query->latest();
     }
 
     public function getNotificationsProperty()

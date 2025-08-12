@@ -89,34 +89,17 @@ class UserService
 
     public function addCredit(User $user, array $data)
     {
-        return DB::transaction(function () use ($user, $data) {
-            $credit['transaction_type'] = CreditTransaction::TYPE_MANUAL;
-            $credit['calculation_type'] = CreditTransaction::CALCULATION_TYPE_DEBIT;
-            $credit['receiver_urn'] = $user->urn;
-            $credit['credits'] = $data['credit'];
-            $credit['amount'] = 0;
-            $credit['status'] = 'succeeded';
-            $credit['creater_id'] = admin()->id;
-            $credit['creater_type'] = get_class(admin());
-            $credit['description'] = $data['description'] ?? 'Manual credit addition by ' . admin()->name;
-            $credit['source_id'] = admin()->id;
-            $credit['source_type'] = get_class(admin());
-            CreditTransaction::create($credit);
-
-            return CustomNotification::create([
-                'type' => CustomNotification::TYPE_USER,
-                'sender_id' => admin()->id,
-                'sender_type' => get_class(admin()),
-                'receiver_id' => $user->id,
-                'receiver_type' => User::class,
-                'message_data' => [
-                    'title' => 'Credit Added',
-                    'message' => 'Credit added successfully!',
-                    'description' => 'You have received ' . $data['credit'] . ' credits from ' . admin()->name,
-                    'icon' => 'currency-dollar',
-                    'additional_data' => []
-                ]
-            ]);
-        });
+        $credit['transaction_type'] = CreditTransaction::TYPE_MANUAL;
+        $credit['calculation_type'] = CreditTransaction::CALCULATION_TYPE_DEBIT;
+        $credit['receiver_urn'] = $user->urn;
+        $credit['credits'] = $data['credit'];
+        $credit['amount'] = 0;
+        $credit['status'] = 'succeeded';
+        $credit['creater_id'] = admin()->id;
+        $credit['creater_type'] = get_class(admin());
+        $credit['description'] = $data['description'] ?? 'Manual credit addition by ' . admin()->name;
+        $credit['source_id'] = admin()->id;
+        $credit['source_type'] = get_class(admin());
+        CreditTransaction::create($credit);
     }
 }
