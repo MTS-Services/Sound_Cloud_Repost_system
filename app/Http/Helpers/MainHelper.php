@@ -214,3 +214,11 @@ function userCredits($user = null)
     $credit = $user->creditTransactions->sum('credits');
     return $debit - $credit;
 }
+
+function totalReposts($campaign = null)
+{
+    if (!$campaign) {
+        $campaign = 0;
+    }
+    return $campaign->reposts()->count();
+}
