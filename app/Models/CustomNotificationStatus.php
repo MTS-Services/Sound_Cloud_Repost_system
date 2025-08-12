@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Builder;
 
 class CustomNotificationStatus extends BaseModel
 {
@@ -40,5 +41,16 @@ class CustomNotificationStatus extends BaseModel
         $this->appends = array_merge(parent::getAppends(), [
             //
         ]);
+    }
+
+    public function scopeForCurrentUser(Builder $query): Builder
+    {
+        return $query->where('user_id', user()->id)
+            ->where('user_type', get_class(user()));
+    }
+    public function scopeForAdmin(Builder $query): Builder
+    {
+        return $query->where('user_id', user()->id)
+            ->where('user_type', get_class(user()));
     }
 }

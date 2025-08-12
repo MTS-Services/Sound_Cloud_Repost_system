@@ -187,8 +187,7 @@ class NotificationController extends Controller
     private function getNotificationsQuery()
     {
         return CustomNotification::with(['statuses' => function ($query) {
-            $query->where('user_id', admin()->id)
-                ->where('user_type', get_class(admin()));
+           $query->forCurrentAdmin();
         }])
             ->where(function ($query) {
                 // Group all the 'where' and 'orWhere' conditions together

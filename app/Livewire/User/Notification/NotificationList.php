@@ -87,7 +87,10 @@ class NotificationList extends Component
         $query = CustomNotification::with(['statuses' => function ($q) {
             $q->where('user_id', $this->currentUserId)
                 ->where('user_type', $this->currentUserType);
-        }]);
+        }])->whereDoesntHave('deleteds', function ($q) {
+            $q->where('user_id', $this->currentUserId)
+                ->where('user_type', $this->currentUserType);
+        });
 
         $query->where(function ($query) {
             // Main query: Get notifications for the current user (private) OR public notifications
@@ -117,7 +120,7 @@ class NotificationList extends Component
                     ->whereNotNull('read_at');
             });
         }
-      
+
         return $query;
     }
 
@@ -158,6 +161,10 @@ class NotificationList extends Component
                         ->where('type', CustomNotification::TYPE_USER);
                 });
         })
+            ->whereDoesntHave('deleteds', function ($q) {
+                $q->where('user_id', $this->currentUserId)
+                    ->where('user_type', $this->currentUserType);
+            })
             ->whereHas('statuses', function ($q) {
                 $q->where('user_id', $this->currentUserId)
                     ->where('user_type', $this->currentUserType)
@@ -169,12 +176,18 @@ class NotificationList extends Component
     public function getTotalCountProperty()
     {
         return CustomNotification::where(function ($query) {
-            $query->where('receiver_id', $this->currentUserId)
-                ->where('receiver_type', $this->currentUserType);
+            $query->where(function ($q) {
+                $q->where('receiver_id', $this->currentUserId)
+                    ->where('receiver_type', $this->currentUserType);
+            })
+                ->orWhere(function ($q) {
+                    $q->where('receiver_id', null)
+                        ->where('type', CustomNotification::TYPE_USER);
+                });
         })
-            ->orWhere(function ($query) {
-                $query->where('receiver_id', null)
-                    ->where('type', CustomNotification::TYPE_USER);
+            ->whereDoesntHave('deleteds', function ($q) {
+                $q->where('user_id', $this->currentUserId)
+                    ->where('user_type', $this->currentUserType);
             })
             ->count();
     }

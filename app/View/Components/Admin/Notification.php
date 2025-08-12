@@ -13,8 +13,7 @@ class Notification extends Component
     public function __construct()
     {
         $this->notifications = CustomNotification::with(['statuses' => function ($query) {
-            $query->where('user_id', admin()->id)
-                ->where('user_type', get_class(admin()));
+            $query->forCurrentAdmin();
         }])
             ->where(function ($query) {
                 // Condition one for private messages

@@ -11,6 +11,33 @@
             </a>
         </div>
 
+        {{-- confirmation modal --}}
+        {{-- <div x-data="{ showConfirmModal: @entangle('showConfirmModal').live }" x-show="showConfirmModal"
+            class="absolute inset-0 pointer-events-none z-50 bg-black/50 backdrop-blur-xs">
+            <div class="absolute inset-0 flex items-center justify-center">
+                <div class="card bg-white dark:bg-gray-800/90 shadow-lg max-w-4xl">
+                    <div class="card-body p-8">
+                        <h1 class="text-3xl font-bold mb-2 text-gray-800 dark:text-gray-200">
+                            {{ $this->getNotificationTitle() }}
+                        </h1>
+                        <p class="text-lg text-gray-600 dark:text-gray-400">
+                            {{ $this->getNotificationMessage() }}
+                        </p>
+                        <div class="flex justify-between mt-4">
+                            <button wire:click="confirmNotification"
+                                class="btn btn-outline border-orange-300 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500">
+                                Confirm
+                            </button>
+                            <button wire:click="cancelNotification"
+                                class="btn btn-outline border-gray-600 text-gray-600 hover:bg-gray-500 hover:text-white hover:border-gray-500">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> --}}
+
         {{-- Notification Detail Card --}}
         <div class="card bg-white/90  dark:bg-gray-800/90 shadow-xl">
             <div class="card-body p-8">
@@ -53,8 +80,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a wire:click="deleteNotification"
-                                    wire:confirm="Are you sure you want to delete this notification?"
+                                <a wire:click="deleteNotification" wire:navigate="route('user.notifications.index')"
                                     class="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30">
                                     <i class="fas fa-trash mr-2"></i>
                                     Delete
