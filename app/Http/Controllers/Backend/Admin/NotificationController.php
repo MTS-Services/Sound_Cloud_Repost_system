@@ -17,11 +17,20 @@ class NotificationController extends Controller
      */
     public function index(Request $request): View
     {
-        $notifications = $this->getNotificationsQuery()
+
+
+        $data['notifications'] = $this->getNotificationsQuery()
             ->paginate(20)
             ->withQueryString();
 
-        return view('backend.admin.all-notifications', compact('notifications'));
+        $data['unreadCount'] = $this->getNotificationsQuery()
+            ->whereDoesntHave('statuses', function ($query) {
+                $query->where('user_id', admin()->id)
+                    ->where('user_type', get_class(admin()));
+            })
+            ->count();
+
+        return view('backend.admin.all-notifications', $data);
     }
 
     /**
@@ -55,9 +64,9 @@ class NotificationController extends Controller
     public function markAsRead(Request $request): JsonResponse
     {
         $notificationId = $request->get('notification_id');
-        
+
         $notification = CustomNotification::find($notificationId);
-        
+
         if (!$notification) {
             return response()->json([
                 'success' => false,
@@ -128,9 +137,9 @@ class NotificationController extends Controller
     public function destroy(Request $request): JsonResponse
     {
         $notificationId = $request->get('notification_id');
-        
+
         $notification = CustomNotification::find($notificationId);
-        
+
         if (!$notification) {
             return response()->json([
                 'success' => false,
@@ -139,8 +148,10 @@ class NotificationController extends Controller
         }
 
         // Only allow deletion if it's a private notification for this admin
-        if ($notification->receiver_id !== admin()->id || 
-            $notification->receiver_type !== get_class(admin())) {
+        if (
+            $notification->receiver_id !== admin()->id ||
+            $notification->receiver_type !== get_class(admin())
+        ) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized to delete this notification'
@@ -173,24 +184,24 @@ class NotificationController extends Controller
         ]);
     }
 
-    /**
-     * Common query for notifications
-     */
     private function getNotificationsQuery()
     {
         return CustomNotification::with(['statuses' => function ($query) {
-                $query->where('user_id', admin()->id)
-                    ->where('user_type', get_class(admin()));
-            }])
+            $query->where('user_id', admin()->id)
+                ->where('user_type', get_class(admin()));
+        }])
             ->where(function ($query) {
-                // Private notifications for this admin
-                $query->where('receiver_id', admin()->id)
-                    ->where('receiver_type', get_class(admin()));
-            })
-            ->orWhere(function ($query) {
-                // Public notifications for all admins
-                $query->where('receiver_id', null)
-                    ->where('type', CustomNotification::TYPE_ADMIN);
+                // Group all the 'where' and 'orWhere' conditions together
+                $query->where(function ($q) {
+                    // Private notifications for this admin
+                    $q->where('receiver_id', admin()->id)
+                        ->where('receiver_type', get_class(admin()));
+                })
+                    ->orWhere(function ($q) {
+                        // Public notifications for all admins
+                        $q->where('receiver_id', null)
+                            ->where('type', CustomNotification::TYPE_ADMIN);
+                    });
             })
             ->latest();
     }
