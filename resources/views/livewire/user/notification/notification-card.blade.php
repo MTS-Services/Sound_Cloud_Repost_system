@@ -58,7 +58,7 @@
                                     {{ $this->getNotificationMessage() }}</p>
                                 <div class="flex items-center gap-4 text-sm">
                                     <span class="flex items-center text-gray-500">
-                                        <i class="fas fa-clock mr-1"></i>
+                                        <x-heroicon-s-clock class="w-4 h-4 mr-1" />
                                         {{ $this->getNotificationTime() }}
                                     </span>
                                     <span
@@ -75,7 +75,7 @@
                                 <div class="flex-shrink-0" wire:click.stop>
                                     <div class="dropdown dropdown-end">
                                         <div tabindex="0" role="button" class="btn btn-ghost btn-sm">
-                                          <i class="fas fa-ellipsis-v"></i>
+                                         <x-zondicon-dots-horizontal-triple class="w-6 h-6"/>
 
                                         </div>
                                         <ul tabindex="0"

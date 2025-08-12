@@ -26,7 +26,7 @@
                             </h1>
                             <div class="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                                 <span class="flex items-center">
-                                    <i class="fas fa-clock mr-1"></i>
+                                    <x-heroicon-s-clock class="w-4 h-4 mr-1" />
                                     {{ $customNotification->created_at_human }}
                                 </span>
                                 {{-- <span class="badge badge-outline {{ $customNotification->type === \App\Models\CustomNotification::TYPE_ADMIN ? 'text-red-600 border-red-300' : 'text-blue-600 border-blue-300' }}">
@@ -42,7 +42,7 @@
                     {{-- Actions --}}
                     <div class="dropdown dropdown-end">
                         <div tabindex="0" role="button" class="btn btn-ghost">
-                            <i class="fas fa-ellipsis-v"></i>
+                        <x-zondicon-dots-horizontal-triple class="w-6 h-6"/>
                         </div>
                         <ul tabindex="0"
                             class="dropdown-content menu bg-white dark:bg-gray-800 rounded-box z-[1] w-52 p-2 shadow-xl border border-gray-200 dark:border-gray-700">
