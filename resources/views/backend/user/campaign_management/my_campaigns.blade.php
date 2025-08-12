@@ -43,7 +43,7 @@
                 <div class="w-full flex flex-col gap-6">
                     @forelse ($campaigns as $campaig_)
                         <div class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-                            <div class="p-4 sm:p-6">
+                            <div class="p-2 sm:p-4">
                                 <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
                                     <div class="flex flex-col sm:flex-row gap-4">
                                         <img src="{{ soundcloud_image($campaig_->music?->artwork_url) }}"
@@ -95,13 +95,13 @@
                                     </div>
                                 </div>
 
-                                <hr class="my-6 border-gray-300 dark:border-gray-600" />
+                                <hr class="my-1 border-gray-300 dark:border-gray-600" />
 
                                 <!-- Stats -->
-                                <div class="flex justify-between gap-6 mb-2">
+                                <div class="flex justify-between gap-6">
                                     <div class="flex gap-6">
                                         <div class="text-center">
-                                            <div class="flex items-center justify-center mb-2">
+                                            <div class="flex items-center justify-center ">
 
                                                 <x-lucide-repeat
                                                     class="text-gray-500 w-5 h-5 m-2 dark:text-white text-black" />
@@ -111,7 +111,7 @@
                                         </div>
                                         <!-- Repeat block with different data -->
                                         <div class="text-center">
-                                            <div class="flex items-center justify-center mb-2">
+                                            <div class="flex items-center justify-center ">
                                                 <x-lucide-user-plus
                                                     class="text-gray-500 w-5 h-5 m-2 dark:text-white text-black" />
                                                 <span class=" text-black dark:text-gray-100">8</span>
@@ -119,7 +119,7 @@
 
                                         </div>
                                         <div class="text-center">
-                                            <div class="flex items-center justify-center mb-2">
+                                            <div class="flex items-center justify-center ">
                                                 <x-lucide-heart
                                                     class="text-gray-500 w-5 h-5 m-2 dark:text-white text-black" />
                                                 <span class=" text-black dark:text-gray-100">{{ $campaig_->favorite_count ?? 0 }}</span>
@@ -127,7 +127,7 @@
 
                                         </div>
                                         <div class="text-center">
-                                            <div class="flex items-center justify-center mb-2">
+                                            <div class="flex items-center justify-center ">
                                                 <x-lucide-message-square
                                                     class="text-gray-500 w-5 h-5 m-2 dark:text-white text-black" />
                                                 <span class=" text-black dark:text-gray-100">{{ __('10') }}</span>
@@ -135,7 +135,7 @@
 
                                         </div>
                                         <div class="text-center">
-                                            <div class="flex items-center justify-center mb-2">
+                                            <div class="flex items-center justify-center ">
                                                 <x-lucide-smile
                                                     class="text-gray-500 w-5 h-5 m-2 dark:text-white text-black" />
                                                 <span class=" text-black dark:text-gray-100">{{ $campaig_->emoji_count ?? 0 }}</span>
@@ -143,7 +143,7 @@
 
                                         </div>
                                         <div class="text-center">
-                                            <div class="flex items-center justify-center mb-2">
+                                            <div class="flex items-center justify-center ">
 
                                                 <span wire:click="openViewDetailsModal({{ $campaig_->id }})"
                                                     class="text-orange-500 items-end font-medium mt-2 cursor-pointer hover:underline transition-all duration-300">Show
