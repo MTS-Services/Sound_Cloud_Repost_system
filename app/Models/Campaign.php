@@ -179,6 +179,8 @@ class Campaign extends BaseModel
 
     public const FEATURED = 1;
     public const NOT_FEATURED = 0;
+    public const PRO_FEATURED = 1;
+    public const NOT_PRO_FEATURED = 0;
 
     public static function getFeatureList(): array
     {
@@ -209,6 +211,14 @@ class Campaign extends BaseModel
     public function scopeNotFeatured(Builder $query): Builder
     {
         return $query->where('is_featured', self::NOT_FEATURED);
+    }
+    public function scopeProFeatured(Builder $query): Builder
+    {
+        return $query->where('pro_feature', self::PRO_FEATURED);
+    }
+    public function scopeNotProFeatured(Builder $query): Builder
+    {
+        return $query->where('pro_feature', self::NOT_PRO_FEATURED);
     }
 
     public function scopeOpen(Builder $query): Builder

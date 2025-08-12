@@ -17,7 +17,8 @@ class DashboardController extends Controller
         $data['user'] = User::all()->count();
         $data['track']= Track::all()->count();
         $data['order'] = Order::all()->count();
-        $data['total_payment'] = Payment::all()->sum('amount');
+        $data['total_payment'] = Payment::all()->sum('amount');;
+
         return view('backend.admin.dashboard', $data);
     }
 }
