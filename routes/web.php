@@ -10,6 +10,7 @@ use App\Livewire\NotificationList;
 use App\Livewire\NotificationShow;
 use App\Livewire\StatsCard;
 use Illuminate\Support\Facades\Broadcast;
+use App\Http\Controllers\NotificationController;
 
 Route::post('update/sort/order', [DatatableController::class, 'updateSortOrder'])->name('update.sort.order');
 Route::post('/content-image/upload', [FileManagementController::class, 'contentImageUpload'])->name('file.ci_upload');

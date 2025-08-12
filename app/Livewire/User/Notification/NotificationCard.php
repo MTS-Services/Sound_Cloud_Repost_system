@@ -4,6 +4,7 @@ namespace App\Livewire\User\Notification;
 
 use Livewire\Component;
 use App\Models\CustomNotification;
+use App\Models\CustomNotificationDeleted;
 use App\Models\CustomNotificationStatus;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,6 +15,7 @@ class NotificationCard extends Component
     public $compact = false;
     public $currentUserId;
     public $currentUserType;
+
 
     public function mount(CustomNotification $notification, $showActions = true, $compact = false)
     {
@@ -49,7 +51,11 @@ class NotificationCard extends Component
 
     public function deleteNotification()
     {
-        $this->notification->delete();
+        CustomNotificationDeleted::create([
+            'notification_id' => $this->notification->id,
+            'user_id' => $this->currentUserId,
+            'user_type' => $this->currentUserType,
+        ]);
         $this->dispatch('notification-deleted', $this->notification->id);
     }
 

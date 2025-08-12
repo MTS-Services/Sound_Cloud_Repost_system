@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend\Admin\UserManagement;
 
+use App\Events\AdminNotificationSent;
 use App\Events\UserNotificationSent;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
@@ -345,9 +346,40 @@ class UserController extends Controller implements HasMiddleware
             'credit' => 'required|numeric|min:1',
         ]);
 
-        $notification = $this->userService->addCredit($user, $data);
+        DB::transaction(function () use ($user, $data) {
+            $this->userService->addCredit($user, $data);
 
-        broadcast(new UserNotificationSent($notification));
+            $userNotification = CustomNotification::create([
+                'type' => CustomNotification::TYPE_USER,
+                'sender_id' => admin()->id,
+                'sender_type' => get_class(admin()),
+                'receiver_id' => $user->id,
+                'receiver_type' => User::class,
+                'message_data' => [
+                    'title' => 'Credit Added',
+                    'message' => 'Credit added successfully!',
+                    'description' => 'You have received ' . $data['credit'] . ' credits from ' . admin()->name,
+                    'icon' => 'currency-dollar',
+                    'additional_data' => []
+                ]
+            ]);
+            $adminNotification = CustomNotification::create([
+                'type' => CustomNotification::TYPE_ADMIN,
+                'sender_id' => admin()->id,
+                'sender_type' => get_class(admin()),
+                'receiver_id' => null,
+                'receiver_type' => null,
+                'message_data' => [
+                    'title' => 'Sended Credit',
+                    'message' => 'Credit added successfully! to ' . $user->name,
+                    'description' => 'You have sent ' . $data['credit'] . ' credits to ' . $user->name,
+                    'icon' => 'currency-dollar',
+                    'additional_data' => []
+                ]
+            ]);
+            broadcast(new AdminNotificationSent($adminNotification));
+            broadcast(new UserNotificationSent($userNotification));
+        });
 
         session()->flash('success', 'Credit added successfully.');
         return $this->redirectIndex();
