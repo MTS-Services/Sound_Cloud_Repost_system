@@ -36,14 +36,15 @@
                         </div>
                         <div class="text-2xl font-bold text-gray-800 dark:text-white">
                             ${{ number_format($credit->price, 2) }}</div>
-                        <form action="{{ route('user.order.store') }}" method="POST" class="w-full">
+                        <form action="{{ route('user.buy-credits') }}" method="POST" class="w-full">
                             @csrf
                             <input type="hidden" name="credits" value="{{ $credit->credits }}">
                             <input type="hidden" name="amount" value="{{ $credit->price }}">
+                            <input type="hidden" name="credit_id" value="{{ encrypt($credit->id) }}">
                             <button type="submit"
                                 class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold text-sm py-2 px-4 rounded-md transition duration-200 whitespace-nowrap"
                                 style="background-color: #fb3802;">
-                                Buy Now
+                                {{ __('Buy Now') }}
                             </button>
                         </form>
                     </div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CreditTransaction;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\User;
 use App\Services\Admin\OrderManagement\OrderService;
 use App\Services\Payments\StripeService;
 use Illuminate\Http\Request;
@@ -24,17 +25,16 @@ class PaymentController extends Controller
         $this->orderService = $orderService;
     }
 
-    public function paymentMethod(string $credit_id)
+    public function paymentMethod(string $order_id)
     {
-        $data['order'] = $this->orderService->getOrder($credit_id);
-
+        $data['order'] = $this->orderService->getOrder($order_id);
         return view('frontend.pages.payment_method', $data);
     }
 
     /**
      * Show the payment form
      */
-    public function showPaymentForm(Request $request, string $order_id)
+    public function showPaymentForm(string $order_id)
     {
         $data['order'] = $this->orderService->getOrder($order_id);
         return view('backend.admin.payments.form', $data);
@@ -62,31 +62,45 @@ class PaymentController extends Controller
                 ],
             ]);
             DB::transaction(function () use ($request, $order, $paymentIntent) {
-                $creditTransaction = CreditTransaction::create([
-                    'receiver_urn' => user()->urn,
+
+                CreditTransaction::create([
+                    'receiver_urn' => $order->user_urn,
                     'transaction_type' => CreditTransaction::TYPE_PURCHASE,
                     'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
+                    'source_id' => $order->id,
+                    'source_type' => Order::class,
                     'amount' => $order->amount,
                     'credits' => $order->credits,
-                    'metadata' => $paymentIntent->metadata->toArray(),
-                    'source_type' => Order::class,
-                    'source_id' => $order->id,
+                    'description' => 'Purchased ' . $order->credits . ' credits for ' . $order->amount . ' ' . $request->currency,
+                    'creater_id' => $order->creater_id,
+                    'creater_type' => $order->creater_type,
+
                 ]);
 
                 Payment::create([
-                    'user_urn' => user()->urn,
                     'name' => $request->name,
                     'email_address' => $request->email_address,
-                    'payment_gateway' => Payment::PAYMENT_METHOD_STRIPE,
-                    'credits_purchased' => $order->credits,
-                    'credit_transaction_id' => $creditTransaction->id,
-                    'exchange_rate' => 1,
-                    'payment_provider_id' => $paymentIntent->id,
-                    'payment_intent_id' => $paymentIntent->id,
-                    'amount' => $order->amount,
+                    'address' => $request->address ?? null,
                     'currency' => $request->currency ?? 'usd',
+                    'postal_code' => $request->postal_code ?? null,
+                    'reference' => $request->reference ?? null,
+                    'user_urn' => $order->user_urn,
+                    'order_id' => $order->id,
+                    'payment_method' => $request->payment_method ?? null,
+
+                    'payment_gateway' => Payment::PAYMENT_GATEWAY_STRIPE,
+                    'payment_provider_id' => $request->payment_provider_id ?? null,
+                    'amount' => $order->amount,
+                    'credits_purchased' => $order->credits,
                     'status' => $paymentIntent->status,
-                    'metadata' => $paymentIntent->metadata->toArray(),
+                    'payment_intent_id' => $paymentIntent->id ?? null,
+                    'receipt_url' => $request->receipt_url ?? null,
+                    'failure_reason' => $request->failure_reason ?? null,
+                    'metadata' => $paymentIntent->metadata->toArray() ?? null,
+                    'processed_at' => $request->processed_at ?? null,
+                    'creater_id' => $order->creater_id,
+                    'creater_type' => $order->creater_type,
+
                 ]);
             });
 
@@ -124,13 +138,6 @@ class PaymentController extends Controller
                     'processed_at' => $paymentIntent->status === 'succeeded' ? now() : null,
                 ]);
             }
-            // Update credit transaction
-            $credidTransaction = CreditTransaction::where('id', $payment->credit_transaction_id)->first();
-            if ($credidTransaction) {
-                $credidTransaction->update([
-                    'status' => $paymentIntent->status
-                ]);
-            }
             return view('backend.admin.payments.success', compact('payment', 'paymentIntent'));
         } catch (\Exception $e) {
             Log::error('Payment success handling failed: ' . $e->getMessage());
@@ -141,7 +148,7 @@ class PaymentController extends Controller
     /**
      * Handle payment cancellation
      */
-    public function paymentCancel()
+    public function paymentCancel(Request $request)
     {
         return view('backend.admin.payments.cancel');
     }

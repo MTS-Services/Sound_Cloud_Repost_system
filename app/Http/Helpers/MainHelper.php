@@ -200,7 +200,7 @@ function repostPrice($user = null)
     $user->load('userInfo');
     $followers_count = $user?->userInfo?->followers_count;
     if ($followers_count === null) {
-        return 1 + $total ; // Default to 1 if followers count is not available
+        return 1 + $total; // Default to 1 if followers count is not available
     }
     return ceil($followers_count / 100) + $total ?: 1 + $total; // Ensure at least 1 credit
 }
@@ -223,12 +223,15 @@ function SouceClassName($className)
 }
 
 
-function generateOrderID($length = 10)
+function generateOrderID()
 {
-    $orderID = Str::random($length);
-    $order = Order::where('order_id', $orderID)->first();
-    if ($order) {
-        return generateOrderID($length);
-    }
-    return $orderID;
+
+    $prefix = 'ORDER-';
+
+    $microseconds = explode(' ', microtime(true))[0];
+
+    $date = date('ymd');
+    $time = date('is');
+
+    return $prefix . $date . $time . mt_rand(10000, 99999);
 }

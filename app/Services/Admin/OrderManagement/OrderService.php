@@ -3,6 +3,7 @@
 namespace App\Services\Admin\OrderManagement;
 
 use App\Models\Order;
+use App\Models\User;
 use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\F;
 
 class OrderService
@@ -27,6 +28,9 @@ class OrderService
     {
         $data['user_urn'] = user()->urn;
         $data['creater_id'] = user()->id;
+        $data['creater_id'] = user()->id;
+        $data['creater_type'] = User::class;
+        $data['order_id'] = generateOrderID();
         return Order::create($data);
     }
     public function toggleStatusS(Order $order)
@@ -35,7 +39,7 @@ class OrderService
         $order->status = $order->status === 'active' ? 'inactive' : 'active';
         $order->save();
     }
-      public function toggleStatus(Order $order): void
+    public function toggleStatus(Order $order): void
     {
         $order->update([
             'status' => !$order->status,

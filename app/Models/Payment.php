@@ -125,12 +125,12 @@ class Payment extends BaseModel
 
     public function getPaymentGatewayLabelAttribute()
     {
-        return isset($this->payment_method) ? $this->getPaymentGateways()[$this->payment_method] : 'Unknown';
+        return isset($this->payment_gateway) ? $this->getPaymentGateways()[$this->payment_gateway] : 'Unknown';
     }
 
     public function getPaymentGatewayColorAttribute()
     {
-        return isset($this->payment_method) ? $this->getPaymentGateways()[$this->payment_method] : 'Unknown';
+        return isset($this->payment_gateway) ? $this->getPaymentGateways()[$this->payment_gateway] : 'Unknown';
     }
 
     public function order(): BelongsTo

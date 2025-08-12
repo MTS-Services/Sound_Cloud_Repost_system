@@ -164,16 +164,13 @@ class CreditTransactionController extends Controller
     public function payments(Request $request)
     {
         if ($request->ajax()) {
-            $query = $this->paymentService->getPayments()->with(['user','order']);
+            $query = $this->paymentService->getPayments()->with(['user', 'order']);
             return DataTables::eloquent($query)
-                ->editColumn('created_at', function ($payment) {
-                    return $payment->created_at_formatted;
-                })
                 ->editColumn('action', function ($payment) {
                     $menuItems = $this->paymentMenuItems($payment);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action', 'created_at'])
+                ->rawColumns(['action'])
                 ->make(true);
         }
         return view('backend.admin.order-management.payments.payment');

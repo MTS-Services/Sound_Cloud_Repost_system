@@ -131,24 +131,20 @@ class User extends AuthBaseModel
     }
     public function debitTransactions(): HasMany
     {
-        return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn')->where('calculation_type', CreditTransaction::CALCULATION_TYPE_DEBIT)->where('status', 'succeeded');
+        return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn')->where('calculation_type', CreditTransaction::CALCULATION_TYPE_DEBIT);
     }
     public function creditTransactions(): HasMany
     {
-        return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn')->where('calculation_type', CreditTransaction::CALCULATION_TYPE_CREDIT)->where('status', 'succeeded');
+        return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn')->where('calculation_type', CreditTransaction::CALCULATION_TYPE_CREDIT);
     }
-    public function succedDebitTransactions(): HasMany
+    public function succedDebitTransactions()
     {
-        return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn')
-            ->where('calculation_type', CreditTransaction::CALCULATION_TYPE_DEBIT)
-            ->where('status', 'succeeded');
+        return $this->debitTransactions()->succeeded();
     }
 
-    public function succedCreditTransactions(): HasMany
+    public function succedCreditTransactions()
     {
-        return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn')
-            ->where('calculation_type', CreditTransaction::CALCULATION_TYPE_CREDIT)
-            ->where('status', 'succeeded');
+        return $this->creditTransactions()->succeeded();
     }
 
 

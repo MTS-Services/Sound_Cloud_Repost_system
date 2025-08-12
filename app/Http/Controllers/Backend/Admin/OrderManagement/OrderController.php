@@ -21,7 +21,7 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
-        
+
         if ($request->ajax()) {
             $query = $this->orderService->getOrders();
             return DataTables::eloquent($query)
@@ -31,10 +31,10 @@ class OrderController extends Controller
                 ->editColumn('credit', function ($order) {
                     return $order->credit;
                 })
-                ->editColumn('amount', function ($order) {   
+                ->editColumn('amount', function ($order) {
                     return $order->amount;
                 })
-                
+
                 ->editColumn('status', fn($order) => "<span class='badge badge-soft {$order->status_color}'>{$order->status_label}</span>")
 
                 ->editColumn('created_at', function ($order) {
@@ -73,9 +73,9 @@ class OrderController extends Controller
                 'className' => $model->status_btn_color,
                 'permissions' => ['order-status']
             ],
-            
 
-          
+
+
 
         ];
     }
@@ -90,22 +90,12 @@ class OrderController extends Controller
 {
     $data = $this->orderService->getOrder($id);
     $data['user_urn'] = $data->user?->name;
-  
+
     // remove the following line
     // $data['updater_name'] = $this->updater_name($data);
     return response()->json($data);
 }
-    public function store(OrderRequest $request)
-    {
-        try{
-            $validated = $request->validated();
-            $orders =$this->orderService->createOrder($validated);
-            return redirect()->route('f.payment.method', encrypt($orders->id));
-        }catch(\Exception $e){
-            session()->flash('error', $e->getMessage());
-            return redirect()->back();
-        }
-    }
+    
 
    // app/Http/Controllers/Backend/Admin/OrderManagement/OrderController.php
 

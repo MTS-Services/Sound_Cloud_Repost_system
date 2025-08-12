@@ -41,6 +41,7 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/analytics', [AnalyticsController::class, 'analytics'])->name('analytics');
     Route::get('/add-credits', [AddCaeditsController::class, 'addCredits'])->name('add-credits');
+    Route::post('/buy-credits', [AddCaeditsController::class, 'buyCredits'])->name('buy-credits');
     Route::get('/promote', [PromoteController::class, 'tracks'])->name('promote');
 
     // Campaign Management
@@ -62,9 +63,9 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     Route::get('members', Member::class)->name('members');
     Route::get('reposts-request', RepostRequest::class)->name('reposts-request');
     // Order Manaagement Routes
-    Route::controller(UserOrderController::class)->name('order.')->prefix('order')->group(function () {
-        Route::post('/store', 'store')->name('store');
-    });
+    // Route::controller(UserOrderController::class)->name('order.')->prefix('order')->group(function () {
+    //     Route::post('/store', 'store')->name('store');
+    // });
 
     Route::group(['as' => 'pm.', 'prefix' => 'profile-management'], function () {
 
@@ -74,7 +75,7 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     // Help Support
     Route::get('/help-support', HelpAndSupport::class)->name('help-support');
 
-    // Notification Routes 
+    // Notification Routes
     Route::name('notifications.')->prefix('notifications')->group(function () {
         Route::get('/', NotificationList::class)->name('index');
         Route::get('/{encryptedId}', NotificationShow::class)->name('show');

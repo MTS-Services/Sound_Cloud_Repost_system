@@ -24,6 +24,7 @@ class OrderRequest extends FormRequest
         return [
             'credits' => 'required|numeric',
             'amount' => 'required|numeric',
+            'credit_id' => 'required',
         ] + ($this->isMethod('POST') ? $this->store() : $this->update());
     }
 

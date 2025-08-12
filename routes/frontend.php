@@ -11,7 +11,7 @@ Route::group(['as' => 'f.'], function () {
 
     // Stripe Payments Routes
     Route::controller(PaymentController::class)->name('payment.')->prefix('payment')->group(function () {
-        Route::get('/method/{credit_id}', 'paymentMethod')->name('method');
+        Route::get('/method/{order_id}', 'paymentMethod')->name('method');
         Route::get('/{order_id}', 'showPaymentForm')->name('form');
         Route::post('/create-intent', 'createPaymentIntent')->name('create-intent');
         Route::get('/success/page', 'paymentSuccess')->name('success');

@@ -24,33 +24,34 @@ class PaypalController extends Controller
         $reference = Str::uuid();
         $payment = null;
 
-        DB::transaction(function () use (&$payment, $orderId, $amount, $credit, $reference) {
+        DB::transaction(function () use (&$payment, $order, $amount, $credit, $reference) {
             // ✅ 1. Create CreditTransaction first
             $creditTransaction = CreditTransaction::create([
-                'receiver_urn' => user()->urn,
+                'receiver_urn' => $order->user_urn,
                 'transaction_type' => CreditTransaction::TYPE_PURCHASE,
                 'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
-                'status' => 'processing',
-                'amount' => $amount,
-                'credits' => $credit,
-                'metadata' => json_encode(['via' => 'PayPal']),
+                'source_id' => $order->id,
                 'source_type' => Order::class,
-                'source_id' => $orderId, // placeholder
+                'amount' => $order->amount,
+                'credits' => $order->credits,
+                'metadata' => json_encode(['via' => 'PayPal']),
+                'description' => 'Purchased ' . $order->credits . ' credits for ' . $order->amount . ' ' . 'usd',
+                'creater_id' => $order->creater_id,
+                'creater_type' => $order->creater_type,
             ]);
 
-            // ✅ 2. Create Payment linked to that CreditTransaction
             $payment = Payment::create([
-                'user_urn' => user()->urn,
-                'payment_method' => 'PayPal',
-                'payment_gateway' => Payment::PAYMENT_METHOD_PAYPAL,
-                'amount' => $amount,
-                'currency' => 'USD',
-                'credits_purchased' => $credit,
-                'status' => 'processing',
+                'user_urn' => $order->user_urn,
+                'order_id' => $order->id,
+                'payment_gateway' => Payment::PAYMENT_GATEWAY_PAYPAL,
+                'amount' => $order->amount,
+                'credits_purchased' => $order->credits,
+                'status' => Payment::STATUS_PROCESSING,
+                'payment_intent_id' => $paymentIntent->id ?? null,
                 'reference' => $reference,
-                'processed_at' => now(),
-                'credit_transaction_id' => $creditTransaction->id,
-                'order_id' => $orderId, // if you have this in DB
+                'creater_id' => $order->creater_id,
+                'creater_type' => $order->creater_type,
+
             ]);
         });
 
@@ -105,9 +106,6 @@ class PaypalController extends Controller
                 return redirect(route('user.add-credits'));
             }
 
-            $creditTransaction = CreditTransaction::find($payment->credit_transaction_id);
-            // dd($creditTransaction);
-
             if (
                 $order['status'] === 'COMPLETED' &&
                 isset($order['purchase_units'][0]['payments']['captures'][0])
@@ -124,13 +122,12 @@ class PaypalController extends Controller
                 $postalCode = $shippingAddress['postal_code'] ?? null;
 
 
-                $creditTransaction->update([
-                    'status' => 'succeeded',
-                ]);
+
 
                 $payment->update([
                     'payment_provider_id' => $paymentProviderId,
-                    'status' => 'succeeded',
+                    'status' => Payment::STATUS_SUCCEEDED,
+                    'currency' => $currency,
                     'payment_intent_id' => $paymentProviderId,
                     'receipt_url' => $receiptUrl,
                     'name' => $payerName,
@@ -162,7 +159,7 @@ class PaypalController extends Controller
         $reference = $request->query('reference');
         $payment = Payment::where('reference', $reference)->where('status', 'processing')->first();
         if ($payment) {
-            $payment->update(['status' => 'canceled']);
+            $payment->update(['status' => Payment::STATUS_CANCELED]);
         }
         Log::info('Payment Cancel Callback', ['reference' => $reference, 'payment' => $payment]);
         session()->flash('error', "Payment was canceled.");
