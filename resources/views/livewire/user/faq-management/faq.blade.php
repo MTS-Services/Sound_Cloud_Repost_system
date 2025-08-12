@@ -22,11 +22,11 @@
     <!-- Hero Section -->
     <section class="relative z-10 py-16 md:py-24 bg-orange-500">
         <div class="container mx-auto px-4 text-center">
-            <h1 class="text-4xl md:text-6xl font-bold text-slate-800 mb-6">
-                How can we <span class="bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-gray-800">help
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">
+                How can we <span class="bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-black">help
                     you?</span>
             </h1>
-            <p class="text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
+            <p class="text-xl text-slate-100 mb-8 max-w-2xl mx-auto">
                 Find answers to your questions quickly and easily.
             </p>
 
@@ -49,19 +49,19 @@
     </section>
 
     <!-- Category Buttons -->
-    <section class="relative z-10 py-8 bg-white/60 dark:bg-slate-800 backdrop-blur-md border-y border-white/30">
+    <section class="relative z-10 py-8 bg-white/60 dark:bg-slate-800 backdrop-blur-md border-y border-gray-200 dark:border-white/30">
         <div class="container mx-auto px-4">
             <div class="flex flex-wrap justify-center gap-4">
                 <!-- All Button -->
                 <button
-                    class="category-btn px-6 py-3 rounded-full bg-gray-500  text-black hover:bg-orange-500 hover:text-black font-medium dark:text-white"
+                    class="category-btn px-6 py-3 rounded-full bg-orange-500  text-white hover:bg-orange-500 font-medium"
                     data-category="all">
                     All
                 </button>
                 @foreach ($faqCategories as $faqCategory)
                     @if ($faqCategory->faqs_count > 0)
                         <button
-                            class="category-btn px-6 py-3 rounded-full bg-gray-500    text-slate-700 font-medium  hover:bg-orange-500 hover:text-black dark:text-white"
+                            class="category-btn px-6 py-3 rounded-full bg-gray-500  text-white hover:bg-orange-500 font-medium"
                             data-category="{{ $faqCategory->slug }}">
                             {{ $faqCategory->name }}
                         </button>
@@ -88,7 +88,7 @@
                         <div class="grid gap-4 ">
                             @foreach ($category->faqs as $faq)
                                 <div
-                                    class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden" id="faq-{{ $faq->id }}">
+                                    class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 dark:border-gray-700 overflow-hidden" id="faq-{{ $faq->id }}">
                                     <button
                                         class="faq-question w-full text-left p-6 flex items-center justify-between  transition-colors dark:bg-gray-900">
                                         <span class="font-samibold text-slate-800 pr-4 text-xl dark:text-white ">{{ $faq->question }}</span>
@@ -163,11 +163,11 @@
 
                         // Update active button
                         categoryButtons.forEach(btn => {
-                            btn.classList.remove('active', 'bg-primary-500', 'text-white');
-                            btn.classList.add('bg-white/60', 'text-slate-700');
+                            btn.classList.remove('active', 'text-white', 'bg-orange-500');
+                            btn.classList.add( 'text-slate-100', 'bg-gray-500');
                         });
-                        this.classList.add('active', 'bg-primary-500', 'text-white');
-                        this.classList.remove('bg-white/60', 'text-slate-700');
+                        this.classList.add('active', 'bg-orange-500', 'text-white');
+                        this.classList.remove( 'text-slate-100',);
 
                         // Show/hide categories
                         faqCategories.forEach(cat => {
@@ -250,22 +250,22 @@
                 document.getElementById('searchResults').classList.add('hidden');
                 document.getElementById('searchInput').value = '';
 
-                // Show the specific category
-                const categoryButtons = document.querySelectorAll('.category-btn');
-                const faqCategories = document.querySelectorAll('.faq-category');
+                // // Show the specific category
+                // const categoryButtons = document.querySelectorAll('.category-btn');
+                // const faqCategories = document.querySelectorAll('.faq-category');
 
-                categoryButtons.forEach(btn => {
-                    btn.classList.remove('active', 'bg-primary-500', 'text-white');
-                    btn.classList.add('bg-white/60', 'text-slate-700');
-                    if (btn.dataset.category === category) {
-                        btn.classList.add('active', 'bg-primary-500', 'text-white');
-                        btn.classList.remove('bg-white/60', 'text-slate-700');
-                    }
-                });
+                // categoryButtons.forEach(btn => {
+                //     btn.classList.remove('active', 'bg-primary-500', 'text-white');
+                //     btn.classList.add('bg-white/60', 'text-slate-700');
+                //     if (btn.dataset.category === category) {
+                //         btn.classList.add('active', 'bg-primary-500', 'text-white');
+                //         btn.classList.remove('bg-white/60', 'text-slate-700');
+                //     }
+                // });
 
-                faqCategories.forEach(cat => {
-                    cat.style.display = cat.dataset.category === category ? 'block' : 'none';
-                });
+                // faqCategories.forEach(cat => {
+                //     cat.style.display = cat.dataset.category === category ? 'block' : 'none';
+                // });
 
                 // Find and open the specific FAQ
                 setTimeout(() => {
