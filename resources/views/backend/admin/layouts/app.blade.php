@@ -72,6 +72,7 @@
         x-transition:leave-end="opacity-0" @click="closeMobileMenu()" class="fixed inset-0 z-40 glass-card lg:hidden">
     </div>
 
+
     <div class="flex h-screen">
         <!-- Sidebar -->
 
@@ -92,9 +93,7 @@
         </div>
     </div>
 
-    <!-- Notification Panel -->
     <x-admin::notification />
-
 
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
     <script>
@@ -107,36 +106,7 @@
                 sidebar_expanded: window.innerWidth >= 1024,
                 mobile_menu_open: false,
                 darkMode: true,
-                showNotifications: false,
-
-                notifications: [{
-                        id: 1,
-                        title: 'System Update',
-                        message: 'System maintenance scheduled for tonight',
-                        time: '5 minutes ago',
-                        icon: 'settings',
-                        iconBg: 'bg-blue-500/20',
-                        iconColor: 'text-blue-400'
-                    },
-                    {
-                        id: 2,
-                        title: 'New Comment',
-                        message: 'Someone commented on your post',
-                        time: '10 minutes ago',
-                        icon: 'message-circle',
-                        iconBg: 'bg-green-500/20',
-                        iconColor: 'text-green-400'
-                    },
-                    {
-                        id: 3,
-                        title: 'Security Alert',
-                        message: 'New login from unknown device',
-                        time: '1 hour ago',
-                        icon: 'shield-alert',
-                        iconBg: 'bg-red-500/20',
-                        iconColor: 'text-red-400'
-                    }
-                ],
+                showNotifications: true,
 
                 // Methods
                 init() {
