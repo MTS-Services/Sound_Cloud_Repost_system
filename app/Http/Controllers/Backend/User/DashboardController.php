@@ -22,7 +22,7 @@ class DashboardController extends Controller
     public function dashboard()
     {
         $data['total_credits'] = $this->creditTransactionService->getUserTotalCredits();
-        $data['totalCount'] = RepostRequest::where('requester_urn', user()->urn)->count();
+        $data['totalCount'] = RepostRequest::where('requester_urn', user()->urn)->get()->count();
 
         $data['repostRequests'] = RepostRequest::where('requester_urn', user()->urn)
             ->with(['track', 'requester'])
