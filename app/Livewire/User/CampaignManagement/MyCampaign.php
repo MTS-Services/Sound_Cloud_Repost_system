@@ -79,13 +79,14 @@ class MyCampaign extends Component
 
     public $track = null;
     public $credit = 100;
-    public $genres =[]; 
+    public $genres = [];
     public $commentable = false;
     public $likeable = false;
     public $proFeatureEnabled = false;
-    public $maxFollower = null;
-    public $maxRepostLast24h = null;
-    public $maxRepostsPerDay = null;
+    public $proFeatureValue = 1;
+    public $maxFollower = 0;
+    public $maxRepostLast24h = 0;
+    public $maxRepostsPerDay = 0;
     public $anyGenre = '';
     public $trackGenre = '';
     public $targetGenre = '';
@@ -103,10 +104,10 @@ class MyCampaign extends Component
     {
         $rules = [
             'credit' => 'required|integer|min:100',
-          
+
         ];
 
-       
+
         return $rules;
     }
 
@@ -118,7 +119,7 @@ class MyCampaign extends Component
         return [
             'credit.required' => 'Minimum credit is 100.',
             'maxFollower.required' => 'Max follower is required.',
-            
+
         ];
     }
 
@@ -430,7 +431,7 @@ class MyCampaign extends Component
         ]);
 
         // Check if user has minimum credits
-        if (userCredits() < 50) {
+        if (userCredits() < 100) {
             $this->showLowCreditWarningModal = true;
             $this->showSubmitModal = false;
             return;
@@ -442,7 +443,7 @@ class MyCampaign extends Component
 
         try {
             if ($type === 'track') {
-               $this->track = Track::findOrFail($id);
+                $this->track = Track::findOrFail($id);
                 if (!$this->track->urn || !$this->track->title) {
                     throw new \Exception('Track data is incomplete');
                 }
@@ -476,26 +477,34 @@ class MyCampaign extends Component
         }
     }
 
-  
+
     public function getAllGenres()
     {
         $this->genres = $this->trackService->getTracks()->where('user_urn', user()->urn)->pluck('genre')->unique()->values()->toArray();
     }
+    public function profeature($isChecked)
+    {
+        $this->proFeatureEnabled = $isChecked ? true : false;
+        $this->proFeatureValue = $isChecked ? 0 : 1;
+    }
     public function createCampaign()
-     {
+    {
         $this->validate();
 
         try {
-           
-            $totalBudget = $this->credit; //($this->costPerRepost * $this->targetReposts);
+            $totalBudget = $this->credit;
+            if ($this->anyGenre == 'anyGenre') {
+                $this->targetGenre = $this->anyGenre;
+            }
+            if ($this->trackGenre == 'trackGenre') {
+                $this->targetGenre = $this->trackGenre;
+            }
 
-           
 
             DB::transaction(function () use ($totalBudget) {
-                $commentable= $this->commentable ? 1 : 0;
+                $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
                 $proFeatureEnabled = $this->proFeatureEnabled ? 1 : 0;
-                    // dd($this->commentable, $this->likeable, $this->proFeatureEnabled, $this->maxRepostLast24h, $this->maxRepostsPerDay, $this->targetGenre, $this->maxFollower);
                 $campaign = Campaign::create([
                     'music_id' => $this->musicId,
                     'music_type' => $this->musicType,
@@ -507,11 +516,11 @@ class MyCampaign extends Component
                     'max_followers' => $this->maxFollower,
                     'creater_id' => user()->id,
                     'creater_type' => get_class(user()),
-                    'comentable' => 1,
+                    'commentable' => $commentable,
                     'likeable' => $likeable,
                     'pro_feature' => $proFeatureEnabled,
-                    'max_repost_last_24h' => $this->maxRepostLast24h,
-                    'max_reposts_per_day' => $this->maxRepostsPerDay,
+                    'max_repost_last_24_h' => $this->maxRepostLast24h,
+                    'max_repost_per_day' => $this->maxRepostsPerDay,
                     'target_genre' => $this->targetGenre,
                 ]);
                 CreditTransaction::create([
@@ -541,20 +550,18 @@ class MyCampaign extends Component
             $this->showCampaignsModal = false;
             $this->showSubmitModal = false;
 
+
             $this->reset([
                 'musicId',
                 'title',
                 'description',
-                'endDate',
-                'targetReposts',
-                'costPerRepost',
                 'playlistId',
                 'playlistTracks',
-                'activeModalTab',
+                'activeTab',
                 'tracks',
+                'track',
                 'playlists',
-                'minFollowers',
-                'maxFollowers',
+                'maxFollower',
                 'showBudgetWarning',
                 'budgetWarningMessage',
                 'canSubmit',
@@ -564,11 +571,15 @@ class MyCampaign extends Component
                 'maxRepostLast24h',
                 'maxRepostsPerDay',
                 'targetGenre',
-                'maxFollower'
+                'anyGenre',
+                'trackGenre',
+                'maxFollower',
+                'proFeatureEnabled',
             ]);
 
             $this->resetValidation();
             $this->resetErrorBag();
+            session()->flash('message', 'Campaign created successfully!');
         } catch (\Exception $e) {
             session()->flash('error', 'Failed to create campaign: ' . $e->getMessage());
 

@@ -4,7 +4,6 @@
 
 
 
-
     {{-- Main Content --}}
     <main class="container mx-auto px-4  pb-8 ">
         <div class="max-w-4xl mx-auto">
@@ -88,6 +87,7 @@
             @if ($notifications->hasPages())
                 <div class="flex justify-center mt-12">
                     {{ $notifications->links() }}
+                    {{-- {{ $notifications->links('components.pagination.wire-navigate') }} --}}
                 </div>
             @endif
         </div>

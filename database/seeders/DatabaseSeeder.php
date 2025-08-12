@@ -32,8 +32,8 @@ class DatabaseSeeder extends Seeder
             FaqSeeder::class,
             PlaylistTrackSeeder::class,
 
-            CustomNotificationSeeder::class,
-            CustomNotificationStatusSeeder::class,
+            // CustomNotificationSeeder::class,
+            // CustomNotificationStatusSeeder::class,
         ]);
     }
 }

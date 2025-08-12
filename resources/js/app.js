@@ -1,12 +1,12 @@
 // import './bootstrap';
 
 import './jquery';
-// import './datatable';
-// import './sweetalert2';
-// import './axios';
-// import './toastr';
-// import './filepond';
-// import './ckeditor5';
+import './datatable';
+import './sweetalert2';
+import './axios';
+import './toastr';
+import './filepond';
+import './ckeditor5';
 
 import './echo';
 

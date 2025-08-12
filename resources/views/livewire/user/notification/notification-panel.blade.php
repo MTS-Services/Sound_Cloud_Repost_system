@@ -37,7 +37,8 @@
                         <span class="ml-2 badge bg-white/20 text-white border-none">{{ $this->unreadCount }} new</span>
                     @endif
                 </h2>
-                <button wire:click="closePanel" class="btn btn-ghost btn-sm text-white hover:bg-white/20 bg-white/20 border-none">
+                <button wire:click="closePanel"
+                    class="btn btn-ghost btn-sm text-white hover:bg-white/20 bg-white/20 border-none">
                     <i class="fas fa-items">x</i>
                 </button>
             </div>
@@ -46,8 +47,8 @@
             <div class="flex flex-col h-full">
                 <div class="flex-1 overflow-y-auto p-4 space-y-3">
                     @forelse($notifications as $notification)
-                        <livewire:user.notification.notification-card :notification="$notification" :compact="true" :show-actions="false"
-                            :key="'panel-notification-' . $notification->id" />
+                        <livewire:user.notification.notification-card :notification="$notification" :compact="true"
+                            :show-actions="false" :key="'panel-notification-' . $notification->id" />
                     @empty
                         <div class="text-center py-8">
                             <div
@@ -60,28 +61,34 @@
                 </div>
 
                 {{-- Panel Footer --}}
-               <div
-    class="flex items-center justify-between p-4 border-t border-orange-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-gray-800 dark:to-gray-700 space-x-4 mb-15">
-    
-    @if ($this->unreadCount > 0)
-        <button wire:click="markAllAsRead"
-            class="btn btn-outline btn-sm border-orange-300 text-white bg-orange-500 hover:bg-orange-600 hover:text-white hover:border-orange-500 flex-1 max-w-xs">
-            <i class="fas fa-check-circle mr-2"></i>
-            Mark All as Read
-        </button>
-    @else
-        <div></div> 
-    @endif
+                <div
+                    class="flex items-center justify-between p-4 border-t border-orange-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-gray-800 dark:to-gray-700 space-x-4 mb-15">
 
-    <a href="{{ route('user.notifications.index') }}"
-        class="btn btn-sm bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-none flex-1 max-w-xs text-center">
-        <i class="fas fa-list mr-2"></i>
-        View All 
-    </a>
-</div>
+                    @if ($this->unreadCount > 0)
+                        <button wire:click="markAllAsRead"
+                            class="btn btn-outline btn-sm border-orange-300 text-white bg-orange-500 hover:bg-orange-600 hover:text-white hover:border-orange-500 flex-1 max-w-xs">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            Mark All as Read
+                        </button>
+                    @else
+                        <div></div>
+                    @endif
 
+                    <a href="{{ route('user.notifications.index') }}"
+                        class="btn btn-sm bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-none flex-1 max-w-xs text-center">
+                        <i class="fas fa-list mr-2"></i>
+                        View All
+                    </a>
+                </div>
+
+                <a href="{{ route('user.notifications.index') }}" wire:navigate
+                    class="btn btn-sm w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-none">
+                    <i class="fas fa-list mr-2"></i>
+                    View All Notifications
+                </a>
             </div>
         </div>
+
     @endif
 
     @push('cs')

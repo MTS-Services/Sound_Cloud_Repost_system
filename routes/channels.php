@@ -19,19 +19,21 @@ use App\Models\User;
 Broadcast::routes();
 
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
-});
+// Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
+//     return (int) $user->id === (int) $id;
+// });
 
 
 // For presence channels (optional)
-Broadcast::channel('notifications', function ($user) {
-    return ['id' => $user->id, 'name' => $user->name];
-});
+// Broadcast::channel('notifications', function ($user) {
+//     return ['id' => $user->id, 'name' => $user->name];
+// });
 
-// This channel is for user-specific private notifications.
-// It checks if the currently authenticated user's ID matches the ID in the channel name.
-// This prevents one user from listening to another user's private channel.
+
+// Broadcast::channel('users', function ($user) {
+//     return ['id' => $user->id, 'name' => $user->name];
+// });
+
 Broadcast::channel('user.{userId}', function ($user, $userId) {
     return (int) $user->id === (int) $userId;
-});
+}, ['guards' => ['web']]);
