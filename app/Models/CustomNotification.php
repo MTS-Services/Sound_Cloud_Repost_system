@@ -46,6 +46,11 @@ class CustomNotification extends BaseModel
         return $this->hasMany(CustomNotificationStatus::class, 'notification_id');
     }
 
+    public function deleteds(): HasMany
+    {
+        return $this->hasMany(CustomNotificationDeleted::class, 'notification_id');
+    }
+
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */

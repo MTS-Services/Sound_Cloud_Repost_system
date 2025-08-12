@@ -37,3 +37,7 @@ Broadcast::routes();
 Broadcast::channel('user.{userId}', function ($user, $userId) {
     return (int) $user->id === (int) $userId;
 }, ['guards' => ['web']]);
+
+Broadcast::channel('admin.{adminId}', function ($admin, $adminId) {
+    return (int) $admin->id === (int) $adminId;
+}, ['guards' => ['admin']]);

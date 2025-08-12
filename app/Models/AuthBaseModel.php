@@ -65,6 +65,11 @@ class AuthBaseModel extends Authenticatable
         return $this->morphMany(CustomNotificationStatus::class, 'user');
     }
 
+    public function notificationsDeleted()
+    {
+        return $this->morphMany(CustomNotificationDeleted::class, 'user');
+    }
+
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
             End of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */

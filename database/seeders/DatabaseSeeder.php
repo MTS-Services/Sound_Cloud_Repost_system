@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
             FaqSeeder::class,
             PlaylistTrackSeeder::class,
 
-            // CustomNotificationSeeder::class,
+            CustomNotificationSeeder::class,
             // CustomNotificationStatusSeeder::class,
         ]);
     }

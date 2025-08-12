@@ -21,21 +21,57 @@ class CustomNotificationFactory extends Factory
      */
     public function definition(): array
     {
-        $isPublic = $this->faker->boolean(25); // 25% chance of being a public notification
+        // Randomly determine the type of receiver: 'public', 'user', or 'admin'
+        // We check if users and admins exist to avoid errors.
+        $hasUsers = User::count() > 0;
+        $hasAdmins = Admin::count() > 0;
 
-        if ($isPublic) {
-            $receiverId = null;
-            $receiverType = null;
-        } else {
-            $user = User::inRandomOrder()->first();
-            $receiverId = $user ? $user->id : null;
-            $receiverType = $user ? get_class($user) : null;
+        $options = ['public'];
+        if ($hasUsers) {
+            $options[] = 'user';
+        }
+        if ($hasAdmins) {
+            $options[] = 'admin';
+        }
+
+        $receiverTypeChoice = $this->faker->randomElement($options);
+
+        $receiverId = null;
+        $receiverType = null;
+        $type = null;
+
+        switch ($receiverTypeChoice) {
+            case 'user':
+                $user = User::inRandomOrder()->first();
+                if ($user) {
+                    $receiverId = $user->id;
+                    $receiverType = User::class;
+                    $type = CustomNotification::TYPE_USER;
+                }
+                break;
+
+            case 'admin':
+                $admin = Admin::inRandomOrder()->first();
+                if ($admin) {
+                    $receiverId = $admin->id;
+                    $receiverType = Admin::class;
+                    $type = CustomNotification::TYPE_ADMIN;
+                }
+                break;
+
+            case 'public':
+            default:
+                $receiverId = null;
+                $receiverType = null;
+                // For a public notification, the `type` can be for either a user or an admin, so we choose randomly.
+                $type = $this->faker->randomElement([CustomNotification::TYPE_USER, CustomNotification::TYPE_ADMIN]);
+                break;
         }
 
         return [
             'receiver_id' => $receiverId,
             'receiver_type' => $receiverType,
-            'type' => CustomNotification::TYPE_USER,
+            'type' => $type,
             'message_data' => [
                 'title' => $this->faker->sentence(3),
                 'message' => $this->faker->paragraph(2),

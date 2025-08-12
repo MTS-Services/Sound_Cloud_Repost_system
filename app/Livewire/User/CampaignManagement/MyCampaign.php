@@ -2,8 +2,10 @@
 
 namespace App\Livewire\User\CampaignManagement;
 
+use App\Events\UserNotificationSent;
 use App\Models\Campaign;
 use App\Models\CreditTransaction;
+use App\Models\CustomNotification;
 use App\Models\Faq;
 use App\Models\Track;
 use App\Models\Playlist;
@@ -74,7 +76,7 @@ class MyCampaign extends Component
     public $targetReposts = null;
     public $costPerRepost = null;
     public $track = null;
-    public int $credit = 100;
+    public int $credit = 50;
     public array $genres = [];
     public bool $commentable = true;
     public bool $likeable = true;
@@ -120,7 +122,7 @@ class MyCampaign extends Component
 
     // Constants
     private const MIN_BUDGET = 50;
-    private const MIN_CREDIT = 100;
+    private const MIN_CREDIT = 50;
     private const REFUND_PERCENTAGE = 0.5;
     private const ITEMS_PER_PAGE = 10;
 
@@ -162,7 +164,7 @@ class MyCampaign extends Component
             'credit' => [
                 'required',
                 'integer',
-                'min:100',
+                'min:50',
                 function ($attribute, $value, $fail) {
                     if ($value > userCredits()) {
                         $fail('The credit is not available.');
@@ -535,7 +537,7 @@ class MyCampaign extends Component
             if ($this->trackGenre == 'trackGenre') {
                 $this->targetGenre = $this->trackGenre;
             }
-            DB::transaction(function () use($oldBudget) {
+            DB::transaction(function () use ($oldBudget) {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
                 $proFeatureEnabled = $this->proFeatureEnabled ? 1 : 0;
@@ -554,7 +556,7 @@ class MyCampaign extends Component
                     'commentable' => $commentable,
                     'likeable' => $likeable,
                     'pro_feature' => $this->isEditing && $this->editingCampaign ? $editingProFeature : $proFeatureEnabled,
-                    'momentum_price' => $editingProFeature == 1 ? $this->credit/2 : 0,
+                    'momentum_price' => $editingProFeature == 1 ? $this->credit / 2 : 0,
                     'max_repost_last_24_h' => $this->maxRepostLast24h,
                     'max_repost_per_day' => $this->maxRepostsPerDay,
                     'target_genre' => $this->targetGenre,
@@ -565,24 +567,44 @@ class MyCampaign extends Component
                     $this->editingCampaign->update($campaign);
                     $campaign = $this->editingCampaign;
                 }
-                CreditTransaction::create([
-                    'receiver_urn' => user()->urn,
-                    'calculation_type' => CreditTransaction::CALCULATION_TYPE_CREDIT,
-                    'source_id' => $campaign->id,
-                    'source_type' => Campaign::class,
-                    'transaction_type' => CreditTransaction::TYPE_SPEND,
-                    'status' => 'succeeded',
-                    'credits' => ($campaign->budget_credits + $campaign->momentum_price) - $oldBudget,
-                    'description' => 'Spent on campaign creation',
-                    'metadata' => [
-                        'campaign_id' => $campaign->id,
-                        'music_id' => $this->musicId,
-                        'music_type' => $this->musicType,
-                        'start_date' => now(),
-                    ],
-                    'created_id' => user()->id,
-                    'creater_type' => get_class(user())
-                ]);
+                $calculation = $campaign->budget_credits + $campaign->momentum_price;
+
+                if (($this->isEditing && $calculation > $oldBudget) || !$this->isEditing) {
+                    CreditTransaction::create([
+                        'receiver_urn' => user()->urn,
+                        'calculation_type' => CreditTransaction::CALCULATION_TYPE_CREDIT,
+                        'source_id' => $campaign->id,
+                        'source_type' => Campaign::class,
+                        'transaction_type' => CreditTransaction::TYPE_SPEND,
+                        'status' => 'succeeded',
+                        'credits' => $calculation - $oldBudget,
+                        'description' => 'Spent on campaign creation',
+                        'metadata' => [
+                            'campaign_id' => $campaign->id,
+                            'music_id' => $this->musicId,
+                            'music_type' => $this->musicType,
+                            'start_date' => now(),
+                        ],
+                        'created_id' => user()->id,
+                        'creater_type' => get_class(user())
+                    ]);
+
+                    $notification = CustomNotification::create([
+                        'receiver_id' => user()->id,
+                        'receiver_type' => get_class(user()),
+                        'type' => CustomNotification::TYPE_USER,
+                        'message_data' => [
+                            'title' => 'Campaign ' . ($this->isEditing ? 'updated' : 'created'),
+                            'message' => 'Your campaign has been ' . ($this->isEditing ? 'updated' : 'created') . ' successfully',
+                            'description' => 'Your campaign has been ' . ($this->isEditing ? 'updated' : 'created') . ' successfully',
+                            'additional_data' => [
+                                'Campaign ID' => $campaign?->id,
+                                'Total Budget Credits' => $campaign?->budget_credits,
+                            ]
+                        ]
+                    ]);
+                    broadcast(new UserNotificationSent($notification));
+                }
             });
 
             session()->flash('message', 'Campaign created successfully!');
@@ -599,7 +621,7 @@ class MyCampaign extends Component
                 'description',
                 'playlistId',
                 'playlistTracks',
-                'activeTab',
+                'activeModalTab',
                 'tracks',
                 'track',
                 'playlists',

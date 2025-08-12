@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AdminNotificationSent;
 use Illuminate\Http\Request;
 use App\Events\UserNotificationSent;
+use App\Models\Admin;
 use App\Models\CustomNotification;
 use App\Models\User;
 
@@ -11,26 +13,73 @@ class TestController extends Controller
 {
     public function sendNotification(Request $request)
     {
-        $userId = $request->input('user_id') ? $request->input('user_id') : null;
+        // Get input values from the request
+        $userId = $request->input('user_id');
+        $sendTo = $request->input('send_to', 'users');
         $message = $request->input('message', 'Hello from Laravel!');
-        $description = $request->input('description', 'This is a ' . ($userId ? 'private' : 'public') . ' notification.');
+        $description = $request->input('description', 'This is a notification.');
 
+        $receiverId = null;
+        $receiverType = null;
+        $type = null;
+
+        switch ($sendTo) {
+            case 'users':
+                $type = CustomNotification::TYPE_USER;
+                $receiverType = User::class;
+                if ($userId) {
+                    $user = User::find($userId);
+                    if (!$user) {
+                        return redirect()->back()->with('error', 'User not found.');
+                    }
+                    $receiverId = $user->id;
+                }
+                break;
+
+            case 'admins':
+                $type = CustomNotification::TYPE_ADMIN;
+                $receiverType = Admin::class;
+                if ($userId) {
+                    $admin = Admin::find($userId);
+                    if (!$admin) {
+                        return redirect()->back()->with('error', 'Admin not found.');
+                    }
+                    $receiverId = $admin->id;
+                }
+                break;
+            default:
+                $type = CustomNotification::TYPE_USER;
+                $receiverType = null;
+                $receiverId = null;
+                break;
+        }
+
+        $title = $request->input('title', ($receiverId ? 'Private Notification' : 'Public Notification'));
+
+        // Create the notification record in the database
         $notification = CustomNotification::create([
-            'type' => CustomNotification::TYPE_USER,
-            'receiver_id' => $userId,
-            'receiver_type' => $userId ? User::class : null,
+            'type' => $type,
+            'receiver_id' => $receiverId,
+            'receiver_type' => $receiverType,
             'message_data' => [
-                'title' => $userId ? 'Private Notification' : 'Public Notification',
+                'title' => $title,
+                'icon' => 'bell-ring',
                 'message' => $message,
                 'description' => $description,
                 'url' => null,
-                'additional_data' => [],
-                'icon' => 'envelope',
+                'additional_data' => [
+                    'userId' => $userId,
+                    'sendTo' => $sendTo,
+                ],
             ],
         ]);
 
-        broadcast(new UserNotificationSent($notification));
-
+        if ($sendTo === 'users') {
+            broadcast(new UserNotificationSent($notification));
+        }
+        if ($sendTo === 'admins') {
+            broadcast(new AdminNotificationSent($notification));
+        }
         return redirect()->back()->with('success', 'Notification sent successfully!');
     }
 }
