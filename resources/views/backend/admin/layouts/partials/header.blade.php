@@ -61,6 +61,7 @@
                         class="absolute top-1 right-1 w-2 h-2 bg-red-400 rounded-full notification-badge">
                     </div>
                 </button>
+                {{-- <x-admin.notification.notification-panel /> --}}
 
                 <!-- Profile -->
                 <div class="relative" x-data="{ open: false }">
