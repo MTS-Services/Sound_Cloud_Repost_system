@@ -29,13 +29,3 @@ Route::get('/send', function () {
     return view('send');
 });
 Route::post('/send-notification', [App\Http\Controllers\TestController::class, 'sendNotification'])->name('send-notification');
-
-// Notification routes
-Route::middleware('auth:admin')->prefix('admin')->group(function () {
-    Route::get('/notifications', [NotificationController::class, 'index']);
-    Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount']);
-    Route::post('/notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead']);
-    Route::post('/notifications/{notification}/mark-as-unread', [NotificationController::class, 'markAsUnread']);
-    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead']);
-    Route::delete('/notifications/{notification}', [NotificationController::class, 'delete']);
-});
