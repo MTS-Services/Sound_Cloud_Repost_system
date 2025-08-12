@@ -1248,7 +1248,7 @@ class Campaign extends Component
             //     ['path' => request()->url()]
             // );
 
-            session()->flash('error', 'Failed to load campaigns. Please try again.');
+            // session()->flash('error', 'Failed to load campaigns. Please try again.');
             return view('backend.user.campaign_management.campaign', [
                 'campaigns' => $campaigns
             ]);
