@@ -93,11 +93,11 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
-            Pusher.log = (message) => {
-                if (window.console && window.console.log) {
-                    window.console.log(message);
-                }
-            };
+            // Pusher.log = (message) => {
+            //     if (window.console && window.console.log) {
+            //         window.console.log(message);
+            //     }
+            // };
 
             window.Echo.channel('users')
                 .listen('.notification.sent', (e) => {
