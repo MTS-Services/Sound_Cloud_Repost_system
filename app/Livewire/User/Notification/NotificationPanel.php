@@ -32,21 +32,33 @@ class NotificationPanel extends Component
 
     public function loadNotifications()
     {
-        $this->notifications = CustomNotification::with(['statuses' => function ($query) {
-            $query->where('user_id', $this->currentUserId)
-                ->where('user_type', $this->currentUserType);
+        $query = CustomNotification::with(['statuses' => function ($q) {
+            $q->forCurrentUser();
         }])
+            // Use a single, outer `where` closure to group the private and public conditions.
+            // This ensures the `whereDoesntHave` clause is applied to both.
             ->where(function ($query) {
-                // Condition one for private messages
-                $query->where('receiver_id', $this->currentUserId)
-                    ->where('receiver_type', $this->currentUserType);
+                $query->where(function ($q) {
+                    // Condition for private messages, intended for the current user
+                    $q->where('receiver_id', $this->currentUserId)
+                        ->where('receiver_type', $this->currentUserType);
+                })
+                    ->orWhere(function ($q) {
+                        // Condition for public messages, intended for all users of this type
+                        $q->where('receiver_id', null)
+                            ->where('type', CustomNotification::TYPE_USER);
+                    });
             })
-            ->orWhere(function ($query) {
-                // Condition two for public messages
-                $query->where('receiver_id', null)
-                    ->where('type', CustomNotification::TYPE_USER);
-            })
-            ->latest()
+            // Add a new clause to skip notifications that have been deleted by the current user
+            // This now correctly checks if the notification DOES NOT have a 'deleteds' relationship entry
+            // for the specific user and user type across both private and public notifications.
+            ->whereDoesntHave('deleteds', function ($q) {
+                $q->where('user_id', $this->currentUserId)
+                    ->where('user_type', $this->currentUserType);
+            });
+
+        // Finalize the query by ordering and limiting the results
+        $this->notifications = $query->latest()
             ->take($this->maxDisplay)
             ->get();
     }

@@ -17,6 +17,7 @@ use App\Http\Controllers\Backend\Admin\PackageManagement\FeatureCategoryControll
 use App\Http\Controllers\Backend\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Backend\Admin\Faq\FaqCategotyController;
 use App\Http\Controllers\Backend\Admin\Faq\FaqController;
+use App\Http\Controllers\Backend\Admin\NotificationController;
 use App\Http\Controllers\Backend\Admin\RepostManagement\RepostController;
 use App\Http\Controllers\Backend\Admin\RepostManagement\RepostRequestController;
 use App\Http\Controllers\Backend\Admin\UserManagement\UserPlaneController;
@@ -108,7 +109,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::delete('/permanent-delete/{user}', 'permanentDelete')->name('permanent-delete');
             Route::get('/user-detail/{user}', 'detail')->name('detail');
             //palylist
-            Route::get('/playlist/{user}','playlist')->name('playlist'); // all playlist
+            Route::get('/playlist/{user}', 'playlist')->name('playlist'); // all playlist
             Route::get('/playlist-detail/{playlist}', 'playlistDetail')->name('playlist.details');
             Route::get('/playlist-tracks/{soundcloudUrn}', 'playlistTracks')->name('playlist.track-list'); // all tracks under playlist
 
@@ -117,7 +118,6 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::post('/tracklist/{urn}', 'tracklistShow')->name('tracklist.show');
             Route::post('/add-credit/{user_urn}', 'addCredit')->name('add-credit');
             Route::get('/detail/{user}', 'detail')->name('detail');
-
         });
 
         Route::resource('user-plane', UserPlaneController::class);
@@ -177,30 +177,25 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::post('/store', 'store')->name('store');
             Route::get('/purchase', 'purchase')->name('purchase');
             Route::get('/details/{transaction}', 'paymentDetails')->name('payment-detail');
-            Route::get('/payments', 'payments')->name('payments'); 
+            Route::get('/payments', 'payments')->name('payments');
             Route::get('/detail/{payment}', 'detail')->name('detail');
-          
-            
         });
     });
 
     // Repost Management Routes
     Route::group(['as' => 'rm.', 'prefix' => 'repost-management'], function () {
-          Route::resource('repost', RepostController::class);
+        Route::resource('repost', RepostController::class);
         Route::controller(RepostController::class)->name('repost.')->prefix('repost')->group(function () {
-         
-            Route::get('/detail/{repost}', 'detail')->name('detail');
-           
 
+            Route::get('/detail/{repost}', 'detail')->name('detail');
         });
     });
     // Repost Request Management Routes
     Route::group(['as' => 'rrm.', 'prefix' => 'request-management'], function () {
-          Route::resource('request', RepostRequestController::class);
-          Route::controller(RepostRequestController::class)->name('request.')->prefix('request')->group(function () {
-         
-            Route::get('/detail/{request}', 'detail')->name('detail');
+        Route::resource('request', RepostRequestController::class);
+        Route::controller(RepostRequestController::class)->name('request.')->prefix('request')->group(function () {
 
+            Route::get('/detail/{request}', 'detail')->name('detail');
         });
     });
 
@@ -220,5 +215,23 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         Route::get('trash/bin', [FaqCategotyController::class, 'trash'])->name('faq-category.trash');
         Route::get('restore/{faq_category}', [FaqCategotyController::class, 'restore'])->name('faq-category.restore');
         Route::delete('permanent-delete/{faq_category}', [FaqCategotyController::class, 'permanentDelete'])->name('faq-category.permanent-delete');
+    });
+
+
+    // Admin Notification Routes
+    Route::prefix('notifications')->name('admin.notifications.')->group(function () {
+        // Main notifications page
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+
+        // API endpoints for AJAX requests
+        Route::get('/api', [NotificationController::class, 'getNotifications'])->name('api');
+        Route::get('/unread-count', [NotificationController::class, 'getUnreadCount'])->name('unread-count');
+
+        // Mark notifications as read
+        Route::post('/mark-as-read', [NotificationController::class, 'markAsRead'])->name('mark-as-read');
+        Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('mark-all-read');
+
+        // Delete notification (only for private notifications)
+        Route::delete('/delete', [NotificationController::class, 'destroy'])->name('destroy');
     });
 });

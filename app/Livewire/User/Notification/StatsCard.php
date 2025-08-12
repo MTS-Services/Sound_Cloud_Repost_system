@@ -22,7 +22,7 @@ class StatsCard extends Component
 
     public function mount($title, $icon, $color, $description, $type, $showProgress = true)
     {
-      
+
         $this->loadValue();
     }
 
@@ -36,41 +36,53 @@ class StatsCard extends Component
 
     public function loadValue()
     {
-        $baseQuery = CustomNotification::where('receiver_id', $this->currentUserId)
-            ->where('receiver_type', $this->currentUserType);
+        $baseQuery = CustomNotification::where(function ($query) {
+            $query->where(function ($q) {
+                $q->where('receiver_id', $this->currentUserId)
+                    ->where('receiver_type', $this->currentUserType);
+            })
+                ->orWhere(function ($q) {
+                    $q->where('receiver_id', null)
+                        ->where('type', CustomNotification::TYPE_USER);
+                });
+        })
+            ->whereDoesntHave('deleteds', function ($q) {
+                $q->where('user_id', $this->currentUserId)
+                    ->where('user_type', $this->currentUserType);
+            });
 
         switch ($this->type) {
             case 'total':
                 $this->value = $baseQuery->count();
                 break;
-                
+
             case 'unread':
-                $this->value = $baseQuery->whereDoesntHave('statuses', function($query) {
+                $this->value = $baseQuery->whereDoesntHave('statuses', function ($query) {
                     $query->where('user_id', $this->currentUserId)
-                          ->where('user_type', $this->currentUserType)
-                          ->whereNotNull('read_at');
+                        ->where('user_type', $this->currentUserType)
+                        ->whereNotNull('read_at');
                 })->count();
                 break;
-                
+
             case 'read':
-                $this->value = $baseQuery->whereHas('statuses', function($query) {
+                $this->value = $baseQuery->whereHas('statuses', function ($query) {
                     $query->where('user_id', $this->currentUserId)
-                          ->where('user_type', $this->currentUserType)
-                          ->whereNotNull('read_at');
+                        ->where('user_type', $this->currentUserType)
+                        ->whereNotNull('read_at');
                 })->count();
                 break;
-                
+
             case 'today':
                 $this->value = $baseQuery->whereDate('created_at', today())->count();
                 break;
-                
+
             case 'week':
                 $this->value = $baseQuery->whereBetween('created_at', [
                     now()->startOfWeek(),
                     now()->endOfWeek()
                 ])->count();
                 break;
-                
+
             case 'month':
                 $this->value = $baseQuery->whereMonth('created_at', now()->month)
                     ->whereYear('created_at', now()->year)
@@ -82,13 +94,13 @@ class StatsCard extends Component
     public function getProgressPercentage()
     {
         if (!$this->showProgress) return 0;
-        
+
         $total = CustomNotification::where('receiver_id', $this->currentUserId)
             ->where('receiver_type', $this->currentUserType)
             ->count();
-            
+
         if ($total === 0) return 0;
-        
+
         return ($this->value / $total) * 100;
     }
 

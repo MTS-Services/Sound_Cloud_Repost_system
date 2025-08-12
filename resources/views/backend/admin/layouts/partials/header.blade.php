@@ -57,10 +57,9 @@
                 <button @click="toggleNotifications()"
                     class="relative p-2 rounded-xl hover:bg-bg-black/10 dark:hover:bg-bg-white/10 transition-colors">
                     <i data-lucide="bell" class="w-5 h-5 text-text-light-primary dark:text-text-white"></i>
-                    <div x-show="notifications.length > 0"
-                        class="absolute top-1 right-1 w-2 h-2 bg-red-400 rounded-full notification-badge">
-                    </div>
+                    {{-- <span class="absolute top-1 right-1 w-2 h-2 bg-orange-400 rounded-full notification-badge"></span> --}}
                 </button>
+                {{-- <x-admin.notification.notification-panel /> --}}
 
                 <!-- Profile -->
                 <div class="relative" x-data="{ open: false }">

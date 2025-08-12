@@ -4,6 +4,7 @@ namespace App\Livewire\User\Notification;
 
 use Livewire\Component;
 use App\Models\CustomNotification;
+use App\Models\CustomNotificationDeleted;
 use App\Models\CustomNotificationStatus;
 use App\Models\User;
 use App\Services\User\NotificationService;
@@ -92,10 +93,14 @@ class NotificationShow extends Component
 
     public function deleteNotification()
     {
-        $this->customNotification->delete();
+        CustomNotificationDeleted::create([
+            'notification_id' => $this->customNotification->id,
+            'user_id' => $this->currentUserId,
+            'user_type' => $this->currentUserType,
+        ]);
         $this->dispatch('notification-deleted', $this->customNotification->id);
-        return redirect()->route('user.notifications.index')
-            ->with('success', 'Notification deleted successfully.');
+        session()->flash('success', 'Notification deleted successfully.');
+        return $this->redirect(route('user.notifications.index'), navigate: true);
     }
 
     public function getNotificationTitle()

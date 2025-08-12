@@ -107,9 +107,9 @@ class Campaign extends Component
     public $activeTab = 'tracks';
 
     public $track = null;
-    public $credit = 100;
-    public $commentable = false;
-    public $likeable = false;
+    public $credit = 50;
+    public $commentable = true;
+    public $likeable = true;
     public $proFeatureEnabled = false;
     public $proFeatureValue = 1;
     public $maxFollower = 0;
@@ -186,7 +186,7 @@ class Campaign extends Component
             'credit' => [
                 'required',
                 'integer',
-                'min:100',
+                'min:50',
                 function ($attribute, $value, $fail) {
                     if ($value > userCredits()) {
                         $fail('The credit is not available.');
@@ -667,7 +667,6 @@ class Campaign extends Component
         $this->validate();
 
         try {
-            $totalBudget = $this->credit;
             if ($this->anyGenre == 'anyGenre') {
                 $this->targetGenre = $this->anyGenre;
             }
@@ -675,7 +674,7 @@ class Campaign extends Component
                 $this->targetGenre = $this->trackGenre;
             }
 
-            DB::transaction(function () use ($totalBudget) {
+            DB::transaction(function () {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
                 $proFeatureEnabled = $this->proFeatureEnabled ? 1 : 0;
@@ -685,7 +684,7 @@ class Campaign extends Component
                     'music_type' => $this->musicType,
                     'title' => $this->title,
                     'description' => $this->description,
-                    'budget_credits' => $totalBudget,
+                    'budget_credits' => $this->credit,
                     'user_urn' => user()->urn,
                     'status' => ModelsCampaign::STATUS_OPEN,
                     'max_followers' => $this->maxFollower,
@@ -694,6 +693,7 @@ class Campaign extends Component
                     'commentable' => $commentable,
                     'likeable' => $likeable,
                     'pro_feature' => $proFeatureEnabled,
+                    'momentum_price' => $proFeatureEnabled == 1 ? $this->credit/2 : 0,
                     'max_repost_last_24_h' => $this->maxRepostLast24h,
                     'max_repost_per_day' => $this->maxRepostsPerDay,
                     'target_genre' => $this->targetGenre,
@@ -706,7 +706,7 @@ class Campaign extends Component
                     'source_type' => ModelsCampaign::class,
                     'transaction_type' => CreditTransaction::TYPE_SPEND,
                     'status' => 'succeeded',
-                    'credits' => $totalBudget,
+                    'credits' => ($campaign->budget_credits + $campaign->momentum_price),
                     'description' => 'Spent on campaign creation',
                     'metadata' => [
                         'campaign_id' => $campaign->id,
@@ -1248,7 +1248,7 @@ class Campaign extends Component
             //     ['path' => request()->url()]
             // );
 
-            session()->flash('error', 'Failed to load campaigns. Please try again.');
+            // session()->flash('error', 'Failed to load campaigns. Please try again.');
             return view('backend.user.campaign_management.campaign', [
                 'campaigns' => $campaigns
             ]);

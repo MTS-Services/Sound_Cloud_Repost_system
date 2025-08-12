@@ -34,10 +34,10 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->unsignedBigInteger('completed_reposts')->default(0);
-            $table->decimal('momentum_price', 8, 2)->index()->nullable();
-            $table->decimal('budget_credits', 10, 2);
-            $table->decimal('credits_spent', 10, 2)->default(0.00);
-            $table->decimal('refund_credits', 10, 2)->default(0.00);
+            $table->decimal('momentum_price', 15, 2)->default(0.00);
+            $table->decimal('budget_credits', 15, 2);
+            $table->decimal('credits_spent', 15, 2)->default(0.00);
+            $table->decimal('refund_credits', 15, 2)->default(0.00);
             $table->unsignedBigInteger('min_followers')->index()->default(0);
             $table->unsignedBigInteger('max_followers')->index()->default(0);
             $table->unsignedBigInteger('playback_count')->index()->default(0);

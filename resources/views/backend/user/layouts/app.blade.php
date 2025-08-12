@@ -52,6 +52,10 @@
 
     @stack('cs')
     @livewireStyles()
+    <script async src="https://cse.google.com/cse.js?cx=23c01bcccd3964c56"></script>
+
+
+
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-black overflow-x-hidden! relative" x-data="{ sidebarOpen: false, mobileSearchOpen: false }">
@@ -90,6 +94,22 @@
         })
     </script>
     @livewireScripts()
+    <script>
+        document.addEventListener('livewire:navigated', () => {
+            // Re-initialize your Google Custom Search script here
+            // For example, you might re-run the script that creates the search element.
+            // It could look something like this, depending on your setup:
+            (function() {
+                var cx = '23c01bcccd3964c56';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+            })();
+        });
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 

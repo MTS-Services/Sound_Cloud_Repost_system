@@ -2,8 +2,8 @@
 
 namespace App\Events;
 
+use App\Models\Admin;
 use App\Models\CustomNotification;
-use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -13,7 +13,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class UserNotificationSent implements ShouldBroadcast, ShouldQueue
+class AdminNotificationSent implements ShouldBroadcast, ShouldQueue
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -24,13 +24,12 @@ class UserNotificationSent implements ShouldBroadcast, ShouldQueue
         $this->notification = $notification;
     }
 
-
     public function broadcastOn()
     {
-        if ($this->notification->receiver_id && $this->notification->receiver_type == User::class) {
-            return new PrivateChannel('user.' . $this->notification->receiver_id);
-        } elseif ($this->notification->receiver_id == null && $this->notification->type == CustomNotification::TYPE_USER) {
-            return new Channel('users');
+        if ($this->notification->receiver_id && $this->notification->receiver_type == Admin::class) {
+            return new PrivateChannel('admin.' . $this->notification->receiver_id);
+        } elseif ($this->notification->receiver_id == null && $this->notification->type == CustomNotification::TYPE_ADMIN) {
+            return new Channel('admins');
         }
         return [];
     }

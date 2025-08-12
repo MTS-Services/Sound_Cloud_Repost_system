@@ -35,9 +35,9 @@ Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
 });
 
 // Dashboard and other routes
-Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
+Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user'], function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
-  
+
 
 
     Route::get('/user-profile', [ProfileController::class, 'profile'])->name('profile');
@@ -60,7 +60,7 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
 
     });
 
-   
+
     // Member Management
     Route::group(['as' => 'mm.', 'prefix' => 'member-management'], function () {
         // Member Routes
@@ -90,16 +90,16 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     });
 });
 
- //Faq Management
+//Faq Management
 
-    // Route::get('/faq', FaqManagementFaqController::class, 'index')->name('faq.index'); 
-    Route::get('/frequently-asked-questions', Faq::class)->name('user.faq');
+// Route::get('/faq', FaqManagementFaqController::class, 'index')->name('faq.index');
+Route::get('user/frequently-asked-questions', Faq::class)->name('user.faq')->middleware('auth:web');
 
 
 
 // static page route
 
 // Route::view('/help-support', 'backend.user.help-support')->name('help-support');
-Route::view('/settings', 'backend.user.settings')->name('settings');
-Route::view('/page', 'backend.user.dummy-page')->name('page');
-Route::view('/charts', 'backend.user.chart')->name('charts');
+Route::view('user/settings', 'backend.user.settings')->name('settings')->middleware('auth:web');
+Route::view('user/page', 'backend.user.dummy-page')->name('page')->middleware('auth:web');
+Route::view('user/charts', 'backend.user.chart')->name('charts')->middleware('auth:web');

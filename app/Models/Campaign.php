@@ -30,6 +30,7 @@ class Campaign extends BaseModel
         'end_date',
         'refund_credits',
         'pro_feature',
+        'momentum_price',
         'commentable',
         'likeable',
         'max_repost_last_24_h',

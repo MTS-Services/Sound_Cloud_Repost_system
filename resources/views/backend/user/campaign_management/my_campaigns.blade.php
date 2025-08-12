@@ -698,7 +698,7 @@
                         </div>
 
                         <!-- Enable Campaign Accelerator -->
-                        @if ($isEditing && $editingCampaign->pro_feature != 1)
+                        @if (!$isEditing || $editingCampaign->pro_feature != 1)
                             <div class="flex items-start space-x-3">
                                 <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
                                     class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
@@ -867,8 +867,8 @@
 
                     <!-- Submit Button -->
                     <div class="pt-4">
-                        <button type="submit"
-                            class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-4 px-6 rounded-xl {{ !$canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }}">
+                        <button type="submit" {{$isEditing && $credit < $editingCampaign->budget_credits ? 'disabled' : '' }}
+                            class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-4 px-6 rounded-xl {{ !$canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }} {{$isEditing && $credit < $editingCampaign->budget_credits ? '!bg-gray-600 !cursor-not-allowed' : '' }}" >
                             <span>
                                 <svg class="w-8 h-8 text-white" width="26" height="18" viewBox="0 0 26 18"
                                     fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1357,9 +1357,9 @@
                     <!-- Campaign Stats -->
                     <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                         <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
-                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Completed Reposts</h4>
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Total Reposts</h4>
                             <p class="text-xl font-bold text-black dark:text-white">
-                                {{ $campaign->completed_reposts }}
+                                {{ totalReposts($campaign) }}
                             </p>
                         </div>
                         <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">

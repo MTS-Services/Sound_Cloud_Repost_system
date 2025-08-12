@@ -462,7 +462,7 @@
                 <p>No campaigns available at the moment.</p>
             </div>
         @endif --}}
-        @if ($campaigns->hasPages())
+        @if (isset($campaigns) && method_exists($campaigns, 'hasPages') && $campaigns->hasPages())
             <div class="mt-6">
                 {{ $campaigns->links('components.pagination.wire-navigate', [
                     'pageName' => $activeMainTab . 'Page',
@@ -751,7 +751,7 @@
                         <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mt-4">Campaign Settings</h2>
                         <p class="text-sm text-gray-400 mb-4 mt-2">Select amount of credits to be spent</p>
                         <div class="flex items-start space-x-3">
-                            <input type="checkbox" wire:model="commentable"
+                            <input type="checkbox" wire:model="commentable" checked
                                 class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                             <div>
                                 <h4 class="text-sm font-medium text-gray-900 dark:text-white">Activate Feedback</h4>
@@ -764,7 +764,7 @@
 
                     <!-- Enable LikePlus -->
                     <div class="flex items-start space-x-3">
-                        <input type="checkbox" wire:model="likeable"
+                        <input type="checkbox" wire:model="likeable" checked
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                         <div>
                             <h4 class="text-sm font-medium text-gray-900 dark:text-white">Activate HeartPush</h4>
