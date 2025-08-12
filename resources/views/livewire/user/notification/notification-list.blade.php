@@ -2,72 +2,43 @@
 
     <x-slot name="page_slug">notifications</x-slot>
 
-    {{-- Enhanced Stats Bar --}}
-    <div class="bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg">
-        <div class="container mx-auto px-4 py-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold mb-2">All Notifications</h1>
-                    <p class="text-orange-100">Manage and organize your notifications</p>
-                </div>
-                <div class="flex items-center gap-8 text-sm">
-                    <div class="text-center">
-                        <div class="text-2xl font-bold">{{ $totalCount }}</div>
-                        <div class="text-orange-100">Total</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-2xl font-bold">{{ $unreadCount }}</div>
-                        <div class="text-orange-100">Unread</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-2xl font-bold">{{ $readCount }}</div>
-                        <div class="text-orange-100">Read</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    {{-- Filter and Search Bar --}}
-    <livewire:user.notification.notification-filter :filter="$filter" :search="$search" :sort="$sort"
-        :total-count="$totalCount" :unread-count="$unreadCount" :read-count="$readCount" />
 
     {{-- Main Content --}}
-    <main class="container mx-auto px-4 py-8">
+    <main class="container mx-auto px-4  pb-8 ">
         <div class="max-w-4xl mx-auto">
-            {{-- Action Buttons --}}
-            @if ($totalCount > 0)
-                <div class="flex items-center justify-between mb-6">
-                    <div class="flex items-center gap-3">
-                        @if ($unreadCount > 0)
-                            <button wire:click="$dispatch('mark-all-as-read')"
-                                wire:confirm="Are you sure you want to mark all notifications as read?"
-                                class="btn btn-sm bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white border-none">
-                                <i class="fas fa-check-circle mr-2"></i>
-                                Mark All as Read ({{ $unreadCount }})
-                            </button>
-                        @endif
+            <div class="flex flex-col mb-6  sticky top-0 left-0 z-10 bg-white dark:bg-slate-800">
+                {{-- Filter and Search Bar --}}
 
-                        <button wire:click="$dispatch('clear-all-notifications')"
-                            wire:confirm="Are you sure you want to delete all notifications? This action cannot be undone."
-                            class="btn btn-sm btn-outline border-red-300 text-red-600 hover:bg-red-500 hover:text-white hover:border-red-500">
-                            <i class="fas fa-trash mr-2"></i>
-                            Clear All
-                        </button>
-                    </div>
+                <div class="flex items-center justify-between gap-4  sticky top-0 left-0 z-10">
+                    <livewire:user.notification.notification-filter :filter="$filter" :total-count="$totalCount"
+                        :unread-count="$unreadCount" :read-count="$readCount" />
+                    @if ($totalCount > 0)
+                        <div class="flex-1">
+                            <div class="flex items-center justify-end">
+                                <div class="flex items-center gap-3 ">
+                                    @if ($unreadCount > 0)
+                                        <button wire:click="$dispatch('mark-all-as-read')"
+                                            wire:confirm="Are you sure you want to mark all notifications as read?"
+                                            class="btn btn-sm py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white border-none">
+                                            <i class="fas fa-check-circle mr-2"></i>
+                                            Mark All as Read ({{ $unreadCount }})
+                                        </button>
+                                    @endif
 
-                    <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                        <span>Per page:</span>
-                        <select wire:model.live="perPage"
-                            class="select select-sm select-bordered border-orange-300 focus:border-orange-500">
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="20">20</option>
-                            <option value="50">50</option>
-                        </select>
-                    </div>
+                                    <button wire:click="$dispatch('clear-all-notifications')"
+                                        wire:confirm="Are you sure you want to delete all notifications? This action cannot be undone."
+                                        class="btn btn-sm py-3 btn-outline border-red-300 text-red-600 hover:bg-red-500 hover:text-white hover:border-red-500">
+                                        <i class="fas fa-trash mr-2"></i>
+                                        Clear All
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    @endif
                 </div>
-            @endif
+            </div>
 
             {{-- Notifications List --}}
             <div class="space-y-4" wire:loading.class="opacity-50">
