@@ -27,7 +27,7 @@ class Notification extends Component
                     ->where('type', CustomNotification::TYPE_ADMIN);
             })
             ->latest()
-            // ->take(15)
+            ->take(15)
             ->get();
     }
 

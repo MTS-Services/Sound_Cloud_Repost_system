@@ -106,7 +106,7 @@
                 sidebar_expanded: window.innerWidth >= 1024,
                 mobile_menu_open: false,
                 darkMode: true,
-                showNotifications: true,
+                showNotifications: false,
 
                 // Methods
                 init() {
