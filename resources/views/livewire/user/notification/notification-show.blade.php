@@ -17,8 +17,9 @@
                 {{-- Header --}}
                 <div class="flex items-start justify-between mb-6">
                     <div class="flex items-start gap-4">
-                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg bg-orange-500">
-                            <x-lucide-home class="w-6 h-6 bg-orange-500" />
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center shadow-lg bg-orange-500/20">
+                            {{-- <x-lucide-home class="w-6 h-6 bg-orange-500" /> --}}
+                            <i class="bx bx-{{ $this->getNotificationIcon() }} text-2xl text-orange-500"></i>
                         </div>
                         <div>
                             <h1 class="text-3xl font-bold mb-2 text-gray-800 dark:text-gray-200">

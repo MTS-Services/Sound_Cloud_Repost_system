@@ -2,7 +2,8 @@
     {{-- Notification Button --}}
     <button wire:click="togglePanel"
         class="btn btn-ghost btn-circle relative hover:bg-orange-100 dark:hover:bg-orange-900/30 text-orange-500">
-        <x-lucide-bell class="w-6 h-6" />
+        {{-- <x-lucide-bell class="w-6 h-6" /> --}}
+        <i data-lucide="bell" class="w-6 h-6"></i>
         @if ($this->unreadCount > 0)
             <span
                 class="absolute -top-1 -right-1 badge badge-sm bg-gradient-to-r from-red-500 to-pink-500 text-white border-none blink-indicator pulse-glow">

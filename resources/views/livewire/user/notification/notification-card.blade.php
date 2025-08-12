@@ -22,7 +22,8 @@
                         </div>
                     </div>
                     <div class="flex-shrink-0">
-                        <x-lucide-home class="w-6 h-6" />                        
+                        {{-- <x-lucide-home class="w-6 h-6" /> --}}
+                        <i class="bx bx-{{ $this->getNotificationIcon() }} text-2xl  text-orange-500"></i>
                     </div>
                 </div>
             </div>
@@ -34,18 +35,21 @@
             <div class="card-body p-6">
                 <div class="flex items-start gap-4">
                     {{-- Status Indicator --}}
-                    <div class="flex-shrink-0 pt-1">
-                        <div
-                            class="w-4 h-4 rounded-full {{ $this->isRead ? 'bg-gray-400' : 'bg-gradient-to-r from-orange-500 to-red-500 blink-indicator' }}">
+                    @if (!$this->isRead)
+                        <div class="flex-shrink-0 pt-1">
+                            <div
+                                class="w-4 h-4 rounded-full {{ $this->isRead ? 'bg-gray-400' : 'bg-gradient-to-r from-orange-500 to-red-500 blink-indicator' }}">
+                            </div>
                         </div>
-                    </div>
+                    @endif
+
 
                     {{-- Icon --}}
-                    <div class="flex-shrink-0 bg-orange-500 rounded-full">
-                        <div
-                            class="w-12 h-12  rounded-2xl flex items-center justify-center shadow-lg  bg-orange-500">
-                            <x-lucide-home class="w-6 h-6 bg-orange-500"/>
-                        </div>
+                    <div
+                        class="flex-shrink-0 bg-orange-500/20 rounded-full w-12 h-12 flex items-center justify-center shadow-lg">
+                        {{-- <x-lucide-home class="w-6 h-6 bg-orange-500"/> --}}
+                        <i class="bx bx-{{ $this->getNotificationIcon() }} text-2xl  text-orange-500"></i>
+
                     </div>
 
                     {{-- Content --}}
@@ -58,7 +62,7 @@
                                     {{ $this->getNotificationMessage() }}</p>
                                 <div class="flex items-center gap-4 text-sm">
                                     <span class="flex items-center text-gray-500">
-                                        <x-heroicon-s-clock class="w-4 h-4 mr-1" />
+                                        <x-lucide-clock class="w-4 h-4 mr-1" />
                                         {{ $this->getNotificationTime() }}
                                     </span>
                                     <span
@@ -75,7 +79,7 @@
                                 <div class="flex-shrink-0" wire:click.stop>
                                     <div class="dropdown dropdown-end">
                                         <div tabindex="0" role="button" class="btn btn-ghost btn-sm">
-                                         <x-zondicon-dots-horizontal-triple class="w-6 h-6"/>
+                                            <x-zondicon-dots-horizontal-triple class="w-6 h-6" />
 
                                         </div>
                                         <ul tabindex="0"
@@ -133,4 +137,5 @@
             }
         </style>
     @endpush
+
 </div>
