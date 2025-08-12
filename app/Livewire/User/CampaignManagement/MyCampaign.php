@@ -167,8 +167,8 @@ class MyCampaign extends Component
                     if ($value > userCredits()) {
                         $fail('The credit is not available.');
                     }
-                    if($this->editingCampaign->budget_credits > $value){
-                        $fail('The credit is not available.');
+                    if ($this->isEditing && $this->editingCampaign->budget_credits > $value) {
+                        $fail('The Credit is No Decrease.');
                     }
                 },
             ],
@@ -1537,7 +1537,6 @@ class MyCampaign extends Component
                     ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage)
             };
-            
         } catch (\Exception $e) {
             $campaigns = collect();
             $this->handleError('Failed to load campaigns', $e);

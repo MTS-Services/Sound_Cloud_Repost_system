@@ -698,7 +698,7 @@
                         </div>
 
                         <!-- Enable Campaign Accelerator -->
-                        @if ($isEditing && $editingCampaign->pro_feature != 1)
+                        @if (!$isEditing || $editingCampaign->pro_feature != 1)
                             <div class="flex items-start space-x-3">
                                 <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
                                     class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
@@ -1357,9 +1357,9 @@
                     <!-- Campaign Stats -->
                     <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                         <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
-                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Completed Reposts</h4>
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Total Reposts</h4>
                             <p class="text-xl font-bold text-black dark:text-white">
-                                {{ $campaign->completed_reposts }}
+                                {{ totalReposts($campaign) }}
                             </p>
                         </div>
                         <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
