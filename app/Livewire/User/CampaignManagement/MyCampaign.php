@@ -1534,6 +1534,7 @@ class MyCampaign extends Component
                     ->latest()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage)
             };
+            
         } catch (\Exception $e) {
             $campaigns = collect();
             $this->handleError('Failed to load campaigns', $e);

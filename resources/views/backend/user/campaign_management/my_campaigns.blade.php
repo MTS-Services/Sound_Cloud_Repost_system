@@ -54,7 +54,7 @@
                                                 <h3 class="text-black dark:text-gray-100 font-semibold text-lg">
                                                     {{ $campaig_->music?->title }}
                                                 </h3>
-                                                <span>
+                                                <span wire:click="editCampaign({{ $campaig_->id }})" class="cursor-pointer">
                                                     <!-- Pencil Icon -->
                                                     <svg class="w-5 h-5 inline-block text-gray-500 dark:text-gray-100"
                                                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
@@ -105,7 +105,7 @@
 
                                                 <x-lucide-repeat
                                                     class="text-gray-500 w-5 h-5 m-2 dark:text-white text-black" />
-                                                <span class=" text-black dark:text-white">22</span>
+                                                <span class=" text-black dark:text-white">{{ totalReposts($campaig_) }}</span>
                                             </div>
 
                                         </div>
@@ -122,15 +122,15 @@
                                             <div class="flex items-center justify-center mb-2">
                                                 <x-lucide-heart
                                                     class="text-gray-500 w-5 h-5 m-2 dark:text-white text-black" />
-                                                <span class=" text-black dark:text-gray-100">17</span>
+                                                <span class=" text-black dark:text-gray-100">{{ $campaig_->favorite_count ?? 0 }}</span>
                                             </div>
 
                                         </div>
                                         <div class="text-center">
                                             <div class="flex items-center justify-center mb-2">
-                                                <x-lucide-mail
+                                                <x-lucide-message-square
                                                     class="text-gray-500 w-5 h-5 m-2 dark:text-white text-black" />
-                                                <span class=" text-black dark:text-gray-100">6</span>
+                                                <span class=" text-black dark:text-gray-100">{{ __('10') }}</span>
                                             </div>
 
                                         </div>
@@ -138,14 +138,15 @@
                                             <div class="flex items-center justify-center mb-2">
                                                 <x-lucide-smile
                                                     class="text-gray-500 w-5 h-5 m-2 dark:text-white text-black" />
-                                                <span class=" text-black dark:text-gray-100">0</span>
+                                                <span class=" text-black dark:text-gray-100">{{ $campaig_->emoji_count ?? 0 }}</span>
                                             </div>
 
                                         </div>
                                         <div class="text-center">
                                             <div class="flex items-center justify-center mb-2">
 
-                                                <span class="text-orange-500 items-end font-medium mt-2">Show
+                                                <span wire:click="openViewDetailsModal({{ $campaig_->id }})"
+                                                    class="text-orange-500 items-end font-medium mt-2 cursor-pointer hover:underline transition-all duration-300">Show
                                                     All</span>
                                             </div>
 
@@ -1310,8 +1311,8 @@
                 <div
                     class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                            <x-lucide-info class="w-5 h-5 text-white" />
+                        <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                            <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
                         </div>
                         <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                             {{ __('Campaign Details') }}
@@ -1369,12 +1370,37 @@
                         <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
                             <h4 class="text-gray-600 dark:text-gray-400 text-sm">Budget</h4>
                             <p class="text-xl font-bold text-black dark:text-white">
-                                {{ number_format($campaign->budget) }}</p>
+                                {{ number_format($campaign->budget_credits) }}</p>
                         </div>
                         <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
                             <h4 class="text-gray-600 dark:text-gray-400 text-sm">Credits Spent</h4>
                             <p class="text-xl font-bold text-black dark:text-white">
                                 {{ number_format($campaign->credits_spent) }}</p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Max Reposts Last 24h</h4>
+                            <p class="text-xl font-bold text-black dark:text-white">
+                                {{ number_format($campaign->max_repost_last_24_h) }}</p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Max Reposts per Day</h4>
+                            <p class="text-xl font-bold text-black dark:text-white">
+                                {{ number_format($campaign->max_repost_per_day) }}</p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Max Followers</h4>
+                            <p class="text-xl font-bold text-black dark:text-white">
+                                {{ number_format($campaign->max_followers) }}</p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Favourites</h4>
+                            <p class="text-xl font-bold text-black dark:text-white">
+                                {{ number_format($campaign->favorite_count) }}</p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Emojis</h4>
+                            <p class="text-xl font-bold text-black dark:text-white">
+                                {{ number_format($campaign->emoji_count) }}</p>
                         </div>
                     </div>
 
