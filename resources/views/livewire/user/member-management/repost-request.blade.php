@@ -80,7 +80,7 @@
                         <!-- Toggle Switch -->
                         <div class="w-7 h-4 rounded-full relative cursor-pointer transition-colors"
                             :class="on ? 'bg-green-500' : 'bg-gray-300'" @click="on = !on">
-                            <div class="absolute top-0 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-300"
+                            <div class="absolute top-0 left-0 w-4 h-4 bg-white rounded-full shadow transition-transform duration-300"
                                 :class="on ? 'translate-x-4' : 'translate-x-0'">
                             </div>
                         </div>

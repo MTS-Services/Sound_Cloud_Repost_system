@@ -112,9 +112,19 @@ class Member extends Component
         // if (filter_var($this->searchQuery, FILTER_VALIDATE_URL) && preg_match('/^https?:\/\/(www\.)?soundcloud\.com\//', $this->searchQuery)) {
         $this->performLocalSearch();
     }
+    public $allPlaylistTracks;
 
     private function performLocalSearch()
     {
+        if ($this->activeTab === 'tracks' && $this->playListTrackShow) {
+            $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
+                ->where(function ($query) {
+                    $query->where('permalink_url', $this->searchQuery)
+                        ->orWhere('title', 'like', '%' . $this->searchQuery . '%');
+                })
+                ->get();
+            $this->tracks = $this->allPlaylistTracks->take($this->perPage);
+        }
         if ($this->activeTab === 'tracks') {
             $query = Track::self()
                 ->where(function ($q) {
