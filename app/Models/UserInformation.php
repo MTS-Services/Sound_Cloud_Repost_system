@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserInformation extends BaseModel
@@ -90,5 +91,10 @@ class UserInformation extends BaseModel
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_urn', 'urn');
+    }
+
+    public function scopeSelf(Builder $query): Builder
+    {
+        return $query->where('user_urn', user()->urn);
     }
 }

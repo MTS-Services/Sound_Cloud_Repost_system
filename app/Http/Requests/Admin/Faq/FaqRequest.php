@@ -23,22 +23,23 @@ class FaqRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'faq_category_id' => 'required|exists:faq_categories,id',
             'question' => 'required|string|max:255',
             'description' => 'required|string',
-            'key' => 'required|unique:faqs,key|in:' . implode(',', array_keys(Faq::keyLists())),
+           
         ] + ($this->isMethod('POST') ? $this->store() : $this->update());
     }
 
     protected function store(): array
     {
         return [
-            'key' => 'required|integer|unique:faqs,key',
+            
         ];
     }
     protected function update(): array
     {
         return [
-            'key' => 'required|integer|unique:faqs,key,' . decrypt($this->route('faq')),
+            
         ];
     }
 }

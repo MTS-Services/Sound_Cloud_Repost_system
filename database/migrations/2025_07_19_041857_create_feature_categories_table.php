@@ -5,6 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Http\Traits\AuditColumnsTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\FeatureCategory;
 
 return new class extends Migration
 {
@@ -18,6 +19,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('sort_order')->default(0);
             $table->string('name')->unique();
+            $table->tinyInteger('status')->default(FeatureCategory::STATUS_ACTIVE)->index();
 
 
             $table->timestamps();

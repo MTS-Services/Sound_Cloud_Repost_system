@@ -8,35 +8,41 @@ use App\Http\Traits\AuditRelationTraits;
 use App\Models\Faq;
 use App\Services\Admin\Faq\FaqService;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Yajra\DataTables\Facades\DataTables;
+use App\Services\Admin\Faq\FaqCategoryService;
 
 
 class FaqController extends Controller implements HasMiddleware
 {
-    protected FaqService $FaqService;
+    protected FaqService $faqService;
+     protected FaqCategoryService $faqCategoryService;
     use AuditRelationTraits;
-
-    protected $serviceName = FaqService::class;
-
+    public function __construct(FaqService $faqService, FaqCategoryService $faqCategoryService)
+    {
+        $this->faqService = $faqService;
+        $this->faqCategoryService = $faqCategoryService;
+    }
     protected function redirectIndex(): RedirectResponse
     {
-        return redirect()->route('index route');
+        return redirect()->route('fm.faq.index');
     }
 
     protected function redirectTrashed(): RedirectResponse
     {
-        return redirect()->route('trash route');
+        return redirect()->route('fm.faq.trash');
+    }
+    public function getDeletedFaq($encryptedId): Faq | Collection
+    {
+        return Faq::onlyTrashed()->findOrFail(decrypt($encryptedId));
     }
 
-    public function __construct(FaqService $FaqService)
-    {
-        $this->FaqService = $FaqService;
-    }
-    
+
+
     public static function middleware(): array
     {
         return [
@@ -60,29 +66,32 @@ class FaqController extends Controller implements HasMiddleware
      */
     public function index(Request $request)
     {
-        
-          if($request->ajax()) {
-              $query = $this->FaqService->getFaqs();
-              return DataTables::eloquent($query)
 
-               
-                 ->editColumn('status', fn($faq) => "<span class='badge badge-soft {$faq->status_color}'>{$faq->status_label}</span>")
+        if ($request->ajax()) {
+            $query = $this->faqService->getFaqs()->with('faqCategory');
+            return DataTables::eloquent($query)
 
+                ->editColumn('faq_category_id', function ($faq) {
+                    return $faq?->faqCategory?->name;
+                })
 
-                  ->editColumn('created_by', function ($faq) {
-                      // return $faq->creater_name;
-                      return $this->creater_name($faq);
-                  })
-                  ->editColumn('created_at', function ($faq) {
-                      return $faq->created_at_formatted;
-                  })
-                  ->editColumn('action', function ($faq) {
-                      $menuItems = $this->menuItems($faq);
-                      return view('components.action-buttons', compact('menuItems'))->render();
-                  })
-                  ->rawColumns(['key','status','created_by', 'created_at', 'action'])
-                  ->make(true);
-          }
+                ->editColumn('status', fn($faq) => "<span class='badge badge-soft {$faq->status_color}'>{$faq->status_label}</span>")
+
+            
+                ->editColumn('created_by', function ($faq) {
+                    // return $faq->creater_name;
+                    return $this->creater_name($faq);
+                })
+                ->editColumn('created_at', function ($faq) {
+                    return $faq->created_at_formatted;
+                })
+                ->editColumn('action', function ($faq) {
+                    $menuItems = $this->menuItems($faq);
+                    return view('components.action-buttons', compact('menuItems'))->render();
+                })
+                ->rawColumns(['faq_category_id',  'status', 'created_by', 'created_at', 'action'])
+                ->make(true);
+        }
         return view('backend.admin.faq-management.faq.index');
     }
 
@@ -117,7 +126,7 @@ class FaqController extends Controller implements HasMiddleware
                 'delete' => true,
                 'permissions' => ['permission-delete']
             ],
-            
+
 
         ];
     }
@@ -127,8 +136,10 @@ class FaqController extends Controller implements HasMiddleware
      */
     public function create(): View
     {
-        
-        return view('backend.admin.faq-management.faq.create');
+        $data['faq'] = Faq::where('status', 1)->get();
+        $data['faq_categories'] = $this->faqCategoryService->getFaqCategories()->active()->select(['id', 'name'])->get();
+
+        return view('backend.admin.faq-management.faq.create', $data);
     }
 
     /**
@@ -136,15 +147,14 @@ class FaqController extends Controller implements HasMiddleware
      */
     public function store(FaqRequest $request)
     {
-         try {
-             $validated = $request->validated();
-             $this->FaqService->createFaq($validated);
+        try {
+            $validated = $request->validated();
+            $this->faqService->createFaq($validated);
             return redirect()->route('fm.faq.index')->with('success', 'Service created successfully');
         } catch (\Throwable $e) {
-           session()->flash('error', $e->getMessage());
+            session()->flash('error', $e->getMessage());
             return redirect()->back();
         }
-        
     }
 
     /**
@@ -152,7 +162,7 @@ class FaqController extends Controller implements HasMiddleware
      */
     public function show(Request $request, string $id)
     {
-        $data = $this->FaqService->getFaq($id);
+        $data = $this->faqService->getFaq($id);
         $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
         return response()->json($data);
@@ -163,29 +173,32 @@ class FaqController extends Controller implements HasMiddleware
      */
     public function edit($id): View
     {
-       $data['faq'] = $this->FaqService->getFaq($id);
-        return view('backend.admin.faq-management.faq.edit',$data);
+        $data['faq'] = $this->faqService->getFaq($id);
+        $data['faq_categories'] = $this->faqCategoryService->getFaqCategories()->select(['id', 'name'])->get();
+        return view('backend.admin.faq-management.faq.edit', $data);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(FaqRequest $request, string $id)
+   public function update(FaqRequest $request, string $id)
     {
-         try {
+        try {
             $validated = $request->validated();
-            $this->FaqService->updateFaq($this->FaqService->getFaq($id), $validated, $id);
-            session()->flash('success', "Service updated successfully");
+            $faq = $this->faqService->getFaq($id);
+            $this->faqService->updateFaq($validated, $faq);
+            session()->flash('success', 'Faq  updated successfully!');
         } catch (\Throwable $e) {
-            session()->flash('Service update failed');
+            session()->flash('error', 'Faq  update failed!');
             throw $e;
         }
         return $this->redirectIndex();
     }
 
+
     public function status(Request $request, string $id)
     {
-       $faq = Faq::findOrFail(decrypt($id));
+        $faq = Faq::findOrFail(decrypt($id));
         $faq->update(['status' => !$faq->status, 'updated_by' => admin()->id]);
         session()->flash('success', 'Faq status updated successfully!');
         return redirect()->route('fm.faq.index');
@@ -194,77 +207,88 @@ class FaqController extends Controller implements HasMiddleware
     /**
      * Remove the specified resource from storage.
      */
-  public function destroy(string $id)
-{
-   $faq = Faq::findOrFail(decrypt($id));
+    public function destroy(string $id)
+    {
+        $faq = Faq::findOrFail(decrypt($id));
         $faq->update(['deleted_by' => admin()->id]);
         $faq->delete();
         session()->flash('success', 'Faq deleted successfully!');
         return redirect()->route('fm.faq.index');
-}
+    }
 
-    // public function trash(Request $request)
-    // {
-    //     if ($request->ajax()) {
-    //         $query = $this->FaqService->getFaqs()->onlyTrashed();
-    //         return DataTables::eloquent($query)
-    //             ->editColumn('deleted_by', function ($admin) {
-    //                 return $this->deleter_name($admin);
-    //             })
-    //             ->editColumn('deleted_at', function ($admin) {
-    //                 return $admin->deleted_at_formatted;
-    //             })
-    //             ->editColumn('action', function ($permission) {
-    //                 $menuItems = $this->trashedMenuItems($permission);
-    //                 return view('components.action-buttons', compact('menuItems'))->render();
-    //             })
-    //             ->rawColumns(['deleted_by', 'deleted_at', 'action'])
-    //             ->make(true);
-    //     }
-    //     return view('view blade file url...');
-    // }
+    public function trash(Request $request)
+    {
+        if ($request->ajax()) {
+            $query = $this->faqService->getFaqs()->onlyTrashed();
+            return DataTables::eloquent($query)
 
-    // protected function trashedMenuItems($model): array
-    // {
-    //     return [
-    //         [
-    //             'routeName' => '',
-    //             'params' => [encrypt($model->id)],
-    //             'label' => 'Restore',
-    //             'permissions' => ['permission-restore']
-    //         ],
-    //         [
-    //             'routeName' => '',
-    //             'params' => [encrypt($model->id)],
-    //             'label' => 'Permanent Delete',
-    //             'p-delete' => true,
-    //             'permissions' => ['permission-permanent-delete']
-    //         ]
+                ->editColumn('status', function ($faq) {
+                    return "<span class='badge badge-soft {$faq->status_color}'>{$faq->status_label}</span>";
+                })
+                ->editColumn('deleted_by', function ($faq) {
+                    return $this->deleter_name($faq);
+                })
+                ->editColumn('deleted_at', function ($faq) {
+                    return $faq->deleted_at_formatted;
+                })
+                ->editColumn('action', function ($permission) {
+                    $menuItems = $this->trashedMenuItems($permission);
+                    return view('components.action-buttons', compact('menuItems'))->render();
+                })
+                ->rawColumns(['status', 'deleted_by', 'deleted_at', 'action'])
+                ->make(true);
+        }
+        return view('backend.admin.faq-management.faq.trash');
+    }
 
-    //     ];
-    // }
+    protected function trashedMenuItems($model): array
+    {
+        return [
+            [
+                'routeName' => 'fm.faq.restore',
+                'params' => [encrypt($model->id)],
+                'label' => 'Restore',
+                'permissions' => ['permission-restore']
+            ],
+            [
+                'routeName' => 'fm.faq.permanent-delete',
+                'params' => [encrypt($model->id)],
+                'label' => 'Permanent Delete',
+                'p-delete' => true,
+                'permissions' => ['permission-permanent-delete']
+            ]
 
-    //  public function restore(string $id): RedirectResponse
-    // {
-    //     try {
-    //         $this->FaqService->restore($id);
-    //         session()->flash('success', "Service restored successfully");
-    //     } catch (\Throwable $e) {
-    //         session()->flash('Service restore failed');
-    //         throw $e;
-    //     }
-    //     return $this->redirectTrashed();
-    // }
+        ];
+    } 
+    public function restore(string $id): RedirectResponse
+    {
+        try {
+            $faq = Faq::onlyTrashed()->findOrFail(decrypt($id));
 
-    // public function permanentDelete(string $id): RedirectResponse
-    // {
-    //     try {
-    //         $this->FaqService->permanentDelete($id);
-    //         session()->flash('success', "Service permanently deleted successfully");
-    //     } catch (\Throwable $e) {
-    //         session()->flash('Service permanent delete failed');
-    //         throw $e;
-    //     }
-    //     return $this->redirectTrashed();
-    // }
+            $this->faqService->restore($faq, $id);
+            session()->flash('success', "Faq restored successfully");
+        } catch (\Throwable $e) {
+            session()->flash('Faq restore failed');
+            throw $e;
+        }
+        return $this->redirectTrashed();
+    }
+
+
+    public function permanentDelete(string $encryptedId): RedirectResponse
+    {
+        try {
+            $id = decrypt($encryptedId);
+            $faq = Faq::onlyTrashed()->findOrFail($id);
+
+            $this->faqService->permanentDelete($faq, $id);
+            $faq->forceDelete();
+
+            session()->flash('success', 'Faq permanently deleted successfully!');
+        } catch (\Throwable $e) {
+            session()->flash('error', 'Faq permanent delete failed');
+            throw $e;
+        }
+        return $this->redirectTrashed();
+    }
 }

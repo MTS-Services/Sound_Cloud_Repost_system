@@ -8,7 +8,7 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Feature Category List') }}</h2>
                 <div class="flex items-center gap-2">
-                    <x-button href="{{ route('pm.feature-category.create') }}" icon="user-plus" permission="feature_category-create">
+                    <x-button href="{{ route('pm.feature-category.create') }}" icon="plus" permission="feature_category-create">
                         {{ __('Add') }}
                     </x-button>
                 </div>
@@ -20,6 +20,7 @@
                     <tr>
                         <th width="5%">{{ __('SL') }}</th>
                         <th>{{ __('Name') }}</th>
+                        <th>{{ __('Status') }}</th>
                         <th>{{ __('Created By') }}</th>
                         <th>{{ __('Created Date') }}</th>
                         <th width="10%">{{ __('Action') }}</th>
@@ -40,6 +41,7 @@
                 let table_columns = [
                     //name and data, orderable, searchable
                     ['name', true, true],
+                    ['status', true, true],
                     ['created_by', true, true],
                     ['created_at', true, true],
                     ['action', false, false],

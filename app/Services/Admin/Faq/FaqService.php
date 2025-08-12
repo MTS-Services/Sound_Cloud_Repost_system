@@ -32,9 +32,11 @@ class FaqService
     }
 
 
-    public function updateFaq(Faq $faq, array $data, $id)
+     public function updateFaq(array $data, Faq $faq): Faq
     {
-        $faq->update($data, $id);
+        $data['updated_by'] = admin()->id;
+        $faq->update($data);
+        return $faq;
     }
 
     public  function keyLists()
@@ -62,5 +64,16 @@ class FaqService
     public function deleteFaq(Faq $faq, $id): void
     {
         $faq->delete($id);
+    }
+
+   public function restore(Faq $faq, $id): void
+    {
+        $faq->restore($id);
+   }
+
+    public function permanentDelete($faq,$id): void
+    {
+      $faq->forceDelete($id);
+      
     }
 }

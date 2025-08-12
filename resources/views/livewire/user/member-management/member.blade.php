@@ -1,5 +1,6 @@
-<div>
-    <x-slot name="page_slug">members</x-slot>
+<div x-data="{
+    showModal: @entangle('showModal').live,
+    showRepostsModal: @entangle('showRepostsModal').live}">
 
     <!-- Header -->
     <div class="mb-8">
@@ -187,7 +188,7 @@
                             @endif
                         </label>
                         <div class="flex w-full mt-2">
-                            <input wire:model.live.debounce.500ms="searchQuery" type="text" id="track-link-search"
+                            <input wire:model="searchQuery" type="text" id="track-link-search"
                                 placeholder="{{ $activeTab === 'tracks' ? 'Paste a SoundCloud profile or track link' : 'Paste a SoundCloud playlist link' }}"
                                 class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 border border-gray-300 dark:border-gray-600 ">
                             <button wire:click="searchSoundcloud" type="button"

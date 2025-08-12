@@ -1,19 +1,19 @@
 <x-admin::layout>
-    <x-slot name="title">{{ __('Faq Credit') }}</x-slot>
-    <x-slot name="breadcrumb">{{ __('Faq Credit') }}</x-slot>
+    <x-slot name="title">{{ __('Faq ') }}</x-slot>
+    <x-slot name="breadcrumb">{{ __('Faq ') }}</x-slot>
     <x-slot name="page_slug">faq</x-slot>
 
 <section>
 
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
-                <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Campaign List') }}</h2>
+                <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Faq List') }}</h2>
                 <div class="flex items-center gap-2">
-                    {{-- <x-button href="{{ route('cm.campaign.trash') }}" icon="trash-2" type='secondary'
-                        permission="campaign-trash">
+                    <x-button href="{{ route('fm.faq.trash') }}" icon="trash-2" type='secondary'
+                        permission="Faq-trash">
                         {{ __('Trash') }}
-                    </x-button> --}}
-                    <x-button href="{{ route('fm.faq.create') }}" icon="user-plus" permission="campaign-create">
+                    </x-button>
+                    <x-button href="{{ route('fm.faq.create') }}" icon="plus" permission="Faq-create">
                         {{ __('Add') }}
                     </x-button>
                 </div>
@@ -24,8 +24,8 @@
                 <thead>
                     <tr>
                         <th>{{ __('SL') }}</th>
+                        <th>{{__('Faq Category')}}</th>
                         <th>{{ __('Question') }}</th>
-                        <th>{{ __('Key') }}</th>
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('Created Date') }}</th>   
                         <th>{{ __('Action') }}</th>
@@ -47,8 +47,9 @@
             document.addEventListener('DOMContentLoaded', () => {
                 let table_columns = [
                     //name and data, orderable, searchable
+                    
+                    ['faq_category_id', true, true],
                     ['question', true, true],
-                    ['key', true, true],
                     ['status', true, true],                 
                     ['created_at', true, true],
                     ['action', false, false],
@@ -76,7 +77,14 @@
                     const id = $(this).data('id');
                     const route = "{{ route('fm.faq.show', ':id') }}";
 
-                    const details = [{
+                    const details = [
+                        
+                        {
+                            label: '{{ __('Faq Category') }}',
+                            key: 'faq_category_id',
+                        },
+                        {
+
                        
                             label: '{{ __('Question') }}',
                             key: 'question',
@@ -85,10 +93,7 @@
                             label: '{{ __('Description') }}',
                             key: 'description',
                         },
-                        {
-                            label: '{{ __('key') }}',
-                            key: 'key',
-                        },
+                       
                         {
                             label: '{{ __('Status') }}',
                             key: 'status',

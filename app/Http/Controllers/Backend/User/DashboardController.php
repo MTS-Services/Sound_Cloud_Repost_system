@@ -31,4 +31,8 @@ class DashboardController extends Controller
             ->get();
         return view('backend.user.dashboard', $data);
     }
+
+ 
+
+   
 }

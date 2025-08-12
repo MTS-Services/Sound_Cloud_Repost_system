@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Backend\User\Faq\FaqController;
 use App\Http\Controllers\Backend\User\DashboardController;
 use App\Http\Controllers\Backend\Admin\OrderManagement\OrderController as UserOrderController;
 use App\Http\Controllers\Backend\User\AddCaeditsController;
 use App\Http\Controllers\Backend\User\AnalyticsController;
+use App\Http\Controllers\Backend\User\FaqManagement\FaqController as FaqManagementFaqController;
 use App\Livewire\User\CampaignManagement\Campaign;
 use App\Livewire\User\CampaignManagement\MyCampaign;
 use App\Http\Controllers\Backend\User\Members\MemberController;
@@ -13,6 +15,7 @@ use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Livewire\User\FaqManagement\Faq;
 use App\Livewire\User\HelpAndSupport;
 use App\Livewire\User\MemberManagement\Member;
 use App\Livewire\User\MemberManagement\RepostRequest;
@@ -20,6 +23,7 @@ use App\Livewire\User\Notification\NotificationList;
 use App\Livewire\User\Notification\NotificationShow;
 use App\Livewire\User\PackageManagement\Pricing;
 use App\Livewire\User\ProfileManagement\MyAccount;
+use App\Models\Faq as ModelsFaq;
 use Illuminate\Validation\Rules\Unique;
 use PHPUnit\TextUI\Help;
 
@@ -33,6 +37,7 @@ Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
 // Dashboard and other routes
 Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+  
 
 
     Route::get('/user-profile', [ProfileController::class, 'profile'])->name('profile');
@@ -52,7 +57,10 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
     });
     Route::group(['as' => 'pkm.', 'prefix' => 'package-management'], function () {
         Route::get('/pricing', Pricing::class)->name('pricing');
+
     });
+
+   
     // Member Management
     Route::group(['as' => 'mm.', 'prefix' => 'member-management'], function () {
         // Member Routes
@@ -81,6 +89,11 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.'], function () {
         Route::get('/{encryptedId}', NotificationShow::class)->name('show');
     });
 });
+
+ //Faq Management
+
+    // Route::get('/faq', FaqManagementFaqController::class, 'index')->name('faq.index'); 
+    Route::get('/frequently-asked-questions', Faq::class)->name('user.faq');
 
 
 

@@ -11,17 +11,17 @@
                     <nav class="-mb-px flex space-x-8">
                         <button
                             class="tab-button @if ($activeMainTab === 'recommended_pro') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 pb-1 px-2 text-md font-semibold transition-all duration-200"
-                            wire:click="setActiveTab('recommended_pro')">
+                            wire:click="setActiveMainTab('recommended_pro')">
                             {{ __('Recommended Pro') }} <span class="text-xs ml-2">{{ __('20') }}</span>
                         </button>
                         <button
                             class="tab-button @if ($activeMainTab === 'recommended') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 pb-1 px-2 text-md font-semibold transition-all duration-200"
-                            wire:click="setActiveTab('recommended')">
+                            wire:click="setActiveMainTab('recommended')">
                             {{ __('Recommended') }}<span class="text-xs ml-2">{{ __('95') }}</span>
                         </button>
                         <button
                             class="tab-button @if ($activeMainTab === 'all') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 pb-1 px-2 text-md font-semibold transition-all duration-200"
-                            wire:click="setActiveTab('all')">
+                            wire:click="setActiveMainTab('all')">
                             {{ __('All') }}<span class="text-xs ml-2 text-orange-500">{{ __('205') }}</span>
                         </button>
                     </nav>
@@ -530,14 +530,14 @@
                     <div class="p-1">
                         <label for="track-link-search" class="text-xl font-semibold text-gray-700 dark:text-gray-200">
                             @if ($activeTab === 'tracks')
-                                Paste a SoundCloud profile or track link
+                                Paste a SoundCloud track link
                             @else
                                 Paste a SoundCloud playlist link
                             @endif
                         </label>
                         <div class="flex w-full mt-2">
-                            <input wire:model.live.debounce.500ms="searchQuery" type="text" id="track-link-search"
-                                placeholder="{{ $activeTab === 'tracks' ? 'Paste a SoundCloud profile or track link' : 'Paste a SoundCloud playlist link' }}"
+                            <input wire:model="searchQuery" type="text" id="track-link-search"
+                                placeholder="{{ $activeTab === 'tracks' ? 'Paste a SoundCloud track link' : 'Paste a SoundCloud playlist link' }}"
                                 class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 border border-gray-300 dark:border-gray-600 ">
                             <button wire:click="searchSoundcloud" type="button"
                                 class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200 ">
@@ -700,7 +700,7 @@
                     @if ($track)
                         <div>
                             <div class="flex items-center justify-between mb-3">
-                                <h3 class="text-md font-medium text-gray-900">Selected Track</h3>
+                                <h3 class="text-md font-medium text-gray-900 dark:text-white">Selected Track</h3>
                                 <button x-on:click="showSubmitModal = false"
                                     class="bg-gray-100 dark:bg-slate-700 py-1.5 px-3 rounded-xl text-orange-500 text-sm font-medium hover:text-orange-600">Edit</button>
                             </div>
@@ -711,9 +711,10 @@
                                         class="w-12 h-12 rounded">
                                 @endif
                                 <div>
-                                    <p class="text-sm text-gray-600">{{ $track->type }} -
+                                    <p class="text-sm text-gray-600 dark:text-white">{{ $track->type }} -
                                         {{ $track->author_username }}</p>
-                                    <p class="text-sm font-medium text-gray-900">{{ $track->title }}</p>
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $track->title }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -722,12 +723,12 @@
                     <!-- Set Budget -->
                     <div>
                         <div class="flex items-center space-x-2 mb-2">
-                            <h3 class="text-sm font-medium text-gray-900">Set budget</h3>
-                            <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
+                            <h3 class="text-sm font-medium text-gray-900 dark:text-white">Set budget</h3>
+                            <div class="w-4 h-4 bg-gray-400 rounded-full  flex items-center justify-center">
                                 <span class="text-white text-xs">i</span>
                             </div>
                         </div>
-                        <p class="text-xs text-gray-500 mb-4">A potential 10,000 people reached per campaign</p>
+                        <p class="text-xs text-gray-400 mb-4">A potential 10,000 people reached per campaign</p>
 
                         <!-- Budget Display -->
                         <div class="flex items-center justify-center space-x-2 mb-4">
@@ -758,13 +759,13 @@
                     <!-- Enable CommentPlus -->
                     <div>
                         <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mt-4">Campaign Settings</h2>
-                        <p class="text-sm text-gray-700 mb-4 mt-2">Select amount of credits to be spent</p>
+                        <p class="text-sm text-gray-400 mb-4 mt-2">Select amount of credits to be spent</p>
                         <div class="flex items-start space-x-3">
                             <input type="checkbox" wire:model="commentable"
                                 class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                             <div>
-                                <h4 class="text-sm font-medium text-gray-900">Activate Feedback</h4>
-                                <p class="text-xs text-gray-500">Encourage listeners to comment on your track (2
+                                <h4 class="text-sm font-medium text-gray-900 dark:text-white">Activate Feedback</h4>
+                                <p class="text-xs text-gray-400">Encourage listeners to comment on your track (2
                                     credits
                                     per comment).</p>
                             </div>
@@ -776,8 +777,8 @@
                         <input type="checkbox" wire:model="likeable"
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                         <div>
-                            <h4 class="text-sm font-medium text-gray-900">Activate HeartPush</h4>
-                            <p class="text-xs text-gray-500">Motivate real users to like your track (2 credits per
+                            <h4 class="text-sm font-medium text-gray-900 dark:text-white">Activate HeartPush</h4>
+                            <p class="text-xs text-gray-400">Motivate real users to like your track (2 credits per
                                 like).</p>
                         </div>
                     </div>
@@ -788,14 +789,15 @@
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                         <div>
                             <div class="flex items-center space-x-2">
-                                <h4 class="text-sm font-medium text-gray-900">{{ __('Turn on Momentum+ (') }}
+                                <h4 class="text-sm font-medium text-dark dark:text-white">
+                                    {{ __('Turn on Momentum+ (') }}
                                     <span class="text-md font-semibold">PRO</span>{{ __(')') }}
                                 </h4>
                                 <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
                                     <span class="text-white text-xs">i</span>
                                 </div>
                             </div>
-                            <p class="text-xs text-gray-500">Use Campaign Accelerator (+50 credits)</p>
+                            <p class="text-xs text-gray-400">Use Campaign Accelerator (+50 credits)</p>
                         </div>
                     </div>
                     <div x-data="{ showOptions: false }" class="flex flex-col space-y-2">
@@ -805,11 +807,12 @@
                                 class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
 
                             <div class="flex items-center space-x-2">
-                                <span class="text-sm font-medium text-gray-900">Limit to users with max follower
+                                <span class="text-sm font-medium text-gray-900 dark:text-white">Limit to users with max
+                                    follower
                                     count</span>
-                                {{-- <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
-                                            <span class="text-white text-xs">i</span>
-                                        </div> --}}
+                                <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
+                                    <span class="text-white text-xs">i</span>
+                                </div>
                             </div>
                         </div>
 
@@ -838,7 +841,7 @@
                         <div class=" mb-4">
                             <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
                                 {{ __('Audience Filtering (PRO Feature)') }}</h4>
-                            <p class="text-sm text-gray-700 mb-4 mt-2">Fine-tune who can support your track:</p>
+                            <p class="text-sm  text-gray-400 mb-4 mt-2">Fine-tune who can support your track:</p>
                         </div>
 
                         <div class="space-y-3 ml-4">
@@ -847,7 +850,7 @@
                                     <input type="checkbox" @change="showOptions = !showOptions"
                                         class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                                     <div class="flex items-center space-x-2">
-                                        <span class="text-sm text-gray-700">Exclude users who repost too often (last
+                                        <span class="text-sm text-gray-400">Exclude users who repost too often (last
                                             24h)</span>
                                     </div>
                                 </div>
@@ -875,7 +878,7 @@
                                     <input type="checkbox" @click="showRepostPerDay = !showRepostPerDay"
                                         class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                                     <div class="flex items-center space-x-2">
-                                        <span class="text-sm text-gray-700">Limit average repost frequency per
+                                        <span class="text-sm text-gray-400">Limit average repost frequency per
                                             day</span>
                                     </div>
                                 </div>
@@ -904,19 +907,19 @@
                         <div class="mt-6">
                             <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Genre Preferences for
                                 Sharers</h2>
-                            <p class="text-sm text-gray-700 mb-3 mt-2">Reposters must have the following genres:</p>
+                            <p class="text-sm text-gray-400 mb-3 mt-2">Reposters must have the following genres:</p>
                             <div class="space-y-2 ml-4">
                                 <div class="flex items-center space-x-2">
                                     <input type="radio" name="genre" value="anyGenre"
                                         @click="showGenreRadios = false" wire:model="anyGenre"
                                         class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
-                                    <span class="text-sm text-gray-700">Open to all music types</span>
+                                    <span class="text-sm text-gray-400">Open to all music types</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <input type="radio" name="genre" value="trackGenre"
                                         @click="showGenreRadios = false" wire:model="trackGenre"
                                         class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
-                                    <span class="text-sm text-gray-700">Match track genre – Hip-hop & Rap</span>
+                                    <span class="text-sm text-gray-400">Match track genre – Hip-hop & Rap</span>
                                 </div>
                                 <div x-data="{ showGenreRadios: false }" class="space-y-3">
 
@@ -925,7 +928,7 @@
                                         <input type="radio" name="genre"
                                             @click="showGenreRadios = !showGenreRadios" wire:click="getAllGenres"
                                             class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
-                                        <span class="text-sm text-gray-700">Match one of your profile’s chosen
+                                        <span class="text-sm text-gray-400">Match one of your profile’s chosen
                                             genres</span>
                                     </div>
 

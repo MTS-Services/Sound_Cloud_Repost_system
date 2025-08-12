@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Backend\Admin\PackageManagement;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PackageManagement\FeatureCategoryRequest;
 use App\Http\Traits\AuditRelationTraits;
+use App\Models\FeatureCategory;
 use App\Services\Admin\PackageManagement\FeatureCategorySevice;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
@@ -51,6 +52,9 @@ class FeatureCategoryController extends Controller implements HasMiddleware
         if ($request->ajax()) {
             $query = $this->FeatureCategorySevice->getFeatureCategories();
             return DataTables::eloquent($query)
+
+             ->editColumn('status', fn($credit) => "<span class='badge badge-soft {$credit->status_color}'>{$credit->status_label}</span>")
+            
                 ->editColumn('created_by', function ($credit) {
                     return $this->creater_name($credit);
                 })
@@ -61,7 +65,7 @@ class FeatureCategoryController extends Controller implements HasMiddleware
                     $menuItems = $this->menuItems($credit);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['status', 'created_by', 'created_at', 'action'])
                 ->make(true);
         }
         return view('backend.admin.package_management.feature_category.index');
@@ -75,6 +79,13 @@ class FeatureCategoryController extends Controller implements HasMiddleware
                 'params' => [encrypt($model->id)],
                 'label' => 'Edit',
                 'permissions' => ['feature_category-edit']
+            ],
+            [
+                'routeName' => 'pm.feature-category.status',
+                'params' => [encrypt($model->id)],
+                'label' => $model->status ? 'Deactivate' : 'Activate',
+                'status' => true,
+                'permissions' => ['permission-status']
             ],
 
             [
@@ -138,6 +149,13 @@ class FeatureCategoryController extends Controller implements HasMiddleware
         return $this->redirectIndex();
     }
 
+    public function status(Request $request, string $id)
+    {
+        $featrue_category = FeatureCategory::findOrFail(decrypt($id));
+        $featrue_category->update(['status' => !$featrue_category->status, 'updated_by' => admin()->id]);
+        session()->flash('success', 'Feature Category status updated successfully!');
+        return redirect()->route('pm.feature-category.index');
+    }
     /**
      * Remove the specified resource from storage.
      */

@@ -15,6 +15,7 @@ use App\Http\Controllers\Backend\Admin\UserManagement\UserTracklistController;
 use App\Http\Controllers\Backend\Admin\OrderManagement\CreditTransactionController;
 use App\Http\Controllers\Backend\Admin\PackageManagement\FeatureCategoryController;
 use App\Http\Controllers\Backend\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Backend\Admin\Faq\FaqCategotyController;
 use App\Http\Controllers\Backend\Admin\Faq\FaqController;
 use App\Http\Controllers\Backend\Admin\RepostManagement\RepostController;
 use App\Http\Controllers\Backend\Admin\RepostManagement\RepostRequestController;
@@ -69,9 +70,12 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         // Feature Category Routes
         Route::resource('feature-category', FeatureCategoryController::class);
         Route::controller(FeatureCategoryController::class)->name('feature-category.')->prefix('feature-category')->group(function () {});
+        Route::get('status/{feature_category}', [FeatureCategoryController::class, 'status'])->name('feature-category.status');
         // Feature Routes
         Route::resource('feature', FeatureController::class);
         Route::controller(FeatureController::class)->name('feature.')->prefix('feature')->group(function () {});
+        Route::get('status/{feature}', [FeatureController::class, 'status'])->name('feature.status');
+        // Plan Routes
         Route::resource('plan', PlanController::class);
         Route::controller(PlanController::class)->name('plan.')->prefix('plan')->group(function () {
             Route::post('/show/{plan}', 'show')->name('show');
@@ -202,8 +206,12 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{faq}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{faq}', 'permanentDelete')->name('permanent-delete');
-            Route::get('/detail/{faq}', 'detail')->name('detail');
-           
         });
+        Route::resource('faq-category', FaqCategotyController::class);
+        Route::get('status/{faq_category}', [FaqCategotyController::class, 'status'])->name('faq-category.status');
+        Route::post('show/{faq_category}', [FaqCategotyController::class, 'show'])->name('faq-category.show');
+        Route::get('trash/bin', [FaqCategotyController::class, 'trash'])->name('faq-category.trash');
+        Route::get('restore/{faq_category}', [FaqCategotyController::class, 'restore'])->name('faq-category.restore');
+        Route::delete('permanent-delete/{faq_category}', [FaqCategotyController::class, 'permanentDelete'])->name('faq-category.permanent-delete');
     });
 });
