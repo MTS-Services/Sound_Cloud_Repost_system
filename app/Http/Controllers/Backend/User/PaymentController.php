@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Credit;
 use App\Models\CreditTransaction;
 use App\Models\Order;
 use App\Models\Payment;
@@ -63,19 +64,22 @@ class PaymentController extends Controller
             ]);
             DB::transaction(function () use ($request, $order, $paymentIntent) {
 
-                CreditTransaction::create([
-                    'receiver_urn' => $order->user_urn,
-                    'transaction_type' => CreditTransaction::TYPE_PURCHASE,
-                    'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
-                    'source_id' => $order->id,
-                    'source_type' => Order::class,
-                    'amount' => $order->amount,
-                    'credits' => $order->credits,
-                    'description' => 'Purchased ' . $order->credits . ' credits for ' . $order->amount . ' ' . $request->currency,
-                    'creater_id' => $order->creater_id,
-                    'creater_type' => $order->creater_type,
+                if ($order->source_type == Credit::class) {
+                    CreditTransaction::create([
+                        'receiver_urn' => $order->user_urn,
+                        'transaction_type' => CreditTransaction::TYPE_PURCHASE,
+                        'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
+                        'source_id' => $order->id,
+                        'source_type' => Order::class,
+                        'amount' => $order->amount,
+                        'credits' => $order->credits,
+                        'description' => 'Purchased ' . $order->credits . ' credits for ' . $order->amount . ' ' . $request->currency,
+                        'creater_id' => $order->creater_id,
+                        'creater_type' => $order->creater_type,
 
-                ]);
+                    ]);
+                }
+
 
                 Payment::create([
                     'name' => $request->name,
@@ -87,6 +91,7 @@ class PaymentController extends Controller
                     'user_urn' => $order->user_urn,
                     'order_id' => $order->id,
                     'payment_method' => $request->payment_method ?? null,
+                    'notes' => $order->notes ?? null,
 
                     'payment_gateway' => Payment::PAYMENT_GATEWAY_STRIPE,
                     'payment_provider_id' => $request->payment_provider_id ?? null,

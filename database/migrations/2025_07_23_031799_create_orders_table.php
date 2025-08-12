@@ -23,6 +23,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('source_id')->index()->comment('Credits table id or Plans Table Id');
             $table->string('source_type')->index()->comment('Credit Or Plan Model');
             $table->decimal('credits', 10, 2)->nullable();
+            $table->longText('notes')->nullable();
             $table->decimal('amount', 10, 2)->default(0.00);
             $table->tinyInteger('status')->index()->default(Order::STATUS_PENDING);
             $table->tinyInteger('type')->index()->default(Order::TYPE_CREDIT)->comment(Order::TYPE_CREDIT . ': Credit' . Order::TYPE_PLAN . ': Plan');

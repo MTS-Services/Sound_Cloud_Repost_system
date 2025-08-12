@@ -22,6 +22,7 @@ class Order extends BaseModel
         'source_type',
         'order_id',
         'credits',
+        'notes',
         'amount',
         'status',
         'type',
@@ -195,8 +196,14 @@ class Order extends BaseModel
                 }
 
                 if ($model->userPlan) {
+                    UserPlan::where('user_urn', $model->user_urn)->where('status', UserPlan::STATUS_ACTIVE)->update([
+                        'status' => UserPlan::STATUS_INACTIVE,
+                        'notes' => $model->notes
+                    ]);
                     $model->userPlan?->update([
-                        'status' => UserPlan::STATUS_ACTIVE
+                        'status' => UserPlan::STATUS_ACTIVE,
+                        'start_date' => now(),
+                        'end_date' => now()->addDays($model->userPlan->duration)
                     ]);
                 }
             }
@@ -211,8 +218,14 @@ class Order extends BaseModel
                     ]);
                 }
                 if ($model->userPlan) {
+                    UserPlan::where('user_urn', $model->user_urn)->where('status', UserPlan::STATUS_ACTIVE)->update([
+                        'status' => UserPlan::STATUS_INACTIVE,
+                        'notes' => $model->notes
+                    ]);
                     $model->userPlan?->update([
-                        'status' => UserPlan::STATUS_ACTIVE
+                        'status' => UserPlan::STATUS_ACTIVE,
+                        'start_date' => now(),
+                        'end_date' => now()->addDays($model->userPlan->duration)
                     ]);
                 }
 

@@ -23,10 +23,12 @@ return new class extends Migration {
             $table->foreign('plan_id')->references('id')->on('plans')->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedBigInteger('order_id')->unique();
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade')->onUpdate('cascade');
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->decimal('price', 10, 2)->default(0.00);
+            $table->date('start_date')->nullable()->index();
+            $table->date('end_date')->nullable()->index();
+            $table->decimal('price', 15, 2)->default(0.00);
             $table->tinyInteger('status')->default(UserPlan::STATUS_PENDING)->index();
+            $table->longText('notes')->nullable();
+            $table->integer('duration');
             $table->timestamps();
             $table->softDeletes();
             $this->addMorphedAuditColumns($table);

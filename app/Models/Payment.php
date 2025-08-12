@@ -20,6 +20,7 @@ class Payment extends BaseModel
         'payment_gateway',
         'payment_provider_id',
         'amount',
+        'notes',
         'currency',
         'credits_purchased',
         'exchange_rate',

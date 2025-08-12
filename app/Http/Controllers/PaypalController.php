@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Credit;
 use App\Models\CreditTransaction;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -26,24 +27,26 @@ class PaypalController extends Controller
 
         DB::transaction(function () use (&$payment, $order, $amount, $credit, $reference) {
             // ✅ 1. Create CreditTransaction first
-            $creditTransaction = CreditTransaction::create([
-                'receiver_urn' => $order->user_urn,
-                'transaction_type' => CreditTransaction::TYPE_PURCHASE,
-                'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
-                'source_id' => $order->id,
-                'source_type' => Order::class,
-                'amount' => $order->amount,
-                'credits' => $order->credits,
-                'metadata' => json_encode(['via' => 'PayPal']),
-                'description' => 'Purchased ' . $order->credits . ' credits for ' . $order->amount . ' ' . 'usd',
-                'creater_id' => $order->creater_id,
-                'creater_type' => $order->creater_type,
-            ]);
-
+            if ($order->source_type == Credit::class) {
+                CreditTransaction::create([
+                    'receiver_urn' => $order->user_urn,
+                    'transaction_type' => CreditTransaction::TYPE_PURCHASE,
+                    'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
+                    'source_id' => $order->id,
+                    'source_type' => Order::class,
+                    'amount' => $order->amount,
+                    'credits' => $order->credits,
+                    'metadata' => json_encode(['via' => 'PayPal']),
+                    'description' => 'Purchased ' . $order->credits . ' credits for ' . $order->amount . ' ' . 'usd',
+                    'creater_id' => $order->creater_id,
+                    'creater_type' => $order->creater_type,
+                ]);
+            }
             $payment = Payment::create([
                 'user_urn' => $order->user_urn,
                 'order_id' => $order->id,
                 'payment_gateway' => Payment::PAYMENT_GATEWAY_PAYPAL,
+                'notes' => $order->notes,
                 'amount' => $order->amount,
                 'credits_purchased' => $order->credits,
                 'status' => Payment::STATUS_PROCESSING,

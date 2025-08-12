@@ -70,7 +70,7 @@
                         </div>
                     </div>
                     <div class="p-6 pt-0 w-full ">
-                        <button
+                        <button wire:click="subscribe('{{ encrypt($plan->id) }}')"
                             class="w-full bg-orange-500 hover:bg-orange-600 text-white text-sm md:text-base py-1.5 md:py-2 px-3 md:px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors">
                             {{ $plan->monthly_price == 0 ? 'Get Started' : 'Choose Plan' }}
                         </button>

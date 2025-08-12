@@ -19,6 +19,8 @@ class UserPlan extends BaseModel
         'end_date',
         'price',
         'status',
+        'notes',
+        'duration',
 
         'creater_id',
         'updater_id',
@@ -44,14 +46,16 @@ class UserPlan extends BaseModel
 
     public const STATUS_PENDING = 0;
     public const STATUS_ACTIVE = 1;
-    public const STATUS_CANCELED = 2;
-    public const STATUS_EXPIRED = 3;
+    public const STATUS_INACTIVE = 2;
+    public const STATUS_CANCELED = 3;
+    public const STATUS_EXPIRED = 4;
 
     public static function getStatusList(): array
     {
         return [
             self::STATUS_PENDING => 'Pending',
             self::STATUS_ACTIVE => 'Active',
+            self::STATUS_INACTIVE => 'Inactive',
             self::STATUS_CANCELED => 'Canceled',
             self::STATUS_EXPIRED => 'Expired',
         ];
@@ -63,6 +67,7 @@ class UserPlan extends BaseModel
         return [
             self::STATUS_PENDING => 'info',
             self::STATUS_ACTIVE => 'success',
+            self::STATUS_INACTIVE => 'warning',
             self::STATUS_CANCELED => 'error',
             self::STATUS_EXPIRED => 'secondary',
         ];
@@ -85,6 +90,11 @@ class UserPlan extends BaseModel
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_ACTIVE);
+    }
+
+    public function scopeInactive(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_INACTIVE);
     }
 
     public function scopeExpired(Builder $query): Builder

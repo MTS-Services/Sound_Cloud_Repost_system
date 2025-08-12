@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->string('address')->nullable();
             $table->string('postal_code')->nullable();
             $table->string('reference')->unique()->nullable();
+            $table->longText('notes')->nullable();
             $table->string('user_urn');
             $table->unsignedBigInteger('order_id');
 
