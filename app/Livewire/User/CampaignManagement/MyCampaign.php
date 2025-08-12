@@ -122,7 +122,7 @@ class MyCampaign extends Component
     private const MIN_BUDGET = 50;
     private const MIN_CREDIT = 100;
     private const REFUND_PERCENTAGE = 0.5;
-    private const ITEMS_PER_PAGE = 2;
+    private const ITEMS_PER_PAGE = 10;
 
     // Campaign edit 
     public $isEditing = false;
