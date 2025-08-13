@@ -254,13 +254,13 @@
                                 <input 
                                     type="text" 
                                     id="urlInput" wire:model="permalink"
-                                    value="https://soundcloud.com/username/"
+                                    value="https://api.soundcloud.com"
                                     x-model="permalink" 
                                     class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white"
-                                    @input="if (!$event.target.value.startsWith('https://soundcloudcom/username/')) { 
-                                        $event.target.value = 'https://soundcloudcom/username/' + $event.target.value.substring(24); 
+                                    @input="if (!$event.target.value.startsWith('https://api.soundcloud.com/')) { 
+                                        $event.target.value = 'https://api.soundcloud.com/' + $event.target.value.substring(24); 
                                     }"
-                                    @keydown="if ($event.target.selectionStart < 30 && ['Backspace', 'Delete'].includes($event.key)) { 
+                                    @keydown="if ($event.target.selectionStart < 24 && ['Backspace', 'Delete'].includes($event.key)) { 
                                         $event.preventDefault(); 
                                     }"
                                 />

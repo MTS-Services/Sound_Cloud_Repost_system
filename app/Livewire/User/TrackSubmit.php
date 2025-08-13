@@ -19,7 +19,7 @@ class TrackSubmit extends Component
     public $genre = null;
     public $description = '';
     public $tag_list = '';
-    public static $artist = null;
+    public $artist = null;
 
     public function mount()
     {
@@ -46,6 +46,7 @@ class TrackSubmit extends Component
             'permalink' => $this->permalink,
             'asset_data' => $this->asset_data,
             'genre' => $this->genre,
+            'artist' => $this->artist,
             'description' => $this->description,
             'tag_list' => $this->tag_list,
         ];
@@ -55,7 +56,7 @@ class TrackSubmit extends Component
         ]);
         // Make the request to the SoundCloud API
         $response = $httpClient->post($this->baseUrl . '/tracks', $trackData);
-        dd($httpClient, $response);
+        dd($trackData ,$httpClient, $response);
         // Check if the request was successful
         if ($response->successful()) {
             session()->flash('message', 'Track submitted successfully!');
