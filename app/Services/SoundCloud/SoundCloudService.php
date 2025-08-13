@@ -173,7 +173,7 @@ class SoundCloudService
                 if (!$track_author) {
                     $track_author = User::create([
                         'soundcloud_id' => $trackData['user']['id'],
-                        'name' => $trackData['user']['full_name'],
+                        'name' => $trackData['user']['username'],
                         'nickname' => $trackData['user']['username'],
                         'avatar' => $trackData['user']['avatar_url'],
                         'soundcloud_permalink_url' => $trackData['user']['permalink_url'],
