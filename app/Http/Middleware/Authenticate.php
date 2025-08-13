@@ -60,17 +60,17 @@ class Authenticate extends Middleware
                         } else {
                             // Refresh token failed, log out the user
                             Auth::logout();
-                            return redirect()->route('login')->with('error', 'Session expired, please log in again.');
+                            return redirect()->route('f.landing')->with('error', 'Session expired, please log in again.');
                         }
                     } catch (\Exception $e) {
                         // Handle exceptions, e.g., network error
                         Auth::logout();
-                        return redirect()->route('login')->with('error', 'An error occurred, please log in again.');
+                        return redirect()->route('f.landing')->with('error', 'An error occurred, please log in again.');
                     }
                 } else {
                     // No refresh token available, log out the user
                     Auth::logout();
-                    return redirect()->route('login')->with('error', 'Session expired, please log in again.');
+                    return redirect()->route('f.landing')->with('error', 'Session expired, please log in again.');
                 }
             }
         }
