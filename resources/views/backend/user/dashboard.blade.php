@@ -28,11 +28,12 @@
                 </div>
                 <!-- Submit Track -->
                 <div
-                    class="flex items-center gap-2 bg-orange-600 text-white py-2 px-3 rounded-md hover:bg-orange-700 w-full sm:w-auto justify-center">
-                    <span class="flex items-center">
-                        <i data-lucide="music" class="inline-block text-center h-5 w-6 text-purple-800"></i>
-                    </span>
-                    <a href="#" class="text-base sm:text-sm">{{ __('Submit Track') }}</a>
+                    class="flex items-center gap-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 w-full sm:w-auto justify-center">
+                    <a href="{{ route('user.track.submit') }}" class="text-base sm:text-sm py-2 px-3">
+                        <span>
+                            <i data-lucide="music" class="inline-block text-center h-5 w-6 text-purple-800"></i>
+                        </span>
+                        {{ __('Submit Track') }}</a>
                 </div>
             </div>
         </div>
@@ -89,7 +90,7 @@
                         </svg></div>
                 </div>
                 <div class="space-y-2">
-                    <p class="text-2xl  font-bold text-slate-700 dark:text-white">{{ ($totalCount) }}</p>
+                    <p class="text-2xl  font-bold text-slate-700 dark:text-white">{{ $totalCount }}</p>
                     <p class="text-sm flex items-center space-x-1 text-green-400"><span>+8.5% from last week</span></p>
                 </div>
             </div>
