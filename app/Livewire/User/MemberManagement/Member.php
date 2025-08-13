@@ -324,7 +324,7 @@ class Member extends Component
                         'request_type' => 'track',
                         'target_urn' => $this->track->urn,
                     ],
-                    'status' => 'succeeded',
+                    'status' => CreditTransaction::STATUS_SUCCEEDED,
                 ]);
             });
 
