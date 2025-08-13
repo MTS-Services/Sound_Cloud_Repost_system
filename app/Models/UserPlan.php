@@ -53,50 +53,71 @@ class UserPlan extends BaseModel
     public static function getStatusList(): array
     {
         return [
-            self::STATUS_PENDING => 'Pending',
-            self::STATUS_ACTIVE => 'Active',
+            self::STATUS_PENDING  => 'Pending',
+            self::STATUS_ACTIVE   => 'Active',
             self::STATUS_INACTIVE => 'Inactive',
             self::STATUS_CANCELED => 'Canceled',
-            self::STATUS_EXPIRED => 'Expired',
+            self::STATUS_EXPIRED  => 'Expired',
         ];
     }
-
 
     public static function getStatusColorList(): array
     {
         return [
-            self::STATUS_PENDING => 'info',
-            self::STATUS_ACTIVE => 'success',
+            self::STATUS_PENDING  => 'info',
+            self::STATUS_ACTIVE   => 'success',
             self::STATUS_INACTIVE => 'warning',
             self::STATUS_CANCELED => 'error',
-            self::STATUS_EXPIRED => 'secondary',
+            self::STATUS_EXPIRED  => 'secondary',
         ];
     }
 
-    
     public function getStatusLabelAttribute()
     {
-        return $this->status ? self::getStatusList()[$this->status] : 'Unknown';
+        return $this->status
+            ? self::getStatusList()[$this->status]
+            : self::getStatusList()[self::STATUS_INACTIVE];
     }
 
     public function getStatusColorAttribute()
     {
-         return $this->status == self::STATUS_ACTIVE ? 'badge-parimary' : '';
+        return $this->status
+            ? 'badge-' . self::getStatusColorList()[$this->status]
+            : 'badge-' . self::getStatusColorList()[self::STATUS_INACTIVE];
     }
 
     public function getStatusBtnLabelAttribute()
     {
-        return $this->status == self::STATUS_PENDING ? self::statusList()[self::STATUS_ACTIVE] : self::statusList()[self::STATUS_INACTIVE];
+        return $this->status == self::STATUS_PENDING
+            ? self::getStatusList()[self::STATUS_ACTIVE]
+            : self::getStatusList()[self::STATUS_INACTIVE];
     }
 
     public function getStatusBtnColorAttribute()
     {
-        return $this->status == self::STATUS_ACTIVE ? 'btn-error' : 'btn-success';
+        return $this->status == self::STATUS_ACTIVE
+            ? 'btn-error'
+            : 'btn-success';
     }
+
     public function getStatusBtnClassAttribute()
     {
-        return $this->status == self::STATUS_INACTIVE ? 'btn-error' : 'btn-primary';
+        return $this->status == self::STATUS_INACTIVE
+            ? 'btn-error'
+            : 'btn-primary';
     }
+
+    /**
+     * Full badge HTML ready for Blade
+     */
+    public function getStatusBadgeAttribute()
+    {
+        return '<span class="badge ' . $this->status_color . '">' . $this->status_label . '</span>';
+    }
+
+
+
+
 
     public function scopePending(Builder $query): Builder
     {
