@@ -55,7 +55,7 @@ class TrackSubmit extends Component
         ]);
         // Make the request to the SoundCloud API
         $response = $httpClient->post($this->baseUrl . '/tracks', $trackData);
-        dd($httpClient, $response);
+        // dd($httpClient, $response);
         // Check if the request was successful
         if ($response->successful()) {
             session()->flash('message', 'Track submitted successfully!');
