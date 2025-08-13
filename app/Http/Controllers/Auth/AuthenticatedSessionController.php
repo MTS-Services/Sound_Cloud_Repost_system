@@ -21,7 +21,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('user.dashboard', absolute: false));
         }
         // return view('auth.login');
-        return redirect()->route('f.landing');
+        return redirect()->route('soundcloud.redirect');
         // return redirect()->route('f.landing');
     }
 
