@@ -159,16 +159,17 @@ class SoundCloudService
 
                 $userUrn = $trackData['user']['urn']; // e.g. "soundcloud:users:1109180353"
 
-                $exists = User::where('urn', $userUrn)->exists();
+                $track_author = User::where('urn', $userUrn)->first();
 
-                if (!$exists) {
-                    User::create([
+                if (!$track_author) {
+                    $track_author = User::create([
                         'soundcloud_id' => $trackData['user']['id'],
                         'name' => $trackData['user']['full_name'],
                         'nickname' => $trackData['user']['username'],
                         'avatar' => $trackData['user']['avatar_url'],
                         'soundcloud_permalink_url' => $trackData['user']['permalink_url'],
-                        'urn' => $userUrn
+                        'urn' => $userUrn,
+                        'status' => User::STATUS_INACTIVE
                     ]);
                 }
                 // Prepare common track data, setting defaults for potentially missing keys
@@ -241,8 +242,9 @@ class SoundCloudService
                     $commonTrackData
                 );
 
-                $track_author = User::where('urn', $track->user_urn)->first();
-                if ($track_author && $track_author->user_urn !== $user->urn) {
+                Log::info("Successfully synced track {$track->soundcloud_track_id} for user {$user->urn}- Track authon urn: {$track_author->urn}.");
+
+                if ($track_author && $track_author->urn !== $user->urn) {
                     Repost::create([
                         'repost_request_id' => $track_author->id,
                         'reposter_urn' => $user->urn,
