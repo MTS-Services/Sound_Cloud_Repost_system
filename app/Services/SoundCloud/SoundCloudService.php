@@ -153,6 +153,7 @@ class SoundCloudService
             foreach ($tracksData as $trackData) {
                 // Prepare common track data, setting defaults for potentially missing keys
                 $commonTrackData = [
+                    'user_urn' => $trackData['user']['urn'] ?? $user->urn,
                     'kind' => $trackData['kind'] ?? null,
                     'urn' => $trackData['urn'] ?? null,
                     'duration' => $trackData['duration'] ?? 0,
@@ -210,6 +211,7 @@ class SoundCloudService
                         'author_soundcloud_permalink_url' => $trackData['user']['permalink_url'] ?? null,
                         'author_soundcloud_permalink' => $trackData['user']['permalink'] ?? null,
                         'author_soundcloud_uri' => $trackData['user']['uri'] ?? null,
+                        'user_urn' => $user->urn,
                     ]);
                 }
 
@@ -336,6 +338,7 @@ class SoundCloudService
                         'soundcloud_id' => $playlistData['id'] ?? null, // Use soundcloud_id for unique identification
                     ],
                     [
+                        'user_urn' => $playlistData['user']['urn'] ?? $user->urn,
                         'soundcloud_urn' => $playlistData['urn'] ?? null,
                         'soundcloud_kind' => $playlistData['kind'] ?? null,
                         'title' => $playlistData['title'] ?? null,
@@ -423,6 +426,7 @@ class SoundCloudService
                             'created_at_soundcloud' => isset($trackData['created_at']) ? Carbon::parse($trackData['created_at'])->toDateTimeString() : null,
                             'type' => $trackData['type'] ?? null,
                             'last_sync_at' => now(),
+                            'user_urn' => $trackData['user']['urn'] ?? $user->urn,
                         ];
 
                         // Add author details if available for the track
