@@ -283,7 +283,7 @@ class RepostRequest extends Component
                     $request->update([
                         'status' => ModelsRepostRequest::STATUS_APPROVED,
                         'completed_at' => now(),
-                        'responded_at' => now(),
+                        'reposted_at' => now(),
                     ]);
 
                     // Create the CreditTransaction record
@@ -356,12 +356,11 @@ class RepostRequest extends Component
             $request = ModelsRepostRequest::findOrFail($requestId);
             $request->update([
                 'status' => ModelsRepostRequest::STATUS_CANCELLED,
-                'responded_at' => now(),
+                'reposted_at' => now(),
             ]);
             // Create credit transaction
             $creditTransaction = new CreditTransaction();
-            $creditTransaction->receiver_urn = $request->target_user_urn;
-            $creditTransaction->sender_urn = $request->requester_urn;
+            $creditTransaction->receiver_urn = $request->requester_urn;
             $creditTransaction->transaction_type = CreditTransaction::TYPE_REFUND;
             $creditTransaction->calculation_type = CreditTransaction::CALCULATION_TYPE_DEBIT;
             $creditTransaction->source_id = $request->id;
@@ -371,7 +370,8 @@ class RepostRequest extends Component
             $creditTransaction->description = 'Repost Request Refund';
             $creditTransaction->metadata = [
                 'request_type' => 'repost_request',
-                'target_urn' => $request->requester_urn,
+                'requester_urn' => $request->requester_urn,
+                'request_id' => $request->id,
             ];
             $creditTransaction->status = 'succeeded';
             $creditTransaction->save();
