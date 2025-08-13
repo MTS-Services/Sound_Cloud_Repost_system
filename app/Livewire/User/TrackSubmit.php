@@ -31,9 +31,9 @@ class TrackSubmit extends Component
         return [
             'title' => 'required|string|max:255',
             'asset_data' => 'required|file',
-            'permalink' => 'required|string|max:255',
-            'genre' => 'nullable|string|max:100',
-            'tag_list' => 'nullable|string|max:500',
+            // 'permalink' => 'required|string|max:255',
+            // 'genre' => 'nullable|string|max:100',
+            // 'tag_list' => 'nullable|string|max:500',
         ];
     }
     public function submit()
@@ -43,12 +43,12 @@ class TrackSubmit extends Component
         // Create the track data array
         $trackData = [
             'title' => $this->title,
-            'permalink' => $this->permalink,
             'asset_data' => $this->asset_data,
-            'genre' => $this->genre,
-            'artist' => $this->artist,
-            'description' => $this->description,
-            'tag_list' => $this->tag_list,
+            // 'permalink' => $this->permalink,
+            // 'genre' => $this->genre,
+            // 'artist' => $this->artist,
+            // 'description' => $this->description,
+            // 'tag_list' => $this->tag_list,
         ];
         // Create the HTTP client
         $httpClient = Http::withHeaders([
