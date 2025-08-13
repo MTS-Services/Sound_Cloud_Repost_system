@@ -78,7 +78,7 @@
                         </div>
                     </div>
 
-                    <div class="mb-4">
+                    {{-- <div class="mb-4">
                         <label class="block text-gray-700 text-sm font-semibold mb-2" for="currency">
                             <i class="fas fa-coins mr-1"></i> Currency
                         </label>
@@ -90,7 +90,7 @@
                             <option value="cad">CAD - Canadian Dollar</option>
                             <option value="aud">AUD - Australian Dollar</option>
                         </select>
-                    </div>
+                    </div> --}}
 
                     <div
                         class="mb-4 bg-gray-100 border border-gray-300 rounded-lg p-4 focus-within:border-orange-500 focus-within:bg-white">
@@ -102,13 +102,13 @@
                         </div>
                     </div>
 
-                    <div
+                    {{-- <div
                         class="mb-4 flex items-center gap-2 p-4 bg-orange-50 border border-orange-200 rounded-lg text-orange-800 text-sm">
                         <input type="checkbox" id="save_payment_method" name="save_payment_method" class="w-4 h-4">
                         <label for="save_payment_method" class="cursor-pointer">
                             <i class="fas fa-bookmark mr-1"></i> Save this payment method for future purchases
                         </label>
-                    </div>
+                    </div> --}}
 
                     <button type="submit" id="submit-button"
                         class="w-full bg-gradient-to-br from-orange-500 to-orange-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg transition-all flex items-center justify-center gap-2">
@@ -206,11 +206,9 @@
                             'content')
                     },
                     body: JSON.stringify({
-                        currency: formData.get('currency'),
                         name: formData.get('name'),
                         email_address: formData.get('email_address'),
                         customer_phone: formData.get('customer_phone'),
-                        save_payment_method: formData.get('save_payment_method') === 'on',
                         order_id: formData.get('order_id')
                     })
                 });

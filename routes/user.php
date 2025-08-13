@@ -23,6 +23,7 @@ use App\Livewire\User\Notification\NotificationList;
 use App\Livewire\User\Notification\NotificationShow;
 use App\Livewire\User\PackageManagement\Pricing;
 use App\Livewire\User\ProfileManagement\MyAccount;
+use App\Livewire\User\TrackSubmit;
 use App\Models\Faq as ModelsFaq;
 use Illuminate\Validation\Rules\Unique;
 use PHPUnit\TextUI\Help;
@@ -88,6 +89,9 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
         Route::get('/', NotificationList::class)->name('index');
         Route::get('/{encryptedId}', NotificationShow::class)->name('show');
     });
+
+    // Track Submit Routes
+    Route::get('/track/submit', TrackSubmit::class)->name('track.submit');
 });
 
 //Faq Management

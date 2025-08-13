@@ -247,3 +247,55 @@ function totalReposts($campaign = null)
     }
     return $campaign->reposts()->count();
 }
+
+// Get all genres
+function AllGenres()
+{
+    $genres = [
+        "Alternative Rock",
+        "Ambient",
+        "Classical",
+        "Country",
+        "Dance & EDM",
+        "Dancehall",
+        "Deep House",
+        "Disco",
+        "Drum & Bass",
+        "Dubstep",
+        "Electronic",
+        "Folk & Singer-Songwriter",
+        "Hip-hop & Rap",
+        "House",
+        "Indie",
+        "Jazz & Blues",
+        "Latin",
+        "Metal",
+        "Piano",
+        "Pop",
+        "R&B & Soul",
+        "Reggae",
+        "Reggaeton",
+        "Rock",
+        "Soundtrack",
+        "Speech",
+        "Techno",
+        "Trance",
+        "Trap",
+        "Triphop",
+        "world",
+        "all audio genres",
+        "audiobooks",
+        "business",
+        "comedy",
+        "entertainment",
+        "learning",
+        "news & politics",
+        "religion & spirituality",
+        "science",
+        "sports",
+        "Storytelling",
+        "Technology",
+    ];
+
+    return $genres;
+}
