@@ -95,6 +95,36 @@
 
     <x-admin::notification />
 
+    <div id="loading-overlay"
+        class="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="glass-card rounded-2xl py-6 flex items-center gap-3 px-10">
+            <div class="w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full animate-spin">
+            </div>
+            <span class="text-black dark:text-white font-medium">Loading...</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const links = document.querySelectorAll(
+            'a:not([target="_blank"])'); // Select all links except those that open in a new tab
+
+            links.forEach(link => {
+                link.addEventListener('click', () => {
+                    // Show the loading overlay
+                    loadingOverlay.classList.remove('hidden');
+                });
+            });
+
+            // Hide the loading overlay when the new page has fully loaded
+            window.addEventListener('load', () => {
+                loadingOverlay.classList.add('hidden');
+            });
+        });
+    </script>
+
+
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
     <script>
         function dashboardData() {
