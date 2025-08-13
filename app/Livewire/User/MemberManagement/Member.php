@@ -326,7 +326,7 @@ class Member extends Component
                         'request_type' => 'track',
                         'target_urn' => $this->track->urn,
                     ],
-                    'status' => 'succeeded',
+                    'status' => CreditTransaction::STATUS_SUCCEEDED,
                 ]);
 
                 $requesterNotification = CustomNotification::create([
@@ -369,10 +369,10 @@ class Member extends Component
                 broadcast(new UserNotificationSent($requesterNotification));
                 broadcast(new UserNotificationSent($targetUserNotification));
             });
-
+            session()->flash('success', 'Repost request sent successfully!');
+            sleep(1);
             $this->closeRepostModal();
             $this->closeModal();
-            session()->flash('success', 'Repost request sent successfully!');
         } catch (InvalidArgumentException $e) {
             session()->flash('error', $e->getMessage());
         } catch (Exception $e) {
@@ -396,7 +396,7 @@ class Member extends Component
     public function render()
     {
         $query = User::where('urn', '!=', user()->urn)
-            ->with('userInfo');
+            ->with('userInfo')->active();
 
         if ($this->genreFilter) {
             $query->whereHas('tracks', function ($q) {

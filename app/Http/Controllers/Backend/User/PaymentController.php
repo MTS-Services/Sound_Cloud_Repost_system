@@ -52,14 +52,14 @@ class PaymentController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email_address' => 'required|email',
-            'currency' => 'sometimes|string|size:3',
+            // 'currency' => 'sometimes|string|size:3',
             'customer_email' => 'sometimes|email',
         ]);
         $order = $this->orderService->getOrder(encrypt($request->order_id));
         try {
             $paymentIntent = $this->stripeService->createPaymentIntent([
                 'amount' => $order->amount,
-                'currency' => $request->currency ?? 'usd',
+                'currency' => 'usd',
                 'metadata' => [
                     'order_id' => $request->order_id ?? null,
                     'customer_email' => $request->customer_email ?? null,
@@ -74,7 +74,7 @@ class PaymentController extends Controller
                         'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
                         'source_id' => $order->id,
                         'source_type' => Order::class,
-                        'amount' => $order->amount,
+                        'amount' => 100,
                         'credits' => $order->credits,
                         'description' => 'Purchased ' . $order->credits . ' credits for ' . $order->amount . ' ' . $request->currency,
                         'creater_id' => $order->creater_id,
@@ -98,7 +98,7 @@ class PaymentController extends Controller
 
                     'payment_gateway' => Payment::PAYMENT_GATEWAY_STRIPE,
                     'payment_provider_id' => $request->payment_provider_id ?? null,
-                    'amount' => $order->amount,
+                    'amount' => 100,
                     'credits_purchased' => $order->credits,
                     'status' => $paymentIntent->status,
                     'payment_intent_id' => $paymentIntent->id ?? null,
@@ -117,10 +117,10 @@ class PaymentController extends Controller
                 'payment_intent_id' => Crypt::encryptString($paymentIntent->id),
             ]);
         } catch (\Exception $e) {
-            Log::error('Payment intent creation failed: ' . $e->getMessage());
+            Log::error($e->getMessage());
 
             return response()->json([
-                'error' => 'Failed to create payment intent ' . $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

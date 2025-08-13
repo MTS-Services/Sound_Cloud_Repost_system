@@ -54,6 +54,7 @@ class CampaignService
                     'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
                     'source_id' => $campaign->id,
                     'source_type' => Campaign::class,
+                    'status' => CreditTransaction::STATUS_SUCCEEDED,
                     'transaction_type' => CreditTransaction::TYPE_EARN,
                     'amount' => 0,
                     'credits' => (float) repostPrice($reposter),
