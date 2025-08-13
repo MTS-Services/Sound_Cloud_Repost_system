@@ -354,7 +354,7 @@ class Member extends Component
     public function render()
     {
         $query = User::where('urn', '!=', user()->urn)
-            ->with('userInfo');
+            ->with('userInfo')->active();
 
         if ($this->genreFilter) {
             $query->whereHas('tracks', function ($q) {
