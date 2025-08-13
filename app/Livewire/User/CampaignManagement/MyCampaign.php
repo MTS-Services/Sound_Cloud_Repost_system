@@ -522,7 +522,7 @@ class MyCampaign extends Component
                             'additional_data' => [
                                 'Track Title' => $campaign->music->title,
                                 'Track Artist' => $campaign->music->user->name ?? 'Unknown Artist',
-                                'Total Budget' => $campaign->budget_credits,
+                                'Total Budget' => $calculation,
 
                                 'Moentum' => $campaign->momentum_price > 0 ? 'Enabled' : 'Disabled',
                                 'Exclude frequent reposters (24h)' => $campaign->max_repost_last_24_h > 0 ? $campaign->max_repost_last_24_h  : 'Not Applicable',
