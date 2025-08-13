@@ -2,7 +2,9 @@
 
 namespace App\Livewire\User\MemberManagement;
 
+use App\Events\UserNotificationSent;
 use App\Models\CreditTransaction;
+use App\Models\CustomNotification;
 use App\Models\Playlist;
 use App\Models\RepostRequest;
 use App\Models\Track;
@@ -53,7 +55,7 @@ class Member extends Component
     public Collection $genres;
     public Collection $trackTypes;
 
-    private string $soundcloudClientId;
+    private $soundcloudClientId;
     private string $soundcloudApiUrl = 'https://api-v2.soundcloud.com';
 
     protected $listeners = ['refreshData' => 'render'];
@@ -123,7 +125,7 @@ class Member extends Component
                         ->orWhere('title', 'like', '%' . $this->searchQuery . '%');
                 })
                 ->get();
-            $this->tracks = $this->allPlaylistTracks->take($this->perPage);
+            $this->tracks = $this->allPlaylistTracks->with('user')->take($this->perPage);
         }
         if ($this->activeTab === 'tracks') {
             $query = Track::self()
@@ -132,7 +134,7 @@ class Member extends Component
                         ->orWhere('permalink_url', 'like', '%' . $this->searchQuery . '%');
                 });
 
-            $this->allTracks = $query->get();
+            $this->allTracks = $query->with('user')->get();
             if ($this->allTracks->isEmpty() && preg_match('/^https?:\/\/(www\.)?soundcloud\.com\//', $this->searchQuery)) {
                 $this->resolveSoundcloudUrl();
             }
@@ -310,7 +312,7 @@ class Member extends Component
                     'credits_spent' => $amount,
                 ]);
 
-                CreditTransaction::create([
+                $creditTransaction = CreditTransaction::create([
                     'receiver_urn' => $requester->urn,
                     'sender_urn' => $this->user->urn,
                     'transaction_type' => CreditTransaction::TYPE_SPEND,
@@ -326,6 +328,46 @@ class Member extends Component
                     ],
                     'status' => 'succeeded',
                 ]);
+
+                $requesterNotification = CustomNotification::create([
+                    'receiver_id' => $requester->id,
+                    'receiver_type' => get_class($requester),
+                    'type' => CustomNotification::TYPE_USER,
+                    'message_data' => [
+                        'title' => 'Repost Request Sent',
+                        'message' => 'You have sent a repost request to ' . $this->user->name,
+                        'description' => 'You have sent a repost request to ' . $this->user->name . ' for the track "' . $this->track->title . '".',
+                        'icon' => 'repeat-2',
+                        'additional_data' => [
+                            'Request Sent To' => $this->user->name,
+                            'Track Title' => $this->track->title,
+                            'Track Artist' => $this->track?->user?->name ?? $requester->name,
+                            'Credits Spent' => $amount,
+                        ],
+                    ],
+                ]);
+                $targetUserNotification = CustomNotification::create([
+                    'sender_id' => $requester->id,
+                    'sender_type' => get_class($requester),
+                    'receiver_id' => $this->user->id,
+                    'receiver_type' => get_class($this->user),
+                    'type' => CustomNotification::TYPE_USER,
+                    'message_data' => [
+                        'title' => 'Repost Request Received',
+                        'message' => 'You have received a repost request from ' . $requester->name,
+                        'description' => 'You have received a repost request from ' . $requester->name . ' for the track "' . $this->track->title . '".',
+                        'icon' => 'repeat-2',
+                        'additional_data' => [
+                            'Request Received From' => $requester->name,
+                            'Track Title' => $this->track->title,
+                            'Track Artist' => $this->track?->user?->name ?? $requester->name,
+                            'Credits Offered' => $amount,
+                        ]
+                    ]
+                ]);
+
+                broadcast(new UserNotificationSent($requesterNotification));
+                broadcast(new UserNotificationSent($targetUserNotification));
             });
 
             $this->closeRepostModal();
