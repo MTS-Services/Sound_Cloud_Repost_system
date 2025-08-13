@@ -283,7 +283,7 @@ class RepostRequest extends Component
                     $request->update([
                         'status' => ModelsRepostRequest::STATUS_APPROVED,
                         'completed_at' => now(),
-                        'reposted_at' => now(),
+                        'responded_at' => now(),
                     ]);
 
                     // Create the CreditTransaction record
@@ -356,7 +356,7 @@ class RepostRequest extends Component
             $request = ModelsRepostRequest::findOrFail($requestId);
             $request->update([
                 'status' => ModelsRepostRequest::STATUS_CANCELLED,
-                'reposted_at' => now(),
+                'responded_at' => now(),
             ]);
             // Create credit transaction
             $creditTransaction = new CreditTransaction();
