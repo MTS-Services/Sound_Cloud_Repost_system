@@ -13,11 +13,11 @@ class NotificationManager {
             type: 'sidebar', // 'sidebar' or 'full-page'
             ...config
         };
-
+        
         this.container = null;
         this.isInitialized = false;
         this.echoChannels = [];
-
+        
         this.init();
     }
 
@@ -49,9 +49,9 @@ class NotificationManager {
         // Public notifications channel
         const publicChannel = window.Echo.channel('admins');
         publicChannel.listen('.notification.sent', (e) => {
-            // console.log('Public notification received:', e);
+            console.log('Public notification received:', e);
             this.handleNewNotification(e, false);
-            this.showToast(e.title ?? 'New notification received.');
+            this.showToast('New public notification received.');
         });
         this.echoChannels.push(publicChannel);
 
@@ -59,9 +59,9 @@ class NotificationManager {
         if (window.Laravel?.user?.id) {
             const privateChannel = window.Echo.private(`admin.${window.Laravel.user.id}`);
             privateChannel.listen('.notification.sent', (e) => {
-                // console.log('Private notification received:', e);
+                console.log('Private notification received:', e);
                 this.handleNewNotification(e, false);
-                this.showToast(e.title ?? 'New notification received.');
+                this.showToast('New private notification received.');
             });
             this.echoChannels.push(privateChannel);
         }
@@ -82,15 +82,15 @@ class NotificationManager {
     handleSidebarNotification(data, isRead) {
         // Create new notification card for sidebar
         const newNotificationCard = this.createSidebarNotificationCard(data, isRead);
-
+        
         if (this.config.animations) {
             newNotificationCard.style.opacity = '0';
             newNotificationCard.style.transform = 'translateY(-10px)';
         }
-
+        
         // Insert at the beginning
         this.container.insertBefore(newNotificationCard, this.container.firstChild);
-
+        
         if (this.config.animations) {
             requestAnimationFrame(() => {
                 newNotificationCard.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
@@ -119,13 +119,13 @@ class NotificationManager {
     createSidebarNotificationCard(data, isRead = false) {
         const cardElement = document.createElement('div');
         cardElement.className = 'notification-item';
-
+        
         const url = data.url || '#';
         const icon = data.icon || 'bell';
         const title = data.title || 'New Notification';
         const message = data.message || '';
         const timestamp = data.timestamp || 'Just now';
-
+        
         cardElement.innerHTML = `
             <a href="${url}" class="p-4">
                 <div class="flex items-start gap-3">
@@ -155,10 +155,10 @@ class NotificationManager {
         if (this.config.type !== 'sidebar') return;
 
         const notifications = this.container.querySelectorAll('.notification-item');
-
+        
         if (notifications.length > this.config.maxNotifications) {
             const excessCount = notifications.length - this.config.maxNotifications;
-
+            
             for (let i = notifications.length - 1; i >= notifications.length - excessCount; i--) {
                 const notification = notifications[i];
                 this.removeNotificationWithAnimation(notification);
@@ -176,13 +176,13 @@ class NotificationManager {
         element.style.opacity = '0';
         element.style.transform = 'translateX(-20px) scale(0.95)';
         element.style.maxHeight = element.offsetHeight + 'px';
-
+        
         setTimeout(() => {
             element.style.maxHeight = '0';
             element.style.padding = '0';
             element.style.margin = '0';
         }, 150);
-
+        
         setTimeout(() => {
             if (element.parentNode) {
                 element.parentNode.removeChild(element);
@@ -230,7 +230,7 @@ class NotificationManager {
         // Handle close button
         const newCloseButton = closeButton.cloneNode(true);
         closeButton.parentNode.replaceChild(newCloseButton, closeButton);
-
+        
         newCloseButton.addEventListener('click', () => {
             clearTimeout(timeoutId);
             this.hideToast();
@@ -251,12 +251,13 @@ class NotificationManager {
 
         const toast = document.createElement('div');
         toast.id = 'fallback-toast';
-        toast.className = `fixed top-5 right-5 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 ${type === 'success' ? 'bg-green-500 text-white' :
+        toast.className = `fixed top-5 right-5 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 ${
+            type === 'success' ? 'bg-green-500 text-white' :
             type === 'error' ? 'bg-red-500 text-white' :
-                type === 'warning' ? 'bg-yellow-500 text-white' :
-                    'bg-blue-500 text-white'
-            }`;
-
+            type === 'warning' ? 'bg-yellow-500 text-white' :
+            'bg-blue-500 text-white'
+        }`;
+        
         toast.innerHTML = `
             <div class="flex items-center gap-3">
                 <span>${this.escapeHtml(message)}</span>
@@ -266,9 +267,9 @@ class NotificationManager {
                 </button>
             </div>
         `;
-
+        
         document.body.appendChild(toast);
-
+        
         setTimeout(() => {
             toast.style.opacity = '0';
             toast.style.transform = 'translateX(100%)';
@@ -301,7 +302,7 @@ class NotificationManager {
 
         const unreadIndicators = this.container.querySelectorAll('.animate-ping');
         unreadIndicators.forEach(indicator => indicator.remove());
-
+        
         // Update badges
         const badges = document.querySelectorAll('.notification-badge, [data-notification-badge]');
         badges.forEach(badge => {
@@ -312,16 +313,13 @@ class NotificationManager {
 
     async sendMarkAllAsReadRequest() {
         try {
-            const response = await fetch('/admin/notifications/mark-all-read', {
-                method: 'POST',
+            const response = await axios.post('/admin/notifications/mark-all-read', {}, {
                 headers: {
-                    'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
                 }
             });
-
-            const data = await response.json();
-            if (data.success) {
+            
+            if (response.data.success) {
                 this.markAllAsRead();
                 this.showToast('All notifications marked as read', 'success');
             }
@@ -372,12 +370,12 @@ class NotificationManager {
 }
 
 // Factory function for easy initialization
-window.createNotificationManager = function (config = {}) {
+window.createNotificationManager = function(config = {}) {
     return new NotificationManager(config);
 };
 
 // Auto-initialize based on page context
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     // Initialize sidebar notification manager if container exists
     if (document.getElementById('notification-container')) {
         window.notificationManager = new NotificationManager({
@@ -385,7 +383,7 @@ document.addEventListener('DOMContentLoaded', function () {
             containerId: 'notification-container'
         });
     }
-
+    
     // Initialize full-page notification manager if all-notifications container exists
     if (document.getElementById('all-notifications-container')) {
         window.allNotificationsManager = new NotificationManager({
