@@ -119,12 +119,12 @@ class NotificationShow extends Component
 
     public function getNotificationIcon()
     {
-        return $this->customNotification->message_data['icon'] ?? 'fas fa-bell';
+        return $this->customNotification->message_data['icon'] ?? 'home';
     }
 
     public function getTypeLabel()
     {
-        return $this->customNotification->type === CustomNotification::TYPE_ADMIN ? 'Admin' : 'User';
+        return $this->customNotification->receiver_id === null ? 'Public' : 'Private';
     }
 
     public function getTypeColor()

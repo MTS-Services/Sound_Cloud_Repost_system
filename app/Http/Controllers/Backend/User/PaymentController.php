@@ -185,7 +185,7 @@ class PaymentController extends Controller
                         'title' => 'Payment successful',
                         'message' => 'You have successfully made a payment.',
                         'description' => 'You have successfully made a payment.' . ' ' . $paymentIntent->amount . ' ' . $paymentIntent->currency,
-                        'icon' => 'banknote',
+                        'icon' => 'dollar-sign',
                         'additional_data' => $additionalData
                     ]
                 ]);
@@ -197,7 +197,7 @@ class PaymentController extends Controller
                         'title' => 'Payment successful',
                         'message' => 'User ' . user()->name . ' has successfully made a payment.',
                         'description' => 'User ' . user()->name . ' has successfully made a payment.' . ' ' . $paymentIntent->amount . ' ' . $paymentIntent->currency,
-                        'icon' => 'banknote',
+                        'icon' => 'dollar-sign',
                         'additional_data' => $additionalData
                     ]
                 ]);
