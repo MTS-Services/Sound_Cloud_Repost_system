@@ -168,16 +168,18 @@ class SoundCloudService
 
                 $userUrn = $trackData['user']['urn']; // e.g. "soundcloud:users:1109180353"
 
-                $track_author = User::where('urn', $userUrn)->first();
-
-                if (!$track_author) {
-                    $track_author = User::create([
-                        'soundcloud_id' => $trackData['user']['id'],
-                        'name' => $trackData['user']['username'],
-                        'nickname' => $trackData['user']['username'],
-                        'avatar' => $trackData['user']['avatar_url'],
-                        'soundcloud_permalink_url' => $trackData['user']['permalink_url'],
-                        'urn' => $userUrn,
+                // $track_author = User::where('urn', $userUrn)->first();
+                $track_author = User::updateOrCreate([
+                    'urn' => $userUrn,
+                ], [
+                    'soundcloud_id' => $trackData['user']['id'],
+                    'name' => $trackData['user']['username'],
+                    'nickname' => $trackData['user']['username'],
+                    'avatar' => $trackData['user']['avatar_url'],
+                    'soundcloud_permalink_url' => $trackData['user']['permalink_url'],
+                ]);
+                if ($track_author->last_synced_at == null) {
+                    $track_author->update([
                         'status' => User::STATUS_INACTIVE
                     ]);
                 }
