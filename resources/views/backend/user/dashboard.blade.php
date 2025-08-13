@@ -214,8 +214,11 @@
                             <h3 class="text-lg font-semibold">Latest Repost Requests</h3>
                             <p class="text-slate-400 text-sm">{{ $totalCount }} requests</p>
                         </div>
-                        <a class="text-orange-500 hover:text-orange-400 text-sm font-medium" href="/requests">View all
-                            →</a>
+                        @if ($repostRequests->count() > 0)
+                            <a class="text-orange-500 hover:text-orange-400 text-sm font-medium"
+                                href="{{ route('user.reposts-request') }}">View all
+                                →</a>
+                        @endif
                     </div>
                     @foreach ($repostRequests as $request)
                         <div class="space-y-4">
