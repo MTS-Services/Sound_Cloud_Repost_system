@@ -31,7 +31,7 @@
                     class="flex items-center gap-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 w-full sm:w-auto justify-center">
                     <a href="{{ route('user.track.submit') }}" class="text-base sm:text-sm py-2 px-3">
                         <span>
-                            <i data-lucide="music" class="inline-block text-center h-5 w-6 text-purple-800"></i>
+                            <x-lucide-music class="inline-block text-center h-5 w-6 text-purple-800"/>
                         </span>
                         {{ __('Submit Track') }}</a>
                 </div>
