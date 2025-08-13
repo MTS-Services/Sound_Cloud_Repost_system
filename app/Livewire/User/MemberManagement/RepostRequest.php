@@ -275,6 +275,7 @@ class RepostRequest extends Component
                         'music_type' => Track::class,
                         'soundcloud_repost_id' => $soundcloudRepostId,
                         'track_owner_urn' => $trackOwnerUrn,
+                        'reposted_at' => now(),
                         // Add other necessary fields based on your Repost model
                     ]);
 
