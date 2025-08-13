@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\AuthBaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -218,5 +219,10 @@ class User extends AuthBaseModel
     public function getModifiedImageAttribute()
     {
         return auth_storage_url($this->image);
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_ACTIVE);
     }
 }
