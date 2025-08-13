@@ -13,24 +13,111 @@ use Illuminate\View\View;
 class NotificationController extends Controller
 {
     /**
-     * Display all notifications page
+     * Display all notifications page with filtering and custom pagination
      */
     public function index(Request $request): View
     {
+        $filterType = $request->get('filter', 'all');
+        $perPage = min($request->get('per_page', 20), 50);
 
+        // Get base query
+        $query = $this->getNotificationsQuery();
 
-        $data['notifications'] = $this->getNotificationsQuery()
-            ->paginate(20)
-            ->withQueryString();
+        // Apply filters
+        $query = $this->applyFilters($query, $filterType);
 
-        $data['unreadCount'] = $this->getNotificationsQuery()
+        // Get filtered notifications with pagination
+        $notifications = $query->paginate($perPage);
+
+        // Preserve filter in pagination links
+        $notifications->appends($request->all());
+
+        $unreadCount = $this->getNotificationsQuery()
             ->whereDoesntHave('statuses', function ($query) {
                 $query->where('user_id', admin()->id)
                     ->where('user_type', get_class(admin()));
             })
             ->count();
 
-        return view('backend.admin.all-notifications', $data);
+        return view('backend.admin.notifications.all', compact('notifications', 'filterType', 'unreadCount'));
+    }
+
+    /**
+     * Show notification details page
+     */
+    public function show($id)
+    {
+        $notification = CustomNotification::with(['statuses' => function ($query) {
+            $query->where('user_id', admin()->id)
+                ->where('user_type', get_class(admin()));
+        }])
+            ->where('id', $id)
+            ->where(function ($query) {
+                // Private notifications for this admin
+                $query->where('receiver_id', admin()->id)
+                    ->where('receiver_type', get_class(admin()));
+            })
+            ->orWhere(function ($query) use ($id) {
+                // Public notifications for all admins
+                $query->where('id', $id)
+                    ->where('receiver_id', null)
+                    ->where('type', CustomNotification::TYPE_ADMIN);
+            })
+            ->first();
+
+        if (!$notification) {
+            return redirect()->route('admin.notifications.index')
+                ->with('error', 'Notification not found or access denied');
+        }
+
+        // Mark as read if not already
+        $existingStatus = CustomNotificationStatus::where([
+            'notification_id' => $id,
+            'user_id' => admin()->id,
+            'user_type' => get_class(admin())
+        ])->first();
+
+        if (!$existingStatus) {
+            CustomNotificationStatus::create([
+                'notification_id' => $id,
+                'user_id' => admin()->id,
+                'user_type' => get_class(admin()),
+                'read_at' => now()
+            ]);
+        }
+
+        return view('backend.admin.notifications.details', compact('notification'));
+    }
+
+    /**
+     * Apply filters to the notifications query
+     */
+    private function applyFilters($query, string $filterType)
+    {
+        switch ($filterType) {
+            case 'read':
+                return $query->whereHas('statuses', function ($q) {
+                    $q->where('user_id', admin()->id)
+                        ->where('user_type', get_class(admin()));
+                });
+
+            case 'unread':
+                return $query->whereDoesntHave('statuses', function ($q) {
+                    $q->where('user_id', admin()->id)
+                        ->where('user_type', get_class(admin()));
+                });
+
+            case 'private':
+                return $query->where('receiver_id', admin()->id)
+                    ->where('receiver_type', get_class(admin()));
+
+            case 'public':
+                return $query->where('receiver_id', null)
+                    ->where('type', CustomNotification::TYPE_ADMIN);
+
+            default:
+                return $query; // All notifications
+        }
     }
 
     /**
@@ -38,7 +125,7 @@ class NotificationController extends Controller
      */
     public function getNotifications(Request $request): JsonResponse
     {
-        $perPage = min($request->get('per_page', 15), 50); // Max 50 per page
+        $perPage = min($request->get('per_page', 15), 50);
         $page = $request->get('page', 1);
 
         $notifications = $this->getNotificationsQuery()
@@ -61,17 +148,14 @@ class NotificationController extends Controller
     /**
      * Mark a single notification as read
      */
-    public function markAsRead(Request $request): JsonResponse
+    public function markAsRead(Request $request)
     {
         $notificationId = $request->get('notification_id');
 
         $notification = CustomNotification::find($notificationId);
 
         if (!$notification) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Notification not found'
-            ], 404);
+            return redirect()->back()->with('error', 'Notification not found');
         }
 
         // Check if already marked as read
@@ -90,16 +174,13 @@ class NotificationController extends Controller
             ]);
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Notification marked as read'
-        ]);
+        return redirect()->back()->with('success', 'Notification marked as read');
     }
 
     /**
      * Mark all notifications as read
      */
-    public function markAllAsRead(): JsonResponse
+    public function markAllAsRead()
     {
         $notifications = $this->getNotificationsQuery()
             ->whereDoesntHave('statuses', function ($query) {
@@ -124,27 +205,24 @@ class NotificationController extends Controller
             CustomNotificationStatus::insert($statusData);
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'All notifications marked as read',
-            'count' => count($statusData)
-        ]);
+        $message = count($statusData) > 0
+            ? count($statusData) . ' notifications marked as read'
+            : 'All notifications are already read';
+
+        return redirect()->back()->with('success', $message);
     }
 
     /**
      * Delete a notification
      */
-    public function destroy(Request $request): JsonResponse
+    public function destroy(Request $request)
     {
         $notificationId = $request->get('notification_id');
 
         $notification = CustomNotification::find($notificationId);
 
         if (!$notification) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Notification not found'
-            ], 404);
+            return redirect()->back()->with('error', 'Notification not found');
         }
 
         // Only allow deletion if it's a private notification for this admin
@@ -152,18 +230,12 @@ class NotificationController extends Controller
             $notification->receiver_id !== admin()->id ||
             $notification->receiver_type !== get_class(admin())
         ) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized to delete this notification'
-            ], 403);
+            return redirect()->back()->with('error', 'Unauthorized to delete this notification');
         }
 
         $notification->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Notification deleted successfully'
-        ]);
+        return redirect()->back()->with('success', 'Notification deleted successfully');
     }
 
     /**
@@ -184,23 +256,24 @@ class NotificationController extends Controller
         ]);
     }
 
+    /**
+     * Common query for notifications
+     */
     private function getNotificationsQuery()
     {
         return CustomNotification::with(['statuses' => function ($query) {
-           $query->forCurrentAdmin();
+            $query->where('user_id', admin()->id)
+                ->where('user_type', get_class(admin()));
         }])
             ->where(function ($query) {
-                // Group all the 'where' and 'orWhere' conditions together
-                $query->where(function ($q) {
-                    // Private notifications for this admin
-                    $q->where('receiver_id', admin()->id)
-                        ->where('receiver_type', get_class(admin()));
-                })
-                    ->orWhere(function ($q) {
-                        // Public notifications for all admins
-                        $q->where('receiver_id', null)
-                            ->where('type', CustomNotification::TYPE_ADMIN);
-                    });
+                // Private notifications for this admin
+                $query->where('receiver_id', admin()->id)
+                    ->where('receiver_type', get_class(admin()));
+            })
+            ->orWhere(function ($query) {
+                // Public notifications for all admins
+                $query->where('receiver_id', null)
+                    ->where('type', CustomNotification::TYPE_ADMIN);
             })
             ->latest();
     }
