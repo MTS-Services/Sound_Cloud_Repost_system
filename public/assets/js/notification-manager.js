@@ -49,9 +49,9 @@ class NotificationManager {
         // Public notifications channel
         const publicChannel = window.Echo.channel('admins');
         publicChannel.listen('.notification.sent', (e) => {
-            console.log('Public notification received:', e);
+            // console.log('Public notification received:', e);
             this.handleNewNotification(e, false);
-            this.showToast('New public notification received.');
+            this.showToast(e.title || 'New notification received.');
         });
         this.echoChannels.push(publicChannel);
 
@@ -59,9 +59,9 @@ class NotificationManager {
         if (window.Laravel?.user?.id) {
             const privateChannel = window.Echo.private(`admin.${window.Laravel.user.id}`);
             privateChannel.listen('.notification.sent', (e) => {
-                console.log('Private notification received:', e);
+                // console.log('Private notification received:', e);
                 this.handleNewNotification(e, false);
-                this.showToast('New private notification received.');
+                this.showToast(e.title || 'New notification received.');
             });
             this.echoChannels.push(privateChannel);
         }
@@ -313,13 +313,16 @@ class NotificationManager {
 
     async sendMarkAllAsReadRequest() {
         try {
-            const response = await axios.post('/admin/notifications/mark-all-read', {}, {
+            const response = await fetch('/admin/notifications/mark-all-read', {
+                method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
                 }
             });
             
-            if (response.data.success) {
+            const data = await response.json();
+            if (data.success) {
                 this.markAllAsRead();
                 this.showToast('All notifications marked as read', 'success');
             }

@@ -112,6 +112,10 @@ class NotificationShow extends Component
     {
         return $this->customNotification->message_data['message'] ?? 'No message content available.';
     }
+    public function getNotificationDescription()
+    {
+        return $this->customNotification->message_data['description'] ?? 'No description content available.';
+    }
 
     public function getNotificationIcon()
     {
