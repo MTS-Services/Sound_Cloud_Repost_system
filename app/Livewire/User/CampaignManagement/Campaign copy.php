@@ -693,7 +693,7 @@ class Campaign extends Component
                     'commentable' => $commentable,
                     'likeable' => $likeable,
                     'pro_feature' => $proFeatureEnabled,
-                    'momentum_price' => $proFeatureEnabled == 1 ? $this->credit / 2 : 0,
+                    'momentum_price' => $proFeatureEnabled == 1 ? $this->credit/2 : 0,
                     'max_repost_last_24_h' => $this->maxRepostLast24h,
                     'max_repost_per_day' => $this->maxRepostsPerDay,
                     'target_genre' => $this->targetGenre,
@@ -929,7 +929,7 @@ class Campaign extends Component
 
             if ($response->successful()) {
                 $soundcloudRepostId = $response->json('id');
-                $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId);
+                $this->campaignService->syncReposts($campaign, $currentUserUrn, $soundcloudRepostId);
                 session()->flash('success', 'Campaign music reposted successfully.');
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [
@@ -1192,14 +1192,14 @@ class Campaign extends Component
                     //     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
 
 
-                    $campaigns = $baseQuery->proFeatured()
+                    $campaigns  = $baseQuery->proFeatured()
                         ->latest()
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
                     break;
 
                 case 'recommended':
 
-                    $campaigns = $baseQuery->featured()
+                    $campaigns  = $baseQuery->featured()
                         ->latest()
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
                     break;

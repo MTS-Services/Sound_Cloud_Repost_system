@@ -22,7 +22,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class MyCampaign extends Component
+class MyCampaigncopy extends Component
 {
     use WithPagination;
 
@@ -126,7 +126,7 @@ class MyCampaign extends Component
     private const REFUND_PERCENTAGE = 0.5;
     private const ITEMS_PER_PAGE = 10;
 
-    // Campaign edit 
+    // Campaign edit
     public $isEditing = false;
     public $editingCampaign = null;
 
@@ -676,7 +676,8 @@ class MyCampaign extends Component
     // Method to load campaign data into form fields
     private function loadCampaignData()
     {
-        if (!$this->editingCampaign) return;
+        if (!$this->editingCampaign)
+            return;
 
         $this->musicId = $this->editingCampaign->music_id;
         $this->musicType = $this->editingCampaign->music_type;
@@ -762,7 +763,8 @@ class MyCampaign extends Component
     // Modal Management Methods
     public function openAddCreditModal(Campaign $campaign): void
     {
-        if ($this->isCampaignCancelled($campaign)) return;
+        if ($this->isCampaignCancelled($campaign))
+            return;
 
         $this->resetFormValidation();
         $this->addCreditCampaignId = $campaign->id;
@@ -790,7 +792,8 @@ class MyCampaign extends Component
 
     public function openEditCampaignModal(Campaign $campaign): void
     {
-        if ($this->isCampaignCancelled($campaign)) return;
+        if ($this->isCampaignCancelled($campaign))
+            return;
 
         $this->resetFormValidation();
         $this->populateEditForm($campaign);
@@ -811,7 +814,8 @@ class MyCampaign extends Component
 
     public function openCancelWarningModal(Campaign $campaign): void
     {
-        if ($this->isCampaignCancelled($campaign)) return;
+        if ($this->isCampaignCancelled($campaign))
+            return;
 
         $this->resetFormValidation();
         $this->campaignToDeleteId = $campaign->id;
@@ -973,9 +977,11 @@ class MyCampaign extends Component
 
     private function getCampaignsQuery(): \Illuminate\Database\Eloquent\Builder
     {
-        return Campaign::with(['music' => function ($query) {
-            $query;
-        }]);
+        return Campaign::with([
+            'music' => function ($query) {
+                $query;
+            }
+        ]);
     }
 
     private function closeAllModals(): void
