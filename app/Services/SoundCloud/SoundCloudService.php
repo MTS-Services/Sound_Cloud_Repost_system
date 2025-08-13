@@ -124,7 +124,7 @@ class SoundCloudService
     }
 
     /* =================================== ===================================
-                Start of Sync User SoundCloud Services 
+                Start of Sync User SoundCloud Services
      =================================== =================================== */
 
     public function getUserTracks(User $user, int $limit = 50, int $offset = 0): array
@@ -215,7 +215,7 @@ class SoundCloudService
 
                 $track = Track::updateOrCreate(
                     [
-                        'user_urn' => $user->urn,
+                        // 'user_urn' => $user->urn,
                         'soundcloud_track_id' => $trackData['id'],
                     ],
                     $commonTrackData
@@ -332,7 +332,7 @@ class SoundCloudService
             foreach ($playlistsData as $playlistData) {
                 $playlist = Playlist::updateOrCreate(
                     [
-                        'user_urn' => $user->urn,
+                        // 'user_urn' => $user->urn,
                         'soundcloud_id' => $playlistData['id'] ?? null, // Use soundcloud_id for unique identification
                     ],
                     [
@@ -441,7 +441,7 @@ class SoundCloudService
                         $track = Track::updateOrCreate(
                             [
                                 // Use the user_urn from the main user object and the soundcloud_track_id
-                                'user_urn' => $user->urn,
+                                // 'user_urn' => $user->urn,
                                 'soundcloud_track_id' => $trackData['id'],
                             ],
                             $commonTrackData
