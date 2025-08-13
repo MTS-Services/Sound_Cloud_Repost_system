@@ -94,8 +94,11 @@
                 <div class="prose max-w-none dark:prose-invert">
                     <div
                         class="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-lg p-6 mb-6">
-                        <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-0">
+                        <p class="text-lg leading-relaxed text-gray-800 dark:text-gray-300 mb-2">
                             {{ $this->getNotificationMessage() }}
+                        </p>
+                        <p class="leading-relaxed text-gray-600 dark:text-gray-400 mb-0">
+                            {{ $this->getNotificationDescription() }}
                         </p>
                     </div>
 

@@ -104,11 +104,28 @@
         </div>
     </div>
 
+    <div id="notification-toast"
+        class="absolute top-5 right-5 w-72 z-[100] rounded-2xl shadow-2xl bg-white text-black transition-all duration-500 ease-in-out transform translate-x-full opacity-0">
+        <div class="p-4 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3 flex-grow">
+                <x-heroicon-o-information-circle class="w-6 h-6 text-blue-500 flex-shrink-0" />
+                <p id="notification-message" class="text-sm leading-snug font-normal"></p>
+            </div>
+            <button id="close-notification-btn"
+                class="flex-shrink-0 p-1 rounded-full hover:bg-gray-100 transition-colors duration-200">
+                <x-heroicon-o-x-mark class="w-5 h-5" />
+            </button>
+        </div>
+    </div>
+
+    {{-- Include the reusable notification manager --}}
+    <script src="{{ asset('assets/js/notification-manager.js') }}"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const loadingOverlay = document.getElementById('loading-overlay');
             const links = document.querySelectorAll(
-            'a:not([target="_blank"])'); // Select all links except those that open in a new tab
+                'a:not([target="_blank"])'); // Select all links except those that open in a new tab
 
             links.forEach(link => {
                 link.addEventListener('click', () => {
@@ -123,6 +140,7 @@
             });
         });
     </script>
+
 
 
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>

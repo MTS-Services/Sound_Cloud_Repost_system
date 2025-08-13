@@ -30,6 +30,7 @@ class Admin extends AuthBaseModel implements MustVerifyEmail
         'role_id',
         'email_verified_at',
         'image',
+        'last_synced_at',
 
         'created_by',
         'updated_by',
@@ -44,6 +45,7 @@ class Admin extends AuthBaseModel implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'last_synced_at' => 'datetime',
         ];
     }
 
