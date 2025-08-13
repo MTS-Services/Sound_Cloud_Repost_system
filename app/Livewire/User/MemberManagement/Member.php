@@ -327,10 +327,10 @@ class Member extends Component
                     'status' => CreditTransaction::STATUS_SUCCEEDED,
                 ]);
             });
-
+            session()->flash('success', 'Repost request sent successfully!');
+            sleep(1);
             $this->closeRepostModal();
             $this->closeModal();
-            session()->flash('success', 'Repost request sent successfully!');
         } catch (InvalidArgumentException $e) {
             session()->flash('error', $e->getMessage());
         } catch (Exception $e) {
