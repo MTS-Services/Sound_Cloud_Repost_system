@@ -7,6 +7,7 @@ use App\Models\RepostRequest as ModelsRepostRequest;
 use App\Models\Repost;
 use App\Models\Track;
 use App\Models\Playlist;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Livewire\Attributes\Locked;
@@ -231,8 +232,8 @@ class RepostRequest extends Component
             // Check if the user has already reposted this specific request
             if (
                 Repost::where('reposter_urn', $currentUserUrn)
-                ->where('repost_request_id', $requestId)
-                ->exists()
+                    ->where('repost_request_id', $requestId)
+                    ->exists()
             ) {
                 session()->flash('error', 'You have already reposted this request.');
                 return;
@@ -260,23 +261,49 @@ class RepostRequest extends Component
                 // If SoundCloud returns a repost ID, capture it
                 $soundcloudRepostId = $response->json('id');
 
-                // Create repost record
-                Repost::create([
-                    'reposter_urn' => $currentUserUrn,
-                    'repost_request_id' => $requestId,
-                    'campaign_id' => $request->campaign_id,
-                    'music_id' => $request->track->id,
-                    'music_type' => Track::class,
-                    'soundcloud_repost_id' => $soundcloudRepostId,
-                    // Add other necessary fields based on your Repost model
-                ]);
+                $trackOwnerUrn = $request->track->user?->urn ?? $request->user?->urn;
+                $trackOwnerName = $request->track->user?->name ?? $request->user?->name;
 
-                // Mark request as completed
-                $request->update([
-                    'status' => ModelsRepostRequest::STATUS_APPROVED,
-                    'completed_at' => now(),
-                    'responded_at' => now(),
-                ]);
+
+                DB::transaction(function () use ($requestId, $request, $currentUserUrn, $soundcloudRepostId, $trackOwnerUrn, $trackOwnerName) {
+                    // Create repost record
+                    $repost = Repost::create([
+                        'reposter_urn' => $currentUserUrn,
+                        'repost_request_id' => $requestId,
+                        'campaign_id' => $request->campaign_id,
+                        'music_id' => $request->track->id,
+                        'music_type' => Track::class,
+                        'soundcloud_repost_id' => $soundcloudRepostId,
+                        'track_owner_urn' => $trackOwnerUrn,
+                        // Add other necessary fields based on your Repost model
+                    ]);
+
+                    // Mark request as completed
+                    $request->update([
+                        'status' => ModelsRepostRequest::STATUS_APPROVED,
+                        'completed_at' => now(),
+                        'responded_at' => now(),
+                    ]);
+
+                    // Create the CreditTransaction record
+                    CreditTransaction::create([
+                        'receiver_urn' => $currentUserUrn,
+                        'sender_urn' => $request->user?->urn,
+                        'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
+                        'source_id' => $request->id,
+                        'source_type' => RepostRequest::class,
+                        'status' => CreditTransaction::STATUS_SUCCEEDED,
+                        'transaction_type' => CreditTransaction::TYPE_EARN,
+                        'amount' => 0,
+                        'credits' => (float) repostPrice(user()),
+                        'description' => "Repost From Direct Request",
+                        'metadata' => [
+                            'repost_id' => $repost->id,
+                            'repost_request_id' => $request->id,
+                            'soundcloud_repost_id' => $soundcloudRepostId,
+                        ]
+                    ]);
+                });
 
                 // Mark as reposted in component
                 $this->repostedRequests[] = $requestId;
@@ -330,23 +357,23 @@ class RepostRequest extends Component
                 'status' => ModelsRepostRequest::STATUS_CANCELLED,
                 'responded_at' => now(),
             ]);
-                // Create credit transaction
-                $creditTransaction = new CreditTransaction();
-                $creditTransaction->receiver_urn = $request->target_user_urn;
-                $creditTransaction->sender_urn = $request->requester_urn;
-                $creditTransaction->transaction_type = CreditTransaction::TYPE_REFUND;
-                $creditTransaction->calculation_type = CreditTransaction::CALCULATION_TYPE_DEBIT;
-                $creditTransaction->source_id = $request->id;
-                $creditTransaction->source_type = RepostRequest::class;
-                $creditTransaction->amount = 0;
-                $creditTransaction->credits = $request->credits_spent;
-                $creditTransaction->description = 'Repost Request Refund';
-                $creditTransaction->metadata = [
-                    'request_type' => 'repost_request',
-                    'target_urn' => $request->requester_urn,
-                ];
-                $creditTransaction->status = 'succeeded';
-                $creditTransaction->save();
+            // Create credit transaction
+            $creditTransaction = new CreditTransaction();
+            $creditTransaction->receiver_urn = $request->target_user_urn;
+            $creditTransaction->sender_urn = $request->requester_urn;
+            $creditTransaction->transaction_type = CreditTransaction::TYPE_REFUND;
+            $creditTransaction->calculation_type = CreditTransaction::CALCULATION_TYPE_DEBIT;
+            $creditTransaction->source_id = $request->id;
+            $creditTransaction->source_type = RepostRequest::class;
+            $creditTransaction->amount = 0;
+            $creditTransaction->credits = $request->credits_spent;
+            $creditTransaction->description = 'Repost Request Refund';
+            $creditTransaction->metadata = [
+                'request_type' => 'repost_request',
+                'target_urn' => $request->requester_urn,
+            ];
+            $creditTransaction->status = 'succeeded';
+            $creditTransaction->save();
             $this->dataLoad();
             session()->flash('success', 'Repost request cancelled successfully.');
         } catch (Throwable $e) {
@@ -363,7 +390,7 @@ class RepostRequest extends Component
         if ($this->activeMainTab == 'accept_requests') {
             $this->activeMainTab = 'incoming_request';
             $this->dataLoad();
-        }else{
+        } else {
             $this->activeMainTab = $tab;
             $this->dataLoad();
         }
@@ -380,9 +407,9 @@ class RepostRequest extends Component
                 $query->where('requester_urn', user()->urn)->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED)->where('status', '!=', ModelsRepostRequest::STATUS_DECLINE);
                 break;
             case 'previously_reposted' || 'accept_requests':
-                $query->where('requester_urn', user()->urn)->Where('campaign_id', null)->where('status',ModelsRepostRequest::STATUS_APPROVED);
+                $query->where('requester_urn', user()->urn)->Where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED);
                 break;
-                
+
         }
 
         // Order by created_at desc and paginate
