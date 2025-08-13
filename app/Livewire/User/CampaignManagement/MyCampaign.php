@@ -486,7 +486,7 @@ class MyCampaign extends Component
                 $calculation = $campaign->budget_credits + $campaign->momentum_price;
 
                 if (($this->isEditing && $calculation > $oldBudget) || !$this->isEditing) {
-                    CreditTransaction::create([
+                    $transaction = CreditTransaction::create([
                         'receiver_urn' => user()->urn,
                         'calculation_type' => CreditTransaction::CALCULATION_TYPE_CREDIT,
                         'source_id' => $campaign->id,
@@ -504,19 +504,32 @@ class MyCampaign extends Component
                         'created_id' => user()->id,
                         'creater_type' => get_class(user())
                     ]);
-
+                    $campaign->load('music.user');
+                    $data = [];
+                    if ($this->isEditing && $calculation > $oldBudget) {
+                        $data['Appended Budget']  = $calculation - $oldBudget;
+                    }
                     $notification = CustomNotification::create([
                         'receiver_id' => user()->id,
                         'receiver_type' => get_class(user()),
                         'type' => CustomNotification::TYPE_USER,
+                        'url' => route('user.cm.my-campaigns'),
                         'message_data' => [
-                            'title' => 'Campaign ' . ($this->isEditing ? 'updated' : 'created'),
+                            'title' => ($this->isEditing ? 'Campaign updated.' : 'New campaign created.'),
                             'message' => 'Your campaign has been ' . ($this->isEditing ? 'updated' : 'created') . ' successfully',
                             'description' => 'Your campaign has been ' . ($this->isEditing ? 'updated' : 'created') . ' successfully',
+                            'icon' => 'audio-lines',
                             'additional_data' => [
-                                'Campaign ID' => $campaign?->id,
-                                'Total Budget Credits' => $campaign?->budget_credits,
-                            ]
+                                'Track Title' => $campaign->music->title,
+                                'Track Artist' => $campaign->music->user->name ?? 'Unknown Artist',
+                                'Total Budget' => $campaign->budget_credits,
+
+                                'Moentum' => $campaign->momentum_price > 0 ? 'Enabled' : 'Disabled',
+                                'Exclude frequent reposters (24h)' => $campaign->max_repost_last_24_h > 0 ? $campaign->max_repost_last_24_h  : 'Not Applicable',
+                                'Limit max followers count' => $campaign->max_followers > 0 ? $campaign->max_followers  : 'Not Applicable',
+                                'Limit avg repost per day' => $campaign->max_repost_per_day > 0 ? $campaign->max_repost_per_day  : 'Not Applicable',
+                                'Target Genre' => $campaign->target_genre ?? 'N/A',
+                            ] + $data
                         ]
                     ]);
                     broadcast(new UserNotificationSent($notification));
