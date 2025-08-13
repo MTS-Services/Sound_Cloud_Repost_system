@@ -224,22 +224,19 @@
                                         class="text-sm text-orange-400">*</sup></label>
                                 <input type="text" wire:model="title"
                                     class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white">
-                                {{-- Error message --}}
                                 @error('title')
                                     <p class="text-xs text-red-500">{{ $message }}</p>
                                 @enderror
                             </div>
-                            <div class="space-y-2">
+                            {{-- <div class="space-y-2">
                                 <label class="block text-sm font-medium text-gray-700">Main Artist<sup
                                         class="text-sm text-orange-400">*</sup></label>
                                 <input type="text" wire:model="artist"
                                     class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white">
-                                {{-- Error message --}}
                                 @error('artist')
                                     <p class="text-xs text-red-500">{{ $message }}</p>
                                 @enderror
-                            </div>
-                            <!-- Artwork URL -->
+                            </div> --}}
                             <div class="space-y-2">
                                 <label class="block text-sm font-medium text-gray-700">Track<sup
                                         class="text-sm text-orange-400">*</sup></label>
@@ -248,7 +245,7 @@
                                     <p class="text-xs text-red-500">{{ $message }}</p>
                                 @enderror
                             </div>
-                            <div class="space-y-2">
+                            {{-- <div class="space-y-2">
                                 <label class="block text-sm font-medium text-gray-700">Track Link<sup
                                         class="text-sm text-orange-400">*</sup></label>
                                 <input 
@@ -272,13 +269,12 @@
                                         <option value="{{ $genre }}">{{ $genre }}</option>
                                     @endforeach
                                 </select>
-                            </div>
-                            {{-- Tags --}}
-                            <div class="space-y-2">
+                            </div> --}}
+                            {{-- <div class="space-y-2">
                                 <label class="block text-sm font-medium text-gray-700">Tags</label>
                                 <input type="text"wire:model="tag_list" value="" placeholder="Add styles, moods, tempos"
                                     class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white">
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
 

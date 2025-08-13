@@ -329,9 +329,9 @@ class UserController extends Controller implements HasMiddleware
         $data['tracklists'] = $this->trackService->getTrack($trackUrn, 'urn')->load(['user']);
         return view('backend.admin.user-management.tracklist.details', $data);
     }
-    public function playlistShow(string $soudcloud_urn, )
+    public function playlistShow(string $soudcloud_urn,)
     {
-        $data = $this->playlistService->getPlaylist($soudcloud_urn, 'soundcloud_urn', );
+        $data = $this->playlistService->getPlaylist($soudcloud_urn, 'soundcloud_urn',);
         $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
         return response()->json($data);
@@ -388,42 +388,40 @@ class UserController extends Controller implements HasMiddleware
         try {
             DB::transaction(function () use ($user, $data) {
                 $this->creditService->addCredit($data);
-                
-            $userNotification = CustomNotification::create([
-                'type' => CustomNotification::TYPE_USER,
-                'sender_id' => admin()->id,
-                'sender_type' => get_class(admin()),
-                'receiver_id' => $user->id,
-                'receiver_type' => User::class,
-                'message_data' => [
-                    'title' => 'Credit Added',
-                    'message' => 'Credit added successfully!',
-                    'description' => 'You have received ' . $data['credit'] . ' credits from ' . admin()->name,
-                    'icon' => 'dollar-sign',
-                    'additional_data' => []
-                ]
-            ]);
-            $adminNotification = CustomNotification::create([
-                'type' => CustomNotification::TYPE_ADMIN,
-                'sender_id' => admin()->id,
-                'sender_type' => get_class(admin()),
-                'receiver_id' => null,
-                'receiver_type' => null,
-                'message_data' => [
-                    'title' => 'Sended Credit',
-                    'message' => 'Credit added successfully! to ' . $user->name,
-                    'description' => 'You have sent ' . $data['credit'] . ' credits to ' . $user->name,
-                    'icon' => 'dollar-sign',
-                    'additional_data' => []
-                ]
-            ]);
-            broadcast(new AdminNotificationSent($adminNotification));
-            broadcast(new UserNotificationSent($userNotification));
+
+                $userNotification = CustomNotification::create([
+                    'type' => CustomNotification::TYPE_USER,
+                    'sender_id' => admin()->id,
+                    'sender_type' => get_class(admin()),
+                    'receiver_id' => $user->id,
+                    'receiver_type' => User::class,
+                    'message_data' => [
+                        'title' => 'Credit Added',
+                        'message' => 'Credit added successfully!',
+                        'description' => 'You have received ' . $data['credit'] . ' credits from ' . admin()->name,
+                        'icon' => 'banknote',
+                        'additional_data' => []
+                    ]
+                ]);
+                $adminNotification = CustomNotification::create([
+                    'type' => CustomNotification::TYPE_ADMIN,
+                    'sender_id' => admin()->id,
+                    'sender_type' => get_class(admin()),
+                    'receiver_id' => null,
+                    'receiver_type' => null,
+                    'message_data' => [
+                        'title' => 'Sended Credit',
+                        'message' => 'Credit added successfully! to ' . $user->name,
+                        'description' => 'You have sent ' . $data['credit'] . ' credits to ' . $user->name,
+                        'icon' => 'banknote',
+                        'additional_data' => []
+                    ]
+                ]);
+                broadcast(new AdminNotificationSent($adminNotification));
+                broadcast(new UserNotificationSent($userNotification));
                 //  broadcast(new UserNotificationSent($notification));
                 session()->flash('success', 'Credit added successfully.');
-                
             });
-            
         } catch (\Throwable $th) {
             session()->flash('error', 'Error adding credit.');
             Log::info("message:" . $th->getMessage());

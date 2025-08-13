@@ -22,7 +22,7 @@
                         </div>
                     </div>
                     <div class="flex-shrink-0">
-                        <x-lucide-home class="w-6 h-6" />                        
+                        <i data-lucide="{{ $this->getNotificationIcon() }}" class="w-8 h-8 text-orange-400"></i>
                     </div>
                 </div>
             </div>
@@ -42,9 +42,8 @@
 
                     {{-- Icon --}}
                     <div class="flex-shrink-0 bg-orange-500 rounded-full">
-                        <div
-                            class="w-12 h-12  rounded-2xl flex items-center justify-center shadow-lg  bg-orange-500">
-                            <x-lucide-home class="w-6 h-6 bg-orange-500"/>
+                        <div class="w-12 h-12  rounded-2xl flex items-center justify-center shadow-lg  bg-orange-500">
+                            <x-lucide-home class="w-6 h-6 bg-orange-500" />
                         </div>
                     </div>
 
@@ -75,7 +74,7 @@
                                 <div class="flex-shrink-0" wire:click.stop>
                                     <div class="dropdown dropdown-end">
                                         <div tabindex="0" role="button" class="btn btn-ghost btn-sm">
-                                          <i class="fas fa-ellipsis-v"></i>
+                                            <i class="fas fa-ellipsis-v"></i>
 
                                         </div>
                                         <ul tabindex="0"
