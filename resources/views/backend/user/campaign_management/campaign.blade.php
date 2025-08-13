@@ -282,10 +282,10 @@
                                         </div>
                                         <span class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
                                     </div>
-
+                                    {{-- <button wire:click="confirmRepost('{{ $campaign_->id }}')">test</button> --}}
                                     <div class="relative">
                                         <!-- Repost Button -->
-                                        <button wire:click="repost('{{ $campaign_->id }}')"
+                                        <button wire:click="confirmRepost('{{ $campaign_->id }}')"
                                             @class([
                                                 'flex items-center gap-2 py-2 px-3 sm:px-5 sm:pl-8 rounded-md shadow-sm text-sm sm:text-base transition-colors',
                                                 'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white dark:text-gray-300 cursor-pointer' => $this->canRepost(
@@ -1012,49 +1012,121 @@
             </div>
         </div>
     </div>
-    <!-- Simple Livewire-SoundCloud Bridge Script -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize SoundCloud Widget API integration with Livewire
-            function initializeSoundCloudWidgets() {
-                if (typeof SC === 'undefined') {
-                    setTimeout(initializeSoundCloudWidgets, 500);
-                    return;
-                }
+    {{-- Repost Confirmation Modal --}}
+    <div x-data="{ showRepostConfirmationModal: @entangle('showRepostConfirmationModal').live }" x-show="showRepostConfirmationModal" x-cloak
+        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        @if ($campaign)
+            <div
+                class="w-full max-w-md mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
+                <div
+                    class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
+                    <div class="flex items-center gap-3">
+                        <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                            <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white">
+                            {{ __('Repost Confirmation') }}
+                        </h2>
+                    </div>
+                    <button x-on:click="showRepostConfirmationModal = false"
+                        class="cursor-pointer w-8 h-8 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
+                        <x-lucide-x class="w-5 h-5" />
+                    </button>
+                </div>
+                {{-- Track Information --}}
 
-                const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center gap-2">
+                        <img src="{{ soundcloud_image($campaign->music->artwork_url) }}" alt="Album cover"
+                            class="w-12 h-12 rounded">
+                        <div>
+                            <p class="text-sm text-gray-600 dark:text-white">{{ $campaign->music->type }} -
+                                {{ $campaign->music->author_username }}</p>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $campaign->music->title }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
-                playerContainers.forEach(container => {
-                    const campaignId = container.dataset.campaignId;
-                    const iframe = container.querySelector('iframe');
-
-                    if (iframe && campaignId) {
-                        const widget = SC.Widget(iframe);
-
-                        // Track play events and call Livewire methods
-                        widget.bind(SC.Widget.Events.PLAY, () => {
-                            @this.call('handleAudioPlay', campaignId);
-                        });
-
-                        widget.bind(SC.Widget.Events.PAUSE, () => {
-                            @this.call('handleAudioPause', campaignId);
-                        });
-
-                        widget.bind(SC.Widget.Events.FINISH, () => {
-                            @this.call('handleAudioEnded', campaignId);
-                        });
-
-                        // Track position updates
-                        widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-                            const currentTime = data.currentPosition / 1000;
-                            @this.call('handleAudioTimeUpdate', campaignId, currentTime);
-                        });
-                    }
-                });
+                <div class="p-6">
+                    <div class="space-y-2 mb-2">
+                        <label for="commented" class="block text-sm font-medium text-gray-700">
+                            {{ __('Comment:') }}
+                            <textarea name="commented" id="repostDescription" cols="5" rows="2" wire:model.live="commented"
+                                class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white resize-none"></textarea>
+                        </label>
+                    </div>
+                    <div class="space-y-2 mb-4">
+                        <label for="liked" class="flex items-center gap-2 text-sm font-medium text-gray-700">
+                            <input type="checkbox" id="liked" class="form-checkbox" wire:model.live="liked">
+                            {{ __('Activate HeartPush') }}
+                        </label>
+                    </div>
+                    <div class="flex justify-center gap-4">
+                        <button @click="showRepostConfirmationModal = false"
+                            wire:click="repost('{{ $campaign->id }}')"
+                            class="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-xl transition-all duration-200">
+                            <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect x="1" y="1" width="24" height="16" rx="3" fill="none"
+                                    stroke="currentColor" stroke-width="2" />
+                                <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
+                                    stroke-width="2" />
+                            </svg>
+                            <span>{{ repostPrice() + (($liked ? 2 : 0) + ($commented ? 2 : 0)) }}</span>
+                            {{ __('Repost') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        @endif
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize SoundCloud Widget API integration with Livewire
+        function initializeSoundCloudWidgets() {
+            if (typeof SC === 'undefined') {
+                setTimeout(initializeSoundCloudWidgets, 500);
+                return;
             }
 
-            // Initialize widgets
-            initializeSoundCloudWidgets();
-        });
-    </script>
+            const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+
+            playerContainers.forEach(container => {
+                const campaignId = container.dataset.campaignId;
+                const iframe = container.querySelector('iframe');
+
+                if (iframe && campaignId) {
+                    const widget = SC.Widget(iframe);
+
+                    // Track play events and call Livewire methods
+                    widget.bind(SC.Widget.Events.PLAY, () => {
+                        @this.call('handleAudioPlay', campaignId);
+                    });
+
+                    widget.bind(SC.Widget.Events.PAUSE, () => {
+                        @this.call('handleAudioPause', campaignId);
+                    });
+
+                    widget.bind(SC.Widget.Events.FINISH, () => {
+                        @this.call('handleAudioEnded', campaignId);
+                    });
+
+                    // Track position updates
+                    widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+                        const currentTime = data.currentPosition / 1000;
+                        @this.call('handleAudioTimeUpdate', campaignId, currentTime);
+                    });
+                }
+            });
+        }
+
+        // Initialize widgets
+        initializeSoundCloudWidgets();
+    });
+</script>
 </div>

@@ -150,13 +150,19 @@ class Campaign extends Component
     public $budgetWarningMessage = '';
     public $canSubmit = false;
 
+    // Confirmation Repost
+    public $totalRepostPrice = 0;
+    public $campaign = null;
+    public $liked = false;
+    public $commented = null;
+
     public $showSubmitModal = false;
     public $showCampaignsModal = false;
     public bool $showAddCreditModal = false;
     public bool $showEditCampaignModal = false;
     public bool $showCancelWarningModal = false;
     public bool $showLowCreditWarningModal = false;
-
+    public bool $showRepostConfirmationModal = false;
     ################################loadmore########################################
 
     // Properties for "Load More"
@@ -880,6 +886,11 @@ class Campaign extends Component
     {
         $playTime = $this->getPlayTime($campaignId);
         return max(0, 5 - $playTime);
+    }
+    public function confirmRepost($campaignId)
+    {
+        $this->showRepostConfirmationModal = true;
+        $this->campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
     }
 
     public function repost($campaignId)
