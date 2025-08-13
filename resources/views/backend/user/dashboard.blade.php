@@ -20,7 +20,7 @@
                     class="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 dark:bg-slate-800 dark:hover:bg-slate-700 text-white dark:text-gray-200 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer w-full sm:w-auto justify-center">
                     <span class="flex items-center gap-1 text-base sm:text-sm">
                         💰
-                        <a href="{{ route('user.cm.my-campaigns') }}" wire:navigate
+                        <a href="{{ route('user.cm.campaigns') }}" wire:navigate
                             class="hover:underline text-white dark:text-gray-200 text-base sm:text-sm">
                             {{ __('Earn Credits') }}
                         </a>
@@ -215,8 +215,11 @@
                             <h3 class="text-lg font-semibold">Latest Repost Requests</h3>
                             <p class="text-slate-400 text-sm">{{ $totalCount }} requests</p>
                         </div>
-                        <a class="text-orange-500 hover:text-orange-400 text-sm font-medium" href="/requests">View all
-                            →</a>
+                        @if ($repostRequests->count() > 0)
+                            <a class="text-orange-500 hover:text-orange-400 text-sm font-medium"
+                                href="{{ route('user.reposts-request') }}">View all
+                                →</a>
+                        @endif
                     </div>
                     @foreach ($repostRequests as $request)
                         <div class="space-y-4">

@@ -399,7 +399,7 @@ class UserController extends Controller implements HasMiddleware
                     'title' => 'Credit Added',
                     'message' => 'Credit added successfully!',
                     'description' => 'You have received ' . $data['credit'] . ' credits from ' . admin()->name,
-                    'icon' => 'currency-dollar',
+                    'icon' => 'dollar-sign',
                     'additional_data' => []
                 ]
             ]);
@@ -413,7 +413,7 @@ class UserController extends Controller implements HasMiddleware
                     'title' => 'Sended Credit',
                     'message' => 'Credit added successfully! to ' . $user->name,
                     'description' => 'You have sent ' . $data['credit'] . ' credits to ' . $user->name,
-                    'icon' => 'currency-dollar',
+                    'icon' => 'dollar-sign',
                     'additional_data' => []
                 ]
             ]);

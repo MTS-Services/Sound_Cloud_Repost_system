@@ -27,7 +27,9 @@ use Throwable;
 
 class SoundCloudController extends Controller
 {
-    public function __construct(protected SoundCloudService $soundCloudService) {}
+    public function __construct(protected SoundCloudService $soundCloudService)
+    {
+    }
 
     public function redirect(): RedirectResponse
     {
@@ -119,7 +121,7 @@ class SoundCloudController extends Controller
     {
         try {
             DB::transaction(function () use ($user, $soundCloudUser) {
-                $this->soundCloudService->syncUserTracks($user);
+                $this->soundCloudService->syncUserTracks($user, []);
                 $this->soundCloudService->syncUserProductsAndSubscriptions($user, $soundCloudUser);
                 $this->soundCloudService->syncUserPlaylists($user);
                 $this->soundCloudService->syncUserInformation($user, $soundCloudUser);
@@ -177,7 +179,7 @@ class SoundCloudController extends Controller
                     'nickname' => $soundCloudUser->getNickname(),
                     'avatar' => $soundCloudUser->getAvatar(),
                     'token' => $soundCloudUser->token,
-                    'soundcloud_permalink_url' => $soundCloudUser->getRaw()['permalink_url'] ,
+                    'soundcloud_permalink_url' => $soundCloudUser->getRaw()['permalink_url'],
                     'refresh_token' => $soundCloudUser->refreshToken,
                     'expires_in' => $soundCloudUser->expiresIn,
                     'last_synced_at' => now(),

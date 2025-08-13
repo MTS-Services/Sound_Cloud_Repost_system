@@ -57,7 +57,7 @@
                 class="lg:hidden p-1 md:p-2 rounded-md text-gray-900 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700">
                 <x-lucide-menu class="w-5 h-5 md:w-6 md:h-6" />
             </button>
-            <a class="flex items-center space-x-2" href="/dashboard" data-discover="true" wire:navigate>
+            <a class="flex items-center space-x-2" href="{{ route('user.dashboard') }}" data-discover="true" wire:navigate>
                 <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
                     <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
                 </div>
@@ -138,8 +138,7 @@
                             </li>
                             <li>
                                 <a href="#"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Help
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Center') }}</a>
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Help Center') }}</a>
                             </li>
                             <li>
                                 <a href="{{ route('user.pkm.pricing') }}" wire:navigate

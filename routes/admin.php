@@ -219,19 +219,13 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
 
 
     // Admin Notification Routes
-    Route::prefix('notifications')->name('admin.notifications.')->group(function () {
-        // Main notifications page
-        Route::get('/', [NotificationController::class, 'index'])->name('index');
-
-        // API endpoints for AJAX requests
-        Route::get('/api', [NotificationController::class, 'getNotifications'])->name('api');
-        Route::get('/unread-count', [NotificationController::class, 'getUnreadCount'])->name('unread-count');
-
-        // Mark notifications as read
-        Route::post('/mark-as-read', [NotificationController::class, 'markAsRead'])->name('mark-as-read');
-        Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('mark-all-read');
-
-        // Delete notification (only for private notifications)
-        Route::delete('/delete', [NotificationController::class, 'destroy'])->name('destroy');
+    Route::controller(NotificationController::class)->prefix('notifications')->name('admin.notifications.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/show/{encryptedId}', 'show')->name('show');
+        Route::get('/api', 'getNotifications')->name('api');
+        Route::get('/unread-count', 'getUnreadCount')->name('unread-count');
+        Route::post('/mark-as-read', 'markAsRead')->name('mark-as-read');
+        Route::post('/mark-all-read', 'markAllAsRead')->name('mark-all-read');
+        Route::delete('/delete', 'destroy')->name('destroy');
     });
 });

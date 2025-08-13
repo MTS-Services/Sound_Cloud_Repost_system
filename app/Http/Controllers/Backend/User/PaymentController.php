@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Backend\User;
 
+use App\Events\AdminNotificationSent;
+use App\Events\UserNotificationSent;
 use App\Http\Controllers\Controller;
 use App\Models\Credit;
 use App\Models\CreditTransaction;
+use App\Models\CustomNotification;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\User;
@@ -133,6 +136,7 @@ class PaymentController extends Controller
         try {
             $decryptedId = Crypt::decryptString($request->pid);
             $paymentIntent = $this->stripeService->retrievePaymentIntent($decryptedId);
+            // dd($paymentIntent);
 
             // Update payment record
             $payment = Payment::where('payment_intent_id', $paymentIntent->id)->first();
@@ -143,6 +147,64 @@ class PaymentController extends Controller
                     'processed_at' => $paymentIntent->status === 'succeeded' ? now() : null,
                 ]);
             }
+
+            DB::transaction(function () use ($paymentIntent, $payment) {
+
+                $additionalData = [];
+                if (isset($payment->name)) {
+                    $additionalData['Name'] = $payment->name;
+                }
+                if (isset($payment->email_address)) {
+                    $additionalData['Email'] = $payment->email_address;
+                }
+                if (isset($payment->address)) {
+                    $additionalData['Address'] = $payment->address;
+                }
+                if (isset($payment->reference)) {
+                    $additionalData['Reference'] = $payment->reference;
+                }
+                $additionalData['Order ID'] = $payment->order_id;
+                if (isset($payment->payment_method)) {
+                    $additionalData['Payment Method'] = $payment->payment_method;
+                }
+                $additionalData['Payment Gateway'] = $payment->payment_gateway_label;
+                $additionalData['Amount'] = $payment->amount;
+                $additionalData['Currency'] = $payment->currency;
+                if (isset($payment->credits_purchased)) {
+                    $additionalData['Credits'] = $payment->credits_purchased;
+                }
+                if (isset($payment->receipt_url)) {
+                    $additionalData['Receipt URL'] = $payment->receipt_url;
+                }
+
+                $userNotification = CustomNotification::create([
+                    'receiver_id' => user()->id,
+                    'receiver_type' => User::class,
+                    'type' => CustomNotification::TYPE_USER,
+                    'message_data' => [
+                        'title' => 'Payment successful',
+                        'message' => 'You have successfully made a payment.',
+                        'description' => 'You have successfully made a payment.' . ' ' . $paymentIntent->amount . ' ' . $paymentIntent->currency,
+                        'icon' => 'banknote',
+                        'additional_data' => $additionalData
+                    ]
+                ]);
+                $adminNotification = CustomNotification::create([
+                    'sender_id' => user()->id,
+                    'sender_type' => User::class,
+                    'type' => CustomNotification::TYPE_ADMIN,
+                    'message_data' => [
+                        'title' => 'Payment successful',
+                        'message' => 'User ' . user()->name . ' has successfully made a payment.',
+                        'description' => 'User ' . user()->name . ' has successfully made a payment.' . ' ' . $paymentIntent->amount . ' ' . $paymentIntent->currency,
+                        'icon' => 'banknote',
+                        'additional_data' => $additionalData
+                    ]
+                ]);
+                broadcast(new UserNotificationSent($userNotification));
+                broadcast(new AdminNotificationSent($adminNotification));
+            });
+
             return view('backend.admin.payments.success', compact('payment', 'paymentIntent'));
         } catch (\Exception $e) {
             Log::error('Payment success handling failed: ' . $e->getMessage());
