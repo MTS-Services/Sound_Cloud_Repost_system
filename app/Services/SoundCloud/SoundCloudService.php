@@ -145,7 +145,16 @@ class SoundCloudService
         return $tracksData;
     }
 
-    public function syncUserTracks(User $user, $tracksData = []): int
+    /**
+     * Syncs a user's tracks from SoundCloud API.
+     *
+     * @param User $user The user to sync tracks for.
+     * @param array $tracksData The tracks data to sync, or an empty array to fetch from SoundCloud API.
+     * @param string|null $playlist_urn The urn of the playlist to sync tracks for, or null to sync all tracks.
+     * @return int The number of tracks synced.
+     * @throws Exception If there's an error syncing tracks.
+     */
+    public function syncUserTracks(User $user, $tracksData, $playlist_urn = null): int
     {
         try {
             $limit = 200;
@@ -242,15 +251,24 @@ class SoundCloudService
                     $commonTrackData
                 );
 
+
+
                 Log::info("Successfully synced track {$track->soundcloud_track_id} for user {$user->urn}- Track authon urn: {$track_author->urn}.");
 
-                if ($track_author && $track_author->urn !== $user->urn) {
+                if ($track_author && $track_author->urn !== $user->urn && $playlist_urn == null) {
                     Repost::create([
                         'reposter_urn' => $user->urn,
                         'track_owner_urn' => $track->user_urn,
                         'track_id' => $track->id,
                         'reposted_at' => $track->created_at_soundcloud
                     ]);
+                } elseif ($playlist_urn) {
+                    if ($playlist_urn && $track->urn) {
+                        PlaylistTrack::updateOrCreate([
+                            'playlist_urn' => $playlist_urn,
+                            'track_urn' => $track->urn,
+                        ]);
+                    }
                 }
 
                 if ($track->wasRecentlyCreated) {
@@ -408,7 +426,7 @@ class SoundCloudService
 
                 // --- Uncommented and refined playlist track syncing ---
                 if (!empty($playlistData['tracks'])) {
-                    $this->syncUserTracks($user, $playlistData['tracks']);
+                    $this->syncUserTracks($user, $playlistData['tracks'], $playlist->soundcloud_urn);
                 }
                 // --- End of uncommented and refined playlist track syncing ---
 
