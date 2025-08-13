@@ -19,7 +19,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): View|RedirectResponse
     {
-        return redirect()->route('f.landing');
+        return redirect()->route('soundcloud.redirect');
         // return view('auth.register');
     }
 
