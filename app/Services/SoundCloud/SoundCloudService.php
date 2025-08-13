@@ -246,7 +246,6 @@ class SoundCloudService
 
                 if ($track_author && $track_author->urn !== $user->urn) {
                     Repost::create([
-                        'repost_request_id' => $track_author->id,
                         'reposter_urn' => $user->urn,
                         'track_owner_urn' => $track->user_urn,
                         'track_id' => $track->id,
