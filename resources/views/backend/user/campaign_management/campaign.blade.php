@@ -392,7 +392,7 @@
                                                 <a href="{{ route('user.profile') }}" wire:navigate
                                                     class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                     RepostChain Profile</a>
-      
+
                                             </div>
                                         </div>
                                     </div>
@@ -438,7 +438,7 @@
                                                     Repost</span>
                                             </button>
 
-                                          
+
                                         </div>
                                     </div>
                                 </div>
