@@ -136,7 +136,9 @@ class MyAccount extends Component
 
         // Recent reposts (not paginated here)
         $reposts = Repost::with(['campaign.music', 'request.track'])
-            ->where('reposter_urn', user()->urn)
+            ->where('reposter_urn', user()->urn)->where(function ($query) {
+                $query->whereNotNull('campaign_id')->orWhereNotNull('repost_request_id');
+            })
             ->orderByDesc('reposted_at')
             ->take(10)
             ->get()

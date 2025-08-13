@@ -29,7 +29,7 @@ class User extends AuthBaseModel
         'token',
         'refresh_token',
         'expires_in',
-        'last_sync_at',
+        'last_synced_at',
         'status',
         'urn',
     ];

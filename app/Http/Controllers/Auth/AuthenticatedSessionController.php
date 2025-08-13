@@ -51,8 +51,8 @@ class AuthenticatedSessionController extends Controller
 
         Auth::guard('web')->logout();
 
-        $request->session()->invalidate();
-
+        $sessionKey = 'login_web_' . sha1(config('auth.providers.users.model'));
+        $request->session()->forget($sessionKey);
         $request->session()->regenerateToken();
 
         return redirect()->route('login');
