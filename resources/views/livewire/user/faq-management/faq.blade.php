@@ -37,7 +37,7 @@
                     <div class="text-slate-600">Questions Answered</div>
                 </div>
                 <div class="bg-white/60 backdrop-blur-md rounded-xl p-6 border border-white/30">
-                    <div class="text-3xl font-bold text-accent-500 mb-2">{{ $CategoryCount }}</div>
+                    <div class="text-3xl font-bold text-accent-500 mb-2">{{ $categoryCount }}</div>
                     <div class="text-slate-600">Categories</div>
                 </div>
                 <div class="bg-white/60 backdrop-blur-md rounded-xl p-6 border border-white/30">
