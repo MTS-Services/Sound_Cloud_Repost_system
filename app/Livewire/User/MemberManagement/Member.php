@@ -13,9 +13,11 @@ use App\Models\UserInformation;
 use App\Services\PlaylistService;
 use App\Services\TrackService;
 use Exception;
+use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -376,8 +378,10 @@ class Member extends Component
             $this->closeRepostModal();
             $this->closeModal();
         } catch (InvalidArgumentException $e) {
+            Log::info('Repost request failed', ['error' => $e->getMessage()]);
             session()->flash('error', $e->getMessage());
         } catch (Exception $e) {
+            Log::info('Repost request failed', ['error' => $e->getMessage()]);
             session()->flash('error', 'Failed to send repost request. Please try again.');
             logger()->error('Repost request failed', ['error' => $e->getMessage()]);
         }
