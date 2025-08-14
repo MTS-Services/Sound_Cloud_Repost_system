@@ -21,17 +21,17 @@ class TrackSubmit extends Component
         'artwork_data' => null,
         'permalink' => '',
         'sharing' => 'public', // Default to public
-        'embeddable_by' => '',
+        'embeddable_by' => 'all', // Set default to 'all' based on documentation
         'purchase_url' => '',
         'description' => '',
         'genre' => '',
         'tag_list' => '',
         'label_name' => '',
-        'release' => '',
+        'release' => '', // This is the new input field
         'release_date' => '',
         'streamable' => true,
         'downloadable' => true,
-        'license' => '--',
+        'license' => 'no-rights-reserved', // Set default based on documentation
         'commentable' => true,
         'isrc' => '',
     ];
@@ -43,7 +43,9 @@ class TrackSubmit extends Component
 
     public function mount()
     {
+        // Genres from the previous implementation are fine as a simple array.
         $this->genres = [
+            '' => 'Select a genre',
             'Electronic',
             'Dance',
             'Hip Hop & Rap',
@@ -66,8 +68,9 @@ class TrackSubmit extends Component
             'Trance',
         ];
 
+        // Licenses matching the API documentation exactly
         $this->licenses = [
-            '' => 'No License',
+            'no-rights-reserved' => 'No Rights Reserved',
             'all-rights-reserved' => 'All Rights Reserved',
             'cc-by' => 'CC BY',
             'cc-by-nc' => 'CC BY-NC',
@@ -77,6 +80,7 @@ class TrackSubmit extends Component
             'cc-by-nc-sa' => 'CC BY-NC-SA',
         ];
 
+        // Embeddable options matching the API documentation
         $this->embeddableByOptions = [
             'all' => 'All',
             'me' => 'Me',
@@ -84,8 +88,8 @@ class TrackSubmit extends Component
         ];
 
         // Set default values from the options
-        $this->track['license'] = ''; // Default to "No License"
-        $this->track['embeddable_by'] = 'all'; // Default to "All"
+        $this->track['license'] = 'no-rights-reserved';
+        $this->track['embeddable_by'] = 'all';
     }
 
     public function rules()
@@ -96,7 +100,7 @@ class TrackSubmit extends Component
             'track.artwork_data' => 'nullable|image|mimes:png,jpg,jpeg,gif|max:5000', // 5MB
             'track.permalink' => 'nullable|string|max:255',
             'track.sharing' => 'required|string|in:public,private',
-            'track.embeddable_by' => 'nullable|string',
+            'track.embeddable_by' => 'nullable|string|in:all,me,none',
             'track.purchase_url' => 'nullable|string|url',
             'track.description' => 'nullable|string',
             'track.genre' => 'nullable|string|max:100',
@@ -106,53 +110,49 @@ class TrackSubmit extends Component
             'track.release_date' => 'nullable|date',
             'track.streamable' => 'nullable|boolean',
             'track.downloadable' => 'nullable|boolean',
-            'track.license' => 'nullable|string',
+            'track.license' => 'nullable|string|in:no-rights-reserved,all-rights-reserved,cc-by,cc-by-nc,cc-by-nd,cc-by-sa,cc-by-nc-nd,cc-by-nc-sa',
             'track.commentable' => 'nullable|boolean',
             'track.isrc' => 'nullable|string',
         ];
     }
-
+    
     public function updated($field)
     {
         $this->validateOnly($field);
     }
-
+    
     public function submit()
     {
         $this->validate();
-
+    
         // Log the validated data for debugging
         logger()->info('Validated data: ', $this->track);
-
+    
         try {
             $httpClient = Http::withHeaders([
                 'Authorization' => 'OAuth ' . user()->token,
             ])->attach(
-                'track[asset_data]',
-                file_get_contents($this->track['asset_data']->getRealPath()),
-                $this->track['asset_data']->getClientOriginalName()
+                'track[asset_data]', file_get_contents($this->track['asset_data']->getRealPath()), $this->track['asset_data']->getClientOriginalName()
             );
-
+    
             if ($this->track['artwork_data']) {
                 $httpClient->attach(
-                    'track[artwork_data]',
-                    file_get_contents($this->track['artwork_data']->getRealPath()),
-                    $this->track['artwork_data']->getClientOriginalName()
+                    'track[artwork_data]', file_get_contents($this->track['artwork_data']->getRealPath()), $this->track['artwork_data']->getClientOriginalName()
                 );
             }
-
+    
             $requestBody = collect($this->track)->except(['asset_data', 'artwork_data'])->toArray();
-
+            
             if (empty($requestBody['permalink'])) {
                 unset($requestBody['permalink']);
             }
-
+    
             $response = $httpClient->post($this->baseUrl . '/tracks', [
                 'track' => $requestBody
             ]);
-
+    
             $response->throw();
-
+    
             session()->flash('message', 'Track submitted successfully!');
             $this->reset();
             return redirect()->route('user.dashboard');
@@ -164,7 +164,7 @@ class TrackSubmit extends Component
             session()->flash('error', 'An unexpected error occurred. Please try again.');
         }
     }
-
+    
     public function render()
     {
         return view('livewire.user.track-submit');

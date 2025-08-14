@@ -28,7 +28,7 @@
             @endif
             @if (session()->has('error'))
                 <div
-                    class="p-4 bg-red-50 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 rounded-lg flex items-center space-x-3 shadow-sm transition-opacity duration-300">
+                    class="p-4 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 rounded-lg flex items-center space-x-3 shadow-sm transition-opacity duration-300">
                     <x-lucide-alert-triangle class="h-6 w-6" />
                     <span class="font-medium">{{ session('error') }}</span>
                 </div>
@@ -71,7 +71,7 @@
                         x-on:drop.prevent="isDragging = false; $event.target.files = $event.dataTransfer.files; handleFileChange($event);"
                         class="relative w-full aspect-square border-4 border-dashed rounded-lg flex flex-col items-center justify-center p-6 transition-all duration-300 cursor-pointer"
                         :class="{
-                            'border-orange-500 bg-orange-50 dark:bg-orange-900/30': isDragging,
+                            'border-orange-500 bg-orange-100 dark:bg-orange-900/30': isDragging,
                             'border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800': !isDragging,
                             'ring-2 ring-orange-500': artworkPreviewUrl
                         }">
@@ -101,7 +101,8 @@
                             </div>
 
                             {{-- "Click to change" message for the image, including filename --}}
-                            <div class="relative z-10 text-white dark:text-gray-200" x-show="artworkPreviewUrl">
+                            <div class="absolute bottom-4 z-10 text-white dark:text-gray-200 bg-black/60 px-2 py-0.5 rounded-md"
+                                x-show="artworkPreviewUrl">
                                 <span class="mt-2 text-sm font-medium text-white">Click to change</span>
                                 <span class="mt-1 text-xs text-gray-200 truncate w-full px-2"
                                     x-text="artworkFileName"></span>
@@ -138,7 +139,7 @@
                         x-on:drop.prevent="isDragging = false; $event.target.files = $event.dataTransfer.files; handleFileChange($event);"
                         class="relative w-full aspect-square border-4 border-dashed rounded-lg flex flex-col items-center justify-center p-6 transition-all duration-300 cursor-pointer"
                         :class="{
-                            'border-orange-500 bg-orange-50 dark:bg-orange-900/30': isDragging,
+                            'border-orange-500 bg-orange-100 dark:bg-orange-900/30': isDragging,
                             'border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800': !isDragging,
                             'ring-2 ring-orange-500': audioFileName
                         }">
@@ -191,8 +192,8 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <x-form.input label="Track Title" wire:model="track.title" placeholder="e.g., Summer Anthem"
                         required />
-                    <x-form.input label="Main Artist(s)" wire:model="track.artist"
-                        placeholder="e.g., Mahfuz Ahmed, The Artist" tip="Use commas to separate multiple artists." />
+                    <x-form.input label="Release Title" wire:model="track.release" placeholder="e.g., Coolify EP"
+                        tip="Name of the album or EP this track belongs to." />
                     <x-form.select label="Genre" wire:model="track.genre" :options="$genres"
                         placeholder="Select a genre" />
                     <x-form.input label="Tags" wire:model="track.tag_list" placeholder="e.g., electronic chill 120bpm"
@@ -303,7 +304,7 @@
 
             <div class="pt-8">
                 <button type="submit" wire:loading.attr="disabled"
-                    class="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 dark:bg-orange-500 dark:hover:bg-orange-600 dark:disabled:bg-orange-400 text-white font-bold py-4 px-6 rounded-full transition-all duration-300 flex items-center justify-center space-x-3 shadow-lg transform hover:scale-105">
+                    class="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 dark:bg-orange-1000 dark:hover:bg-orange-600 dark:disabled:bg-orange-400 text-white font-bold py-4 px-6 rounded-full transition-all duration-300 flex items-center justify-center space-x-3 shadow-lg transform hover:scale-105">
                     <span wire:loading.remove class="flex items-center gap-2">
                         <x-lucide-upload class="h-6 w-6" />
                         <span>Submit Track</span>
