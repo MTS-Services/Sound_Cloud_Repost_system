@@ -927,7 +927,7 @@ class Campaign extends Component
             ]);
             $data = [
                 'comment' => [
-                    'body' => $this->commented,
+                    'body' => "$this->commented",
                     'timestamp' => time()
                 ]
             ];
@@ -936,7 +936,7 @@ class Campaign extends Component
             switch ($campaign->music_type) {
                 case Track::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
-                    $response = $httpClient->post("{$this->baseUrl}/tracks/{$campaign->music->urn}/comments", json_encode($data));
+                    $response = $httpClient->post("{$this->baseUrl}/tracks/{$campaign->music->urn}/comments", $data);
                     break;
                 case Playlist::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$campaign->music->urn}");
