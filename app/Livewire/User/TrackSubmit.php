@@ -276,7 +276,7 @@ class TrackSubmit extends Component
                         'title' => 'Track Submitted',
                         'message' => 'A new track has been submitted.',
                         'description' => "Your track has been successfully uploaded to SoundCloud. Track Title: {$track->title}. If this track is not visible on SoundCloud, it may have been removed by SoundCloud due to a potential copyright infringement. Please review your SoundCloud account notifications for details. If you possess write permissions for this track or are its rightful owner, we recommend contacting SoundCloud support for further assistance.",
-                        'url' => route('user.my-account') . '?tab=tracks',
+                        'url' => route('user.pm.my-account') . '?tab=tracks',
                         'icon' => 'audio-lines',
                         'additional_data' => [
                             'Track Title' => $track->title,
@@ -291,7 +291,7 @@ class TrackSubmit extends Component
 
             session()->flash('message', 'Track submitted successfully!');
             $this->reset();
-            return $this->redirect(route('user.my-account') . '?tab=tracks', navigate: true);
+            return $this->redirect(route('user.pm.my-account') . '?tab=tracks', navigate: true);
         } catch (\Illuminate\Http\Client\RequestException $e) {
             logger()->error('SoundCloud API Error: ' . $e->getMessage(), ['response_body' => $e->response->body()]);
             session()->flash('error', 'Failed to submit track: ' . $e->response->json('errors.0.message', 'Unknown API error.'));
