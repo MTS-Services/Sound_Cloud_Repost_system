@@ -937,10 +937,13 @@ class Campaign extends Component
                     session()->flash('error', 'Invalid music type specified for the campaign.');
                     return;
             }
-
+            $data = [
+                'likeable' => $this->liked,
+                'commentable' => $this->commented
+            ];
             if ($response->successful()) {
                 $soundcloudRepostId = $response->json('id');
-                $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId);
+                $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
                 session()->flash('success', 'Campaign music reposted successfully.');
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [

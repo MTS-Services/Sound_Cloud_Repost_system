@@ -282,7 +282,7 @@
                                         </div>
                                         <span class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
                                     </div>
-                                    {{-- <button wire:click="confirmRepost('{{ $campaign_->id }}')">test</button> --}}
+                                    <button wire:click="confirmRepost('{{ $campaign_->id }}')">test</button>
                                     <div class="relative">
                                         <!-- Repost Button -->
                                         <button wire:click="confirmRepost('{{ $campaign_->id }}')"
@@ -1076,7 +1076,7 @@
                                 <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
                                     stroke-width="2" />
                             </svg>
-                            <span>{{ repostPrice() + (($liked ? 2 : 0) + ($commented ? 2 : 0)) }}</span>
+                            <span>{{ repostPrice(null, $liked, $commented) }}</span>
                             {{ __('Repost') }}
                         </button>
                     </div>
