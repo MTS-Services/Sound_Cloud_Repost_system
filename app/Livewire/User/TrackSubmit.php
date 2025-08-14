@@ -184,16 +184,17 @@ class TrackSubmit extends Component
                     $this->track['artwork_data']->getClientOriginalName()
                 );
             }
-
-            $requestBody = collect($this->track)->except(['asset_data', 'artwork_data'])->toArray();
-
-            if (empty($requestBody['permalink'])) {
-                unset($requestBody['permalink']);
+            
+            // Highlighted change: Replaced the old requestBody creation
+            $requestBody = [];
+            foreach ($this->track as $key => $value) {
+                // Only include non-file fields and those with a value
+                if (! in_array($key, ['asset_data', 'artwork_data']) && ! empty($value)) {
+                    $requestBody["track[{$key}]"] = $value;
+                }
             }
 
-            $response = $httpClient->post($this->baseUrl . '/tracks', [
-                'track' => $requestBody
-            ]);
+            $response = $httpClient->post($this->baseUrl . '/tracks', $requestBody);
 
             $response->throw();
 
