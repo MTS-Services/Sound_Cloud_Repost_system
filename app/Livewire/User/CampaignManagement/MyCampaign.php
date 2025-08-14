@@ -368,8 +368,7 @@ class MyCampaign extends Component
     public function toggleSubmitModal(string $type, int $id): void
     {
         $this->resetFormValidation();
-        // $this->user = $this->userService->getUser(encrypt(user()->urn, 'urn'));
-        $this->user = User::where('urn', user()->urn)->with('activePlan')->first();
+        $this->user = User::where('urn', user()->urn)->first()->activePlan();
 
         if (userCredits() < self::MIN_BUDGET) {
             $this->showLowCreditWarningModal = true;
@@ -457,11 +456,10 @@ class MyCampaign extends Component
             if ($this->trackGenre == 'trackGenre') {
                 $this->targetGenre = $this->trackGenre;
             }
-
             DB::transaction(function () use ($oldBudget) {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
-                $proFeatureEnabled = $this->proFeatureEnabled && !empty($this->user->activePlan) ? 1 : 0;
+                $proFeatureEnabled = $this->proFeatureEnabled && $this->user->status == User::STATUS_ACTIVE ? 1 : 0;
                 $editingProFeature = $this->isEditing && $this->editingCampaign->pro_feature == 1 ? $this->editingCampaign->pro_feature : $proFeatureEnabled;
 
                 $campaignData = [

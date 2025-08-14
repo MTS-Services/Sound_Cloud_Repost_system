@@ -46,7 +46,7 @@
 
                     <p class="text-sm flex items-start gap-2 mb-2">
                         <span class="font-medium text-black dark:text-white">Status:</span>
-                        <span class="text-green-400 font-semibold">{{ $user->status_label }}</span>
+                        <span class="text-green-400 font-semibold">{{ $user?->status_label }}</span>
                     </p>
 
                 </div>

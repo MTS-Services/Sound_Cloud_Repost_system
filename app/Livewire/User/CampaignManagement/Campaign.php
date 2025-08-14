@@ -607,7 +607,7 @@ class Campaign extends Component
             'canSubmit',
         ]);
 
-        $this->user = User::where('urn', user()->urn)->with('activePlan')->first();
+        $this->user = User::where('urn', user()->urn)->first()->activePlan();
 
         if (userCredits() < 100) {
             $this->showLowCreditWarningModal = true;

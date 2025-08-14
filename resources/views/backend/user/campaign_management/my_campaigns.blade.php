@@ -734,10 +734,10 @@
                     </div>
                     <!-- Enable Campaign Accelerator -->
                     @if (!$isEditing || $editingCampaign->pro_feature != 1)
-                        <div class="flex items-start space-x-3 {{ empty($user->activePlan) ? 'opacity-30' : '' }}">
+                        <div class="flex items-start space-x-3 {{ $user?->status != App\Models\User::STATUS_ACTIVE  ? 'opacity-30' : '' }}">
                             <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
-                                x-model="momentumEnabled" {{ empty($user->activePlan) ? 'disabled' : '' }}
-                                class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ empty($user->activePlan) ? 'cursor-not-allowed' : 'cursor-pointer' }}">
+                                x-model="momentumEnabled" {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'disabled' : '' }}
+                                class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ $user?->status != App\Models\User::STATUS_ACTIVE  ? 'cursor-not-allowed' : 'cursor-pointer' }}">
                             <div>
                                 <div class="flex items-center space-x-2">
                                     <h4 class="text-sm font-medium text-gray-900">{{ __('Turn on Momentum+ (') }}
