@@ -965,7 +965,9 @@
                                                             <td class="px-2 py-2">{{ $transaction->credits }}</td>
                                                             <td class="px-2 py-2">{{ $transaction->type_name }}</td>
                                                             <td class="px-2 py-2 text-green-600 font-semibold">
-                                                                {{ $transaction->status }}</td>
+                                                                <span
+                                                                    class="badge badge-soft badge-{{ $transaction->status_color }}">{{ $transaction->status_label }}</span>
+                                                            </td>
                                                         </tr>
                                                     </tbody>
                                                 @endforeach
