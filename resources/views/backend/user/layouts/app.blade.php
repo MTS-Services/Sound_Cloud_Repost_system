@@ -89,8 +89,11 @@
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
     {{-- <script src="{{ asset('assets/frontend/js/custome.js') }}"></script> --}}
     <script>
+        lucide.createIcons();
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         document.addEventListener('alpine:init', () => {
             lucide.createIcons();
+            if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         })
     </script>
     @livewireScripts()

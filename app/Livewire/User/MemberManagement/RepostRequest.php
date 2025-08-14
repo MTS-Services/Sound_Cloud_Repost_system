@@ -283,7 +283,7 @@ class RepostRequest extends Component
                     $request->update([
                         'status' => ModelsRepostRequest::STATUS_APPROVED,
                         'completed_at' => now(),
-                        'reposted_at' => now(),
+                        'responded_at' => now(),
                     ]);
 
                     // Create the CreditTransaction record
@@ -356,7 +356,7 @@ class RepostRequest extends Component
             $request = ModelsRepostRequest::findOrFail($requestId);
             $request->update([
                 'status' => ModelsRepostRequest::STATUS_CANCELLED,
-                'reposted_at' => now(),
+                'responded_at' => now(),
             ]);
             // Create credit transaction
             $creditTransaction = new CreditTransaction();
@@ -373,7 +373,7 @@ class RepostRequest extends Component
                 'requester_urn' => $request->requester_urn,
                 'request_id' => $request->id,
             ];
-            $creditTransaction->status = 'succeeded';
+            $creditTransaction->status = CreditTransaction::STATUS_SUCCEEDED;
             $creditTransaction->save();
             $this->dataLoad();
             session()->flash('success', 'Repost request cancelled successfully.');
@@ -408,13 +408,11 @@ class RepostRequest extends Component
                 $query->where('requester_urn', user()->urn)->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED)->where('status', '!=', ModelsRepostRequest::STATUS_DECLINE);
                 break;
             case 'previously_reposted' || 'accept_requests':
-                $query->where('requester_urn', user()->urn)->Where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED);
+                $query->where('target_user_urn', user()->urn)->Where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED);
                 break;
-
         }
-
         // Order by created_at desc and paginate
-        return $this->repostRequests = $query->orderBy('sort_order', 'asc')->take(10)->get();
+        return $this->repostRequests = $query->orderBy('status', 'asc')->take(10)->get();
     }
 
     public function render()

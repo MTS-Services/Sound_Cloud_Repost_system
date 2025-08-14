@@ -40,7 +40,7 @@ class SoundCloudController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return redirect()->route('login')
+            return redirect()->route('f.landing')
                 ->with('error', 'Unable to connect to SoundCloud. Please try again.');
         }
     }
@@ -50,7 +50,7 @@ class SoundCloudController extends Controller
 
         // Check for error from SoundCloud
         if ($request->has('error')) {
-            return redirect()->route('login')
+            return redirect()->route('f.landing')
                 ->with('error', 'SoundCloud authentication was cancelled or failed.');
         }
 
@@ -74,7 +74,7 @@ class SoundCloudController extends Controller
                 'user_id' => Auth::guard('web')->id(),
             ]);
 
-            return redirect()->route('login')
+            return redirect()->route('f.landing')
                 ->with('error', 'Failed to authenticate with SoundCloud. Please try again.');
         }
     }
@@ -84,7 +84,7 @@ class SoundCloudController extends Controller
         $user = Auth::guard('web')->user();
 
         if (!$user) {
-            return redirect()->route('login');
+            return redirect()->route('f.landing');
         }
 
         try {

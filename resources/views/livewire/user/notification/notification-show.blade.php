@@ -44,8 +44,8 @@
                 {{-- Header --}}
                 <div class="flex items-start justify-between mb-6">
                     <div class="flex items-start gap-4">
-                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg bg-orange-500">
-                            <x-lucide-home class="w-6 h-6 bg-orange-500" />
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg bg-orange-500/30">
+                            <i data-lucide="{{ $this->getNotificationIcon() }}" class="w-8 h-8 text-orange-400"></i>
                         </div>
                         <div>
                             <h1 class="text-3xl font-bold mb-2 text-gray-800 dark:text-gray-200">
@@ -56,12 +56,10 @@
                                     <i class="fas fa-clock mr-1"></i>
                                     {{ $customNotification->created_at_human }}
                                 </span>
-                                {{-- <span class="badge badge-outline {{ $customNotification->type === \App\Models\CustomNotification::TYPE_ADMIN ? 'text-red-600 border-red-300' : 'text-blue-600 border-blue-300' }}">
+                                <span class="badge badge-outline text-orange-600 border-orange-300">
                                     {{ $this->getTypeLabel() }}
                                 </span>
-                                <span class="badge {{ $isRead ? 'bg-green-100 text-green-800 border-green-300' : 'bg-red-100 text-red-800 border-red-300' }}">
-                                    {{ $isRead ? 'Read' : 'Unread' }}
-                                </span> --}}
+
                             </div>
                         </div>
                     </div>
@@ -112,7 +110,7 @@
                                     <div
                                         class="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
                                         <span
-                                            class="font-medium text-gray-600 dark:text-gray-400">{{ ucfirst(str_replace('_', ' ', $key)) }}:</span>
+                                            class="font-medium text-gray-600 dark:text-gray-400">{{ str_replace('_', ' ', $key) }}:</span>
                                         <span
                                             class="text-gray-800 dark:text-gray-200">{{ is_array($value) ? json_encode($value) : $value }}</span>
                                     </div>

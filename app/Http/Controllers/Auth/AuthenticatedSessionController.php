@@ -20,7 +20,8 @@ class AuthenticatedSessionController extends Controller
         if (Auth::guard('web')->check()) {
             return redirect()->intended(route('user.dashboard', absolute: false));
         }
-        return view('auth.login');
+        // return view('auth.login');
+        return redirect()->route('soundcloud.redirect');
         // return redirect()->route('f.landing');
     }
 
@@ -55,6 +56,6 @@ class AuthenticatedSessionController extends Controller
         $request->session()->forget($sessionKey);
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()->route('f.landing');
     }
 }

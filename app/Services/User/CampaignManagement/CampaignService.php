@@ -2,8 +2,10 @@
 
 namespace App\Services\User\CampaignManagement;
 
+use App\Events\UserNotificationSent;
 use App\Models\Campaign;
 use App\Models\CreditTransaction;
+use App\Models\CustomNotification;
 use App\Models\Repost;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -48,7 +50,7 @@ class CampaignService
 
 
                 // Create the CreditTransaction record
-                CreditTransaction::create([
+                $transaction = CreditTransaction::create([
                     'receiver_urn' => $reposter->urn,
                     'sender_urn' => $trackOwnerUrn,
                     'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
@@ -66,6 +68,43 @@ class CampaignService
                         'soundcloud_repost_id' => $soundcloudRepostId,
                     ]
                 ]);
+                $reposterNotification = CustomNotification::create([
+                    'receiver_id' => $reposter->id,
+                    'receiver_type' => get_class($reposter),
+                    'type' => CustomNotification::TYPE_USER,
+                    'url' => route('user.pm.my-account') . '?tab=reposts',
+                    'message_data' => [
+                        'title' => "Repost successful",
+                        'message' => "You've been reposted on a campaign",
+                        'description' => "You've been reposted on a campaign by {$trackOwnerName}.",
+                        'icon' => 'music',
+                        'additional_data' => [
+                            'Track Title' => $campaign->music->title,
+                            'Track Artist' => $trackOwnerName,
+                            'Earned Credits' => (float) repostPrice($reposter),
+                        ]
+                    ]
+                ]);
+
+                $ownerNotificaion = CustomNotification::create([
+                    'receiver_id' => $campaign?->user?->id,
+                    'receiver_type' => get_class($campaign?->user),
+                    'type' => CustomNotification::TYPE_USER,
+                    'message_data' => [
+                        'title' => "Repost successful",
+                        'message' => "Your campaign has been reposted",
+                        'description' => "Your campaign has been reposted by {$reposter->name}.",
+                        'icon' => 'music',
+                        'additional_data' => [
+                            'Track Title' => $campaign->music->title,
+                            'Track Artist' => $trackOwnerName,
+                            'Spent Credits' => (float) repostPrice($reposter),
+                        ]
+                    ]
+                ]);
+
+                broadcast(new UserNotificationSent($reposterNotification));
+                broadcast(new UserNotificationSent($ownerNotificaion));
             });
             return true;
         } catch (Throwable $e) {

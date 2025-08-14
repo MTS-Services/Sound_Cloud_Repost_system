@@ -711,7 +711,7 @@ class Campaign extends Component
                     'source_id' => $campaign->id,
                     'source_type' => ModelsCampaign::class,
                     'transaction_type' => CreditTransaction::TYPE_SPEND,
-                    'status' => 'succeeded',
+                    'status' => CreditTransaction::STATUS_SUCCEEDED,
                     'credits' => ($campaign->budget_credits + $campaign->momentum_price),
                     'description' => 'Spent on campaign creation',
                     'metadata' => [
