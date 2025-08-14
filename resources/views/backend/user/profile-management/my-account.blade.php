@@ -961,7 +961,8 @@
                                                             <td class="px-2 py-2">{{ $transaction->id }}</td>
                                                             <td class="px-2 py-2">{{ $transaction->receiver_urn }}
                                                             </td>
-                                                            <td class="px-2 py-2">{{ $transaction->amount }}</td>
+                                                            <td class="px-2 py-2">{{ $transaction->amount ?? '0.00' }}
+                                                            </td>
                                                             <td class="px-2 py-2">{{ $transaction->credits }}</td>
                                                             <td class="px-2 py-2">{{ $transaction->type_name }}</td>
                                                             <td class="px-2 py-2 text-green-600 font-semibold">
