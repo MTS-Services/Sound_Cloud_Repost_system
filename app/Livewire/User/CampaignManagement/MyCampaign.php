@@ -9,6 +9,8 @@ use App\Models\CustomNotification;
 use App\Models\Faq;
 use App\Models\Track;
 use App\Models\Playlist;
+use App\Models\User;
+use App\Services\Admin\UserManagement\UserService;
 use App\Services\TrackService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +27,7 @@ class MyCampaign extends Component
     use WithPagination;
 
     protected TrackService $trackService;
+    protected UserService $userService;
 
     // Pagination URL parameters
     #[Url(as: 'allPage')]
@@ -51,7 +54,7 @@ class MyCampaign extends Component
     public bool $showAlreadyCancelledModal = false;
     public bool $showDetailsModal = false;
 
-    public $proFeatureValue = 1;
+    public $proFeatureValue = 0;
 
     // Modal tab state
     public string $activeModalTab = 'tracks';
@@ -80,6 +83,7 @@ class MyCampaign extends Component
     public $anyGenre = '';
     public $trackGenre = '';
     public $targetGenre = '';
+    public $user = null;
 
     // Form fields - Add Credit
     public $addCreditCampaignId = null;
@@ -131,9 +135,10 @@ class MyCampaign extends Component
     private const ITEMS_PER_PAGE = 10;
     private const SOUNDCLOUD_API_URL = 'https://api-v2.soundcloud.com';
 
-    public function boot(TrackService $trackService): void
+    public function boot(TrackService $trackService, UserService $userService): void
     {
         $this->trackService = $trackService;
+        $this->userService = $userService;
         $this->tracks = collect();
         $this->playlists = collect();
     }
@@ -363,6 +368,8 @@ class MyCampaign extends Component
     public function toggleSubmitModal(string $type, int $id): void
     {
         $this->resetFormValidation();
+        // $this->user = $this->userService->getUser(encrypt(user()->urn, 'urn'));
+        $this->user = User::where('urn', user()->urn)->with('activePlan')->first();
 
         if (userCredits() < self::MIN_BUDGET) {
             $this->showLowCreditWarningModal = true;
@@ -370,6 +377,7 @@ class MyCampaign extends Component
         }
 
         $this->showSubmitModal = true;
+        $this->getAllGenres();
 
         try {
             match ($type) {
@@ -429,7 +437,7 @@ class MyCampaign extends Component
 
     public function profeature($isChecked)
     {
-        $this->proFeatureEnabled = $isChecked ? true : false;
+        $this->proFeatureEnabled = $isChecked ? false : true;
         $this->proFeatureValue = $isChecked ? 0 : 1;
     }
 
@@ -453,7 +461,7 @@ class MyCampaign extends Component
             DB::transaction(function () use ($oldBudget) {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
-                $proFeatureEnabled = $this->proFeatureEnabled ? 1 : 0;
+                $proFeatureEnabled = $this->proFeatureEnabled && !empty($this->user->activePlan) ? 1 : 0;
                 $editingProFeature = $this->isEditing && $this->editingCampaign->pro_feature == 1 ? $this->editingCampaign->pro_feature : $proFeatureEnabled;
 
                 $campaignData = [
@@ -557,6 +565,7 @@ class MyCampaign extends Component
         }
 
         $this->loadCampaignData();
+        $this->getAllGenres();
         $this->isEditing = true;
         $this->showSubmitModal = true;
     }
@@ -731,7 +740,8 @@ class MyCampaign extends Component
             'anyGenre',
             'trackGenre',
             'editingCampaign',
-            'isEditing'
+            'isEditing',
+            'user',
         ]);
         $this->resetValidation();
         $this->resetErrorBag();

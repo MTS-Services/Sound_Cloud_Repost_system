@@ -54,7 +54,8 @@
                                                 <h3 class="text-black dark:text-gray-100 font-semibold text-lg">
                                                     {{ $campaign_->music?->title }}
                                                 </h3>
-                                                <span wire:click="editCampaign({{ $campaign_->id }})" class="cursor-pointer">
+                                                <span wire:click="editCampaign({{ $campaign_->id }})"
+                                                    class="cursor-pointer">
                                                     <!-- Pencil Icon -->
                                                     <svg class="w-5 h-5 inline-block text-gray-500 dark:text-gray-100"
                                                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
@@ -105,7 +106,8 @@
 
                                                 <x-lucide-repeat
                                                     class="text-gray-500 w-5 h-5 m-2 dark:text-white text-black" />
-                                                <span class=" text-black dark:text-white">{{ totalReposts($campaign_) }}</span>
+                                                <span
+                                                    class=" text-black dark:text-white">{{ totalReposts($campaign_) }}</span>
                                             </div>
 
                                         </div>
@@ -122,7 +124,8 @@
                                             <div class="flex items-center justify-center ">
                                                 <x-lucide-heart
                                                     class="text-gray-500 w-5 h-5 m-2 dark:text-white text-black" />
-                                                <span class=" text-black dark:text-gray-100">{{ $campaign_->favorite_count ?? 0 }}</span>
+                                                <span
+                                                    class=" text-black dark:text-gray-100">{{ $campaign_->favorite_count ?? 0 }}</span>
                                             </div>
 
                                         </div>
@@ -138,7 +141,8 @@
                                             <div class="flex items-center justify-center ">
                                                 <x-lucide-smile
                                                     class="text-gray-500 w-5 h-5 m-2 dark:text-white text-black" />
-                                                <span class=" text-black dark:text-gray-100">{{ $campaign_->emoji_count ?? 0 }}</span>
+                                                <span
+                                                    class=" text-black dark:text-gray-100">{{ $campaign_->emoji_count ?? 0 }}</span>
                                             </div>
 
                                         </div>
@@ -553,7 +557,7 @@
                 </div>
             </div>
 
-            <div class="flex-grow overflow-y-auto p-6">
+            <div x-data="{ momentumEnabled: false }" class="flex-grow overflow-y-auto p-6">
                 <form wire:submit.prevent="createCampaign" class="space-y-6">
 
                     <!-- Campaign Status (if editing) -->
@@ -590,7 +594,7 @@
                                 @endif
                             </div>
                             <div
-                                class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
+                                class="p-4 flex items-center space-x-4 dark:bg-slate-700 rounded-xl transition-all duration-200 border  border-orange-200">
                                 @if ($track)
                                     <img src="{{ soundcloud_image($track->artwork_url) }}" alt="Album cover"
                                         class="w-12 h-12 rounded">
@@ -697,131 +701,137 @@
                             </div>
                         </div>
 
-                        <!-- Enable Campaign Accelerator -->
-                        @if (!$isEditing || $editingCampaign->pro_feature != 1)
+                        <!-- Max Follower Limit -->
+                        <div x-data="{ showOptions: {{ $isEditing && $maxFollower > 0 ? 'true' : 'false' }} }" class="flex flex-col space-y-2">
                             <div class="flex items-start space-x-3">
-                                <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
+                                <input type="checkbox" @change="showOptions = !showOptions"
+                                    {{ $maxFollower > 0 ? 'checked' : '' }}
                                     class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                                <div>
-                                    <div class="flex items-center space-x-2">
-                                        <h4 class="text-sm font-medium text-gray-900">{{ __('Turn on Momentum+ (') }}
-                                            <span class="text-md font-semibold">PRO</span>{{ __(')') }}
-                                        </h4>
-                                        <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
-                                            <span class="text-white text-xs">i</span>
-                                        </div>
-                                    </div>
-                                    <p class="text-xs text-gray-500">Use Campaign Accelerator (+50 credits)</p>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm font-medium text-gray-900">Limit to users with max follower
+                                        count</span>
                                 </div>
                             </div>
-                        @endif
+                            <div x-show="showOptions" x-transition class="p-3">
+                                <div class="flex justify-between items-center gap-4">
+                                    <div class="w-full relative">
+                                        <input type="range" x-data
+                                            x-on:input="$wire.set('maxFollower', $event.target.value)" min="0"
+                                            max="500" value="{{ $maxFollower }}"
+                                            class="w-full h-2 cursor-pointer">
+                                    </div>
+                                    <div
+                                        class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
+                                        <span>{{ $maxFollower }}</span>
+                                    </div>
+                                </div>
+                                @error('maxFollower')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
                     </div>
-
-                    <!-- Max Follower Limit -->
-                    <div x-data="{ showOptions: {{ $isEditing && $maxFollower > 0 ? 'true' : 'false' }} }" class="flex flex-col space-y-2">
-                        <div class="flex items-start space-x-3">
-                            <input type="checkbox" @change="showOptions = !showOptions"
-                                {{ $maxFollower > 0 ? 'checked' : '' }}
-                                class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-sm font-medium text-gray-900">Limit to users with max follower
-                                    count</span>
+                    <!-- Enable Campaign Accelerator -->
+                    @if (!$isEditing || $editingCampaign->pro_feature != 1)
+                        <div class="flex items-start space-x-3 {{ empty($user->activePlan) ? 'opacity-30' : '' }}">
+                            <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
+                                x-model="momentumEnabled" {{ empty($user->activePlan) ? 'disabled' : '' }}
+                                class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ empty($user->activePlan) ? 'cursor-not-allowed' : 'cursor-pointer' }}">
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <h4 class="text-sm font-medium text-gray-900">{{ __('Turn on Momentum+ (') }}
+                                        <span class="text-md font-semibold">PRO</span>{{ __(')') }}
+                                    </h4>
+                                    <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
+                                        <span class="text-white text-xs">i</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-500">Use Campaign Accelerator (+50 credits)</p>
                             </div>
                         </div>
-                        <div x-show="showOptions" x-transition class="p-3">
-                            <div class="flex justify-between items-center gap-4">
-                                <div class="w-full relative">
-                                    <input type="range" x-data
-                                        x-on:input="$wire.set('maxFollower', $event.target.value)" min="0"
-                                        max="500" value="{{ $maxFollower }}"
-                                        class="w-full h-2 cursor-pointer">
-                                </div>
-                                <div
-                                    class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
-                                    <span>{{ $maxFollower }}</span>
-                                </div>
-                            </div>
-                            @error('maxFollower')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- Campaign Targeting -->
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <div class="mb-4">
-                            <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                                {{ __('Audience Filtering (PRO Feature)') }}
-                            </h4>
-                            <p class="text-sm text-gray-700 mb-4 mt-2">Fine-tune who can support your track:</p>
-                        </div>
-
-                        <div class="space-y-3 ml-4">
-                            <!-- Max Repost Last 24h -->
-                            <div x-data="{ showOptions: false }" class="flex flex-col space-y-2">
-                                <div class="flex items-start space-x-3">
-                                    <input type="checkbox" @change="showOptions = !showOptions"
-                                        {{ $maxRepostLast24h > 0 ? 'checked' : '' }}
-                                        class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                                    <div class="flex items-center space-x-2">
-                                        <span class="text-sm text-gray-700">Exclude users who repost too often (last
-                                            24h)</span>
-                                    </div>
-                                </div>
-                                <div x-show="showOptions" x-transition class="p-3">
-                                    <div class="flex justify-between items-center gap-4">
-                                        <div class="w-full relative">
-                                            <input type="range" x-data
-                                                x-on:input="$wire.set('maxRepostLast24h', $event.target.value)"
-                                                min="0" max="50" value="{{ $maxRepostLast24h }}"
-                                                class="w-full h-2 cursor-pointer">
-                                        </div>
-                                        <div
-                                            class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
-                                            <span>{{ $maxRepostLast24h }}</span>
-                                        </div>
-                                    </div>
-                                    @error('maxRepostLast24h')
-                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
+                        <!-- Campaign Targeting -->
+                        <div class="border border-gray-200 rounded-lg p-4 mb-6"
+                            :class="momentumEnabled ? 'opacity-100' : 'opacity-30 border-opacity-10'">
+                            <div class="mb-4">
+                                <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                                    {{ __('Audience Filtering (PRO Feature)') }}
+                                </h4>
+                                <p class="text-sm text-gray-700 mb-4 mt-2">Fine-tune who can support your track:</p>
                             </div>
 
-                            <!-- Max Repost Per Day -->
-                            <div x-data="{ showRepostPerDay: false }" class="flex flex-col space-y-2">
-                                <div class="flex items-start space-x-3">
-                                    <input type="checkbox" @click="showRepostPerDay = !showRepostPerDay"
-                                        {{ $maxRepostsPerDay > 0 ? 'checked' : '' }}
-                                        class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                                    <div class="flex items-center space-x-2">
-                                        <span class="text-sm text-gray-700">Limit average repost frequency per
-                                            day</span>
+                            <div class="space-y-3 ml-4">
+                                <!-- Max Repost Last 24h -->
+                                <div x-data="{ showOptions: false }" class="flex flex-col space-y-2">
+                                    <div class="flex items-start space-x-3">
+                                        <input type="checkbox" @change="showOptions = !showOptions"
+                                            :disabled="!momentumEnabled" {{ $maxRepostLast24h > 0 ? 'checked' : '' }}
+                                            class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
+                                            :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="text-sm text-gray-700">Exclude users who repost too often
+                                                (last
+                                                24h)</span>
+                                        </div>
+                                    </div>
+                                    <div x-show="showOptions" x-transition class="p-3">
+                                        <div class="flex justify-between items-center gap-4">
+                                            <div class="w-full relative">
+                                                <input type="range" x-data :disabled="!momentumEnabled"
+                                                    x-on:input="$wire.set('maxRepostLast24h', $event.target.value)"
+                                                    min="0" max="50" value="{{ $maxRepostLast24h }}"
+                                                    class="w-full h-2 cursor-pointer"
+                                                    :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
+                                            </div>
+                                            <div
+                                                class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
+                                                <span>{{ $maxRepostLast24h }}</span>
+                                            </div>
+                                        </div>
+                                        @error('maxRepostLast24h')
+                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                 </div>
-                                <div x-show="showRepostPerDay" x-transition class="p-3">
-                                    <div class="flex justify-between items-center gap-4">
-                                        <div class="w-full relative">
-                                            <input type="range" x-data
-                                                x-on:input="$wire.set('maxRepostsPerDay', $event.target.value)"
-                                                min="0" max="100" value="{{ $maxRepostsPerDay }}"
-                                                class="w-full h-2 cursor-pointer">
-                                        </div>
-                                        <div
-                                            class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
-                                            <span>{{ $maxRepostsPerDay }}</span>
+
+                                <!-- Max Repost Per Day -->
+                                <div x-data="{ showRepostPerDay: false }" class="flex flex-col space-y-2">
+                                    <div class="flex items-start space-x-3">
+                                        <input type="checkbox" @click="showRepostPerDay = !showRepostPerDay"
+                                            {{ $maxRepostsPerDay > 0 ? 'checked' : '' }} :disabled="!momentumEnabled"
+                                            class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
+                                            :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="text-sm text-gray-700">Limit average repost frequency per
+                                                day</span>
                                         </div>
                                     </div>
-                                    @error('maxRepostsPerDay')
-                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                    @enderror
+                                    <div x-show="showRepostPerDay" x-transition class="p-3">
+                                        <div class="flex justify-between items-center gap-4">
+                                            <div class="w-full relative">
+                                                <input type="range" x-data :disabled="!momentumEnabled"
+                                                    x-on:input="$wire.set('maxRepostsPerDay', $event.target.value)"
+                                                    min="0" max="100" value="{{ $maxRepostsPerDay }}"
+                                                    class="w-full h-2 cursor-pointer"
+                                                    :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
+                                            </div>
+                                            <div
+                                                class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
+                                                <span>{{ $maxRepostsPerDay }}</span>
+                                            </div>
+                                        </div>
+                                        @error('maxRepostsPerDay')
+                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
 
                     <!-- Genre Selection -->
                     <div class="border border-gray-200 rounded-lg p-4">
-                        <div class="mt-6">
+                        <div class="">
                             <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Genre Preferences for
                                 Sharers</h2>
                             <p class="text-sm text-gray-700 mb-3 mt-2">Reposters must have the following genres:</p>
@@ -867,8 +877,9 @@
 
                     <!-- Submit Button -->
                     <div class="pt-4">
-                        <button type="submit" {{$isEditing && $credit < $editingCampaign->budget_credits ? 'disabled' : '' }}
-                            class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-4 px-6 rounded-xl {{ !$canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }} {{$isEditing && $credit < $editingCampaign->budget_credits ? '!bg-gray-600 !cursor-not-allowed' : '' }}" >
+                        <button type="submit"
+                            {{ $isEditing && $credit < $editingCampaign->budget_credits ? 'disabled' : '' }}
+                            class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-4 px-6 rounded-xl {{ !$canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }} {{ $isEditing && $credit < $editingCampaign->budget_credits ? '!bg-gray-600 !cursor-not-allowed' : '' }}">
                             <span>
                                 <svg class="w-8 h-8 text-white" width="26" height="18" viewBox="0 0 26 18"
                                     fill="none" xmlns="http://www.w3.org/2000/svg">

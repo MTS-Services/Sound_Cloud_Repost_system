@@ -111,13 +111,14 @@ class Campaign extends Component
     public $commentable = true;
     public $likeable = true;
     public $proFeatureEnabled = false;
-    public $proFeatureValue = 1;
+    public $proFeatureValue = 0;
     public $maxFollower = 0;
     public $maxRepostLast24h = 0;
     public $maxRepostsPerDay = 0;
     public $anyGenre = '';
     public $trackGenre = '';
     public $targetGenre = '';
+    public $user = null;
 
     public $musicId = null;
     public $musicType = null;
@@ -606,6 +607,8 @@ class Campaign extends Component
             'canSubmit',
         ]);
 
+        $this->user = User::where('urn', user()->urn)->with('activePlan')->first();
+
         if (userCredits() < 100) {
             $this->showLowCreditWarningModal = true;
             $this->showSubmitModal = false;
@@ -664,7 +667,7 @@ class Campaign extends Component
 
     public function profeature($isChecked)
     {
-        $this->proFeatureEnabled = $isChecked ? true : false;
+        $this->proFeatureEnabled = $isChecked ? false : true;
         $this->proFeatureValue = $isChecked ? 0 : 1;
     }
 
@@ -683,8 +686,7 @@ class Campaign extends Component
             DB::transaction(function () {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
-                $proFeatureEnabled = $this->proFeatureEnabled ? 1 : 0;
-
+                $proFeatureEnabled = $this->proFeatureEnabled && !empty($this->user->activePlan) ? 1 : 0;
                 $campaign = ModelsCampaign::create([
                     'music_id' => $this->musicId,
                     'music_type' => $this->musicType,
