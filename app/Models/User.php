@@ -231,14 +231,13 @@ class User extends AuthBaseModel
     {
         return $this->hasMany(UserGenre::class, 'user_urn', 'urn');
     }
-
     public function userPlans(): HasMany
     {
         return $this->hasMany(UserPlan::class, 'user_urn', 'urn');
     }
 
-    public function activePlan(): HasOne
+    public function activePlan()
     {
-        return $this->hasOne(UserPlan::class, 'user_urn', 'urn')->where('status', UserPlan::STATUS_ACTIVE);
+        return $this->userPlans->where('status', UserPlan::STATUS_ACTIVE)->first();
     }
 }

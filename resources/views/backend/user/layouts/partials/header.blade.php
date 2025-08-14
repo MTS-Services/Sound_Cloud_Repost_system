@@ -233,7 +233,13 @@
                             <span>Current Plan</span>
                         </div>
                         <div class="text-sm flex justify-between items-center">
-                            <span class="font-semibold text-slate-800 dark:text-white">{{ __('Free Plan') }}</span>
+                            <span class="font-semibold text-slate-800 dark:text-white">
+                                @if (empty(user()->activePlan()) || user()->activePlan()->price == 0)
+                                    {{ __('Free Plan') }}
+                                @else
+                                    {{ user()->activePlan()->plan?->name }}
+                                @endif
+                            </span>
                             <a href="{{ route('user.pkm.pricing') }}" wire:navigate
                                 class="text-orange-500 text-xs hover:underline">{{ __('View All Plans') }}</a>
                         </div>
@@ -248,7 +254,7 @@
                     </li>
 
                     <!-- Purchase History -->
-                    <li>
+                    {{-- <li>
                         <a href="#" wire:navigate
                             class="px-2 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 " fill="none"
@@ -258,7 +264,7 @@
                             </svg>
                             Purchase History
                         </a>
-                    </li>
+                    </li> --}}
 
                     <!-- Logout -->
                     <li class="border-t border-gray-200 dark:border-slate-700 pt-2">

@@ -8,11 +8,11 @@
                 <h1 class="text-3xl font-bold text-gray-900 mb-2">My Profile</h1>
                 <p class="text-gray-600">Manage your account and view your activity</p>
             </div>
-            <a href="#"
+            {{-- <a href="#"
                 class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                 <i data-lucide="edit" class="w-4 h-4"></i>
                 <span class="text-gray-700">Edit Profile</span>
-            </a>
+            </a> --}}
         </div>
         <!-- Profile Card -->
         <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -79,12 +79,12 @@
                 <nav class="flex space-x-8 px-6">
                     <a href="#" class="tab-btn py-4 px-1 border-b-2 border-orange-600 text-orange-600 font-medium"
                         data-tab="overview">Overview</a>
-                    <a href="#"
+                    {{-- <a href="#"
                         class="tab-btn py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700"
                         data-tab="transactions">Credit Transactions</a>
                     <a href="#"
                         class="tab-btn py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700"
-                        data-tab="history">Repost History</a>
+                        data-tab="history">Repost History</a> --}}
                 </nav>
             </div>
 
@@ -202,7 +202,7 @@
                 </div>
             </div>
 
-            <div id="transactions" class="tab-pane p-6 hidden">
+            {{-- <div id="transactions" class="tab-pane p-6 hidden">
                 <!-- Transaction Tab -->
                 <div class="w-full overflow-x-auto">
                     <table
@@ -361,7 +361,7 @@
                         <p class="text-gray-600 dark:text-gray-400">Not found</p>
                     </div>
                 @endforelse
-            </div>
+            </div> --}}
         </div>
     </div>
     @push('js')
