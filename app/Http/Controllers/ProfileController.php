@@ -6,6 +6,7 @@ use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\CreditTransaction;
 use App\Models\RepostRequest as ModelsRepostRequest;
 use App\Models\User;
+use App\Models\UserGenre;
 use App\Models\UserInformation;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\Admin\RepostManagement\RepostRequestService;
@@ -100,12 +101,22 @@ class ProfileController extends Controller
     public function emailStore(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'email' => ['required', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . user()->id],
             'genres' => ['required', 'array', 'min:5', 'max:5'],
             'genres.*' => ['required', 'string'],
         ]);
         $user = User::where('urn', user()->urn)->first();
         $user->update($validated);
+
+        foreach ($validated['genres'] as $genre) {
+            UserGenre::create([
+                'user_urn' => $user->urn,
+                'genre' => $genre,
+                'creater_id' => $user->id,
+                'creater_type' => get_class($user)
+            ]);
+        }
+
         return redirect()->route('user.dashboard');
     }
 }
