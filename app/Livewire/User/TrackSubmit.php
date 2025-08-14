@@ -275,12 +275,12 @@ class TrackSubmit extends Component
                     'message_data' => [
                         'title' => 'Track Submitted',
                         'message' => 'A new track has been submitted.',
-                        'description' => "Your track has been successfully uploaded to SoundCloud. Track Title: {$track->title}. If this track is not visible on SoundCloud, it may have been removed by SoundCloud due to a potential copyright infringement. Please review your SoundCloud account notifications for details. If you possess write permissions for this track or are its rightful owner, we recommend contacting SoundCloud support for further assistance.",
+                        'description' => "Your track has been successfully uploaded to SoundCloud. Track Title: {$track->title}. If this track is not visible on SoundCloud, it may have been deleted or removed by SoundCloud due to a potential copyright infringement. Please review your SoundCloud account notifications for details. If you possess write permissions for this track or are its rightful owner, we recommend contacting SoundCloud support for further assistance.",
                         'url' => route('user.pm.my-account') . '?tab=tracks',
                         'icon' => 'audio-lines',
                         'additional_data' => [
                             'Track Title' => $track->title,
-                            'Description' => $track->description,
+                            'Description' => $track->description ?? 'No description provided.',
                             'Track Artist' => $track->author_username,
                             'Track Link' => $track->permalink_url,
                         ]
