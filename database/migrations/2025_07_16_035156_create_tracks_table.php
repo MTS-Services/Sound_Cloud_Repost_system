@@ -42,6 +42,7 @@ return new class extends Migration
             $table->string('bpm')->nullable()->index();
             $table->string('release_year')->nullable()->index();
             $table->string('release_month')->nullable()->index();
+            $table->string('release_day')->nullable()->index();
             $table->string('license')->nullable()->index();
             $table->text('uri')->nullable();
 

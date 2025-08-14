@@ -2,8 +2,12 @@
 
 namespace App\Livewire\User;
 
+use App\Events\UserNotificationSent;
+use App\Models\CustomNotification;
 use App\Models\Track;
+use App\Models\User;
 use App\Models\UserGenre;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -205,7 +209,85 @@ class TrackSubmit extends Component
             if ($this->track['artwork_data']) {
                 $this->track['artwork_data']->delete();
             }
-            dd($response->json());
+            DB::transaction(function () use ($response) {
+                $responseTrack = $response->json();
+                $track =  Track::create([
+                    'user_urn' => user()->urn,
+                    'kind' =>  $responseTrack['kind'],
+                    'soundcloud_track_id' =>  $responseTrack['id'],
+                    'urn' =>  $responseTrack['urn'],
+                    'duration' =>  $responseTrack['duration'],
+                    'commentable' =>  $responseTrack['commentable'],
+                    'comment_count' =>  $responseTrack['comment_count'],
+                    'sharing' =>  $responseTrack['sharing'],
+                    'tag_lsit' =>  $responseTrack['tag_list'],
+                    'streamable' =>  $responseTrack['streamable'],
+                    'embeddable_by' =>  $responseTrack['embeddable_by'],
+                    'purchase_url' =>  $responseTrack['purchase_url'],
+                    'purchase_title' =>  $responseTrack['purchase_title'],
+                    'genre' =>  $responseTrack['genre'],
+                    'title' =>  $responseTrack['title'],
+                    'description' =>  $responseTrack['description'],
+                    'label_name' =>  $responseTrack['label_name'],
+                    'release' =>  $responseTrack['release'],
+                    'key_signature' =>  $responseTrack['key_signature'],
+                    'isrc' =>  $responseTrack['isrc'],
+                    'bpm' =>  $responseTrack['bpm'],
+                    'release_year' =>  $responseTrack['release_year'],
+                    'release_month' =>  $responseTrack['release_month'],
+                    'release_day' =>  $responseTrack['release_day'],
+                    'license' =>  $responseTrack['license'],
+                    'uri' =>  $responseTrack['uri'],
+                    'permalink_url' =>  $responseTrack['permalink_url'],
+                    'artwork_url' =>  $responseTrack['artwork_url'],
+                    'stream_url' =>  $responseTrack['stream_url'],
+                    'download_url' =>  $responseTrack['download_url'],
+                    'waveform_url' =>  $responseTrack['waveform_url'],
+                    'available_country_codes' =>  $responseTrack['available_country_codes'],
+                    'secret_uri' =>  $responseTrack['secret_uri'],
+                    'user_favorite' =>  $responseTrack['user_favorite'],
+                    'user_playback_count' =>  $responseTrack['user_playback_count'],
+                    'playback_count' =>  $responseTrack['playback_count'],
+                    'download_count' =>  $responseTrack['download_count'],
+                    'favoritings_count' =>  $responseTrack['favoritings_count'],
+                    'reposts_count' =>  $responseTrack['reposts_count'],
+                    'downloadable' =>  $responseTrack['downloadable'],
+                    'access' =>  $responseTrack['access'],
+                    'policy' =>  $responseTrack['policy'],
+                    'monetization_model' =>  $responseTrack['monetization_model'],
+                    'metadata_artist' =>  $responseTrack['metadata_artist'],
+                    'created_at_soundcloud' =>  $responseTrack['created_at'],
+
+                    'author_username' =>  $responseTrack['user']['username'],
+                    'author_soundcloud_id' =>  $responseTrack['user']['id'],
+                    'author_soundcloud_urn' =>  $responseTrack['user']['urn'],
+                    'author_soundcloud_kind' =>  $responseTrack['user']['kind'],
+                    'author_soundcloud_permalink_url' =>  $responseTrack['user']['permalink_url'],
+                    'author_soundcloud_permalink' =>  $responseTrack['user']['permalink'],
+                    'author_soundcloud_uri' =>  $responseTrack['user']['uri'],
+
+                    'last_sync_at' => now(),
+                ]);
+                $notification = CustomNotification::create([
+                    'receiver_id' => user()->id,
+                    'receiver_type' => User::class,
+                    'type' => CustomNotification::TYPE_USER,
+                    'message_data' => [
+                        'title' => 'Track Submitted',
+                        'message' => 'A new track has been submitted.',
+                        'description' => "Your track has been successfully uploaded to SoundCloud. Track Title: {$track->title}. If this track is not visible on SoundCloud, it may have been removed by SoundCloud due to a potential copyright infringement. Please review your SoundCloud account notifications for details. If you possess write permissions for this track or are its rightful owner, we recommend contacting SoundCloud support for further assistance.",
+                        'url' => route('user.my-account') . '?tab=tracks',
+                        'icon' => 'audio-lines',
+                        'additional_data' => [
+                            'Track Title' => $track->title,
+                            'Description' => $track->description,
+                            'Track Artist' => $track->author_username,
+                            'Track Link' => $track->permalink_url,
+                        ]
+                    ]
+                ]);
+                broadcast(new UserNotificationSent($notification));
+            });
 
             session()->flash('message', 'Track submitted successfully!');
             $this->reset();
