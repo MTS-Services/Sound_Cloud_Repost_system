@@ -31,7 +31,7 @@
                     class="flex items-center gap-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 w-full sm:w-auto justify-center">
                     <a href="{{ route('user.track.submit') }}" class="text-base sm:text-sm py-2 px-3">
                         <span>
-                            <x-lucide-music class="inline-block text-center h-5 w-6 text-purple-800"/>
+                            <x-lucide-music class="inline-block text-center h-5 w-6 text-purple-800" />
                         </span>
                         {{ __('Submit Track') }}</a>
                 </div>
@@ -150,21 +150,12 @@
                             </div>
                         </div>
                         <div class="flex flex-wrap justify-center gap-x-2 gap-y-2 text-xs">
-                            <div class="flex items-center gap-2"><span
-                                    class="w-3 h-3 rounded-full bg-violet-500"></span><span
-                                    class="text-slate-400">Electronic</span></div>
-                            <div class="flex items-center gap-2"><span
-                                    class="w-3 h-3 rounded-full bg-orange-500"></span><span
-                                    class="text-slate-400">Hip-Hop</span></div>
-                            <div class="flex items-center gap-2"><span
-                                    class="w-3 h-3 rounded-full bg-blue-500"></span><span
-                                    class="text-slate-400">Pop</span></div>
-                            <div class="flex items-center gap-2"><span
-                                    class="w-3 h-3 rounded-full bg-green-500"></span><span
-                                    class="text-slate-400">R&B</span></div>
-                            <div class="flex items-center gap-2"><span
-                                    class="w-3 h-3 rounded-full bg-yellow-500"></span><span
-                                    class="text-slate-400">Rock</span></div>
+                            @foreach (user()->genres as $genre)
+                                <div class="flex items-center gap-2">{!! AllGenres()[$genre->genre] !!}<span
+                                        class="text-slate-400">{{ $genre->genre }}</span></div>
+                            @endforeach
+
+
                         </div>
                     </div>
                 </div>

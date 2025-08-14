@@ -224,17 +224,14 @@
                                 class="bg-gray-100 dark:bg-slate-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-slate-700">
                                 <h3 class="text-gray-900 dark:text-white font-semibold mb-3 sm:mb-4">Genres</h3>
                                 <div class="grid grid-cols-2 sm:grid-cols-1 gap-2">
-                                    <div class="bg-gray-200 dark:bg-slate-700 px-3 py-2 rounded-lg">
-                                        <span
-                                            class="text-gray-600 dark:text-slate-300 text-xs sm:text-sm">Hip-Hop</span>
-                                    </div>
-                                    <div class="bg-gray-200 dark:bg-slate-700 px-3 py-2 rounded-lg">
-                                        <span class="text-gray-600 dark:text-slate-300 text-xs sm:text-sm">Pop</span>
-                                    </div>
-                                    <div class="bg-gray-200 dark:bg-slate-700 px-3 py-2 rounded-lg">
-                                        <span
-                                            class="text-gray-600 dark:text-slate-300 text-xs sm:text-sm">Electronic</span>
-                                    </div>
+                                    @foreach ($user->genres as $genre)
+                                        <div class="bg-gray-200 dark:bg-slate-700 px-3 py-2 rounded-lg">
+                                            <span
+                                                class="text-gray-600 dark:text-slate-300 text-xs sm:text-sm">{{ $genre->genre }}</span>
+                                        </div>
+                                    @endforeach
+
+
                                 </div>
                             </div>
 
