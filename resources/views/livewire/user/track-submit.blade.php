@@ -46,6 +46,7 @@
                         isDragging: false,
                         artworkPreviewUrl: '',
                         artworkFileName: '',
+                        artworkUploadProgress: 0,
                         handleFileChange(event) {
                             const file = event.target.files[0];
                             if (!file) {
@@ -65,20 +66,44 @@
                                 this.artworkPreviewUrl = '';
                             }
                         }
-                    }" x-on:dragover.prevent="isDragging = true"
-                        x-on:dragleave.prevent="isDragging = false"
+                    }" x-on:livewire-upload-start="artworkUploadProgress = 0"
+                        x-on:livewire-upload-finish="artworkUploadProgress = 100"
+                        x-on:livewire-upload-error="artworkUploadProgress = 0"
+                        x-on:livewire-upload-progress="artworkUploadProgress = $event.detail.progress"
+                        x-on:dragover.prevent="isDragging = true" x-on:dragleave.prevent="isDragging = false"
                         x-on:drop.prevent="isDragging = false; $event.target.files = $event.dataTransfer.files; handleFileChange($event);"
                         class="relative w-full aspect-square border-4 border-dashed rounded-lg flex flex-col items-center justify-center p-6 transition-all duration-300 cursor-pointer"
                         :class="{
-                            'border-orange-500 bg-orange-100 dark:bg-orange-900/30': isDragging,
-                            'border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800': !isDragging,
-                            'ring-2 ring-orange-500': artworkPreviewUrl
+                            'border-orange-500 dark:border-orange-500 bg-orange-100 dark:bg-orange-900/30': isDragging ||
+                                artworkPreviewUrl,
+                            'border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800': !isDragging && !
+                                artworkPreviewUrl
                         }">
                         <input type="file" accept="image/*" wire:model="track.artwork_data" id="artwork-upload"
                             class="absolute inset-0 opacity-0 cursor-pointer" @change="handleFileChange($event)">
 
                         <label for="artwork-upload"
                             class="absolute inset-0 cursor-pointer flex flex-col items-center justify-center text-center p-4">
+
+                            {{-- Circular Progress Bar Overlay --}}
+                            <div x-show="artworkUploadProgress > 0 && artworkUploadProgress < 100"
+                                class="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm rounded-lg z-20">
+                                <div class="relative w-24 h-24">
+                                    <svg class="w-full h-full" viewBox="0 0 100 100">
+                                        <circle class="text-gray-200 stroke-current dark:text-gray-700" stroke-width="8"
+                                            cx="50" cy="50" r="40" fill="transparent"></circle>
+                                        <circle class="text-orange-500 stroke-current transition-all duration-300"
+                                            stroke-width="8" cx="50" cy="50" r="40" fill="transparent"
+                                            stroke-dasharray="251.2" stroke-dashoffset="251.2"
+                                            x-bind:style="`stroke-dashoffset: ${251.2 - (artworkUploadProgress / 100) * 251.2}`"
+                                            transform="rotate(-90 50 50)"></circle>
+                                    </svg>
+                                    <span
+                                        class="absolute inset-0 flex items-center justify-center text-white text-lg font-bold">
+                                        <span x-text="artworkUploadProgress"></span>%
+                                    </span>
+                                </div>
+                            </div>
 
                             {{-- Preview for the image --}}
                             <template x-if="artworkPreviewUrl">
@@ -121,6 +146,7 @@
                         isDragging: false,
                         mediaPreviewUrl: '',
                         audioFileName: '',
+                        audioUploadProgress: 0,
                         handleFileChange(event) {
                             const file = event.target.files[0];
                             if (!file) {
@@ -136,20 +162,44 @@
                             };
                             reader.readAsDataURL(file);
                         }
-                    }" x-on:dragover.prevent="isDragging = true"
-                        x-on:dragleave.prevent="isDragging = false"
+                    }" x-on:livewire-upload-start="audioUploadProgress = 0"
+                        x-on:livewire-upload-finish="audioUploadProgress = 100"
+                        x-on:livewire-upload-error="audioUploadProgress = 0"
+                        x-on:livewire-upload-progress="audioUploadProgress = $event.detail.progress"
+                        x-on:dragover.prevent="isDragging = true" x-on:dragleave.prevent="isDragging = false"
                         x-on:drop.prevent="isDragging = false; $event.target.files = $event.dataTransfer.files; handleFileChange($event);"
                         class="relative w-full aspect-square border-4 border-dashed rounded-lg flex flex-col items-center justify-center p-6 transition-all duration-300 cursor-pointer"
                         :class="{
-                            'border-orange-500 bg-orange-100 dark:bg-orange-900/30': isDragging,
-                            'border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800': !isDragging,
-                            'ring-2 ring-orange-500': audioFileName
+                            'border-orange-500 dark:border-orange-500 bg-orange-100 dark:bg-orange-900/30': isDragging ||
+                                audioFileName,
+                            'border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800': !isDragging && !
+                                audioFileName
                         }">
                         <input type="file" accept="audio/*, video/*" wire:model="track.asset_data" id="audio-upload"
                             class="absolute inset-0 opacity-0 cursor-pointer" @change="handleFileChange($event)">
 
                         <label for="audio-upload"
                             class="absolute inset-0 cursor-pointer flex flex-col items-center justify-center text-center p-4">
+
+                            {{-- Circular Progress Bar Overlay --}}
+                            <div x-show="audioUploadProgress > 0 && audioUploadProgress < 100"
+                                class="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm rounded-lg z-20">
+                                <div class="relative w-24 h-24">
+                                    <svg class="w-full h-full" viewBox="0 0 100 100">
+                                        <circle class="text-gray-200 stroke-current dark:text-gray-700" stroke-width="8"
+                                            cx="50" cy="50" r="40" fill="transparent"></circle>
+                                        <circle class="text-orange-500 stroke-current transition-all duration-300"
+                                            stroke-width="8" cx="50" cy="50" r="40" fill="transparent"
+                                            stroke-dasharray="251.2" stroke-dashoffset="251.2"
+                                            x-bind:style="`stroke-dashoffset: ${251.2 - (audioUploadProgress / 100) * 251.2}`"
+                                            transform="rotate(-90 50 50)"></circle>
+                                    </svg>
+                                    <span
+                                        class="absolute inset-0 flex items-center justify-center text-white text-lg font-bold">
+                                        <span x-text="audioUploadProgress"></span>%
+                                    </span>
+                                </div>
+                            </div>
 
                             {{-- Preview for the audio/video file --}}
                             <template x-if="mediaPreviewUrl">
@@ -197,8 +247,8 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <x-form.input label="Track Title" wire:model="track.title" placeholder="Enter track title"
                         required />
-                    <x-form.input label="Release Title" wire:model="track.release" placeholder="e.g., EP or Album Name"
-                        tip="Name of the album or EP this track belongs to." />
+                    <x-form.input label="Release Title" wire:model="track.release"
+                        placeholder="e.g., EP or Album Name" tip="Name of the album or EP this track belongs to." />
                     <x-form.select label="Genre" wire:model="track.genre" :options="$genres"
                         placeholder="Select a genre" />
                     <x-form.input label="Tags" wire:model="track.tag_list" placeholder="Add styles, moods, tempo."
@@ -336,9 +386,9 @@
         </form>
     </section>
 </div>
-
+{{-- 
 @once
     @push('scripts')
         <script src="https://unpkg.com/lucide@latest"></script>
     @endpush
-@endonce
+@endonce --}}
