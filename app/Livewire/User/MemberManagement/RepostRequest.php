@@ -306,7 +306,6 @@ class RepostRequest extends Component
                         ]
                     ]);
                 });
-
                 // Mark as reposted in component
                 $this->repostedRequests[] = $requestId;
 
