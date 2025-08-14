@@ -1,310 +1,394 @@
 <div>
     <x-slot name="page_slug">track-submit</x-slot>
-    {{-- <!-- Main Form Card -->
-    <div class="bg-white dark:bg-gray-800 rounded-2xl card-shadow overflow-hidden">
-        <!-- Form Header -->
-        <div class="gradient-bg px-8 py-6">
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl font-semibold text-black dark:text-white">Track Information</h2>
-                <x-button href="{{ route('user.dashboard') }}">Back</x-button>
-            </div>
+    <x-slot name="title">Track Submit</x-slot>
+
+    <section class="mx-auto max-w-5xl">
+
+        <div
+            class="flex flex-col sm:flex-row items-center justify-between mb-10 border-b border-gray-200 dark:border-gray-800 pb-6">
+            <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white leading-tight">
+                {{ __('Upload Your Track') }}
+            </h2>
+            <a href="{{ route('user.dashboard') }}" wire:navigate
+                class="mt-4 sm:mt-0 flex items-center gap-2 bg-orange-600 text-white font-medium py-3 px-6 rounded-full hover:bg-orange-700 transition duration-300 transform hover:scale-105 shadow-md">
+                <x-lucide-music class="h-5 w-5" />
+                <span>{{ __('Go to Dashboard') }}</span>
+            </a>
         </div>
 
-        <form action="/submit-track" method="POST" class="p-8 pt-0 space-y-8">
-            <!-- Basic Information Section -->
-            <div class="space-y-4">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <!-- Title -->
-                    <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-700">Track Title<sup
-                                class="text-sm text-orange-400">*</sup></label>
-                        <input type="text" name="title" value="Some title" required
-                            class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white">
-                    </div>
-
-                    <!-- Genre -->
-                    <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-700">Genre</label>
-                        <input type="text" name="genre" value="Rock"
-                            class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white">
-                    </div>
-                    <!-- Artwork URL -->
-                    <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-700">Artwork URL<sup
-                                class="text-sm text-orange-400">*</sup></label>
-                        <input type="url" name="artwork_url" value="https://i1.sndcdn.com/artworks-large.jpg"
-                            required
-                            class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white">
-                    </div>
-
-                    <!-- Label Name -->
-                    <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-700">Label Name</label>
-                        <input type="text" name="label_name" value="some label"
-                            class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white">
-                    </div>
-
+        {{-- Status Messages Section --}}
+        <div class="mb-8">
+            @if (session()->has('message'))
+                <div
+                    class="p-4 bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-700 text-green-700 dark:text-green-300 rounded-lg flex items-center space-x-3 shadow-sm transition-opacity duration-300">
+                    <x-lucide-check-circle class="h-6 w-6" />
+                    <span class="font-medium">{{ session('message') }}</span>
                 </div>
-            </div>
-
-            <!-- Technical Details Section -->
-            <div class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Duration -->
-                    <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-700">Duration (ms)</label>
-                        <input type="number" name="duration" value="40000"
-                            class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white">
-                    </div>
-
-                    <!-- BPM -->
-                    <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-700">BPM</label>
-                        <input type="number" name="bpm" placeholder="Optional"
-                            class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white">
-                    </div>
-
-                    <!-- Stream URL -->
-                    <div class="space-y-2 md:col-span-2 lg:col-span-1">
-                        <label class="block text-sm font-medium text-gray-700">Stream URL</label>
-                        <input type="url" name="stream_url" value="https://api.soundcloud.com/tracks/1234/stream"
-                            class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white">
-                    </div>
+            @endif
+            @if (session()->has('error'))
+                <div
+                    class="p-4 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 rounded-lg flex items-center space-x-3 shadow-sm transition-opacity duration-300">
+                    <x-lucide-alert-triangle class="h-6 w-6" />
+                    <span class="font-medium">{{ session('error') }}</span>
                 </div>
-            </div>
+            @endif
+        </div>
 
-            <!-- Release Information Section -->
-            <div class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-700">Release Day</label>
-                        <input type="number" name="release_day" value="22" min="1" max="31"
-                            class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-700">Release Month</label>
-                        <input type="number" name="release_month" value="8" min="1" max="12"
-                            class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-700">Release Year</label>
-                        <input type="number" name="release_year" value="2019"
-                            class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white">
-                    </div>
-                </div>
-            </div>
-            <!-- Settings Section -->
-            <div class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-                    <label
-                        class="flex items-center gap-3 px-3 py-2 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer transition-colors duration-200">
-                        <input type="checkbox" name="commentable" checked
-                            class="checkbox-custom w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="message-circle" class="w-4 h-4 text-gray-500"></i>
-                            <span class="text-sm font-medium text-gray-700">Allow Comments</span>
-                        </div>
+        <form wire:submit.prevent="submit" class="space-y-10" enctype="multipart/form-data">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                <div class="flex flex-col items-center">
+                    <label class="block text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
+                        Track Artwork
                     </label>
+                    <div x-data="{
+                        isDragging: false,
+                        artworkPreviewUrl: '',
+                        artworkFileName: '',
+                        artworkUploadProgress: 0,
+                        handleFileChange(event) {
+                            const file = event.target.files[0];
+                            if (!file) {
+                                this.artworkFileName = '';
+                                this.artworkPreviewUrl = '';
+                                return;
+                            }
+                    
+                            this.artworkFileName = file.name;
+                            if (file.type.startsWith('image/')) {
+                                const reader = new FileReader();
+                                reader.onload = (e) => {
+                                    this.artworkPreviewUrl = e.target.result;
+                                };
+                                reader.readAsDataURL(file);
+                            } else {
+                                this.artworkPreviewUrl = '';
+                            }
+                        }
+                    }" x-on:livewire-upload-start="artworkUploadProgress = 0"
+                        x-on:livewire-upload-finish="artworkUploadProgress = 100"
+                        x-on:livewire-upload-error="artworkUploadProgress = 0"
+                        x-on:livewire-upload-progress="artworkUploadProgress = $event.detail.progress"
+                        x-on:dragover.prevent="isDragging = true" x-on:dragleave.prevent="isDragging = false"
+                        x-on:drop.prevent="isDragging = false; $event.target.files = $event.dataTransfer.files; handleFileChange($event);"
+                        class="relative w-full aspect-square border-4 border-dashed rounded-lg flex flex-col items-center justify-center p-6 transition-all duration-300 cursor-pointer"
+                        :class="{
+                            'border-orange-500 dark:border-orange-500 bg-orange-100 dark:bg-orange-900/30': isDragging ||
+                                artworkPreviewUrl,
+                            'border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800': !isDragging && !
+                                artworkPreviewUrl
+                        }">
+                        <input type="file" accept="image/*" wire:model="track.artwork_data" id="artwork-upload"
+                            class="absolute inset-0 opacity-0 cursor-pointer" @change="handleFileChange($event)">
 
-                    <label
-                        class="flex items-center gap-3 px-3 py-2 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer transition-colors duration-200">
-                        <input type="checkbox" name="downloadable"
-                            class="checkbox-custom w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="download" class="w-4 h-4 text-gray-500"></i>
-                            <span class="text-sm font-medium text-gray-700">Allow Downloads</span>
-                        </div>
-                    </label>
+                        <label for="artwork-upload"
+                            class="absolute inset-0 cursor-pointer flex flex-col items-center justify-center text-center p-4">
 
-                    <label
-                        class="flex items-center gap-3 px-3 py-2 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer transition-colors duration-200">
-                        <input type="checkbox" name="streamable" checked
-                            class="checkbox-custom w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="play" class="w-4 h-4 text-gray-500"></i>
-                            <span class="text-sm font-medium text-gray-700">Enable Streaming</span>
-                        </div>
-                    </label>
+                            {{-- Circular Progress Bar Overlay --}}
+                            <div x-show="artworkUploadProgress > 0 && artworkUploadProgress < 100"
+                                class="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm rounded-lg z-20">
+                                <div class="relative w-24 h-24">
+                                    <svg class="w-full h-full" viewBox="0 0 100 100">
+                                        <circle class="text-gray-200 stroke-current dark:text-gray-700" stroke-width="8"
+                                            cx="50" cy="50" r="40" fill="transparent"></circle>
+                                        <circle class="text-orange-500 stroke-current transition-all duration-300"
+                                            stroke-width="8" cx="50" cy="50" r="40" fill="transparent"
+                                            stroke-dasharray="251.2" stroke-dashoffset="251.2"
+                                            x-bind:style="`stroke-dashoffset: ${251.2 - (artworkUploadProgress / 100) * 251.2}`"
+                                            transform="rotate(-90 50 50)"></circle>
+                                    </svg>
+                                    <span
+                                        class="absolute inset-0 flex items-center justify-center text-white text-lg font-bold">
+                                        <span x-text="artworkUploadProgress"></span>%
+                                    </span>
+                                </div>
+                            </div>
 
-                    <label
-                        class="flex items-center gap-3 px-3 py-2 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer transition-colors duration-200">
-                        <input type="checkbox" name="user_favorite" checked
-                            class="checkbox-custom w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="heart" class="w-4 h-4 text-gray-500"></i>
-                            <span class="text-sm font-medium text-gray-700">User Favorite</span>
-                        </div>
+                            {{-- Preview for the image --}}
+                            <template x-if="artworkPreviewUrl">
+                                <div class="absolute inset-0 bg-cover bg-center rounded-md"
+                                    :style="`background-image: url('${artworkPreviewUrl}')`"></div>
+                                <div class="absolute inset-0 bg-black/50 rounded-md"></div>
+                            </template>
+
+                            {{-- Placeholder for the image --}}
+                            <div class="relative z-10 text-white dark:text-gray-200" x-show="!artworkPreviewUrl">
+                                <x-lucide-image-plus
+                                    class="h-12 w-12 text-orange-400 mx-auto transition-colors duration-300" />
+                                <span class="mt-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+                                    Drag & Drop or <span class="text-orange-600 dark:text-orange-400">Click to
+                                        Upload</span>
+                                </span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400 mt-1">PNG, JPG, GIF up to
+                                    5MB</span>
+                            </div>
+
+                            {{-- "Click to change" message for the image, including filename --}}
+                            <div class="absolute bottom-4 z-10 text-white dark:text-gray-200 bg-black/60 px-2 py-0.5 rounded-md"
+                                x-show="artworkPreviewUrl">
+                                <span class="mt-2 text-sm font-medium text-white">Click to change</span>
+                                <span class="mt-1 text-xs text-gray-200 truncate w-full px-2"
+                                    x-text="artworkFileName"></span>
+                            </div>
+                        </label>
+                    </div>
+                    @error('track.artwork_data')
+                        <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="flex flex-col items-center">
+                    <label class="block text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
+                        Audio Track<sup class="text-red-500">*</sup>
                     </label>
+                    <div x-data="{
+                        isDragging: false,
+                        mediaPreviewUrl: '',
+                        audioFileName: '',
+                        audioUploadProgress: 0,
+                        handleFileChange(event) {
+                            const file = event.target.files[0];
+                            if (!file) {
+                                this.audioFileName = '';
+                                this.mediaPreviewUrl = '';
+                                return;
+                            }
+                    
+                            this.audioFileName = file.name;
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                this.mediaPreviewUrl = e.target.result;
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    }" x-on:livewire-upload-start="audioUploadProgress = 0"
+                        x-on:livewire-upload-finish="audioUploadProgress = 100"
+                        x-on:livewire-upload-error="audioUploadProgress = 0"
+                        x-on:livewire-upload-progress="audioUploadProgress = $event.detail.progress"
+                        x-on:dragover.prevent="isDragging = true" x-on:dragleave.prevent="isDragging = false"
+                        x-on:drop.prevent="isDragging = false; $event.target.files = $event.dataTransfer.files; handleFileChange($event);"
+                        class="relative w-full aspect-square border-4 border-dashed rounded-lg flex flex-col items-center justify-center p-6 transition-all duration-300 cursor-pointer"
+                        :class="{
+                            'border-orange-500 dark:border-orange-500 bg-orange-100 dark:bg-orange-900/30': isDragging ||
+                                audioFileName,
+                            'border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800': !isDragging && !
+                                audioFileName
+                        }">
+                        <input type="file" accept="audio/*, video/*" wire:model="track.asset_data" id="audio-upload"
+                            class="absolute inset-0 opacity-0 cursor-pointer" @change="handleFileChange($event)">
+
+                        <label for="audio-upload"
+                            class="absolute inset-0 cursor-pointer flex flex-col items-center justify-center text-center p-4">
+
+                            {{-- Circular Progress Bar Overlay --}}
+                            <div x-show="audioUploadProgress > 0 && audioUploadProgress < 100"
+                                class="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm rounded-lg z-20">
+                                <div class="relative w-24 h-24">
+                                    <svg class="w-full h-full" viewBox="0 0 100 100">
+                                        <circle class="text-gray-200 stroke-current dark:text-gray-700" stroke-width="8"
+                                            cx="50" cy="50" r="40" fill="transparent"></circle>
+                                        <circle class="text-orange-500 stroke-current transition-all duration-300"
+                                            stroke-width="8" cx="50" cy="50" r="40" fill="transparent"
+                                            stroke-dasharray="251.2" stroke-dashoffset="251.2"
+                                            x-bind:style="`stroke-dashoffset: ${251.2 - (audioUploadProgress / 100) * 251.2}`"
+                                            transform="rotate(-90 50 50)"></circle>
+                                    </svg>
+                                    <span
+                                        class="absolute inset-0 flex items-center justify-center text-white text-lg font-bold">
+                                        <span x-text="audioUploadProgress"></span>%
+                                    </span>
+                                </div>
+                            </div>
+
+                            {{-- Preview for the audio/video file --}}
+                            <template x-if="mediaPreviewUrl">
+                                <div class="w-full h-full flex flex-col items-center justify-center">
+                                    <template
+                                        x-if="audioFileName.endsWith('.mp3') || audioFileName.endsWith('.wav') || audioFileName.endsWith('.flac') || audioFileName.endsWith('.m4a')">
+                                        <audio class="w-full max-w-sm rounded-lg" controls
+                                            x-bind:src="mediaPreviewUrl"></audio>
+                                    </template>
+                                    <template x-if="audioFileName.endsWith('.mp4') || audioFileName.endsWith('.mov')">
+                                        <video class="w-full h-full object-cover rounded-lg" controls
+                                            x-bind:src="mediaPreviewUrl"></video>
+                                    </template>
+                                    <span
+                                        class="mt-4 text-sm font-medium text-gray-800 dark:text-gray-200 truncate w-full px-2 text-center"
+                                        x-text="audioFileName"></span>
+                                    <span class="mt-1 text-sm text-gray-500 dark:text-gray-400">Click to change</span>
+                                </div>
+                            </template>
+
+                            {{-- Placeholder for the audio file --}}
+                            <template x-if="!audioFileName">
+                                <div class="flex flex-col items-center">
+                                    <x-lucide-file-up
+                                        class="h-16 w-16 text-orange-400 transition-colors duration-300" />
+                                    <span class="mt-4 text-sm font-medium text-gray-600 dark:text-gray-400"
+                                        :class="{ 'text-orange-600 dark:text-orange-400': isDragging }">
+                                        Drag & Drop or <span class="text-orange-600 dark:text-orange-400">Click to
+                                            Upload</span>
+                                    </span>
+                                    <span class="text-xs text-gray-500 dark:text-gray-500 mt-1">MP3, WAV, FLAC, M4A,
+                                        MP4, MOV up to 250MB</span>
+                                </div>
+                            </template>
+                        </label>
+                    </div>
+                    @error('track.asset_data')
+                        <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
 
-            <!-- Additional Information Section -->
-            <div class="space-y-6">
-                <div class="space-y-6">
-                    <!-- Description -->
-                    <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-700">Description</label>
-                        <textarea name="description" rows="4" placeholder="Tell us about your track..."
-                            class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white resize-none"></textarea>
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-8 space-y-6 shadow-inner">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white">Track Details</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <x-form.input label="Track Title" wire:model="track.title" placeholder="Enter track title"
+                        required />
+                    <x-form.input label="Release Title" wire:model="track.release"
+                        placeholder="e.g., EP or Album Name" tip="Name of the album or EP this track belongs to." />
+                    <x-form.select label="Genre" wire:model="track.genre" :options="$genres"
+                        placeholder="Select a genre" />
+                    <x-form.input label="Tags" wire:model="track.tag_list" placeholder="Add styles, moods, tempo."
+                        tip="Separate tags with spaces. Use double quotes for multi-word tags." />
+                    <x-form.input label="Label Name" wire:model="track.label_name"
+                        placeholder="e.g., Record Label Name" />
+                    <x-form.input label="Release Date" wire:model="track.release_date" type="date" />
+                    <x-form.input label="ISRC" wire:model="track.isrc" placeholder="e.g., US-S1Z-15-00001" />
+                    <x-form.input label="Purchase URL" wire:model="track.purchase_url"
+                        placeholder="e.g., https://bandcamp.com/your-track" />
+                </div>
+                <x-form.textarea label="Description" wire:model="track.description" rows="4"
+                    placeholder="Tell your fans about the track..."
+                    tip="Tracks with descriptions get more engagement." />
+            </div>
+
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-8 space-y-6 shadow-inner">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white">Sharing & Privacy</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Track
+                            Privacy</label>
+                        <div class="flex items-center space-x-6">
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="radio" name="privacy" wire:model="track.sharing" value="public"
+                                    class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
+                                <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">Public</span>
+                            </label>
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="radio" name="privacy" wire:model="track.sharing" value="private"
+                                    class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
+                                <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">Private</span>
+                            </label>
+                        </div>
+                        @error('track.sharing')
+                            <p class="text-sm text-red-500 mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <!-- Tags -->
-                    <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-700">Tags</label>
-                        <input type="text" name="tag_list" placeholder="#rock #alternative #indie"
-                            class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white">
-                        <p class="text-xs text-gray-500">Separate tags with spaces. Use # for hashtags.</p>
+                    <div x-data="{ permalink: @entangle('track.permalink') }">
+                        <x-form.input label="Track Link" wire:model="track.permalink" placeholder="track-name"
+                            prefix="https://soundcloud.com/" tip="This will be the public URL for your track."
+                            input-id="track-link-input" />
                     </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    {{-- Streamable Radio Buttons --}}
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Streamable</label>
+                        <div class="flex items-center space-x-6">
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="radio" wire:model="track.streamable" value="1"
+                                    class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
+                                <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">Yes</span>
+                            </label>
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="radio" wire:model="track.streamable" value="0"
+                                    class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
+                                <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">No</span>
+                            </label>
+                        </div>
+                        @error('track.streamable')
+                            <p class="text-xs text-red-500 mt-2">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Downloadable Radio Buttons --}}
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Downloadable</label>
+                        <div class="flex items-center space-x-6">
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="radio" wire:model="track.downloadable" value="1"
+                                    class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
+                                <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">Yes</span>
+                            </label>
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="radio" wire:model="track.downloadable" value="0"
+                                    class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
+                                <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">No</span>
+                            </label>
+                        </div>
+                        @error('track.downloadable')
+                            <p class="text-xs text-red-500 mt-2">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Commentable Radio Buttons --}}
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Commentable</label>
+                        <div class="flex items-center space-x-6">
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="radio" wire:model="track.commentable" value="1"
+                                    class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
+                                <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">Yes</span>
+                            </label>
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="radio" wire:model="track.commentable" value="0"
+                                    class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
+                                <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">No</span>
+                            </label>
+                        </div>
+                        @error('track.commentable')
+                            <p class="text-xs text-red-500 mt-2">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+                    <x-form.select label="License" wire:model="track.license" :options="$licenses" />
+                    <x-form.select label="Embeddable by" wire:model="track.embeddable_by" :options="$embeddableByOptions" />
                 </div>
             </div>
 
-            <!-- Submit Button -->
-            <div class="pt-6 border-t border-gray-200">
-                <x-button type="submit" class="">Submit</x-button>
+            <div>
+                <button type="submit" wire:loading.attr="disabled"
+                    class="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 dark:bg-orange-1000 dark:hover:bg-orange-600 dark:disabled:bg-orange-400 text-white font-bold py-4 px-6 rounded-full transition-all duration-300 flex items-center justify-center space-x-3 shadow-lg transform hover:scale-105">
+                    <span wire:loading.remove>
+                        <div class="flex items-center justify-center gap-2">
+                            <x-lucide-upload class="h-6 w-6" />
+                            <span>Submit Track</span>
+                        </div>
+                    </span>
+                    <span wire:loading>
+                        <div class="flex items-center justify-center">
+                            <x-lucide-loader-2 class="animate-spin h-6 w-6" />
+                            <span class="ml-3">Submitting...</span>
+                        </div>
+                    </span>
+                </button>
             </div>
         </form>
-    </div> --}}
-
-    <div>
-        <section>
-            <div class="container mx-auto bg-white shadow-md rounded-lg p-8">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-bold text-text-black dark:text-text-white">
-                        {{ __('Track Submit') }}
-                    </h2>
-                    <div class="flex items-center gap-2">
-                        <x-button href="{{ route('um.user.index') }}">
-                            {{ __('Back') }}
-                        </x-button>
-                    </div>
-                </div>
-
-                {{-- Success Message --}}
-                @if (session()->has('message'))
-                    <div
-                        class="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-md flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                        {{ session('message') }}
-                    </div>
-                @endif
-
-                {{-- Warning Message --}}
-                @if (session()->has('warning'))
-                    <div
-                        class="mt-4 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded-md flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z">
-                            </path>
-                        </svg>
-                        {{ session('warning') }}
-                    </div>
-                @endif
-
-                {{-- Error Message --}}
-                @if (session()->has('error'))
-                    <div class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-md flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                        {{ session('error') }}
-                    </div>
-                @endif
-
-                <form wire:submit.prevent="submit" class="space-y-6 mt-6" enctype="multipart/form-data">
-                    <div class="space-y-4">
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                            <!-- Title -->
-                            <div class="space-y-2">
-                                <label class="block text-sm font-medium text-gray-700">Track Title<sup
-                                        class="text-sm text-orange-400">*</sup></label>
-                                <input type="text" wire:model="title"
-                                    class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white">
-                                @error('title')
-                                    <p class="text-xs text-red-500">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            {{-- <div class="space-y-2">
-                                <label class="block text-sm font-medium text-gray-700">Main Artist<sup
-                                        class="text-sm text-orange-400">*</sup></label>
-                                <input type="text" wire:model="artist"
-                                    class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white">
-                                @error('artist')
-                                    <p class="text-xs text-red-500">{{ $message }}</p>
-                                @enderror
-                            </div> --}}
-                            <div class="space-y-2">
-                                <label class="block text-sm font-medium text-gray-700">Track<sup
-                                        class="text-sm text-orange-400">*</sup></label>
-                                <input type="file" accept="audio/*"  value="" wire:model="asset_data">
-                                @error('asset_data')
-                                    <p class="text-xs text-red-500">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            {{-- <div class="space-y-2">
-                                <label class="block text-sm font-medium text-gray-700">Track Link<sup
-                                        class="text-sm text-orange-400">*</sup></label>
-                                <input 
-                                    type="text" 
-                                    id="urlInput" wire:model="permalink"
-                                    value="https://api.soundcloud.com"
-                                    x-model="permalink" 
-                                    class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white"
-                                    @input="if (!$event.target.value.startsWith('https://api.soundcloud.com/')) { 
-                                        $event.target.value = 'https://api.soundcloud.com/' + $event.target.value.substring(24); 
-                                    }"
-                                    @keydown="if ($event.target.selectionStart < 24 && ['Backspace', 'Delete'].includes($event.key)) { 
-                                        $event.preventDefault(); 
-                                    }"
-                                />
-                            </div>
-                            <div class="space-y-2">
-                                <label class="block text-sm font-medium text-gray-700">Genre</label>
-                                <select class="select w-full outline-none" wire:model="genre">
-                                    @foreach (allGenres() as $genre)
-                                        <option value="{{ $genre }}">{{ $genre }}</option>
-                                    @endforeach
-                                </select>
-                            </div> --}}
-                            {{-- <div class="space-y-2">
-                                <label class="block text-sm font-medium text-gray-700">Tags</label>
-                                <input type="text"wire:model="tag_list" value="" placeholder="Add styles, moods, tempos"
-                                    class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white">
-                            </div> --}}
-                        </div>
-                    </div>
-
-                    {{-- Submit Button --}}
-                    <div class="pt-4">
-                        <button type="submit" wire:loading.attr="disabled" 
-                            class="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-md transition duration-200 flex items-center justify-center">
-                            <span wire:loading.remove class="flex items-center">
-                                <svg class="w-5 h-5 mr-2 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
-                                    </path>
-                                </svg>
-                                <span>Submit Track</span>
-                            </span>
-                            <span wire:loading class="flex items-center">
-                                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block"
-                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10"
-                                        stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor"
-                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                    </path>
-                                </svg>
-                               <span>Submitting...</span>
-                            </span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </section>
-    </div>
+    </section>
 </div>
+{{-- 
+@once
+    @push('scripts')
+        <script src="https://unpkg.com/lucide@latest"></script>
+    @endpush
+@endonce --}}

@@ -3,6 +3,7 @@
 namespace App\Livewire\User;
 
 use App\Models\Track;
+use App\Models\UserGenre;
 use Illuminate\Support\Facades\Http;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -10,63 +11,212 @@ use Livewire\WithFileUploads;
 class TrackSubmit extends Component
 {
     use WithFileUploads;
+
     // Base Url
     protected string $baseUrl = 'https://api.soundcloud.com';
 
-    public $title = null;
-    public $asset_data = null;
-    public $permalink = null;
-    public $genre = null;
-    public $description = '';
-    public $tag_list = '';
-    public $artist = null;
+    // The form fields to match the image requirements
+    public $track = [
+        'title' => '',
+        'asset_data' => null,
+        'artwork_data' => null,
+        'permalink' => '',
+        'sharing' => 'public', // Default to public
+        'embeddable_by' => 'all', // Set default to 'all' based on documentation
+        'purchase_url' => '',
+        'description' => '',
+        'genre' => '',
+        'tag_list' => '',
+        'label_name' => '',
+        'release' => '', // This is the new input field
+        'release_date' => '',
+        'streamable' => true,
+        'downloadable' => true,
+        'license' => 'no-rights-reserved', // Set default based on documentation
+        'commentable' => true,
+        'isrc' => '',
+    ];
+
+    // Public properties to hold the select options
+    public $genres;
+    public $licenses;
+    public $embeddableByOptions;
 
     public function mount()
     {
-        // 
+
+        $this->genres = array_keys(AllGenres());
+
+        // Licenses matching the API documentation exactly
+        $this->licenses = [
+            'no-rights-reserved' => 'No Rights Reserved',
+            'all-rights-reserved' => 'All Rights Reserved',
+            'cc-by' => 'CC BY',
+            'cc-by-nc' => 'CC BY-NC',
+            'cc-by-nd' => 'CC BY-ND',
+            'cc-by-sa' => 'CC BY-SA',
+            'cc-by-nc-nd' => 'CC BY-NC-ND',
+            'cc-by-nc-sa' => 'CC BY-NC-SA',
+        ];
+
+        // Embeddable options matching the API documentation
+        $this->embeddableByOptions = [
+            'all' => 'All',
+            'me' => 'Me',
+            'none' => 'None',
+        ];
+
+        // Set default values from the options
+        $this->track['license'] = 'no-rights-reserved';
+        $this->track['embeddable_by'] = 'all';
     }
 
     public function rules()
     {
         return [
-            'title' => 'required|string|max:255',
-            'asset_data' => 'required|file',
-            // 'permalink' => 'required|string|max:255',
-            // 'genre' => 'nullable|string|max:100',
-            // 'tag_list' => 'nullable|string|max:500',
+            'track.title' => 'required|string|max:255',
+            'track.asset_data' => 'required|file|mimes:mp3,wav,flac,m4a,mp4,mov',
+            'track.artwork_data' => 'nullable|image|mimes:png,jpg,jpeg,gif',
+            'track.permalink' => 'nullable|string|max:255',
+            'track.sharing' => 'required|string|in:public,private',
+            'track.embeddable_by' => 'nullable|string|in:all,me,none',
+            'track.purchase_url' => 'nullable|string|url',
+            'track.description' => 'nullable|string',
+            'track.genre' => 'nullable|string|max:100',
+            'track.tag_list' => 'nullable|string|max:500',
+            'track.label_name' => 'nullable|string|max:255',
+            'track.release' => 'nullable|string|max:255',
+            'track.release_date' => 'nullable|date',
+            'track.streamable' => 'nullable|boolean',
+            'track.downloadable' => 'nullable|boolean',
+            'track.license' => 'nullable|string|in:no-rights-reserved,all-rights-reserved,cc-by,cc-by-nc,cc-by-nd,cc-by-sa,cc-by-nc-nd,cc-by-nc-sa',
+            'track.commentable' => 'nullable|boolean',
+            'track.isrc' => 'nullable|string',
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'track.title.required' => 'The track title is required.',
+            'track.title.string' => 'The track title must be a string.',
+            'track.title.max' => 'The track title may not be greater than 255 characters.',
+
+            'track.asset_data.required' => 'Please upload an audio or video file for your track.',
+            'track.asset_data.file' => 'The uploaded track file must be a valid file.',
+            'track.asset_data.mimes' => 'The track must be one of the following types: MP3, WAV, FLAC, M4A, MP4, or MOV.',
+
+            'track.artwork_data.image' => 'The track artwork must be an image.',
+            'track.artwork_data.mimes' => 'The track artwork must be one of the following types: PNG, JPG, JPEG, or GIF.',
+
+            'track.permalink.string' => 'The track link must be a string.',
+            'track.permalink.max' => 'The track link may not be greater than 255 characters.',
+
+            'track.sharing.required' => 'Please select a privacy option for your track.',
+            'track.sharing.string' => 'The privacy option must be a string.',
+            'track.sharing.in' => 'The selected privacy option is invalid.',
+
+            'track.embeddable_by.string' => 'The embeddable option must be a string.',
+            'track.embeddable_by.in' => 'The selected embeddable option is invalid.',
+
+            'track.purchase_url.string' => 'The purchase URL must be a string.',
+            'track.purchase_url.url' => 'Please enter a valid URL for the purchase link.',
+
+            'track.description.string' => 'The track description must be a string.',
+
+            'track.genre.string' => 'The genre must be a string.',
+            'track.genre.max' => 'The genre may not be greater than 100 characters.',
+
+            'track.tag_list.string' => 'The tags must be a string.',
+            'track.tag_list.max' => 'The tags may not be greater than 500 characters.',
+
+            'track.label_name.string' => 'The label name must be a string.',
+            'track.label_name.max' => 'The label name may not be greater than 255 characters.',
+
+            'track.release.string' => 'The release title must be a string.',
+            'track.release.max' => 'The release title may not be greater than 255 characters.',
+
+            'track.release_date.date' => 'The release date is not a valid date.',
+
+            'track.streamable.boolean' => 'The streamable option must be true or false.',
+
+            'track.downloadable.boolean' => 'The downloadable option must be true or false.',
+
+            'track.license.string' => 'The license must be a string.',
+            'track.license.in' => 'The selected license is invalid.',
+
+            'track.commentable.boolean' => 'The commentable option must be true or false.',
+
+            'track.isrc.string' => 'The ISRC must be a string.',
+        ];
+    }
+
+    /**
+     * Updated method is now modified to NOT validate file fields.
+     */
+    public function updated($field)
+    {
+        // Don't validate file inputs while they are being uploaded.
+        // This prevents "required" or other errors during the upload process.
+        if (! in_array($field, ['track.asset_data', 'track.artwork_data'])) {
+            $this->validateOnly($field);
+        }
+    }
+
     public function submit()
     {
+        // All validation for all fields, including files, happens here.
         $this->validate();
-        
-        // Create the track data array
-        $trackData = [
-            'title' => $this->title,
-            'asset_data' => $this->asset_data,
-            // 'permalink' => $this->permalink,
-            // 'genre' => $this->genre,
-            // 'artist' => $this->artist,
-            // 'description' => $this->description,
-            // 'tag_list' => $this->tag_list,
-        ];
-        // Create the HTTP client
-        $httpClient = Http::withHeaders([
-            'Authorization' => 'OAuth ' . user()->token,
-        ]);
-        // Make the request to the SoundCloud API
-        $response = $httpClient->post($this->baseUrl . '/tracks', $trackData);
-        dd($trackData ,$httpClient, $response);
-        // Check if the request was successful
-        if ($response->successful()) {
+
+        try {
+            $httpClient = Http::withHeaders([
+                'Authorization' => 'OAuth ' . user()->token,
+            ])->attach(
+                'track[asset_data]',
+                file_get_contents($this->track['asset_data']->getRealPath()),
+                $this->track['asset_data']->getClientOriginalName()
+            );
+
+            if ($this->track['artwork_data']) {
+                $httpClient->attach(
+                    'track[artwork_data]',
+                    file_get_contents($this->track['artwork_data']->getRealPath()),
+                    $this->track['artwork_data']->getClientOriginalName()
+                );
+            }
+
+            // Highlighted change: Replaced the old requestBody creation
+            $requestBody = [];
+            foreach ($this->track as $key => $value) {
+                // Only include non-file fields and those with a value
+                if (! in_array($key, ['asset_data', 'artwork_data']) && ! empty($value)) {
+                    $requestBody["track[{$key}]"] = $value;
+                }
+            }
+
+            $response = $httpClient->post($this->baseUrl . '/tracks', $requestBody);
+
+            $response->throw();
+
+            // After a successful API call, delete the temporary files to free up disk space.
+            if ($this->track['asset_data']) {
+                $this->track['asset_data']->delete();
+            }
+            if ($this->track['artwork_data']) {
+                $this->track['artwork_data']->delete();
+            }
+            dd($response->json());
+
             session()->flash('message', 'Track submitted successfully!');
             $this->reset();
-        } else {
-            session()->flash('error', 'Failed to submit track. Please try again.');
+            return $this->redirect(route('user.my-account') . '?tab=tracks', navigate: true);
+        } catch (\Illuminate\Http\Client\RequestException $e) {
+            logger()->error('SoundCloud API Error: ' . $e->getMessage(), ['response_body' => $e->response->body()]);
+            session()->flash('error', 'Failed to submit track: ' . $e->response->json('errors.0.message', 'Unknown API error.'));
+        } catch (\Exception $e) {
+            logger()->error('General Submission Error: ' . $e->getMessage());
+            session()->flash('error', 'An unexpected error occurred. Please try again.');
         }
-
-        // Reset form after successful submission
-        $this->reset();
     }
 
     public function render()
