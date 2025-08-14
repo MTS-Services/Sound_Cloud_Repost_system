@@ -282,7 +282,6 @@
                                         </div>
                                         <span class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
                                     </div>
-                                    <button wire:click="confirmRepost('{{ $campaign_->id }}')">test</button>
                                     <div class="relative">
                                         <!-- Repost Button -->
                                         <button wire:click="confirmRepost('{{ $campaign_->id }}')"
@@ -1055,8 +1054,8 @@
                     <div class="space-y-2 mb-2">
                         <label for="commented" class="block text-sm font-medium text-gray-700">
                             {{ __('Comment:') }}
-                            <textarea name="commented" id="repostDescription" cols="5" rows="2" wire:model.live="commented"
-                                class="form-input w-full px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white resize-none"></textarea>
+                            <input name="commented" id="repostDescription" wire:model.live="commented"
+                                class="w-full h-16 px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white resize-none"/>
                         </label>
                     </div>
                     <div class="space-y-2 mb-4">
