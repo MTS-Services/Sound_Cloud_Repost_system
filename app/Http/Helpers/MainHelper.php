@@ -209,7 +209,7 @@ function repostPrice($user = null, $commentend = false, $liked = false )
     if ($followers_count === null) {
         return 1 + $total; // Default to 1 if followers count is not available
     }
-    return ceil($followers_count / 100) ? 1 + $total : ceil($followers_count / 100) + $total;
+    return ceil($followers_count / 100) === 0 ? 1 + $total : ceil($followers_count / 100) + $total;
 }
 
 function userCredits($user = null)
