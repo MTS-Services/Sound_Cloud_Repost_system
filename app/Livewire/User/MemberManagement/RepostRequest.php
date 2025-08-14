@@ -276,6 +276,7 @@ class RepostRequest extends Component
                         'soundcloud_repost_id' => $soundcloudRepostId,
                         'track_owner_urn' => $trackOwnerUrn,
                         'reposted_at' => now(),
+                        'credits_earned' => (float) repostPrice(user()),
                         // Add other necessary fields based on your Repost model
                     ]);
 

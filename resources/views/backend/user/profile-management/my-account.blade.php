@@ -814,11 +814,11 @@
                                     <div class="tab-panel mt-4" x-show="activeTab === 'reposts'" x-transition>
                                         <h2
                                             class="text-gray-900 dark:text-white text-lg sm:text-xl font-semibold mb-4">
-                                            Your Recent Reposts from
-                                            <span
+                                            Your Recent Reposts
+                                            {{-- <span
                                                 class="text-orange-500 dark:text-orange-400 hover:text-orange-400/90 dark:hover:text-orange-300">
                                                 {{ user()->name }}
-                                            </span>
+                                            </span> --}}
                                         </h2>
 
                                         @foreach ($reposts as $repost)
