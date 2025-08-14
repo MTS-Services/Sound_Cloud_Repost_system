@@ -33,11 +33,11 @@
             <!-- Quick Stats -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                 <div class="bg-white/60 backdrop-blur-md rounded-xl p-6 border border-white/30">
-                    <div class="text-3xl font-bold text-primary-600 mb-2">150+</div>
+                    <div class="text-3xl font-bold text-primary-600 mb-2">{{ $faqCount }}+</div>
                     <div class="text-slate-600">Questions Answered</div>
                 </div>
                 <div class="bg-white/60 backdrop-blur-md rounded-xl p-6 border border-white/30">
-                    <div class="text-3xl font-bold text-accent-500 mb-2">8</div>
+                    <div class="text-3xl font-bold text-accent-500 mb-2">{{ $CategoryCount }}</div>
                     <div class="text-slate-600">Categories</div>
                 </div>
                 <div class="bg-white/60 backdrop-blur-md rounded-xl p-6 border border-white/30">
@@ -49,7 +49,8 @@
     </section>
 
     <!-- Category Buttons -->
-    <section class="relative z-10 py-8 bg-white/60 dark:bg-slate-800 backdrop-blur-md border-y border-gray-200 dark:border-white/30">
+    <section
+        class="relative z-10 py-8 bg-white/60 dark:bg-slate-800 backdrop-blur-md border-y border-gray-200 dark:border-white/30">
         <div class="container mx-auto px-4">
             <div class="flex flex-wrap justify-center gap-4">
                 <!-- All Button -->
@@ -83,19 +84,22 @@
                                 <i data-lucide="help-circle" class="h-6 w-6 text-white"></i>
                             </div>
 
-                            <h2 class="text-3xl font-bold text-slate-800 dark:text-white dark:bg-gray-900">{{ $category->name }}</h2>
+                            <h2 class="text-3xl font-bold text-slate-800 dark:text-white dark:bg-gray-900">
+                                {{ $category->name }}</h2>
                         </div>
                         <div class="grid gap-4 ">
                             @foreach ($category->faqs as $faq)
-                                <div
-                                    class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 dark:border-gray-700 overflow-hidden" id="faq-{{ $faq->id }}">
+                                <div class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 dark:border-gray-700 overflow-hidden"
+                                    id="faq-{{ $faq->id }}">
                                     <button
                                         class="faq-question w-full text-left p-6 flex items-center justify-between  transition-colors dark:bg-gray-900">
-                                        <span class="font-samibold text-slate-800 pr-4 text-xl dark:text-white ">{{ $faq->question }}</span>
+                                        <span
+                                            class="font-samibold text-slate-800 pr-4 text-xl dark:text-white ">{{ $faq->question }}</span>
                                         <i data-lucide="chevron-down"
                                             class="h-5 w-5 text-slate-500 transform transition-transform"></i>
                                     </button>
-                                    <div class="faq-content px-6 text-slate-600 leading-relaxed dark:text-white dark:bg-gray-900">
+                                    <div
+                                        class="faq-content px-6 text-slate-600 leading-relaxed dark:text-white dark:bg-gray-900">
                                         <p>{{ $faq->description }}</p>
                                     </div>
                                 </div>
@@ -164,10 +168,10 @@
                         // Update active button
                         categoryButtons.forEach(btn => {
                             btn.classList.remove('active', 'text-white', 'bg-orange-500');
-                            btn.classList.add( 'text-slate-100', 'bg-gray-500');
+                            btn.classList.add('text-slate-100', 'bg-gray-500');
                         });
                         this.classList.add('active', 'bg-orange-500', 'text-white');
-                        this.classList.remove( 'text-slate-100',);
+                        this.classList.remove('text-slate-100', );
 
                         // Show/hide categories
                         faqCategories.forEach(cat => {
@@ -202,8 +206,8 @@
                 //         return;
                 //     }
 
-                //     const results = searchData.filter(item => 
-                //         item.question.toLowerCase().includes(query) || 
+                //     const results = searchData.filter(item =>
+                //         item.question.toLowerCase().includes(query) ||
                 //         item.answer.toLowerCase().includes(query)
                 //     );
 
