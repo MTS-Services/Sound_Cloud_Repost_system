@@ -187,14 +187,16 @@ function isImage($path)
     return in_array($extension, $imageExtensions);
 }
 
-function repostPrice($user = null, $commentLike = false)
+function repostPrice($user = null, $commentend = false, $liked = false )
 {
 
     $commentPrice = 0;
     $likePrice = 0;
 
-    if ($commentLike) {
+    if ($commentend) {
         $commentPrice = 2;
+    }
+    if ($liked) {
         $likePrice = 2;
     }
 
@@ -207,7 +209,7 @@ function repostPrice($user = null, $commentLike = false)
     if ($followers_count === null) {
         return 1 + $total; // Default to 1 if followers count is not available
     }
-    return ceil($followers_count / 100) + $total ?: 1 + $total; // Ensure at least 1 credit
+    return ceil(($followers_count / 100) + $total) ?: 1 + $total; // Ensure at least 1 credit
 }
 
 function userCredits($user = null)

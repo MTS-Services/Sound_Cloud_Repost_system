@@ -21,14 +21,15 @@ class CampaignService
         return Campaign::findOrFail(decrypt($encryptedId));
     }
 
-    public function syncReposts($campaign, $reposter, $soundcloudRepostId)
+    public function syncReposts($campaign, $reposter, $soundcloudRepostId, $likeCommentAbleData= [])
     {
         try {
 
-            DB::transaction(function () use ($campaign, $reposter, $soundcloudRepostId) {
+            DB::transaction(function () use ($campaign, $reposter, $soundcloudRepostId , $likeCommentAbleData) {
 
                 $trackOwnerUrn = $campaign->music->user?->urn ?? $campaign->user_urn;
                 $trackOwnerName = $campaign->music->user?->name;
+                $totalCredits = repostPrice($reposter, $likeCommentAbleData['likeable'], $likeCommentAbleData['commentable']);
 
                 // Create the Repost record
                 $repost = Repost::create([
@@ -37,12 +38,12 @@ class CampaignService
                     'campaign_id' => $campaign->id,
                     'soundcloud_repost_id' => $soundcloudRepostId,
                     'reposted_at' => now(),
-                    'credits_earned' => repostPrice($reposter),
+                    'credits_earned' => $totalCredits,
                 ]);
 
                 // Update the Campaign record using atomic increments
                 $campaign->increment('completed_reposts');
-                $campaign->increment('credits_spent', (float) repostPrice($reposter));
+                $campaign->increment('credits_spent', (float) $totalCredits);
 
                 if ($campaign->budget_credits == $campaign->credits_spent) {
                     $campaign->update(['status' => Campaign::STATUS_COMPLETED]);
@@ -59,7 +60,7 @@ class CampaignService
                     'status' => CreditTransaction::STATUS_SUCCEEDED,
                     'transaction_type' => CreditTransaction::TYPE_EARN,
                     'amount' => 0,
-                    'credits' => (float) repostPrice($reposter),
+                    'credits' => (float) $totalCredits,
                     'description' => "Repost of campaign '{$campaign->title}' by {$trackOwnerName}. " .
                         "Reposted by {$reposter->name} with Repost ID: {$repost->id}.",
                     'metadata' => [
