@@ -109,6 +109,9 @@
                             </div>
                         </label>
                     </div>
+                    @error('track.artwork_data')
+                        <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="flex flex-col items-center">
@@ -184,22 +187,25 @@
                             </template>
                         </label>
                     </div>
+                    @error('track.asset_data')
+                        <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
 
             <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-8 space-y-6 shadow-inner">
                 <h3 class="text-xl font-bold text-gray-800 dark:text-white">Track Details</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <x-form.input label="Track Title" wire:model="track.title" placeholder="e.g., Summer Anthem"
+                    <x-form.input label="Track Title" wire:model="track.title" placeholder="Enter track title"
                         required />
-                    <x-form.input label="Release Title" wire:model="track.release" placeholder="e.g., Coolify EP"
+                    <x-form.input label="Release Title" wire:model="track.release" placeholder="e.g., EP or Album Name"
                         tip="Name of the album or EP this track belongs to." />
                     <x-form.select label="Genre" wire:model="track.genre" :options="$genres"
                         placeholder="Select a genre" />
-                    <x-form.input label="Tags" wire:model="track.tag_list" placeholder="e.g., electronic chill 120bpm"
+                    <x-form.input label="Tags" wire:model="track.tag_list" placeholder="Add styles, moods, tempo."
                         tip="Separate tags with spaces. Use double quotes for multi-word tags." />
                     <x-form.input label="Label Name" wire:model="track.label_name"
-                        placeholder="e.g., Coolify Records" />
+                        placeholder="e.g., Record Label Name" />
                     <x-form.input label="Release Date" wire:model="track.release_date" type="date" />
                     <x-form.input label="ISRC" wire:model="track.isrc" placeholder="e.g., US-S1Z-15-00001" />
                     <x-form.input label="Purchase URL" wire:model="track.purchase_url"
@@ -302,16 +308,20 @@
                 </div>
             </div>
 
-            <div class="pt-8">
+            <div>
                 <button type="submit" wire:loading.attr="disabled"
                     class="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 dark:bg-orange-1000 dark:hover:bg-orange-600 dark:disabled:bg-orange-400 text-white font-bold py-4 px-6 rounded-full transition-all duration-300 flex items-center justify-center space-x-3 shadow-lg transform hover:scale-105">
-                    <span wire:loading.remove class="flex items-center gap-2">
-                        <x-lucide-upload class="h-6 w-6" />
-                        <span>Submit Track</span>
+                    <span wire:loading.remove>
+                        <div class="flex items-center justify-center gap-2">
+                            <x-lucide-upload class="h-6 w-6" />
+                            <span>Submit Track</span>
+                        </div>
                     </span>
-                    <span wire:loading class="flex items-center gap-2">
-                        <x-lucide-loader-2 class="animate-spin h-6 w-6" />
-                        <span class="ml-3">Submitting...</span>
+                    <span wire:loading>
+                        <div class="flex items-center justify-center">
+                            <x-lucide-loader-2 class="animate-spin h-6 w-6" />
+                            <span class="ml-3">Submitting...</span>
+                        </div>
                     </span>
                 </button>
             </div>

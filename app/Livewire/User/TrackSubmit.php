@@ -3,6 +3,7 @@
 namespace App\Livewire\User;
 
 use App\Models\Track;
+use App\Models\UserGenre;
 use Illuminate\Support\Facades\Http;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -44,29 +45,31 @@ class TrackSubmit extends Component
     public function mount()
     {
         // Genres from the previous implementation are fine as a simple array.
-        $this->genres = [
-            '' => 'Select a genre',
-            'Electronic',
-            'Dance',
-            'Hip Hop & Rap',
-            'Pop',
-            'R&B & Soul',
-            'Rock',
-            'Ambient',
-            'Classical',
-            'Country',
-            'Disco',
-            'Dubstep',
-            'Folk',
-            'House',
-            'Jazz',
-            'Latin',
-            'Metal',
-            'Piano',
-            'Reggae',
-            'Techno',
-            'Trance',
-        ];
+        // $this->genres = [
+        //     '' => 'Select a genre',
+        //     'Electronic',
+        //     'Dance',
+        //     'Hip Hop & Rap',
+        //     'Pop',
+        //     'R&B & Soul',
+        //     'Rock',
+        //     'Ambient',
+        //     'Classical',
+        //     'Country',
+        //     'Disco',
+        //     'Dubstep',
+        //     'Folk',
+        //     'House',
+        //     'Jazz',
+        //     'Latin',
+        //     'Metal',
+        //     'Piano',
+        //     'Reggae',
+        //     'Techno',
+        //     'Trance',
+        // ];
+
+        $this->genres = array_keys(AllGenres());
 
         // Licenses matching the API documentation exactly
         $this->licenses = [
@@ -96,8 +99,8 @@ class TrackSubmit extends Component
     {
         return [
             'track.title' => 'required|string|max:255',
-            'track.asset_data' => 'required|file|mimes:mp3,wav,flac,m4a,mp4,mov|max:250000', // 250MB
-            'track.artwork_data' => 'nullable|image|mimes:png,jpg,jpeg,gif|max:5000', // 5MB
+            'track.asset_data' => 'required|file|mimes:mp3,wav,flac,m4a,mp4,mov',
+            'track.artwork_data' => 'nullable|image|mimes:png,jpg,jpeg,gif',
             'track.permalink' => 'nullable|string|max:255',
             'track.sharing' => 'required|string|in:public,private',
             'track.embeddable_by' => 'nullable|string|in:all,me,none',
@@ -115,44 +118,105 @@ class TrackSubmit extends Component
             'track.isrc' => 'nullable|string',
         ];
     }
-    
+
+    public function messages()
+    {
+        return [
+            'track.title.required' => 'The track title is required.',
+            'track.title.string' => 'The track title must be a string.',
+            'track.title.max' => 'The track title may not be greater than 255 characters.',
+
+            'track.asset_data.required' => 'Please upload an audio or video file for your track.',
+            'track.asset_data.file' => 'The uploaded track file must be a valid file.',
+            'track.asset_data.mimes' => 'The track must be one of the following types: MP3, WAV, FLAC, M4A, MP4, or MOV.',
+
+            'track.artwork_data.image' => 'The track artwork must be an image.',
+            'track.artwork_data.mimes' => 'The track artwork must be one of the following types: PNG, JPG, JPEG, or GIF.',
+
+            'track.permalink.string' => 'The track link must be a string.',
+            'track.permalink.max' => 'The track link may not be greater than 255 characters.',
+
+            'track.sharing.required' => 'Please select a privacy option for your track.',
+            'track.sharing.string' => 'The privacy option must be a string.',
+            'track.sharing.in' => 'The selected privacy option is invalid.',
+
+            'track.embeddable_by.string' => 'The embeddable option must be a string.',
+            'track.embeddable_by.in' => 'The selected embeddable option is invalid.',
+
+            'track.purchase_url.string' => 'The purchase URL must be a string.',
+            'track.purchase_url.url' => 'Please enter a valid URL for the purchase link.',
+
+            'track.description.string' => 'The track description must be a string.',
+
+            'track.genre.string' => 'The genre must be a string.',
+            'track.genre.max' => 'The genre may not be greater than 100 characters.',
+
+            'track.tag_list.string' => 'The tags must be a string.',
+            'track.tag_list.max' => 'The tags may not be greater than 500 characters.',
+
+            'track.label_name.string' => 'The label name must be a string.',
+            'track.label_name.max' => 'The label name may not be greater than 255 characters.',
+
+            'track.release.string' => 'The release title must be a string.',
+            'track.release.max' => 'The release title may not be greater than 255 characters.',
+
+            'track.release_date.date' => 'The release date is not a valid date.',
+
+            'track.streamable.boolean' => 'The streamable option must be true or false.',
+
+            'track.downloadable.boolean' => 'The downloadable option must be true or false.',
+
+            'track.license.string' => 'The license must be a string.',
+            'track.license.in' => 'The selected license is invalid.',
+
+            'track.commentable.boolean' => 'The commentable option must be true or false.',
+
+            'track.isrc.string' => 'The ISRC must be a string.',
+        ];
+    }
+
     public function updated($field)
     {
         $this->validateOnly($field);
     }
-    
+
     public function submit()
     {
         $this->validate();
-    
+
         // Log the validated data for debugging
         logger()->info('Validated data: ', $this->track);
-    
+
+        dd($this->track);
         try {
             $httpClient = Http::withHeaders([
                 'Authorization' => 'OAuth ' . user()->token,
             ])->attach(
-                'track[asset_data]', file_get_contents($this->track['asset_data']->getRealPath()), $this->track['asset_data']->getClientOriginalName()
+                'track[asset_data]',
+                file_get_contents($this->track['asset_data']->getRealPath()),
+                $this->track['asset_data']->getClientOriginalName()
             );
-    
+
             if ($this->track['artwork_data']) {
                 $httpClient->attach(
-                    'track[artwork_data]', file_get_contents($this->track['artwork_data']->getRealPath()), $this->track['artwork_data']->getClientOriginalName()
+                    'track[artwork_data]',
+                    file_get_contents($this->track['artwork_data']->getRealPath()),
+                    $this->track['artwork_data']->getClientOriginalName()
                 );
             }
-    
+
             $requestBody = collect($this->track)->except(['asset_data', 'artwork_data'])->toArray();
-            
+
             if (empty($requestBody['permalink'])) {
                 unset($requestBody['permalink']);
             }
-    
+
             $response = $httpClient->post($this->baseUrl . '/tracks', [
                 'track' => $requestBody
             ]);
-    
+
             $response->throw();
-    
+
             session()->flash('message', 'Track submitted successfully!');
             $this->reset();
             return redirect()->route('user.dashboard');
@@ -164,7 +228,7 @@ class TrackSubmit extends Component
             session()->flash('error', 'An unexpected error occurred. Please try again.');
         }
     }
-    
+
     public function render()
     {
         return view('livewire.user.track-submit');
