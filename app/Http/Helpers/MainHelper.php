@@ -187,14 +187,16 @@ function isImage($path)
     return in_array($extension, $imageExtensions);
 }
 
-function repostPrice($user = null, $commentLike = false)
+function repostPrice($user = null, $commentend = false, $liked = false )
 {
 
     $commentPrice = 0;
     $likePrice = 0;
 
-    if ($commentLike) {
+    if ($commentend) {
         $commentPrice = 2;
+    }
+    if ($liked) {
         $likePrice = 2;
     }
 
