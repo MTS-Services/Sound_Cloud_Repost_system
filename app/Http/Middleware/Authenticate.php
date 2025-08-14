@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -39,7 +39,8 @@ class Authenticate extends Middleware
             // if ($user->email == null) {
             //     return redirect()->route('user.email.add');
             // }
-            if ($user->genres()->count() == 0 || $user->email == null) {
+
+            if ($user->genres()->count() == 0) {
                 // return redirect()->route('user.genre.add');
                 if (!$request->routeIs('user.email.add') && !$request->routeIs('user.email.store')) {
                     return redirect()->route('user.email.add');
