@@ -28,7 +28,7 @@
             @endif
             @if (session()->has('error'))
                 <div
-                    class="p-4 bg-red-50 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 rounded-lg flex items-center space-x-3 shadow-sm transition-opacity duration-300">
+                    class="p-4 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 rounded-lg flex items-center space-x-3 shadow-sm transition-opacity duration-300">
                     <x-lucide-alert-triangle class="h-6 w-6" />
                     <span class="font-medium">{{ session('error') }}</span>
                 </div>
@@ -71,11 +71,11 @@
                         x-on:drop.prevent="isDragging = false; $event.target.files = $event.dataTransfer.files; handleFileChange($event);"
                         class="relative w-full aspect-square border-4 border-dashed rounded-lg flex flex-col items-center justify-center p-6 transition-all duration-300 cursor-pointer"
                         :class="{
-                            'border-orange-500 bg-orange-50 dark:bg-orange-900/30': isDragging,
+                            'border-orange-500 bg-orange-100 dark:bg-orange-900/30': isDragging,
                             'border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800': !isDragging,
                             'ring-2 ring-orange-500': artworkPreviewUrl
                         }">
-                        <input type="file" accept="image/*" wire:model="track.artwork_data" id="artwork-upload"
+                        <input type="file" accept="image/*" name="artwork_data" id="artwork-upload"
                             class="absolute inset-0 opacity-0 cursor-pointer" @change="handleFileChange($event)">
 
                         <label for="artwork-upload"
@@ -138,11 +138,11 @@
                         x-on:drop.prevent="isDragging = false; $event.target.files = $event.dataTransfer.files; handleFileChange($event);"
                         class="relative w-full aspect-square border-4 border-dashed rounded-lg flex flex-col items-center justify-center p-6 transition-all duration-300 cursor-pointer"
                         :class="{
-                            'border-orange-500 bg-orange-50 dark:bg-orange-900/30': isDragging,
+                            'border-orange-500 bg-orange-100 dark:bg-orange-900/30': isDragging,
                             'border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800': !isDragging,
                             'ring-2 ring-orange-500': audioFileName
                         }">
-                        <input type="file" accept="audio/*, video/*" wire:model="track.asset_data" id="audio-upload"
+                        <input type="file" accept="audio/*, video/*" name="asset_data" id="audio-upload"
                             class="absolute inset-0 opacity-0 cursor-pointer" @change="handleFileChange($event)">
 
                         <label for="audio-upload"
@@ -189,22 +189,15 @@
             <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-8 space-y-6 shadow-inner">
                 <h3 class="text-xl font-bold text-gray-800 dark:text-white">Track Details</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <x-form.input label="Track Title" wire:model="track.title" placeholder="e.g., Summer Anthem"
-                        required />
-                    <x-form.input label="Main Artist(s)" wire:model="track.artist"
-                        placeholder="e.g., Mahfuz Ahmed, The Artist" tip="Use commas to separate multiple artists." />
-                    <x-form.select label="Genre" wire:model="track.genre" :options="$genres"
-                        placeholder="Select a genre" />
-                    <x-form.input label="Tags" wire:model="track.tag_list" placeholder="e.g., electronic chill 120bpm"
+                    <x-form.input label="Track Title" wire:model="title" placeholder="e.g., Summer Anthem" required />
+                    <x-form.input label="Main Artist(s)" wire:model="artist"
+                        placeholder="e.g., Mahfuz Ahmed, The Artist" required
+                        tip="Use commas to separate multiple artists." />
+                    <x-form.select label="Genre" wire:model="genre" :options="allGenres()" placeholder="Select a genre" />
+                    <x-form.input label="Tags" wire:model="tag_list" placeholder="e.g., electronic chill 120bpm"
                         tip="Separate tags with spaces. Use double quotes for multi-word tags." />
-                    <x-form.input label="Label Name" wire:model="track.label_name"
-                        placeholder="e.g., Coolify Records" />
-                    <x-form.input label="Release Date" wire:model="track.release_date" type="date" />
-                    <x-form.input label="ISRC" wire:model="track.isrc" placeholder="e.g., US-S1Z-15-00001" />
-                    <x-form.input label="Purchase URL" wire:model="track.purchase_url"
-                        placeholder="e.g., https://bandcamp.com/your-track" />
                 </div>
-                <x-form.textarea label="Description" wire:model="track.description" rows="4"
+                <x-form.textarea label="Description" wire:model="description" rows="4"
                     placeholder="Tell your fans about the track..."
                     tip="Tracks with descriptions get more engagement." />
             </div>
@@ -217,93 +210,31 @@
                             Privacy</label>
                         <div class="flex items-center space-x-6">
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="radio" name="privacy" wire:model="track.sharing" value="public"
+                                <input type="radio" name="privacy" wire:model="sharing" value="public"
                                     class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
                                 <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">Public</span>
                             </label>
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="radio" name="privacy" wire:model="track.sharing" value="private"
+                                <input type="radio" name="privacy" wire:model="sharing" value="private"
                                     class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
                                 <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">Private</span>
                             </label>
                         </div>
-                        @error('track.sharing')
+                        @error('sharing')
                             <p class="text-sm text-red-500 mt-2">{{ $message }}</p>
                         @enderror
                     </div>
-
-                    <div x-data="{ permalink: @entangle('track.permalink') }">
-                        <x-form.input label="Track Link" wire:model="track.permalink" placeholder="track-name"
+                    <div x-data="{ permalink: @entangle('permalink') }">
+                        <x-form.input label="Track Link" wire:model="permalink" placeholder="track-name"
                             prefix="https://soundcloud.com/" tip="This will be the public URL for your track."
                             input-id="track-link-input" />
                     </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                    {{-- Streamable Radio Buttons --}}
-                    <div>
-                        <label
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Streamable</label>
-                        <div class="flex items-center space-x-6">
-                            <label class="inline-flex items-center cursor-pointer">
-                                <input type="radio" wire:model="track.streamable" value="true"
-                                    class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
-                                <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">Yes</span>
-                            </label>
-                            <label class="inline-flex items-center cursor-pointer">
-                                <input type="radio" wire:model="track.streamable" value="false"
-                                    class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
-                                <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">No</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    {{-- Downloadable Radio Buttons --}}
-                    <div>
-                        <label
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Downloadable</label>
-                        <div class="flex items-center space-x-6">
-                            <label class="inline-flex items-center cursor-pointer">
-                                <input type="radio" wire:model="track.downloadable" value="true"
-                                    class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
-                                <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">Yes</span>
-                            </label>
-                            <label class="inline-flex items-center cursor-pointer">
-                                <input type="radio" wire:model="track.downloadable" value="false"
-                                    class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
-                                <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">No</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    {{-- Commentable Radio Buttons --}}
-                    <div>
-                        <label
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Commentable</label>
-                        <div class="flex items-center space-x-6">
-                            <label class="inline-flex items-center cursor-pointer">
-                                <input type="radio" wire:model="track.commentable" value="true"
-                                    class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
-                                <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">Yes</span>
-                            </label>
-                            <label class="inline-flex items-center cursor-pointer">
-                                <input type="radio" wire:model="track.commentable" value="false"
-                                    class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
-                                <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">No</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
-                    <x-form.select label="License" wire:model="track.license" :options="$licenses" />
-                    <x-form.select label="Embeddable by" wire:model="track.embeddable_by" :options="$embeddableByOptions" />
                 </div>
             </div>
 
             <div class="pt-8">
                 <button type="submit" wire:loading.attr="disabled"
-                    class="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 dark:bg-orange-500 dark:hover:bg-orange-600 dark:disabled:bg-orange-400 text-white font-bold py-4 px-6 rounded-full transition-all duration-300 flex items-center justify-center space-x-3 shadow-lg transform hover:scale-105">
+                    class="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 dark:bg-orange-1000 dark:hover:bg-orange-600 dark:disabled:bg-orange-400 text-white font-bold py-4 px-6 rounded-full transition-all duration-300 flex items-center justify-center space-x-3 shadow-lg transform hover:scale-105">
                     <span wire:loading.remove class="flex items-center gap-2">
                         <x-lucide-upload class="h-6 w-6" />
                         <span>Submit Track</span>
@@ -317,6 +248,36 @@
         </form>
     </section>
 </div>
+
+@php
+    if (!function_exists('allGenres')) {
+        function allGenres()
+        {
+            return [
+                'Electronic',
+                'Dance',
+                'Hip Hop & Rap',
+                'Pop',
+                'R&B & Soul',
+                'Rock',
+                'Ambient',
+                'Classical',
+                'Country',
+                'Disco',
+                'Dubstep',
+                'Folk',
+                'House',
+                'Jazz',
+                'Latin',
+                'Metal',
+                'Piano',
+                'Reggae',
+                'Techno',
+                'Trance',
+            ];
+        }
+    }
+@endphp
 
 @once
     @push('scripts')
