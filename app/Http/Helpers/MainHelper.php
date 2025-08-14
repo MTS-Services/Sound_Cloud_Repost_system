@@ -254,49 +254,313 @@ function totalReposts($campaign = null)
 function AllGenres()
 {
     $genres = [
-        "Alternative Rock" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 15.75l-4.5-4.5m0 0l-4.5-4.5m4.5 4.5l4.5-4.5m-4.5 4.5l-4.5 4.5" /></svg>',
-        "Ambient" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25a8.25 8.25 0 100-16.5 8.25 8.25 0 000 16.5z" /></svg>',
-        "Classical" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75V21" /></svg>',
-        "Country" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M9 13.5l6-6-6-6" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.5l6-6-6-6" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.5l6-6-6-6" /></svg>',
-        "Dance & EDM" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 14.25v2.25m-4.5-4.5l-2.25 2.25m9 0l2.25 2.25M12 18.75h-.008v.008H12z" /></svg>',
-        "Dancehall" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19.5v-4.5m0 0h4.5m-4.5 0l-2.25-2.25" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /></svg>',
-        "Deep House" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m-3-3h6" /></svg>',
-        "Disco" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18a6 6 0 100-12 6 6 0 000 12z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v3m0-21v3m9 9h-3m-15 0h-3" /></svg>',
-        "Drum & Bass" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15 15.75l-6-6m0 0l6-6m-6 6l-6-6m6 6l6-6m-6 6l-6 6" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /></svg>',
-        "Dubstep" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6" /></svg>',
-        "Electronic" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6" /><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6" /></svg>',
-        "Folk & Singer-Songwriter" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 14.25v2.25m-4.5-4.5l-2.25 2.25m9 0l2.25 2.25M12 18.75h-.008v.008H12z" /></svg>',
-        "Hip-hop & Rap" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>',
-        "House" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6" /><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6" /></svg>',
-        "Indie" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 12m-3 0a3 3 0 106 0 3 3 0 10-6 0z" /></svg>',
-        "Jazz & Blues" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 9l-6 6" /><path stroke-linecap="round" stroke-linejoin="round" d="M9 9l6 6" /></svg>',
-        "Latin" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 14.25a3 3 0 11-6 0 3 3 0 016 0z" /></svg>',
-        "Metal" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 14.25v2.25m-4.5-4.5l-2.25 2.25m9 0l2.25 2.25M12 18.75h-.008v.008H12z" /></svg>',
-        "Piano" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /></svg>',
-        "Pop" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m0 3a3 3 0 110-6 3 3 0 010 6z" /></svg>',
-        "R&B & Soul" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6" /><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6" /></svg>',
-        "Reggae" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6" /></svg>',
-        "Reggaeton" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m-3-3h6" /></svg>',
-        "Rock" => '<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-500 has-[:checked]:text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l-2 3M9 19l-2-3M9 19v2a1 1 0 001 1h4a1 1 0 001-1v-2M15 19v-6m0 6l-2-3m2 3l-2 3M15 19l-2-3M15 19v-6M15 19l2-3m-2 3l2 3M15 19v-6m-2 3l2-3m-2 3l2 3M15 19l2-3M15 19l-2 3"/></svg>',
-        "Soundtrack" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 15.75l-4.5-4.5m0 0l-4.5-4.5m4.5 4.5l4.5-4.5m-4.5 4.5l-4.5 4.5" /></svg>',
-        "Speech" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6" /></svg>',
-        "Techno" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m-3-3h6" /></svg>',
-        "Trance" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m-3-3h6" /></svg>',
-        "Trap" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m-3-3h6" /></svg>',
-        "Triphop" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m-3-3h6" /></svg>',
-        "World" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m-3-3h6" /></svg>',
-        "all audio genres" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m-3-3h6" /></svg>',
-        "audiobooks" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m-3-3h6" /></svg>',
-        "business" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m-3-3h6" /></svg>',
-        "comedy" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m-3-3h6" /></svg>',
-        "entertainment" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m-3-3h6" /></svg>',
-        "learning" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m-3-3h6" /></svg>',
-        "news & politics" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m-3-3h6" /></svg>',
-        "religion & spirituality" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m-3-3h6" /></svg>',
-        "science" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m-3-3h6" /></svg>',
-        "sports" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m-3-3h6" /></svg>',
-        "Storytelling" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m-3-3h6" /></svg>',
-        "Technology" => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m-3-3h6" /></svg>',
+        "Alternative Rock" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="altrock" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ff6b35"/><stop offset="100%" style="stop-color:#f7931e"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#altrock)"/><path d="M8 8l8 8M16 8l-8 8" stroke="#2d3436" stroke-width="2" stroke-linecap="round"/></svg>',
+
+        "Ambient" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><radialGradient id="ambient"><stop offset="0%" style="stop-color:#667eea"/><stop offset="50%" style="stop-color:#764ba2"/><stop offset="100%" style="stop-color:#f093fb"/></radialGradient></defs><circle cx="12" cy="12" r="10" fill="url(#ambient)" opacity="0.8"/><circle cx="12" cy="12" r="6" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.6"/><circle cx="12" cy="12" r="3" fill="#00d4ff" opacity="0.4"/></svg>',
+
+        "Classical" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="classical" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#c9a96e"/><stop offset="100%" style="stop-color:#8b6914"/></linearGradient></defs><rect width="24" height="24" fill="url(#classical)" rx="3"/><path d="M8 6v12M16 6v12M8 12h8" stroke="#2d3436" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="8" r="2" fill="#2d3436"/></svg>',
+
+        "Country" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="country" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#d4a574"/><stop offset="100%" style="stop-color:#8b4513"/></linearGradient></defs><circle cx="12" cy="12" r="11" fill="url(#country)"/><path d="M6 12c2-4 4-4 6 0s4 4 6 0" fill="none" stroke="#2d3436" stroke-width="2"/><circle cx="12" cy="7" r="2" fill="#2d3436"/><path d="M10 16h4v2h-4z" fill="#2d3436"/></svg>',
+
+        "Dance & EDM" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="edm" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ff0080"/><stop offset="50%" style="stop-color:#ff8c00"/><stop offset="100%" style="stop-color:#40e0d0"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#edm)"/><rect x="8" y="14" width="2" height="6" fill="#2d3436" rx="1"/><rect x="11" y="10" width="2" height="10" fill="#2d3436" rx="1"/><rect x="14" y="8" width="2" height="12" fill="#2d3436" rx="1"/></svg>',
+
+        "Dancehall" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="dancehall" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ffd700"/><stop offset="50%" style="stop-color:#ff6347"/><stop offset="100%" style="stop-color:#32cd32"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#dancehall)"/><path d="M8 10l4 4 4-4" fill="#2d3436"/><circle cx="12" cy="16" r="2" fill="#2d3436"/></svg>',
+
+        "Deep House" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="deephouse" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#1a1a2e"/><stop offset="50%" style="stop-color:#16213e"/><stop offset="100%" style="stop-color:#0f3460"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#deephouse)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#00d4ff" stroke-width="2"/><circle cx="12" cy="12" r="2" fill="#00d4ff"/></svg>',
+
+        "Disco" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="disco" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ff1493"/><stop offset="25%" style="stop-color:#ff69b4"/><stop offset="50%" style="stop-color:#dda0dd"/><stop offset="75%" style="stop-color:#9370db"/><stop offset="100%" style="stop-color:#8a2be2"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#disco)"/><g transform="translate(12,12)"><rect x="-1" y="-8" width="2" height="4" fill="#ffd700" transform="rotate(0)"/><rect x="-1" y="-8" width="2" height="4" fill="#ffd700" transform="rotate(45)"/><rect x="-1" y="-8" width="2" height="4" fill="#ffd700" transform="rotate(90)"/><rect x="-1" y="-8" width="2" height="4" fill="#ffd700" transform="rotate(135)"/></g></svg>',
+
+        "Drum & Bass" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="dnb" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ff4757"/><stop offset="100%" style="stop-color:#c44569"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#dnb)"/><path d="M6 12l6-6 6 6-6 6z" fill="#2d3436"/><circle cx="12" cy="12" r="2" fill="url(#dnb)"/></svg>',
+
+        "Dubstep" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="dubstep" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00ff88"/><stop offset="100%" style="stop-color:#00aa55"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#dubstep)"/><path d="M8 8h8l-4 8z" fill="#2d3436"/><rect x="6" y="16" width="12" height="2" fill="#2d3436"/></svg>',
+
+        "Electronic" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="electronic" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00f5ff"/><stop offset="100%" style="stop-color:#0080ff"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#electronic)"/><rect x="6" y="10" width="12" height="4" fill="#2d3436" rx="2"/><circle cx="8" cy="12" r="1" fill="url(#electronic)"/><circle cx="12" cy="12" r="1" fill="url(#electronic)"/><circle cx="16" cy="12" r="1" fill="url(#electronic)"/></svg>',
+
+        "Folk & Singer-Songwriter" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="folk" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#8b4513"/><stop offset="100%" style="stop-color:#daa520"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#folk)"/><ellipse cx="12" cy="14" rx="6" ry="4" fill="#2d3436"/><rect x="11" y="6" width="2" height="8" fill="#2d3436"/><circle cx="12" cy="8" r="1" fill="url(#folk)"/></svg>',
+
+        "Hip-hop & Rap" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="hiphop" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ffd700"/><stop offset="100%" style="stop-color:#ff6347"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#hiphop)"/><path d="M8 8v8l8-4z" fill="#2d3436"/><rect x="6" y="15" width="12" height="2" fill="#2d3436"/></svg>',
+
+        "House" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="house" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ff6b9d"/><stop offset="100%" style="stop-color:#c44569"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#house)"/><rect x="8" y="8" width="8" height="8" fill="#2d3436" rx="1"/><rect x="10" y="10" width="4" height="2" fill="url(#house)"/><rect x="10" y="14" width="4" height="2" fill="url(#house)"/></svg>',
+
+        "Indie" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="indie" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ff7675"/><stop offset="100%" style="stop-color:#fd79a8"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#indie)"/><circle cx="12" cy="12" r="4" fill="none" stroke="#2d3436" stroke-width="2"/><circle cx="12" cy="12" r="1" fill="#2d3436"/></svg>',
+
+        "Jazz & Blues" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="jazz" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#2d3436"/><stop offset="100%" style="stop-color:#636e72"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#jazz)"/><path d="M8 8c0 4 8 4 8 8" fill="none" stroke="#ffd700" stroke-width="2"/><circle cx="16" cy="16" r="2" fill="#ffd700"/></svg>',
+
+        "Latin" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="latin" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ff6b35"/><stop offset="50%" style="stop-color:#ffd700"/><stop offset="100%" style="stop-color:#ff1744"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#latin)"/><path d="M9 9c0 3 6 3 6 6" fill="none" stroke="#2d3436" stroke-width="2"/><circle cx="15" cy="15" r="1.5" fill="#2d3436"/><circle cx="9" cy="9" r="1.5" fill="#2d3436"/></svg>',
+
+        "Metal" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="metal" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#2d3436"/><stop offset="100%" style="stop-color:#636e72"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#metal)"/><path d="M6 10l6 8 6-8-6-4z" fill="#ff0000"/><path d="M10 8l4 0 2 4-4 0z" fill="#ffd700"/></svg>',
+
+        "Piano" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="piano" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f1f2f6"/><stop offset="100%" style="stop-color:#ddd"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#piano)" stroke="#2d3436" stroke-width="1"/><rect x="7" y="8" width="10" height="8" fill="#e8e8e8" stroke="#2d3436"/><rect x="9" y="8" width="1" height="5" fill="#2d3436"/><rect x="11" y="8" width="1" height="5" fill="#2d3436"/><rect x="14" y="8" width="1" height="5" fill="#2d3436"/></svg>',
+
+        "Pop" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="pop" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ff9ff3"/><stop offset="50%" style="stop-color:#f368e0"/><stop offset="100%" style="stop-color:#ff3838"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#pop)"/><path d="M12 6l1.5 4.5h4.5l-3.75 2.5L15.75 18 12 15.5 8.25 18l1.5-4.5L6 11h4.5z" fill="#ffd700"/><circle cx="12" cy="12" r="3" fill="url(#pop)"/></svg>',
+
+        "R&B & Soul" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="rnb" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#8e44ad"/><stop offset="100%" style="stop-color:#9b59b6"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#rnb)"/><path d="M8 10c0-2 8-2 8 0v4c0 2-8 2-8 0z" fill="#ffd700"/><circle cx="12" cy="12" r="2" fill="url(#rnb)"/></svg>',
+
+        "Reggae" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="reggae" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ff1744"/><stop offset="33%" style="stop-color:#ffd600"/><stop offset="66%" style="stop-color:#00e676"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#reggae)"/><path d="M6 12h12" stroke="#2d3436" stroke-width="2"/><path d="M9 9l6 6" stroke="#2d3436" stroke-width="2"/><path d="M15 9l-6 6" stroke="#2d3436" stroke-width="2"/></svg>',
+
+        "Reggaeton" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="reggaeton" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ff6b35"/><stop offset="100%" style="stop-color:#ff1744"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#reggaeton)"/><rect x="8" y="9" width="8" height="6" fill="#2d3436" rx="1"/><rect x="10" y="11" width="4" height="2" fill="url(#reggaeton)"/></svg>',
+
+        "Rock" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="rock" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#2d3436"/><stop offset="100%" style="stop-color:#636e72"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#rock)"/><path d="M8 16l8-8M8 8l8 8" stroke="#ff4757" stroke-width="3" stroke-linecap="round"/><circle cx="12" cy="12" r="2" fill="#ff4757"/></svg>',
+
+        "Soundtrack" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="soundtrack" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ffd700"/><stop offset="100%" style="stop-color:#ff6347"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#soundtrack)"/><rect x="8" y="8" width="8" height="8" fill="#2d3436" rx="1"/><path d="M10 10l4 4M14 10l-4 4" stroke="url(#soundtrack)" stroke-width="2"/></svg>',
+
+        "Speech" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="speech" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00b894"/><stop offset="100%" style="stop-color:#00cec9"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#speech)"/><ellipse cx="12" cy="12" rx="6" ry="4" fill="#2d3436"/><rect x="11" y="10" width="2" height="4" fill="url(#speech)"/></svg>',
+
+        "Techno" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="techno" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00f5ff"/><stop offset="100%" style="stop-color:#0080ff"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#techno)"/><rect x="8" y="10" width="8" height="4" fill="#2d3436"/><rect x="9" y="11" width="6" height="2" fill="url(#techno)"/></svg>',
+
+        "Trance" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="trance" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a29bfe"/><stop offset="100%" style="stop-color:#6c5ce7"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#trance)"/><path d="M6 12c2-4 4-4 6 0s4 4 6 0" fill="none" stroke="#ffd700" stroke-width="3"/></svg>',
+
+        "Trap" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="trap" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#2d3436"/><stop offset="100%" style="stop-color:#636e72"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#trap)"/><path d="M8 8l8 8M8 16l8-8" stroke="#ff6b35" stroke-width="2"/><rect x="10" y="10" width="4" height="4" fill="#ff6b35"/></svg>',
+
+        "Triphop" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="triphop" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#fd79a8"/><stop offset="100%" style="stop-color:#e84393"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#triphop)"/><path d="M8 10l4 4 4-4" fill="#2d3436"/><rect x="10" y="12" width="4" height="4" fill="#2d3436"/></svg>',
+
+        "World" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="world" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00b894"/><stop offset="50%" style="stop-color:#ffeaa7"/><stop offset="100%" style="stop-color:#fd79a8"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#world)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#2d3436" stroke-width="2"/><path d="M12 6v12M6 12h12" stroke="#2d3436" stroke-width="1"/></svg>',
+
+        "all audio genres" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><radialGradient id="allgenres"><stop offset="0%" style="stop-color:#ffd700"/><stop offset="20%" style="stop-color:#ff6b35"/><stop offset="40%" style="stop-color:#00b894"/><stop offset="60%" style="stop-color:#a29bfe"/><stop offset="80%" style="stop-color:#fd79a8"/><stop offset="100%" style="stop-color:#2d3436"/></radialGradient></defs><circle cx="12" cy="12" r="10" fill="url(#allgenres)"/><circle cx="12" cy="12" r="3" fill="#2d3436"/></svg>',
+
+        "audiobooks" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="audiobooks" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#6c5ce7"/><stop offset="100%" style="stop-color:#a29bfe"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#audiobooks)"/><rect x="8" y="6" width="8" height="12" fill="#f1f2f6" rx="1"/><rect x="9" y="8" width="6" height="1" fill="url(#audiobooks)"/><rect x="9" y="10" width="6" height="1" fill="url(#audiobooks)"/><rect x="9" y="12" width="4" height="1" fill="url(#audiobooks)"/></svg>',
+
+        "business" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="business" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#2d3436"/><stop offset="100%" style="stop-color:#636e72"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#business)"/><rect x="8" y="8" width="8" height="8" fill="#00b894" rx="1"/><rect x="9" y="10" width="2" height="2" fill="url(#business)"/><rect x="13" y="10" width="2" height="2" fill="url(#business)"/><rect x="9" y="13" width="6" height="1" fill="url(#business)"/></svg>',
+
+        "comedy" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="comedy" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ffd700"/><stop offset="100%" style="stop-color:#ff6347"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#comedy)"/><circle cx="9" cy="10" r="1" fill="#2d3436"/><circle cx="15" cy="10" r="1" fill="#2d3436"/><path d="M8 14c0 2 4 4 4 4s4-2 4-4" fill="#2d3436"/></svg>',
+
+        "entertainment" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="entertainment" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ff7675"/><stop offset="50%" style="stop-color:#fd79a8"/><stop offset="100%" style="stop-color:#a29bfe"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#entertainment)"/><path d="M8 8l8 8M8 16l8-8" stroke="#ffd700" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="#ffd700"/></svg>',
+
+        "learning" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="learning" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00b894"/><stop offset="100%" style="stop-color:#00cec9"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#learning)"/><rect x="8" y="7" width="8" height="10" fill="#f1f2f6" rx="1"/><rect x="9" y="9" width="6" height="1" fill="url(#learning)"/><rect x="9" y="11" width="6" height="1" fill="url(#learning)"/><rect x="9" y="13" width="4" height="1" fill="url(#learning)"/></svg>',
+
+        "news & politics" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="news" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#2d3436"/><stop offset="100%" style="stop-color:#636e72"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#news)"/><rect x="7" y="6" width="10" height="12" fill="#f1f2f6" rx="1"/><rect x="8" y="8" width="8" height="2" fill="url(#news)"/><rect x="8" y="11" width="8" height="1" fill="url(#news)"/><rect x="8" y="13" width="6" height="1" fill="url(#news)"/><rect x="8" y="15" width="5" height="1" fill="url(#news)"/></svg>',
+
+        "religion & spirituality" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="religion" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ffd700"/><stop offset="100%" style="stop-color:#ff6347"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#religion)"/><path d="M12 6v12M6 12h12" stroke="#2d3436" stroke-width="3" stroke-linecap="round"/><circle cx="12" cy="12" r="2" fill="#2d3436"/></svg>',
+
+        "science" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="science" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00b894"/><stop offset="100%" style="stop-color:#00cec9"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#science)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#ffd700" stroke-width="2"/><circle cx="12" cy="8" r="1" fill="#ffd700"/><circle cx="8" cy="14" r="1" fill="#ffd700"/><circle cx="16" cy="14" r="1" fill="#ffd700"/><path d="M12 8l-4 6M12 8l4 6" stroke="#ffd700" stroke-width="1"/></svg>',
+
+        "sports" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="sports" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ff6b35"/><stop offset="100%" style="stop-color:#f7931e"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#sports)"/><circle cx="12" cy="12" r="6" fill="#2d3436"/><path d="M12 6v12M6 12h12M9 9l6 6M15 9l-6 6" stroke="url(#sports)" stroke-width="1"/></svg>',
+
+        "Storytelling" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="storytelling" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a29bfe"/><stop offset="100%" style="stop-color:#6c5ce7"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#storytelling)"/><ellipse cx="12" cy="10" rx="6" ry="3" fill="#ffd700"/><path d="M9 13c1 2 2 2 3 2s2 0 3-2" fill="none" stroke="#ffd700" stroke-width="2" stroke-linecap="round"/></svg>',
+
+        "Technology" => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6"><defs><linearGradient id="technology" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00f5ff"/><stop offset="100%" style="stop-color:#0080ff"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#technology)"/><rect x="8" y="8" width="8" height="8" fill="#2d3436" rx="1"/><circle cx="10" cy="10" r="1" fill="url(#technology)"/><circle cx="14" cy="10" r="1" fill="url(#technology)"/><circle cx="10" cy="14" r="1" fill="url(#technology)"/><circle cx="14" cy="14" r="1" fill="url(#technology)"/><rect x="11" y="11" width="2" height="2" fill="url(#technology)"/></svg>',
+    ];
+
+    return $genres;
+}
+
+function AllGenresWithIcons()
+{
+    $genres = [
+        "Alternative Rock" => [
+            'lucide' => '<x-lucide-zap class="w-6 h-6 text-orange-500" />',
+            'heroicon' => '<x-heroicon-o-bolt class="w-6 h-6 text-orange-500" />'
+        ],
+
+        "Ambient" => [
+            'lucide' => '<x-lucide-waves class="w-6 h-6 text-purple-500" />',
+            'heroicon' => '<x-heroicon-o-wifi class="w-6 h-6 text-purple-500" />'
+        ],
+
+        "Classical" => [
+            'lucide' => '<x-lucide-music class="w-6 h-6 text-yellow-600" />',
+            'heroicon' => '<x-heroicon-o-musical-note class="w-6 h-6 text-yellow-600" />'
+        ],
+
+        "Country" => [
+            'lucide' => '<x-lucide-guitar class="w-6 h-6 text-amber-600" />',
+            'heroicon' => '<x-heroicon-o-home class="w-6 h-6 text-amber-600" />'
+        ],
+
+        "Dance & EDM" => [
+            'lucide' => '<x-lucide-audio-lines class="w-6 h-6 text-pink-500" />',
+            'heroicon' => '<x-heroicon-o-signal class="w-6 h-6 text-pink-500" />'
+        ],
+
+        "Dancehall" => [
+            'lucide' => '<x-lucide-disc-3 class="w-6 h-6 text-green-500" />',
+            'heroicon' => '<x-heroicon-o-play-circle class="w-6 h-6 text-green-500" />'
+        ],
+
+        "Deep House" => [
+            'lucide' => '<x-lucide-circle-dot class="w-6 h-6 text-blue-800" />',
+            'heroicon' => '<x-heroicon-o-stop-circle class="w-6 h-6 text-blue-800" />'
+        ],
+
+        "Disco" => [
+            'lucide' => '<x-lucide-sparkles class="w-6 h-6 text-pink-400" />',
+            'heroicon' => '<x-heroicon-o-star class="w-6 h-6 text-pink-400" />'
+        ],
+
+        "Drum & Bass" => [
+            'lucide' => '<x-lucide-activity class="w-6 h-6 text-red-500" />',
+            'heroicon' => '<x-heroicon-o-chart-bar class="w-6 h-6 text-red-500" />'
+        ],
+
+        "Dubstep" => [
+            'lucide' => '<x-lucide-zap class="w-6 h-6 text-green-400" />',
+            'heroicon' => '<x-heroicon-o-lightning-bolt class="w-6 h-6 text-green-400" />'
+        ],
+
+        "Electronic" => [
+            'lucide' => '<x-lucide-radio class="w-6 h-6 text-cyan-500" />',
+            'heroicon' => '<x-heroicon-o-signal class="w-6 h-6 text-cyan-500" />'
+        ],
+
+        "Folk & Singer-Songwriter" => [
+            'lucide' => '<x-lucide-guitar class="w-6 h-6 text-brown-600" />',
+            'heroicon' => '<x-heroicon-o-microphone class="w-6 h-6 text-brown-600" />'
+        ],
+
+        "Hip-hop & Rap" => [
+            'lucide' => '<x-lucide-mic class="w-6 h-6 text-yellow-500" />',
+            'heroicon' => '<x-heroicon-o-microphone class="w-6 h-6 text-yellow-500" />'
+        ],
+
+        "House" => [
+            'lucide' => '<x-lucide-home class="w-6 h-6 text-purple-500" />',
+            'heroicon' => '<x-heroicon-o-home class="w-6 h-6 text-purple-500" />'
+        ],
+
+        "Indie" => [
+            'lucide' => '<x-lucide-heart class="w-6 h-6 text-pink-400" />',
+            'heroicon' => '<x-heroicon-o-heart class="w-6 h-6 text-pink-400" />'
+        ],
+
+        "Jazz & Blues" => [
+            'lucide' => '<x-lucide-music-2 class="w-6 h-6 text-yellow-500" />',
+            'heroicon' => '<x-heroicon-o-musical-note class="w-6 h-6 text-yellow-500" />'
+        ],
+
+        "Latin" => [
+            'lucide' => '<x-lucide-flame class="w-6 h-6 text-red-500" />',
+            'heroicon' => '<x-heroicon-o-fire class="w-6 h-6 text-red-500" />'
+        ],
+
+        "Metal" => [
+            'lucide' => '<x-lucide-zap class="w-6 h-6 text-gray-700" />',
+            'heroicon' => '<x-heroicon-o-lightning-bolt class="w-6 h-6 text-gray-700" />'
+        ],
+
+        "Piano" => [
+            'lucide' => '<x-lucide-piano class="w-6 h-6 text-gray-800" />',
+            'heroicon' => '<x-heroicon-o-musical-note class="w-6 h-6 text-gray-800" />'
+        ],
+
+        "Pop" => [
+            'lucide' => '<x-lucide-star class="w-6 h-6 text-pink-500" />',
+            'heroicon' => '<x-heroicon-o-star class="w-6 h-6 text-pink-500" />'
+        ],
+
+        "R&B & Soul" => [
+            'lucide' => '<x-lucide-heart class="w-6 h-6 text-purple-600" />',
+            'heroicon' => '<x-heroicon-o-heart class="w-6 h-6 text-purple-600" />'
+        ],
+
+        "Reggae" => [
+            'lucide' => '<x-lucide-sun class="w-6 h-6 text-green-600" />',
+            'heroicon' => '<x-heroicon-o-sun class="w-6 h-6 text-green-600" />'
+        ],
+
+        "Reggaeton" => [
+            'lucide' => '<x-lucide-volume-2 class="w-6 h-6 text-orange-500" />',
+            'heroicon' => '<x-heroicon-o-speaker-wave class="w-6 h-6 text-orange-500" />'
+        ],
+
+        "Rock" => [
+            'lucide' => '<x-lucide-guitar class="w-6 h-6 text-red-600" />',
+            'heroicon' => '<x-heroicon-o-bolt class="w-6 h-6 text-red-600" />'
+        ],
+
+        "Soundtrack" => [
+            'lucide' => '<x-lucide-film class="w-6 h-6 text-yellow-600" />',
+            'heroicon' => '<x-heroicon-o-film class="w-6 h-6 text-yellow-600" />'
+        ],
+
+        "Speech" => [
+            'lucide' => '<x-lucide-mic class="w-6 h-6 text-teal-500" />',
+            'heroicon' => '<x-heroicon-o-microphone class="w-6 h-6 text-teal-500" />'
+        ],
+
+        "Techno" => [
+            'lucide' => '<x-lucide-cpu class="w-6 h-6 text-blue-500" />',
+            'heroicon' => '<x-heroicon-o-cog class="w-6 h-6 text-blue-500" />'
+        ],
+
+        "Trance" => [
+            'lucide' => '<x-lucide-waves class="w-6 h-6 text-purple-400" />',
+            'heroicon' => '<x-heroicon-o-wifi class="w-6 h-6 text-purple-400" />'
+        ],
+
+        "Trap" => [
+            'lucide' => '<x-lucide-triangle class="w-6 h-6 text-gray-600" />',
+            'heroicon' => '<x-heroicon-o-play class="w-6 h-6 text-gray-600" />'
+        ],
+
+        "Triphop" => [
+            'lucide' => '<x-lucide-circle-dot class="w-6 h-6 text-pink-600" />',
+            'heroicon' => '<x-heroicon-o-stop-circle class="w-6 h-6 text-pink-600" />'
+        ],
+
+        "World" => [
+            'lucide' => '<x-lucide-globe class="w-6 h-6 text-emerald-500" />',
+            'heroicon' => '<x-heroicon-o-globe-alt class="w-6 h-6 text-emerald-500" />'
+        ],
+
+        "all audio genres" => [
+            'lucide' => '<x-lucide-music class="w-6 h-6 text-indigo-500" />',
+            'heroicon' => '<x-heroicon-o-musical-note class="w-6 h-6 text-indigo-500" />'
+        ],
+
+        "audiobooks" => [
+            'lucide' => '<x-lucide-book-audio class="w-6 h-6 text-purple-600" />',
+            'heroicon' => '<x-heroicon-o-book-open class="w-6 h-6 text-purple-600" />'
+        ],
+
+        "business" => [
+            'lucide' => '<x-lucide-briefcase class="w-6 h-6 text-gray-600" />',
+            'heroicon' => '<x-heroicon-o-briefcase class="w-6 h-6 text-gray-600" />'
+        ],
+
+        "comedy" => [
+            'lucide' => '<x-lucide-smile class="w-6 h-6 text-yellow-500" />',
+            'heroicon' => '<x-heroicon-o-face-smile class="w-6 h-6 text-yellow-500" />'
+        ],
+
+        "entertainment" => [
+            'lucide' => '<x-lucide-sparkles class="w-6 h-6 text-purple-500" />',
+            'heroicon' => '<x-heroicon-o-star class="w-6 h-6 text-purple-500" />'
+        ],
+
+        "learning" => [
+            'lucide' => '<x-lucide-graduation-cap class="w-6 h-6 text-teal-600" />',
+            'heroicon' => '<x-heroicon-o-academic-cap class="w-6 h-6 text-teal-600" />'
+        ],
+
+        "news & politics" => [
+            'lucide' => '<x-lucide-newspaper class="w-6 h-6 text-gray-700" />',
+            'heroicon' => '<x-heroicon-o-newspaper class="w-6 h-6 text-gray-700" />'
+        ],
+
+        "religion & spirituality" => [
+            'lucide' => '<x-lucide-church class="w-6 h-6 text-yellow-600" />',
+            'heroicon' => '<x-heroicon-o-building-library class="w-6 h-6 text-yellow-600" />'
+        ],
+
+        "science" => [
+            'lucide' => '<x-lucide-atom class="w-6 h-6 text-teal-500" />',
+            'heroicon' => '<x-heroicon-o-beaker class="w-6 h-6 text-teal-500" />'
+        ],
+
+        "sports" => [
+            'lucide' => '<x-lucide-trophy class="w-6 h-6 text-orange-500" />',
+            'heroicon' => '<x-heroicon-o-trophy class="w-6 h-6 text-orange-500" />'
+        ],
+
+        "Storytelling" => [
+            'lucide' => '<x-lucide-book-open class="w-6 h-6 text-purple-600" />',
+            'heroicon' => '<x-heroicon-o-book-open class="w-6 h-6 text-purple-600" />'
+        ],
+
+        "Technology" => [
+            'lucide' => '<x-lucide-cpu class="w-6 h-6 text-blue-500" />',
+            'heroicon' => '<x-heroicon-o-computer-desktop class="w-6 h-6 text-blue-500" />'
+        ],
     ];
 
     return $genres;

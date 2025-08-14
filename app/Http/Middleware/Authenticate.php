@@ -39,12 +39,13 @@ class Authenticate extends Middleware
             // if ($user->email == null) {
             //     return redirect()->route('user.email.add');
             // }
-            // if ($user->genres()->count() == 0) {
-            //     // return redirect()->route('user.genre.add');
-            //     if (!$request->routeIs('user.email.add') && !$request->routeIs('user.email.store')) {
-            //         return redirect()->route('user.email.add');
-            //     }
-            // }
+
+            if ($user->genres()->count() == 0) {
+                // return redirect()->route('user.genre.add');
+                if (!$request->routeIs('user.email.add') && !$request->routeIs('user.email.store')) {
+                    return redirect()->route('user.email.add');
+                }
+            }
 
             // Check if the access token is expired.
             // SoundCloud's expires_in is an integer in seconds from the time of issue.

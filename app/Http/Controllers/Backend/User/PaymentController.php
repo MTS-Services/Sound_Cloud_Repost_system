@@ -58,7 +58,7 @@ class PaymentController extends Controller
         $order = $this->orderService->getOrder(encrypt($request->order_id));
         try {
             $paymentIntent = $this->stripeService->createPaymentIntent([
-                'amount' => $order->amount,
+                'amount' => $order->amount * 100,
                 'currency' => 'usd',
                 'metadata' => [
                     'order_id' => $request->order_id ?? null,
@@ -74,7 +74,7 @@ class PaymentController extends Controller
                         'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
                         'source_id' => $order->id,
                         'source_type' => Order::class,
-                        'amount' => 100,
+                        'amount' => $order->amount,
                         'credits' => $order->credits,
                         'description' => 'Purchased ' . $order->credits . ' credits for ' . $order->amount . ' ' . $request->currency,
                         'creater_id' => $order->creater_id,
@@ -98,7 +98,7 @@ class PaymentController extends Controller
 
                     'payment_gateway' => Payment::PAYMENT_GATEWAY_STRIPE,
                     'payment_provider_id' => $request->payment_provider_id ?? null,
-                    'amount' => 100,
+                    'amount' => $order->amount,
                     'credits_purchased' => $order->credits,
                     'status' => $paymentIntent->status,
                     'payment_intent_id' => $paymentIntent->id ?? null,
