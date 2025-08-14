@@ -335,7 +335,7 @@ class Member extends Component
                     'receiver_id' => $requester->id,
                     'receiver_type' => get_class($requester),
                     'type' => CustomNotification::TYPE_USER,
-                    'url' => route('reposts-request'),
+                    'url' => route('user.reposts-request'),
                     'message_data' => [
                         'title' => 'Repost Request Sent',
                         'message' => 'You have sent a repost request to ' . $this->user->name,
@@ -355,7 +355,7 @@ class Member extends Component
                     'receiver_id' => $this->user->id,
                     'receiver_type' => get_class($this->user),
                     'type' => CustomNotification::TYPE_USER,
-                    'url' => route('reposts-request'),
+                    'url' => route('user.reposts-request'),
                     'message_data' => [
                         'title' => 'Repost Request Received',
                         'message' => 'You have received a repost request from ' . $requester->name,
