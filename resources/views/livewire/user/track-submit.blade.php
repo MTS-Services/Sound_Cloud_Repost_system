@@ -1,5 +1,4 @@
 <div>
-
     <x-slot name="page_slug">track-submit</x-slot>
     <x-slot name="title">Track Submit</x-slot>
 
@@ -253,16 +252,19 @@
                             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Streamable</label>
                         <div class="flex items-center space-x-6">
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="radio" wire:model="track.streamable" value="true"
+                                <input type="radio" wire:model="track.streamable" value="1"
                                     class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
                                 <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">Yes</span>
                             </label>
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="radio" wire:model="track.streamable" value="false"
+                                <input type="radio" wire:model="track.streamable" value="0"
                                     class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
                                 <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">No</span>
                             </label>
                         </div>
+                        @error('track.streamable')
+                            <p class="text-xs text-red-500 mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Downloadable Radio Buttons --}}
@@ -271,16 +273,19 @@
                             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Downloadable</label>
                         <div class="flex items-center space-x-6">
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="radio" wire:model="track.downloadable" value="true"
+                                <input type="radio" wire:model="track.downloadable" value="1"
                                     class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
                                 <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">Yes</span>
                             </label>
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="radio" wire:model="track.downloadable" value="false"
+                                <input type="radio" wire:model="track.downloadable" value="0"
                                     class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
                                 <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">No</span>
                             </label>
                         </div>
+                        @error('track.downloadable')
+                            <p class="text-xs text-red-500 mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Commentable Radio Buttons --}}
@@ -289,16 +294,19 @@
                             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Commentable</label>
                         <div class="flex items-center space-x-6">
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="radio" wire:model="track.commentable" value="true"
+                                <input type="radio" wire:model="track.commentable" value="1"
                                     class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
                                 <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">Yes</span>
                             </label>
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="radio" wire:model="track.commentable" value="false"
+                                <input type="radio" wire:model="track.commentable" value="0"
                                     class="form-radio text-orange-600 h-5 w-5 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600">
                                 <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium">No</span>
                             </label>
                         </div>
+                        @error('track.commentable')
+                            <p class="text-xs text-red-500 mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 

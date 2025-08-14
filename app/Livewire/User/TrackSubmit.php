@@ -44,30 +44,6 @@ class TrackSubmit extends Component
 
     public function mount()
     {
-        // Genres from the previous implementation are fine as a simple array.
-        // $this->genres = [
-        //     '' => 'Select a genre',
-        //     'Electronic',
-        //     'Dance',
-        //     'Hip Hop & Rap',
-        //     'Pop',
-        //     'R&B & Soul',
-        //     'Rock',
-        //     'Ambient',
-        //     'Classical',
-        //     'Country',
-        //     'Disco',
-        //     'Dubstep',
-        //     'Folk',
-        //     'House',
-        //     'Jazz',
-        //     'Latin',
-        //     'Metal',
-        //     'Piano',
-        //     'Reggae',
-        //     'Techno',
-        //     'Trance',
-        // ];
 
         $this->genres = array_keys(AllGenres());
 
@@ -175,19 +151,23 @@ class TrackSubmit extends Component
         ];
     }
 
+    /**
+     * Updated method is now modified to NOT validate file fields.
+     */
     public function updated($field)
     {
-        $this->validateOnly($field);
+        // Don't validate file inputs while they are being uploaded.
+        // This prevents "required" or other errors during the upload process.
+        if (! in_array($field, ['track.asset_data', 'track.artwork_data'])) {
+            $this->validateOnly($field);
+        }
     }
 
     public function submit()
     {
+        // All validation for all fields, including files, happens here.
         $this->validate();
-
-        // Log the validated data for debugging
-        logger()->info('Validated data: ', $this->track);
-
-        dd($this->track);
+        
         try {
             $httpClient = Http::withHeaders([
                 'Authorization' => 'OAuth ' . user()->token,
@@ -216,6 +196,14 @@ class TrackSubmit extends Component
             ]);
 
             $response->throw();
+
+            // After a successful API call, delete the temporary files to free up disk space.
+            if ($this->track['asset_data']) {
+                $this->track['asset_data']->delete();
+            }
+            if ($this->track['artwork_data']) {
+                $this->track['artwork_data']->delete();
+            }
 
             session()->flash('message', 'Track submitted successfully!');
             $this->reset();
