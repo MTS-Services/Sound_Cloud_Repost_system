@@ -101,9 +101,9 @@ class ProfileController extends Controller
     public function emailStore(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . user()->id],
-            'genres' => ['required', 'array', 'min:5', 'max:5'],
-            'genres.*' => ['required', 'string'],
+            'email' => ['sometimes', 'required', 'email', 'max:255', 'unique:users,email,' . user()->id],
+            'genres' => ['sometimes', 'required', 'array', 'min:5', 'max:5'],
+            'genres.*' => ['sometimes', 'required', 'string'],
         ]);
         $user = User::where('urn', user()->urn)->first();
         $user->update($validated);
