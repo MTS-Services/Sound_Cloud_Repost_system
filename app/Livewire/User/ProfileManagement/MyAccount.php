@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User\ProfileManagement;
 
+use App\Models\CreditTransaction;
 use App\Models\Playlist;
 use App\Models\Repost;
 use App\Models\Track;
@@ -152,7 +153,7 @@ class MyAccount extends Component
 
         // Transactions (top 10)
         $transactions = $this->creditTransactionService->getUserTransactions()
-            ->where('status', 'succeeded')
+            ->where('status', CreditTransaction::STATUS_SUCCEEDED)
             ->sortByDesc('created_at')
             ->take(10);
 

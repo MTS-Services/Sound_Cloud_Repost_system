@@ -373,7 +373,7 @@ class RepostRequest extends Component
                 'requester_urn' => $request->requester_urn,
                 'request_id' => $request->id,
             ];
-            $creditTransaction->status = 'succeeded';
+            $creditTransaction->status = CreditTransaction::STATUS_SUCCEEDED;
             $creditTransaction->save();
             $this->dataLoad();
             session()->flash('success', 'Repost request cancelled successfully.');
