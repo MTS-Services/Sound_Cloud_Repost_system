@@ -167,7 +167,7 @@ class TrackSubmit extends Component
     {
         // All validation for all fields, including files, happens here.
         $this->validate();
-        
+
         try {
             $httpClient = Http::withHeaders([
                 'Authorization' => 'OAuth ' . user()->token,
@@ -184,7 +184,7 @@ class TrackSubmit extends Component
                     $this->track['artwork_data']->getClientOriginalName()
                 );
             }
-            
+
             // Highlighted change: Replaced the old requestBody creation
             $requestBody = [];
             foreach ($this->track as $key => $value) {
@@ -205,10 +205,11 @@ class TrackSubmit extends Component
             if ($this->track['artwork_data']) {
                 $this->track['artwork_data']->delete();
             }
+            dd($response->json());
 
             session()->flash('message', 'Track submitted successfully!');
             $this->reset();
-            return redirect()->route('user.dashboard');
+            return $this->redirect(route('user.my-account') . '?tab=tracks', navigate: true);
         } catch (\Illuminate\Http\Client\RequestException $e) {
             logger()->error('SoundCloud API Error: ' . $e->getMessage(), ['response_body' => $e->response->body()]);
             session()->flash('error', 'Failed to submit track: ' . $e->response->json('errors.0.message', 'Unknown API error.'));
