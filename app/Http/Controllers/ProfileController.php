@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\CreditTransaction;
 use App\Models\RepostRequest as ModelsRepostRequest;
+use App\Models\User;
 use App\Models\UserInformation;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\Admin\RepostManagement\RepostRequestService;
@@ -38,7 +39,7 @@ class ProfileController extends Controller
         $data['total_erned_credits'] = $data['credit_transactions']->where('transaction_type', CreditTransaction::TYPE_EARN)->sum('credits');
         $data['completed_reposts'] = $this->RepostRequestService->getRepostRequests()->where('requester_urn', user()->urn)->where('status', ModelsRepostRequest::STATUS_APPROVED)->count();
         $data['reposted_genres'] = $this->trackService->getTracks()->where('user_urn', user()->urn)->pluck('genre')->unique()->values()->count();
-        $data['repost_requests'] =  ModelsRepostRequest::with(['track', 'targetUser'])->where('requester_urn', user()->urn)->Where('campaign_id', null)->where('status',ModelsRepostRequest::STATUS_APPROVED)->orderBy('sort_order', 'asc')->take(10)->get();
+        $data['repost_requests'] = ModelsRepostRequest::with(['track', 'targetUser'])->where('requester_urn', user()->urn)->Where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED)->orderBy('sort_order', 'asc')->take(10)->get();
         $data['user'] = UserInformation::where('user_urn', user()->urn)->first();
         return view('backend.user.profile.profile', $data);
     }
@@ -89,5 +90,22 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function emailAdd(): View
+    {
+        $user = user()->load('userInfo');
+        return view('backend.user.profile.email-add', compact('user'));
+    }
+    public function emailStore(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'email' => ['required', 'email', 'max:255', 'unique:users'],
+            'genres' => ['required', 'array', 'min:5', 'max:5'],
+            'genres.*' => ['required', 'string'],
+        ]);
+        $user = User::where('urn', user()->urn)->first();
+        $user->update($validated);
+        return redirect()->route('user.dashboard');
     }
 }

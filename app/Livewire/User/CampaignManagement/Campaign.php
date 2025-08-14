@@ -925,17 +925,18 @@ class Campaign extends Component
             $httpClient = Http::withHeaders([
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
-            $data = [
+            $commentSoundcloud = [
                 'comment' => [
                     'body' => $this->commented,
                     'timestamp' => time()
                 ]
             ];
 
+
             switch ($campaign->music_type) {
                 case Track::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
-                    $response = $httpClient->post("{$this->baseUrl}/tracks/{$campaign->music->urn}/comments", $data);
+                    $response = $httpClient->post("{$this->baseUrl}/tracks/{$campaign->music->urn}/comments", $commentSoundcloud);
                     break;
                 case Playlist::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$campaign->music->urn}");
