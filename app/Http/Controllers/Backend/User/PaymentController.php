@@ -58,7 +58,7 @@ class PaymentController extends Controller
         $order = $this->orderService->getOrder(encrypt($request->order_id));
         try {
             $paymentIntent = $this->stripeService->createPaymentIntent([
-                'amount' => $order->amount,
+                'amount' => $order->amount * 100,
                 'currency' => 'usd',
                 'metadata' => [
                     'order_id' => $request->order_id ?? null,

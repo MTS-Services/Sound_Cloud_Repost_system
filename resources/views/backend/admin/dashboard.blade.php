@@ -17,7 +17,7 @@
                     </div>
                     {{-- <div class="text-green-400 text-sm font-medium flex items-center gap-1">
                         <i data-lucide="trending-up" class="w-3 h-3"></i>
-                        
+
                     </div> --}}
                     <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">
                         {{ $user }}
@@ -72,9 +72,9 @@
                         <div class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
                         Live
                     </div> --}}
-                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">{{ $total_payment }}</h3>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">{{ $active_campaign }}</h3>
                 </div>
-                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm ">Active Users</p>
+                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm ">Active Campaign</p>
             </div>
         </div>
 
