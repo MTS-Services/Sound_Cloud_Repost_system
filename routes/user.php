@@ -40,8 +40,10 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
 
-
+    Route::get('/profile-info', [ProfileController::class, 'emailAdd'])->name('email.add');
+    Route::post('/profile-info/update', [ProfileController::class, 'emailStore'])->name('email.store');
     Route::get('/user-profile', [ProfileController::class, 'profile'])->name('profile');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

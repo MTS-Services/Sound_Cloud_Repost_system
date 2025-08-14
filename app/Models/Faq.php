@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Builder;
 
 class Faq extends BaseModel
 {
@@ -90,5 +91,10 @@ class Faq extends BaseModel
     public function scopeFaqBy($query, $userId)
     {
         return $query->where('created_by', $userId);
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_ACTIVE);
     }
 }
