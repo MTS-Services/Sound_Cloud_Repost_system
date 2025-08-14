@@ -41,20 +41,20 @@
             <div class="flex flex-col lg:flex-row justify-between gap-6 px-4">
                 <!-- Main Content -->
                 <div class="w-full flex flex-col gap-6">
-                    @forelse ($campaigns as $campaig_)
+                    @forelse ($campaigns as $campaign_)
                         <div class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
                             <div class="p-2 sm:p-4">
                                 <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
                                     <div class="flex flex-col sm:flex-row gap-4">
-                                        <img src="{{ soundcloud_image($campaig_->music?->artwork_url) }}"
+                                        <img src="{{ soundcloud_image($campaign_->music?->artwork_url) }}"
                                             alt="Sample Track 3" class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
                                         <div class="flex-1">
                                             <div
                                                 class="flex flex-col sm:flex-row sm:items-center sm:space-x-3 mb-2 text-center sm:text-left">
                                                 <h3 class="text-black dark:text-gray-100 font-semibold text-lg">
-                                                    {{ $campaig_->music?->title }}
+                                                    {{ $campaign_->music?->title }}
                                                 </h3>
-                                                <span wire:click="editCampaign({{ $campaig_->id }})" class="cursor-pointer">
+                                                <span wire:click="editCampaign({{ $campaign_->id }})" class="cursor-pointer">
                                                     <!-- Pencil Icon -->
                                                     <svg class="w-5 h-5 inline-block text-gray-500 dark:text-gray-100"
                                                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
@@ -69,8 +69,8 @@
                                             </div>
 
                                             <div class="mb-4 text-sm text-center sm:text-left text-slate-400">
-                                                Budget used: {{ number_format($campaig_->credits_spent) }} /
-                                                {{ number_format($campaig_->buget_credits) }}credits
+                                                Budget used: {{ number_format($campaign_->credits_spent) }} /
+                                                {{ number_format($campaign_->budget_credits) }} credits
                                             </div>
                                         </div>
                                     </div>
@@ -81,11 +81,11 @@
                                             <x-lucide-trending-up class="m-2 w-5 h-5  text-green-600" />
                                             <span class=" text-green-600 dark:text-gray-100"> Running</span>
                                         </div>
-                                        <p class="text-slate-400 text-sm">{{ $campaig_->created_at_formatted }}</p>
+                                        <p class="text-slate-400 text-sm">{{ $campaign_->created_at_formatted }}</p>
                                         <div class="flex flex-wrap justify-center sm:justify-end items-center mt-2">
                                             <x-lucide-ban class="w-5 h-5 m-2 dark:text-white text-gray-500" />
                                             <span class="text-slate-500">Stop</span>
-                                            <div wire:click="editCampaign({{ $campaig_->id }})"
+                                            <div wire:click="editCampaign({{ $campaign_->id }})"
                                                 class="flex items-center cursor-pointer">
                                                 <x-lucide-square-pen
                                                     class="w-5 h-5 m-2 dark:text-white text-gray-500" />
@@ -105,7 +105,7 @@
 
                                                 <x-lucide-repeat
                                                     class="text-gray-500 w-5 h-5 m-2 dark:text-white text-black" />
-                                                <span class=" text-black dark:text-white">{{ totalReposts($campaig_) }}</span>
+                                                <span class=" text-black dark:text-white">{{ totalReposts($campaign_) }}</span>
                                             </div>
 
                                         </div>
@@ -122,7 +122,7 @@
                                             <div class="flex items-center justify-center ">
                                                 <x-lucide-heart
                                                     class="text-gray-500 w-5 h-5 m-2 dark:text-white text-black" />
-                                                <span class=" text-black dark:text-gray-100">{{ $campaig_->favorite_count ?? 0 }}</span>
+                                                <span class=" text-black dark:text-gray-100">{{ $campaign_->favorite_count ?? 0 }}</span>
                                             </div>
 
                                         </div>
@@ -138,14 +138,14 @@
                                             <div class="flex items-center justify-center ">
                                                 <x-lucide-smile
                                                     class="text-gray-500 w-5 h-5 m-2 dark:text-white text-black" />
-                                                <span class=" text-black dark:text-gray-100">{{ $campaig_->emoji_count ?? 0 }}</span>
+                                                <span class=" text-black dark:text-gray-100">{{ $campaign_->emoji_count ?? 0 }}</span>
                                             </div>
 
                                         </div>
                                         <div class="text-center">
                                             <div class="flex items-center justify-center ">
 
-                                                <span wire:click="openViewDetailsModal({{ $campaig_->id }})"
+                                                <span wire:click="openViewDetailsModal({{ $campaign_->id }})"
                                                     class="text-orange-500 items-end font-medium mt-2 cursor-pointer hover:underline transition-all duration-300">Show
                                                     All</span>
                                             </div>
