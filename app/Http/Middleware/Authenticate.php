@@ -28,54 +28,66 @@ class Authenticate extends Middleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    // public function handle($request, \Closure $next, ...$guards): Response
-    // {
-    //     // Check if a user is authenticated with the 'web' guard
-    //     if (Auth::guard('web')->check()) {
-    //         $user = Auth::user();
+    public function handle($request, \Closure $next, ...$guards): Response
+    {
+        // Check if a user is authenticated with the 'web' guard
+        if (Auth::guard('web')->check()) {
+            $user = Auth::user();
 
-    //         // Check if the access token is expired.
-    //         // SoundCloud's expires_in is an integer in seconds from the time of issue.
-    //         // You should store a timestamp of when the token was issued.
-    //         // A better approach is to store the expiration timestamp directly.
-    //         // For example, user()->token_expires_at.
-    //         if ($user->expires_in < time()) {
-    //             Log::info('Time Over')
-    //             // Token has expired, try to refresh it
-    //             if ($user->refresh_token) {
-    //                 try {
-    //                     $response = Http::asForm()->post('https://secure.soundcloud.com/oauth/token', [
-    //                         'grant_type' => 'refresh_token',
-    //                         'client_id' => config('services.soundcloud.client_id'),
-    //                         'client_secret' => config('services.soundcloud.client_secret'),
-    //                         'refresh_token' => $user->refresh_token,
-    //                     ]);
+            $user->load('genres');
 
-    //                     if ($response->successful()) {
-    //                         $data = $response->json();
-    //                         // Update user's token information
-    //                         $user->token = $data['token'];
-    //                         $user->refresh_token = $data['refresh_token'] ?? $user->refresh_token; // Refresh token can be reused or a new one provided
-    //                         $user->expires_in = time() + $data['expires_in'];
-    //                         $user->save();
-    //                     } else {
-    //                         // Refresh token failed, log out the user
-    //                         Auth::logout();
-    //                         return redirect()->route('f.landing')->with('error', 'Session expired, please log in again.');
-    //                     }
-    //                 } catch (\Exception $e) {
-    //                     // Handle exceptions, e.g., network error
-    //                     Auth::logout();
-    //                     return redirect()->route('f.landing')->with('error', 'An error occurred, please log in again.');
-    //                 }
-    //             } else {
-    //                 // No refresh token available, log out the user
-    //                 Auth::logout();
-    //                 return redirect()->route('f.landing')->with('error', 'Session expired, please log in again.');
-    //             }
-    //         }
-    //     }
+            // if ($user->email == null) {
+            //     return redirect()->route('user.email.add');
+            // }
+            if ($user->genres()->count() == 0) {
+                // return redirect()->route('user.genre.add');
+                if (!$request->routeIs('user.email.add') && !$request->routeIs('user.email.store')) {
+                    return redirect()->route('user.email.add');
+                }
+            }
 
-    //     return parent::handle($request, $next, ...$guards);
-    // }
+            // Check if the access token is expired.
+            // SoundCloud's expires_in is an integer in seconds from the time of issue.
+            // You should store a timestamp of when the token was issued.
+            // A better approach is to store the expiration timestamp directly.
+            // For example, user()->token_expires_at.
+            // if ($user->expires_in < time()) {
+            //     Log::info('Time Over')
+            //     // Token has expired, try to refresh it
+            //     if ($user->refresh_token) {
+            //         try {
+            //             $response = Http::asForm()->post('https://secure.soundcloud.com/oauth/token', [
+            //                 'grant_type' => 'refresh_token',
+            //                 'client_id' => config('services.soundcloud.client_id'),
+            //                 'client_secret' => config('services.soundcloud.client_secret'),
+            //                 'refresh_token' => $user->refresh_token,
+            //             ]);
+
+            //             if ($response->successful()) {
+            //                 $data = $response->json();
+            //                 // Update user's token information
+            //                 $user->token = $data['token'];
+            //                 $user->refresh_token = $data['refresh_token'] ?? $user->refresh_token; // Refresh token can be reused or a new one provided
+            //                 $user->expires_in = time() + $data['expires_in'];
+            //                 $user->save();
+            //             } else {
+            //                 // Refresh token failed, log out the user
+            //                 Auth::logout();
+            //                 return redirect()->route('f.landing')->with('error', 'Session expired, please log in again.');
+            //             }
+            //         } catch (\Exception $e) {
+            //             // Handle exceptions, e.g., network error
+            //             Auth::logout();
+            //             return redirect()->route('f.landing')->with('error', 'An error occurred, please log in again.');
+            //         }
+            //     } else {
+            //         // No refresh token available, log out the user
+            //         Auth::logout();
+            //         return redirect()->route('f.landing')->with('error', 'Session expired, please log in again.');
+            //     }
+            // }
+        }
+
+        return parent::handle($request, $next, ...$guards);
+    }
 }

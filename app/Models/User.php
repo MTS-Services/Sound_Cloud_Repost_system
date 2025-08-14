@@ -33,6 +33,7 @@ class User extends AuthBaseModel
         'last_synced_at',
         'status',
         'urn',
+        'email',
     ];
 
     /**
@@ -224,5 +225,10 @@ class User extends AuthBaseModel
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_ACTIVE);
+    }
+
+    public function genres(): HasMany
+    {
+        return $this->hasMany(UserGenre::class, 'user_urn', 'urn');
     }
 }
