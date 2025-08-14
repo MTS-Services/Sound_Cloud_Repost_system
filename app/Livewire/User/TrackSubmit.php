@@ -220,7 +220,7 @@ class TrackSubmit extends Component
                     'commentable' =>  $responseTrack['commentable'],
                     'comment_count' =>  $responseTrack['comment_count'],
                     'sharing' =>  $responseTrack['sharing'],
-                    'tag_lsit' =>  $responseTrack['tag_list'],
+                    'tag_list' =>  $responseTrack['tag_list'],
                     'streamable' =>  $responseTrack['streamable'],
                     'embeddable_by' =>  $responseTrack['embeddable_by'],
                     'purchase_url' =>  $responseTrack['purchase_url'],

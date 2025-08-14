@@ -21,7 +21,7 @@ class Track extends BaseModel
         'commentable',
         'comment_count',
         'sharing',
-        'tag_lsit',
+        'tag_list',
         'streamable',
         'embeddable_by',
         'purchase_url',
