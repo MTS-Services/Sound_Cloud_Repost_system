@@ -21,11 +21,11 @@ class CampaignService
         return Campaign::findOrFail(decrypt($encryptedId));
     }
 
-    public function syncReposts($campaign, $reposter, $soundcloudRepostId, $likeCommentAbleData= [])
+    public function syncReposts($campaign, $reposter, $soundcloudRepostId, $likeCommentAbleData = [])
     {
         try {
 
-            DB::transaction(function () use ($campaign, $reposter, $soundcloudRepostId , $likeCommentAbleData) {
+            DB::transaction(function () use ($campaign, $reposter, $soundcloudRepostId, $likeCommentAbleData) {
 
                 $trackOwnerUrn = $campaign->music->user?->urn ?? $campaign->user_urn;
                 $trackOwnerName = $campaign->music->user?->name;
@@ -44,6 +44,12 @@ class CampaignService
                 // Update the Campaign record using atomic increments
                 $campaign->increment('completed_reposts');
                 $campaign->increment('credits_spent', (float) $totalCredits);
+                if ($likeCommentAbleData['commentable']) {
+                    $campaign->increment('favorite_count');
+                }
+                if ($likeCommentAbleData['likeable']) {
+                    $campaign->increment('emoji_count');
+                }
 
                 if ($campaign->budget_credits == $campaign->credits_spent) {
                     $campaign->update(['status' => Campaign::STATUS_COMPLETED]);
