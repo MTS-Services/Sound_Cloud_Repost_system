@@ -78,35 +78,38 @@
             @error('genres.*')
                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
-            <div class="mb-6">
-                <h2 class="text-xl font-bold text-[#1F2937] mb-4">Select your genres</h2>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-                    @foreach (AllGenres() as $genre => $logo)
-                        <label for="{{ Str::slug($genre) }}"
-                            class="flex flex-col items-center justify-center p-4 rounded-lg border-2 border-gray-300 cursor-pointer transition-all duration-200 hover:border-orange-500 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-100 genre-card">
-                            <input type="checkbox" id="{{ Str::slug($genre) }}" value="{{ $genre }}"
-                                name="genres[]" class="sr-only peer genre-checkbox">
-                            <div class="mb-2">
-                                {!! $logo !!}
-                            </div>
-                            <span
-                                class="text-sm font-semibold text-gray-700 has-[:checked]:text-orange-500">{{ $genre }}</span>
-                        </label>
-                    @endforeach
+            @if ($user->genres->isEmpty() || $user->genres->count() == 0)
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-[#1F2937] mb-4">Select your genres</h2>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                        @foreach (AllGenres() as $genre => $logo)
+                            <label for="{{ Str::slug($genre) }}"
+                                class="flex flex-col items-center justify-center p-4 rounded-lg border-2 border-gray-300 cursor-pointer transition-all duration-200 hover:border-orange-500 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-100 genre-card">
+                                <input type="checkbox" id="{{ Str::slug($genre) }}" value="{{ $genre }}"
+                                    name="genres[]" class="sr-only peer genre-checkbox">
+                                <div class="mb-2">
+                                    {!! $logo !!}
+                                </div>
+                                <span
+                                    class="text-sm font-semibold text-gray-700 has-[:checked]:text-orange-500">{{ $genre }}</span>
+                            </label>
+                        @endforeach
+                    </div>
                 </div>
-            </div>
+            @endif
 
             <hr class="border-gray-200 my-6">
-
-            <div>
-                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                <input type="email" id="email" name="email" placeholder="john.doe@example.com"
-                    value="{{ old('email', $user->email) }}"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 hover:border-gray-400" />
-                @error('email')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+            @if (!$user->email)
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="email" name="email" placeholder="john.doe@example.com"
+                        value="{{ old('email', $user->email) }}"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 hover:border-gray-400" />
+                    @error('email')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+            @endif
             <button type="submit" id="submitButton"
                 class="w-full bg-orange-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-orange-600 focus:ring-4 focus:ring-orange-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled>
