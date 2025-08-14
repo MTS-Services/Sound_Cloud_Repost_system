@@ -220,7 +220,7 @@ class TrackSubmit extends Component
                     'commentable' =>  $responseTrack['commentable'],
                     'comment_count' =>  $responseTrack['comment_count'],
                     'sharing' =>  $responseTrack['sharing'],
-                    'tag_lsit' =>  $responseTrack['tag_list'],
+                    'tag_list' =>  $responseTrack['tag_list'],
                     'streamable' =>  $responseTrack['streamable'],
                     'embeddable_by' =>  $responseTrack['embeddable_by'],
                     'purchase_url' =>  $responseTrack['purchase_url'],
@@ -246,11 +246,11 @@ class TrackSubmit extends Component
                     'available_country_codes' =>  $responseTrack['available_country_codes'],
                     'secret_uri' =>  $responseTrack['secret_uri'],
                     'user_favorite' =>  $responseTrack['user_favorite'],
-                    'user_playback_count' =>  $responseTrack['user_playback_count'],
-                    'playback_count' =>  $responseTrack['playback_count'],
-                    'download_count' =>  $responseTrack['download_count'],
-                    'favoritings_count' =>  $responseTrack['favoritings_count'],
-                    'reposts_count' =>  $responseTrack['reposts_count'],
+                    'user_playback_count' =>  $responseTrack['user_playback_count'] === null ? 0 : $responseTrack['user_playback_count'],
+                    'playback_count' =>  $responseTrack['playback_count'] === null ? 0 : $responseTrack['playback_count'],
+                    'download_count' =>  $responseTrack['download_count'] === null ? 0 : $responseTrack['download_count'],
+                    'favoritings_count' =>  $responseTrack['favoritings_count'] === null ? 0 : $responseTrack['favoritings_count'],
+                    'reposts_count' =>  $responseTrack['reposts_count'] === null ? 0 : $responseTrack['reposts_count'],
                     'downloadable' =>  $responseTrack['downloadable'],
                     'access' =>  $responseTrack['access'],
                     'policy' =>  $responseTrack['policy'],
@@ -275,12 +275,12 @@ class TrackSubmit extends Component
                     'message_data' => [
                         'title' => 'Track Submitted',
                         'message' => 'A new track has been submitted.',
-                        'description' => "Your track has been successfully uploaded to SoundCloud. Track Title: {$track->title}. If this track is not visible on SoundCloud, it may have been removed by SoundCloud due to a potential copyright infringement. Please review your SoundCloud account notifications for details. If you possess write permissions for this track or are its rightful owner, we recommend contacting SoundCloud support for further assistance.",
-                        'url' => route('user.my-account') . '?tab=tracks',
+                        'description' => "Your track has been successfully uploaded to SoundCloud. Track Title: {$track->title}. If this track is not visible on SoundCloud, it may have been deleted or removed by SoundCloud due to a potential copyright infringement. Please review your SoundCloud account notifications for details. If you possess write permissions for this track or are its rightful owner, we recommend contacting SoundCloud support for further assistance.",
+                        'url' => route('user.pm.my-account') . '?tab=tracks',
                         'icon' => 'audio-lines',
                         'additional_data' => [
                             'Track Title' => $track->title,
-                            'Description' => $track->description,
+                            'Description' => $track->description ?? 'No description provided.',
                             'Track Artist' => $track->author_username,
                             'Track Link' => $track->permalink_url,
                         ]
@@ -291,7 +291,7 @@ class TrackSubmit extends Component
 
             session()->flash('message', 'Track submitted successfully!');
             $this->reset();
-            return $this->redirect(route('user.my-account') . '?tab=tracks', navigate: true);
+            return $this->redirect(route('user.pm.my-account') . '?tab=tracks', navigate: true);
         } catch (\Illuminate\Http\Client\RequestException $e) {
             logger()->error('SoundCloud API Error: ' . $e->getMessage(), ['response_body' => $e->response->body()]);
             session()->flash('error', 'Failed to submit track: ' . $e->response->json('errors.0.message', 'Unknown API error.'));
