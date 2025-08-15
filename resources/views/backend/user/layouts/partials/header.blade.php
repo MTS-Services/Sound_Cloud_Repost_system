@@ -67,8 +67,8 @@
             </a>
         </div>
 
-        <div class="flex-1 flex justify-center px-2 md:px-4 lg:px-0 lg:ml-8 ">
-            {{-- <form class="relative w-full max-w-md items-center hidden sm:flex">
+        {{-- <div class="flex-1 flex justify-center px-2 md:px-4 lg:px-0 lg:ml-8 ">
+            <form class="relative w-full max-w-md items-center hidden sm:flex">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-4">
 
                     <x-lucide-search class="w-5 h-5 text-slate-800 dark:text-slate-300" />
@@ -78,9 +78,9 @@
                     focus:border-[#F54A00]! dark:focus:border-[#F54A00]!
                     text-gray-900 dark:text-gray-200 dark:placeholder:text-slate-300
                     dark:shadow-sm outline-none transition" />
-            </form> --}}
+            </form>
             <div class="gcse-search"></div>
-        </div>
+        </div> --}}
 
         <div class="flex items-center space-x-1 md:space-x-2">
             <!-- Navigation items - hide on mobile -->
