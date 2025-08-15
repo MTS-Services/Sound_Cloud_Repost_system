@@ -2,9 +2,6 @@
     <x-slot name="page_slug">dashboard</x-slot>
     <!-- Dashboard Content (Default) -->
 
-    <a href="{{ route('token.refresh') }}" wire:navigate
-        class="flex items-center justify-center py-2 px-5 text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition duration-300 ease-in-out">Demo</a>
-
     <div id="content-dashboard" class="page-content py-2 px-2 ">
         <div
             class="px-2 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 w-full">
