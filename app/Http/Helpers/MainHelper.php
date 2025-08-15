@@ -574,27 +574,24 @@ function searchableRoutes()
         [
             'title' => 'My Campaigns',
             'keywords' => ['campaign', 'my campaigns', 'repost campaigns'],
-            'route' => 'campaigns.index', // Use named routes
+            'route' => route('user.cm.my-campaigns'),
         ],
         [
             'title' => 'Campaigns',
-            'keywords' => ['campaign', 'all campaigns', 'repost campaigns'],
-            'route' => 'campaigns', // Use named routes
+            'keywords' => ['campaign', 'all campaigns', 'repost campaigns', 'recommended', 'recommended pro', 'repost', 'reposts campaigns', 'create campaign'],
+            'route' => route('user.cm.campaigns'),
         ],
         [
-            'title' => 'My Tracks',
-            'keywords' => ['track', 'my tracks', 'repost tracks'],
-            'route' => 'tracks.index',
+            'title' => 'Requests',
+            'keywords' => ['requests', 'repost requests', 'incomming requests', 'outgoing requests','create request'],
+            'route' => route('user.reposts-request'),
         ],
         [
-            'title' => 'My Artists',
-            'keywords' => [
-                'artist',
-                'my artists',
-                'repost artists'
-            ],
-            'route' => 'artists.index',
+            'title' => 'Members',
+            'keywords' => ['members', 'create request', 'create requests'],
+            'route' => route('user.mm.members.index'),
         ],
+
     ];
 
     return json_encode($searchableData);
