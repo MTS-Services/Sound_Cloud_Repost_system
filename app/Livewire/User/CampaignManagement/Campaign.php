@@ -10,6 +10,7 @@ use App\Models\Track;
 use App\Models\User;
 use App\Models\UserInformation;
 use App\Services\PlaylistService;
+use App\Services\SoundCloud\SoundCloudService;
 use App\Services\TrackService;
 use App\Services\User\CampaignManagement\CampaignService;
 use Illuminate\Support\Facades\DB;
@@ -27,9 +28,7 @@ class Campaign extends Component
 {
     use WithPagination;
 
-    protected ?CampaignService $campaignService = null;
-    protected ?TrackService $trackService = null;
-    protected ?PlaylistService $playlistService = null;
+    
 
     #[Locked]
     protected string $baseUrl = 'https://api.soundcloud.com';
@@ -174,11 +173,18 @@ class Campaign extends Component
     public $hasMorePlaylists = false;
 
     ############################## Campaign Creation ##########################
-    public function boot(CampaignService $campaignService, TrackService $trackService, PlaylistService $playlistService)
+    
+    protected ?CampaignService $campaignService = null;
+    protected ?TrackService $trackService = null;
+    protected ?PlaylistService $playlistService = null;
+    protected ?SoundCloudService $soundCloudService = null;
+
+    public function boot(CampaignService $campaignService, TrackService $trackService, PlaylistService $playlistService, SoundCloudService $soundCloudService)
     {
         $this->campaignService = $campaignService;
         $this->trackService = $trackService;
         $this->playlistService = $playlistService;
+        $this->soundCloudService = $soundCloudService;
     }
 
     public function mount()
@@ -897,6 +903,8 @@ class Campaign extends Component
 
     public function repost($campaignId)
     {
+        $this->soundCloudService->ensureSoundCloudConnection(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         try {
             if (!$this->canRepost($campaignId)) {
                 session()->flash('error', 'You cannot repost this campaign. Please play it for at least 5 seconds first.');

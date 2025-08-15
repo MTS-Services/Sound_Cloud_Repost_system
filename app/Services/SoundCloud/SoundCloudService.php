@@ -152,7 +152,7 @@ class SoundCloudService
      * @param User $user
      * @throws Exception
      */
-    private function ensureSoundCloudConnection(User $user): void
+    public function ensureSoundCloudConnection(User $user): void
     {
         // This is a good place to check for a basic connection. You might need to add a `isSoundCloudConnected()` method to your User model.
         // For example: `return !is_null($this->token) && !is_null($this->refresh_token);`

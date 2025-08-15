@@ -7,6 +7,7 @@ use App\Models\RepostRequest as ModelsRepostRequest;
 use App\Models\Repost;
 use App\Models\Track;
 use App\Models\Playlist;
+use App\Services\SoundCloud\SoundCloudService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
@@ -36,6 +37,13 @@ class RepostRequest extends Component
         'audioTimeUpdate' => 'handleAudioTimeUpdate',
         'audioEnded' => 'handleAudioEnded'
     ];
+
+    protected SoundCloudService $soundCloudService;
+
+    public function boot(SoundCloudService $soundCloudService)
+    {
+        $this->soundCloudService = $soundCloudService;
+    }
 
     public function mount()
     {
@@ -221,6 +229,8 @@ class RepostRequest extends Component
      */
     public function repost($requestId)
     {
+        $this->soundCloudService->ensureSoundCloudConnection(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         try {
             if (!$this->canRepost($requestId)) {
                 session()->flash('error', 'You cannot repost this request. Please play it for at least 5 seconds first.');
@@ -232,8 +242,8 @@ class RepostRequest extends Component
             // Check if the user has already reposted this specific request
             if (
                 Repost::where('reposter_urn', $currentUserUrn)
-                    ->where('repost_request_id', $requestId)
-                    ->exists()
+                ->where('repost_request_id', $requestId)
+                ->exists()
             ) {
                 session()->flash('error', 'You have already reposted this request.');
                 return;

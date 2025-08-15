@@ -8,6 +8,7 @@ use App\Models\CreditTransaction;
 use App\Models\Playlist;
 use App\Models\Repost;
 use App\Models\Track;
+use App\Services\SoundCloud\SoundCloudService;
 use App\Services\User\CampaignManagement\CampaignService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -20,15 +21,18 @@ class CampaignController extends Controller
 
     protected string $baseUrl = 'https://api.soundcloud.com';
     protected CampaignService $campaignService;
+    protected SoundCloudService $soundCloudService;
 
     protected function redirectBack(): RedirectResponse
     {
         return redirect()->back();
     }
 
-    public function __construct(CampaignService $campaignService)
+    public function __construct(CampaignService $campaignService, SoundCloudService $soundCloudService)
     {
         $this->campaignService = $campaignService;
+        $this->soundCloudService = $soundCloudService;
+
     }
 
     public function campaignFeed()
@@ -41,6 +45,8 @@ class CampaignController extends Controller
     public function repost(string $id)
     {
         try {
+            $this->soundCloudService->ensureSoundCloudConnection(user());
+            $this->soundCloudService->refreshUserTokenIfNeeded(user());
             $campaignId = decrypt($id);
             $currentUserUrn = user()->urn;
 
