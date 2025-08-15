@@ -565,3 +565,20 @@ function AllGenresWithIcons()
 
     return $genres;
 }
+
+
+function searchQuery()
+{
+    $searches = [
+        'campaign, my campaigns, repost, ..... related all possible text.' => [
+            'route_map' => ['campaigns', 'my-campagin', 'repost']
+        ],
+        'track, my tracks, repost, ..... related all possible text.' => [
+            'route_map' => ['tracks', 'my-tracks', 'repost']
+        ],
+        'artist, my artists, repost, ..... related all possible text.' => [
+            'route_map' => ['artists', 'my-artists', 'repost']
+        ],
+    ];
+    return $searches;
+}

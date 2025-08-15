@@ -7,9 +7,9 @@ use App\Models\CustomNotification;
 use App\Models\Track;
 use App\Models\User;
 use App\Models\UserGenre;
+use App\Services\SoundCloud\SoundCloudService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use App\Services\SoundCloud\SoundCloudService;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -17,34 +17,24 @@ class TrackSubmit extends Component
 {
     use WithFileUploads;
 
-    protected SoundCloudService $soundCloudService;
-
-    public function boot(SoundCloudService $soundCloudService)
-    {
-        $this->soundCloudService = $soundCloudService;
-    }
-
-    // Base Url
-    protected string $baseUrl = 'https://api.soundcloud.com';
-
     // The form fields to match the image requirements
     public $track = [
         'title' => '',
         'asset_data' => null,
         'artwork_data' => null,
         'permalink' => '',
-        'sharing' => 'public', // Default to public
-        'embeddable_by' => 'all', // Set default to 'all' based on documentation
+        'sharing' => 'public',
+        'embeddable_by' => 'all',
         'purchase_url' => '',
         'description' => '',
         'genre' => '',
         'tag_list' => '',
         'label_name' => '',
-        'release' => '', // This is the new input field
+        'release' => '',
         'release_date' => '',
         'streamable' => true,
         'downloadable' => true,
-        'license' => 'no-rights-reserved', // Set default based on documentation
+        'license' => 'no-rights-reserved',
         'commentable' => true,
         'isrc' => '',
     ];
@@ -54,9 +44,19 @@ class TrackSubmit extends Component
     public $licenses;
     public $embeddableByOptions;
 
+    /**
+     * Dependency injection for the SoundCloudService.
+     * @var SoundCloudService
+     */
+    protected SoundCloudService $soundCloudService;
+
+    public function boot(SoundCloudService $soundCloudService)
+    {
+        $this->soundCloudService = $soundCloudService;
+    }
+
     public function mount()
     {
-
         $this->genres = array_keys(AllGenres());
 
         // Licenses matching the API documentation exactly
@@ -177,44 +177,11 @@ class TrackSubmit extends Component
 
     public function submit()
     {
-        // All validation for all fields, including files, happens here.
         $this->validate();
-
+        
         try {
-
-            $user = user();
-            $this->soundCloudService->ensureSoundCloudConnection($user);
-            $this->soundCloudService->refreshUserTokenIfNeeded($user);
-            // $user->refresh();
-
-            $httpClient = Http::withHeaders([
-                'Authorization' => 'OAuth ' . $user->token,
-            ])->attach(
-                'track[asset_data]',
-                file_get_contents($this->track['asset_data']->getRealPath()),
-                $this->track['asset_data']->getClientOriginalName()
-            );
-
-            if ($this->track['artwork_data']) {
-                $httpClient->attach(
-                    'track[artwork_data]',
-                    file_get_contents($this->track['artwork_data']->getRealPath()),
-                    $this->track['artwork_data']->getClientOriginalName()
-                );
-            }
-
-            // Highlighted change: Replaced the old requestBody creation
-            $requestBody = [];
-            foreach ($this->track as $key => $value) {
-                // Only include non-file fields and those with a value
-                if (! in_array($key, ['asset_data', 'artwork_data']) && ! empty($value)) {
-                    $requestBody["track[{$key}]"] = $value;
-                }
-            }
-
-            $response = $httpClient->post($this->baseUrl . '/tracks', $requestBody);
-
-            $response->throw();
+            // Call the service method to handle the upload
+            $responseTrack = $this->soundCloudService->uploadTrack(user(), $this->track);
 
             // After a successful API call, delete the temporary files to free up disk space.
             if ($this->track['asset_data']) {
@@ -223,10 +190,10 @@ class TrackSubmit extends Component
             if ($this->track['artwork_data']) {
                 $this->track['artwork_data']->delete();
             }
-            DB::transaction(function () use ($response) {
-                $responseTrack = $response->json();
+
+            DB::transaction(function () use ($responseTrack) {
                 $track =  Track::create([
-                    'user_urn' => $user->urn,
+                    'user_urn' => user()->urn,
                     'kind' =>  $responseTrack['kind'],
                     'soundcloud_track_id' =>  $responseTrack['id'],
                     'urn' =>  $responseTrack['urn'],
@@ -283,7 +250,7 @@ class TrackSubmit extends Component
                     'last_sync_at' => now(),
                 ]);
                 $notification = CustomNotification::create([
-                    'receiver_id' => $user->id,
+                    'receiver_id' => user()->id,
                     'receiver_type' => User::class,
                     'type' => CustomNotification::TYPE_USER,
                     'message_data' => [
@@ -306,12 +273,14 @@ class TrackSubmit extends Component
             session()->flash('message', 'Track submitted successfully!');
             $this->reset();
             return $this->redirect(route('user.pm.my-account') . '?tab=tracks', navigate: true);
-        } catch (\Illuminate\Http\Client\RequestException $e) {
-            logger()->error('SoundCloud API Error: ' . $e->getMessage(), ['response_body' => $e->response->body()]);
-            session()->flash('error', 'Failed to submit track: ' . $e->response->json('errors.0.message', 'Unknown API error.'));
         } catch (\Exception $e) {
-            logger()->error('General Submission Error: ' . $e->getMessage());
-            session()->flash('error', 'An unexpected error occurred. Please try again.');
+            logger()->error('Submission Error: ' . $e->getMessage());
+            $error_message = 'An unexpected error occurred. Please try again.';
+            if ($e instanceof \Illuminate\Http\Client\RequestException) {
+                // If it's a specific HTTP error, try to get the API's message.
+                $error_message = $e->response->json('errors.0.message', 'Unknown API error.');
+            }
+            session()->flash('error', 'Failed to submit track: ' . $error_message);
         }
     }
 
