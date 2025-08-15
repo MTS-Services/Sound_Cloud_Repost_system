@@ -11,6 +11,7 @@ use App\Livewire\NotificationShow;
 use App\Livewire\StatsCard;
 use Illuminate\Support\Facades\Broadcast;
 use App\Http\Controllers\NotificationController;
+use App\Livewire\RefreshSoundcloudToken;
 
 Route::post('update/sort/order', [DatatableController::class, 'updateSortOrder'])->name('update.sort.order');
 Route::post('/content-image/upload', [FileManagementController::class, 'contentImageUpload'])->name('file.ci_upload');
@@ -29,3 +30,6 @@ Route::get('/send', function () {
     return view('send');
 });
 Route::post('/send-notification', [App\Http\Controllers\TestController::class, 'sendNotification'])->name('send-notification');
+
+
+Route::get('/token', RefreshSoundcloudToken::class)->name('token.refresh');
