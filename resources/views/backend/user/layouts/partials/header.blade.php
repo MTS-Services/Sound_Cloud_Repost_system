@@ -4,16 +4,17 @@
         searchModalOpen: false,
         searchQuery: '',
         selectedIndex: -1,
-        suggestions: [
-            {{-- { text: 'Repostschain documentation', type: 'recent', icon: '📚' }, --}}
-            {{-- { text: 'Alpine.js components', type: 'recent', icon: '⚡' },
+        {{-- suggestions: [
+            { text: 'Repostschain documentation', type: 'recent', icon: '📚' },
+            { text: 'Alpine.js components', type: 'recent', icon: '⚡' },
             { text: 'DaisyUI themes', type: 'popular', icon: '🎨' },
             { text: 'Tailwind CSS utilities', type: 'popular', icon: '💨' },
             { text: 'PHP best practices', type: 'suggestion', icon: '🐘' },
             { text: 'JavaScript frameworks', type: 'suggestion', icon: '⚛️' },
             { text: 'Database optimization', type: 'recent', icon: '🗄️' },
-            { text: 'API development', type: 'popular', icon: '🔌' } --}}
-        ],
+            { text: 'API development', type: 'popular', icon: '🔌' }
+        ], --}}
+        suggestions: {{ searchableRoutes() }},
         filteredSuggestions: [],
         
         init() {
@@ -59,7 +60,8 @@
             this.searchModalOpen = false;
         }
     }">
-    
+    {{-- @dd(searchableRoutes(), ); --}}
+
     <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2">
             <button @click="sidebarOpen = !sidebarOpen"

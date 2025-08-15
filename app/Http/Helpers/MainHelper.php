@@ -567,18 +567,35 @@ function AllGenresWithIcons()
 }
 
 
-function searchQuery()
+// Global Search Function
+function searchableRoutes()
 {
-    $searches = [
-        'campaign, my campaigns, repost, ..... related all possible text.' => [
-            'route_map' => ['campaigns', 'my-campagin', 'repost']
+    $searchableData = [
+        [
+            'title' => 'My Campaigns',
+            'keywords' => ['campaign', 'my campaigns', 'repost campaigns'],
+            'route' => 'campaigns.index', // Use named routes
         ],
-        'track, my tracks, repost, ..... related all possible text.' => [
-            'route_map' => ['tracks', 'my-tracks', 'repost']
+        [
+            'title' => 'Campaigns',
+            'keywords' => ['campaign', 'all campaigns', 'repost campaigns'],
+            'route' => 'campaigns', // Use named routes
         ],
-        'artist, my artists, repost, ..... related all possible text.' => [
-            'route_map' => ['artists', 'my-artists', 'repost']
+        [
+            'title' => 'My Tracks',
+            'keywords' => ['track', 'my tracks', 'repost tracks'],
+            'route' => 'tracks.index',
+        ],
+        [
+            'title' => 'My Artists',
+            'keywords' => [
+                'artist',
+                'my artists',
+                'repost artists'
+            ],
+            'route' => 'artists.index',
         ],
     ];
-    return $searches;
+
+    return json_encode($searchableData);
 }
