@@ -46,7 +46,7 @@ class SoundCloudService
      * @return array The JSON response from the API.
      * @throws Exception
      */
-    private function makeApiRequest(User $user, string $method, string $endpoint, array $options, string $errorMessage): array
+    public function makeApiRequest(User $user, string $method, string $endpoint, array $options, string $errorMessage): array
     {
         $this->ensureSoundCloudConnection($user);
 
@@ -91,7 +91,7 @@ class SoundCloudService
      * @param User $user The user model instance.
      * @throws Exception
      */
-    protected function refreshUserTokenIfNeeded(User $user): void
+    public function refreshUserTokenIfNeeded(User $user): void
     {
         // Check if the token needs a refresh based on the stored `last_synced_at` and `expires_in`.
         $expirationTime = is_null($user->last_synced_at) ? null : $user->last_synced_at->addSeconds($user->expires_in);
