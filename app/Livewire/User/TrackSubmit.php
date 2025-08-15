@@ -215,7 +215,7 @@ class TrackSubmit extends Component
 
             // $response->throw();
 
-             $responseTrack = $this->soundCloudService->uploadTrack(user(), $this->track);
+            $responseTrack = $this->soundCloudService->uploadTrack(user(), $this->track);
 
             // After a successful API call, delete the temporary files to free up disk space.
             if ($this->track['asset_data']) {
@@ -286,11 +286,11 @@ class TrackSubmit extends Component
                     'receiver_id' => user()->id,
                     'receiver_type' => User::class,
                     'type' => CustomNotification::TYPE_USER,
+                    'url' => route('user.pm.my-account') . '?tab=tracks',
                     'message_data' => [
                         'title' => 'Track Submitted',
                         'message' => 'A new track has been submitted.',
                         'description' => "Your track has been successfully uploaded to SoundCloud. Track Title: {$track->title}. If this track is not visible on SoundCloud, it may have been deleted or removed by SoundCloud due to a potential copyright infringement. Please review your SoundCloud account notifications for details. If you possess write permissions for this track or are its rightful owner, we recommend contacting SoundCloud support for further assistance.",
-                        'url' => route('user.pm.my-account') . '?tab=tracks',
                         'icon' => 'audio-lines',
                         'additional_data' => [
                             'Track Title' => $track->title,
