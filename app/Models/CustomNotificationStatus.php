@@ -39,7 +39,7 @@ class CustomNotificationStatus extends BaseModel
     {
         parent::__construct($attributes);
         $this->appends = array_merge(parent::getAppends(), [
-            //
+            'read_at_formated',
         ]);
     }
 
