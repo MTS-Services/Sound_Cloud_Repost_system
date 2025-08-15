@@ -27,9 +27,12 @@ class SoundCloudService
     /**
      * The base URL for the SoundCloud OAuth.
      *
+     * IMPORTANT: This has been corrected to use the official API domain.
+     * The 'secure.soundcloud.com/oauth2/token' endpoint was causing a 404 error.
+     *
      * @var string
      */
-    protected string $oauthUrl = 'https://secure.soundcloud.com';
+    protected string $oauthUrl = 'https://api.soundcloud.com';
 
     /**
      * Makes an authenticated API request to SoundCloud, ensuring a valid token is used.
@@ -496,7 +499,6 @@ class SoundCloudService
         }
         return min(floor($followers / 100), 100);
     }
-
 
 
     /**
