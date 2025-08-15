@@ -125,7 +125,7 @@
                             <a href="{{ $customNotification->url }}"
                                 class="btn btn-lg bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-none shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
                                 <i class="fas fa-external-link-alt mr-2"></i>
-                                Take Action
+                                Continue
                             </a>
                         </div>
                     @endif
@@ -137,7 +137,6 @@
                         <div>
                             <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-2">Notification Details</h4>
                             <div class="space-y-1 text-gray-600 dark:text-gray-400">
-                                <div>ID: #{{ $customNotification->id }}</div>
                                 <div>Created: {{ $customNotification->created_at_formatted }}</div>
                                 <div>Updated: {{ $customNotification->updated_at_formatted }}</div>
                             </div>

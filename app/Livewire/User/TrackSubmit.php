@@ -9,12 +9,20 @@ use App\Models\User;
 use App\Models\UserGenre;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use App\Services\SoundCloud\SoundCloudService;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
 class TrackSubmit extends Component
 {
     use WithFileUploads;
+
+    protected SoundCloudService $soundCloudService;
+
+    public function boot(SoundCloudService $soundCloudService)
+    {
+        $this->soundCloudService = $soundCloudService;
+    }
 
     // Base Url
     protected string $baseUrl = 'https://api.soundcloud.com';
@@ -173,34 +181,41 @@ class TrackSubmit extends Component
         $this->validate();
 
         try {
-            $httpClient = Http::withHeaders([
-                'Authorization' => 'OAuth ' . user()->token,
-            ])->attach(
-                'track[asset_data]',
-                file_get_contents($this->track['asset_data']->getRealPath()),
-                $this->track['asset_data']->getClientOriginalName()
-            );
 
-            if ($this->track['artwork_data']) {
-                $httpClient->attach(
-                    'track[artwork_data]',
-                    file_get_contents($this->track['artwork_data']->getRealPath()),
-                    $this->track['artwork_data']->getClientOriginalName()
-                );
-            }
+            // $this->soundCloudService->ensureSoundCloudConnection(user());
+            // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+            // // user()->refresh();
 
-            // Highlighted change: Replaced the old requestBody creation
-            $requestBody = [];
-            foreach ($this->track as $key => $value) {
-                // Only include non-file fields and those with a value
-                if (! in_array($key, ['asset_data', 'artwork_data']) && ! empty($value)) {
-                    $requestBody["track[{$key}]"] = $value;
-                }
-            }
+            // $httpClient = Http::withHeaders([
+            //     'Authorization' => 'OAuth ' . user()->token,
+            // ])->attach(
+            //     'track[asset_data]',
+            //     file_get_contents($this->track['asset_data']->getRealPath()),
+            //     $this->track['asset_data']->getClientOriginalName()
+            // );
 
-            $response = $httpClient->post($this->baseUrl . '/tracks', $requestBody);
+            // if ($this->track['artwork_data']) {
+            //     $httpClient->attach(
+            //         'track[artwork_data]',
+            //         file_get_contents($this->track['artwork_data']->getRealPath()),
+            //         $this->track['artwork_data']->getClientOriginalName()
+            //     );
+            // }
 
-            $response->throw();
+            // // Highlighted change: Replaced the old requestBody creation
+            // $requestBody = [];
+            // foreach ($this->track as $key => $value) {
+            //     // Only include non-file fields and those with a value
+            //     if (! in_array($key, ['asset_data', 'artwork_data']) && ! empty($value)) {
+            //         $requestBody["track[{$key}]"] = $value;
+            //     }
+            // }
+
+            // $response = $httpClient->post($this->baseUrl . '/tracks', $requestBody);
+
+            // $response->throw();
+
+            $responseTrack = $this->soundCloudService->uploadTrack(user(), $this->track);
 
             // After a successful API call, delete the temporary files to free up disk space.
             if ($this->track['asset_data']) {
@@ -209,8 +224,7 @@ class TrackSubmit extends Component
             if ($this->track['artwork_data']) {
                 $this->track['artwork_data']->delete();
             }
-            DB::transaction(function () use ($response) {
-                $responseTrack = $response->json();
+            DB::transaction(function () use ($responseTrack) {
                 $track =  Track::create([
                     'user_urn' => user()->urn,
                     'kind' =>  $responseTrack['kind'],
@@ -272,17 +286,16 @@ class TrackSubmit extends Component
                     'receiver_id' => user()->id,
                     'receiver_type' => User::class,
                     'type' => CustomNotification::TYPE_USER,
+                    'url' => route('user.pm.my-account') . '?tab=tracks',
                     'message_data' => [
                         'title' => 'Track Submitted',
                         'message' => 'A new track has been submitted.',
                         'description' => "Your track has been successfully uploaded to SoundCloud. Track Title: {$track->title}. If this track is not visible on SoundCloud, it may have been deleted or removed by SoundCloud due to a potential copyright infringement. Please review your SoundCloud account notifications for details. If you possess write permissions for this track or are its rightful owner, we recommend contacting SoundCloud support for further assistance.",
-                        'url' => route('user.pm.my-account') . '?tab=tracks',
                         'icon' => 'audio-lines',
                         'additional_data' => [
                             'Track Title' => $track->title,
                             'Description' => $track->description ?? 'No description provided.',
                             'Track Artist' => $track->author_username,
-                            'Track Link' => $track->permalink_url,
                         ]
                     ]
                 ]);
