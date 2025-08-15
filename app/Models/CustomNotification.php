@@ -75,4 +75,5 @@ class CustomNotification extends BaseModel
     {
         return $query->where('sender_type', self::TYPE_ADMIN);
     }
+
 }

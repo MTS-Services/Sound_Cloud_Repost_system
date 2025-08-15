@@ -296,7 +296,6 @@ class TrackSubmit extends Component
                             'Track Title' => $track->title,
                             'Description' => $track->description ?? 'No description provided.',
                             'Track Artist' => $track->author_username,
-                            'Track Link' => $track->permalink_url,
                         ]
                     ]
                 ]);
