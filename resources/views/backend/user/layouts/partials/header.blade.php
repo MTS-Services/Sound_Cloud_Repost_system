@@ -88,10 +88,10 @@
                 <x-lucide-search
                     class="w-5 h-5 text-slate-800 dark:text-slate-300 group-hover:text-orange-500 transition-colors" />
                 <span class="ml-3 text-slate-400 dark:text-slate-300 text-left flex-1">Search...</span>
-                <kbd
+                {{-- <kbd
                     class="hidden md:inline-flex items-center px-2 py-1 text-xs font-medium text-slate-400 bg-slate-100 dark:bg-slate-600 dark:text-slate-300 rounded border">
                     ⌘K
-                </kbd>
+                </kbd> --}}
             </button>
         </div>
         <div class="flex items-center space-x-1 md:space-x-2">
