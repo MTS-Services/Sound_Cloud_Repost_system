@@ -1,5 +1,5 @@
 <header
-    class="bg-white h-[9vh] dark:bg-slate-800 z-41 border-b border-gray-100 dark:border-slate-700 px-4 md:px-6 py-3 md:py-5 sticky top-0"
+    class="bg-white dark:bg-slate-800 z-41 border-b border-gray-100 dark:border-slate-700 px-4 md:px-6 py-3 md:py-5 sticky top-0"
     x-data="{
         searchModalOpen: false,
         searchQuery: '',
@@ -84,7 +84,7 @@
         </div>
         <div class="flex-1 flex justify-center px-2 md:px-4 lg:px-0 lg:ml-8 md:mr-3">
             <button @click="searchModalOpen = true"
-                class="relative w-full max-w-md items-center hidden sm:flex bg-white dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600 rounded-lg px-4 py-2 hover:border-orange-500 dark:hover:border-orange-500 transition-colors group">
+                class="relative w-full max-w-md items-center hidden lg:flex bg-white dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600 rounded-lg px-4 py-2 hover:border-orange-500 dark:hover:border-orange-500 transition-colors group">
                 <x-lucide-search
                     class="w-5 h-5 text-slate-800 dark:text-slate-300 group-hover:text-orange-500 transition-colors" />
                 <span class="ml-3 text-slate-400 dark:text-slate-300 text-left flex-1">Search...</span>
