@@ -54,8 +54,8 @@ class CustomNotificationStatus extends BaseModel
             ->where('user_type', get_class(admin()));
     }
 
-    public function getReadAtFormatedAttribute()
+    public function getReadAtFormattedAttribute()
     {
-        return $this->read_at ? timeFormat($this->deleted_at) : 'N/A';
+        return $this->read_at ? timeFormat($this->read_at) : 'N/A';
     }
 }

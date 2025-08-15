@@ -231,7 +231,7 @@
         x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0" @click.self="searchModalOpen = false"
         @keydown.escape.window="searchModalOpen = false"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-16 md:pt-24"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-16 md:pt-24 hidden"
         :class="{ 'hidden': !searchModalOpen }">
         <div x-show="searchModalOpen" x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 scale-95 translate-y-4"
@@ -246,7 +246,7 @@
                         class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-orange-500" />
                     <input x-model="searchQuery" @input="filterSuggestions()" @keydown="handleKeydown($event)"
                         x-ref="searchInput" type="text" placeholder="Search anything..."
-                        class="w-full pl-12 pr-4 py-3 text-lg bg-transparent border-2 border-gray-200 dark:border-slate-600 rounded-lg focus:border-orange-500 dark:focus:border-orange-500 focus:outline-none text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-300 transition-colors">
+                        class="w-full pl-12 pr-4 py-3 text-lg bg-transparent border-2 border-gray-200 rounded-lg focus:border-orange-500 dark:focus:border-orange-500 focus:outline-none text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-300 focus-within:outline-none transition-colors">
                     <button @click="searchModalOpen = false"
                         class="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

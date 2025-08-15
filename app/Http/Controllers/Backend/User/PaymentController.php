@@ -58,7 +58,7 @@ class PaymentController extends Controller
         $order = $this->orderService->getOrder(encrypt($request->order_id));
         try {
             $paymentIntent = $this->stripeService->createPaymentIntent([
-                'amount' => $order->amount * 100,
+                'amount' => $order->amount,
                 'currency' => 'usd',
                 'metadata' => [
                     'order_id' => $request->order_id ?? null,
@@ -164,9 +164,6 @@ class PaymentController extends Controller
                     $additionalData['Reference'] = $payment->reference;
                 }
                 $additionalData['Order ID'] = $payment->order_id;
-                if (isset($payment->payment_method)) {
-                    $additionalData['Payment Method'] = $payment->payment_method;
-                }
                 $additionalData['Payment Gateway'] = $payment->payment_gateway_label;
                 $additionalData['Amount'] = $payment->amount;
                 $additionalData['Currency'] = $payment->currency;
