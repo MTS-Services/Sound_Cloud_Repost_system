@@ -591,6 +591,31 @@ function searchableRoutes()
             'keywords' => ['members', 'create request', 'create requests'],
             'route' => route('user.mm.members.index'),
         ],
+        [
+            'title' => 'Plans',
+            'keywords' => ['plans', 'pricing', 'premium plans', 'pro plans', 'features', 'feature comparison', 'Core Features', 'Free Boosts', 'Simultaneous Campaigns', 'Priority Direct Requests', 'Free Forever', 'subscribe', 'upgrade', 'upgrade now'],
+            'route' => route('user.pkm.pricing'),
+        ],
+        [
+            'title' => 'My Account',
+            'keywords' => ['my account', 'my profile', 'profile', 'email', 'password', 'update', 'update password', 'update email', 'update profile', 'change password', 'change email', 'change profile', 'account'],
+            'route' => route('user.pm.my-account'),
+        ],
+        [
+            'title' => 'Analytics',
+            'keywords' => ['analytics', 'stats', 'statistics', 'stats', 'statistics', 'stats', 'statistics'],
+            'route' => route('user.analytics'),
+        ],
+        [
+            'title' => 'Settings',
+            'keywords' => [],
+            'route' => '',
+        ],
+        [
+            'title' => 'Help & Support',
+            'keywords' => ['Help & Support', 'FAQ', 'FAQs', 'Frequently Asked Questions', 'Contact Us', 'Contact', 'Support', 'Help', 'help', 'support', 'faq', 'faqs', 'frequently asked questions', 'privacy & safety', '&', 'privacy', 'safety', 'community guidelines', 'community', 'guidelines'],
+            'route' => route('user.help-support'),
+        ],
 
     ];
 
