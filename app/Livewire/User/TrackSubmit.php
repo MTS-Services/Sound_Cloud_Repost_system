@@ -182,13 +182,12 @@ class TrackSubmit extends Component
 
         try {
 
-            $user = user();
-            $this->soundCloudService->ensureSoundCloudConnection($user);
-            $this->soundCloudService->refreshUserTokenIfNeeded($user);
-            // $user->refresh();
+            $this->soundCloudService->ensureSoundCloudConnection(user());
+            $this->soundCloudService->refreshUserTokenIfNeeded(user());
+            // user()->refresh();
 
             $httpClient = Http::withHeaders([
-                'Authorization' => 'OAuth ' . $user->token,
+                'Authorization' => 'OAuth ' . user()->token,
             ])->attach(
                 'track[asset_data]',
                 file_get_contents($this->track['asset_data']->getRealPath()),
@@ -226,7 +225,7 @@ class TrackSubmit extends Component
             DB::transaction(function () use ($response) {
                 $responseTrack = $response->json();
                 $track =  Track::create([
-                    'user_urn' => $user->urn,
+                    'user_urn' => user()->urn,
                     'kind' =>  $responseTrack['kind'],
                     'soundcloud_track_id' =>  $responseTrack['id'],
                     'urn' =>  $responseTrack['urn'],
@@ -283,7 +282,7 @@ class TrackSubmit extends Component
                     'last_sync_at' => now(),
                 ]);
                 $notification = CustomNotification::create([
-                    'receiver_id' => $user->id,
+                    'receiver_id' => user()->id,
                     'receiver_type' => User::class,
                     'type' => CustomNotification::TYPE_USER,
                     'message_data' => [
