@@ -91,7 +91,7 @@ class SoundCloudService
      * @param User $user The user model instance.
      * @throws Exception
      */
-    protected function refreshUserTokenIfNeeded(User $user): void
+    public function refreshUserTokenIfNeeded(User $user): void
     {
         // Check if the token needs a refresh based on the stored `last_synced_at` and `expires_in`.
         $expirationTime = is_null($user->last_synced_at) ? null : $user->last_synced_at->addSeconds($user->expires_in);
@@ -152,7 +152,7 @@ class SoundCloudService
      * @param User $user
      * @throws Exception
      */
-    private function ensureSoundCloudConnection(User $user): void
+    public function ensureSoundCloudConnection(User $user): void
     {
         // This is a good place to check for a basic connection. You might need to add a `isSoundCloudConnected()` method to your User model.
         // For example: `return !is_null($this->token) && !is_null($this->refresh_token);`
