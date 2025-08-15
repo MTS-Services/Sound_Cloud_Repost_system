@@ -835,7 +835,7 @@
 
 
                     <!-- Campaign Targeting -->
-                    <div class="border border-gray-200 rounded-lg p-4"
+                    <div class="border border-gray-200 dark:border-gray-700 bg-gray-200 dark:bg-gray-900 rounded-lg p-4"
                         :class="momentumEnabled ? 'opacity-100' : 'opacity-30 border-opacity-10'">
                         <div class=" mb-4">
                             <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
@@ -910,9 +910,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="border border-gray-200 dark:border-gray-700 bg-gray-200 dark:bg-gray-900 rounded-lg p-4">
                         <!-- Genre Selection -->
-                        <div class="mt-6">
+                        <div class="">
                             <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Genre Preferences for
                                 Sharers</h2>
                             <p class="text-sm text-gray-700 dark:text-gray-400 mb-3 mt-2">Reposters must have the
