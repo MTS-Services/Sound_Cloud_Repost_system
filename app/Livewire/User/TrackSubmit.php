@@ -182,38 +182,40 @@ class TrackSubmit extends Component
 
         try {
 
-            $this->soundCloudService->ensureSoundCloudConnection(user());
-            $this->soundCloudService->refreshUserTokenIfNeeded(user());
-            // user()->refresh();
+            // $this->soundCloudService->ensureSoundCloudConnection(user());
+            // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+            // // user()->refresh();
 
-            $httpClient = Http::withHeaders([
-                'Authorization' => 'OAuth ' . user()->token,
-            ])->attach(
-                'track[asset_data]',
-                file_get_contents($this->track['asset_data']->getRealPath()),
-                $this->track['asset_data']->getClientOriginalName()
-            );
+            // $httpClient = Http::withHeaders([
+            //     'Authorization' => 'OAuth ' . user()->token,
+            // ])->attach(
+            //     'track[asset_data]',
+            //     file_get_contents($this->track['asset_data']->getRealPath()),
+            //     $this->track['asset_data']->getClientOriginalName()
+            // );
 
-            if ($this->track['artwork_data']) {
-                $httpClient->attach(
-                    'track[artwork_data]',
-                    file_get_contents($this->track['artwork_data']->getRealPath()),
-                    $this->track['artwork_data']->getClientOriginalName()
-                );
-            }
+            // if ($this->track['artwork_data']) {
+            //     $httpClient->attach(
+            //         'track[artwork_data]',
+            //         file_get_contents($this->track['artwork_data']->getRealPath()),
+            //         $this->track['artwork_data']->getClientOriginalName()
+            //     );
+            // }
 
-            // Highlighted change: Replaced the old requestBody creation
-            $requestBody = [];
-            foreach ($this->track as $key => $value) {
-                // Only include non-file fields and those with a value
-                if (! in_array($key, ['asset_data', 'artwork_data']) && ! empty($value)) {
-                    $requestBody["track[{$key}]"] = $value;
-                }
-            }
+            // // Highlighted change: Replaced the old requestBody creation
+            // $requestBody = [];
+            // foreach ($this->track as $key => $value) {
+            //     // Only include non-file fields and those with a value
+            //     if (! in_array($key, ['asset_data', 'artwork_data']) && ! empty($value)) {
+            //         $requestBody["track[{$key}]"] = $value;
+            //     }
+            // }
 
-            $response = $httpClient->post($this->baseUrl . '/tracks', $requestBody);
+            // $response = $httpClient->post($this->baseUrl . '/tracks', $requestBody);
 
-            $response->throw();
+            // $response->throw();
+
+             $responseTrack = $this->soundCloudService->uploadTrack(user(), $this->track);
 
             // After a successful API call, delete the temporary files to free up disk space.
             if ($this->track['asset_data']) {
@@ -222,8 +224,7 @@ class TrackSubmit extends Component
             if ($this->track['artwork_data']) {
                 $this->track['artwork_data']->delete();
             }
-            DB::transaction(function () use ($response) {
-                $responseTrack = $response->json();
+            DB::transaction(function () use ($responseTrack) {
                 $track =  Track::create([
                     'user_urn' => user()->urn,
                     'kind' =>  $responseTrack['kind'],

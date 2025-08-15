@@ -91,7 +91,7 @@ class SoundCloudService
      * @param User $user The user model instance.
      * @throws Exception
      */
-    public function refreshUserTokenIfNeeded(User $user): void
+    protected function refreshUserTokenIfNeeded(User $user): void
     {
         // Check if the token needs a refresh based on the stored `last_synced_at` and `expires_in`.
         $expirationTime = is_null($user->last_synced_at) ? null : $user->last_synced_at->addSeconds($user->expires_in);
@@ -152,7 +152,7 @@ class SoundCloudService
      * @param User $user
      * @throws Exception
      */
-    public function ensureSoundCloudConnection(User $user): void
+    private function ensureSoundCloudConnection(User $user): void
     {
         // This is a good place to check for a basic connection. You might need to add a `isSoundCloudConnected()` method to your User model.
         // For example: `return !is_null($this->token) && !is_null($this->refresh_token);`
@@ -516,25 +516,15 @@ class SoundCloudService
         $user->refresh();
 
         try {
-            $httpClient = Http::withToken($user->token);
-
-            // Prepare the request body for multipart/form-data
-            $requestBody = [];
-            foreach ($trackData as $key => $value) {
-                if (!in_array($key, ['asset_data', 'artwork_data'])) {
-                    $requestBody["track[{$key}]"] = $value;
-                }
-            }
-
-            // Attach the track file
-            $httpClient->attach(
+            $httpClient = Http::withHeaders([
+                'Authorization' => 'OAuth ' . $user->token,
+            ])->attach(
                 'track[asset_data]',
                 file_get_contents($trackData['asset_data']->getRealPath()),
                 $trackData['asset_data']->getClientOriginalName()
             );
 
-            // Attach the artwork file if it exists
-            if (isset($trackData['artwork_data']) && $trackData['artwork_data']) {
+            if ($trackData['artwork_data']) {
                 $httpClient->attach(
                     'track[artwork_data]',
                     file_get_contents($trackData['artwork_data']->getRealPath()),
@@ -542,7 +532,16 @@ class SoundCloudService
                 );
             }
 
-            $response = $httpClient->post("{$this->baseUrl}/tracks", $requestBody);
+            // Highlighted change: Replaced the old requestBody creation
+            $requestBody = [];
+            foreach ($trackData as $key => $value) {
+                // Only include non-file fields and those with a value
+                if (! in_array($key, ['asset_data', 'artwork_data']) && ! empty($value)) {
+                    $requestBody["track[{$key}]"] = $value;
+                }
+            }
+
+            $response = $httpClient->post($this->baseUrl . '/tracks', $requestBody);
 
             $response->throw();
 
