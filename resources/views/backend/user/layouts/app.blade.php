@@ -13,17 +13,35 @@
     </title>
 
     <script>
+     
         (function() {
-            let theme = localStorage.getItem('theme') || 'system';
+            function applyThemeImmediately() {
+                const theme = localStorage.getItem('theme') || 'light';
+                const isDark = theme === 'dark';
 
-            if (theme === 'system') {
-                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                document.documentElement.classList.toggle('dark', systemPrefersDark);
-                document.documentElement.setAttribute('data-theme', systemPrefersDark ? 'dark' : 'light');
-            } else {
-                document.documentElement.classList.toggle('dark', theme === 'dark');
-                document.documentElement.setAttribute('data-theme', theme);
+                document.documentElement.classList.toggle('dark', isDark);
+                document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
             }
+
+            // Apply theme immediately on script execution
+            applyThemeImmediately();
+
+            // Apply theme before Livewire navigation starts
+            document.addEventListener('livewire:navigating', function() {
+                applyThemeImmediately();
+            });
+
+            // Apply theme immediately after navigation (backup)
+            document.addEventListener('livewire:navigated', function() {
+                applyThemeImmediately();
+
+                // Refresh icons after navigation
+                setTimeout(() => {
+                    if (window.lucide && lucide.createIcons) {
+                        lucide.createIcons();
+                    }
+                }, 10);
+            });
         })();
     </script>
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/custome.css') }}">

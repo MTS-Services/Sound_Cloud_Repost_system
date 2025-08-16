@@ -152,7 +152,7 @@
                 <x-lucide-search class="w-5 h-5" />
             </button>
             <livewire:user.notification.notification-panel />
-            {{-- <button @click="$store.theme.toggleTheme()"
+            <button @click="$store.theme.toggleTheme()"
                 class="p-2 rounded-xl hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
                 data-tooltip="Toggle theme"
                 :title="$store.theme.current.charAt(0).toUpperCase() + $store.theme.current.slice(1) + ' mode'">
@@ -160,24 +160,19 @@
                     class="w-5 h-5 text-text-light-primary dark:text-text-white" />
                 <x-heroicon-o-moon x-show="$store.theme.darkMode"
                     class="w-5 h-5 text-text-light-primary dark:text-text-white" />
-            </button> --}}
-            <button @click="$store.theme.toggleTheme()"
+            </button>
+            {{-- <button @click="$store.theme.toggleTheme()"
                 class="p-2 rounded-xl hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
                 data-tooltip="Toggle theme"
-                :title="$store.theme.current.charAt(0).toUpperCase() + $store.theme.current.slice(1) + ' mode'"
-                x-data="{ mounted: false }" x-init="mounted = true">
+                :title="$store.theme.current.charAt(0).toUpperCase() + $store.theme.current.slice(1) + ' mode'">
                 <!-- Sun icon for light mode -->
-                <i data-lucide="sun" x-show="mounted && !$store.theme.darkMode"
-                    x-transition:enter="transition-opacity duration-200" x-transition:enter-start="opacity-0"
-                    x-transition:enter-end="opacity-100"
+                <i data-lucide="sun" x-show="!$store.theme.darkMode" x-cloak
                     class="w-5 h-5 text-text-light-primary dark:text-text-white"></i>
 
                 <!-- Moon icon for dark mode -->
-                <i data-lucide="moon" x-show="mounted && $store.theme.darkMode"
-                    x-transition:enter="transition-opacity duration-200" x-transition:enter-start="opacity-0"
-                    x-transition:enter-end="opacity-100"
+                <i data-lucide="moon" x-show="$store.theme.darkMode" x-cloak
                     class="w-5 h-5 text-text-light-primary dark:text-text-white"></i>
-            </button>
+            </button> --}}
             <div class="dropdown dropdown-end">
                 <div tabindex="0" role="button" class="flex items-center space-x-1 md:space-x-2">
                     <img src="{{ auth_storage_url(user()->avatar) }}" alt="{{ user()->name ?? 'name' }}"
@@ -185,8 +180,8 @@
                     <span
                         class="text-xs md:text-sm font-medium dark:text-slate-300 hidden sm:block">{{ user()->name ?? 'name' }}</span>
                     <svg class="dark:text-slate-300 w-3 h-3 md:w-4 md:h-4" xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
                         <path d="m6 9 6 6 6-6"></path>
                     </svg>
                 </div>
