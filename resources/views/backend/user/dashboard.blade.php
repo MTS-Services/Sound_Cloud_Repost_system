@@ -4,7 +4,7 @@
 
     <div id="content-dashboard" class="page-content py-2 px-2 ">
         <div
-            class="px-2 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 w-full">
+            class="tablet:px-2 px-0.5 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 w-full">
             <!-- Left: Title and subtitle -->
             <div class="w-full sm:w-auto">
                 <h2 class="text-2xl text-black dark:text-white font-semibold mb-2">Dashboard</h2>
@@ -15,31 +15,31 @@
                 </p>
             </div>
             <!-- Right: Buttons group -->
-            <div class="flex flex-col sm:flex-row gap-3 sm:gap-2 w-full sm:w-auto">
+            <div class="flex flex-col lg:flex-row gap-3 sm:gap-2 w-full sm:w-auto">
                 <!-- Earn Credits -->
                 <div
                     class="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 dark:bg-slate-800 dark:hover:bg-slate-700 text-white dark:text-gray-200 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer w-full sm:w-auto justify-center">
                     <span class="flex items-center gap-1 text-base sm:text-sm">
                         💰
                         <a href="{{ route('user.cm.campaigns') }}" wire:navigate
-                            class="hover:underline text-white dark:text-gray-200 text-base sm:text-sm">
+                            class="hover:underline text-white dark:text-gray-200 text-base sm:text-xs lg:text-base">
                             {{ __('Earn Credits') }}
                         </a>
                     </span>
                 </div>
                 <!-- Submit Track -->
                 <div
-                    class="flex items-center gap-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 w-full sm:w-auto justify-center">
-                    <a href="{{ route('user.track.submit') }}" class="text-base sm:text-sm py-2 px-3" wire:navigate>
+                    class="flex items-center gap-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 w-full sm:w-auto justify-center py-2 px-3">
+                    <a href="{{ route('user.track.submit') }}" class="text-base sm:text-xs lg:text-base  " wire:navigate>
                         <span>
-                            <x-lucide-music class="inline-block text-center h-5 w-6 text-purple-800" />
+                            <x-lucide-music class="inline-block text-center h-4 w-4 text-purple-800" />
                         </span>
                         {{ __('Submit Track') }}</a>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             <div
                 class="bg-white  dark:bg-slate-800 rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
                 <div class="flex items-center justify-between mb-4">
