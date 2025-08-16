@@ -13,7 +13,7 @@
     </title>
 
     <script>
-     
+
         (function() {
             function applyThemeImmediately() {
                 const theme = localStorage.getItem('theme') || 'light';
@@ -104,7 +104,7 @@
 
     <!-- Main Content -->
     <div class="ml-auto lg:w-[calc(100%-15%)] w-full">
-        <div class="p-4 md:p-6 h-[calc(100vh-9vh)] ">
+        <div class="p-4 md:p-6 min-h-[calc(100vh-64px)]">
             {{ $slot }}
         </div>
     </div>
