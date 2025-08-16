@@ -6,10 +6,27 @@
             <div class="container mx-auto px-4 py-8 lg:py-12">
                 <div class="max-w-8xl mx-auto">
                     {{-- Header --}}
-                    <div class="text-center mb-8 bg-gray-200 dark:bg-slate-700 py-4 rounded-lg">
-                        <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-2">Edit Profile</h1>
-                        <p class="text-gray-600 dark:text-white">Update your personal information and preferences</p>
+                    <div
+                        class="flex justify-between items-center mb-8 bg-gray-200 dark:bg-slate-700 py-4 px-6 rounded-lg">
+
+                        <!-- Title and Description -->
+
+                        <div class=" flex-1">
+                            <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-2">Edit Profile
+                            </h1>
+                            <p class="text-gray-600 dark:text-white">Update your personal information and preferences
+                            </p>
+                        </div>
+                        <!-- Back Button -->
+                        <a href="{{ route('user.pm.my-account') }}"
+                            class="btn btn-primary dark:text-white">
+                           <x-heroicon-o-arrow-left class="w-4 h-4" />
+                            <span>Back</span>
+                        </a>
+
+
                     </div>
+
 
                     {{-- Form Container --}}
                     <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden">
@@ -42,7 +59,7 @@
                                 </div>
 
                                 <div class="text-center sm:text-left dark:text-white">
-                                    <h2 class="text-2xl font-bold text-white mb-1">{{ user()->name }}</h2>
+                                    <h2 class="text-2xl font-bold text-white  mb-1">{{ user()->name }}</h2>
                                     <p class="text-primary-100">{{ user()->email }}</p>
                                     <p class="text-primary-200 text-sm mt-1">Joined
                                         {{ user()->created_at->diffForHumans() }}</p>
@@ -68,22 +85,22 @@
                                 </div>
 
                                 {{-- First Name --}}
-                                <div class="space-y-2">
+                                {{-- <div class="space-y-2">
                                     <label for="firstName"
                                         class="block text-sm font-medium text-gray-700 dark:text-white">First
                                         Name</label>
                                     <input type="text" id="firstName" name="firstName" value="John"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-gray-400" />
-                                </div>
+                                </div> --}}
 
                                 {{-- Last Name --}}
-                                <div class="space-y-2">
+                                {{-- <div class="space-y-2">
                                     <label for="lastName"
                                         class="block text-sm font-medium text-gray-700 dark:text-white">Last
                                         Name</label>
                                     <input type="text" id="lastName" name="lastName" value="Doe"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-gray-400" />
-                                </div>
+                                </div> --}}
 
                                 {{-- Email --}}
                                 <div class="space-y-2">
@@ -126,7 +143,7 @@
             <div class="min-h-screen bg-white dark:bg-slate-900">
                 {{-- Header Section --}}
                 <div class="bg-gradient-to-r from-gray-100 to-gray-200 dark:from-slate-800 dark:to-slate-700 relative">
-                    <div class="absolute inset-0 dark:bg-black bg-opacity-10 dark:bg-opacity-30"></div>
+                    <div class="absolute inset-0 dark:to-slate-700 bg-opacity-10 dark:bg-opacity-30"></div>
                     <div class="relative p-4 sm:p-6">
                         <div class="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-6">
                             {{-- Avatar --}}
