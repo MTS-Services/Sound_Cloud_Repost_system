@@ -28,7 +28,7 @@
     </script>
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/custome.css') }}">
     <!-- Scripts -->
-    <script src="{{ asset('assets/js/toggle-theme.js') }}"></script>
+    <script src="{{ asset('assets/js/toggle-theme-3.js') }}"></script>
 
     @vite(['resources/css/user-dashboard.css', 'resources/js/user-dashboard.js'])
 
