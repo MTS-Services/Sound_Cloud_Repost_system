@@ -35,7 +35,7 @@
             </select> --}}
 
             <select wire:model.live="genreFilter"
-                class="bg-card-blue border border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-4 py-3 text-text-gray hover:border-orange-500 transition-colors min-w-[160px] focus:outline-none focus:border-orange-500">
+                class="bg-card-blue border border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-7 py-3 text-text-gray hover:border-orange-500 transition-colors min-w-[160px] focus:outline-none focus:border-orange-500">
                 <option class="hidden" value="">Filter by genre</option>
                 @forelse ($genres as $genre)
                     <option value="{{ $genre }}">{{ $genre }}</option>
