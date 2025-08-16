@@ -85,7 +85,7 @@
                         :class="open ? '!block' : '!hidden'">
                         <x-admin.profile-navlink route="{{ route('admin.profile.index') }}"
                             name="{{ __('Profile') }}" />
-                        <x-admin.profile-navlink route="#" name="{{ __('Settings') }}" />
+                        {{-- <x-admin.profile-navlink route="#" name="{{ __('Settings') }}" /> --}}
                         <x-admin.profile-navlink route="{{ route('admin.logout') }}" logout='true'
                             name="{{ __('Sign Out') }}" />
                         {{-- <a href="#"
