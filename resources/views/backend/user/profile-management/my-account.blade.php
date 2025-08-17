@@ -1026,6 +1026,11 @@
                             widget.bind(SC.Widget.Events.FINISH, () => {
                                 @this.call('handleAudioEnded', campaignId);
                             });
+                            // Track position updates
+                            widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+                                const currentTime = data.currentPosition / 1000;
+                                @this.call('handleAudioTimeUpdate', campaignId, currentTime);
+                            });
                         }
                     });
                 }

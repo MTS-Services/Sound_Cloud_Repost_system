@@ -103,6 +103,13 @@ class MyAccount extends Component
     {
         $this->showEditProfileModal = true;
     }
+    public function handleAudioTimeUpdate($campaignId, $currentTime)
+    {
+        if ($currentTime >= 5 && !in_array($campaignId, $this->playedCampaigns)) {
+            $this->playedCampaigns[] = $campaignId;
+            $this->dispatch('campaignPlayedEnough', $campaignId);
+        }
+    }
 
     public function render()
     {
