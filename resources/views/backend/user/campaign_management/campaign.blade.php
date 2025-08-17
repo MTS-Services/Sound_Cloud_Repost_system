@@ -12,12 +12,14 @@
                         <button
                             class="tab-button @if ($activeMainTab === 'recommended_pro') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 pb-1 px-2 text-md font-semibold transition-all duration-200"
                             wire:click="setActiveMainTab('recommended_pro')">
-                            {{ __('Recommended Pro') }} <span class="text-xs ml-2 text-orange-500">{{ $totalRecommendedPro}}</span>
+                            {{ __('Recommended Pro') }} <span
+                                class="text-xs ml-2 text-orange-500">{{ $totalRecommendedPro }}</span>
                         </button>
                         <button
                             class="tab-button @if ($activeMainTab === 'recommended') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 pb-1 px-2 text-md font-semibold transition-all duration-200"
                             wire:click="setActiveMainTab('recommended')">
-                            {{ __('Recommended') }}<span class="text-xs ml-2 text-orange-500">{{ $totalRecommended }}</span>
+                            {{ __('Recommended') }}<span
+                                class="text-xs ml-2 text-orange-500">{{ $totalRecommended }}</span>
                         </button>
                         <button
                             class="tab-button @if ($activeMainTab === 'all') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 pb-1 px-2 text-md font-semibold transition-all duration-200"
@@ -812,9 +814,11 @@
                     </div>
 
                     <!-- Enable Campaign Accelerator -->
-                    <div class="flex items-start space-x-3 {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'opacity-30' : '' }}">
+                    <div
+                        class="flex items-start space-x-3 {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'opacity-30' : '' }}">
                         <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
-                            x-model="momentumEnabled" {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'disabled' : '' }}
+                            x-model="momentumEnabled"
+                            {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'disabled' : '' }}
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'cursor-not-allowed' : 'cursor-pointer' }}">
                         <div>
                             <div class="flex items-center space-x-2">
@@ -909,7 +913,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="border border-gray-200 dark:border-gray-700 bg-gray-200 dark:bg-gray-900 rounded-lg p-4">
+                    <div
+                        class="border border-gray-200 dark:border-gray-700 bg-gray-200 dark:bg-gray-900 rounded-lg p-4">
                         <!-- Genre Selection -->
                         <div class="">
                             <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Genre Preferences for
@@ -1079,12 +1084,15 @@
                         <label for="commented" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             {{ __('Comment:') }}
                             <input name="commented" id="repostDescription" wire:model.live="commented"
-                                class="w-full h-16 px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-md focus:border-orange-500 focus:ring-0 transition-colors duration-200 bg-gray-50 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-800 resize-none" />
+                                class="w-full h-16 px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-md focus:border-orange-500 focus:ring-0 transition-colors duration-200 bg-gray-50 dark:bg-slate-800 focus:bg-gray-100 dark:focus:bg-slate-800 resize-none" />
                         </label>
                     </div>
                     <div class="space-y-2 mb-4">
-                        <label for="liked" class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                            <input type="checkbox" id="liked" class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500" wire:model.live="liked">
+                        <label for="liked"
+                            class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <input type="checkbox" id="liked"
+                                class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
+                                wire:model.live="liked">
                             {{ __('Activate HeartPush') }}
                         </label>
                     </div>
@@ -1099,7 +1107,7 @@
                                 <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
                                     stroke-width="2" />
                             </svg>
-                            <span>{{ repostPrice()+ ($liked ? 2 : 0) + ($commented ? 2 : 0) }}</span>
+                            <span>{{ repostPrice() + ($liked ? 2 : 0) + ($commented ? 2 : 0) }}</span>
                             {{ __('Repost') }}
                         </button>
                     </div>
