@@ -972,7 +972,7 @@
                                                     <tbody
                                                         class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
                                                         <tr class="border-b border-gray-200 dark:border-gray-700">
-                                                            <td class="px-2 py-2">{{ $transaction->id }}</td>
+                                                            <td class="px-2 py-2">{{ $loop->iteration }}</td>
                                                             <td class="px-2 py-2">{{ $transaction->receiver_urn }}
                                                             </td>
                                                             <td class="px-2 py-2">{{ $transaction->amount ?? '0.00' }}
