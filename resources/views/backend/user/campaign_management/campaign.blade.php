@@ -1099,7 +1099,7 @@
                                 <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
                                     stroke-width="2" />
                             </svg>
-                            <span>{{ repostPrice(null, $commented, $liked) }}</span>
+                            <span>{{ repostPrice()+ ($liked ? 2 : 0) + ($commented ? 2 : 0) }}</span>
                             {{ __('Repost') }}
                         </button>
                     </div>

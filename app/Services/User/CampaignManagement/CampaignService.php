@@ -29,7 +29,8 @@ class CampaignService
 
                 $trackOwnerUrn = $campaign->music->user?->urn ?? $campaign->user_urn;
                 $trackOwnerName = $campaign->music->user?->name;
-                $totalCredits = repostPrice($reposter, $likeCommentAbleData['commentable'], $likeCommentAbleData['likeable']);
+                // $totalCredits = repostPrice($reposter, $likeCommentAbleData['commentable'], $likeCommentAbleData['likeable']);
+                $totalCredits = repostPrice() + ($likeCommentAbleData['commentable'] ? 2 : 0) + ($likeCommentAbleData['likeable'] ? 2 : 0);
 
                 // Create the Repost record
                 $repost = Repost::create([
