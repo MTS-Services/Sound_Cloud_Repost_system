@@ -1,6 +1,6 @@
 <div x-show="sidebarOpen" @click.away="sidebarOpen = false" class="fixed z-30 lg:hidden" x-cloak></div>
 <div :class="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }"
-    class="fixed left-0 lg:top-20 top-17 w-64 lg:w-[15%]  h-[92vh] lg:h-[calc(100vh-9vh)] bg-white dark:bg-slate-800 border-r border-gray-100 dark:border-slate-700 flex flex-col z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0">
+    class="fixed left-0 lg:top-20 top-17 w-64 lg:w-[15%]  min-h-[92vh] lg:h-[calc(100vh-9vh)] bg-white dark:bg-slate-800 border-r border-gray-100 dark:border-slate-700 flex flex-col z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0">
 
     <!-- Profile Section -->
     <div class="p-3 md:p-4 border-b border-gray-100 dark:border-slate-700">
