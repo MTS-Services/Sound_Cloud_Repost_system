@@ -12,12 +12,12 @@
                         <button
                             class="tab-button @if ($activeMainTab === 'recommended_pro') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 pb-1 px-2 text-md font-semibold transition-all duration-200"
                             wire:click="setActiveMainTab('recommended_pro')">
-                            {{ __('Recommended Pro') }} <span class="text-xs ml-2">{{ $totalRecommendedPro}}</span>
+                            {{ __('Recommended Pro') }} <span class="text-xs ml-2 text-orange-500">{{ $totalRecommendedPro}}</span>
                         </button>
                         <button
                             class="tab-button @if ($activeMainTab === 'recommended') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 pb-1 px-2 text-md font-semibold transition-all duration-200"
                             wire:click="setActiveMainTab('recommended')">
-                            {{ __('Recommended') }}<span class="text-xs ml-2">{{ $totalRecommended }}</span>
+                            {{ __('Recommended') }}<span class="text-xs ml-2 text-orange-500">{{ $totalRecommended }}</span>
                         </button>
                         <button
                             class="tab-button @if ($activeMainTab === 'all') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 pb-1 px-2 text-md font-semibold transition-all duration-200"
