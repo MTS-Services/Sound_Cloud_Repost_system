@@ -136,7 +136,6 @@ class PaymentController extends Controller
         try {
             $decryptedId = Crypt::decryptString($request->pid);
             $paymentIntent = $this->stripeService->retrievePaymentIntent($decryptedId);
-            // dd($paymentIntent);
 
             // Update payment record
             $payment = Payment::where('payment_intent_id', $paymentIntent->id)->first();
