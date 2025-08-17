@@ -1017,20 +1017,20 @@
                         if (iframe && campaignId) {
                             const widget = SC.Widget(iframe);
                             // Track play events and call Livewire methods
-                            widget.bind(SC.Widget.Events.PLAY, () => {
-                                @this.call('handleAudioPlay', campaignId);
-                            });
-                            widget.bind(SC.Widget.Events.PAUSE, () => {
-                                @this.call('handleAudioPause', campaignId);
-                            });
-                            widget.bind(SC.Widget.Events.FINISH, () => {
-                                @this.call('handleAudioEnded', campaignId);
-                            });
-                            // Track position updates
-                            widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-                                const currentTime = data.currentPosition / 1000;
-                                @this.call('handleAudioTimeUpdate', campaignId, currentTime);
-                            });
+                            // widget.bind(SC.Widget.Events.PLAY, () => {
+                            //     @this.call('handleAudioPlay', campaignId);
+                            // });
+                            // widget.bind(SC.Widget.Events.PAUSE, () => {
+                            //     @this.call('handleAudioPause', campaignId);
+                            // });
+                            // widget.bind(SC.Widget.Events.FINISH, () => {
+                            //     @this.call('handleAudioEnded', campaignId);
+                            // });
+                            // // Track position updates
+                            // widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+                            //     const currentTime = data.currentPosition / 1000;
+                            //     @this.call('handleAudioTimeUpdate', campaignId, currentTime);
+                            // });
                         }
                     });
                 }
