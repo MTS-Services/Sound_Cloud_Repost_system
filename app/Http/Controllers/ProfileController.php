@@ -98,6 +98,7 @@ class ProfileController extends Controller
         $user = user()->load('userInfo');
         return view('backend.user.profile.email-add', compact('user'));
     }
+
     public function emailStore(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -105,8 +106,17 @@ class ProfileController extends Controller
             'genres' => ['sometimes', 'required', 'array', 'min:5', 'max:5'],
             'genres.*' => ['sometimes', 'required', 'string'],
         ]);
+
         $user = User::where('urn', user()->urn)->first();
-        $user->update($validated);
+        $user->fill($validated);
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null; // Reset verification if email changes
+            $user->save(); // Save the user first
+            event(new Registered($user)); // Fire the Registered event to send verification email
+        } else {
+            $user->save(); // Save if only genres are updated or email hasn't changed
+        }
 
         foreach ($validated['genres'] as $genre) {
             UserGenre::create([
@@ -117,6 +127,6 @@ class ProfileController extends Controller
             ]);
         }
 
-        return redirect()->route('user.dashboard');
+        return redirect()->route('user.dashboard')->with('status', 'Email and genres updated. Please verify your email!');
     }
 }
