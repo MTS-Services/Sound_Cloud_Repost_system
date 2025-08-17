@@ -100,6 +100,11 @@ class Campaign extends Component
     ];
 
     ############################## Campaign Creation ##########################
+    // Total number of campaigns
+    public $totalCampaign;
+    public $totalRecommended;
+    public $totalRecommendedPro;
+
     public $tracks = [];
     public $playlists = [];
     public $playlistTracks = [];
@@ -190,6 +195,7 @@ class Campaign extends Component
     public function mount()
     {
         $this->getAllGenres();
+        $this->totalCampaigns();
         // Initialize play tracking for campaigns (will be done in render method)
     }
 
@@ -1172,7 +1178,7 @@ class Campaign extends Component
             'searchQuery',
         ]);
     }
-
+    
     public function openRepostsModal($trackId)
     {
         $this->toggleSubmitModal('track', $trackId);
@@ -1189,6 +1195,13 @@ class Campaign extends Component
     //         }
     //     }
     // }
+
+    public function totalCampaigns()
+    {
+        $this->totalCampaign = $this->getCampaignsQuery()->count();
+        $this->totalRecommended = $this->getCampaignsQuery()->featured()->count();
+        $this->totalRecommendedPro = $this->getCampaignsQuery()->proFeatured()->count();
+    }
 
     /**
      * Main render method with optimized data loading and pagination
