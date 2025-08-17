@@ -168,7 +168,7 @@ class CreditTransaction extends BaseModel
     }
     public function getTransactionTypeNameAttribute(): string
     {
-        return isset($this->transaction_typ) ? self::getTypes()[$this->transaction_type] : 'Unknown';
+        return isset($this->transaction_type) ? self::getTypes()[$this->transaction_type] : 'Unknown';
     }
 
 

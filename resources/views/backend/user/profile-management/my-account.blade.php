@@ -977,7 +977,7 @@
                                                             <td class="px-2 py-2">{{ $transaction->amount ?? '0.00' }}
                                                             </td>
                                                             <td class="px-2 py-2">{{ $transaction->credits }}</td>
-                                                            <td class="px-2 py-2">{{ $transaction->calculation_type_name }}</td>
+                                                            <td class="px-2 py-2">{{ $transaction->transaction_type_name }}</td>
                                                             <td class="px-2 py-2 text-green-600 font-semibold">
                                                                 <span
                                                                     class="badge badge-soft badge-{{ $transaction->status_color }}">{{ $transaction->status_label }}</span>
