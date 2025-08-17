@@ -1084,7 +1084,7 @@
                         <label for="commented" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             {{ __('Comment:') }}
                             <input name="commented" id="repostDescription" wire:model.live="commented"
-                                class="w-full h-16 px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-md focus:border-orange-500 focus:ring-0 transition-colors duration-200 bg-gray-50 dark:bg-slate-800 focus:bg-gray-100 dark:focus:bg-slate-800 resize-none" />
+                                class="w-full h-16 px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-md focus:border-orange-500 focus:ring-0 transition-colors duration-200 bg-gray-50 dark:bg-slate-800 dark:focus:bg-slate-800 resize-none outline-none" />
                         </label>
                     </div>
                     <div class="space-y-2 mb-4">
