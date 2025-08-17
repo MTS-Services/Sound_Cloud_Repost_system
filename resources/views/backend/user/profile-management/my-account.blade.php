@@ -18,9 +18,8 @@
                             </p>
                         </div>
                         <!-- Back Button -->
-                        <a href="{{ route('user.pm.my-account') }}"
-                            class="btn btn-primary dark:text-white">
-                           <x-heroicon-o-arrow-left class="w-4 h-4" />
+                        <a href="{{ route('user.pm.my-account') }}" class="btn btn-primary dark:text-white">
+                            <x-heroicon-o-arrow-left class="w-4 h-4" />
                             <span>Back</span>
                         </a>
 
@@ -181,9 +180,8 @@
                                     </div>
                                     <div class="flex items-center space-x-1">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                            fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
-                                            class="w-3 h-3 sm:w-4 sm:h-4">
+                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" class="w-3 h-3 sm:w-4 sm:h-4">
                                             <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
                                             <circle cx="12" cy="10" r="3"></circle>
                                         </svg>
@@ -961,9 +959,9 @@
                                                     class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white text-xs sm:text-sm">
                                                     <tr>
                                                         <th class="w-10 px-2 py-3">ID</th>
-                                                        <th class="w-28 px-2 py-3">Reciver</th>
+                                                        <th class="w-28 px-2 py-3">Sender Name</th>
                                                         <th class="w-20 px-2 py-3">Amount</th>
-                                                        <th class="w-20 px-2 py-3">Credit</th>
+                                                        <th class="w-20 px-2 py-3">Credits</th>
                                                         <th class="w-24 px-2 py-3">Type</th>
                                                         <th class="w-20 px-2 py-3">Status</th>
                                                     </tr>
@@ -973,12 +971,13 @@
                                                         class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
                                                         <tr class="border-b border-gray-200 dark:border-gray-700">
                                                             <td class="px-2 py-2">{{ $loop->iteration }}</td>
-                                                            <td class="px-2 py-2">{{ $transaction->receiver_urn }}
+                                                            <td class="px-2 py-2">
+                                                                {{ $transaction->sender?->name ?? 'System' }}
                                                             </td>
                                                             <td class="px-2 py-2">{{ $transaction->amount ?? '0.00' }}
                                                             </td>
                                                             <td class="px-2 py-2">{{ $transaction->credits }}</td>
-                                                            <td class="px-2 py-2">{{ $transaction->type_name }}</td>
+                                                            <td class="px-2 py-2">{{ $transaction->calculation_type_name }}</td>
                                                             <td class="px-2 py-2 text-green-600 font-semibold">
                                                                 <span
                                                                     class="badge badge-soft badge-{{ $transaction->status_color }}">{{ $transaction->status_label }}</span>
