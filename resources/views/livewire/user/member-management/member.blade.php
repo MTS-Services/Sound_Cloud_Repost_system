@@ -73,13 +73,13 @@
                         <p class="text-text-gray text-sm dark:text-white">{{ $user_->created_at->format('M d, Y') }}</p>
                     </div>
                 </div>
-
                 <!-- Genre Tags -->
                 <div class="flex flex-wrap gap-2 mb-4">
-                    <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">Ambient</span>
-                    <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">Dubstep</span>
-                    <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">Electronic</span>
-                    <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">Techno</span>
+                    @forelse ($user_->genres as $genre)
+                    <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">{{ $genre->genre }}</span>
+                    @empty
+                    <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">No genres</span>
+                    @endforelse
                 </div>
 
                 <!-- Repost Price -->
