@@ -1076,14 +1076,14 @@
 
                 <div class="p-6">
                     <div class="space-y-2 mb-2">
-                        <label for="commented" class="block text-sm font-medium text-gray-700">
+                        <label for="commented" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             {{ __('Comment:') }}
                             <input name="commented" id="repostDescription" wire:model.live="commented"
-                                class="w-full h-16 px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white resize-none" />
+                                class="w-full h-16 px-3 py-2 border border-gray-200 rounded-md focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 dark:bg-slate-800 focus:bg-white resize-none" />
                         </label>
                     </div>
                     <div class="space-y-2 mb-4">
-                        <label for="liked" class="flex items-center gap-2 text-sm font-medium text-gray-700">
+                        <label for="liked" class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                             <input type="checkbox" id="liked" class="form-checkbox" wire:model.live="liked">
                             {{ __('Activate HeartPush') }}
                         </label>
