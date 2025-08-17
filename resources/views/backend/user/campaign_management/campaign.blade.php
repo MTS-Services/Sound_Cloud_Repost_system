@@ -684,33 +684,32 @@
             </div>
 
             <div x-data="{ momentumEnabled: false }" class="flex-grow overflow-y-auto p-6">
-                <form wire:submit.prevent="createCampaign" class="space-y-6">
-                    <!-- Selected Track -->
-                    @if ($track)
-                        <div>
-                            <div class="flex items-center justify-between mb-3">
-                                <h3 class="text-md font-medium text-gray-900 dark:text-white">Selected Track</h3>
-                                <button x-on:click="showSubmitModal = false"
-                                    class="bg-gray-100 dark:bg-slate-700 py-1.5 px-3 rounded-xl text-orange-500 text-sm font-medium hover:text-orange-600">Edit</button>
-                            </div>
-                            <div
-                                class="p-4 flex items-center space-x-4 dark:bg-slate-700 rounded-xl transition-all duration-200 border  border-orange-200 ">
-                                @if ($track)
-                                    <img src="{{ soundcloud_image($track->artwork_url) }}" alt="Album cover"
-                                        class="w-12 h-12 rounded">
-                                @endif
-                                <div>
-                                    <p class="text-sm text-gray-600 dark:text-white">{{ $track->type }} -
-                                        {{ $track->author_username }}</p>
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $track->title }}
-                                    </p>
-                                </div>
+                <!-- Selected Track -->
+                @if ($track)
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-md font-medium text-gray-900 dark:text-white">Selected Track</h3>
+                            <button x-on:click="showSubmitModal = false"
+                                class="bg-gray-100 dark:bg-slate-700 py-1.5 px-3 rounded-xl text-orange-500 text-sm font-medium hover:text-orange-600">Edit</button>
+                        </div>
+                        <div
+                            class="p-4 flex items-center space-x-4 dark:bg-slate-700 rounded-xl transition-all duration-200 border  border-orange-200 ">
+                            @if ($track)
+                                <img src="{{ soundcloud_image($track->artwork_url) }}" alt="Album cover"
+                                    class="w-12 h-12 rounded">
+                            @endif
+                            <div>
+                                <p class="text-sm text-gray-600 dark:text-white">{{ $track->type }} -
+                                    {{ $track->author_username }}</p>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $track->title }}
+                                </p>
                             </div>
                         </div>
-                    @endif
-
+                    </div>
+                @endif
+                <form wire:submit.prevent="createCampaign" class="space-y-6">
                     <!-- Set Budget -->
-                    <div>
+                    <div class="mt-4">
                         <div class="flex items-center space-x-2 mb-2">
                             <h3 class="text-sm font-medium text-gray-900 dark:text-white">Set budget</h3>
                             <div class="w-4 h-4 bg-gray-400 rounded-full  flex items-center justify-center">

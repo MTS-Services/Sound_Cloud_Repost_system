@@ -28,7 +28,7 @@ class Campaign extends Component
 {
     use WithPagination;
 
-    
+
 
     #[Locked]
     protected string $baseUrl = 'https://api.soundcloud.com';
@@ -173,7 +173,7 @@ class Campaign extends Component
     public $hasMorePlaylists = false;
 
     ############################## Campaign Creation ##########################
-    
+
     protected ?CampaignService $campaignService = null;
     protected ?TrackService $trackService = null;
     protected ?PlaylistService $playlistService = null;
@@ -615,7 +615,7 @@ class Campaign extends Component
 
         $this->user = User::where('urn', user()->urn)->first()->activePlan();
 
-        if (userCredits() < 100) {
+        if (userCredits() < 50) {
             $this->showLowCreditWarningModal = true;
             $this->showSubmitModal = false;
             return;
@@ -624,6 +624,7 @@ class Campaign extends Component
         }
 
         $this->showSubmitModal = true;
+        $this->getAllGenres();
 
         try {
             if ($type === 'track') {
@@ -692,7 +693,7 @@ class Campaign extends Component
             DB::transaction(function () {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
-                $proFeatureEnabled = $this->proFeatureEnabled && !empty($this->user->activePlan) ? 1 : 0;
+                $proFeatureEnabled = $this->proFeatureEnabled && $this->user->status == User::STATUS_ACTIVE ? 1 : 0;
                 $campaign = ModelsCampaign::create([
                     'music_id' => $this->musicId,
                     'music_type' => $this->musicType,
@@ -733,12 +734,6 @@ class Campaign extends Component
                 ]);
             });
 
-            session()->flash('message', 'Campaign created successfully!');
-            $this->dispatch('campaignCreated');
-
-            $this->showCampaignsModal = false;
-            $this->showSubmitModal = false;
-
             $this->reset([
                 'musicId',
                 'title',
@@ -761,10 +756,13 @@ class Campaign extends Component
                 'targetGenre',
                 'anyGenre',
                 'trackGenre',
-                'maxFollower',
                 'proFeatureEnabled',
             ]);
+            session()->flash('message', 'Campaign created successfully!');
+            $this->dispatch('campaignCreated');
 
+            $this->showCampaignsModal = false;
+            $this->showSubmitModal = false;
             $this->resetValidation();
             $this->resetErrorBag();
         } catch (\Exception $e) {

@@ -558,56 +558,54 @@
             </div>
 
             <div x-data="{ momentumEnabled: false }" class="flex-grow overflow-y-auto p-6">
-                <form wire:submit.prevent="createCampaign" class="space-y-6">
+                <!-- Campaign Status (if editing) -->
+                @if ($isEditing && $editingCampaign)
+                    <div
+                        class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-sm font-medium text-blue-900 dark:text-blue-100">
+                                    {{ $editingCampaign->title }}</h3>
+                                <p class="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                                    Created: {{ $editingCampaign->created_at->format('M d, Y') }}
+                                </p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-blue-700 dark:text-blue-300">Status:</p>
+                                <p class="font-mono text-sm font-bold text-blue-900 dark:text-blue-100">
+                                    {{ $editingCampaign->status_label }}</p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
 
-                    <!-- Campaign Status (if editing) -->
-                    @if ($isEditing && $editingCampaign)
+                <!-- Selected Track -->
+                @if ($track)
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-md font-medium text-gray-900 dark:text-white">Selected Track</h3>
+                            @if (!$isEditing)
+                                <button x-on:click="showSubmitModal = false"
+                                    class="bg-gray-100 dark:bg-slate-700 py-1.5 px-3 rounded-xl text-orange-500 text-sm font-medium hover:text-orange-600">
+                                    Edit
+                                </button>
+                            @endif
+                        </div>
                         <div
-                            class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h3 class="text-sm font-medium text-blue-900 dark:text-blue-100">
-                                        {{ $editingCampaign->title }}</h3>
-                                    <p class="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                                        Created: {{ $editingCampaign->created_at->format('M d, Y') }}
-                                    </p>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-sm text-blue-700 dark:text-blue-300">Status:</p>
-                                    <p class="font-mono text-sm font-bold text-blue-900 dark:text-blue-100">
-                                        {{ $editingCampaign->status_label }}</p>
-                                </div>
+                            class="p-4 flex items-center space-x-4 dark:bg-slate-700 rounded-xl transition-all duration-200 border  border-orange-200">
+                            @if ($track)
+                                <img src="{{ soundcloud_image($track->artwork_url) }}" alt="Album cover"
+                                    class="w-12 h-12 rounded">
+                            @endif
+                            <div>
+                                <p class="text-sm text-gray-600 dark:text-gray-100">{{ $track->type }} -
+                                    {{ $track->author_username }}</p>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $track->title }}</p>
                             </div>
                         </div>
-                    @endif
-
-                    <!-- Selected Track -->
-                    @if ($track)
-                        <div>
-                            <div class="flex items-center justify-between mb-3">
-                                <h3 class="text-md font-medium text-gray-900 dark:text-white">Selected Track</h3>
-                                @if (!$isEditing)
-                                    <button x-on:click="showSubmitModal = false"
-                                        class="bg-gray-100 dark:bg-slate-700 py-1.5 px-3 rounded-xl text-orange-500 text-sm font-medium hover:text-orange-600">
-                                        Edit
-                                    </button>
-                                @endif
-                            </div>
-                            <div
-                                class="p-4 flex items-center space-x-4 dark:bg-slate-700 rounded-xl transition-all duration-200 border  border-orange-200">
-                                @if ($track)
-                                    <img src="{{ soundcloud_image($track->artwork_url) }}" alt="Album cover"
-                                        class="w-12 h-12 rounded">
-                                @endif
-                                <div>
-                                    <p class="text-sm text-gray-600 dark:text-gray-100">{{ $track->type }} -
-                                        {{ $track->author_username }}</p>
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $track->title }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
+                    </div>
+                @endif
+                <form wire:submit.prevent="createCampaign" class="space-y-6 mt-4">
                     <!-- Budget Changes Warning (if editing) -->
                     @if ($isEditing && $editingCampaign)
                         <div

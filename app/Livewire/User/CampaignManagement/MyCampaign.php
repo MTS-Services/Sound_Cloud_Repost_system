@@ -54,7 +54,7 @@ class MyCampaign extends Component
     public bool $showAlreadyCancelledModal = false;
     public bool $showDetailsModal = false;
 
-    public $proFeatureValue = 0;
+    public $proFeatureValue = 1;
 
     // Modal tab state
     public string $activeModalTab = 'tracks';
@@ -367,7 +367,7 @@ class MyCampaign extends Component
 
     public function toggleSubmitModal(string $type, int $id): void
     {
-        $this->resetFormValidation();
+        // $this->resetFormValidation();
         $this->user = User::where('urn', user()->urn)->first()->activePlan();
 
         if (userCredits() < self::MIN_BUDGET) {
@@ -436,7 +436,7 @@ class MyCampaign extends Component
 
     public function profeature($isChecked)
     {
-        $this->proFeatureEnabled = $isChecked ? false : true;
+        $this->proFeatureEnabled = $isChecked ? true : false;
         $this->proFeatureValue = $isChecked ? 0 : 1;
     }
 
