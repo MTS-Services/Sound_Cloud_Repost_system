@@ -109,8 +109,8 @@
                                 <img class="h-20 w-20 rounded-full object-cover shadow-md" src="{{ soundcloud_image($user->avatar) }}"
                                     alt="{{ $user->name }}" />
                                 <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-900 mb-1">{{ $user->name }}
-                                        ({{ $user->nickname }})</h3>
+                                    <h3 class="font-semibold text-gray-900 mb-1">{{ $user->name }} 
+                                        ({{ $user->nickname ?? 'N/A' }})</h3>
                                     <p class="text-gray-600 text-sm mb-1">{{ $user->email }}</p>
                                     <p class="text-gray-500 text-sm mb-4">{{ $user->userInfo?->city ?? 'N/A' }},
                                         {{ $user->userInfo?->country ?? 'N/A'}}</p>
@@ -316,14 +316,14 @@
                         </div>
 
                         <!-- User Summary -->
-                        <div class="text-left max-w-md mx-auto mb-8">
+                        <div class="text-left max-w-xl mx-auto mb-8">
                             <!-- Profile Summary -->
                             <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl mb-6">
                                 <img class="h-20 w-20 rounded-full object-cover" src="{{ soundcloud_image($user->avatar)}}"
                                     alt="User Avatar" />
                                 <div class="flex-1">
                                     <h3 class="font-semibold text-gray-900 mb-1">{{ $user->name }}
-                                        ({{ $user->nickname }})</h3>
+                                        ({{ $user->nickname ?? 'N/A' }})</h3>
                                     <p class="text-gray-600 text-sm" x-text="formData.email"></p>
                                 </div>
                             </div>
@@ -334,7 +334,7 @@
                                 <div class="flex flex-wrap gap-2">
                                     <template x-for="genre in selectedGenres" :key="genre">
                                         <div
-                                            class="flex items-center gap-2 px-4 py-2 bg-orange-50 text-orange-600 rounded-full text-sm font-medium">
+                                            class="flex items-center gap-2 px-2 py-2 bg-orange-50 text-orange-600 rounded-full text-sm font-medium">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -350,7 +350,7 @@
                         </div>
 
                         <!-- Final Actions -->
-                        <div class="flex gap-4 max-w-md mx-auto">
+                        <div class="flex gap-4 max-w-xl mx-auto">
                             <button @click="goToStep(2)"
                                 class="flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-all duration-200">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"

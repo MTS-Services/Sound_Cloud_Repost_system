@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController as UserAuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController as UserConfirmablePasswordController;
+use App\Http\Controllers\Auth\EmailTokenVerificationController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController as UserEmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController as UserEmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController as UserNewPasswordController;
@@ -71,6 +72,7 @@ Route::middleware('auth:web')->group(function () {
         ->name('logout');
 });
 
+Route::get('confirm/email', [EmailTokenVerificationController::class, 'confirmEmail']);
 
 // Admin Auth Rotues
 Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {

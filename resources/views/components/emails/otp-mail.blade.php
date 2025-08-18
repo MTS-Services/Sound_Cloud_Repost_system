@@ -1,4 +1,4 @@
-@props(['token', 'name'])
+@props(['token', 'name', 'id'])
 {{--
  name : {{ $name }}
  token : {{ $token }} --}}
@@ -270,13 +270,13 @@
                             </div>
 
                             <!-- Main confirmation button -->
-                            <a href="{{ url('/confirm-email?token=' . $token) }}" class="confirm-button">
+                            <a href="{{ url('confirm/email?token=' . $token) }}" class="confirm-button">
                                 Confirm Email and Opt In to Newsletter
                             </a>
 
                             <!-- Alternative confirmation text -->
                             <div class="alternative-text">
-                                Or just <a href="{{ url('/confirm-email?token=' . $token) }}"
+                                Or just <a href="{{ url('/email/verify?token=' . $token) }}"
                                     class="alternative-link">confirm email address</a>
                             </div>
 
