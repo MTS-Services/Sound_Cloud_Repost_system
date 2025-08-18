@@ -460,7 +460,7 @@
                                 :aria-disabled="!canContinueGenres"
                                 :class="canContinueGenres ? 'bg-primary-600 hover:bg-primary-700 shadow-primary-200' :
                                     'bg-gray-300 cursor-not-allowed shadow-gray-200'"
-                                class="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                                class="w-auto flex items-center justify-end gap-2 px-6 py-3.5 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
                                 <span>Continue</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                     fill="currentColor">
@@ -476,8 +476,8 @@
                 <!-- Step 3: Completion -->
                 <section x-show="currentStep === 3" x-transition:enter="animate-slide-in"
                     class="bg-white rounded-xl shadow-lg overflow-hidden" aria-labelledby="s3h">
-                    <div class="p-6 sm:p-8 md:p-10">
-                        <div class="text-center max-w-lg mx-auto">
+                    <div class="p-6 sm:p-6 md:p-10">
+                        <div class="text-center max-w-2xl mx-auto">
                             <!-- Success Icon -->
                             <div
                                 class="w-24 h-24 bg-gradient-to-br from-green-100 to-primary-100 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner border-4 border-white animate-pulse-slow">
@@ -499,10 +499,10 @@
                             </div>
 
                             <!-- User Summary -->
-                            <div class="text-left mb-8 animate-slide-in animate-delay-100">
+                            <div class="text-left mb-8 p-6  animate-slide-in bg-gray-50 border-gray-100 rounded-xl  border  shadow-sm animate-delay-100">
                                 <!-- Profile Summary -->
                                 <div
-                                    class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl mb-6 border border-gray-100 shadow-sm">
+                                    class="flex items-center gap-4 p-1  ">
                                     <img class="h-16 w-16 rounded-full object-cover shadow-md border-2 border-white"
                                         src="{{ soundcloud_image($user->avatar) }}" alt="User Avatar" />
                                     <div class="flex-1">
@@ -516,7 +516,7 @@
                                 <!-- Selected Genres -->
                                 <div>
                                     <h4 class="font-semibold text-gray-900 mb-3">Selected Genres:</h4>
-                                    <div class="flex flex-wrap gap-2 justify-center">
+                                    <div class="flex flex-wrap gap-2 ">
                                         <template x-for="genre in selectedGenres" :key="genre">
                                             <div
                                                 class="flex items-center gap-2 px-3 py-1.5 bg-primary-50 text-primary-700 rounded-full text-sm font-medium border border-primary-100 shadow-sm">
@@ -533,9 +533,9 @@
                             </div>
 
                             <!-- Final Actions -->
-                            <div class="flex flex-col sm:flex-row gap-3 animate-slide-in animate-delay-200">
+                            <div class="flex flex-col justify-between sm:flex-row gap-3 animate-slide-in animate-delay-200">
                                 <button @click="goToStep(2)"
-                                    class="flex items-center justify-center gap-2 px-6 py-3.5  text-gray-700 font-medium rounded-lg  transition-all duration-200 ">
+                                    class="flex w-auto items-center justify-center gap-2 px-6 py-3.5  text-gray-700 font-medium rounded-lg  transition-all duration-200 ">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                         fill="currentColor">
                                         <path fill-rule="evenodd"
@@ -547,10 +547,10 @@
 
                                 <!-- Submit form -->
                                 <form x-ref="finalForm" data-action="{{ route('user.email.store') }}" method="POST"
-                                    class="flex-1">
+                                    class="justify-end">
                                     @csrf
                                     <button type="button" @click="submitForm()"
-                                        class="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-primary-600 text-white font-medium rounded-lg hover:shadow-md transition-all duration-200 shadow-sm transform hover:-translate-y-0.5">
+                                        class="w-auto flex items-center justify-center gap-2 px-6 py-3.5 bg-primary-600 text-white font-medium rounded-lg hover:shadow-md transition-all duration-200 shadow-sm transform hover:-translate-y-0.5">
                                         Complete Registration
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                             fill="currentColor">
