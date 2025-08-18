@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Mail\UserOtpMail;
+use App\Mail\EmailVerificationMail;
 use App\Models\CreditTransaction;
 use App\Models\RepostRequest as ModelsRepostRequest;
 use App\Models\User;
@@ -105,15 +105,19 @@ class ProfileController extends Controller
 
     public function emailStore(Request $request): RedirectResponse
     {
+        // Validate incoming request data
         $validated = $request->validate([
             'email' => ['sometimes', 'required', 'email', 'max:255', 'unique:users,email,' . user()->id],
             'genres' => ['sometimes', 'required', 'array', 'min:5', 'max:5'],
             'genres.*' => ['sometimes', 'required', 'string'],
         ]);
 
+        // Find the user by URN
         $user = User::where('urn', user()->urn)->first();
+
         $user->fill($validated);
 
+        UserGenre::where('user_urn', $user->urn)->delete();
         foreach ($validated['genres'] as $genre) {
             UserGenre::create([
                 'user_urn' => $user->urn,
@@ -124,11 +128,17 @@ class ProfileController extends Controller
         }
 
         $token = Str::random(60);
-       $user->email_token = $token;
-       $user->save();
+        $user->email_token = $token;
 
-        Mail::to($user->email)->send(new UserOtpMail($user, $token));
+        $user->email_token_expires_at = now()->addMinutes(config('auth.verification.expire', 60));
+        $user->save();
 
+        $request->session()->put('email_verification_token', $token);
+        $request->session()->put('email_verification_user_id', $user->id);
+
+        Mail::to($user->email)->send(new EmailVerificationMail($user, $token));
+
+        // Redirect to dashboard with a status message
         return redirect()->route('user.dashboard')->with('status', 'Email and genres updated. Please verify your email!');
     }
 }

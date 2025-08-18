@@ -1,7 +1,8 @@
 @props(['token', 'name', 'id'])
 {{--
- name : {{ $name }}
- token : {{ $token }} --}}
+This Blade template is used for sending email verification links.
+It receives 'token', 'name', and 'id' as props.
+--}}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -165,7 +166,7 @@
         }
 
         .highlight {
-            background-color: #ffff00;
+            /* background-color: #ffff00; */
             color: #000000;
             padding: 2px 4px;
         }
@@ -198,7 +199,7 @@
         }
 
         .company-highlight {
-            background-color: #ffff00;
+            /* background-color: #ffff00; */
             color: #000000;
             padding: 1px 3px;
         }
@@ -258,7 +259,7 @@
                             <div class="logo-container">
                                 <div class="logo-text">
                                     ⇄ REPOSTchain
-                                    <div class="logo-accent"></div>
+                                    {{-- <div class="logo-accent"></div> --}}
                                 </div>
                             </div>
 
@@ -269,16 +270,16 @@
                                 your email address
                             </div>
 
-                            <!-- Main confirmation button -->
-                            <a href="{{ url('confirm/email?token=' . $token) }}" class="confirm-button">
+                            <!-- Main confirmation button, using the new route -->
+                            <a href="{{ route('user.email.verify', ['id' => $id, 'token' => $token]) }}" class="confirm-button">
                                 Confirm Email and Opt In to Newsletter
                             </a>
 
-                            <!-- Alternative confirmation text -->
-                            <div class="alternative-text">
-                                Or just <a href="{{ url('/email/verify?token=' . $token) }}"
+                            <!-- Alternative confirmation text, using the new route -->
+                            {{-- <div class="alternative-text">
+                                Or just <a href="{{ route('user.email.verify', ['id' => $id, 'token' => $token]) }}"
                                     class="alternative-link">confirm email address</a>
-                            </div>
+                            </div> --}}
 
                             <!-- Fallback URL section with dynamic token -->
                             <div class="fallback-section">
@@ -287,8 +288,8 @@
                                     following into your browser:
                                 </div>
                                 <div class="fallback-url">
-                                    https://<span class="highlight">repostchain</span>.com/tokens/confirm?id=48571&<br>
-                                    token=<span class="highlight">{{ $token }}</span>
+                                    {{ config('app.url') }}/confirm-email?id={{ $id }}&
+                                    token={{ $token }}
                                 </div>
                             </div>
 

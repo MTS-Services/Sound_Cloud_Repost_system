@@ -72,7 +72,7 @@ Route::middleware('auth:web')->group(function () {
         ->name('logout');
 });
 
-Route::get('confirm/email', [EmailTokenVerificationController::class, 'confirmEmail']);
+Route::get('confirm/email', [EmailTokenVerificationController::class, 'confirmEmail'])->name('user.email.verify');
 
 // Admin Auth Rotues
 Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {

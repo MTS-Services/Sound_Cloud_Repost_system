@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class UserOtpMail extends Mailable
+class EmailVerificationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -32,7 +32,7 @@ class UserOtpMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Email Verification' . ' - ' . config('app.name'),
+            subject: 'Email Verification - ' . config('app.name'),
         );
     }
 
@@ -41,11 +41,16 @@ class UserOtpMail extends Mailable
      */
     public function content(): Content
     {
+        // Define the Blade view and pass data to it
         return new Content(
-            markdown: 'emails.user_otp',
+            markdown: 'emails.email_verification', // Specifies the markdown template
+            with: [
+                'name' => $this->user->name, // Pass user's name
+                'id' => $this->user->id,     // Pass user's ID
+                'token' => $this->token,     // Pass the verification token
+            ],
         );
     }
-
 
     /**
      * Get the attachments for the message.
