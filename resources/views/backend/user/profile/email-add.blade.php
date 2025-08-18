@@ -30,6 +30,21 @@
             }
         }
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (session('success'))
+                showAlert('success', "{!! session('success') !!}");
+            @endif
+
+            @if (session('error'))
+                showAlert('error', "{!! session('error') !!}");
+            @endif
+
+            @if (session('warning'))
+                showAlert('warning', "{!! session('warning') !!}");
+            @endif
+        });
+    </script>
 </head>
 
 <body class="font-sans text-gray-800 leading-relaxed">
@@ -97,8 +112,8 @@
                                     <h3 class="font-semibold text-gray-900 mb-1">{{ $user->name }}
                                         ({{ $user->nickname }})</h3>
                                     <p class="text-gray-600 text-sm mb-1">{{ $user->email }}</p>
-                                    <p class="text-gray-500 text-sm mb-4">{{ $user->userInfo?->city }},
-                                        {{ $user->userInfo?->country }}</p>
+                                    <p class="text-gray-500 text-sm mb-4">{{ $user->userInfo?->city ?? 'N/A' }},
+                                        {{ $user->userInfo?->country ?? 'N/A'}}</p>
                                     <div class="flex gap-8">
                                         <div class="text-center">
                                             <div class="text-lg font-semibold text-gray-900">

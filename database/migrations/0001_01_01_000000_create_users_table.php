@@ -29,6 +29,7 @@ return new class extends Migration {
             $table->tinyInteger('status')->default(User::STATUS_ACTIVE)->index(); // Assuming 1 is for active status
             $table->string('avatar')->nullable();
             $table->text('token')->nullable();
+            $table->string('email_token')->nullable();
             $table->string('refresh_token')->nullable();
             $table->bigInteger('expires_in')->nullable()->index();
             $table->string('urn')->unique();

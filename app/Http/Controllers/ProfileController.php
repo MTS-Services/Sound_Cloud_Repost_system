@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Mail\UserOtpMail;
 use App\Models\CreditTransaction;
 use App\Models\RepostRequest as ModelsRepostRequest;
 use App\Models\User;
@@ -16,8 +17,10 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Str;
 
 class ProfileController extends Controller
 {
@@ -111,14 +114,6 @@ class ProfileController extends Controller
         $user = User::where('urn', user()->urn)->first();
         $user->fill($validated);
 
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null; // Reset verification if email changes
-            $user->save(); // Save the user first
-            event(new Registered($user)); // Fire the Registered event to send verification email
-        } else {
-            $user->save(); // Save if only genres are updated or email hasn't changed
-        }
-
         foreach ($validated['genres'] as $genre) {
             UserGenre::create([
                 'user_urn' => $user->urn,
@@ -127,6 +122,12 @@ class ProfileController extends Controller
                 'creater_type' => get_class($user)
             ]);
         }
+
+        $token = Str::random(60);
+       $user->email_token = $token;
+       $user->save();
+
+        Mail::to($user->email)->send(new UserOtpMail($user, $token));
 
         return redirect()->route('user.dashboard')->with('status', 'Email and genres updated. Please verify your email!');
     }

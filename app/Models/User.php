@@ -29,6 +29,7 @@ class User extends AuthBaseModel implements MustVerifyEmail
         'nickname',
         'avatar',
         'token',
+        'email_token',
         'refresh_token',
         'expires_in',
         'last_synced_at',
