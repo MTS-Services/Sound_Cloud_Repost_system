@@ -153,7 +153,7 @@
                 <div class="flex items-center justify-between">
                     <!-- Logo Section -->
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center shadow-md"
+                        <div class="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center shadow-md"
                             aria-hidden="true">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -164,7 +164,7 @@
                             </svg>
                         </div>
                         <h1
-                            class="text-2xl font-bold text-gray-900 bg-gradient-to-r from-primary-700 to-secondary-600 bg-clip-text text-transparent">
+                            class="text-2xl font-bold text-gray-900 bg-primary-600 bg-clip-text text-transparent">
                             RepostChain
                         </h1>
                     </div>
@@ -331,7 +331,7 @@
                             <!-- How It Works Section -->
                             <aside class="hidden lg:block animate-slide-in animate-delay-200">
                                 <div
-                                    class="bg-gradient-to-br from-primary-50 to-secondary-50 rounded-xl p-8 h-full border border-primary-100 shadow-sm">
+                                    class=" bg-gray-50 rounded-xl p-8 h-full border border-primary-100 shadow-sm">
                                     <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary-600"
                                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -552,7 +552,7 @@
                                     class="flex-1">
                                     @csrf
                                     <button type="button" @click="submitForm()"
-                                        class="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-medium rounded-lg hover:shadow-md transition-all duration-200 shadow-sm transform hover:-translate-y-0.5">
+                                        class="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-primary-600 text-white font-medium rounded-lg hover:shadow-md transition-all duration-200 shadow-sm transform hover:-translate-y-0.5">
                                         Complete Registration
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                             fill="currentColor">
