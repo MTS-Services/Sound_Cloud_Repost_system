@@ -509,7 +509,7 @@
                                         src="{{ soundcloud_image($user->avatar) }}" alt="User Avatar" />
                                     <div class="flex-1">
                                         <h3 class="font-semibold text-gray-900 mb-1">{{ $user->name }}
-                                            <span class="text-gray-500">({{ $user->nickname ?? 'N/A' }})</span>
+                                            {{-- <span class="text-gray-500">({{ $user->nickname ?? 'N/A' }})</span> --}}
                                         </h3>
                                         <p class="text-gray-600 text-sm" x-text="formData.email"></p>
                                     </div>
