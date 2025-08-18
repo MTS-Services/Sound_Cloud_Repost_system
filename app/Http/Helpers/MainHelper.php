@@ -318,50 +318,50 @@ function AllGenresWithIcons()
             'heroicon' => '<x-heroicon-o-signal class="w-6 h-6 text-pink-500" />'
         ],
 
-        "Dancehall" => [
-            'lucide' => '<x-lucide-disc-3 class="w-6 h-6 text-green-500" />',
-            'heroicon' => '<x-heroicon-o-play-circle class="w-6 h-6 text-green-500" />'
-        ],
+        // "Dancehall" => [
+        //     'lucide' => '<x-lucide-disc-3 class="w-6 h-6 text-green-500" />',
+        //     'heroicon' => '<x-heroicon-o-play-circle class="w-6 h-6 text-green-500" />'
+        // ],
 
-        "Deep House" => [
-            'lucide' => '<x-lucide-circle-dot class="w-6 h-6 text-blue-800" />',
-            'heroicon' => '<x-heroicon-o-stop-circle class="w-6 h-6 text-blue-800" />'
-        ],
+        // "Deep House" => [
+        //     'lucide' => '<x-lucide-circle-dot class="w-6 h-6 text-blue-800" />',
+        //     'heroicon' => '<x-heroicon-o-stop-circle class="w-6 h-6 text-blue-800" />'
+        // ],
 
-        "Disco" => [
-            'lucide' => '<x-lucide-sparkles class="w-6 h-6 text-pink-400" />',
-            'heroicon' => '<x-heroicon-o-star class="w-6 h-6 text-pink-400" />'
-        ],
+        // "Disco" => [
+        //     'lucide' => '<x-lucide-sparkles class="w-6 h-6 text-pink-400" />',
+        //     'heroicon' => '<x-heroicon-o-star class="w-6 h-6 text-pink-400" />'
+        // ],
 
-        "Drum & Bass" => [
-            'lucide' => '<x-lucide-activity class="w-6 h-6 text-red-500" />',
-            'heroicon' => '<x-heroicon-o-chart-bar class="w-6 h-6 text-red-500" />'
-        ],
+        // "Drum & Bass" => [
+        //     'lucide' => '<x-lucide-activity class="w-6 h-6 text-red-500" />',
+        //     'heroicon' => '<x-heroicon-o-chart-bar class="w-6 h-6 text-red-500" />'
+        // ],
 
-        "Dubstep" => [
-            'lucide' => '<x-lucide-zap class="w-6 h-6 text-green-400" />',
-            'heroicon' => '<x-heroicon-o-lightning-bolt class="w-6 h-6 text-green-400" />'
-        ],
+        // "Dubstep" => [
+        //     'lucide' => '<x-lucide-zap class="w-6 h-6 text-green-400" />',
+        //     'heroicon' => '<x-heroicon-o-lightning-bolt class="w-6 h-6 text-green-400" />'
+        // ],
 
-        "Electronic" => [
-            'lucide' => '<x-lucide-radio class="w-6 h-6 text-cyan-500" />',
-            'heroicon' => '<x-heroicon-o-signal class="w-6 h-6 text-cyan-500" />'
-        ],
+        // "Electronic" => [
+        //     'lucide' => '<x-lucide-radio class="w-6 h-6 text-cyan-500" />',
+        //     'heroicon' => '<x-heroicon-o-signal class="w-6 h-6 text-cyan-500" />'
+        // ],
 
-        "Folk & Singer-Songwriter" => [
-            'lucide' => '<x-lucide-guitar class="w-6 h-6 text-brown-600" />',
-            'heroicon' => '<x-heroicon-o-microphone class="w-6 h-6 text-brown-600" />'
-        ],
+        // "Folk & Singer-Songwriter" => [
+        //     'lucide' => '<x-lucide-guitar class="w-6 h-6 text-brown-600" />',
+        //     'heroicon' => '<x-heroicon-o-microphone class="w-6 h-6 text-brown-600" />'
+        // ],
 
         "Hip-hop & Rap" => [
             'lucide' => '<x-lucide-mic class="w-6 h-6 text-yellow-500" />',
             'heroicon' => '<x-heroicon-o-microphone class="w-6 h-6 text-yellow-500" />'
         ],
 
-        "House" => [
-            'lucide' => '<x-lucide-home class="w-6 h-6 text-purple-500" />',
-            'heroicon' => '<x-heroicon-o-home class="w-6 h-6 text-purple-500" />'
-        ],
+        // "House" => [
+        //     'lucide' => '<x-lucide-home class="w-6 h-6 text-purple-500" />',
+        //     'heroicon' => '<x-heroicon-o-home class="w-6 h-6 text-purple-500" />'
+        // ],
 
         "Indie" => [
             'lucide' => '<x-lucide-heart class="w-6 h-6 text-pink-400" />',
@@ -383,10 +383,10 @@ function AllGenresWithIcons()
             'heroicon' => '<x-heroicon-o-lightning-bolt class="w-6 h-6 text-gray-700" />'
         ],
 
-        "Piano" => [
-            'lucide' => '<x-lucide-piano class="w-6 h-6 text-gray-800" />',
-            'heroicon' => '<x-heroicon-o-musical-note class="w-6 h-6 text-gray-800" />'
-        ],
+        // "Piano" => [
+        //     'lucide' => '<x-lucide-piano class="w-6 h-6 text-gray-800" />',
+        //     'heroicon' => '<x-heroicon-o-musical-note class="w-6 h-6 text-gray-800" />'
+        // ],
 
         "Pop" => [
             'lucide' => '<x-lucide-star class="w-6 h-6 text-pink-500" />',
@@ -403,10 +403,10 @@ function AllGenresWithIcons()
             'heroicon' => '<x-heroicon-o-sun class="w-6 h-6 text-green-600" />'
         ],
 
-        "Reggaeton" => [
-            'lucide' => '<x-lucide-volume-2 class="w-6 h-6 text-orange-500" />',
-            'heroicon' => '<x-heroicon-o-speaker-wave class="w-6 h-6 text-orange-500" />'
-        ],
+        // "Reggaeton" => [
+        //     'lucide' => '<x-lucide-volume-2 class="w-6 h-6 text-orange-500" />',
+        //     'heroicon' => '<x-heroicon-o-speaker-wave class="w-6 h-6 text-orange-500" />'
+        // ],
 
         "Rock" => [
             'lucide' => '<x-lucide-guitar class="w-6 h-6 text-red-600" />',
@@ -418,99 +418,80 @@ function AllGenresWithIcons()
             'heroicon' => '<x-heroicon-o-film class="w-6 h-6 text-yellow-600" />'
         ],
 
-        "Speech" => [
-            'lucide' => '<x-lucide-mic class="w-6 h-6 text-teal-500" />',
-            'heroicon' => '<x-heroicon-o-microphone class="w-6 h-6 text-teal-500" />'
-        ],
-
-        "Techno" => [
-            'lucide' => '<x-lucide-cpu class="w-6 h-6 text-blue-500" />',
-            'heroicon' => '<x-heroicon-o-cog class="w-6 h-6 text-blue-500" />'
-        ],
-
-        "Trance" => [
-            'lucide' => '<x-lucide-waves class="w-6 h-6 text-purple-400" />',
-            'heroicon' => '<x-heroicon-o-wifi class="w-6 h-6 text-purple-400" />'
-        ],
-
-        "Trap" => [
-            'lucide' => '<x-lucide-triangle class="w-6 h-6 text-gray-600" />',
-            'heroicon' => '<x-heroicon-o-play class="w-6 h-6 text-gray-600" />'
-        ],
-
-        "Triphop" => [
-            'lucide' => '<x-lucide-circle-dot class="w-6 h-6 text-pink-600" />',
-            'heroicon' => '<x-heroicon-o-stop-circle class="w-6 h-6 text-pink-600" />'
-        ],
+        // "Speech" => [
+        //     'lucide' => '<x-lucide-mic class="w-6 h-6 text-teal-500" />',
+        //     'heroicon' => '<x-heroicon-o-microphone class="w-6 h-6 text-teal-500" />'
+        // ],
 
         "World" => [
             'lucide' => '<x-lucide-globe class="w-6 h-6 text-emerald-500" />',
             'heroicon' => '<x-heroicon-o-globe-alt class="w-6 h-6 text-emerald-500" />'
         ],
 
-        "all audio genres" => [
-            'lucide' => '<x-lucide-music class="w-6 h-6 text-indigo-500" />',
-            'heroicon' => '<x-heroicon-o-musical-note class="w-6 h-6 text-indigo-500" />'
-        ],
+        // "all audio genres" => [
+        //     'lucide' => '<x-lucide-music class="w-6 h-6 text-indigo-500" />',
+        //     'heroicon' => '<x-heroicon-o-musical-note class="w-6 h-6 text-indigo-500" />'
+        // ],
 
-        "audiobooks" => [
-            'lucide' => '<x-lucide-book-audio class="w-6 h-6 text-purple-600" />',
-            'heroicon' => '<x-heroicon-o-book-open class="w-6 h-6 text-purple-600" />'
-        ],
+        // "audiobooks" => [
+        //     'lucide' => '<x-lucide-book-audio class="w-6 h-6 text-purple-600" />',
+        //     'heroicon' => '<x-heroicon-o-book-open class="w-6 h-6 text-purple-600" />'
+        // ],
 
-        "business" => [
-            'lucide' => '<x-lucide-briefcase class="w-6 h-6 text-gray-600" />',
-            'heroicon' => '<x-heroicon-o-briefcase class="w-6 h-6 text-gray-600" />'
-        ],
+        // "business" => [
+        //     'lucide' => '<x-lucide-briefcase class="w-6 h-6 text-gray-600" />',
+        //     'heroicon' => '<x-heroicon-o-briefcase class="w-6 h-6 text-gray-600" />'
+        // ],
 
-        "comedy" => [
-            'lucide' => '<x-lucide-smile class="w-6 h-6 text-yellow-500" />',
-            'heroicon' => '<x-heroicon-o-face-smile class="w-6 h-6 text-yellow-500" />'
-        ],
+        // "comedy" => [
+        //     'lucide' => '<x-lucide-smile class="w-6 h-6 text-yellow-500" />',
+        //     'heroicon' => '<x-heroicon-o-face-smile class="w-6 h-6 text-yellow-500" />'
+        // ],
 
-        "entertainment" => [
-            'lucide' => '<x-lucide-sparkles class="w-6 h-6 text-purple-500" />',
-            'heroicon' => '<x-heroicon-o-star class="w-6 h-6 text-purple-500" />'
-        ],
+        // "entertainment" => [
+        //     'lucide' => '<x-lucide-sparkles class="w-6 h-6 text-purple-500" />',
+        //     'heroicon' => '<x-heroicon-o-star class="w-6 h-6 text-purple-500" />'
+        // ],
 
-        "learning" => [
-            'lucide' => '<x-lucide-graduation-cap class="w-6 h-6 text-teal-600" />',
-            'heroicon' => '<x-heroicon-o-academic-cap class="w-6 h-6 text-teal-600" />'
-        ],
+        // "learning" => [
+        //     'lucide' => '<x-lucide-graduation-cap class="w-6 h-6 text-teal-600" />',
+        //     'heroicon' => '<x-heroicon-o-academic-cap class="w-6 h-6 text-teal-600" />'
+        // ],
 
-        "news & politics" => [
-            'lucide' => '<x-lucide-newspaper class="w-6 h-6 text-gray-700" />',
-            'heroicon' => '<x-heroicon-o-newspaper class="w-6 h-6 text-gray-700" />'
-        ],
+        // "news & politics" => [
+        //     'lucide' => '<x-lucide-newspaper class="w-6 h-6 text-gray-700" />',
+        //     'heroicon' => '<x-heroicon-o-newspaper class="w-6 h-6 text-gray-700" />'
+        // ],
 
-        "religion & spirituality" => [
-            'lucide' => '<x-lucide-church class="w-6 h-6 text-yellow-600" />',
-            'heroicon' => '<x-heroicon-o-building-library class="w-6 h-6 text-yellow-600" />'
-        ],
+        // "religion & spirituality" => [
+        //     'lucide' => '<x-lucide-church class="w-6 h-6 text-yellow-600" />',
+        //     'heroicon' => '<x-heroicon-o-building-library class="w-6 h-6 text-yellow-600" />'
+        // ],
 
-        "science" => [
-            'lucide' => '<x-lucide-atom class="w-6 h-6 text-teal-500" />',
-            'heroicon' => '<x-heroicon-o-beaker class="w-6 h-6 text-teal-500" />'
-        ],
+        // "science" => [
+        //     'lucide' => '<x-lucide-atom class="w-6 h-6 text-teal-500" />',
+        //     'heroicon' => '<x-heroicon-o-beaker class="w-6 h-6 text-teal-500" />'
+        // ],
 
-        "sports" => [
-            'lucide' => '<x-lucide-trophy class="w-6 h-6 text-orange-500" />',
-            'heroicon' => '<x-heroicon-o-trophy class="w-6 h-6 text-orange-500" />'
-        ],
+        // "sports" => [
+        //     'lucide' => '<x-lucide-trophy class="w-6 h-6 text-orange-500" />',
+        //     'heroicon' => '<x-heroicon-o-trophy class="w-6 h-6 text-orange-500" />'
+        // ],
 
-        "Storytelling" => [
-            'lucide' => '<x-lucide-book-open class="w-6 h-6 text-purple-600" />',
-            'heroicon' => '<x-heroicon-o-book-open class="w-6 h-6 text-purple-600" />'
-        ],
+        // "Storytelling" => [
+        //     'lucide' => '<x-lucide-book-open class="w-6 h-6 text-purple-600" />',
+        //     'heroicon' => '<x-heroicon-o-book-open class="w-6 h-6 text-purple-600" />'
+        // ],
 
-        "Technology" => [
-            'lucide' => '<x-lucide-cpu class="w-6 h-6 text-blue-500" />',
-            'heroicon' => '<x-heroicon-o-computer-desktop class="w-6 h-6 text-blue-500" />'
-        ],
+        // "Technology" => [
+        //     'lucide' => '<x-lucide-cpu class="w-6 h-6 text-blue-500" />',
+        //     'heroicon' => '<x-heroicon-o-computer-desktop class="w-6 h-6 text-blue-500" />'
+        // ],
     ];
 
     return $genres;
 }
+
 
 
 // Global Search Function
