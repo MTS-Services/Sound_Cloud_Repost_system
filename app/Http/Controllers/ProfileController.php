@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserNotificationSent;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Mail\EmailVerificationMail;
 use App\Models\CreditTransaction;
+use App\Models\CustomNotification;
 use App\Models\RepostRequest as ModelsRepostRequest;
 use App\Models\User;
 use App\Models\UserGenre;
@@ -126,6 +128,7 @@ class ProfileController extends Controller
 
         $user->fill($validated);
 
+        // Update the genres
         UserGenre::where('user_urn', $user->urn)->delete();
         foreach ($validated['genres'] as $genre) {
             UserGenre::create([
@@ -135,12 +138,32 @@ class ProfileController extends Controller
                 'creater_type' => get_class($user)
             ]);
         }
+
+        // Create email verification notification
+        $notification = CustomNotification::create([
+            'receiver_id' => $user->id,
+            'receiver_type' => get_class($user),
+            'type' => CustomNotification::TYPE_USER,
+            'message_data' => [
+                'title' => 'Email Verification Required',
+                'message' => 'Please verify your email address to activate your account.',
+                'description' => 'Click the link in your inbox to complete the verification process.',
+                'icon' => 'email', // Email verification icon
+            ],
+        ]);
+
+        broadcast(new UserNotificationSent($notification));
+
+        // Send the verification email
         $this->profileService->sendEmailVerification($user, $request);
 
+        // Flash success message
         session()->flash('success', 'Registration completed successfully! Please check your email to verify your account.');
-        // Redirect to dashboard with a status message
+
+        // Redirect to dashboard
         return redirect()->route('user.dashboard');
     }
+
 
     public function resendEmailVerification(Request $request): RedirectResponse
     {
@@ -158,10 +181,27 @@ class ProfileController extends Controller
         }
 
         // Generate a new token and expiry
-         $this->profileService->sendEmailVerification($user, $request);
+        $this->profileService->sendEmailVerification($user, $request);
 
+        // Create email verification resend notification
+        $notification = CustomNotification::create([
+            'receiver_id' => $user->id,
+            'receiver_type' => get_class($user),
+            'type' => CustomNotification::TYPE_USER,
+            'message_data' => [
+                'title' => 'Email Verification Resent',
+                'message' => 'A new verification email has been sent to your inbox.',
+                'description' => 'Please check your email and verify your account.',
+                'icon' => 'email', // Email verification icon
+            ],
+        ]);
+
+        broadcast(new UserNotificationSent($notification));
+
+        // Flash success message
         session()->flash('success', 'A new verification email has been sent to your inbox. Please check your email.');
 
-        return redirect()->back(); // Redirect back to the page they were on, e.g., dashboard
+        // Redirect back to the previous page
+        return redirect()->back();
     }
 }
