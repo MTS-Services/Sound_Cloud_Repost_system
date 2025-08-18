@@ -67,14 +67,34 @@
                             @endif
 
                             @if (!user()->email_verified_at)
-                                <form method="POST" action="{{ route('user.email.resend.verification') }}">
-                                    @csrf 
-                                    <button type="submit"
-                                        class="bg-indigo-500 hover:bg-indigo-600 hover:underline text-white px-3 py-1 rounded-full text-xs font-medium transition duration-300">
-                                        Resend Verification Email
+                                <form x-data="{ loading: false }" x-ref="form" method="POST"
+                                    action="{{ route('user.email.resend.verification') }}"
+                                    @submit.prevent="loading = true; $refs.submitButton.disabled = true; $refs.form.submit();">
+                                    @csrf
+
+                                    <button type="submit" x-ref="submitButton" :disabled="loading"
+                                        class="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded-full text-xs font-medium transition duration-300">
+                                        <template x-if="!loading">
+                                            <span>Resend Verification Email</span>
+                                        </template>
+                                        <template x-if="loading">
+                                            <span>Sending...</span>
+                                        </template>
                                     </button>
+
                                 </form>
+                                <!-- Loader -->
+                                <div x-show="loading" class="text-center mt-2 hidden" x-transition>
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="animate-spin h-5 w-5 text-indigo-500" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor">
+                                        <circle cx="12" cy="12" r="10" stroke="currentColor"
+                                            stroke-width="4" class="opacity-25"></circle>
+                                        <path fill="currentColor" d="M4 12a8 8 0 0116 0" class="opacity-75"></path>
+                                    </svg>
+                                </div>
                             @endif
+
                         </div>
 
 
@@ -131,7 +151,8 @@
                         </div>
                     </div>
 
-                    <div class="bg-blue-50 p-6 rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
+                    <div
+                        class="bg-blue-50 p-6 rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
                         <div class="flex items-center">
                             <div class="bg-blue-100 p-3 shadow-sm rounded-lg mr-4">
                                 <x-lucide-refresh-cw class="w-6 h-6 text-blue-600"></x-lucide-refresh-cw>
