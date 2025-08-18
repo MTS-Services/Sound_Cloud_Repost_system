@@ -137,8 +137,8 @@ class ProfileController extends Controller
         $request->session()->put('email_verification_user_id', $user->id);
 
         Mail::to($user->email)->send(new EmailVerificationMail($user, $token));
-
+        session()->flash('success', 'Registration completed successfully! Please check your email to verify your account.');
         // Redirect to dashboard with a status message
-        return redirect()->route('user.dashboard')->with('status', 'Email and genres updated. Please verify your email!');
+        return redirect()->route('user.dashboard');
     }
 }
