@@ -163,8 +163,7 @@
                                 <circle cx="18" cy="16" r="3" />
                             </svg>
                         </div>
-                        <h1
-                            class="text-2xl font-bold text-gray-900 bg-primary-600 bg-clip-text text-transparent">
+                        <h1 class="text-2xl font-bold text-gray-900 bg-primary-600 bg-clip-text text-transparent">
                             RepostChain
                         </h1>
                     </div>
@@ -330,8 +329,7 @@
 
                             <!-- How It Works Section -->
                             <aside class="hidden lg:block animate-slide-in animate-delay-200">
-                                <div
-                                    class=" bg-gray-50 rounded-xl p-8 h-full border border-primary-100 shadow-sm">
+                                <div class=" bg-gray-50 rounded-xl p-8 h-full border border-primary-100 shadow-sm">
                                     <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary-600"
                                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -416,8 +414,8 @@
                         </div>
 
                         <!-- Genre Grid -->
-                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-8">
-                            @foreach (AllGenres() as $genre => $logo)
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-3 mb-8">
+                            @foreach (AllGenres() as $genre)
                                 <div @click="toggleGenre('{{ addslashes($genre) }}')"
                                     :class="{
                                         'border-primary-500 bg-primary-50 text-primary-700 shadow-md': selectedGenres
@@ -431,12 +429,12 @@
                                     class="relative p-3 border-2 rounded-lg text-center cursor-pointer transition-all duration-200 font-medium group"
                                     role="checkbox"
                                     :aria-checked="selectedGenres.includes('{{ addslashes($genre) }}')">
-                                    <label class="flex flex-col items-center justify-center p-1 rounded-lg">
-                                        <div class="mb-2 text-2xl">{!! $logo !!}</div>
-                                        <span
+                                    <label class="flex flex-col items-center justify-center  rounded-lg">
+                                        <div class="text-sm font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">{{ $genre }}</div>
+                                        {{-- <span
                                             class="text-sm font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">
                                             {{ $genre }}
-                                        </span>
+                                        </span> --}}
                                     </label>
                                     <div x-show="selectedGenres.includes('{{ addslashes($genre) }}')"
                                         class="absolute top-2 right-2 w-5 h-5 bg-primary-600 text-white rounded-full flex items-center justify-center text-xs font-bold shadow-sm">
@@ -449,7 +447,7 @@
                         <!-- Navigation Buttons -->
                         <div class="flex flex-col sm:flex-row gap-3 justify-between">
                             <button @click="goToStep(1)"
-                                class="flex items-center justify-center gap-2 px-6 py-3.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200 shadow-sm hover:shadow-md">
+                                class="flex items-center justify-center gap-2 px-6 py-3.5  text-gray-700 font-medium rounded-lg transition-all duration-200 ">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                     fill="currentColor">
                                     <path fill-rule="evenodd"
@@ -537,7 +535,7 @@
                             <!-- Final Actions -->
                             <div class="flex flex-col sm:flex-row gap-3 animate-slide-in animate-delay-200">
                                 <button @click="goToStep(2)"
-                                    class="flex items-center justify-center gap-2 px-6 py-3.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200 shadow-sm hover:shadow-md">
+                                    class="flex items-center justify-center gap-2 px-6 py-3.5  text-gray-700 font-medium rounded-lg  transition-all duration-200 ">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                         fill="currentColor">
                                         <path fill-rule="evenodd"
@@ -569,6 +567,7 @@
             </div>
         </main>
     </div>
+
 
     <script>
         function registrationForm() {
