@@ -146,7 +146,7 @@ class ProfileController extends Controller
             'type' => CustomNotification::TYPE_USER,
             'message_data' => [
                 'title' => 'Email Verification Required',
-                'message' => 'Please verify your email address to activate your account.',
+                'message' => 'Please verify your email address to verify your account.',
                 'description' => 'Click the link in your inbox to complete the verification process.',
                 'icon' => 'email', // Email verification icon
             ],
