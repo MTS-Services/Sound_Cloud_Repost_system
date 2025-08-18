@@ -12,6 +12,7 @@ use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\Admin\RepostManagement\RepostRequestService;
 use App\Services\Admin\RepostManagement\RepostService;
 use App\Services\TrackService;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
