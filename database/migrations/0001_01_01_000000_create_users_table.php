@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('sort_order')->default(0);
 
             $table->string('email')->unique()->nullable();
-            $table->string('email_verified_at')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->unsignedBigInteger('soundcloud_id')->unique();
             $table->string('soundcloud_permalink_url')->nullable()->unique();
