@@ -597,7 +597,7 @@
                 },
 
                 get canContinueGenres() {
-                    return this.selectedGenres.length >= 5 && this.selectedGenres.length <= this.maxGenres;
+                    return this.selectedGenres.length >= 1 && this.selectedGenres.length <= this.maxGenres;
                 },
 
                 isValidEmail(email) {
