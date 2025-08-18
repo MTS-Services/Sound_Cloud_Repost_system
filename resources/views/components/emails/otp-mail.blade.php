@@ -282,7 +282,7 @@ It receives 'token', 'name', and 'id' as props.
                             </div>
 
                             <a href="{{ route('user.email.verify', ['id' => $id, 'token' => $token]) }}" class="confirm-button">
-                                Confirm Email and Opt In to Newsletter
+                                Confirm Email In to Newsletter
                             </a>
                             
                             <div class="fallback-section">
