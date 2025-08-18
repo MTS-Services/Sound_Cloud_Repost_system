@@ -156,9 +156,9 @@
                 class="p-2 rounded-xl hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
                 data-tooltip="Toggle theme"
                 :title="$store.theme.current.charAt(0).toUpperCase() + $store.theme.current.slice(1) + ' mode'">
-                <x-heroicon-o-sun x-show="!$store.theme.darkMode"
+                <x-heroicon-o-sun x-show="$store.theme.darkMode"
                     class="w-5 h-5 text-text-light-primary dark:text-text-white" />
-                <x-heroicon-o-moon x-show="$store.theme.darkMode"
+                <x-heroicon-o-moon x-show="!$store.theme.darkMode"
                     class="w-5 h-5 text-text-light-primary dark:text-text-white" />
             </button>
             {{-- <button @click="$store.theme.toggleTheme()"
