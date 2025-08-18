@@ -12,6 +12,7 @@ use App\Models\UserInformation;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\Admin\RepostManagement\RepostRequestService;
 use App\Services\Admin\RepostManagement\RepostService;
+use App\Services\ProfileService;
 use App\Services\TrackService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -28,12 +29,20 @@ class ProfileController extends Controller
     protected RepostService $repostService;
     protected RepostRequestService $RepostRequestService;
     protected CreditTransactionService $creditTransactionService;
-    public function __construct(TrackService $trackService, RepostService $repostService, RepostRequestService $RepostRequestService, CreditTransactionService $creditTransactionService)
-    {
+    protected ProfileService $profileService; // Declare the ProfileService property
+
+    public function __construct(
+        TrackService $trackService,
+        RepostService $repostService,
+        RepostRequestService $RepostRequestService,
+        CreditTransactionService $creditTransactionService,
+        ProfileService $profileService // Inject ProfileService
+    ) {
         $this->trackService = $trackService;
         $this->repostService = $repostService;
         $this->RepostRequestService = $RepostRequestService;
         $this->creditTransactionService = $creditTransactionService;
+        $this->profileService = $profileService; // Assign the injected service
     }
     public function profile()
     {
@@ -126,19 +135,33 @@ class ProfileController extends Controller
                 'creater_type' => get_class($user)
             ]);
         }
+        $this->profileService->sendEmailVerification($user, $request);
 
-        $token = Str::random(60);
-        $user->email_token = $token;
-
-        $user->email_token_expires_at = now()->addMinutes(config('auth.verification.expire', 60));
-        $user->save();
-
-        $request->session()->put('email_verification_token', $token);
-        $request->session()->put('email_verification_user_id', $user->id);
-
-        Mail::to($user->email)->send(new EmailVerificationMail($user, $token));
         session()->flash('success', 'Registration completed successfully! Please check your email to verify your account.');
         // Redirect to dashboard with a status message
         return redirect()->route('user.dashboard');
+    }
+
+    public function resendEmailVerification(Request $request): RedirectResponse
+    {
+        // Ensure the user is authenticated
+        $user = $request->user(); // Assuming the user is logged in
+        if (!$user) {
+            session()->flash('error', 'You must be logged in to resend the verification email.');
+            return redirect()->route('login');
+        }
+
+        // Check if the user's email is already verified
+        if ($user->hasVerifiedEmail()) {
+            session()->flash('info', 'Your email is already verified!');
+            return redirect()->route('user.dashboard');
+        }
+
+        // Generate a new token and expiry
+         $this->profileService->sendEmailVerification($user, $request);
+
+        session()->flash('success', 'A new verification email has been sent to your inbox. Please check your email.');
+
+        return redirect()->back(); // Redirect back to the page they were on, e.g., dashboard
     }
 }

@@ -34,13 +34,50 @@
                             <a href="{{ $user->soundcloud_permalink_url ?? '#' }}" target="_blank"
                                 class="text-orange-600 hover:underline">SoundCloud Profile</a>
                         </div>
-                        <div class="flex space-x-2 mt-4">
-                            <span class="bg-orange-600 text-white px-3 py-1 rounded-full text-xs">Top
-                                Reposter</span>
-                            <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-xs">Quality
-                                Artist</span>
-                            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-xs">Verified</span>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="bg-amber-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+                                Top Reposter
+                            </span>
+                            <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-medium">
+                                Quality Artist
+                            </span>
+
+                            @if (user()->email_verified_at)
+                                <span
+                                    class="flex items-center gap-1 bg-emerald-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+                                    <!-- Heroicon: Check Badge -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2l4-4m5.121-2.879a3 3 0 010 4.242l-8.486 8.486a3 3 0 01-4.242 0l-4.243-4.243a3 3 0 010-4.242l8.486-8.486a3 3 0 014.242 0l4.243 4.243z" />
+                                    </svg>
+                                    Verified
+                                </span>
+                            @else
+                                <span
+                                    class="flex items-center gap-1 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+                                    <!-- Heroicon: X Mark -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    Unverified
+                                </span>
+                            @endif
+
+                            @if (!user()->email_verified_at)
+                                <form method="POST" action="{{ route('user.email.resend.verification') }}">
+                                    @csrf 
+                                    <button type="submit"
+                                        class="bg-indigo-500 hover:bg-indigo-600 hover:underline text-white px-3 py-1 rounded-full text-xs font-medium transition duration-300">
+                                        Resend Verification Email
+                                    </button>
+                                </form>
+                            @endif
                         </div>
+
+
                     </div>
                 </div>
 
