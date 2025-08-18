@@ -98,19 +98,19 @@ class UserSeeder extends Seeder
                 'urn' => 'urn:sc:users:1006',
             ],
         );
-        User::create(
-            [
-                'name' => 'Wasif Ahmed',
-                'soundcloud_id' => 1007,
-                'status' => User::STATUS_ACTIVE,
-                'email' => 'dev.wasifahmed@gmail.com',
-                'password' => Hash::make('dev.wasifahmed@gmail.com'),
-                'last_synced_at' => now(),
-                'token' => 'test-token-7',
-                'refresh_token' => 'test-refresh-token-7',
-                'expires_in' => 3600,
-                'urn' => 'urn:sc:users:1007',
-            ],
-        );
+        // User::create(
+        //     [
+        //         'name' => 'Wasif Ahmed',
+        //         'soundcloud_id' => 1007,
+        //         'status' => User::STATUS_ACTIVE,
+        //         'email' => 'dev.wasifahmed@gmail.com',
+        //         'password' => Hash::make('dev.wasifahmed@gmail.com'),
+        //         'last_synced_at' => now(),
+        //         'token' => 'test-token-7',
+        //         'refresh_token' => 'test-refresh-token-7',
+        //         'expires_in' => 3600,
+        //         'urn' => 'urn:sc:users:1007',
+        //     ],
+        // );
     }
 }
