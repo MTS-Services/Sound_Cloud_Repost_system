@@ -75,7 +75,7 @@
                     ],
 
                     [
-                        'name' => ' Users Plan',
+                        'name' => ' Plan',
                         'route' => route('um.user-plane.index'),
                         'icon' => 'user',
                         'active' => 'users_plane',

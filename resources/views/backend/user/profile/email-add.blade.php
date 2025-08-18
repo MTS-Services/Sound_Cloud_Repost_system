@@ -248,7 +248,7 @@
                                             <div class="border-l border-gray-200"></div>
                                             <div class="text-center">
                                                 <div class="text-lg font-semibold text-gray-900">
-                                                    {{ number_format($user->userInfo?->tracks_count) }}</div>
+                                                    {{ number_format($user->userInfo?->track_count) }}</div>
                                                 <div class="text-xs text-gray-500 uppercase tracking-wider">Tracks</div>
                                             </div>
                                         </div>
