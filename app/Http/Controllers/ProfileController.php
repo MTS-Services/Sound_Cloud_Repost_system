@@ -148,7 +148,7 @@ class ProfileController extends Controller
                 'title' => 'Email Verification Required',
                 'message' => 'Please verify your email address to verify your account.',
                 'description' => 'Click the link in your inbox to complete the verification process.',
-                'icon' => 'email', // Email verification icon
+                'icon' => 'fa-solid fa-envelope', // Email verification icon
             ],
         ]);
 
@@ -192,7 +192,7 @@ class ProfileController extends Controller
                 'title' => 'Email Verification Resent',
                 'message' => 'A new verification email has been sent to your inbox.',
                 'description' => 'Please check your email and verify your account.',
-                'icon' => 'email', // Email verification icon
+                'icon' => 'fa-solid fa-envelope', // Email verification icon
             ],
         ]);
 
