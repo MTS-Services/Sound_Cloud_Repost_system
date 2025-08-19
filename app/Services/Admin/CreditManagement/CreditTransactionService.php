@@ -64,17 +64,23 @@ class CreditTransactionService
         $startOfWeek = Carbon::now()->startOfWeek();
         $currentDayEnd = Carbon::now()->endOfDay();
 
-        $currentSum = Credit::where('id', $userUrn)
+        // Sum of succeeded transactions for this week up to the current day
+        $currentSum = CreditTransaction::where('receiver_urn', $userUrn)
+            ->where('status', CreditTransaction::STATUS_SUCCEEDED)
             ->whereBetween('created_at', [$startOfWeek, $currentDayEnd])
             ->sum('credits');
 
+        // Calculate the start and end dates for the same period last week
         $lastWeekStart = $startOfWeek->copy()->subWeek();
-        $lastWeekEnd = $currentDayEnd->copy()->subWeek();
+        $lastWeekEnd = Carbon::now()->subWeek()->endOfDay(); 
 
-        $lastWeekSum = Credit::where('id', $userUrn)
+        // Sum of succeeded transactions for the same period last week
+        $lastWeekSum = CreditTransaction::where('receiver_urn', $userUrn)
+            ->where('status', CreditTransaction::STATUS_SUCCEEDED)
             ->whereBetween('created_at', [$lastWeekStart, $lastWeekEnd])
             ->sum('credits');
 
+        // Calculation of percentage change
         if ($lastWeekSum > 0) {
             return round((($currentSum - $lastWeekSum) / $lastWeekSum) * 100, 2);
         }

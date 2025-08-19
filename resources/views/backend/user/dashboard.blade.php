@@ -61,7 +61,7 @@
                         </p>
                     @elseif($percentageChange < 0)
                         <p class="text-sm flex items-center space-x-1 text-red-400">
-                            <span>-{{ $percentageChange }}% from last week</span>
+                            <span>{{ $percentageChange }}% from last week</span>
                         </p>
                     @else
                         <p class="text-sm flex items-center space-x-1 text-gray-400">
