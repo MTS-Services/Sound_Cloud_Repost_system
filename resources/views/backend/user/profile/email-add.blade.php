@@ -164,7 +164,7 @@
                             </svg>
                         </div>
                         <h1 class="text-2xl font-bold text-gray-900 bg-primary-600 bg-clip-text text-transparent">
-                            RepostChain
+                           <a href="{{ route('f.landing') }}"> RepostChain</a>
                         </h1>
                     </div>
 
@@ -414,7 +414,8 @@
                         </div>
 
                         <!-- Genre Grid -->
-                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-3 mb-8">
+                        <div
+                            class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-3 mb-8">
                             @foreach (AllGenres() as $genre)
                                 <div @click="toggleGenre('{{ addslashes($genre) }}')"
                                     :class="{
@@ -430,7 +431,9 @@
                                     role="checkbox"
                                     :aria-checked="selectedGenres.includes('{{ addslashes($genre) }}')">
                                     <label class="flex flex-col items-center justify-center  rounded-lg">
-                                        <div class="text-sm font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">{{ $genre }}</div>
+                                        <div
+                                            class="text-sm font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">
+                                            {{ $genre }}</div>
                                         {{-- <span
                                             class="text-sm font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">
                                             {{ $genre }}
@@ -480,12 +483,12 @@
                         <div class="text-center max-w-2xl mx-auto">
                             <!-- Success Icon -->
                             <div
-                                class="w-24 h-24 bg-gradient-to-br from-green-100 to-primary-100 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner border-4 border-white animate-pulse-slow">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-green-600"
-                                    viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                        clip-rule="evenodd" />
+                                class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="lucide lucide-check w-8 h-8 text-green-600">
+                                    <path d="M20 6 9 17l-5-5"></path>
                                 </svg>
                             </div>
 
@@ -499,10 +502,10 @@
                             </div>
 
                             <!-- User Summary -->
-                            <div class="text-left mb-8 p-6  animate-slide-in bg-gray-50 border-gray-100 rounded-xl  border  shadow-sm animate-delay-100">
+                            <div
+                                class="text-left mb-8 p-6  animate-slide-in bg-gray-50 border-gray-100 rounded-xl  border  shadow-sm animate-delay-100">
                                 <!-- Profile Summary -->
-                                <div
-                                    class="flex items-center gap-4 p-1  ">
+                                <div class="flex items-center gap-4 p-1  ">
                                     <img class="h-16 w-16 rounded-full object-cover shadow-md border-2 border-white"
                                         src="{{ soundcloud_image($user->avatar) }}" alt="User Avatar" />
                                     <div class="flex-1">
@@ -533,7 +536,8 @@
                             </div>
 
                             <!-- Final Actions -->
-                            <div class="flex flex-col justify-between sm:flex-row gap-3 animate-slide-in animate-delay-200">
+                            <div
+                                class="flex flex-col justify-between sm:flex-row gap-3 animate-slide-in animate-delay-200">
                                 <button @click="goToStep(2)"
                                     class="flex w-auto items-center justify-center gap-2 px-6 py-3.5  text-gray-700 font-medium rounded-lg  transition-all duration-200 ">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
