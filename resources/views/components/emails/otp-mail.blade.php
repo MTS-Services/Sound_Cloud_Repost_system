@@ -12,7 +12,7 @@ It receives 'token', 'name', and 'id' as props.
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Email Confirmation - RepostChain</title>
-    
+
     <style type="text/css">
         body,
         table,
@@ -203,7 +203,7 @@ It receives 'token', 'name', and 'id' as props.
                 padding: 15px;
             }
         }
-        
+
         /* Dark Mode Styles */
         @media (prefers-color-scheme: dark) {
             body {
@@ -241,7 +241,7 @@ It receives 'token', 'name', and 'id' as props.
             .fallback-text {
                 color: #b0b0b0 !important;
             }
-            
+
             .fallback-url {
                 background-color: #222222 !important;
                 border-color: #444444 !important;
@@ -255,7 +255,7 @@ It receives 'token', 'name', and 'id' as props.
             .footer-text {
                 color: #999999 !important;
             }
-            
+
             .company-info {
                 color: #777777 !important;
             }
@@ -284,19 +284,19 @@ It receives 'token', 'name', and 'id' as props.
                             <a href="{{ route('user.email.verify', ['id' => $id, 'token' => $token]) }}" class="confirm-button">
                                 Confirm Email In to Newsletter
                             </a>
-                            
+
                             <div class="fallback-section">
                                 <div class="fallback-text">
                                     If the link above isn't working, please copy and paste the following into your
                                     browser:
                                 </div>
                                 <div class="fallback-url">
-                                    {{ config('app.url') }}/confirm-email?id={{ $id }}&token={{ $token }}
+                                    {{ config('app.url') }}/confirm/email?id={{ $id }}&token={{ $token }}
                                 </div>
                             </div>
 
                             <div class="footer-section">
-                              
+
                                 <div class="footer-text">
                                     You are receiving this email to keep you informed of important changes to your
                                     <strong>RepostChain</strong> account
