@@ -150,7 +150,10 @@ class ProfileController extends Controller
                 'title' => 'Email Verification Required',
                 'message' => 'Please verify your email address to verify your account.',
                 'description' => 'Click the link in your inbox to complete the verification process.',
-                'icon' => 'fa-solid fa-envelope', // Email verification icon
+                'route' => route('user.email.resend.verification'),
+                'method' => 'POST',
+                'button_title' => 'Resend Verification Email',
+                'icon' => 'mail-warning', // Email verification icon
             ],
         ]);
 
@@ -194,7 +197,7 @@ class ProfileController extends Controller
                 'title' => 'Email Verification Resent',
                 'message' => 'A new verification email has been sent to your inbox.',
                 'description' => 'Please check your email and verify your account.',
-                'icon' => 'fa-solid fa-envelope', // Email verification icon
+                'icon' => 'mail-check', // Email verification icon
             ],
         ]);
 

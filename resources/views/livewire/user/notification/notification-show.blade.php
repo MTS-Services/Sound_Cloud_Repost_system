@@ -101,6 +101,7 @@
                     </div>
 
                     {{-- Additional Data --}}
+
                     @if (isset($customNotification->message_data['additional_data']))
                         <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-6 mb-6">
                             <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">Additional
@@ -115,8 +116,17 @@
                                             class="text-gray-800 dark:text-gray-200">{{ is_array($value) ? json_encode($value) : $value }}</span>
                                     </div>
                                 @endforeach
+
                             </div>
                         </div>
+                    @endif
+                    @if (isset($customNotification->message_data['method']) && $customNotification->message_data['method'] === 'POST')
+                        <form action="{{ $customNotification->message_data['route'] }}"
+                            method="{{ $customNotification->message_data['method'] }}">
+                            @csrf
+                            <button type="submit"
+                                class="btn btn-sm btn-primary">{{ $customNotification->message_data['button_title'] }}</button>
+                        </form>
                     @endif
 
                     {{-- Action URL --}}
