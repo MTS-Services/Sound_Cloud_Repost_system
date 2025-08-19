@@ -59,25 +59,22 @@ class CreditTransactionService
     }
 
 
-     public static function getWeeklyChangeByUrn(string $userUrn, int $days = 3): float
+    public static function getWeeklyChangeByUrn(string $userUrn): float
     {
-        // Current range: today + previous ($days - 1) days
-        $currentStart = Carbon::today()->subDays($days - 1);
-        $currentEnd   = Carbon::today()->endOfDay();
+        $startOfWeek = Carbon::now()->startOfWeek();
+        $currentDayEnd = Carbon::now()->endOfDay();
 
         $currentSum = Credit::where('id', $userUrn)
-            ->whereBetween('created_at', [$currentStart, $currentEnd])
+            ->whereBetween('created_at', [$startOfWeek, $currentDayEnd])
             ->sum('credits');
 
-        // Same range last week
-        $lastWeekStart = $currentStart->copy()->subWeek();
-        $lastWeekEnd   = $currentEnd->copy()->subWeek();
+        $lastWeekStart = $startOfWeek->copy()->subWeek();
+        $lastWeekEnd = $currentDayEnd->copy()->subWeek();
 
         $lastWeekSum = Credit::where('id', $userUrn)
             ->whereBetween('created_at', [$lastWeekStart, $lastWeekEnd])
             ->sum('credits');
 
-        // Calculate percentage change
         if ($lastWeekSum > 0) {
             return round((($currentSum - $lastWeekSum) / $lastWeekSum) * 100, 2);
         }
