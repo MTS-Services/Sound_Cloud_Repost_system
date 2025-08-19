@@ -43,8 +43,8 @@
                                 <span class="label-text">{{ __('Credit') }}</span>
                             </label>
                             <input type="number" name="credit" id="credit"
-                                class="input input-bordered text-gray-800 dark:text-gray-200 w-full" placeholder="{{ __('Enter credit') }}"
-                                required>
+                                class="input input-bordered text-gray-800 dark:text-gray-200 w-full"
+                                placeholder="{{ __('Enter credit') }}" required>
                         </div>
                         {{-- <div class="flex items-center justify-end w-full mt-4">
                             <button type="submit" class="btn btn-primary">{{ __('Add Credit') }}</button>
@@ -101,7 +101,7 @@
                 let table_columns = [
                     //name and data, orderable, searchable
                     ['name', true, true],
-                    ['soundcloud_permalink_url', true, true],
+                    ['profile_link', true, true],
                     ['status', true, true],
                     ['last_synced_at', true, true],
                     ['creater_id', true, true],

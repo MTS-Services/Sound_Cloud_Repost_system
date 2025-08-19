@@ -85,11 +85,11 @@ class UserController extends Controller implements HasMiddleware
             $query = $this->userService->getUsers();
             return DataTables::eloquent($query)
                 ->editColumn('status', fn($user) => "<span class='badge badge-soft {$user->status_color}'>{$user->status_label}</span>")
-                ->editColumn('soundcloud_permalink_url', fn($user) => "<a href='{$user->soundcloud_permalink_url}' target='_blank'>Profile</a>")
+                ->addColumn('profile_link', fn($user) => "<a href='{$user->soundcloud_permalink_url}' target='_blank'>Profile</a>")
                 ->editColumn('creater_id', fn($user) => $this->creater_name($user))
                 ->editColumn('created_at', fn($user) => $user->created_at_formatted)
                 ->editColumn('action', fn($user) => view('components.action-buttons', ['menuItems' => $this->menuItems($user)])->render())
-                ->rawColumns(['action', 'status', 'created_at', 'creater_id', 'soundcloud_permalink_url'])
+                ->rawColumns(['action', 'status', 'created_at', 'creater_id', 'profile_link'])
                 ->make(true);
         }
         return view('backend.admin.user-management.user.index');
@@ -216,7 +216,7 @@ class UserController extends Controller implements HasMiddleware
                     $menuItems = $this->trashedMenuItems($user);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['deleter_id','status', 'deleted_at', 'action'])
+                ->rawColumns(['deleter_id', 'status', 'deleted_at', 'action'])
                 ->make(true);
         }
         return view('backend.admin.user-management.user.trash');
