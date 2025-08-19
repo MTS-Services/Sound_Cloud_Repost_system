@@ -54,7 +54,7 @@
                 </div>
                 <div class="space-y-2">
                     <p class="text-2xl  font-bold text-slate-700 dark:text-white">{{ userCredits() }}</p>
-                    <p class="text-sm flex items-center space-x-1 text-green-400"><span>+12% from last week</span></p>
+                    <p class="text-sm flex items-center space-x-1 text-green-400"><span>+{{ $percentageChange }}% from last week</span></p>
                 </div>
             </div>
 

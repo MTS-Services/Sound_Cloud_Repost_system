@@ -40,7 +40,7 @@
                 let table_columns = [
                     //name and data, orderable, searchable
                     ['name', true, true],
-                    ['soundcloud_permalink_url', true, true],
+                    ['profile_link', true, true],
                     ['status', true, true],
                     ['last_synced_at', true, true],
                     ['deleter_id', true, true],

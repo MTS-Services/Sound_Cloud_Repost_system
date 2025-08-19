@@ -29,10 +29,10 @@ class DashboardController extends Controller
             ->latest()
             ->take(2)
             ->get();
+
+        $userId = user()->urn;
+        $data['percentageChange'] = $this->creditTransactionService->getWeeklyChangeByUrn($userId);
+        //  = $creditStats['percentage_change'];
         return view('backend.user.dashboard', $data);
     }
-
- 
-
-   
 }
