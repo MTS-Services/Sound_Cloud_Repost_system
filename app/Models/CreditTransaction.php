@@ -86,6 +86,8 @@ class CreditTransaction extends BaseModel
         return isset($this->status) ? $this->getStatusClassList()[$this->status] : 'primary';
     }
 
+    
+
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                     Start of RELATIONSHIPS

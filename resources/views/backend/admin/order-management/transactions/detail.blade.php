@@ -49,18 +49,13 @@
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Transaction Type</h4>
                     <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $transactions->type_name }}</p>
+                        {{ $transactions->transaction_type_name }}
+                    </p>
                 </div>
                 <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
                     <h4 class="text-gray-600 dark:text-gray-400 text-sm">Status</h4>
-                    <p
-                        class="text-xl font-bold
-                        @if ($transactions->status == 'succeeded') text-green-500
-                        @elseif($transactions->status == 'pending') text-yellow-500
-                        @elseif($transactions->status == 'failed') text-red-500
-                        @else @endif
-                        ">
-                        {{ $transactions->status }}
+                    <p class=" font-bold text-white badge badge-{{ $transactions->status_color }}">
+                        {{ $transactions->status_label }}
                     </p>
                 </div>
 
