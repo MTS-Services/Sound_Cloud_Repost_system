@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Http;
 use App\Services\SoundCloud\SoundCloudService;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Illuminate\Http\Client\RequestException;
 
 class TrackSubmit extends Component
 {
@@ -305,9 +306,23 @@ class TrackSubmit extends Component
             session()->flash('message', 'Track submitted successfully!');
             $this->reset();
             return $this->redirect(route('user.pm.my-account') . '?tab=tracks', navigate: true);
-        } catch (\Illuminate\Http\Client\RequestException $e) {
+        } catch (RequestException $e) {
             logger()->error('SoundCloud API Error: ' . $e->getMessage(), ['response_body' => $e->response->body()]);
-            session()->flash('error', 'Failed to submit track: ' . $e->response->json('errors.0.message', 'Unknown API error.'));
+
+            $responseBody = $e->response->json();
+            $errorMessage = 'An unknown error occurred with the SoundCloud API. Please try again later.';
+
+            if (isset($responseBody['errors']) && is_array($responseBody['errors']) && !empty($responseBody['errors'])) {
+                // Check for the specific 'uid has already been taken' error
+                $apiErrorMessage = $responseBody['errors'][0]['error_message'] ?? '';
+                if (str_contains(strtolower($apiErrorMessage), 'uid has already been taken')) {
+                    $errorMessage = 'The track title or permalink you entered has already been taken on SoundCloud. Please try a different track title.';
+                } else {
+                    $errorMessage = $apiErrorMessage;
+                }
+            }
+
+            session()->flash('error', $errorMessage);
         } catch (\Exception $e) {
             logger()->error('General Submission Error: ' . $e->getMessage());
             session()->flash('error', 'An unexpected error occurred. Please try again.');
