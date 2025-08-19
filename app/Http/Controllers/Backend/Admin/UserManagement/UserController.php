@@ -215,7 +215,7 @@ class UserController extends Controller implements HasMiddleware
                     $menuItems = $this->trashedMenuItems($user);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['deleter_id','status', 'deleted_at', 'action'])
+                ->rawColumns(['deleter_id', 'status', 'deleted_at', 'action'])
                 ->make(true);
         }
         return view('backend.admin.user-management.user.trash');
