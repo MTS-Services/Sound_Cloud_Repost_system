@@ -289,7 +289,7 @@
                     </div>
 
                     <div x-data="{ permalink: @entangle('track.permalink') }">
-                        <x-form.input type="url" label="Track Link" wire:model="track.permalink" placeholder="track-name"
+                        <x-form.input label="Track Link" wire:model="track.permalink" placeholder="track-name"
                             prefix="https://soundcloud.com/" tip="This will be the public URL for your track."
                             input-id="track-link-input" />
                     </div>
