@@ -226,6 +226,7 @@ class TrackSubmit extends Component
             if ($this->track['artwork_data']) {
                 $this->track['artwork_data']->delete();
             }
+            
             DB::transaction(function () use ($responseTrack) {
                 $track =  Track::create([
                     'user_urn' => user()->urn,
