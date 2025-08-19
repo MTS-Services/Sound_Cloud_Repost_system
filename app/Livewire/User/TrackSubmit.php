@@ -313,10 +313,13 @@ class TrackSubmit extends Component
             $errorMessage = 'An unknown error occurred with the SoundCloud API. Please try again later.';
 
             if (isset($responseBody['errors']) && is_array($responseBody['errors']) && !empty($responseBody['errors'])) {
-                // Check for the specific 'uid has already been taken' error
                 $apiErrorMessage = $responseBody['errors'][0]['error_message'] ?? '';
-                if (str_contains(strtolower($apiErrorMessage), 'uid has already been taken')) {
+                $lowerCaseApiErrorMessage = strtolower($apiErrorMessage);
+
+                if (str_contains($lowerCaseApiErrorMessage, 'uid has already been taken')) {
                     $errorMessage = 'The track title or permalink you entered has already been taken on SoundCloud. Please try a different track title.';
+                } elseif (str_contains($lowerCaseApiErrorMessage, 'permalink must contain only lower case letters and numbers')) {
+                    $errorMessage = 'The track permalink you entered is invalid. It must only contain lowercase letters, numbers, hyphens (-), or underscores (_). Please correct it and try again.';
                 } else {
                     $errorMessage = $apiErrorMessage;
                 }
