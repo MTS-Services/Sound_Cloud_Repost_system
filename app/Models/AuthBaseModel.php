@@ -87,6 +87,7 @@ class AuthBaseModel extends Authenticatable
         'created_at_formatted',
         'updated_at_formatted',
         'deleted_at_formatted',
+        'last_synced_at_human',
     ];
 
     // Verify Accessors
@@ -126,6 +127,11 @@ class AuthBaseModel extends Authenticatable
     public function getDeletedAtFormattedAttribute()
     {
         return $this->deleted_at ? timeFormat($this->deleted_at) : 'N/A';
+    }
+
+    public function getLastSyncedAtHumanAttribute()
+    {
+        return $this->last_synced_at ? timeFormatHuman($this->last_synced_at) : 'N/A';
     }
 
     // Accessor for created time human readable

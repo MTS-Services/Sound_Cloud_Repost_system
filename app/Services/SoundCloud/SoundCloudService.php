@@ -535,7 +535,7 @@ class SoundCloudService
         $requestBody = [];
         foreach ($trackData as $key => $value) {
             // Only include non-file fields and those with a value
-            if (! in_array($key, ['asset_data', 'artwork_data']) && ! empty($value)) {
+            if (!in_array($key, ['asset_data', 'artwork_data']) && !empty($value)) {
                 $requestBody["track[{$key}]"] = $value;
             }
         }

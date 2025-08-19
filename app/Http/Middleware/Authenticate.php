@@ -31,7 +31,7 @@ class Authenticate extends Middleware
     public function handle($request, \Closure $next, ...$guards): Response
     {
         // Check if a user is authenticated with the 'web' guard
-        if (Auth::guard('web')->check()) {
+        if (Auth::guard('web')->check() && $request->routeIs('user.*')) {
             $user = Auth::user();
 
             $user->load('genres');

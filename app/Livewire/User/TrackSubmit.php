@@ -178,6 +178,7 @@ class TrackSubmit extends Component
 
     public function submit()
     {
+        // dd($this->track);
         // All validation for all fields, including files, happens here.
         $this->validate();
 
@@ -225,6 +226,7 @@ class TrackSubmit extends Component
             if ($this->track['artwork_data']) {
                 $this->track['artwork_data']->delete();
             }
+            
             DB::transaction(function () use ($responseTrack) {
                 $track =  Track::create([
                     'user_urn' => user()->urn,
