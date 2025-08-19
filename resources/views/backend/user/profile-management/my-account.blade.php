@@ -139,7 +139,7 @@
         </script>
     @else
         <section class="flex-1 overflow-auto">
-            <div class="min-h-screen bg-white dark:bg-slate-900">
+            <div class="min-h-screen bg-white  dark:bg-slate-900">
                 {{-- Header Section --}}
                 <div class="bg-gradient-to-r from-gray-100 to-gray-200 dark:from-slate-800 dark:to-slate-700 relative">
                     <div class="absolute inset-0 dark:to-slate-700 bg-opacity-10 dark:bg-opacity-30"></div>
@@ -220,7 +220,7 @@
                     </div>
                 </div>
 
-                <div class="p-4 sm:p-6">
+                <div class="pt-4 sm:pt-6">
                     <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
                         {{-- Sidebar --}}
                         <div class="lg:col-span-1 space-y-4 sm:space-y-6">

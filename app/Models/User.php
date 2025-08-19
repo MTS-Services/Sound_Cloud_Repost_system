@@ -159,6 +159,7 @@ class User extends AuthBaseModel implements MustVerifyEmail
         return $this->creditTransactions()->succeeded();
     }
 
+    
 
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=

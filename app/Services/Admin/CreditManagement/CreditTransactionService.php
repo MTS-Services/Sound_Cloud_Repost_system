@@ -2,11 +2,13 @@
 
 namespace App\Services\Admin\CreditManagement;
 
+use App\Models\Campaign;
 use App\Models\CreditTransaction;
 use App\Models\Track;
 use Illuminate\Database\Eloquent\Collection;
 use Carbon\Carbon;
 use App\Models\Credit;
+use App\Models\RepostRequest;
 
 class CreditTransactionService
 {
@@ -59,26 +61,92 @@ class CreditTransactionService
     }
 
 
-    public static function getWeeklyChangeByUrn(string $userUrn): float
+    public static function getWeeklyChangeByCredit(string $userUrn): float
     {
         $startOfWeek = Carbon::now()->startOfWeek();
         $currentDayEnd = Carbon::now()->endOfDay();
 
-        $currentSum = Credit::where('id', $userUrn)
+        // Sum of succeeded transactions for this week up to the current day
+        $currentSum = CreditTransaction::where('receiver_urn', $userUrn)
+            ->where('status', CreditTransaction::STATUS_SUCCEEDED)
             ->whereBetween('created_at', [$startOfWeek, $currentDayEnd])
             ->sum('credits');
 
+        // Calculate the start and end dates for the same period last week
         $lastWeekStart = $startOfWeek->copy()->subWeek();
-        $lastWeekEnd = $currentDayEnd->copy()->subWeek();
+        $lastWeekEnd = Carbon::now()->subWeek()->endOfDay();
 
-        $lastWeekSum = Credit::where('id', $userUrn)
+        // Sum of succeeded transactions for the same period last week
+        $lastWeekSum = CreditTransaction::where('receiver_urn', $userUrn)
+            ->where('status', CreditTransaction::STATUS_SUCCEEDED)
             ->whereBetween('created_at', [$lastWeekStart, $lastWeekEnd])
             ->sum('credits');
-
+        // Calculation of percentage change
         if ($lastWeekSum > 0) {
             return round((($currentSum - $lastWeekSum) / $lastWeekSum) * 100, 2);
         }
 
         return $currentSum > 0 ? 100.0 : 0.0;
+    }
+
+    public static function getWeeklyCampaignChange(string $userUrn): float
+    {
+        $startOfWeek = Carbon::now()->startOfWeek();
+        $currentDayEnd = Carbon::now()->endOfDay();
+
+        // Count of open and completed campaigns for this week up to the current day
+        $currentSum = Campaign::where('user_urn', $userUrn)
+            ->whereIn('status', [Campaign::STATUS_OPEN, Campaign::STATUS_COMPLETED])
+            ->whereBetween('created_at', [$startOfWeek, $currentDayEnd])
+            ->count();
+
+        // Calculate the start and end dates for the same period last week
+        $lastWeekStart = $startOfWeek->copy()->subWeek();
+        $lastWeekEnd = Carbon::now()->subWeek()->endOfDay();
+
+        // Count of open and completed campaigns for the same period last week
+        $lastWeekSum = Campaign::where('user_urn', $userUrn)
+            ->whereIn('status', [Campaign::STATUS_OPEN, Campaign::STATUS_COMPLETED])
+            ->whereBetween('created_at', [$lastWeekStart, $lastWeekEnd])
+            ->count();
+
+        // Calculation of percentage change
+        if ($lastWeekSum > 0) {
+            return round((($currentSum - $lastWeekSum) / $lastWeekSum) * 100, 2);
+        }
+
+        return $currentSum > 0 ? 100.0 : 0.0;
+    }
+
+
+
+    public static function getWeeklyRepostRequestChange(string $userUrn): float
+    {
+        $startOfWeek = Carbon::now()->startOfWeek();
+        $currentDayEnd = Carbon::now()->endOfDay();
+
+        // Count of approved and declined requests this week up to the current day
+        $currentCount = RepostRequest::where('requester_urn', $userUrn)
+            ->whereIn('status', [RepostRequest::STATUS_APPROVED, RepostRequest::STATUS_DECLINE, RepostRequest::STATUS_PENDING])
+            ->whereBetween('created_at', [$startOfWeek, $currentDayEnd])
+            ->count();
+
+        // Calculate the start and end dates for the same period last week
+        $lastWeekStart = $startOfWeek->copy()->subWeek();
+        $lastWeekEnd = Carbon::now()->subWeek()->endOfDay();
+
+        // Count of approved and declined requests for the same period last week
+        $lastWeekCount = RepostRequest::where('requester_urn', $userUrn)
+            ->whereIn('status', [RepostRequest::STATUS_APPROVED, RepostRequest::STATUS_DECLINE, RepostRequest::STATUS_PENDING])
+            ->whereBetween('created_at', [$lastWeekStart, $lastWeekEnd])
+            ->count();
+
+        // Calculation of percentage change
+        if ($lastWeekCount > 0) {
+            return round((($currentCount - $lastWeekCount) / $lastWeekCount) * 100, 2);
+        }
+
+        // If last week's count was zero, handle the edge case
+        return $currentCount > 0 ? 100.0 : 0.0;
     }
 }

@@ -55,13 +55,13 @@
                 <div class="space-y-2">
                     <p class="text-2xl font-bold text-slate-700 dark:text-white">{{ userCredits() }}</p>
 
-                    @if ($percentageChange >= 0)
+                    @if ($creditPercentage >= 0)
                         <p class="text-sm flex items-center space-x-1 text-green-400">
-                            <span>+{{ $percentageChange }}% from last week</span>
+                            <span>+{{ $creditPercentage }}% from last week</span>
                         </p>
-                    @elseif($percentageChange < 0)
+                    @elseif($creditPercentage < 0)
                         <p class="text-sm flex items-center space-x-1 text-red-400">
-                            <span>-{{ $percentageChange }}% from last week</span>
+                            <span>{{ $creditPercentage }}% from last week</span>
                         </p>
                     @else
                         <p class="text-sm flex items-center space-x-1 text-gray-400">
@@ -86,8 +86,20 @@
                     </div>
                 </div>
                 <div class="space-y-2">
-                    <p class="text-2xl  font-bold text-slate-700 dark:text-white">1</p>
-                    <p class="text-sm flex items-center space-x-1 text-green-400"><span>+0% from last week</span></p>
+                    <p class="text-2xl  font-bold text-slate-700 dark:text-white">{{ $totalCams }}</p>
+                    @if ($campaignPercentage >= 0)
+                        <p class="text-sm flex items-center space-x-1 text-green-400">
+                            <span>+{{ $campaignPercentage }}% from last week</span>
+                        </p>
+                    @elseif($campaignPercentage < 0)
+                        <p class="text-sm flex items-center space-x-1 text-red-400">
+                            <span>{{ $campaignPercentage }}% from last week</span>
+                        </p>
+                    @else
+                        <p class="text-sm flex items-center space-x-1 text-gray-400">
+                            <span>0% from last week</span>
+                        </p>
+                    @endif
                 </div>
             </div>
 
@@ -107,7 +119,19 @@
                 </div>
                 <div class="space-y-2">
                     <p class="text-2xl  font-bold text-slate-700 dark:text-white">{{ $totalCount }}</p>
-                    <p class="text-sm flex items-center space-x-1 text-green-400"><span>+8.5% from last week</span></p>
+                  @if ($repostRequestPercentage >= 0)
+                      <p class="text-sm flex items-center space-x-1 text-green-400">
+                          <span>+{{ $repostRequestPercentage }}% from last week</span>
+                      </p>
+                  @elseif($repostRequestPercentage < 0)
+                      <p class="text-sm flex items-center space-x-1 text-red-400">
+                          <span>{{ $repostRequestPercentage }}% from last week</span>
+                      </p>
+                  @else
+                      <p class="text-sm flex items-center space-x-1 text-gray-400">
+                          <span>0% from last week</span>
+                      </p>
+                  @endif
                 </div>
             </div>
 
