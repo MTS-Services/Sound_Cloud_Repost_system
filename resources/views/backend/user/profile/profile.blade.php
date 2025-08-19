@@ -85,9 +85,8 @@
                                 </form>
                                 <!-- Loader -->
                                 <div x-show="loading" class="text-center mt-2 hidden" x-transition>
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="animate-spin h-5 w-5 text-indigo-500" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="animate-spin h-5 w-5 text-indigo-500"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                         <circle cx="12" cy="12" r="10" stroke="currentColor"
                                             stroke-width="4" class="opacity-25"></circle>
                                         <path fill="currentColor" d="M4 12a8 8 0 0116 0" class="opacity-75"></path>
@@ -195,13 +194,19 @@
                 <div class="mb-8">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200 mb-4">Your Genres</h3>
                     <div class="flex flex-wrap gap-3">
-                        <span class="bg-orange-100 text-orange-800 px-4 py-2 rounded-full">Electronic</span>
-                        <span class="bg-purple-100 text-purple-800 px-4 py-2 rounded-full">Hip-hop</span>
-                        <span class="bg-red-100 text-red-800 px-4 py-2 rounded-full">Indie</span>
-                        <span class="bg-purple-100 text-purple-800 px-4 py-2 rounded-full">Classical</span>
-                        <span class="bg-red-100 text-red-800 px-4 py-2 rounded-full">Rock</span>
+                        @foreach (user()->genres as $index => $genre)
+                            @php
+                                // Alternate between two colors
+                                $colors = ['bg-orange-100 text-orange-800', 'bg-purple-100 text-purple-800'];
+                                $colorClass = $colors[$index % 2];
+                            @endphp
+                            <span class="{{ $colorClass }} px-4 py-2 rounded-full">
+                                {{ $genre->genre }}
+                            </span>
+                        @endforeach
                     </div>
                 </div>
+
 
                 <!-- Achievements -->
                 <div>
