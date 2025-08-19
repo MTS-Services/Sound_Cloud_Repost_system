@@ -87,7 +87,19 @@
                 </div>
                 <div class="space-y-2">
                     <p class="text-2xl  font-bold text-slate-700 dark:text-white">1</p>
-                    <p class="text-sm flex items-center space-x-1 text-green-400"><span>+0% from last week</span></p>
+                    @if ($campaignChange >= 0)
+                        <p class="text-sm flex items-center space-x-1 text-green-400">
+                            <span>+{{ $campaignChange }}% from last week</span>
+                        </p>
+                    @elseif($campaignChange < 0)
+                        <p class="text-sm flex items-center space-x-1 text-red-400">
+                            <span>{{ $campaignChange }}% from last week</span>
+                        </p>
+                    @else
+                        <p class="text-sm flex items-center space-x-1 text-gray-400">
+                            <span>0% from last week</span>
+                        </p>
+                    @endif
                 </div>
             </div>
 

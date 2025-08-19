@@ -27,9 +27,11 @@ class DashboardController extends Controller
             ->take(2)
             ->get();
 
+        // Available Creadit
         $userId = user()->urn;
-        $data['percentageChange'] = $this->creditTransactionService->getWeeklyChangeByUrn($userId);
-        //  = $creditStats['percentage_change'];
+        $data['percentageChange'] = $this->creditTransactionService->getWeeklyChangeByCredit($userId);
+        $data['campaignChange'] = $this->creditTransactionService->getWeeklyCampaignChange($userId);
+       
         return view('backend.user.dashboard', $data);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services\Admin\CreditManagement;
 
+use App\Models\Campaign;
 use App\Models\CreditTransaction;
 use App\Models\Track;
 use Illuminate\Database\Eloquent\Collection;
@@ -59,7 +60,7 @@ class CreditTransactionService
     }
 
 
-    public static function getWeeklyChangeByUrn(string $userUrn): float
+    public static function getWeeklyChangeByCredit(string $userUrn): float
     {
         $startOfWeek = Carbon::now()->startOfWeek();
         $currentDayEnd = Carbon::now()->endOfDay();
@@ -72,13 +73,41 @@ class CreditTransactionService
 
         // Calculate the start and end dates for the same period last week
         $lastWeekStart = $startOfWeek->copy()->subWeek();
-        $lastWeekEnd = Carbon::now()->subWeek()->endOfDay(); 
+        $lastWeekEnd = Carbon::now()->subWeek()->endOfDay();
 
         // Sum of succeeded transactions for the same period last week
         $lastWeekSum = CreditTransaction::where('receiver_urn', $userUrn)
             ->where('status', CreditTransaction::STATUS_SUCCEEDED)
             ->whereBetween('created_at', [$lastWeekStart, $lastWeekEnd])
             ->sum('credits');
+        // Calculation of percentage change
+        if ($lastWeekSum > 0) {
+            return round((($currentSum - $lastWeekSum) / $lastWeekSum) * 100, 2);
+        }
+
+        return $currentSum > 0 ? 100.0 : 0.0;
+    }
+
+    public static function getWeeklyCampaignChange(string $userUrn): float
+    {
+        $startOfWeek = Carbon::now()->startOfWeek();
+        $currentDayEnd = Carbon::now()->endOfDay();
+
+        // Count of open and completed campaigns for this week up to the current day
+        $currentSum = Campaign::where('user_urn', $userUrn)
+            ->whereIn('status', [Campaign::STATUS_OPEN, Campaign::STATUS_COMPLETED])
+            ->whereBetween('created_at', [$startOfWeek, $currentDayEnd])
+            ->count();
+
+        // Calculate the start and end dates for the same period last week
+        $lastWeekStart = $startOfWeek->copy()->subWeek();
+        $lastWeekEnd = Carbon::now()->subWeek()->endOfDay();
+
+        // Count of open and completed campaigns for the same period last week
+        $lastWeekSum = Campaign::where('user_urn', $userUrn)
+            ->whereIn('status', [Campaign::STATUS_OPEN, Campaign::STATUS_COMPLETED])
+            ->whereBetween('created_at', [$lastWeekStart, $lastWeekEnd])
+            ->count();
 
         // Calculation of percentage change
         if ($lastWeekSum > 0) {
