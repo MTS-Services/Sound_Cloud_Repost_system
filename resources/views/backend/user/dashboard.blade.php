@@ -53,9 +53,23 @@
                         </svg></div>
                 </div>
                 <div class="space-y-2">
-                    <p class="text-2xl  font-bold text-slate-700 dark:text-white">{{ userCredits() }}</p>
-                    <p class="text-sm flex items-center space-x-1 text-green-400"><span>+{{ $percentageChange }}% from last week</span></p>
+                    <p class="text-2xl font-bold text-slate-700 dark:text-white">{{ userCredits() }}</p>
+
+                    @if ($percentageChange >= 0)
+                        <p class="text-sm flex items-center space-x-1 text-green-400">
+                            <span>+{{ $percentageChange }}% from last week</span>
+                        </p>
+                    @elseif($percentageChange < 0)
+                        <p class="text-sm flex items-center space-x-1 text-red-400">
+                            <span>-{{ $percentageChange }}% from last week</span>
+                        </p>
+                    @else
+                        <p class="text-sm flex items-center space-x-1 text-gray-400">
+                            <span>0% from last week</span>
+                        </p>
+                    @endif
                 </div>
+
             </div>
 
             <div
