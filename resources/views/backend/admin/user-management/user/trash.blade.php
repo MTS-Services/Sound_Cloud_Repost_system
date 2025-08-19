@@ -19,7 +19,7 @@
                     <tr>
                         <th width="5%">{{ __('SL') }}</th>
                         <th>{{ __('Name') }}</th>
-                        <th>{{ __('Soundcloud ID') }}</th>
+                        <th>{{ __('Profile Link') }}</th>
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('Last Synced At') }}</th>
                         <th>{{ __('Deleted By') }}</th>
@@ -40,7 +40,7 @@
                 let table_columns = [
                     //name and data, orderable, searchable
                     ['name', true, true],
-                    ['soundcloud_id', true, true],
+                    ['soundcloud_permalink_url', true, true],
                     ['status', true, true],
                     ['last_synced_at', true, true],
                     ['deleter_id', true, true],
