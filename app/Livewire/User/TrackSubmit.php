@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Http;
 use App\Services\SoundCloud\SoundCloudService;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Illuminate\Http\Client\RequestException;
 
 class TrackSubmit extends Component
 {
@@ -305,9 +306,30 @@ class TrackSubmit extends Component
             session()->flash('message', 'Track submitted successfully!');
             $this->reset();
             return $this->redirect(route('user.pm.my-account') . '?tab=tracks', navigate: true);
-        } catch (\Illuminate\Http\Client\RequestException $e) {
+        } catch (RequestException $e) {
             logger()->error('SoundCloud API Error: ' . $e->getMessage(), ['response_body' => $e->response->body()]);
-            session()->flash('error', 'Failed to submit track: ' . $e->response->json('errors.0.message', 'Unknown API error.'));
+
+            $statusCode = $e->response->status();
+            $responseBody = $e->response->json();
+            $errorMessage = 'An error occurred while submitting the track. Please try again.';
+
+            // Check for specific client-side errors (400) first
+            if ($statusCode === 400 && isset($responseBody['errors']) && is_array($responseBody['errors']) && !empty($responseBody['errors'])) {
+                $apiErrorMessage = $responseBody['errors'][0]['error_message'] ?? '';
+                $lowerCaseApiErrorMessage = strtolower($apiErrorMessage);
+
+                if (str_contains($lowerCaseApiErrorMessage, 'uid has already been taken')) {
+                    $errorMessage = 'Track title or link already taken. Please use a different one.';
+                } elseif (str_contains($lowerCaseApiErrorMessage, 'permalink must contain only lower case letters and numbers')) {
+                    $errorMessage = 'Invalid link format. Use lowercase letters, numbers, hyphens, or underscores.';
+                } else {
+                    $errorMessage = $apiErrorMessage;
+                }
+            } elseif ($statusCode >= 500) {
+                $errorMessage = 'An internal server error occurred on SoundCloud\'s side. Please try again in a few minutes.';
+            }
+
+            session()->flash('error', $errorMessage);
         } catch (\Exception $e) {
             logger()->error('General Submission Error: ' . $e->getMessage());
             session()->flash('error', 'An unexpected error occurred. Please try again.');
