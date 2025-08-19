@@ -178,6 +178,7 @@ class TrackSubmit extends Component
 
     public function submit()
     {
+        // dd($this->track);
         // All validation for all fields, including files, happens here.
         $this->validate();
 
