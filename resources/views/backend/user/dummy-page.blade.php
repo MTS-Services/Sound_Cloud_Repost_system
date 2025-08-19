@@ -28,7 +28,7 @@
 
                 <div class="flex items-center justify-between mt-4 text-sm text-gray-500">
                     <div class="flex items-center gap-2">
-                        <span class="w-8 h-8 rounded-full bg-gray-200"></span>
+                        <span class="w-8 h-8  rounded-full bg-gray-200"></span>
                         <span>Sarah Johnson • Marketing Director</span>
                     </div>
                     <div>
