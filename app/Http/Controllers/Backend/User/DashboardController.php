@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Campaign;
 use App\Models\RepostRequest;
 use App\Models\User;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
@@ -26,12 +27,13 @@ class DashboardController extends Controller
             ->latest()
             ->take(2)
             ->get();
-
+        $data['totalCams'] = Campaign::where('user_urn', user()->urn)->orWhere('status', [Campaign::STATUS_COMPLETED, Campaign::STATUS_OPEN])->count();
         // Available Creadit
         $userId = user()->urn;
-        $data['percentageChange'] = $this->creditTransactionService->getWeeklyChangeByCredit($userId);
-        $data['campaignChange'] = $this->creditTransactionService->getWeeklyCampaignChange($userId);
-       
+        $data['creditPercentage'] = $this->creditTransactionService->getWeeklyChangeByCredit($userId);
+        // Campaign Percentage
+        $data['campaignPercentage'] = $this->creditTransactionService->getWeeklyCampaignChange($userId);
+
         return view('backend.user.dashboard', $data);
     }
 }
