@@ -6,15 +6,18 @@ use App\Events\AdminNotificationSent;
 use App\Events\UserNotificationSent;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
+use App\Models\Admin;
 use App\Models\CreditTransaction;
 use App\Models\CustomNotification;
 use App\Models\Order;
 use App\Models\Payment;
-
+use App\Models\Plan;
 use App\Models\Playlist;
 use App\Models\User;
 use App\Services\Admin\CreditManagement\CreditService;
 use App\Services\Admin\OrderManagement\PaymentService;
+use App\Services\Admin\PackageManagement\PlanService;
+use App\Services\Admin\PackageManagement\UserPlanService;
 use App\Services\Admin\UserManagement\UserService;
 use App\Services\PlaylistService;
 use App\Services\TrackService;
@@ -37,6 +40,8 @@ class UserController extends Controller implements HasMiddleware
     protected TrackService $trackService;
     protected CreditService $creditService;
     protected PaymentService $paymentService;
+    protected PlanService $planService;
+    protected UserPlanService $userPlanService;
 
     protected function redirectIndex(): RedirectResponse
     {
@@ -50,13 +55,15 @@ class UserController extends Controller implements HasMiddleware
 
 
 
-    public function __construct(UserService $userService, PlaylistService $playlistService, TrackService $trackService, CreditService $creditService, PaymentService $paymentService)
+    public function __construct(UserService $userService, PlaylistService $playlistService, TrackService $trackService, CreditService $creditService, PaymentService $paymentService, PlanService $planService, UserPlanService $userPlanService)
     {
         $this->userService = $userService;
         $this->playlistService = $playlistService;
         $this->trackService = $trackService;
         $this->creditService = $creditService;
         $this->paymentService = $paymentService;
+        $this->planService = $planService;
+        $this->userPlanService = $userPlanService;
     }
 
     public static function middleware(): array
@@ -112,6 +119,13 @@ class UserController extends Controller implements HasMiddleware
                 'data-id' => encrypt($model->urn),
                 'className' => 'add-credit',
                 'permissions' => ['permission-credit']
+            ],
+            [
+                'routeName' => 'javascript:void(0)',
+                'label' => 'Add Plan',
+                'data-id' => encrypt($model->urn),
+                'className' => 'add-plan',
+                'permissions' => ['permission-plan']
             ],
 
             [
@@ -206,7 +220,7 @@ class UserController extends Controller implements HasMiddleware
             $query = $this->userService->getUsers()->onlyTrashed();
             return DataTables::eloquent($query)
                 ->editColumn('status', fn($user) => "<span class='badge badge-soft {$user->status_color}'>{$user->status_label}</span>")
-                   ->addColumn('profile_link', fn($user) => "<a href='{$user->soundcloud_permalink_url}'  target='_blank' class='inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-all bg-blue-100 hover:bg-blue-200 text-blue-700 dark:bg-blue-900/30 dark:hover:bg-blue-800/40 dark:text-blue-400 border border-blue-200 dark:border-blue-700 hover:shadow-sm hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500/50'>Profile</a>")
+                ->addColumn('profile_link', fn($user) => "<a href='{$user->soundcloud_permalink_url}'  target='_blank' class='inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-all bg-blue-100 hover:bg-blue-200 text-blue-700 dark:bg-blue-900/30 dark:hover:bg-blue-800/40 dark:text-blue-400 border border-blue-200 dark:border-blue-700 hover:shadow-sm hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500/50'>Profile</a>")
                 ->editColumn('deleter_id', function ($user) {
                     return $this->deleter_name($user);
                 })
@@ -217,7 +231,7 @@ class UserController extends Controller implements HasMiddleware
                     $menuItems = $this->trashedMenuItems($user);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['deleter_id', 'status', 'deleted_at', 'action' ,'profile_link'])
+                ->rawColumns(['deleter_id', 'status', 'deleted_at', 'action', 'profile_link'])
                 ->make(true);
         }
         return view('backend.admin.user-management.user.trash');
@@ -509,5 +523,96 @@ class UserController extends Controller implements HasMiddleware
             throw $th;
         }
         return redirect()->route('um.user.index');
+    }
+
+    public function addPlan(Request $request)
+    {
+
+        try {
+            DB::transaction(function () use ($request) {
+                $user = $this->userService->getUser(decrypt($request->user_urn), 'urn');
+                $plan = $this->planService->getPlan($request->plan_id);
+
+                $data['source_id'] = $plan->id;
+                $data['source_type'] = Plan::class;
+                $data['type'] = Order::TYPE_PLAN;
+                $data['user_urn'] = $user->urn;
+                $data['creater_id'] = admin()->id;
+                $data['creater_type'] = Admin::class;
+                $data['plan_id'] = $plan->id;
+
+                $activeUserPlan = $this->userPlanService->getUserActivePlan($user->urn);
+
+                if ($activeUserPlan && $activeUserPlan->plan?->price > $plan->price) {
+                    session()->flash('error', "User has already subscribed to a plan with higher price. Cannot upgrade a lower price plan.");
+                    return redirect()->back();
+                } elseif ($activeUserPlan && $activeUserPlan->plan?->price < $plan->price) {
+                    $data['amount'] = $this->yearly_plan == 1
+                        ? $plan->yearly_price - $activeUserPlan->plan->yearly_price
+                        : $plan->monthly_price - $activeUserPlan->plan->monthly_price;
+                    $data['notes'] = "Plan upgrade from " . $activeUserPlan->plan->name . " to " . $plan->name;
+                    $data['start_date'] = $activeUserPlan->start_date;
+                    $data['end_date'] = $activeUserPlan->end_date;
+                    $data['duration'] = $activeUserPlan->duration;
+                } else {
+                    $data['amount'] = $this->yearly_plan == 1 ? $plan->yearly_price : $plan->monthly_price;
+                    $data['notes'] = "Plan subscription for " . $plan->name;
+                    $data['start_date'] = now();
+                    $data['end_date'] = $this->yearly_plan == 1 ? now()->addYear() : now()->addMonth();
+                    $data['duration'] = now()->diffInDays($data['end_date']);
+                }
+
+                $order = $this->orderService->createOrder($data);
+                $data['order_id'] = $order->id;
+                $data['price'] = $data['amount'];
+                $this->userPlanService->createUserPlan($data);
+            });
+
+
+            dd($plan);
+
+            DB::transaction(function () use ($user, $data) {
+                $this->creditService->addCredit($data);
+
+                $userNotification = CustomNotification::create([
+                    'type' => CustomNotification::TYPE_USER,
+                    'sender_id' => admin()->id,
+                    'sender_type' => get_class(admin()),
+                    'receiver_id' => $user->id,
+                    'receiver_type' => User::class,
+                    'message_data' => [
+                        'title' => 'Credit Added',
+                        'message' => 'Credit added successfully!',
+                        'description' => 'You have received ' . $data['credit'] . ' credits from ' . admin()->name,
+                        'icon' => 'banknote',
+                        'additional_data' => []
+                    ]
+                ]);
+                $userNotification = CustomNotification::create([
+                    'type' => CustomNotification::TYPE_ADMIN,
+                    'sender_id' => admin()->id,
+                    'sender_type' => get_class(admin()),
+                    'receiver_id' => null,
+                    'receiver_type' => null,
+                    'message_data' => [
+                        'title' => 'Sended Credit',
+                        'message' => 'Credit added successfully! to ' . $user->name,
+                        'description' => 'You have sent ' . $data['credit'] . ' credits to ' . $user->name,
+                        'icon' => 'banknote',
+                        'additional_data' => []
+                    ]
+                ]);
+                broadcast(new AdminNotificationSent($userNotification));
+                broadcast(new UserNotificationSent($userNotification));
+                //  broadcast(new UserNotificationSent($notification));
+                session()->flash('success', 'Credit added successfully.');
+            });
+
+            // other code of logic .... 
+        } catch (\Throwable $th) {
+            session()->flash('error', 'Error adding plan.');
+            Log::info("message:" . $th->getMessage());
+            throw $th;
+        }
     }
 }
