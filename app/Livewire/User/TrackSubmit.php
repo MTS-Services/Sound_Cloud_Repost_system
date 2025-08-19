@@ -319,9 +319,9 @@ class TrackSubmit extends Component
                 $lowerCaseApiErrorMessage = strtolower($apiErrorMessage);
 
                 if (str_contains($lowerCaseApiErrorMessage, 'uid has already been taken')) {
-                    $errorMessage = 'Track title/permalink already taken. Please use a different one.';
+                    $errorMessage = 'Track title or link already taken. Please use a different one.';
                 } elseif (str_contains($lowerCaseApiErrorMessage, 'permalink must contain only lower case letters and numbers')) {
-                    $errorMessage = 'Invalid permalink format. Use lowercase letters, numbers, hyphens, or underscores.';
+                    $errorMessage = 'Invalid link format. Use lowercase letters, numbers, hyphens, or underscores.';
                 } else {
                     $errorMessage = $apiErrorMessage;
                 }
