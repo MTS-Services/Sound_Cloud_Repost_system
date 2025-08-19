@@ -542,8 +542,17 @@ class SoundCloudService
 
         $response = $httpClient->post($this->baseUrl . '/tracks', $requestBody);
 
-        $response->throw();
+        $responseData = $response->json();
+        if (!$response->successful() && isset($responseData['id'])) {
+            logger()->warning('SoundCloud API returned a non-2xx status code but successfully uploaded the track.', [
+                'status_code' => $response->status(),
+                'user_urn' => $user->urn,
+                'response_body' => $response->body()
+            ]);
+            return $responseData;
+        }
 
-        return $response->json();
+        $response->throw();
+        return $responseData;
     }
 }
