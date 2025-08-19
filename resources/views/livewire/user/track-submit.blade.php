@@ -367,15 +367,15 @@
             </div>
 
             <div>
-                <button type="submit" wire:loading.attr="disabled"
+                <button type="submit" wire:loading.attr="disabled" wire:target="submit"
                     class="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 dark:bg-orange-1000 dark:hover:bg-orange-600 dark:disabled:bg-orange-400 text-white font-bold py-4 px-6 rounded-full transition-all duration-300 flex items-center justify-center space-x-3 shadow-lg transform hover:scale-105">
-                    <span wire:loading.remove>
+                    <span wire:loading.remove wire:target="submit">
                         <div class="flex items-center justify-center gap-2">
                             <x-lucide-upload class="h-6 w-6" />
                             <span>Submit Track</span>
                         </div>
                     </span>
-                    <span wire:loading>
+                    <span wire:loading wire:target="submit">
                         <div class="flex items-center justify-center">
                             <x-lucide-loader-2 class="animate-spin h-6 w-6" />
                             <span class="ml-3">Submitting...</span>
