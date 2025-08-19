@@ -30,7 +30,8 @@
                 <!-- Submit Track -->
                 <div
                     class="flex items-center gap-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 w-full sm:w-auto justify-center py-2 px-3">
-                    <a href="{{ route('user.track.submit') }}" class="text-base sm:text-xs lg:text-base  " wire:navigate>
+                    <a href="{{ route('user.track.submit') }}" class="text-base sm:text-xs lg:text-base  "
+                        wire:navigate>
                         <span>
                             <x-lucide-music class="inline-block text-center h-4 w-4 text-purple-800" />
                         </span>
@@ -152,7 +153,7 @@
                         </div>
                         <div class="flex flex-wrap justify-center gap-x-2 gap-y-2 text-xs">
                             @foreach (user()->genres as $genre)
-                                <div class="flex items-center gap-2">{!! AllGenres()[$genre->genre] !!}<span
+                                <div class="flex items-center gap-2"><span
                                         class="text-slate-400">{{ $genre->genre }}</span></div>
                             @endforeach
 
