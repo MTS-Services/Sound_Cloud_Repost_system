@@ -33,7 +33,7 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
-
+        session()->flash('success', 'Login successful!');
         return redirect()->intended(route('user.pm.my-account', absolute: false));
     }
 
