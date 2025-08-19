@@ -196,6 +196,15 @@
                         <h3 id="plan-confirm-text"
                             class="text-lg font-bold text-gray-900 dark:text-white text-center mb-3">
                             {{ __('Are you sure to assign this plan?') }}</h3>
+
+                        <div class="flex items-center justify-center gap-4 mb-4">
+                            <span class="">{{ __('Monthly') }}</span>
+                            <span class="">
+                                <input type="checkbox" class="toggle toggle-secondary" />
+                            </span>
+                            <span class="">{{ __('Yearly') }}</span>
+                        </div>
+
                         <div class="flex justify-between items-center gap-3 mt-4">
                             {{-- Add onclick to close the modal --}}
                             <x-button type="secondary" :button="true" :is_submit="false" icon_position="left"

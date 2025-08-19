@@ -15,6 +15,7 @@ use App\Models\Plan;
 use App\Models\Playlist;
 use App\Models\User;
 use App\Services\Admin\CreditManagement\CreditService;
+use App\Services\Admin\OrderManagement\OrderService;
 use App\Services\Admin\OrderManagement\PaymentService;
 use App\Services\Admin\PackageManagement\PlanService;
 use App\Services\Admin\PackageManagement\UserPlanService;
@@ -42,6 +43,7 @@ class UserController extends Controller implements HasMiddleware
     protected PaymentService $paymentService;
     protected PlanService $planService;
     protected UserPlanService $userPlanService;
+    protected OrderService $orderService;
 
     protected function redirectIndex(): RedirectResponse
     {
@@ -55,7 +57,7 @@ class UserController extends Controller implements HasMiddleware
 
 
 
-    public function __construct(UserService $userService, PlaylistService $playlistService, TrackService $trackService, CreditService $creditService, PaymentService $paymentService, PlanService $planService, UserPlanService $userPlanService)
+    public function __construct(UserService $userService, PlaylistService $playlistService, TrackService $trackService, CreditService $creditService, PaymentService $paymentService, PlanService $planService, UserPlanService $userPlanService, OrderService $orderService)
     {
         $this->userService = $userService;
         $this->playlistService = $playlistService;
@@ -64,6 +66,7 @@ class UserController extends Controller implements HasMiddleware
         $this->paymentService = $paymentService;
         $this->planService = $planService;
         $this->userPlanService = $userPlanService;
+        $this->orderService = $orderService;
     }
 
     public static function middleware(): array
@@ -527,11 +530,15 @@ class UserController extends Controller implements HasMiddleware
 
     public function addPlan(Request $request)
     {
+        $request->validate([
+            'yearly_plan' => 'nullable|boolean',
+        ]);
 
         try {
             DB::transaction(function () use ($request) {
-                $user = $this->userService->getUser(decrypt($request->user_urn), 'urn');
+                $user = $this->userService->getUser($request->user_urn, 'urn');
                 $plan = $this->planService->getPlan($request->plan_id);
+                $yearly_plan = $request->yearly_plan == 1 ? 1 : 0;
 
                 $data['source_id'] = $plan->id;
                 $data['source_type'] = Plan::class;
@@ -547,7 +554,7 @@ class UserController extends Controller implements HasMiddleware
                     session()->flash('error', "User has already subscribed to a plan with higher price. Cannot upgrade a lower price plan.");
                     return redirect()->back();
                 } elseif ($activeUserPlan && $activeUserPlan->plan?->price < $plan->price) {
-                    $data['amount'] = $this->yearly_plan == 1
+                    $data['amount'] = $yearly_plan == 1
                         ? $plan->yearly_price - $activeUserPlan->plan->yearly_price
                         : $plan->monthly_price - $activeUserPlan->plan->monthly_price;
                     $data['notes'] = "Plan upgrade from " . $activeUserPlan->plan->name . " to " . $plan->name;
@@ -555,24 +562,34 @@ class UserController extends Controller implements HasMiddleware
                     $data['end_date'] = $activeUserPlan->end_date;
                     $data['duration'] = $activeUserPlan->duration;
                 } else {
-                    $data['amount'] = $this->yearly_plan == 1 ? $plan->yearly_price : $plan->monthly_price;
+                    $data['amount'] = $yearly_plan == 1 ? $plan->yearly_price : $plan->monthly_price;
                     $data['notes'] = "Plan subscription for " . $plan->name;
                     $data['start_date'] = now();
-                    $data['end_date'] = $this->yearly_plan == 1 ? now()->addYear() : now()->addMonth();
+                    $data['end_date'] = $yearly_plan == 1 ? now()->addYear() : now()->addMonth();
                     $data['duration'] = now()->diffInDays($data['end_date']);
                 }
 
-                $order = $this->orderService->createOrder($data);
+                $data['user_urn'] = $user->urn;
+                $data['creater_id'] = admin()->id;
+                $data['creater_type'] = Admin::class;
+                $data['order_id'] = generateOrderID();
+                $order = Order::create($data);
                 $data['order_id'] = $order->id;
                 $data['price'] = $data['amount'];
-                $this->userPlanService->createUserPlan($data);
-            });
+                $plan = $this->userPlanService->createUserPlan($data);
 
-
-            dd($plan);
-
-            DB::transaction(function () use ($user, $data) {
-                $this->creditService->addCredit($data);
+                $payment = Payment::create([
+                    'user_urn' => $order->user_urn,
+                    'order_id' => $order->id,
+                    'payment_gateway' => Payment::PAYMENT_GATEWAY_UNKNOWN,
+                    'notes' => $order->notes,
+                    'amount' => 0,
+                    'credits_purchased' => $order->credits,
+                    'status' => Payment::STATUS_SUCCEEDED,
+                    'payment_intent_id' =>  null,
+                    'creater_id' => $order->creater_id,
+                    'creater_type' => $order->creater_type,
+                ]);
 
                 $userNotification = CustomNotification::create([
                     'type' => CustomNotification::TYPE_USER,
@@ -581,34 +598,44 @@ class UserController extends Controller implements HasMiddleware
                     'receiver_id' => $user->id,
                     'receiver_type' => User::class,
                     'message_data' => [
-                        'title' => 'Credit Added',
-                        'message' => 'Credit added successfully!',
-                        'description' => 'You have received ' . $data['credit'] . ' credits from ' . admin()->name,
-                        'icon' => 'banknote',
-                        'additional_data' => []
+                        'title' => 'Plan ' . $activeUserPlan ? 'Upgraded' : 'Subscribed',
+                        'message' => 'Plan ' . $activeUserPlan ? 'upgraded' : 'subscribed' . ' successfully!',
+                        'description' => 'Your plan has been ' . $activeUserPlan ? 'upgraded' : 'subscribed' . ' to: ' . $plan->name,
+                        'icon' => 'check',
+                        'additional_data' => [
+                            'plan_name' => $plan->name,
+                            'plan_price' => $plan->price,
+                            'start_date' => $plan->start_date,
+                            'end_date' => $plan->end_date,
+                            'duration' => $plan->duration
+                        ]
                     ]
                 ]);
-                $userNotification = CustomNotification::create([
+                $adminNotification = CustomNotification::create([
                     'type' => CustomNotification::TYPE_ADMIN,
                     'sender_id' => admin()->id,
                     'sender_type' => get_class(admin()),
                     'receiver_id' => null,
                     'receiver_type' => null,
                     'message_data' => [
-                        'title' => 'Sended Credit',
-                        'message' => 'Credit added successfully! to ' . $user->name,
-                        'description' => 'You have sent ' . $data['credit'] . ' credits to ' . $user->name,
-                        'icon' => 'banknote',
-                        'additional_data' => []
+                        'title' => 'Plan Assigned',
+                        'message' => 'Plan assigned successfully!',
+                        'description' => 'User: ' . $user->name . ' has been assigned the plan: ' . $plan->name,
+                        'icon' => 'check',
+                        'additional_data' => [
+                            'plan_name' => $plan->name,
+                            'plan_price' => $plan->price,
+                            'start_date' => $plan->start_date,
+                            'end_date' => $plan->end_date,
+                            'duration' => $plan->duration
+                        ]
                     ]
                 ]);
-                broadcast(new AdminNotificationSent($userNotification));
+                broadcast(new AdminNotificationSent($adminNotification));
                 broadcast(new UserNotificationSent($userNotification));
-                //  broadcast(new UserNotificationSent($notification));
-                session()->flash('success', 'Credit added successfully.');
             });
-
-            // other code of logic .... 
+            session()->flash('success', 'Plan assigned successfully.');
+            return redirect()->route('um.user.index');
         } catch (\Throwable $th) {
             session()->flash('error', 'Error adding plan.');
             Log::info("message:" . $th->getMessage());
