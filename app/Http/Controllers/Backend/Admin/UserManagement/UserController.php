@@ -185,6 +185,85 @@ class UserController extends Controller implements HasMiddleware
         session()->flash('success', 'User status updated successfully.');
         return $this->redirectIndex();
     }
+    public function destroy(string $id)
+    {
+        try {
+            $user = $this->userService->getUser($id);
+
+            $this->userService->delete($user);
+            session()->flash('success', 'User deleted successfully!');
+        } catch (\Throwable $e) {
+            session()->flash('error', 'User delete failed!');
+            throw $e;
+        }
+        return $this->redirectIndex();
+    }
+
+    public function trash(Request $request)
+    {
+        if ($request->ajax()) {
+            $query = $this->userService->getUsers()->onlyTrashed();
+            return DataTables::eloquent($query)
+                ->editColumn('status', fn($user) => "<span class='badge badge-soft {$user->status_color}'>{$user->status_label}</span>")
+                ->editColumn('deleter_id', function ($user) {
+                    return $this->deleter_name($user);
+                })
+                ->editColumn('deleted_at', function ($user) {
+                    return $user->deleted_at_formatted;
+                })
+                ->editColumn('action', function ($user) {
+                    $menuItems = $this->trashedMenuItems($user);
+                    return view('components.action-buttons', compact('menuItems'))->render();
+                })
+                ->rawColumns(['deleter_id','status', 'deleted_at', 'action'])
+                ->make(true);
+        }
+        return view('backend.admin.user-management.user.trash');
+    }
+
+    protected function trashedMenuItems($model): array
+    {
+        return [
+            [
+                'routeName' => 'um.user.restore',
+                'params' => [encrypt($model->id)],
+                'label' => 'Restore',
+                'permissions' => ['user-restore']
+            ],
+            [
+                'routeName' => 'um.user.permanent-delete',
+                'params' => [encrypt($model->id)],
+                'label' => 'Permanent Delete',
+                'p-delete' => true,
+                'permissions' => ['user-permanent-delete']
+            ]
+
+        ];
+    }
+
+    public function restore(string $id)
+    {
+        try {
+            $this->userService->restore($id);
+            session()->flash('success', "User restored successfully");
+        } catch (\Throwable $e) {
+            session()->flash('User restore failed');
+            throw $e;
+        }
+        return $this->redirectTrashed();
+    }
+
+    public function permanentDelete(string $id)
+    {
+        try {
+            $this->userService->permanentDelete($id);
+            session()->flash('success', "User permanently deleted successfully");
+        } catch (\Throwable $e) {
+            session()->flash('User permanent delete failed');
+            throw $e;
+        }
+        return $this->redirectTrashed();
+    }
 
     public function playlist(Request $request)
     {
@@ -403,7 +482,7 @@ class UserController extends Controller implements HasMiddleware
                         'additional_data' => []
                     ]
                 ]);
-                $adminNotification = CustomNotification::create([
+                $userNotification = CustomNotification::create([
                     'type' => CustomNotification::TYPE_ADMIN,
                     'sender_id' => admin()->id,
                     'sender_type' => get_class(admin()),
@@ -417,7 +496,7 @@ class UserController extends Controller implements HasMiddleware
                         'additional_data' => []
                     ]
                 ]);
-                broadcast(new AdminNotificationSent($adminNotification));
+                broadcast(new AdminNotificationSent($userNotification));
                 broadcast(new UserNotificationSent($userNotification));
                 //  broadcast(new UserNotificationSent($notification));
                 session()->flash('success', 'Credit added successfully.');
