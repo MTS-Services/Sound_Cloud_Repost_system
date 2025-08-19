@@ -309,20 +309,24 @@ class TrackSubmit extends Component
         } catch (RequestException $e) {
             logger()->error('SoundCloud API Error: ' . $e->getMessage(), ['response_body' => $e->response->body()]);
 
+            $statusCode = $e->response->status();
             $responseBody = $e->response->json();
-            $errorMessage = 'An unknown error occurred with the SoundCloud API. Please try again later.';
+            $errorMessage = 'An error occurred while submitting the track. Please try again.';
 
-            if (isset($responseBody['errors']) && is_array($responseBody['errors']) && !empty($responseBody['errors'])) {
+            // Check for specific client-side errors (400) first
+            if ($statusCode === 400 && isset($responseBody['errors']) && is_array($responseBody['errors']) && !empty($responseBody['errors'])) {
                 $apiErrorMessage = $responseBody['errors'][0]['error_message'] ?? '';
                 $lowerCaseApiErrorMessage = strtolower($apiErrorMessage);
 
                 if (str_contains($lowerCaseApiErrorMessage, 'uid has already been taken')) {
-                    $errorMessage = 'The track title or permalink you entered has already been taken on SoundCloud. Please try a different track title.';
+                    $errorMessage = 'Track title/permalink already taken. Please use a different one.';
                 } elseif (str_contains($lowerCaseApiErrorMessage, 'permalink must contain only lower case letters and numbers')) {
-                    $errorMessage = 'The track permalink you entered is invalid. It must only contain lowercase letters, numbers, hyphens (-), or underscores (_). Please correct it and try again.';
+                    $errorMessage = 'Invalid permalink format. Use lowercase letters, numbers, hyphens, or underscores.';
                 } else {
                     $errorMessage = $apiErrorMessage;
                 }
+            } elseif ($statusCode >= 500) {
+                $errorMessage = 'An internal server error occurred on SoundCloud\'s side. Please try again in a few minutes.';
             }
 
             session()->flash('error', $errorMessage);
