@@ -515,50 +515,44 @@ class SoundCloudService
         $this->refreshUserTokenIfNeeded($user);
         $user->refresh();
 
-        try {
-            $httpClient = Http::withHeaders([
-                'Authorization' => 'OAuth ' . $user->token,
-            ])->attach(
-                'track[asset_data]',
-                file_get_contents($trackData['asset_data']->getRealPath()),
-                $trackData['asset_data']->getClientOriginalName()
+        $httpClient = Http::withHeaders([
+            'Authorization' => 'OAuth ' . $user->token,
+        ])->attach(
+            'track[asset_data]',
+            file_get_contents($trackData['asset_data']->getRealPath()),
+            $trackData['asset_data']->getClientOriginalName()
+        );
+
+        if ($trackData['artwork_data']) {
+            $httpClient->attach(
+                'track[artwork_data]',
+                file_get_contents($trackData['artwork_data']->getRealPath()),
+                $trackData['artwork_data']->getClientOriginalName()
             );
-
-            if ($trackData['artwork_data']) {
-                $httpClient->attach(
-                    'track[artwork_data]',
-                    file_get_contents($trackData['artwork_data']->getRealPath()),
-                    $trackData['artwork_data']->getClientOriginalName()
-                );
-            }
-
-            // Highlighted change: Replaced the old requestBody creation
-            $requestBody = [];
-            foreach ($trackData as $key => $value) {
-                // Only include non-file fields and those with a value
-                if (! in_array($key, ['asset_data', 'artwork_data']) && ! empty($value)) {
-                    $requestBody["track[{$key}]"] = $value;
-                }
-            }
-
-            $response = $httpClient->post($this->baseUrl . '/tracks', $requestBody);
-
-            $response->throw();
-
-            return $response->json();
-        } catch (\Illuminate\Http\Client\RequestException $e) {
-            Log::error('SoundCloud API Upload Error', [
-                'user_urn' => $user->urn,
-                'response_body' => $e->response->body(),
-                'error_message' => $e->getMessage(),
-            ]);
-            throw new Exception('Failed to upload track to SoundCloud: ' . ($e->response->json('errors.0.message') ?? 'Unknown error.'));
-        } catch (Exception $e) {
-            Log::error('General Track Upload Error', [
-                'user_urn' => $user->urn,
-                'error_message' => $e->getMessage(),
-            ]);
-            throw $e;
         }
+
+        // Highlighted change: Replaced the old requestBody creation
+        $requestBody = [];
+        foreach ($trackData as $key => $value) {
+            // Only include non-file fields and those with a value
+            if (! in_array($key, ['asset_data', 'artwork_data']) && ! empty($value)) {
+                $requestBody["track[{$key}]"] = $value;
+            }
+        }
+
+        $response = $httpClient->post($this->baseUrl . '/tracks', $requestBody);
+
+        $responseData = $response->json();
+        if (!$response->successful() && isset($responseData['id'])) {
+            logger()->warning('SoundCloud API returned a non-2xx status code but successfully uploaded the track.', [
+                'status_code' => $response->status(),
+                'user_urn' => $user->urn,
+                'response_body' => $response->body()
+            ]);
+            return $responseData;
+        }
+
+        $response->throw();
+        return $responseData;
     }
 }

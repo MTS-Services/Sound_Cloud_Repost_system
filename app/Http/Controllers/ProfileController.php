@@ -49,6 +49,8 @@ class ProfileController extends Controller
     public function profile()
     {
         $data['tracks'] = $this->trackService->getTracks()->where('user_urn', user()->urn)->count();
+        $data['tracks_today'] = $this->trackService->getTracks()->whereDate('created_at_soundcloud', today())->count();
+
         $data['gevened_repostRequests'] = $this->RepostRequestService->getRepostRequests()->where('requester_urn', user()->urn)->count();
         $data['received_repostRequests'] = $this->RepostRequestService->getRepostRequests()->where('target_user_urn', user()->urn)->count();
         $data['credit_transactions'] = $this->creditTransactionService->getUserTransactions()->where('receiver_urn', user()->urn)->load('sender');
@@ -119,7 +121,7 @@ class ProfileController extends Controller
         // Validate incoming request data
         $validated = $request->validate([
             'email' => ['sometimes', 'required', 'email', 'max:255', 'unique:users,email,' . user()->id],
-            'genres' => ['sometimes', 'required', 'array', 'min:5', 'max:5'],
+            'genres' => ['sometimes', 'required', 'array', 'min:1', 'max:5'],
             'genres.*' => ['sometimes', 'required', 'string'],
         ]);
 

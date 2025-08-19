@@ -3,12 +3,9 @@
 namespace App\Http\Controllers\Backend\User;
 
 use App\Http\Controllers\Controller;
-use App\Models\Repost;
 use App\Models\RepostRequest;
 use App\Models\User;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -29,10 +26,10 @@ class DashboardController extends Controller
             ->latest()
             ->take(2)
             ->get();
+
+        $userId = user()->urn;
+        $data['percentageChange'] = $this->creditTransactionService->getWeeklyChangeByUrn($userId);
+        //  = $creditStats['percentage_change'];
         return view('backend.user.dashboard', $data);
     }
-
- 
-
-   
 }

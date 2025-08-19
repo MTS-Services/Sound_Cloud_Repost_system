@@ -85,10 +85,11 @@ class UserController extends Controller implements HasMiddleware
             $query = $this->userService->getUsers();
             return DataTables::eloquent($query)
                 ->editColumn('status', fn($user) => "<span class='badge badge-soft {$user->status_color}'>{$user->status_label}</span>")
+                ->addColumn('profile_link', fn($user) => "<a href='{$user->soundcloud_permalink_url}'  target='_blank' class='inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-all bg-blue-100 hover:bg-blue-200 text-blue-700 dark:bg-blue-900/30 dark:hover:bg-blue-800/40 dark:text-blue-400 border border-blue-200 dark:border-blue-700 hover:shadow-sm hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500/50'>Profile</a>")
                 ->editColumn('creater_id', fn($user) => $this->creater_name($user))
                 ->editColumn('created_at', fn($user) => $user->created_at_formatted)
                 ->editColumn('action', fn($user) => view('components.action-buttons', ['menuItems' => $this->menuItems($user)])->render())
-                ->rawColumns(['action', 'status', 'created_at', 'creater_id'])
+                ->rawColumns(['action', 'status', 'created_at', 'creater_id', 'profile_link'])
                 ->make(true);
         }
         return view('backend.admin.user-management.user.index');
@@ -205,6 +206,7 @@ class UserController extends Controller implements HasMiddleware
             $query = $this->userService->getUsers()->onlyTrashed();
             return DataTables::eloquent($query)
                 ->editColumn('status', fn($user) => "<span class='badge badge-soft {$user->status_color}'>{$user->status_label}</span>")
+                   ->addColumn('profile_link', fn($user) => "<a href='{$user->soundcloud_permalink_url}'  target='_blank' class='inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-all bg-blue-100 hover:bg-blue-200 text-blue-700 dark:bg-blue-900/30 dark:hover:bg-blue-800/40 dark:text-blue-400 border border-blue-200 dark:border-blue-700 hover:shadow-sm hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500/50'>Profile</a>")
                 ->editColumn('deleter_id', function ($user) {
                     return $this->deleter_name($user);
                 })
@@ -215,7 +217,7 @@ class UserController extends Controller implements HasMiddleware
                     $menuItems = $this->trashedMenuItems($user);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['deleter_id', 'status', 'deleted_at', 'action'])
+                ->rawColumns(['deleter_id', 'status', 'deleted_at', 'action' ,'profile_link'])
                 ->make(true);
         }
         return view('backend.admin.user-management.user.trash');

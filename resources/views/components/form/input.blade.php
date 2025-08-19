@@ -6,6 +6,7 @@
     'tip' => '',
     'prefix' => '',
     'input_id' => null,
+    'type' => 'text',
 ])
 
 @php
@@ -26,7 +27,8 @@
             </span>
         @endif
         <input {{ $attributes->merge(['class' => 'form-input w-full px-4 py-2.5 ' . ($prefix ? 'pl-[12.5rem]' : '')]) }}
-            type="text" name="{{ $name }}" id="{{ $id }}" placeholder="{{ $placeholder }}">
+            type="{{ $type }}" name="{{ $name }}" id="{{ $id }}"
+            placeholder="{{ $placeholder }}">
     </div>
     @if ($tip)
         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $tip }}</p>
