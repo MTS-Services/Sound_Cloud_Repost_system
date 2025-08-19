@@ -257,7 +257,7 @@
                         placeholder="e.g., Record Label Name" />
                     <x-form.input label="Release Date" wire:model="track.release_date" type="date" />
                     <x-form.input label="ISRC" wire:model="track.isrc" placeholder="e.g., US-S1Z-15-00001" />
-                    <x-form.input label="Purchase URL" wire:model="track.purchase_url"
+                    <x-form.input label="Purchase URL" type="url" wire:model="track.purchase_url"
                         placeholder="e.g., https://bandcamp.com/your-track" />
                 </div>
                 <x-form.textarea label="Description" wire:model="track.description" rows="4"
@@ -289,7 +289,7 @@
                     </div>
 
                     <div x-data="{ permalink: @entangle('track.permalink') }">
-                        <x-form.input label="Track Link" wire:model="track.permalink" placeholder="track-name"
+                        <x-form.input type="url" label="Track Link" wire:model="track.permalink" placeholder="track-name"
                             prefix="https://soundcloud.com/" tip="This will be the public URL for your track."
                             input-id="track-link-input" />
                     </div>
