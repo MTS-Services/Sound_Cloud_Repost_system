@@ -164,7 +164,7 @@
                             </svg>
                         </div>
                         <h1 class="text-2xl font-bold text-gray-900 bg-primary-600 bg-clip-text text-transparent">
-                           <a href="{{ route('f.landing') }}"> RepostChain</a>
+                            <a href="{{ route('f.landing') }}"> RepostChain</a>
                         </h1>
                     </div>
 
@@ -578,7 +578,7 @@
             return {
                 currentStep: 1,
                 showReferral: false,
-                maxGenres: 5,
+                maxGenres: 10,
                 formData: {
                     email: '',
                     referralCode: '',
