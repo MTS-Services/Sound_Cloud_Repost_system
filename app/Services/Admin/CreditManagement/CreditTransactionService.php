@@ -8,6 +8,7 @@ use App\Models\Track;
 use Illuminate\Database\Eloquent\Collection;
 use Carbon\Carbon;
 use App\Models\Credit;
+use App\Models\RepostRequest;
 
 class CreditTransactionService
 {
@@ -115,5 +116,37 @@ class CreditTransactionService
         }
 
         return $currentSum > 0 ? 100.0 : 0.0;
+    }
+
+
+
+    public static function getWeeklyRepostRequestChange(string $userUrn): float
+    {
+        $startOfWeek = Carbon::now()->startOfWeek();
+        $currentDayEnd = Carbon::now()->endOfDay();
+
+        // Count of approved and declined requests this week up to the current day
+        $currentCount = RepostRequest::where('requester_urn', $userUrn)
+            ->whereIn('status', [RepostRequest::STATUS_APPROVED, RepostRequest::STATUS_DECLINE, RepostRequest::STATUS_PENDING])
+            ->whereBetween('created_at', [$startOfWeek, $currentDayEnd])
+            ->count();
+
+        // Calculate the start and end dates for the same period last week
+        $lastWeekStart = $startOfWeek->copy()->subWeek();
+        $lastWeekEnd = Carbon::now()->subWeek()->endOfDay();
+
+        // Count of approved and declined requests for the same period last week
+        $lastWeekCount = RepostRequest::where('requester_urn', $userUrn)
+            ->whereIn('status', [RepostRequest::STATUS_APPROVED, RepostRequest::STATUS_DECLINE, RepostRequest::STATUS_PENDING])
+            ->whereBetween('created_at', [$lastWeekStart, $lastWeekEnd])
+            ->count();
+
+        // Calculation of percentage change
+        if ($lastWeekCount > 0) {
+            return round((($currentCount - $lastWeekCount) / $lastWeekCount) * 100, 2);
+        }
+
+        // If last week's count was zero, handle the edge case
+        return $currentCount > 0 ? 100.0 : 0.0;
     }
 }

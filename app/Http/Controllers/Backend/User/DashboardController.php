@@ -20,7 +20,7 @@ class DashboardController extends Controller
     public function dashboard()
     {
         $data['total_credits'] = $this->creditTransactionService->getUserTotalCredits();
-        $data['totalCount'] = RepostRequest::whereIn('status', [
+        $data['totalCount'] = RepostRequest::where('requester_urn', user()->urn)->whereIn('status', [
             RepostRequest::STATUS_APPROVED,
             RepostRequest::STATUS_PENDING,
             RepostRequest::STATUS_DECLINE
@@ -37,7 +37,8 @@ class DashboardController extends Controller
         $data['creditPercentage'] = $this->creditTransactionService->getWeeklyChangeByCredit($userId);
         // Campaign Percentage
         $data['campaignPercentage'] = $this->creditTransactionService->getWeeklyCampaignChange($userId);
-
+        // Repost Request Percentage
+        $data['repostRequestPercentage'] = $this->creditTransactionService->getWeeklyRepostRequestChange($userId);
         return view('backend.user.dashboard', $data);
     }
 }
