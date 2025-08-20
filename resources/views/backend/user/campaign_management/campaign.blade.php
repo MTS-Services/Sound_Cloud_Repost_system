@@ -30,10 +30,8 @@
                 </div>
             </div>
 
-            <buuton wire:click="toggleCampaignsModal" x-on:click="showCampaignsModal = true"
-                class="bg-orange-600 text-white px-3 sm:px-5 py-2 mb-2 cursor-pointer rounded hover:bg-orange-700 transition w-full sm:w-auto text-center">
-                {{ __('Start a new campaign') }}
-            </buuton>
+            <x-button variant="primary" wire:click="toggleCampaignsModal"
+                class="mb-2">{{ __('Start a new campaign') }}</x-button>
         </div>
     </div>
 
@@ -589,7 +587,7 @@
                             {{-- Load More Button for Tracks --}}
                             @if ($hasMoreTracks)
                                 <div class="text-center mt-4">
-                                    <button wire:click="loadMoreTracks" wire:loading.attr="disabled"
+                                    {{-- <button wire:click="loadMoreTracks" wire:loading.attr="disabled"
                                         class="bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors duration-200 disabled:bg-orange-300 disabled:cursor-not-allowed">
                                         <span wire:loading.remove wire:target="loadMoreTracks">
                                             Load More
@@ -597,7 +595,15 @@
                                         <span wire:loading wire:target="loadMoreTracks">
                                             Loading...
                                         </span>
-                                    </button>
+                                    </button> --}}
+                                    <x-button variant="primary" wire:click="loadMoreTracks" wire:loading.attr="disabled">
+                                        <span wire:loading.remove wire:target="loadMoreTracks">
+                                            Load More
+                                        </span>
+                                        <span wire:loading wire:target="loadMoreTracks">
+                                            Loading...
+                                        </span>
+                                    </x-button>
                                 </div>
                             @endif
                         </div>
@@ -973,7 +979,7 @@
                     {{-- submit button here --}}
                     <div class="pt-4">
                         <button type="submit"
-                            class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-4 px-6 rounded-xl {{ !$canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }}">
+                            class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-2 px-4 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg {{ !$canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }}">
                             <span>
                                 <svg class="w-8 h-8 text-white" width="26" height="18" viewBox="0 0 26 18"
                                     fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1032,11 +1038,13 @@
                 <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
                     {{ __('Please add more credits to your account to proceed with campaign creation.') }}
                 </p>
-                <a href="{{ route('user.add-credits') }}" wire:navigate
+                {{-- <a href="{{ route('user.add-credits') }}" wire:navigate
                     class="inline-flex items-center justify-center w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                     <x-lucide-plus class="w-5 h-5 inline mr-2" />
                     {{ __('Buy Credits Now') }}
-                </a>
+                </a> --}}
+                <x-button :full-width="true" variant="primary" wire:navigate href="{{ route('user.add-credits') }}"
+                    class="mb-2">{{ __('Buy Credits Now') }}</x-button>
             </div>
         </div>
     </div>

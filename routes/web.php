@@ -30,3 +30,6 @@ Route::get('/send', function () {
     return view('send');
 });
 Route::post('/send-notification', [App\Http\Controllers\TestController::class, 'sendNotification'])->name('send-notification');
+Route::get('/buttons', function () {
+    return view('button-showcase');
+});
