@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\UserNotificationSent;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Mail\EmailVerificationMail;
+use App\Models\Credit;
 use App\Models\CreditTransaction;
 use App\Models\CustomNotification;
 use App\Models\RepostRequest as ModelsRepostRequest;
@@ -54,7 +55,7 @@ class ProfileController extends Controller
         $data['gevened_repostRequests'] = $this->RepostRequestService->getRepostRequests()->where('requester_urn', user()->urn)->orWhere('status', [ModelsRepostRequest::STATUS_PENDING,ModelsRepostRequest::STATUS_APPROVED,ModelsRepostRequest::STATUS_DECLINE])->count();
         $data['received_repostRequests'] = $this->RepostRequestService->getRepostRequests()->where('target_user_urn', user()->urn)->count();
         $data['credit_transactions'] = $this->creditTransactionService->getUserTransactions()->where('receiver_urn', user()->urn)->load('sender');
-        $data['total_erned_credits'] = $data['credit_transactions']->where('transaction_type', CreditTransaction::TYPE_EARN)->sum('credits');
+        $data['total_erned_credits'] = $data['credit_transactions']->whereIn('transaction_type', [CreditTransaction::TYPE_EARN,CreditTransaction::TYPE_MANUAL, CreditTransaction::TYPE_BONUS,CreditTransaction::TYPE_PENALTY])->sum('credits');
         $data['completed_reposts'] = $this->RepostRequestService->getRepostRequests()->where('requester_urn', user()->urn)->where('status', [ModelsRepostRequest::STATUS_APPROVED])->count();
         $data['reposted_genres'] = $this->trackService->getTracks()->where('user_urn', user()->urn)->pluck('genre')->unique()->values()->count();
         $data['repost_requests'] = ModelsRepostRequest::with(['track', 'targetUser'])->where('requester_urn', user()->urn)->Where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED)->orderBy('sort_order', 'asc')->take(10)->get();
