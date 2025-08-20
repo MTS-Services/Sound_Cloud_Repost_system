@@ -583,7 +583,7 @@ class UserController extends Controller implements HasMiddleware
                 $data['order_id'] = $order->id;
                 $data['price'] = $data['amount'];
                 $userPlan = $this->userPlanService->createUserPlan($data);
-                
+
                 $payment = Payment::create([
                     'user_urn' => $order->user_urn,
                     'order_id' => $order->id,
@@ -611,10 +611,10 @@ class UserController extends Controller implements HasMiddleware
                         'additional_data' => [
                             'Assigned By' => admin()->name,
                             'Plan' => $plan->name,
-                            'Price' => $plan->price,
-                            'Start Date' => $plan->start_date,
-                            'End Date' => $plan->end_date,
-                            'Duration' => $plan->duration
+                            'Price' => $userPlan->price,
+                            'Start Date' => $userPlan->start_date,
+                            'End Date' => $userPlan->end_date,
+                            'Duration' => $userPlan->duration
                         ]
                     ]
                 ]);
@@ -632,10 +632,10 @@ class UserController extends Controller implements HasMiddleware
                         'additional_data' => [
                             'Assigned By' => admin()->name,
                             'Plan' => $plan->name,
-                            'Price' => $plan->price,
-                            'Start Date' => $plan->start_date,
-                            'End Date' => $plan->end_date,
-                            'Duration' => $plan->duration
+                            'Price' => $userPlan->price,
+                            'Start Date' => $userPlan->start_date,
+                            'End Date' => $userPlan->end_date,
+                            'Duration' => $userPlan->duration
                         ]
                     ]
                 ]);
