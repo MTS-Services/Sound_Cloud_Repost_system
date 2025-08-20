@@ -19,28 +19,29 @@
             <div class="glass-card rounded-2xl p-6 md:col-span-5">
                 <form action="{{ route('fm.faq.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    
-                    <div class="space-y-2">
-                            <x-inputs.select name="faq_category_id" label="{{ __('Faq Category') }}"
-                                icon="shield" placeholder="{{ __('Select a Faq Category') }}" :options="$faq_categories->pluck('name', 'id')->toArray()"
-                                :selected="old('faq_category_id')" :messages="$errors->get('faq_category_id')" />
-                        </div>
-                     
-                    
 
-                        <div class="space-y-2">
-                            <x-inputs.input name="question" label="{{ __('Question') }}" placeholder="Enter Question"
-                                value="{{ old('question') }}" :messages="$errors->get('question')" />
-                        </div>
-                   
-                  
-                        <div class="space-y-2">
-                            <x-inputs.input name="description" label="{{ __('Description') }}"
-                                placeholder="Enter Description" value="{{ old('description') }}" :messages="$errors->get('description')" />
-                        </div>
-              
-                    
-                    <div class="justify-end mt-5 items-left">
+                    <div class="space-y-2">
+                        <x-inputs.select name="faq_category_id" label="{{ __('Faq Category') }}" icon="shield"
+                            placeholder="{{ __('Select a Faq Category') }}" :options="$faq_categories->pluck('name', 'id')->toArray()" :selected="old('faq_category_id')"
+                            :messages="$errors->get('faq_category_id')" />
+                    </div>
+
+
+
+                    <div class="space-y-2">
+                        <x-inputs.input name="question" label="{{ __('Question') }}" placeholder="Enter Question"
+                            value="{{ old('question') }}" :messages="$errors->get('question')" />
+                    </div>
+
+
+                    <div class="space-y-2">
+                        <x-inputs.input name="description" label="{{ __('Description') }}"
+                            placeholder="Enter Description" value="{{ old('description') }}" :messages="$errors->get('description')" />
+                    </div>
+
+
+
+                      <div class="flex justify-end mt-5">
                         <x-button type="accent" :button="true" icon="save">{{ __('Create') }}</x-button>
                     </div>
                 </form>

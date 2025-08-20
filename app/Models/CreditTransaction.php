@@ -52,6 +52,7 @@ class CreditTransaction extends BaseModel
             'calculation_type_color',
             'status_label',
             'status_color',
+
             'transaction_type_name',
         ]);
     }
@@ -77,15 +78,30 @@ class CreditTransaction extends BaseModel
         ];
     }
 
+        public function getStatusColorAttribute()
+    {
+        return [
+            self::STATUS_SUCCEEDED => 'badge-success',
+            self::STATUS_PROCESSING => 'badge-warning',
+            self::STATUS_FAILED => 'badge-info',
+            self::STATUS_REFUNDED => 'badge-error',
+        ][$this->status] ?? 'badge-secondary';
+    }
+
+    public function getStatusBtnColorAttribute()
+    {
+        return [
+            self::STATUS_SUCCEEDED => 'btn-success',
+            self::STATUS_PROCESSING => 'btn-warning',
+            self::STATUS_FAILED => 'btn-info',
+            self::STATUS_REFUNDED => 'btn-error',
+        ][$this->status] ?? 'btn-secondary';
+    }
     public function getStatusLabelAttribute(): string
     {
         return isset($this->status) ? $this->getStatusList()[$this->status] : 'Unknown';
     }
-    public function getStatusColorAttribute(): string
-    {
-        return isset($this->status) ? $this->getStatusClassList()[$this->status] : 'primary';
-    }
-
+   
     
 
 

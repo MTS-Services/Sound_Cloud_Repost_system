@@ -35,7 +35,6 @@
                         <x-button variant="text">Text Button</x-button>
                     </div>
                 </section>
-
                 <!-- Button Sizes -->
                 <section>
                     <h2 class="text-2xl font-bold mb-4">Button Sizes</h2>

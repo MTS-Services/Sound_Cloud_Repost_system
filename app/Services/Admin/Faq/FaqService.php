@@ -22,7 +22,7 @@ class FaqService
     }
     public function getFaq(string $encryptedId)
     {
-        return Faq::where('id', decrypt($encryptedId))->first();
+        return Faq::findOrFail(decrypt($encryptedId));
     }
     public function createFaq(array $data): Faq
     {
