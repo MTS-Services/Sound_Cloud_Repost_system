@@ -40,7 +40,7 @@
                     <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
                         Genre:
                         <span class="text-black dark:text-white">
-                            {{ $user->gender ?? 'Unknown' }}
+                            {{ $user->genres->pluck('genre')->join(', ') ?? 'Unknown' }}
                         </span>
                     </p>
 

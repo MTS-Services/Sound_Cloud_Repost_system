@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\On;
 use App\Models\CustomNotification;
+use App\Models\CustomNotificationDeleted;
 use App\Models\CustomNotificationStatus;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
@@ -75,7 +76,11 @@ class NotificationList extends Component
         // To properly clear all notifications, we should get their IDs and then delete them.
         // Direct deletion on the query builder might not be ideal if relationships need to be handled.
         $this->getNotificationsQuery()->pluck('id')->each(function ($id) {
-            CustomNotification::find($id)?->delete();
+            CustomNotificationDeleted::create([
+                'notification_id' => $id,
+                'user_id' => $this->currentUserId,
+                'user_type' => $this->currentUserType,
+            ]);;
         });
 
         $this->dispatch('notifications-updated');

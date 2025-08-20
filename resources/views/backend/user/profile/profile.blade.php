@@ -153,7 +153,7 @@
                         </div>
                     </div>
                     <div
-                        class="bg-gradient-to-br from-green-50 to-green-200 dark:bg-gray-800 p-6 shadow-sm rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out ">
+                        class="bg-green-50 dark:bg-gray-800 p-6 shadow-sm rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out ">
                         <div class="flex items-center">
                             <div class="bg-green-100 dark:bg-green-800 p-3 rounded-lg mr-4">
                                 <x-lucide-users class="w-6 h-6 text-green-600 dark:text-green-400"></x-lucide-users>
@@ -184,9 +184,9 @@
 
 
                     <div
-                        class="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:bg-gray-800  p-6 shadow-sm rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
+                        class="bg-yellow-50  dark:bg-yellow-800  p-6 shadow-sm rounded-lg hover:-translate-y-2 transition-all duration-500 ease-in-out">
                         <div class="flex items-center">
-                            <div class="bg-yellow-100 dark:bg-yellow-800 p-3 rounded-lg mr-4">
+                            <div class="bg-yellow-100 dark:bg-yellow-600 p-3 rounded-lg mr-4">
                                 <x-lucide-trending-up
                                     class="w-6 h-6 text-yellow-600 dark:text-yellow-400"></x-lucide-trending-up>
                             </div>
