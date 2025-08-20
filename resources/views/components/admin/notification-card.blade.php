@@ -1,5 +1,5 @@
 @props(['notification', 'isRead' => false])
-<a href="{{ $notification->url ? $notification->url : '#' }}" class="p-4">
+<a href="{{ route('admin.notifications.show', $notification->id ?? '#') }}" class="p-4">
     <div class="flex items-start gap-3">
         <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-orange-500/20 relative">
             <i data-lucide="{{ $notification->message_data['icon'] }}" class="w-4 h-4 text-orange-400"></i>
