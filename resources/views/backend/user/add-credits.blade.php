@@ -41,11 +41,7 @@
                             <input type="hidden" name="credits" value="{{ $credit->credits }}">
                             <input type="hidden" name="amount" value="{{ $credit->price }}">
                             <input type="hidden" name="credit_id" value="{{ encrypt($credit->id) }}">
-                            <button type="submit"
-                                class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold text-sm py-2 px-4 rounded-md transition duration-200 whitespace-nowrap"
-                                style="background-color: #fb3802;">
-                                {{ __('Buy Now') }}
-                            </button>
+                            <x-button :full-width="true" variant="primary" class="w-full" type="submit">Buy Now</x-button>
                         </form>
                     </div>
                 </div>
