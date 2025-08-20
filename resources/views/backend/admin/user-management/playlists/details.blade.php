@@ -21,7 +21,6 @@
                     {{ __('Back to List') }}
                 </x-button>
              
-
             </div>
         </div>
 

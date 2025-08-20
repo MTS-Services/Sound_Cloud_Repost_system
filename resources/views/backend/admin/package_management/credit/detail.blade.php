@@ -162,7 +162,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Notes -->
-                    <div class="bg-gray-50 dark:bg-gray-700/30 p-5 rounded-xl">
+                    <div class="bg-gray-50 dark:bg-gray-700 p-5 rounded-xl">
                         <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -175,7 +175,7 @@
                     </div>
 
                     <!-- System Information -->
-                    <div class="bg-gray-50 dark:bg-gray-700/30 p-5 rounded-xl">
+                    <div class="bg-gray-50 dark:bg-gray-700 p-5 rounded-xl">
                         <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
                             {{ __('System Information') }}</h4>
 

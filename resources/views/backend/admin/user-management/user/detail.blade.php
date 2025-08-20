@@ -101,7 +101,7 @@
                             <!-- Info Cards -->
                             <div class="grid grid-cols-1 gap-4">
                                 @foreach (['Full Name' => $userinfo->full_name ?? 'N/A', 'Last Name' => $userinfo->last_name ?? 'N/A', 'Username' => $userinfo->username ?? 'N/A', 'Country' => $userinfo->country ?? 'N/A', 'City' => $userinfo->city ?? 'N/A'] as $label => $value)
-                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                                    <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                                         <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">
                                             {{ $label }}
                                         </p>
@@ -121,7 +121,7 @@
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             @foreach (['SoundCloud ID' => $userinfo->soundcloud_id ?? 'N/A', 'SoundCloud URN' => $userinfo->soundcloud_urn ?? 'N/A', 'Plan' => $userinfo->plan ?? 'N/A', 'Followers' => $userinfo->followers_count ?? 'N/A'] as $label => $value)
-                                <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                                     <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">
                                         {{ $label }}</p>
                                     <p class="text-sm font-semibold text-gray-900 dark:text-white">
@@ -132,7 +132,7 @@
 
                         <div class="mt-4 grid grid-cols-1 gap-4">
                             @foreach (['SoundCloud URI' => $userinfo->soundcloud_uri ?? 'N/A', 'Permalink URL' => $userinfo->soundcloud_permalink_url ?? 'N/A'] as $label => $value)
-                                <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                                     <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">
                                         {{ $label }}</p>
                                     <a href="{{ $value ?? '#' }}"
@@ -150,7 +150,7 @@
                         </h3>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             @foreach (['Tracks' => $userinfo->track_count ?? 0, 'Playlists' => $userinfo->playlist_count ?? 0, 'Favorites' => $userinfo->public_favorites_count ?? 0, 'Reposts' => $userinfo->reposts_count ?? 0] as $label => $value)
-                                <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg text-center">
+                                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg text-center">
                                     <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $value ?? '0' }}</p>
                                     <p class="text-xs text-gray-500 dark:text-gray-400">{{ $label }}</p>
                                 </div>
@@ -163,7 +163,7 @@
                             Additional Details
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                                 <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Website
                                 </p>
                                 <a href="{{ $userinfo->website ?? '#' }}"
@@ -171,7 +171,7 @@
                                     {{ $userinfo->website_title ?? ($userinfo->website ?? 'N/A') }}
                                 </a>
                             </div>
-                            <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                                 <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">
                                     Description</p>
                                 <p class="text-sm text-gray-900 dark:text-white line-clamp-2">
