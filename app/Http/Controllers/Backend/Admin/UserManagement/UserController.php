@@ -609,6 +609,7 @@ class UserController extends Controller implements HasMiddleware
                         'description' => 'You got a plan: ' . $plan->name . ' from ' . admin()->name,
                         'icon' => 'check',
                         'additional_data' => [
+                            'Assigned By' => admin()->name,
                             'Plan' => $plan->name,
                             'Price' => $plan->price,
                             'Start Date' => $plan->start_date,
@@ -626,9 +627,10 @@ class UserController extends Controller implements HasMiddleware
                     'message_data' => [
                         'title' => 'Plan Assigned',
                         'message' => 'Plan assigned successfully!',
-                        'description' => admin()->name . ' assigned a plan: ' . $plan->name . ' to ' . $user->name,
+                        'description' => $user->name . ' got a plan: ' . $plan->name . ' from ' . admin()->name,
                         'icon' => 'check',
                         'additional_data' => [
+                            'Assigned By' => admin()->name,
                             'Plan' => $plan->name,
                             'Price' => $plan->price,
                             'Start Date' => $plan->start_date,
