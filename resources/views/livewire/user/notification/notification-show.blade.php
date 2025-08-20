@@ -66,21 +66,28 @@
 
                     {{-- Actions --}}
                     <div class="dropdown dropdown-end">
-                        <div tabindex="0" role="button" class="btn btn-ghost">
-                            <i class="fas fa-ellipsis-v"></i>
+                        <div tabindex="0" role="button" class="btn btn-ghost btn-sm text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-900">
+                            <x-lucide-more-vertical class="w-5 h-5 " />
                         </div>
                         <ul tabindex="0"
                             class="dropdown-content menu bg-white dark:bg-gray-800 rounded-box z-[1] w-52 p-2 shadow-xl border border-gray-200 dark:border-gray-700">
                             <li>
-                                <a wire:click="toggleRead" class="hover:bg-orange-100 dark:hover:bg-orange-900/30">
-                                    <i class="fas fa-{{ $isRead ? 'eye-slash' : 'eye' }} mr-2"></i>
-                                    {{ $isRead ? 'Mark Unread' : 'Mark Read' }}
+                                <a wire:click="toggleRead"
+                                    class="hover:bg-orange-100 dark:hover:bg-orange-900/50 text-gray-800 dark:text-gray-200">
+                                    @if ($this->isRead)
+                                        <x-lucide-eye-off class="w-4 h-4 mr-2" />
+                                    @else
+                                        <x-lucide-eye class="w-4 h-4 mr-2" />
+                                    @endif
+
+                                    {{ $this->isRead ? 'Mark Unread' : 'Mark Read' }}
                                 </a>
                             </li>
                             <li>
-                                <a wire:click="deleteNotification" wire:navigate="route('user.notifications.index')"
-                                    class="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30">
-                                    <i class="fas fa-trash mr-2"></i>
+                                <a wire:click="deleteNotification"
+                                    wire:confirm="Are you sure you want to delete this notification?"
+                                    class="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50">
+                                    <x-lucide-trash class="w-4 h-4 mr-2" />
                                     Delete
                                 </a>
                             </li>

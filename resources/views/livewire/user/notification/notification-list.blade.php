@@ -53,15 +53,13 @@
                         </div>
                         <h3 class="text-2xl font-bold mb-3 text-gray-800 dark:text-gray-200">No notifications found</h3>
                         <p class="text-gray-600 dark:text-gray-400 mb-6">
-                            @if ($search)
-                                No notifications match your search for "{{ $search }}".
-                            @elseif($filter !== 'all')
+                            @if($filter !== 'all')
                                 No {{ $filter }} notifications found.
                             @else
                                 You don't have any notifications yet.
                             @endif
                         </p>
-                        <div class="flex items-center justify-center gap-4">
+                        {{-- <div class="flex items-center justify-center gap-4">
                             @if ($search || $filter !== 'all')
                                 <button wire:click="$set('search', ''); $set('filter', 'all')"
                                     class="btn bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-none">
@@ -69,7 +67,7 @@
                                     Show All Notifications
                                 </button>
                             @endif
-                        </div>
+                        </div> --}}
                     </div>
                 @endforelse
             </div>

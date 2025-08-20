@@ -24,6 +24,7 @@ class CustomNotification extends BaseModel
 
     protected $casts = [
         'message_data' => 'array',
+        'created_at' => 'datetime',
     ];
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
