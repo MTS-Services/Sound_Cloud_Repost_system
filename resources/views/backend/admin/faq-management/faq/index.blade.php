@@ -60,7 +60,7 @@
                     displayLength: 10,
                     main_route: "{{ route('fm.faq.index') }}",
                     order_route: "{{ route('update.sort.order') }}",
-                    export_columns: [0, 1, 2, 3, 4],
+                    export_columns: [0, 1, 2, 3, 4, 5],
                     model: 'Faq',
                 };
                 // initializeDataTable(details);
