@@ -219,12 +219,12 @@
             <div class="space-y-6">
                 <!-- Current Plan -->
                 <div class="dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Current Plan</h2>
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6 dark:text-white">Current Plan</h2>
 
                     <!-- Plan header -->
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
                         <div>
-                            <h3 class="text-lg font-medium text-gray-900">Free Plan</h3>
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white">Free Plan</h3>
                             <p class="text-sm text-gray-500">0 Credits remaining</p>
                         </div>
                         <button
@@ -253,7 +253,7 @@
 
                 <!-- Payment Method -->
                 <div class="dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Payment Methods</h2>
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6 dark:text-white">Payment Methods</h2>
 
                     <div class="space-y-4">
                         <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
@@ -262,7 +262,7 @@
                                     <i class="fab fa-cc-visa text-blue-600"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-medium text-gray-900">Visa ending in 4242</h4>
+                                    <h4 class="font-medium text-gray-900 dark:text-white">Visa ending in 4242</h4>
                                     <p class="text-sm text-gray-500">Expires 12/2025</p>
                                 </div>
                             </div>
@@ -283,16 +283,16 @@
 
                 <!-- Billing History -->
                 <div class="dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Billing History</h2>
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6 dark:text-white">Billing History</h2>
 
                     <div class="space-y-4">
                         <div class="flex items-center justify-between p-4 border-b border-gray-100">
                             <div>
-                                <h4 class="font-medium text-gray-900">Premium Plan - Monthly</h4>
+                                <h4 class="font-medium text-gray-900 dark:text-white">Premium Plan - Monthly</h4>
                                 <p class="text-sm text-gray-500">Jan 15, 2024</p>
                             </div>
                             <div class="text-right">
-                                <div class="font-medium text-gray-900">$29.00</div>
+                                <div class="font-medium text-gray-900 dark:text-white">$29.00</div>
                                 <button
                                     class="text-sm text-brand-orange hover:text-brand-orange-dark">Download</button>
                             </div>
@@ -300,11 +300,11 @@
 
                         <div class="flex items-center justify-between p-4 border-b border-gray-100">
                             <div>
-                                <h4 class="font-medium text-gray-900">Premium Plan - Monthly</h4>
+                                <h4 class="font-medium text-gray-900 dark:text-white">Premium Plan - Monthly</h4>
                                 <p class="text-sm text-gray-500">Dec 15, 2023</p>
                             </div>
                             <div class="text-right">
-                                <div class="font-medium text-gray-900">$29.00</div>
+                                <div class="font-medium text-gray-900 dark:text-white">$29.00</div>
                                 <button
                                     class="text-sm text-brand-orange hover:text-brand-orange-dark">Download</button>
                             </div>
@@ -312,11 +312,11 @@
 
                         <div class="flex items-center justify-between p-4">
                             <div>
-                                <h4 class="font-medium text-gray-900">Premium Plan - Monthly</h4>
+                                <h4 class="font-medium text-gray-900 dark:text-white">Premium Plan - Monthly</h4>
                                 <p class="text-sm text-gray-500">Nov 15, 2023</p>
                             </div>
                             <div class="text-right">
-                                <div class="font-medium text-gray-900">$29.00</div>
+                                <div class="font-medium text-gray-900 dark:text-white">$29.00</div>
                                 <button
                                     class="text-sm text-brand-orange hover:text-brand-orange-dark">Download</button>
                             </div>
@@ -471,7 +471,7 @@
                                 <div>
                                     <div class="flex justify-between text-sm mb-1">
                                         <span class="text-gray-600">Requests per minute</span>
-                                        <span class="text-gray-900">45/100</span>
+                                        <span class="text-gray-900 dark:text-white">45/100</span>
                                     </div>
                                     <div class="w-full bg-gray-200 rounded-full h-2">
                                         <div class="bg-brand-orange h-2 rounded-full" style="width: 45%"></div>
@@ -481,7 +481,7 @@
                                 <div>
                                     <div class="flex justify-between text-sm mb-1">
                                         <span class="text-gray-600">Daily requests</span>
-                                        <span class="text-gray-900">1,250/5,000</span>
+                                        <span class="text-gray-900 dark:text-white">1,250/5,000</span>
                                     </div>
                                     <div class="w-full bg-gray-200 rounded-full h-2">
                                         <div class="bg-brand-orange h-2 rounded-full" style="width: 25%"></div>
@@ -491,19 +491,19 @@
                         </div>
 
                         <div>
-                            <h4 class="font-medium text-gray-900 mb-2">Plan Limits</h4>
+                            <h4 class="font-medium text-gray-900 mb-2 dark:text-white">Plan Limits</h4>
                             <div class="space-y-2 text-sm">
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">Requests per minute:</span>
-                                    <span class="text-gray-900">100</span>
+                                    <span class="text-gray-900 dark:text-white">100</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">Daily requests:</span>
-                                    <span class="text-gray-900">5,000</span>
+                                    <span class="text-gray-900 dark:text-white">5,000</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">Monthly requests:</span>
-                                    <span class="text-gray-900">100,000</span>
+                                    <span class="text-gray-900 dark:text-white">100,000</span>
                                 </div>
                             </div>
                         </div>
