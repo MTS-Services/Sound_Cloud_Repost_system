@@ -17,6 +17,7 @@
                         {{ __('Add') }}
                     </x-button>
                 </div>
+                
             </div>
         </div>
         <div class="glass-card rounded-2xl p-6">
