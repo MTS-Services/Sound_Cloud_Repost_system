@@ -6,12 +6,20 @@
 
     <div class="glass-card rounded-2xl p-6 mb-6">
         <div class="flex items-center justify-between">
-            <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Repost Request Detail List') }}</h2>
+            <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Repost Request Detail List') }}
+            </h2>
             <div class="flex items-center gap-2">
 
-                <x-button href="{{ route('rrm.request.index') }}" permission="credit-create">
+                <x-button href="{{ session('back_route', url()->previous()) }}" permission="credit-create"
+                    class="flex items-center gap-2 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 border-0 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
                     {{ __('Back') }}
                 </x-button>
+
             </div>
         </div>
     </div>
