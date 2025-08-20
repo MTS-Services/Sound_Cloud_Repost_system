@@ -10,7 +10,7 @@
             <p class="dark:text-gray-400 text-gray-800 mb-8">Track your campaign performance with detailed analytics and
                 insights</p>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div class="dark:bg-gray-800 rounded-lg p-6 border border-gray-200">
                     <div class="flex items-center justify-between">
                         <div>
