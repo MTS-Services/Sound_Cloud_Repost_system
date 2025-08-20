@@ -556,10 +556,12 @@ class UserController extends Controller implements HasMiddleware
 
                 $activeUserPlan = $this->userPlanService->getUserActivePlan($user->urn);
 
-                if ($activeUserPlan && $activeUserPlan->plan?->price > $plan->price) {
+
+
+                if ($activeUserPlan && $activeUserPlan->plan?->monthly_price > $plan->monthly_price) {
                     session()->flash('error', "User has already subscribed to a plan with higher price. Cannot upgrade a lower price plan.");
                     return redirect()->back();
-                } elseif ($activeUserPlan && $activeUserPlan->plan?->price < $plan->price) {
+                } elseif ($activeUserPlan && $activeUserPlan->plan?->monthly_price < $plan->monthly_price) {
                     $data['amount'] = $yearly_plan == 1
                         ? $plan->yearly_price - $activeUserPlan->plan->yearly_price
                         : $plan->monthly_price - $activeUserPlan->plan->monthly_price;
