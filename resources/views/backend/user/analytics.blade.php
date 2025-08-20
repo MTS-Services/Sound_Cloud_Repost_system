@@ -162,7 +162,7 @@
                 </div>
             </div>
 
-            <div class= "mt-8 bg-white rounded-lg p-6 border border-gray-200">
+            <div class= "mt-8 dark:bg-gray-800 bg-white p-6 rounded-lg p-6 border border-gray-200">
                 <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-300 mb-6">Recent Activity</h2>
                 <div class="space-y-4">
                     <div class="flex items-center space-x-4 p-4 border-l-4 border-orange-500 bg-orange-50">

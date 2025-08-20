@@ -294,7 +294,7 @@
                             <div class="text-right">
                                 <div class="font-medium text-gray-900 dark:text-white">$29.00</div>
                                 <button
-                                    class="text-sm text-brand-orange hover:text-brand-orange-dark">Download</button>
+                                    class="text-sm text-brand-orange hover:text-brand-orange-dark dark:text-white">Download</button>
                             </div>
                         </div>
 
@@ -306,7 +306,7 @@
                             <div class="text-right">
                                 <div class="font-medium text-gray-900 dark:text-white">$29.00</div>
                                 <button
-                                    class="text-sm text-brand-orange hover:text-brand-orange-dark">Download</button>
+                                    class="text-sm text-brand-orange hover:text-brand-orange-dark dark:text-white">Download</button>
                             </div>
                         </div>
 
@@ -318,7 +318,7 @@
                             <div class="text-right">
                                 <div class="font-medium text-gray-900 dark:text-white">$29.00</div>
                                 <button
-                                    class="text-sm text-brand-orange hover:text-brand-orange-dark">Download</button>
+                                    class="text-sm text-brand-orange hover:text-brand-orange-dark dark:text-white">Download</button>
                             </div>
                         </div>
                     </div>
