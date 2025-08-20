@@ -15,6 +15,9 @@ class CustomNotificationStatus extends BaseModel
         'notification_id',
         'read_at',
     ];
+    protected $casts = [
+        'read_at' => 'datetime',
+    ];
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 Start of RELATIONSHIPS
