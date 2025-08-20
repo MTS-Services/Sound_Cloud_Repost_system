@@ -15,13 +15,18 @@ class BaseModel extends Model
         'created_at_human',
         'updated_at_human',
         'deleted_at_human',
+        'reposted_at_human',
 
         'created_at_formatted',
         'updated_at_formatted',
         'deleted_at_formatted',
+
     ];
 
-
+     public function getRepostedAtHumanAttribute()
+    {
+        return $this->reposted_at ? timeFormatHuman($this->reposted_at) : 'N/A';
+    }
     // Accessor for created time
     public function getCreatedAtFormattedAttribute()
     {

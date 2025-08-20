@@ -53,7 +53,7 @@
                     ['reposter_name', true, true],
                     ['repost_type', true, true],
                     ['credits_earned', true, true],
-                    ['reposted_at', true, true],
+                    ['reposte_at_format', true, true],
                    
                     ['created_at', true, true],
                     ['action', false, false],

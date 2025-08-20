@@ -145,7 +145,7 @@
                             <div class="ml-4">
                                 <h4 class="text-sm font-medium text-gray-900 dark:text-white">Requested</h4>
                                 <p class="text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $requests->requested_at ?? 'N/A' }}
+                                    {{ timeFormat($requests->requested_at ?? 'N/A') }}
                                 </p>
                             </div>
                         </div>
@@ -167,7 +167,7 @@
                                 <div class="ml-4">
                                     <h4 class="text-sm font-medium text-gray-900 dark:text-white">Reposted</h4>
                                     <p class="text-sm text-gray-500 dark:text-gray-400">
-                                        {{ \Carbon\Carbon::parse($requests->reposted_at)->format('M j, Y g:i A') }}</p>
+                                        {{ timeFormat($requests->reposted_at ?? 'N/A') }}</p>
                                 </div>
                             </div>
                         @endif
@@ -189,7 +189,7 @@
                                 <div class="ml-4">
                                     <h4 class="text-sm font-medium text-gray-900 dark:text-white">Completed</h4>
                                     <p class="text-sm text-gray-500 dark:text-gray-400">
-                                        {{ \Carbon\Carbon::parse($requests->completed_at)->format('M j, Y g:i A') }}
+                                        {{ timeFormat($requests->completed_at ?? 'N/A') }}
                                     </p>
                                 </div>
                             </div>
@@ -308,14 +308,14 @@
                     <div>
                         <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Expired At</h4>
                         <p class="text-sm text-gray-900 dark:text-white">
-                            {{ $requests->expired_at ?? 'N/A'}}
+                            {{ timeFormat($requests->expired_at ?? 'N/A') }}
                         </p>
                     </div>
 
                     <div>
                         <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Last Updated</h4>
                         <p class="text-sm text-gray-900 dark:text-white">
-                            {{ $requests->updated_at ?? 'N/A' }}
+                            {{ timeFormat($requests->updated_at ?? 'N/A') }}
                         </p>
                     </div>
                 </div>
