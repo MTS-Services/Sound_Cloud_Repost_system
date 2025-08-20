@@ -1,11 +1,4 @@
-@props([
-    'name',
-    'label' => '',
-    'options' => [],
-    'selected' => null,
-    'messages' => [],
-    'placeholder' => null,
-])
+@props(['name', 'label' => '', 'options' => [], 'selected' => null, 'messages' => [], 'placeholder' => null])
 
 @if (!empty($label))
     <p class="label">{{ $label }}</p>

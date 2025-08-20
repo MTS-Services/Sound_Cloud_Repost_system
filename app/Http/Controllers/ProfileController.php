@@ -61,7 +61,7 @@ class ProfileController extends Controller
         $data['repost_requests'] = ModelsRepostRequest::with(['track', 'targetUser'])->where('requester_urn', user()->urn)->Where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED)->orderBy('sort_order', 'asc')->take(10)->get();
         $data['user'] = UserInformation::where('user_urn', user()->urn)->first();
 
-        
+
 
         return view('backend.user.profile.profile', $data);
     }
@@ -154,9 +154,6 @@ class ProfileController extends Controller
                 'title' => 'Email Verification Required',
                 'message' => 'Please verify your email address to verify your account.',
                 'description' => 'Click the link in your inbox to complete the verification process.',
-                'route' => route('user.email.resend.verification'),
-                'method' => 'POST',
-                'button_title' => 'Resend Verification Email',
                 'icon' => 'mail-warning', // Email verification icon
             ],
         ]);

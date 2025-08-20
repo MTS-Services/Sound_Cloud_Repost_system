@@ -20,7 +20,6 @@ class DashboardController extends Controller
         $data['order'] = Order::all()->count();
         $data['active_campaign'] = Campaign::open()->count();
         $data['total_payment'] = Payment::all()->sum('amount');
-        ;
 
         return view('backend.admin.dashboard', $data);
     }
