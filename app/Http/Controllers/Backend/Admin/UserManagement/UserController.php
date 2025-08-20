@@ -128,7 +128,7 @@ class UserController extends Controller implements HasMiddleware
             ],
             [
                 'routeName' => 'javascript:void(0)',
-                'label' => 'Add Plan',
+                'label' => 'Assign Plan',
                 'data-id' => encrypt($model->urn),
                 'className' => 'add-plan',
                 'permissions' => ['permission-plan']
