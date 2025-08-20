@@ -45,7 +45,7 @@
                     ['amount', true, true],
                     ['currency', true, true],
                     ['payment_gateway_label', true, true],
-                    ['status_label', true, true],
+                    ['status', true, true],
                     ['created_at_formatted', true, true],
                     ['action', false, false],
                 ];

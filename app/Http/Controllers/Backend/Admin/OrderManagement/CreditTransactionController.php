@@ -166,11 +166,12 @@ class CreditTransactionController extends Controller
         if ($request->ajax()) {
             $query = $this->paymentService->getPayments()->with(['user', 'order']);
             return DataTables::eloquent($query)
+             ->editColumn('status', fn($payment) => "<span class='badge badge-soft {$payment->status_color}'>{$payment->status_label}</span>")
                 ->editColumn('action', function ($payment) {
                     $menuItems = $this->paymentMenuItems($payment);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'status'])
                 ->make(true);
         }
         return view('backend.admin.order-management.payments.payment');

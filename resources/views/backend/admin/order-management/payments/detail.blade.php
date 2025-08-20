@@ -13,13 +13,13 @@
             </div>
             <div class="flex items-center gap-2">
                 <x-button href="{{ route('om.credit-transaction.payments') }}"
-                    class="flex items-center gap-2 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 transition-colors duration-200 rounded-lg px-4 py-2.5">
+                    class="flex items-center gap-2 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 transition-colors duration-200 rounded-lg px-4 py-2.5">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    {{ __('Back to Payments') }}
+                    {{ __('Back') }}
                 </x-button>
             </div>
         </div>
