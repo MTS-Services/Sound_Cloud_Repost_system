@@ -17,18 +17,21 @@
             <!-- Right: Buttons group -->
             <div class="flex flex-col lg:flex-row gap-3 sm:gap-2 w-full sm:w-auto">
                 <!-- Earn Credits -->
-                <div
+                {{-- <div
                     class="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 dark:bg-slate-800 dark:hover:bg-slate-700 text-white dark:text-gray-200 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer w-full sm:w-auto justify-center">
                     <span class="flex items-center gap-1 text-base sm:text-sm">
-                        💰
+                        
                         <a href="{{ route('user.cm.campaigns') }}" wire:navigate
                             class="hover:underline text-white dark:text-gray-200 text-base sm:text-xs lg:text-base">
                             {{ __('Earn Credits') }}
                         </a>
                     </span>
-                </div>
+                </div> --}}
+                <x-button variant="secondary" wire:navigate href="{{ route('user.cm.campaigns') }}">
+                    <span>💰 {{ __('Earn Credits') }}</span>
+                </x-button>
                 <!-- Submit Track -->
-                <div
+                {{-- <div
                     class="flex items-center gap-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 w-full sm:w-auto justify-center py-2 px-3">
                     <a href="{{ route('user.track.submit') }}" class="text-base sm:text-xs lg:text-base  "
                         wire:navigate>
@@ -36,7 +39,12 @@
                             <x-lucide-music class="inline-block text-center h-4 w-4 text-purple-800" />
                         </span>
                         {{ __('Submit Track') }}</a>
-                </div>
+                </div> --}}
+                <x-button variant="primary" wire:navigate href="{{ route('user.track.submit') }}">
+                    <span>
+                        <x-lucide-music class="inline-block text-center h-4 w-4 text-white mr-1" />
+                    </span>{{ __('Submit Track') }}
+                </x-button>
             </div>
         </div>
 
@@ -119,19 +127,19 @@
                 </div>
                 <div class="space-y-2">
                     <p class="text-2xl  font-bold text-slate-700 dark:text-white">{{ $totalCount }}</p>
-                  @if ($repostRequestPercentage >= 0)
-                      <p class="text-sm flex items-center space-x-1 text-green-400">
-                          <span>+{{ $repostRequestPercentage }}% from last week</span>
-                      </p>
-                  @elseif($repostRequestPercentage < 0)
-                      <p class="text-sm flex items-center space-x-1 text-red-400">
-                          <span>{{ $repostRequestPercentage }}% from last week</span>
-                      </p>
-                  @else
-                      <p class="text-sm flex items-center space-x-1 text-gray-400">
-                          <span>0% from last week</span>
-                      </p>
-                  @endif
+                    @if ($repostRequestPercentage >= 0)
+                        <p class="text-sm flex items-center space-x-1 text-green-400">
+                            <span>+{{ $repostRequestPercentage }}% from last week</span>
+                        </p>
+                    @elseif($repostRequestPercentage < 0)
+                        <p class="text-sm flex items-center space-x-1 text-red-400">
+                            <span>{{ $repostRequestPercentage }}% from last week</span>
+                        </p>
+                    @else
+                        <p class="text-sm flex items-center space-x-1 text-gray-400">
+                            <span>0% from last week</span>
+                        </p>
+                    @endif
                 </div>
             </div>
 
@@ -232,10 +240,8 @@
                         </div>
                         <h4 class="font-medium mb-2">No upcoming campaigns scheduled</h4>
                         <p class="text-slate-400 text-sm mb-4">Submit a track to start a new campaign</p>
-                        <a href="{{ route('user.cm.my-campaigns') }}"
-                            class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                            Create Campaign
-                        </a>
+                        <x-button variant="primary" wire:navigate href="{{ route('user.cm.my-campaigns') }}">Create
+                            Campaign</x-button>
                     </div>
                 </div>
 
@@ -266,10 +272,12 @@
                                         credits</span>
                                 </div>
                                 <div class="flex space-x-2">
-                                    <button
-                                        class="flex-1 bg-slate-600 hover:bg-slate-500 text-white text-sm py-2 rounded-lg">Decline</button>
-                                    <button
-                                        class="flex-1 bg-orange-500 hover:bg-orange-600 text-white text-sm py-2 rounded-lg">Repost</button>
+                                    <div class="flex-1"> 
+                                    <x-button :full-width="true" variant="secondary">Decline</x-button>
+                                    </div>
+                                    <div class="flex-1">
+                                    <x-button :full-width="true" variant="primary">Reposts</x-button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
