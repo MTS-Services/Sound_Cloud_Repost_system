@@ -360,7 +360,7 @@
                                 <code
                                     class="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded text-sm font-mono overflow-x-auto">rpc_live_sk_1234567890abcdef...</code>
                                 <button
-                                    class="px-3 py-2 text-sm text-center text-brand-orange hover:text-white border border-brand-orange rounded hover:bg-brand-orange transition-colors w-full sm:w-auto">
+                                    class="dark:bg-white px-3 py-2 text-sm text-center text-brand-orange hover:text-white border border-brand-orange rounded hover:bg-brand-orange transition-colors w-full sm:w-auto">
                                     Copy
                                 </button>
                             </div>
@@ -369,7 +369,8 @@
                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-2">
                                 <span class="text-gray-500">Last used: 2 hours ago</span>
                                 <div class="flex space-x-2">
-                                    <button class="text-brand-orange hover:text-brand-orange-dark">Edit</button>
+                                    <button
+                                        class="text-brand-orange hover:text-brand-orange-dark dark:text-white">Edit</button>
                                     <button class="text-red-600 hover:text-red-800">Revoke</button>
                                 </div>
                             </div>
@@ -396,7 +397,7 @@
                                 <code
                                     class="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded text-sm font-mono overflow-x-auto">rpc_test_sk_abcdef1234567890...</code>
                                 <button
-                                    class="px-3 py-2 text-sm text-center text-brand-orange hover:text-white border border-brand-orange rounded hover:bg-brand-orange transition-colors w-full sm:w-auto">
+                                    class="dark:bg-white px-3 py-2 text-sm text-center text-brand-orange hover:text-white border border-brand-orange rounded hover:bg-brand-orange transition-colors w-full sm:w-auto">
                                     Copy
                                 </button>
                             </div>
@@ -405,7 +406,8 @@
                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-2">
                                 <span class="text-gray-500">Last used: 1 week ago</span>
                                 <div class="flex space-x-2">
-                                    <button class="text-brand-orange hover:text-brand-orange-dark">Edit</button>
+                                    <button
+                                        class="text-brand-orange hover:text-brand-orange-dark dark:text-white">Edit</button>
                                     <button class="text-red-600 hover:text-red-800">Revoke</button>
                                 </div>
                             </div>
