@@ -17,11 +17,7 @@
                             <p class="text-gray-600 dark:text-white">Update your personal information and preferences
                             </p>
                         </div>
-                        <!-- Back Button -->
-                        <a href="{{ route('user.pm.my-account') }}" class="btn btn-primary dark:text-white">
-                            <x-heroicon-o-arrow-left class="w-4 h-4" />
-                            <span>Back</span>
-                        </a>
+                        <x-button variant="primary" wire:navigate href="{{ route('user.pm.my-account') }}"><span><x-heroicon-o-arrow-left class="w-4 h-4 mr-1" /></span>Back</x-button>
 
 
                     </div>
@@ -113,14 +109,8 @@
 
                             {{-- Action Buttons --}}
                             <div class="flex flex-wrap justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
-                                <button type="button"
-                                    class="px-4 py-2flex-1 sm:flex-none px-6 py-3 border text-white dark:text-white border-gray-300 bg-gray-800 rounded-lg hover:bg-gray-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-200 font-medium">
-                                    Cancel
-                                </button>
-                                <button type="submit"
-                                    class=" px-4 py-2flex-1 sm:flex-none px-8 py-3 bg-orange-500 text-white dark:text-white rounded-lg hover:from-primary-600 hover:to-primary-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-200 font-medium shadow-lg hover:shadow-xl">
-                                    Profile Update
-                                </button>
+                                <x-button variant="secondary">Cancle</x-button>
+                                <x-button type="submit" variant="primary">Profile Update</x-button>
                             </div>
                         </form>
                     </div>
@@ -205,16 +195,15 @@
                                     </svg>
                                     <span>Visit on SoundCloud</span>
                                 </a>
-                                <button wire:click="profileUpdated({{ $user->id }})"
-                                    class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 sm:px-4 sm:py-2 rounded-lg transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base">
+                                <x-button wire:click="profileUpdated({{ $user->id }})" variant="primary">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                         stroke-linejoin="round" class="w-3 h-3 sm:w-4 sm:h-4">
                                         <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                         <path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"></path>
                                     </svg>
-                                    <span>Edit</span>
-                                </button>
+                                    <span class="ms-1">Edit</span>
+                                </x-button>
                             </div>
                         </div>
                     </div>

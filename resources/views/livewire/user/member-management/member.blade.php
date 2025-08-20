@@ -112,10 +112,7 @@
                 </div>
 
                 <!-- Request Button -->
-                <button wire:click="openModal('{{ $user_->urn }}')"
-                    class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors dark:text-white">
-                    Request
-                </button>
+                <x-button :full-width="true" wire:click="openModal('{{ $user_->urn }}')" variant="primary">Request</x-button>
             </div>
         @empty
             <div class="col-span-full text-center py-8">
@@ -245,10 +242,7 @@
 
                             @if (count($tracks) < count($allTracks))
                                 <div class="text-center mt-6">
-                                    <button wire:click="loadMoreTracks"
-                                        class="font-semibold text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 transition-colors duration-200">
-                                        Load more
-                                    </button>
+                                    <x-button size="sm" wire:click="loadMoreTracks" variant="primary">Load more</x-button>
                                 </div>
                             @endif
                         @elseif($activeTab === 'playlists')
@@ -290,10 +284,7 @@
 
                             @if (count($playlists) < count($allPlaylists))
                                 <div class="text-center mt-6">
-                                    <button wire:click="loadMorePlaylists"
-                                        class="font-semibold text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 transition-colors duration-200">
-                                        Load more
-                                    </button>
+                                    <x-button size="sm" wire:click="loadMorePlaylists" variant="primary">Load more</x-button>
                                 </div>
                             @endif
                         @endif
@@ -422,14 +413,8 @@
                         </div>
                         <!-- Confirm Button -->
                         <div class="mt-6 flex justify-center gap-3">
-                            <button wire:click="closeRepostModal"
-                                class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
-                                Cancel
-                            </button>
-                            <button wire:click="createRepostsRequest()"
-                                class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700">
-                                Send Request
-                            </button>
+                            <x-button wire:click="closeRepostModal" variant="secondary">Cancel</x-button>
+                            <x-button wire:click="createRepostsRequest" variant="primary">Send Request</x-button>
                         </div>
                     @endif
                 </div>

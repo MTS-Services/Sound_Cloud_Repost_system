@@ -5,11 +5,12 @@
             <h1 class="text-xl text-black dark:text-gray-100 font-bold">{{ __('Repost Requests') }}</h1>
         </div>
         {{-- Set Route --}}
-        <a href="{{ route('user.mm.members.index') }}" wire:navigate
+        {{-- <a href="{{ route('user.mm.members.index') }}" wire:navigate
             class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 rounded-xl flex items-center gap-3 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-            <x-lucide-plus class="w-5 h-5" />
+            
             {{ __('Send a New Request') }}
-        </a>
+        </a> --}}
+        <x-button variant="primary" wire:navigate href="{{ route('user.mm.members.index') }}"><span><x-lucide-plus class="w-5 h-5 mr-1" /></span> Send a New Request</x-button>
     </div>
 
     <div class="mb-8">
@@ -310,8 +311,9 @@
                                     </div>
                                     <div class="text-right">
                                         @if ($activeMainTab == 'outgoing_request' && $repostRequest->status !== App\Models\RepostRequest::STATUS_APPROVED)
-                                            <button wire:click="cancleRepostRequest({{ $repostRequest->id }})"
-                                                class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Cancle</button>
+                                            {{-- <button wire:click="cancleRepostRequest({{ $repostRequest->id }})"
+                                                class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Cancle</button> --}}
+                                                <x-button size="sm" wire:click="cancleRepostRequest({{ $repostRequest->id }})" variant="primary">Cancle</x-button>
                                         @else
                                             @if ($repostRequest->status == App\Models\RepostRequest::STATUS_PENDING && $activeMainTab == 'incoming_request')
                                                 <button wire:click="declineRepostRequest({{ $repostRequest->id }})"
