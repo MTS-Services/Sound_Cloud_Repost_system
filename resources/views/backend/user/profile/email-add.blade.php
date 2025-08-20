@@ -578,7 +578,7 @@
             return {
                 currentStep: 1,
                 showReferral: false,
-                maxGenres: 10,
+                maxGenres: 5,
                 formData: {
                     email: '',
                     referralCode: '',

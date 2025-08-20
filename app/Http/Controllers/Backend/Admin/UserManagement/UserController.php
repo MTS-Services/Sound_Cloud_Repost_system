@@ -187,7 +187,7 @@ class UserController extends Controller implements HasMiddleware
 
     public function detail(Request $request, string $id)
     {
-        $data['user'] = $this->userService->getUser($id)->load(['userInfo']);
+        $data['user'] = $this->userService->getUser($id)->load(['userInfo','genres']);
         $data['userinfo'] = $data['user']->userInfo;
         return view('backend.admin.user-management.user.detail', $data);
     }
