@@ -41,11 +41,11 @@ class Button extends Component
 
     public function getButtonClasses(): string
     {
-        $baseStyles = 'font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg inline-flex items-center justify-center';
+        $baseStyles = 'font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg inline-flex items-center justify-center cursor-pointer disabled:cursor-not-allowed';
 
         $variantStyles = [
-            'primary' => 'bg-orange-500 text-white hover:bg-orange-600 active:bg-orange-700 disabled:bg-orange-500 disabled:text-gray-50 disabled:cursor-not-allowed disabled:lg:px-3 disabled:lg:py-6',
-            'secondary' => 'bg-orange-100 text-orange-700 hover:bg-orange-200 active:bg-orange-300 disabled:bg-gray-100 disabled:text-gray-400',
+            'primary' => 'bg-orange-600 text-white hover:bg-orange-500 active:bg-orange-700 disabled:bg-orange-500 disabled:text-gray-50 disabled:cursor-not-allowed disabled:lg:px-3 disabled:lg:py-6',
+            'secondary' => 'bg-orange-100 text-orange-800 hover:bg-orange-200 active:bg-orange-300 disabled:bg-gray-100 disabled:text-gray-400',
             'outline' => 'border border-orange-500 text-orange-500 hover:bg-orange-50 active:bg-orange-100 disabled:border-gray-300 disabled:text-gray-400',
             'text' => 'text-orange-500 hover:bg-orange-50 active:bg-orange-100 disabled:text-gray-400',
         ];

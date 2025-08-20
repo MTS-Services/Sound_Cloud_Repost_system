@@ -28,7 +28,7 @@
                     </span>
                 </div> --}}
                 <x-button variant="secondary" wire:navigate href="{{ route('user.cm.campaigns') }}">
-                    <span>💰 {{ __('Earn Credits') }}</span>
+                    <span>💰</span>{{ __('Earn Credits') }}
                 </x-button>
                 <!-- Submit Track -->
                 {{-- <div
@@ -240,8 +240,8 @@
                         </div>
                         <h4 class="font-medium mb-2">No upcoming campaigns scheduled</h4>
                         <p class="text-slate-400 text-sm mb-4">Submit a track to start a new campaign</p>
-                        <x-button variant="primary" wire:navigate href="{{ route('user.cm.my-campaigns') }}">Create
-                            Campaign</x-button>
+                        <x-button variant="primary" wire:navigate href="{{ route('user.cm.my-campaigns') }}">
+                           <span><x-lucide-plus class="inline-block text-center h-4 w-4 text-white mr-1" /></span> Create Campaign</x-button>
                     </div>
                 </div>
 
