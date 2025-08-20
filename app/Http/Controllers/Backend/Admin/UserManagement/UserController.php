@@ -582,8 +582,8 @@ class UserController extends Controller implements HasMiddleware
                 $order = Order::create($data);
                 $data['order_id'] = $order->id;
                 $data['price'] = $data['amount'];
-                $plan = $this->userPlanService->createUserPlan($data);
-
+                $userPlan = $this->userPlanService->createUserPlan($data);
+                
                 $payment = Payment::create([
                     'user_urn' => $order->user_urn,
                     'order_id' => $order->id,
@@ -606,7 +606,7 @@ class UserController extends Controller implements HasMiddleware
                     'message_data' => [
                         'title' => 'Plan ' . ($activeUserPlan ? 'Upgraded' : 'Subscribed'),
                         'message' => 'Plan ' . ($activeUserPlan ? 'upgraded' : 'subscribed') . ' successfully!',
-                        'description' => 'You got a plan: ' . $plan->name . ' from ' . admin()->name,
+                        'description' => 'You got a plan: ' . $plan->name . ' assigned by ' . admin()->name,
                         'icon' => 'check',
                         'additional_data' => [
                             'Assigned By' => admin()->name,
