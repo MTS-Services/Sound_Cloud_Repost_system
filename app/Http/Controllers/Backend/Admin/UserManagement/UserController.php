@@ -187,7 +187,7 @@ class UserController extends Controller implements HasMiddleware
 
     public function detail(Request $request, string $id)
     {
-        $data['user'] = $this->userService->getUser($id)->load(['userInfo','genres']);
+        $data['user'] = $this->userService->getUser($id)->load(['userInfo', 'genres']);
         $data['userinfo'] = $data['user']->userInfo;
         return view('backend.admin.user-management.user.detail', $data);
     }
@@ -604,16 +604,16 @@ class UserController extends Controller implements HasMiddleware
                     'receiver_id' => $user->id,
                     'receiver_type' => User::class,
                     'message_data' => [
-                        'title' => 'Plan ' . $activeUserPlan ? 'Upgraded' : 'Subscribed',
-                        'message' => 'Plan ' . $activeUserPlan ? 'upgraded' : 'subscribed' . ' successfully!',
-                        'description' => 'Your plan has been ' . $activeUserPlan ? 'upgraded' : 'subscribed' . ' to: ' . $plan->name,
+                        'title' => 'Plan ' . ($activeUserPlan ? 'Upgraded' : 'Subscribed'),
+                        'message' => 'Plan ' . ($activeUserPlan ? 'upgraded' : 'subscribed') . ' successfully!',
+                        'description' => 'You got a plan: ' . $plan->name . ' from ' . admin()->name,
                         'icon' => 'check',
                         'additional_data' => [
-                            'plan_name' => $plan->name,
-                            'plan_price' => $plan->price,
-                            'start_date' => $plan->start_date,
-                            'end_date' => $plan->end_date,
-                            'duration' => $plan->duration
+                            'Plan' => $plan->name,
+                            'Price' => $plan->price,
+                            'Start Date' => $plan->start_date,
+                            'End Date' => $plan->end_date,
+                            'Duration' => $plan->duration
                         ]
                     ]
                 ]);
@@ -626,14 +626,14 @@ class UserController extends Controller implements HasMiddleware
                     'message_data' => [
                         'title' => 'Plan Assigned',
                         'message' => 'Plan assigned successfully!',
-                        'description' => 'User: ' . $user->name . ' has been assigned the plan: ' . $plan->name,
+                        'description' => admin()->name . ' assigned a plan: ' . $plan->name . ' to ' . $user->name,
                         'icon' => 'check',
                         'additional_data' => [
-                            'plan_name' => $plan->name,
-                            'plan_price' => $plan->price,
-                            'start_date' => $plan->start_date,
-                            'end_date' => $plan->end_date,
-                            'duration' => $plan->duration
+                            'Plan' => $plan->name,
+                            'Price' => $plan->price,
+                            'Start Date' => $plan->start_date,
+                            'End Date' => $plan->end_date,
+                            'Duration' => $plan->duration
                         ]
                     ]
                 ]);

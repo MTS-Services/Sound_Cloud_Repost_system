@@ -3,6 +3,7 @@
     <x-slot name="breadcrumb">{{ __('User List') }}</x-slot>
     <x-slot name="page_slug">user</x-slot>
     <section>
+
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('User List') }}</h2>
@@ -32,7 +33,6 @@
             </table>
         </div>
     </section>
-
 
     {{-- Modals Start Here --}}
 
@@ -89,12 +89,13 @@
 
     </dialog>
 
-    <dialog id="add_plan_modal"
+    <dialog id="add_plan_modal" x-data="{ yearly_plan: false }"
         class="modal modal-backdrop fixed inset-0 bg-black/60 backdrop-blur-sm animate-fade-in flex items-center justify-center min-h-screen p-4">
         <div
             class="modal-box glass-card relative w-full max-w-5xl mx-auto rounded-2xl shadow-2xl animate-slide-up bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg border border-white/20 dark:border-gray-700/30">
             <!-- Header -->
-            <div class="flex items-center justify-between p-6 pt-0 border-b border-gray-200 dark:border-gray-700">
+            <div
+                class="flex items-center justify-between p-6 pt-0 border-b border-gray-200 dark:border-gray-700 relative">
                 <div class="flex items-center space-x-3">
                     <div
                         class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
@@ -115,16 +116,25 @@
                         <i data-lucide="x" class="w-6 h-6"></i>
                     </button>
                 </form>
+
+                <div
+                    class="absolute -bottom-5 right-1/2 translate-x-1/2 transform glass-card px-4 py-2 z-10 text-gray-800 dark:text-gray-200 rounded-2xl">
+                    <div class="flex items-center justify-center gap-4 text-sm">
+                        <span class="">{{ __('Monthly') }}</span>
+                        <span class="">
+                            <input type="checkbox" name="" id="yearly_plan" x-model="yearly_plan"
+                                class="toggle toggle-secondary"
+                                style="width: calc((var(--size) * 2) - (var(--border) + var(--toggle-p)) * 2); height: var(--size);" />
+                        </span>
+                        <span class="">{{ __('Yearly') }}</span>
+                    </div>
+                </div>
             </div>
 
             <!-- Content with pricing cards. It is now scrollable independently of the header and footer. -->
-            <div class="modal-action p-6 flex-grow h-fit  max-h-[70vh] overflow-y-auto">
-                <div class="space-y-4 w-full text-gray-800 dark:text-gray-200">
-                    <h3
-                        class="text-3xl sm:text-4xl font-extrabold tracking-tight text-center mb-10 text-gray-900 dark:text-gray-100">
-                        {{ __('Available Plans') }}
-                    </h3>
+            <div class="modal-action p-6 h-fit  max-h-[70vh] overflow-y-auto">
 
+                <div class="space-y-4 w-full text-gray-800 dark:text-gray-200">
                     <!-- Responsive grid layout for cards -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         @foreach (App\Models\Plan::all() as $plan)
@@ -134,15 +144,23 @@
 
                             <div
                                 class=" card flex flex-col p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg ring-1 ring-inset ring-gray-200 dark:ring-gray-700 transform transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
-                                <p class="text-xl sm:text-2xl font-bold mb-2 text-center">{{ $plan->name }}</p>
+                                <p class="text-2xl sm:text-3xl font-bold mb-2 text-center">{{ $plan->name }}</p>
 
                                 <div class="flex flex-col items-center justify-center my-4">
-                                    <p class="text-4xl sm:text-5xl font-extrabold text-indigo-600 dark:text-indigo-400">
-                                        ${{ number_format($plan->monthly_price, 2) }}
+                                    <p
+                                        class="text-2xl sm:text-3xl font-extrabold dark:text-indigo-400 transition-all duration-300 relative text-indigo-500">
+                                        <span
+                                            x-text="yearly_plan ? '{{ number_format($plan->yearly_price, 2) }}' : '{{ number_format($plan->monthly_price, 2) }}'"></span>
+                                        <sup class="line-through text-base text-red-500"
+                                            x-text="yearly_plan ? '{{ number_format($plan->monthly_price * 12, 2) }}' : '' "></sup>
                                     </p>
-                                    <span class="text-base font-medium text-gray-500 dark:text-gray-400 ml-2">
-                                        {{ __('Monthly') }}
-                                    </span>
+                                    <p class="text-base font-medium text-gray-500 dark:text-gray-400 ml-2 mt-2"
+                                        x-text="yearly_plan ? 'Yearly'  : 'Monthly' "> </p>
+                                    <p class="bg-gray-100 dark:bg-gray-700 mt-2 w-full py-1 rounded-lg text-xs text-center text-gray-800 dark:text-gray-200"
+                                        :class="yearly_plan ? 'hidden' : 'block'"
+                                        x-text="yearly_plan ? ''  : 'Save {{ $plan->yearly_save_percentage }}% yearly' ">
+                                    </p>
+
                                 </div>
 
                                 <x-button type="accent" :button="true" icon="wallet" icon_position="left"
@@ -188,33 +206,27 @@
 
             <!-- Content -->
             <div class="modal-action p-3">
-                <form id="plan-assignment-form" action="" method="POST" class="space-y-4 w-full">
+                <form id="plan-assignment-form" action="{{route('um.user.add-plan')}}" method="POST" class="space-y-4 w-full">
                     @csrf
-                    <input type="hidden" id="confirm-user-urn" name="user_urn">
-                    <input type="hidden" id="confirm-plan-id" name="plan_id">
+                    <input type="hidden" id="confirm-user-urn" name="user_urn" class="hidden opacity-0 invisible">
+                    <input type="hidden" id="confirm-plan-id" name="plan_id" class="hidden opacity-0 invisible">
+                    <input type="hidden" id="yearly-checkbox" name="yearly_plan"
+                        class="hidden opacity-0 invisible">
                     <div>
                         <h3 id="plan-confirm-text"
                             class="text-lg font-bold text-gray-900 dark:text-white text-center mb-3">
                             {{ __('Are you sure to assign this plan?') }}</h3>
 
-                        <div class="flex items-center justify-center gap-4 mb-4">
-                            <span class="">{{ __('Monthly') }}</span>
-                            <span class="">
-                                <input type="checkbox" class="toggle toggle-secondary" />
-                            </span>
-                            <span class="">{{ __('Yearly') }}</span>
-                        </div>
-
                         <div class="flex justify-between items-center gap-3 mt-4">
                             {{-- Add onclick to close the modal --}}
                             <x-button type="secondary" :button="true" :is_submit="false" icon_position="left"
                                 icon="x-circle" :outline="true"
-                                onclick="document.getElementById('plan_confirm_modal').close()">{{ __('Cancel') }}</x->
+                                onclick="document.getElementById('plan_confirm_modal').close()">{{ __('Cancel') }}</x-button>
 
-                                {{-- The Assign button will now submit this form --}}
-                                <x-button type="accent" :button="true" icon="check-circle" icon_position="left">
-                                    <span>{{ __('Assign') }}</span>
-                                </x-button>
+                            {{-- The Assign button will now submit this form --}}
+                            <x-button type="accent" :button="true" icon="check-circle" icon_position="left">
+                                <span>{{ __('Assign') }}</span>
+                            </x-button>
                         </div>
                     </div>
                 </form>
@@ -471,7 +483,6 @@
             });
         </script>
 
-
         <script>
             document.addEventListener('DOMContentLoaded', () => {
 
@@ -487,6 +498,7 @@
 
 
                 let currentUserUrn = null;
+                let isYearlyPlan = false;
 
                 $(document).on('click', '.add-plan', function() {
                     currentUserUrn = $(this).data('id');
@@ -496,19 +508,25 @@
 
                 $(document).on('click', '.assign-plan-button', function() {
                     const planId = $(this).data('plan-id');
+
+                    // Get the Alpine.js data context for the modal
+                    const modalElement = document.getElementById('add_plan_modal');
+                    const alpineComponent = Alpine.$data(modalElement);
+
+                    // Get the current state of the yearly toggle
+                    isYearlyPlan = alpineComponent.yearly_plan;
+
                     // Get the elements for the confirm modal
                     const confirmModal = document.getElementById('plan_confirm_modal');
                     const confirmForm = document.getElementById('plan-assignment-form');
                     const userUrnInput = document.getElementById('confirm-user-urn');
                     const planIdInput = document.getElementById('confirm-plan-id');
+                    const yearlyPlanInput = document.getElementById('yearly-checkbox');
 
                     // Set the hidden inputs with the data
                     userUrnInput.value = currentUserUrn;
                     planIdInput.value = planId;
-
-                    // Set the form action URL dynamically
-                    const route = "{{ route('um.user.add-plan') }}";
-                    confirmForm.action = route;
+                    yearlyPlanInput.value = isYearlyPlan ? 1 : 0;
 
                     // Show the confirmation modal
                     confirmModal.showModal();
