@@ -26,15 +26,16 @@
     <!-- Tab Contents -->
     <div id="tab-content-container">
         <div id="notifications" class="tab-content p-4">
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 class="text-xl font-semibold text-gray-900 mb-6">Notification Preferences</h2>
+            <div class="dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Notification Preferences</h2>
                 <div class="space-y-6">
                     <div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Email Notifications</h3>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4 dark:text-white">Email Notifications</h3>
                         <div class="space-y-4">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <label class="text-sm font-medium text-gray-700">Campaign Updates</label>
+                                    <label class="text-sm font-medium text-gray-700 dark:text-white">Campaign
+                                        Updates</label>
                                     <p class="text-sm text-gray-500">Get notified when your campaigns receive new
                                         responses</p>
                                 </div>
@@ -48,7 +49,8 @@
 
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <label class="text-sm font-medium text-gray-700">Weekly Reports</label>
+                                    <label class="text-sm font-medium text-gray-500 dark:text-white">Weekly
+                                        Reports</label>
                                     <p class="text-sm text-gray-500">Receive weekly analytics and performance summaries
                                     </p>
                                 </div>
@@ -62,7 +64,8 @@
 
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <label class="text-sm font-medium text-gray-700">Security Alerts</label>
+                                    <label class="text-sm font-medium text-gray-500 dark:text-white">Security
+                                        Alerts</label>
                                     <p class="text-sm text-gray-500">Important security notifications and login alerts
                                     </p>
                                 </div>
@@ -77,11 +80,12 @@
                     </div>
 
                     <div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Push Notifications</h3>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4 dark:text-white">Push Notifications</h3>
                         <div class="space-y-4">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <label class="text-sm font-medium text-gray-700">Real-time Updates</label>
+                                    <label class="text-sm font-medium text-gray-500 dark:text-white">Real-time
+                                        Updates</label>
                                     <p class="text-sm text-gray-500">Instant notifications for campaign activities</p>
                                 </div>
                                 <label class="relative inline-flex items-center cursor-pointer">
@@ -94,7 +98,8 @@
 
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <label class="text-sm font-medium text-gray-700">Marketing Updates</label>
+                                    <label class="text-sm font-medium text-gray-400 dark:text-white">Marketing
+                                        Updates</label>
                                     <p class="text-sm text-gray-500">New features and promotional content</p>
                                 </div>
                                 <label class="relative inline-flex items-center cursor-pointer">
@@ -119,24 +124,27 @@
         <div id="security" class="tab-content p-4 hidden">
             <div class="space-y-6">
                 <!-- Password Section -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Password & Authentication</h2>
+                <div class="dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Password & Authentication</h2>
 
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Current
+                                Password</label>
                             <input type="password"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">New
+                                Password</label>
                             <input type="password"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">Confirm New
+                                Password</label>
                             <input type="password"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent">
                         </div>
@@ -149,12 +157,12 @@
                 </div>
 
                 <!-- Two-Factor Authentication -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Two-Factor Authentication</h2>
+                <div class="dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6 dark:text-white">Two-Factor Authentication</h2>
 
                     <div class="flex items-center justify-between mb-4">
                         <div>
-                            <h3 class="text-lg font-medium text-gray-900">Enable 2FA</h3>
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable 2FA</h3>
                             <p class="text-sm text-gray-500">Add an extra layer of security to your account</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
@@ -172,8 +180,8 @@
                 </div>
 
                 <!-- Active Sessions -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Active Sessions</h2>
+                <div class="dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6 dark:text-white">Active Sessions</h2>
 
                     <div class="space-y-4">
                         <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
@@ -182,7 +190,7 @@
                                     <i class="fas fa-desktop text-green-600"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-medium text-gray-900">Current Session</h4>
+                                    <h4 class="font-medium text-gray-900 dark:text-white">Current Session</h4>
                                     <p class="text-sm text-gray-500">Chrome on Windows • Bangladesh</p>
                                     <p class="text-xs text-gray-400">Last active: Now</p>
                                 </div>
@@ -196,7 +204,7 @@
                                     <i class="fas fa-mobile-alt text-blue-600"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-medium text-gray-900">Mobile App</h4>
+                                    <h4 class="font-medium text-gray-900 dark:text-white">Mobile App</h4>
                                     <p class="text-sm text-gray-500">iOS App • Bangladesh</p>
                                     <p class="text-xs text-gray-400">Last active: 2 hours ago</p>
                                 </div>
@@ -210,21 +218,23 @@
         <div id="billing" class="tab-content p-4 hidden">
             <div class="space-y-6">
                 <!-- Current Plan -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6">
                     <h2 class="text-xl font-semibold text-gray-900 mb-6">Current Plan</h2>
 
-                    <div class="flex items-center justify-between mb-6">
+                    <!-- Plan header -->
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
                         <div>
                             <h3 class="text-lg font-medium text-gray-900">Free Plan</h3>
                             <p class="text-sm text-gray-500">0 Credits remaining</p>
                         </div>
                         <button
-                            class="bg-brand-orange text-white px-6 py-2 rounded-lg hover:bg-brand-orange-dark transition-colors">
+                            class="bg-brand-orange text-white px-6 py-2 rounded-lg hover:bg-brand-orange-dark transition-colors w-full sm:w-auto">
                             Upgrade Plan
                         </button>
                     </div>
 
-                    <div class="grid grid-cols-3 gap-4">
+                    <!-- Stats section -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div class="text-center p-4 bg-gray-50 rounded-lg">
                             <div class="text-2xl font-bold text-gray-900">0</div>
                             <div class="text-sm text-gray-500">Credits Used</div>
@@ -240,8 +250,9 @@
                     </div>
                 </div>
 
+
                 <!-- Payment Method -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6">
                     <h2 class="text-xl font-semibold text-gray-900 mb-6">Payment Methods</h2>
 
                     <div class="space-y-4">
@@ -271,7 +282,7 @@
                 </div>
 
                 <!-- Billing History -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6">
                     <h2 class="text-xl font-semibold text-gray-900 mb-6">Billing History</h2>
 
                     <div class="space-y-4">
@@ -317,20 +328,22 @@
         <div id="api" class="tab-content p-4 hidden">
             <div class="space-y-6">
                 <!-- API Keys Management -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-xl font-semibold text-gray-900">API Keys</h2>
+                <div class="dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6">
+                    <!-- Header -->
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">API Keys</h2>
                         <button
-                            class="bg-brand-orange text-white px-4 py-2 rounded-lg hover:bg-brand-orange-dark transition-colors">
+                            class="bg-brand-orange text-white px-4 py-2 rounded-lg hover:bg-brand-orange-dark transition-colors w-full sm:w-auto">
                             <i class="fas fa-plus mr-2"></i>Create New Key
                         </button>
                     </div>
 
                     <div class="space-y-4">
+                        <!-- API Key Card -->
                         <div class="p-4 border border-gray-200 rounded-lg">
-                            <div class="flex items-center justify-between mb-3">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 gap-2">
                                 <div>
-                                    <h4 class="font-medium text-gray-900">Production API Key</h4>
+                                    <h4 class="font-medium text-gray-900 dark:text-white">Production API Key</h4>
                                     <p class="text-sm text-gray-500">Created on Jan 15, 2024</p>
                                 </div>
                                 <div class="flex items-center space-x-2">
@@ -342,28 +355,31 @@
                                 </div>
                             </div>
 
-                            <div class="flex items-center space-x-2 mb-3">
+                            <!-- Code block and copy button -->
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-2 mb-3 gap-2">
                                 <code
-                                    class="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded text-sm font-mono">rpc_live_sk_1234567890abcdef...</code>
+                                    class="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded text-sm font-mono overflow-x-auto">rpc_live_sk_1234567890abcdef...</code>
                                 <button
-                                    class="px-3 py-2 text-sm text-brand-orange hover:text-brand-orange-dark border border-brand-orange rounded hover:bg-brand-orange hover:text-white transition-colors">
+                                    class="px-3 py-2 text-sm text-center text-brand-orange hover:text-white border border-brand-orange rounded hover:bg-brand-orange transition-colors w-full sm:w-auto">
                                     Copy
                                 </button>
                             </div>
 
-                            <div class="flex items-center justify-between text-sm">
+                            <!-- Footer -->
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-2">
                                 <span class="text-gray-500">Last used: 2 hours ago</span>
-                                <div class="space-x-2">
+                                <div class="flex space-x-2">
                                     <button class="text-brand-orange hover:text-brand-orange-dark">Edit</button>
                                     <button class="text-red-600 hover:text-red-800">Revoke</button>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Another API Key Card -->
                         <div class="p-4 border border-gray-200 rounded-lg">
-                            <div class="flex items-center justify-between mb-3">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 gap-2">
                                 <div>
-                                    <h4 class="font-medium text-gray-900">Development API Key</h4>
+                                    <h4 class="font-medium text-gray-900 dark:text-white">Development API Key</h4>
                                     <p class="text-sm text-gray-500">Created on Dec 10, 2023</p>
                                 </div>
                                 <div class="flex items-center space-x-2">
@@ -375,18 +391,20 @@
                                 </div>
                             </div>
 
-                            <div class="flex items-center space-x-2 mb-3">
+                            <!-- Code block and copy button -->
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-2 mb-3 gap-2">
                                 <code
-                                    class="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded text-sm font-mono">rpc_test_sk_abcdef1234567890...</code>
+                                    class="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded text-sm font-mono overflow-x-auto">rpc_test_sk_abcdef1234567890...</code>
                                 <button
-                                    class="px-3 py-2 text-sm text-brand-orange hover:text-brand-orange-dark border border-brand-orange rounded hover:bg-brand-orange hover:text-white transition-colors">
+                                    class="px-3 py-2 text-sm text-center text-brand-orange hover:text-white border border-brand-orange rounded hover:bg-brand-orange transition-colors w-full sm:w-auto">
                                     Copy
                                 </button>
                             </div>
 
-                            <div class="flex items-center justify-between text-sm">
+                            <!-- Footer -->
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-2">
                                 <span class="text-gray-500">Last used: 1 week ago</span>
-                                <div class="space-x-2">
+                                <div class="flex space-x-2">
                                     <button class="text-brand-orange hover:text-brand-orange-dark">Edit</button>
                                     <button class="text-red-600 hover:text-red-800">Revoke</button>
                                 </div>
@@ -395,9 +413,10 @@
                     </div>
                 </div>
 
+
                 <!-- API Documentation -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-6">API Documentation</h2>
+                <div class="dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6 dark:text-white">API Documentation</h2>
 
                     <div class="space-y-4">
                         <div class="flex items-center space-x-4 p-4 bg-blue-50 rounded-lg">
@@ -442,12 +461,12 @@
                 </div>
 
                 <!-- Rate Limits -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Rate Limits</h2>
+                <div class="dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6 dark:text-white">Rate Limits</h2>
 
                     <div class="grid grid-cols-2 gap-6">
                         <div>
-                            <h4 class="font-medium text-gray-900 mb-2">Current Usage</h4>
+                            <h4 class="font-medium text-gray-900 mb-2 dark:text-white">Current Usage</h4>
                             <div class="space-y-3">
                                 <div>
                                     <div class="flex justify-between text-sm mb-1">
