@@ -5,7 +5,7 @@
 
     <div class="max-w-8xl mx-auto">
         <!-- Header Section -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6 border border-gray-100 dark:border-gray-700">
+        <div class="bg-white dark:bg-bg-dark-primary rounded-xl shadow-sm p-6 mb-6 border border-gray-100 dark:border-gray-700">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('Package Credit Details') }}</h1>
@@ -29,7 +29,7 @@
 
         <!-- Main Content Card -->
         <div
-            class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden border border-gray-100 dark:border-gray-700">
+            class="bg-white dark:bg-bg-dark-primary rounded-xl shadow-sm overflow-hidden border border-gray-100 dark:border-gray-700">
             <!-- Package Header -->
             <div class="p-8 border-b border-gray-100 dark:border-gray-700">
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">

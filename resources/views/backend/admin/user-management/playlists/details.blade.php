@@ -3,10 +3,10 @@
     <x-slot name="breadcrumb">{{ __('Playlist Detail') }}</x-slot>
     <x-slot name="page_slug">user</x-slot>
 
-    <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-8xl mx-auto px-4 sm:px-4 lg:px-4">
         <!-- Header Section -->
         <div
-            class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6 mb-6 border border-gray-200 dark:border-gray-700">
+            class="bg-white dark:bg-bg-dark-primary rounded-2xl shadow-sm p-6 mb-6 border border-gray-200 dark:border-gray-700">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('Playlist Details') }}</h1>
@@ -26,9 +26,9 @@
 
         <!-- Main Content Card -->
         <div
-            class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
+            class="bg-white dark:bg-bg-dark-primary rounded-2xl shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
             <!-- Playlist Header -->
-            <div class="p-8 border-b border-gray-200 dark:border-gray-700">
+            <div class="p-4 border-b border-gray-200 dark:border-gray-700">
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                     <div class="flex-1">
                         <div class="flex items-center gap-4 mb-3">

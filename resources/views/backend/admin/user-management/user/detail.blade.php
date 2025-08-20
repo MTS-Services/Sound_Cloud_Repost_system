@@ -23,7 +23,7 @@
             <!-- Details Card -->
             <div class="lg:col-span-3">
                 <div
-                    class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    class="bg-white dark:bg-bg-dark-primary rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
 
                     <!-- Card Header -->
                     <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-700">
