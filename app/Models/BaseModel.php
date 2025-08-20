@@ -10,7 +10,7 @@ class BaseModel extends Model
 {
     use HasFactory, SoftDeletes;
 
-      protected $appends = [
+    protected $appends = [
 
         'created_at_human',
         'updated_at_human',
@@ -59,4 +59,34 @@ class BaseModel extends Model
     }
 
     // Accessor for modified image
+
+    public function creater_admin()
+    {
+        return $this->belongsTo(Admin::class, 'created_by', 'id')->select(['name', 'id']);
+    }
+
+    public function updater_admin()
+    {
+        return $this->belongsTo(Admin::class, 'updated_by', 'id')->select(['name', 'id']);
+    }
+
+    public function deleter_admin()
+    {
+        return $this->belongsTo(Admin::class, 'deleted_by', 'id')->select(['name', 'id']);
+    }
+
+    public function creater()
+    {
+        return $this->morphTo();
+    }
+
+    public function updater()
+    {
+        return $this->morphTo();
+    }
+
+    public function deleter()
+    {
+        return $this->morphTo();
+    }
 }
