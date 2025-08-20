@@ -48,7 +48,7 @@ class CreditTransactionController extends Controller
                 ->editColumn('credits', function ($credit) {
                     return number_format($credit->credits, 2);
                 })
-                ->editColumn('status', fn($credit) => "<span class='badge badge-{$credit->status_color}'>{$credit->status_label}</span>")
+                ->editColumn('status', fn($credit) => "<span class='badge badge-soft {$credit->status_color}'>{$credit->status_label}</span>")
                 ->editColumn('calculation_type', fn($credit) => "<span class='badge badge-soft {$credit->calculation_type_color}'>{$credit->calculation_type_name}</span>")
                 ->editColumn('action', function ($credit) {
                     $menuItems = $this->creditmeniItems($credit);
@@ -82,7 +82,7 @@ class CreditTransactionController extends Controller
     }
     public function detail($id)
     {
-        $data['transactions'] = CreditTransaction::where('id', decrypt($id))->first();
+        $data['transactions'] = CreditTransaction::findOrFail(decrypt($id));
         return view('backend.admin.order-management.transactions.detail', $data);
     }
 
@@ -211,7 +211,7 @@ class CreditTransactionController extends Controller
     }
     public function paymentDetails($id)
     {
-        $data['payments'] = Payment::where('id', decrypt($id))->first();
+        $data['payments'] = Payment::findOrFail(decrypt($id));
         return view('backend.admin.order-management.payments.detail', $data);
     }
 }
