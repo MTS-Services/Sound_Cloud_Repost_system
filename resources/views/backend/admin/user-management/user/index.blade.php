@@ -123,10 +123,10 @@
                         <span class="">{{ __('Monthly') }}</span>
                         <span class="">
                             <input type="checkbox" name="" id="yearly_plan" x-model="yearly_plan"
-                                class="toggle toggle-secondary"
-                                style="width: calc((var(--size) * 2) - (var(--border) + var(--toggle-p)) * 2); height: var(--size);" />
+                                class="toggle! toggle-error! toggle-md! bg-transparent! checked:bg-none!" />
+
                         </span>
-                        <span class="">{{ __('Yearly') }}</span>
+                        <span class="text-error font-bold">{{ __('Yearly') }}</span>
                     </div>
                 </div>
             </div>
@@ -206,7 +206,8 @@
 
             <!-- Content -->
             <div class="modal-action p-3">
-                <form id="plan-assignment-form" action="{{route('um.user.add-plan')}}" method="POST" class="space-y-4 w-full">
+                <form id="plan-assignment-form" action="{{ route('um.user.add-plan') }}" method="POST"
+                    class="space-y-4 w-full">
                     @csrf
                     <input type="hidden" id="confirm-user-urn" name="user_urn" class="hidden opacity-0 invisible">
                     <input type="hidden" id="confirm-plan-id" name="plan_id" class="hidden opacity-0 invisible">
