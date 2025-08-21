@@ -548,18 +548,18 @@
                                 <form x-ref="finalForm" data-action="{{ route('user.email.store') }}" method="POST"
                                     class="justify-end">
                                     @csrf
-                                    {{-- <button type="button" @click="submitForm()"
+                                    <button type="button" @click="submitForm()"
                                         class="w-auto flex items-center justify-center gap-2 px-6 py-3.5 bg-primary-600 text-white font-medium rounded-lg hover:shadow-md transition-all duration-200 shadow-sm transform hover:-translate-y-0.5">
                                         Complete Registration
                                         
-                                    </button> --}}
-                                    <x-gbutton type="submit" variant="primary" @click="submitForm()">Complete
+                                    </button>
+                                    {{-- <x-gbutton type="submit" variant="primary" @click="submitForm()">Complete
                                         Registration <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
                                             viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd"
                                                 d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
                                                 clip-rule="evenodd" />
-                                        </svg></x-gbutton>
+                                        </svg></x-gbutton> --}}
                                 </form>
                             </div>
                         </div>
