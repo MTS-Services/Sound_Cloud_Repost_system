@@ -40,6 +40,8 @@ Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
 // User routes (The 'verified' middleware has been removed)
 Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user'], function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('/direct-repost/{requestId}', [DashboardController::class, 'directRepost'])->name('direct-repost');
+    Route::get('/decline-repost/{requestId}', [DashboardController::class, 'declineRepost'])->name('decline-repost');
 
     Route::get('/profile-info', [ProfileController::class, 'emailAdd'])->name('email.add');
     Route::post('/profile-info/update', [ProfileController::class, 'emailStore'])->name('email.store');

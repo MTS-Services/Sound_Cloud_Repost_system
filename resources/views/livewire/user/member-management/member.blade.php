@@ -1,6 +1,7 @@
 <div x-data="{
     showModal: @entangle('showModal').live,
-    showRepostsModal: @entangle('showRepostsModal').live}">
+    showRepostsModal: @entangle('showRepostsModal').live
+}">
 
     <!-- Header -->
     <div class="mb-8">
@@ -62,23 +63,30 @@
                 <!-- Profile Header -->
                 <div class="flex items-center gap-3 mb-6">
                     <div class="relative">
-                        <img src="{{ auth_storage_url($user_->avatar) }}" alt="{{ $user_->name }}"
-                            class="w-12 h-12 rounded-full">
-                        <div
-                            class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-card-blue">
-                        </div>
+                        <a class="cursor-pointer" wire:navigate
+                            href="{{ route('user.profile', encrypt($user_->urn)) }}">
+                            <img src="{{ auth_storage_url($user_->avatar) }}" alt="{{ $user_->name }}"
+                                class="w-12 h-12 rounded-full">
+                            <div
+                                class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-card-blue">
+                            </div>
+                        </a>
                     </div>
                     <div>
-                        <h3 class="font-semibold text-lg dark:text-white">{{ $user_->name }}</h3>
-                        <p class="text-text-gray text-sm dark:text-white">{{ $user_->created_at->format('M d, Y') }}</p>
+                        <a class="cursor-pointer" wire:navigate
+                            href="{{ route('user.profile', encrypt($user_->urn)) }}">
+                            <h3 class="font-semibold text-lg dark:text-white hover:underline">{{ $user_->name }}</h3>
+                        </a>
+                        <p class="text-text-gray text-sm dark:text-white">{{ $user_->created_at->format('M d, Y') }}
+                        </p>
                     </div>
                 </div>
                 <!-- Genre Tags -->
                 <div class="flex flex-wrap gap-2 mb-4">
                     @forelse ($user_->genres as $genre)
-                    <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">{{ $genre->genre }}</span>
+                        <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">{{ $genre->genre }}</span>
                     @empty
-                    <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">No genres</span>
+                        <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">No genres</span>
                     @endforelse
                 </div>
 
@@ -112,7 +120,8 @@
                 </div>
 
                 <!-- Request Button -->
-                <x-gbutton variant="primary" :full-width="true" wire:click="openModal('{{ $user_->urn }}')" >Request</x-gbutton>
+                <x-gbutton variant="primary" :full-width="true"
+                    wire:click="openModal('{{ $user_->urn }}')">Request</x-gbutton>
             </div>
         @empty
             <div class="col-span-full text-center py-8">
@@ -242,7 +251,8 @@
 
                             @if (count($tracks) < count($allTracks))
                                 <div class="text-center mt-6">
-                                    <x-gbutton variant="primary" size="sm" wire:click="loadMoreTracks" >Load more</x-gbutton>
+                                    <x-gbutton variant="primary" size="sm" wire:click="loadMoreTracks">Load
+                                        more</x-gbutton>
                                 </div>
                             @endif
                         @elseif($activeTab === 'playlists')
@@ -284,7 +294,8 @@
 
                             @if (count($playlists) < count($allPlaylists))
                                 <div class="text-center mt-6">
-                                    <x-gbutton variant="primary" size="sm" wire:click="loadMorePlaylists" >Load more</x-gbutton>
+                                    <x-gbutton variant="primary" size="sm" wire:click="loadMorePlaylists">Load
+                                        more</x-gbutton>
                                 </div>
                             @endif
                         @endif
@@ -293,7 +304,7 @@
             @endif
         </div>
     </div>
-   
+
     {{-- Reposts Modal --}}
     <div x-data="{ showRepostsModal: @entangle('showRepostsModal').live }" x-show="showRepostsModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
@@ -413,8 +424,8 @@
                         </div>
                         <!-- Confirm Button -->
                         <div class="mt-6 flex justify-center gap-3">
-                            <x-gbutton variant="secondary" wire:click="closeRepostModal" >Cancel</x-gbutton>
-                            <x-gbutton variant="primary" wire:click="createRepostsRequest" >Send Request</x-gbutton>
+                            <x-gbutton variant="secondary" wire:click="closeRepostModal">Cancel</x-gbutton>
+                            <x-gbutton variant="primary" wire:click="createRepostsRequest">Send Request</x-gbutton>
                         </div>
                     @endif
                 </div>

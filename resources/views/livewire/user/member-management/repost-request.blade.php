@@ -10,7 +10,8 @@
             
             {{ __('Send a New Request') }}
         </a> --}}
-        <x-gbutton variant="primary" wire:navigate href="{{ route('user.mm.members.index') }}"><span><x-lucide-plus class="w-5 h-5 mr-1" /></span> Send a New Request</x-gbutton>
+        <x-gbutton variant="primary" wire:navigate href="{{ route('user.mm.members.index') }}"><span><x-lucide-plus
+                    class="w-5 h-5 mr-1" /></span> Send a New Request</x-gbutton>
     </div>
 
     <div class="mb-8">
@@ -167,7 +168,7 @@
                                             <a href="{{ $repostRequest->requester->soundcloud_url ?? '#' }}"
                                                 target="_blank" class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                 SoundCloud Profile</a>
-                                            <a href="{{ route('user.profile', $repostRequest->requester->username ?? $repostRequest->requester->id) }}"
+                                            <a href="{{ route('user.profile', encrypt($repostRequest->requester->urn)) }}"
                                                 wire:navigate class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                 RepostChain Profile</a>
                                         </div>
@@ -275,8 +276,10 @@
                                                 alt="{{ $repostRequest->targetUser->name }} avatar">
                                             <div x-data="{ open: false }" class="inline-block text-left">
                                                 <div class="flex items-center gap-1 cursor-pointer">
-                                                    <span
-                                                        class="text-slate-700 dark:text-gray-300 font-medium">{{ $repostRequest->targetUser->name }}</span>
+                                                    <a class="text-slate-700 dark:text-gray-300 font-medium cursor-pointer hover:underline" wire:navigate
+                                                        href="{{ route('user.profile', encrypt($repostRequest->targetUser->urn)) }}">
+                                                        {{ $repostRequest->targetUser->name }}
+                                                    </a>
                                                 </div>
 
                                                 <!-- Rating Stars -->
@@ -313,7 +316,8 @@
                                         @if ($activeMainTab == 'outgoing_request' && $repostRequest->status !== App\Models\RepostRequest::STATUS_APPROVED)
                                             {{-- <button wire:click="cancleRepostRequest({{ $repostRequest->id }})"
                                                 class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Cancle</button> --}}
-                                                <x-gbutton variant="primary" size="sm" wire:click="cancleRepostRequest({{ $repostRequest->id }})" >Cancle</x-gbutton>
+                                            <x-gbutton variant="primary" size="sm"
+                                                wire:click="cancleRepostRequest({{ $repostRequest->id }})">Cancle</x-gbutton>
                                         @else
                                             @if ($repostRequest->status == App\Models\RepostRequest::STATUS_PENDING && $activeMainTab == 'incoming_request')
                                                 <button wire:click="declineRepostRequest({{ $repostRequest->id }})"

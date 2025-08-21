@@ -250,7 +250,6 @@
                     <div class="flex items-center justify-between p-2">
                         <div>
                             <h3 class="text-lg font-semibold">Latest Repost Requests</h3>
-                            <p class="text-slate-400 text-sm">{{ $totalCount }} requests</p>
                         </div>
                         @if ($repostRequests->count() > 0)
                             <a class="text-orange-500 hover:text-orange-400 text-sm font-medium"
@@ -273,10 +272,10 @@
                                 </div>
                                 <div class="flex space-x-2">
                                     <div class="flex-1"> 
-                                    <x-gbutton :full-width="true" variant="secondary">Decline</x-gbutton>
+                                    <x-gbutton variant="secondary" :full-width="true" wire:navigate onclick="window.location.href = '{{ route('user.decline-repost', encrypt($request->id)) }}'">Decline</x-gbutton>
                                     </div>
                                     <div class="flex-1">
-                                    <x-gbutton :full-width="true" variant="primary">Reposts</x-gbutton>
+                                    <x-gbutton variant="primary" :full-width="true" wire:navigate onclick="window.location.href = '{{ route('user.direct-repost', encrypt($request->id)) }}'">Reposts</x-gbutton>
                                     </div>
                                 </div>
                             </div>
