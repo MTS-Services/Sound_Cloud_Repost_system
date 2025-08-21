@@ -50,6 +50,7 @@ class ProfileController extends Controller
     public function profile($user_urn): View
     {
         $user_urn = decrypt($user_urn);
+        // dd($user_urn);
         $data['tracks'] = $this->trackService->getTracks()->where('user_urn', $user_urn)->count();
         $data['tracks_today'] = $this->trackService->getTracks()->whereDate('created_at_soundcloud', today())->count();
 
@@ -60,10 +61,8 @@ class ProfileController extends Controller
         $data['completed_reposts'] = $this->RepostRequestService->getRepostRequests()->where('requester_urn', $user_urn)->where('status', [ModelsRepostRequest::STATUS_APPROVED])->count();
         $data['reposted_genres'] = $this->trackService->getTracks()->where('user_urn', $user_urn)->pluck('genre')->unique()->values()->count();
         $data['repost_requests'] = ModelsRepostRequest::with(['track', 'targetUser'])->where('requester_urn', $user_urn)->Where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED)->orderBy('sort_order', 'asc')->take(10)->get();
-        $data['user'] = UserInformation::where('user_urn', $user_urn)->first();
-
-
-
+        $data['user'] = User::where('urn', $user_urn)->with('userInfo', 'genres')->first();
+        // dd($data['user']);
         return view('backend.user.profile.profile', $data);
     }
 
