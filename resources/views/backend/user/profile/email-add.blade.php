@@ -313,7 +313,7 @@
                                 </div>
 
                                 <!-- Next Button -->
-                                <button @click="goToStep(2)" {{-- :disabled="!isStep1Valid" --}} :aria-disabled="!isStep1Valid"
+                                <button @click="goToStep(2)" {{-- :disabled="!isStep1Valid" --}} :aria-disabled="true"
                                     class="w-full font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg px-4 py-2 text-base inline-flex items-center justify-center bg-orange-600 text-white hover:bg-orange-500 active:bg-orange-700 disabled:bg-orange-500 disabled:text-gray-50 disabled:cursor-not-allowed disabled:lg:px-3 disabled:lg:py-6 h-auto">
                                     <span>Continue</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
