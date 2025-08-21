@@ -47,19 +47,20 @@ class ProfileController extends Controller
         $this->creditTransactionService = $creditTransactionService;
         $this->profileService = $profileService; // Assign the injected service
     }
-    public function profile()
+    public function profile($user_urn): View
     {
-        $data['tracks'] = $this->trackService->getTracks()->where('user_urn', user()->urn)->count();
+        $user_urn = decrypt($user_urn);
+        $data['tracks'] = $this->trackService->getTracks()->where('user_urn', $user_urn)->count();
         $data['tracks_today'] = $this->trackService->getTracks()->whereDate('created_at_soundcloud', today())->count();
 
-        $data['gevened_repostRequests'] = $this->RepostRequestService->getRepostRequests()->where('requester_urn', user()->urn)->orWhere('status', [ModelsRepostRequest::STATUS_PENDING,ModelsRepostRequest::STATUS_APPROVED,ModelsRepostRequest::STATUS_DECLINE])->count();
-        $data['received_repostRequests'] = $this->RepostRequestService->getRepostRequests()->where('target_user_urn', user()->urn)->count();
-        $data['credit_transactions'] = $this->creditTransactionService->getUserTransactions()->where('receiver_urn', user()->urn)->load('sender');
+        $data['gevened_repostRequests'] = $this->RepostRequestService->getRepostRequests()->where('requester_urn', $user_urn)->orWhere('status', [ModelsRepostRequest::STATUS_PENDING,ModelsRepostRequest::STATUS_APPROVED,ModelsRepostRequest::STATUS_DECLINE])->count();
+        $data['received_repostRequests'] = $this->RepostRequestService->getRepostRequests()->where('target_user_urn', $user_urn)->count();
+        $data['credit_transactions'] = $this->creditTransactionService->getUserTransactions()->where('receiver_urn', $user_urn)->load('sender');
         $data['total_erned_credits'] = $data['credit_transactions']->whereIn('transaction_type', [CreditTransaction::TYPE_EARN,CreditTransaction::TYPE_MANUAL, CreditTransaction::TYPE_BONUS,CreditTransaction::TYPE_PENALTY])->sum('credits');
-        $data['completed_reposts'] = $this->RepostRequestService->getRepostRequests()->where('requester_urn', user()->urn)->where('status', [ModelsRepostRequest::STATUS_APPROVED])->count();
-        $data['reposted_genres'] = $this->trackService->getTracks()->where('user_urn', user()->urn)->pluck('genre')->unique()->values()->count();
-        $data['repost_requests'] = ModelsRepostRequest::with(['track', 'targetUser'])->where('requester_urn', user()->urn)->Where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED)->orderBy('sort_order', 'asc')->take(10)->get();
-        $data['user'] = UserInformation::where('user_urn', user()->urn)->first();
+        $data['completed_reposts'] = $this->RepostRequestService->getRepostRequests()->where('requester_urn', $user_urn)->where('status', [ModelsRepostRequest::STATUS_APPROVED])->count();
+        $data['reposted_genres'] = $this->trackService->getTracks()->where('user_urn', $user_urn)->pluck('genre')->unique()->values()->count();
+        $data['repost_requests'] = ModelsRepostRequest::with(['track', 'targetUser'])->where('requester_urn', $user_urn)->Where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED)->orderBy('sort_order', 'asc')->take(10)->get();
+        $data['user'] = UserInformation::where('user_urn', $user_urn)->first();
 
 
 
@@ -130,7 +131,7 @@ class ProfileController extends Controller
         ]);
 
         // Find the user by URN
-        $user = User::where('urn', user()->urn)->first();
+        $user = User::where('urn', $user_urn)->first();
 
         $user->fill($validated);
 

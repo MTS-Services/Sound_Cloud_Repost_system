@@ -70,8 +70,7 @@
                                     Unverified
                                 </span>
                             @endif
-
-                            @if (!user()->email_verified_at)
+                            @if (!user()->email_verified_at && user()->urn == $user->user_urn)
                                 <form x-data="{ loading: false }" x-ref="form" method="POST"
                                     action="{{ route('user.email.resend.verification') }}"
                                     @submit.prevent="loading = true; $refs.submitButton.disabled = true; $refs.form.submit();">

@@ -43,7 +43,7 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
 
     Route::get('/profile-info', [ProfileController::class, 'emailAdd'])->name('email.add');
     Route::post('/profile-info/update', [ProfileController::class, 'emailStore'])->name('email.store');
-    Route::get('/user-profile', [ProfileController::class, 'profile'])->name('profile');
+    Route::get('/user-profile/{user_urn}', [ProfileController::class, 'profile'])->name('profile');
     Route::post('email/resend-verification', [ProfileController::class, 'resendEmailVerification'])->middleware(['auth', 'throttle:6,1'])->name('email.resend.verification');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

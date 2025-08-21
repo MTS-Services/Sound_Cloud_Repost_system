@@ -188,7 +188,7 @@
                 <ul tabindex="0"
                     class="menu menu-sm dropdown-content bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-lg shadow-lg z-10 mt-3 w-64 py-2 space-y-1">
                     <li>
-                        <a href="{{ route('user.profile') }}" wire:navigate
+                        <a href="{{ route('user.profile', encrypt(user()->urn)) }}" wire:navigate
                             class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
