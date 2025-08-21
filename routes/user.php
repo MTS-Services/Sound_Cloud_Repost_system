@@ -15,6 +15,7 @@ use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Livewire\User\Dashboard;
 use App\Livewire\User\FaqManagement\Faq;
 use App\Livewire\User\HelpAndSupport;
 use App\Livewire\User\MemberManagement\Member;
@@ -39,9 +40,9 @@ Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
 
 // User routes (The 'verified' middleware has been removed)
 Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user'], function () {
-    Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
-    Route::get('/direct-repost/{requestId}', [DashboardController::class, 'directRepost'])->name('direct-repost');
-    Route::get('/decline-repost/{requestId}', [DashboardController::class, 'declineRepost'])->name('decline-repost');
+    Route::get('/dashboard', Dashboard::class)->name('dashboard');
+    // Route::get('/direct-repost/{requestId}', [DashboardController::class, 'directRepost'])->name('direct-repost');
+    // Route::get('/decline-repost/{requestId}', [DashboardController::class, 'declineRepost'])->name('decline-repost');
 
     Route::get('/profile-info', [ProfileController::class, 'emailAdd'])->name('email.add');
     Route::post('/profile-info/update', [ProfileController::class, 'emailStore'])->name('email.store');
