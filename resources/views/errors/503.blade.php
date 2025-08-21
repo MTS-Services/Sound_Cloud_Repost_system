@@ -294,10 +294,7 @@
                 <div class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
                     <input type="email" placeholder="Enter your email"
                         class="flex-1 px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500">
-                    <button
-                        class="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 glow-animation">
-                        Notify Me
-                    </button>
+                    <x-gbutton variant="primary">Notify Me</x-gbutton>
                 </div>
             </div>
 
