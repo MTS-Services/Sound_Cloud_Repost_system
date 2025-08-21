@@ -314,11 +314,20 @@
 
                                 <!-- Next Button -->
                                 <button @click="goToStep(2)" :disabled="!isStep1Valid" :aria-disabled="!isStep1Valid"
-                                    :class="{
-                                        'disabled:bg-orange-500 disabled:text-gray-50 disabled:cursor-not-allowed disabled:lg:px-3 disabled:lg:py-6 h-auto':
-                                            !isStep1Valid
-                                    }"
+                                    :class="!isStep1Valid ? 'disabled:bg-orange-500 disabled:text-gray-50 disabled:cursor-not-allowed disabled:lg:px-3 disabled:lg:py-6 h-auto' :"
                                     class="w-full font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg px-4 py-2 text-base inline-flex items-center justify-center bg-orange-600 text-white hover:bg-orange-500 active:bg-orange-700 ">
+                                    <span>Continue</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <button @click="goToStep(2)" :disabled="!isStep1Valid" :aria-disabled="!isStep1Valid"
+                                    :class="isStep1Valid ? 'bg-primary-600 hover:bg-primary-700 shadow-primary-200' :
+                                        'bg-gray-300 cursor-not-allowed shadow-gray-200'"
+                                    class="w-full flex items-center justify-center gap-2 px-6 py-3.5 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
                                     <span>Continue</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                         fill="currentColor">
