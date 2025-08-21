@@ -1,8 +1,7 @@
 <div>
     <x-slot name="page_slug">dashboard</x-slot>
     
-    {{-- Flash Messages --}}
-    @if (session()->has('success'))
+    {{-- @if (session()->has('success'))
         <div class="fixed top-4 right-4 z-50">
             <div class="bg-green-500/90 text-green-500 px-4 py-2 rounded-md shadow-lg backdrop-blur-sm">
                 {{ session('success') }}
@@ -16,7 +15,7 @@
                 {{ session('error') }}
             </div>
         </div>
-    @endif
+    @endif --}}
     <!-- Dashboard Content (Default) -->
     <div id="content-dashboard" class="page-content py-2 px-2">
         <div

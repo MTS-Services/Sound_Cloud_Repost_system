@@ -130,7 +130,7 @@ class ProfileController extends Controller
         ]);
 
         // Find the user by URN
-        $user = User::where('urn', $user_urn)->first();
+        $user = User::where('urn', user()->urn)->first();
 
         $user->fill($validated);
 
