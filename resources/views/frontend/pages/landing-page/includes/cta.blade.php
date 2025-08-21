@@ -11,28 +11,28 @@
             </div>
 
             <div class="flex flex-col md:flex-row gap-4 justify-center">
-                <x-button size="lg" variant="primary"><svg xmlns="http://www.w3.org/2000/svg" width="20"
+                <x-gbutton size="lg" variant="primary"><svg xmlns="http://www.w3.org/2000/svg" width="20"
                         height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round" class="mr-2">
                         <path d="M9 18V5l12-2v13"></path>
                         <circle cx="6" cy="18" r="3"></circle>
                         <circle cx="18" cy="16" r="3"></circle>
-                    </svg> Join For Free</x-button>
-                <x-button variant="text" size="lg"><svg xmlns="http://www.w3.org/2000/svg" width="20"
+                    </svg> Join For Free</x-gbutton>
+                <x-gbutton variant="text" size="lg"><svg xmlns="http://www.w3.org/2000/svg" width="20"
                         height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round" class="mr-2">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                         <polyline points="17 8 12 3 7 8"></polyline>
                         <line x1="12" x2="12" y1="3" y2="15"></line>
-                    </svg> Submit a Track</x-button>
-                <x-button variant="outline" size="lg">
+                    </svg> Submit a Track</x-gbutton>
+                <x-gbutton variant="outline" size="lg">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round" class="mr-2">
                         <polygon points="5 3 19 12 5 21 5 3"></polygon>
                     </svg>
                     Get Reposts
-                </x-button>
+                </x-gbutton>
             </div>
 
             <div class="mt-8 pt-8 border-t border-dark-border text-center">

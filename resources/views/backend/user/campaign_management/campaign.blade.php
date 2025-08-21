@@ -30,8 +30,8 @@
                 </div>
             </div>
 
-            <x-button variant="primary" wire:click="toggleCampaignsModal"
-                class="mb-2">{{ __('Start a new campaign') }}</x-button>
+            <x-gbutton variant="primary" wire:click="toggleCampaignsModal"
+                class="mb-2">{{ __('Start a new campaign') }}</x-gbutton>
         </div>
     </div>
 
@@ -1035,8 +1035,8 @@
                     <x-lucide-plus class="w-5 h-5 inline mr-2" />
                     {{ __('Buy Credits Now') }}
                 </a> --}}
-                <x-button :full-width="true" variant="primary" wire:navigate href="{{ route('user.add-credits') }}"
-                    class="mb-2">{{ __('Buy Credits Now') }}</x-button>
+                <x-gbutton :full-width="true" variant="primary" wire:navigate href="{{ route('user.add-credits') }}"
+                    class="mb-2">{{ __('Buy Credits Now') }}</x-gbutton>
             </div>
         </div>
     </div>

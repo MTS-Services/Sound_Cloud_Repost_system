@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class Button extends Component
+class Gbutton extends Component
 {
 
     public string $variant;
@@ -36,7 +36,7 @@ class Button extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.global-button');
+        return view('components.gbutton');
     }
 
     public function getButtonClasses(): string
@@ -63,28 +63,29 @@ class Button extends Component
 }
 
 
+
 // // Basic usage
-// <x-button>Click Me</x-button>
+// <x-gbutton>Click Me</x-gbutton>
 
 // // With variants
-// <x-button variant="primary">Primary</x-button>
-// <x-button variant="secondary">Secondary</x-button>
-// <x-button variant="outline">Outline</x-button>
-// <x-button variant="text">Text</x-button>
+// <x-gbutton variant="primary">Primary</x-gbutton>
+// <x-gbutton variant="secondary">Secondary</x-gbutton>
+// <x-gbutton variant="outline">Outline</x-gbutton>
+// <x-gbutton variant="text">Text</x-gbutton>
 
 // // With sizes
-// <x-button size="sm">Small</x-button>
-// <x-button size="md">Medium</x-button>
-// <x-button size="lg">Large</x-button>
+// <x-gbutton size="sm">Small</x-gbutton>
+// <x-gbutton size="md">Medium</x-gbutton>
+// <x-gbutton size="lg">Large</x-gbutton>
 
 // // Full width
-// <x-button :full-width="true">Full Width</x-button>
+// <x-gbutton :full-width="true">Full Width</x-gbutton>
 
 // // With additional attributes
-// <x-button onclick="myFunction()" class="my-custom-class">Custom Button</x-button>
+// <x-gbutton onclick="myFunction()" class="my-custom-class">Custom Button</x-gbutton>
 
 // // Disabled state
-// <x-button :disabled="true">Disabled</x-button>
+// <x-gbutton :disabled="true">Disabled</x-gbutton>
 
 // // Form submit button
-// <x-button type="submit" variant="primary">Submit</x-button>
+// <x-gbutton type="submit" variant="primary">Submit</x-gbutton>

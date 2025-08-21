@@ -27,9 +27,9 @@
                         </a>
                     </span>
                 </div> --}}
-                <x-button variant="secondary" wire:navigate href="{{ route('user.cm.campaigns') }}">
+                <x-gbutton variant="secondary" wire:navigate href="{{ route('user.cm.campaigns') }}">
                     <span>💰</span>{{ __('Earn Credits') }}
-                </x-button>
+                </x-gbutton>
                 <!-- Submit Track -->
                 {{-- <div
                     class="flex items-center gap-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 w-full sm:w-auto justify-center py-2 px-3">
@@ -40,11 +40,11 @@
                         </span>
                         {{ __('Submit Track') }}</a>
                 </div> --}}
-                <x-button variant="primary" wire:navigate href="{{ route('user.track.submit') }}">
+                <x-gbutton variant="primary" wire:navigate href="{{ route('user.track.submit') }}">
                     <span>
                         <x-lucide-music class="inline-block text-center h-4 w-4 text-white mr-1" />
                     </span>{{ __('Submit Track') }}
-                </x-button>
+                </x-gbutton>
             </div>
         </div>
 
@@ -240,8 +240,8 @@
                         </div>
                         <h4 class="font-medium mb-2">No upcoming campaigns scheduled</h4>
                         <p class="text-slate-400 text-sm mb-4">Submit a track to start a new campaign</p>
-                        <x-button variant="primary" wire:navigate href="{{ route('user.cm.my-campaigns') }}">
-                           <span><x-lucide-plus class="inline-block text-center h-4 w-4 text-white mr-1" /></span> Create Campaign</x-button>
+                        <x-gbutton variant="primary" wire:navigate href="{{ route('user.cm.my-campaigns') }}">
+                           <span><x-lucide-plus class="inline-block text-center h-4 w-4 text-white mr-1" /></span> Create Campaign</x-gbutton>
                     </div>
                 </div>
 
@@ -273,10 +273,10 @@
                                 </div>
                                 <div class="flex space-x-2">
                                     <div class="flex-1"> 
-                                    <x-button :full-width="true" variant="secondary">Decline</x-button>
+                                    <x-gbutton :full-width="true" variant="secondary">Decline</x-gbutton>
                                     </div>
                                     <div class="flex-1">
-                                    <x-button :full-width="true" variant="primary">Reposts</x-button>
+                                    <x-gbutton :full-width="true" variant="primary">Reposts</x-gbutton>
                                     </div>
                                 </div>
                             </div>

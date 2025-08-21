@@ -14,13 +14,13 @@
                      <br> 100% Free to use
                  </p>
                  <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                     <x-button variant="primary"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                     <x-gbutton variant="primary"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                              stroke-linecap="round" stroke-linejoin="round" class="mr-2">
                              <path d="M9 18V5l12-2v13"></path>
                              <circle cx="6" cy="18" r="3"></circle>
                              <circle cx="18" cy="16" r="3"></circle>
-                         </svg> Connect SoundCloud</x-button>
+                         </svg> Connect SoundCloud</x-gbutton>
                      {{-- <button
                          class="border-2 border-primary text-primary hover:text-white hover:bg-primary duration-300 px-8 py-3 rounded-md text-lg transition-all flex items-center justify-center">
                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
@@ -30,12 +30,12 @@
                          </svg>
                          See How It Works
                      </button> --}}
-                     <x-button variant="outline"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                     <x-gbutton variant="outline"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                              stroke-linecap="round" stroke-linejoin="round" class="mr-2">
                              <polygon points="5 3 19 12 5 21 5 3"></polygon>
                          </svg>
-                         See How It Works</x-button>
+                         See How It Works</x-gbutton>
                  </div>
              </div>
 

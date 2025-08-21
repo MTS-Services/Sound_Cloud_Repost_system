@@ -447,13 +447,13 @@
 
                         <!-- Navigation Buttons -->
                         <div class="flex flex-col sm:flex-row gap-3 justify-between">
-                            <x-button variant="secondary" @click="goToStep(1)"><svg
+                            <x-gbutton variant="secondary" @click="goToStep(1)"><svg
                                     xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                     fill="currentColor">
                                     <path fill-rule="evenodd"
                                         d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
                                         clip-rule="evenodd" />
-                                </svg> Back</x-button>
+                                </svg> Back</x-gbutton>
                             <button @click="goToStep(3)" :disabled="!canContinueGenres"
                                 :aria-disabled="!canContinueGenres" {{-- disabled condition --}}
                                 class="font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg px-4 py-2 text-base inline-flex items-center justify-center bg-orange-600 text-white hover:bg-orange-500 active:bg-orange-700 disabled:bg-orange-500 disabled:text-gray-50 disabled:cursor-not-allowed disabled:lg:px-3 disabled:lg:py-6 h-auto">
@@ -531,13 +531,13 @@
                             <!-- Final Actions -->
                             <div
                                 class="flex flex-col justify-between sm:flex-row gap-3 animate-slide-in animate-delay-200">
-                                <x-button variant="secondary" @click="goToStep(2)"><svg
+                                <x-gbutton variant="secondary" @click="goToStep(2)"><svg
                                         xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                         fill="currentColor">
                                         <path fill-rule="evenodd"
                                             d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
                                             clip-rule="evenodd" />
-                                    </svg> Back</x-button>
+                                    </svg> Back</x-gbutton>
 
 
                                 <!-- Submit form -->
@@ -549,13 +549,13 @@
                                         Complete Registration
                                         
                                     </button> --}}
-                                    <x-button type="submit" variant="primary" @click="submitForm()">Complete
+                                    <x-gbutton type="submit" variant="primary" @click="submitForm()">Complete
                                         Registration <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
                                             viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd"
                                                 d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
                                                 clip-rule="evenodd" />
-                                        </svg></x-button>
+                                        </svg></x-gbutton>
                                 </form>
                             </div>
                         </div>

@@ -112,7 +112,7 @@
                 </div>
 
                 <!-- Request Button -->
-                <x-button :full-width="true" wire:click="openModal('{{ $user_->urn }}')" variant="primary">Request</x-button>
+                <x-gbutton variant="primary" :full-width="true" wire:click="openModal('{{ $user_->urn }}')" >Request</x-gbutton>
             </div>
         @empty
             <div class="col-span-full text-center py-8">
@@ -242,7 +242,7 @@
 
                             @if (count($tracks) < count($allTracks))
                                 <div class="text-center mt-6">
-                                    <x-button size="sm" wire:click="loadMoreTracks" variant="primary">Load more</x-button>
+                                    <x-gbutton variant="primary" size="sm" wire:click="loadMoreTracks" >Load more</x-gbutton>
                                 </div>
                             @endif
                         @elseif($activeTab === 'playlists')
@@ -284,7 +284,7 @@
 
                             @if (count($playlists) < count($allPlaylists))
                                 <div class="text-center mt-6">
-                                    <x-button size="sm" wire:click="loadMorePlaylists" variant="primary">Load more</x-button>
+                                    <x-gbutton variant="primary" size="sm" wire:click="loadMorePlaylists" >Load more</x-gbutton>
                                 </div>
                             @endif
                         @endif
@@ -413,8 +413,8 @@
                         </div>
                         <!-- Confirm Button -->
                         <div class="mt-6 flex justify-center gap-3">
-                            <x-button wire:click="closeRepostModal" variant="secondary">Cancel</x-button>
-                            <x-button wire:click="createRepostsRequest" variant="primary">Send Request</x-button>
+                            <x-gbutton variant="secondary" wire:click="closeRepostModal" >Cancel</x-gbutton>
+                            <x-gbutton variant="primary" wire:click="createRepostsRequest" >Send Request</x-gbutton>
                         </div>
                     @endif
                 </div>

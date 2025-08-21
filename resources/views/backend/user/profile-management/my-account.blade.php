@@ -17,7 +17,7 @@
                             <p class="text-gray-600 dark:text-white">Update your personal information and preferences
                             </p>
                         </div>
-                        <x-button variant="primary" wire:navigate href="{{ route('user.pm.my-account') }}"><span><x-heroicon-o-arrow-left class="w-4 h-4 mr-1" /></span>Back</x-button>
+                        <x-gbutton variant="primary" wire:navigate href="{{ route('user.pm.my-account') }}"><span><x-heroicon-o-arrow-left class="w-4 h-4 mr-1" /></span>Back</x-gbutton>
 
 
                     </div>
@@ -109,8 +109,8 @@
 
                             {{-- Action Buttons --}}
                             <div class="flex flex-wrap justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
-                                <x-button variant="secondary">Cancle</x-button>
-                                <x-button type="submit" variant="primary">Profile Update</x-button>
+                                <x-gbutton variant="secondary">Cancle</x-gbutton>
+                                <x-gbutton type="submit" variant="primary">Profile Update</x-gbutton>
                             </div>
                         </form>
                     </div>
@@ -195,7 +195,7 @@
                                     </svg>
                                     <span>Visit on SoundCloud</span>
                                 </a>
-                                <x-button wire:click="profileUpdated({{ $user->id }})" variant="primary">
+                                <x-gbutton variant="primary" wire:click="profileUpdated({{ $user->id }})" >
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                         stroke-linejoin="round" class="w-3 h-3 sm:w-4 sm:h-4">
@@ -203,7 +203,7 @@
                                         <path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"></path>
                                     </svg>
                                     <span class="ms-1">Edit</span>
-                                </x-button>
+                                </x-gbutton>
                             </div>
                         </div>
                     </div>
