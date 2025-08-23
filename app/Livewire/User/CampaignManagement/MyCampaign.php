@@ -801,7 +801,7 @@ class MyCampaign extends Component
     public function render()
     {
         try {
-            $campaigns = match ($this->activeMainTab) {
+            $data['campaigns'] = match ($this->activeMainTab) {
                 'active' => $this->getCampaignsQuery()
                     ->Open()
                     ->latest()
@@ -817,13 +817,12 @@ class MyCampaign extends Component
                     ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage)
             };
+            $data['is_pro'] = Campaign::where('user_urn', user()->urn)->where('pro_feature', 1)->exists();
         } catch (\Exception $e) {
-            $campaigns = collect();
+            $data['campaigns'] = collect();
             $this->handleError('Failed to load campaigns', $e);
         }
 
-        return view('backend.user.campaign_management.my_campaigns', [
-            'campaigns' => $campaigns,
-        ]);
+        return view('backend.user.campaign_management.my_campaigns', $data);
     }
 }

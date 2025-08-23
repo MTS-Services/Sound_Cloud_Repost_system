@@ -8,7 +8,8 @@
                 <h1 class="text-xl text-black dark:text-gray-100 font-bold">{{ __('My Campaigns') }}</h1>
             </div>
             <x-gbutton variant="primary" wire:click="toggleCampaignsModal"
-                x-on:click="showCampaignsModal = true"><span><x-lucide-plus class="w-5 h-5 mr-1" /></span>{{ __('Start a new campaign') }}</x-gbutton>
+                x-on:click="showCampaignsModal = true"><span><x-lucide-plus
+                        class="w-5 h-5 mr-1" /></span>{{ __('Start a new campaign') }}</x-gbutton>
         </div>
 
         <div class="mb-8">
@@ -165,7 +166,12 @@
                                     <span></span>
 
                                     <div class="flex flex-wrap justify-center sm:justify-end gap-4">
+                                        @if ($is_pro)
                                         <x-gbutton variant="secondary">{{ __('Set Featured') }}</x-gbutton>
+                                        @else
+                                            <x-gbutton variant="primary" wire:click="toggleUpgradeModal"
+                                                x-on:click="showUpgradeModal = true">Upgrade Plan</x-gbutton>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -271,7 +277,12 @@
                             </div>
                         </div>
                         <div class="flex justify-center">
-                            <x-gbutton variant="primary">Get featured</x-gbutton>
+                            @if ($is_pro)
+                                <x-gbutton variant="primary">Get featured</x-gbutton>
+                            @else
+                                <x-gbutton variant="primary" wire:click="toggleUpgradeModal"
+                                    x-on:click="showUpgradeModal = true">Upgrade Plan</x-gbutton>
+                            @endif
                         </div>
                     </div>
                 </aside>
