@@ -7,8 +7,8 @@
             <div>
                 <h1 class="text-xl text-black dark:text-gray-100 font-bold">{{ __('My Campaigns') }}</h1>
             </div>
-            <x-button variant="primary" wire:click="toggleCampaignsModal"
-                x-on:click="showCampaignsModal = true">{{ __('Start a new campaign') }}</x-button>
+            <x-gbutton variant="primary" wire:click="toggleCampaignsModal"
+                x-on:click="showCampaignsModal = true"><span><x-lucide-plus class="w-5 h-5 mr-1" /></span>{{ __('Start a new campaign') }}</x-gbutton>
         </div>
 
         <div class="mb-8">
@@ -165,11 +165,7 @@
                                     <span></span>
 
                                     <div class="flex flex-wrap justify-center sm:justify-end gap-4">
-                                        <x-button variant="secondary">{{ __('Set Featured') }}</x-button>
-                                        {{-- <button
-                                            class="bg-red-500 text-white py-2 px-4 rounded-sm text-sm font-semibold shadow-sm hover:bg-red-600 transition-colors">
-                                            Boost campaign
-                                        </button> --}}
+                                        <x-gbutton variant="secondary">{{ __('Set Featured') }}</x-gbutton>
                                     </div>
                                 </div>
                             </div>
@@ -275,7 +271,7 @@
                             </div>
                         </div>
                         <div class="flex justify-center">
-                            <x-button variant="primary">Get featured</x-button>
+                            <x-gbutton variant="primary">Get featured</x-gbutton>
                         </div>
                     </div>
                 </aside>

@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class Button extends Component
+class Gbutton extends Component
 {
 
     public string $variant;
@@ -36,16 +36,16 @@ class Button extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.global-button');
+        return view('components.gbutton');
     }
 
     public function getButtonClasses(): string
     {
-        $baseStyles = 'font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg inline-flex items-center justify-center';
+        $baseStyles = 'font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg inline-flex items-center justify-center cursor-pointer disabled:cursor-not-allowed';
 
         $variantStyles = [
-            'primary' => 'bg-orange-500 text-white hover:bg-orange-600 active:bg-orange-700 disabled:bg-orange-500 disabled:text-gray-50 disabled:cursor-not-allowed disabled:lg:px-3 disabled:lg:py-6',
-            'secondary' => 'bg-orange-100 text-orange-700 hover:bg-orange-200 active:bg-orange-300 disabled:bg-gray-100 disabled:text-gray-400',
+            'primary' => 'bg-orange-600 text-white hover:bg-orange-500 active:bg-orange-700 disabled:bg-orange-500 disabled:text-gray-50 disabled:cursor-not-allowed disabled:lg:px-3 disabled:lg:py-6',
+            'secondary' => 'bg-orange-100 text-orange-800 hover:bg-orange-200 active:bg-orange-300 disabled:bg-gray-100 disabled:text-gray-400',
             'outline' => 'border border-orange-500 text-orange-500 hover:bg-orange-50 active:bg-orange-100 disabled:border-gray-300 disabled:text-gray-400',
             'text' => 'text-orange-500 hover:bg-orange-50 active:bg-orange-100 disabled:text-gray-400',
         ];
@@ -63,28 +63,29 @@ class Button extends Component
 }
 
 
+
 // // Basic usage
-// <x-button>Click Me</x-button>
+// <x-gbutton>Click Me</x-gbutton>
 
 // // With variants
-// <x-button variant="primary">Primary</x-button>
-// <x-button variant="secondary">Secondary</x-button>
-// <x-button variant="outline">Outline</x-button>
-// <x-button variant="text">Text</x-button>
+// <x-gbutton variant="primary">Primary</x-gbutton>
+// <x-gbutton variant="secondary">Secondary</x-gbutton>
+// <x-gbutton variant="outline">Outline</x-gbutton>
+// <x-gbutton variant="text">Text</x-gbutton>
 
 // // With sizes
-// <x-button size="sm">Small</x-button>
-// <x-button size="md">Medium</x-button>
-// <x-button size="lg">Large</x-button>
+// <x-gbutton size="sm">Small</x-gbutton>
+// <x-gbutton size="md">Medium</x-gbutton>
+// <x-gbutton size="lg">Large</x-gbutton>
 
 // // Full width
-// <x-button :full-width="true">Full Width</x-button>
+// <x-gbutton :full-width="true">Full Width</x-gbutton>
 
 // // With additional attributes
-// <x-button onclick="myFunction()" class="my-custom-class">Custom Button</x-button>
+// <x-gbutton onclick="myFunction()" class="my-custom-class">Custom Button</x-gbutton>
 
 // // Disabled state
-// <x-button :disabled="true">Disabled</x-button>
+// <x-gbutton :disabled="true">Disabled</x-gbutton>
 
 // // Form submit button
-// <x-button type="submit" variant="primary">Submit</x-button>
+// <x-gbutton type="submit" variant="primary">Submit</x-gbutton>

@@ -29,20 +29,19 @@
                 <section>
                     <h2 class="text-2xl font-bold mb-4">Button Variants</h2>
                     <div class="flex flex-wrap gap-4">
-                        <x-button variant="primary">Primary Button</x-button>
-                        <x-button variant="secondary">Secondary Button</x-button>
-                        <x-button variant="outline">Outline Button</x-button>
-                        <x-button variant="text">Text Button</x-button>
+                        <x-gbutton variant="primary">Primary Button</x-gbutton>
+                        <x-gbutton variant="secondary">Secondary Button</x-gbutton>
+                        <x-gbutton variant="outline">Outline Button</x-gbutton>
+                        <x-gbutton variant="text">Text Button</x-gbutton>
                     </div>
                 </section>
-
                 <!-- Button Sizes -->
                 <section>
                     <h2 class="text-2xl font-bold mb-4">Button Sizes</h2>
                     <div class="flex flex-wrap items-center gap-4">
-                        <x-button size="sm">Small Button</x-button>
-                        <x-button size="md">Medium Button</x-button>
-                        <x-button size="lg">Large Button</x-button>
+                        <x-gbutton size="sm">Small Button</x-gbutton>
+                        <x-gbutton size="md">Medium Button</x-gbutton>
+                        <x-gbutton size="lg">Large Button</x-gbutton>
                     </div>
                 </section>
 
@@ -50,7 +49,7 @@
                 <section>
                     <h2 class="text-2xl font-bold mb-4">With Icons</h2>
                     <div class="flex flex-wrap gap-4">
-                        <x-button>
+                        <x-gbutton>
                             <span class="flex items-center gap-2">
                                 Continue
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,8 +57,8 @@
                                         d="M9 5l7 7-7 7"></path>
                                 </svg>
                             </span>
-                        </x-button>
-                        <x-button variant="secondary">
+                        </x-gbutton>
+                        <x-gbutton variant="secondary">
                             <span class="flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -68,8 +67,8 @@
                                 </svg>
                                 Download
                             </span>
-                        </x-button>
-                        <x-button variant="outline">
+                        </x-gbutton>
+                        <x-gbutton variant="outline">
                             <span class="flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -77,7 +76,7 @@
                                 </svg>
                                 Completed
                             </span>
-                        </x-button>
+                        </x-gbutton>
                     </div>
                 </section>
 
@@ -85,8 +84,8 @@
                 <section>
                     <h2 class="text-2xl font-bold mb-4">Full Width</h2>
                     <div class="space-y-4 max-w-md">
-                        <x-button :full-width="true">Full Width Button</x-button>
-                        <x-button variant="secondary" :full-width="true">Full Width Secondary</x-button>
+                        <x-gbutton :full-width="true">Full Width Button</x-gbutton>
+                        <x-gbutton variant="secondary" :full-width="true">Full Width Secondary</x-gbutton>
                     </div>
                 </section>
 
@@ -94,9 +93,9 @@
                 <section>
                     <h2 class="text-2xl font-bold mb-4">States</h2>
                     <div class="flex flex-wrap gap-4">
-                        <x-button :disabled="true">Disabled Button</x-button>
+                        <x-gbutton :disabled="true">Disabled Button</x-gbutton>
                         <div class="p-4 bg-gray-100 rounded-lg">
-                            <x-button>Button with Focus Ring</x-button>
+                            <x-gbutton>Button with Focus Ring</x-gbutton>
                         </div>
                     </div>
                 </section>
@@ -105,19 +104,19 @@
                 <section>
                     <h2 class="text-2xl font-bold mb-4">Interactive Examples</h2>
                     <div class="flex flex-wrap gap-4">
-                        <x-button onclick="alert('Primary button clicked!')">Click Me</x-button>
-                        <x-button variant="secondary" onclick="console.log('Secondary button clicked')">Log to
-                            Console</x-button>
-                        <x-button variant="outline" type="submit">Submit Form</x-button>
+                        <x-gbutton onclick="alert('Primary button clicked!')">Click Me</x-gbutton>
+                        <x-gbutton variant="secondary" onclick="console.log('Secondary button clicked')">Log to
+                            Console</x-gbutton>
+                        <x-gbutton variant="outline" type="submit">Submit Form</x-gbutton>
                     </div>
                 </section>
             </div>
             <h2 class="text-2xl font-bold my-4">Button Used Here</h2>
             <div class="flex gap-2.5">
-                <x-button variant="primary">Primary</x-button>
-                <x-button variant="secondary">Secondary</x-button>
-                <x-button variant="outline">Outline</x-button>
-                <x-button variant="text">Text</x-button>
+                <x-gbutton variant="primary">Primary</x-gbutton>
+                <x-gbutton variant="secondary">Secondary</x-gbutton>
+                <x-gbutton variant="outline">Outline</x-gbutton>
+                <x-gbutton variant="text">Text</x-gbutton>
             </div>
         </div>
     </main>

@@ -26,11 +26,11 @@
 
 
         <div class="flex items-center justify-between p-6 glass-card">
-            <x-button href="#" :outline="true" type="secondary"
+            <x-button href="#" type="secondary"
                 onclick="window.notificationManager?.sendMarkAllAsReadRequest()">
                 {{ __('Mark All As Read') }}
             </x-button>
-            <x-button href="{{ route('admin.notifications.index') }}" :outline="true">
+            <x-button href="{{ route('admin.notifications.index') }}">
                 {{ __('See All') }}
             </x-button>
         </div>

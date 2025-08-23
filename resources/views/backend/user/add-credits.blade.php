@@ -41,7 +41,7 @@
                             <input type="hidden" name="credits" value="{{ $credit->credits }}">
                             <input type="hidden" name="amount" value="{{ $credit->price }}">
                             <input type="hidden" name="credit_id" value="{{ encrypt($credit->id) }}">
-                            <x-button :full-width="true" variant="primary" class="w-full" type="submit">Buy Now</x-button>
+                            <x-gbutton :full-width="true" variant="primary" class="w-full" type="submit">Buy Now</x-gbutton>
                         </form>
                     </div>
                 </div>

@@ -223,6 +223,7 @@ class User extends AuthBaseModel implements MustVerifyEmail
     {
         return $this->status == self::STATUS_ACTIVE ? self::statusList()[self::STATUS_INACTIVE] : self::statusList()[self::STATUS_ACTIVE];
     }
+    
 
     public function getStatusBtnColorAttribute()
     {

@@ -14,18 +14,18 @@
             <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between">
                 <div class="flex items-center space-x-4 mb-4 lg:mb-0">
                     <div class="relative">
-                        <img src="{{ auth_storage_url(user()->avatar) }}" alt="{{ user()->name }}"
+                        <img src="{{ auth_storage_url($user->avatar) }}" alt="{{ $user->name }}"
                             class="w-20 h-20 rounded-full ring-2 ring-orange-500/30 dark:ring-orange-400/30">
                         <div
                             class="absolute bottom-0 right-0 w-6 h-6 bg-green-500 rounded-full border-2 border-white dark:border-gray-900">
                         </div>
                     </div>
                     <div>
-                        <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">{{ user()->name }}</h2>
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">{{ $user->name }}</h2>
                         <div class="flex items-center space-x-4 mt-2 text-sm text-gray-600 dark:text-gray-300">
                             <div class="flex items-center">
                                 <i data-lucide="calendar" class="w-4 h-4 mr-1 text-gray-500 dark:text-gray-400"></i>
-                                {{ __('Joined') }} {{ user()->created_at->diffForHumans() }}
+                                {{ __('Joined') }} {{ $user->created_at->diffForHumans() }}
                             </div>
                             <div class="flex items-center">
                                 <i data-lucide="users" class="w-4 h-4 mr-1 text-gray-500 dark:text-gray-400"></i>
@@ -49,7 +49,7 @@
                                 Quality Artist
                             </span>
 
-                            @if (user()->email_verified_at)
+                            @if ($user->email_verified_at)
                                 <span
                                     class="flex items-center gap-1 bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 px-3 py-1 rounded-full text-xs font-medium">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
@@ -70,8 +70,7 @@
                                     Unverified
                                 </span>
                             @endif
-
-                            @if (!user()->email_verified_at)
+                            @if (!user()->email_verified_at && user()->urn == $user->user_urn)
                                 <form x-data="{ loading: false }" x-ref="form" method="POST"
                                     action="{{ route('user.email.resend.verification') }}"
                                     @submit.prevent="loading = true; $refs.submitButton.disabled = true; $refs.form.submit();">
@@ -203,7 +202,7 @@
                 <div class="mb-8">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Your Genres</h3>
                     <div class="flex flex-wrap gap-3">
-                        @foreach (user()->genres as $index => $genre)
+                        @foreach ($user->genres as $index => $genre)
                             @php
                                 $colors = [
                                     'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-gray-300',

@@ -101,16 +101,7 @@
                         </div>
 
                         <!-- Submit -->
-                        <button type="submit"
-                            class="w-full py-3 px-6 font-semibold rounded-xl bg-gradient-to-r from-orange-500 to-orange-400 hover:from-orange-400 hover:to-orange-500 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(255,85,0,0.4),_0_0_40px_rgba(255,85,0,0.15)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:ring-offset-[#1E1E1E]">
-                            <span class="flex items-center justify-center space-x-2">
-                                <span>Login</span>
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                </svg>
-                            </span>
-                        </button>
+                        <x-gbutton variant="primary" full-width="true" size="lg" type="submit">Login</x-gbutton>
                     </form>
 
                     <p class="text-center text-xs text-gray-500 mt-8">© {{ now()->year }} RepostChain Admin</p>

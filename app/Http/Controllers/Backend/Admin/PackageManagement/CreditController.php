@@ -107,7 +107,8 @@ class CreditController extends Controller implements HasMiddleware
 
     public function detail($id)
     {
-        $data['credits'] = Credit::where('id', decrypt($id))->first();
+        $data['credits'] = Credit::findOrFail(decrypt($id))->load('updater_admin');
+        $data['updater_name'] = $this->updater_name($data['credits']);
         return view('backend.admin.package_management.credit.detail', $data);
     }
     /**

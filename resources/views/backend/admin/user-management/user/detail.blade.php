@@ -1,253 +1,195 @@
 <x-admin::layout>
-    <x-slot name="title">{{ __(' User Detail') }}</x-slot>
-    <x-slot name="breadcrumb">{{ __(' User Detail') }}</x-slot>
+    <x-slot name="title">{{ __('User Detail') }}</x-slot>
+    <x-slot name="breadcrumb">{{ __('User Detail') }}</x-slot>
     <x-slot name="page_slug">user</x-slot>
 
+    <div class="max-w-8xl mx-auto px-4 sm:px-6 md:px-8">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 py-6">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">User Details</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    Comprehensive information about {{ $user->name }}
+                </p>
+            </div>
+            <x-button href="{{ route('um.user.index') }}" permission="credit-create" class="flex items-center gap-2">
+                <x-lucide-arrow-left class="w-4 h-4" />
+                {{ __('Back to Users') }}
+            </x-button>
+        </div>
 
-    <div class="glass-card rounded-2xl p-6 mb-6">
-        <div class="flex items-center justify-between">
-            <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('User Detail List') }}</h2>
-            <div class="flex items-center gap-2">
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Details Card -->
+            <div class="lg:col-span-3">
+                <div
+                    class="bg-white dark:bg-bg-dark-primary rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
 
-                <x-button href="{{ route('um.user.index') }}" permission="credit-create">
-                    {{ __('Back') }}
-                </x-button>
+                    <!-- Card Header -->
+                    <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-700">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                            <x-lucide-info class="w-5 h-5 text-blue-500" />
+                            User Information
+                        </h2>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="p-6 space-y-6">
+                        <!-- User Info -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Profile Card -->
+                            <div
+                                class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                                <div class="p-6 flex flex-col items-center text-center space-y-4">
+                                    <div class="relative">
+                                        <img class="w-32 h-32 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-lg"
+                                            src="{{ auth_storage_url($user->avatar) }}" alt="{{ $user->name }}">
+                                    </div>
+                                    <div>
+                                        <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ $user->name }}
+                                        </h2>
+                                        <p class="text-sm text-orange-500 font-medium">{{ $user->email }}</p>
+                                    </div>
+
+                                    <div class="w-full space-y-2">
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500 dark:text-gray-400">Status</span>
+                                            <span
+                                                class="px-2 py-1 rounded-full text-xs font-semibold badge badge-soft {{ $user->status_color }}">
+                                                {{ $user?->status_label }}
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500 dark:text-gray-400">Member since</span>
+                                            <span
+                                                class="text-gray-900 dark:text-white">{{ $userinfo->created_at_formatted ?? 'N/A' }}</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Genres -->
+                                    <div class="border-t border-gray-100 dark:border-gray-700 pt-4 mt-4 w-full">
+                                        <h3
+                                            class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                                            <x-lucide-music class="w-5 h-5 text-orange-500" />
+                                            Genres
+                                        </h3>
+                                        <div class="flex flex-wrap gap-2">
+                                            @forelse ($user->genres as $index => $genre)
+                                                @php
+                                                    $colors = [
+                                                        'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
+                                                        'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
+                                                        'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+                                                        'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
+                                                        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
+                                                    ];
+                                                    $colorClass = $colors[$index % count($colors)];
+                                                @endphp
+                                                <span
+                                                    class="{{ $colorClass }} px-3 py-1.5 rounded-full text-xs font-medium">
+                                                    {{ $genre->genre }}
+                                                </span>
+                                            @empty
+                                                <span class="text-gray-500 dark:text-gray-400 text-sm">No genres
+                                                    specified</span>
+                                            @endforelse
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Info Cards -->
+                            <div class="grid grid-cols-1 gap-4">
+                                @foreach (['Full Name' => $userinfo->full_name ?? 'N/A', 'Last Name' => $userinfo->last_name ?? 'N/A', 'Username' => $userinfo->username ?? 'N/A', 'Country' => $userinfo->country ?? 'N/A', 'City' => $userinfo->city ?? 'N/A'] as $label => $value)
+                                    <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">
+                                            {{ $label }}
+                                        </p>
+                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">
+                                            {{ !empty($value) ? $value : 'N/A' }}
+                                        </p>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                        </div>
+
+                        <!-- SoundCloud Details -->
+                        <h3 class="text-md font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                            <x-lucide-cloud class="w-5 h-5 text-orange-500" />
+                            SoundCloud Details
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @foreach (['SoundCloud ID' => $userinfo->soundcloud_id ?? 'N/A', 'SoundCloud URN' => $userinfo->soundcloud_urn ?? 'N/A', 'Plan' => $userinfo->plan ?? 'N/A', 'Followers' => $userinfo->followers_count ?? 'N/A'] as $label => $value)
+                                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">
+                                        {{ $label }}</p>
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">
+                                        {{ $value ?? 'N/A' }}</p>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <div class="mt-4 grid grid-cols-1 gap-4">
+                            @foreach (['SoundCloud URI' => $userinfo->soundcloud_uri ?? 'N/A', 'Permalink URL' => $userinfo->soundcloud_permalink_url ?? 'N/A'] as $label => $value)
+                                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">
+                                        {{ $label }}</p>
+                                    <a href="{{ $value ?? '#' }}"
+                                        class="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline break-all">
+                                        {{ $value ?? 'N/A' }}
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <!-- Statistics -->
+                        <h3 class="text-md font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                            <x-lucide-bar-chart class="w-5 h-5 text-green-500" />
+                            Statistics
+                        </h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            @foreach (['Tracks' => $userinfo->track_count ?? 0, 'Playlists' => $userinfo->playlist_count ?? 0, 'Favorites' => $userinfo->public_favorites_count ?? 0, 'Reposts' => $userinfo->reposts_count ?? 0] as $label => $value)
+                                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg text-center">
+                                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $value ?? '0' }}</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ $label }}</p>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <!-- Additional Details -->
+                        <h3 class="text-md font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                            <x-lucide-more-horizontal class="w-5 h-5 text-purple-500" />
+                            Additional Details
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Website
+                                </p>
+                                <a href="{{ $userinfo->website ?? '#' }}"
+                                    class="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+                                    {{ $userinfo->website_title ?? ($userinfo->website ?? 'N/A') }}
+                                </a>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">
+                                    Description</p>
+                                <p class="text-sm text-gray-900 dark:text-white line-clamp-2">
+                                    {{ $userinfo->description ?? 'N/A' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div
-        class="w-full max-w-8xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
 
-
-        <div class="p-6 text-center">
-
-
-            <div class="flex flex-col md:flex-row gap-6 items-start">
-                <!-- Image -->
-                <div class="w-full md:w-1/3 max-w-56 rounded-xl shadow-lg overflow-hidden">
-                    <img class="w-full h-full object-cover"
-                        src="{{ auth_storage_url($user->avatar) }}" alt="{{ $user->name }}">
-                </div>
-
-                <!-- User Info -->
-                <div class="flex-1 text-left">
-                    <h2 class="text-3xl font-bold mb-2 text-gray-900 dark:text-white">
-                        {{ $user->name }}
-                    </h2>
-
-                    <p class="text-orange-500 mb-2">by {{ $user->email }}</p>
-
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                        Genre:
-                        <span class="text-black dark:text-white">
-                            {{ $user->genres->pluck('genre')->join(', ') ?? 'Unknown' }}
-                        </span>
-                    </p>
-
-                    <p class="text-sm flex items-start gap-2 mb-2">
-                        <span class="font-medium text-black dark:text-white">Status:</span>
-                        <span class="text-green-400 font-semibold">{{ $user?->status_label }}</span>
-                    </p>
-
-                </div>
-            </div>
-
-
-            <!-- Campaign Stats -->
-            <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">First Name</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->first_name ?? "N/A" }}
-                    </p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Last Name</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->last_name ?? "N/A" }}
-                    </p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">{{ __('Full Name') }}</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->full_name ?? "N/A" }}
-                    </p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Username </h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->username ?? "N/A" }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud ID</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->soundcloud_id ?? "N/A" }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud URN</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->soundcloud_urn ?? "N/A" }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud ID</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->soundcloud_id ?? "N/A" }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud Kind</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->soundcloud_kind ?? "N/A" }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud Permalink URL</h4>
-                    <a class="text-xl font-bold text-black dark:text-white hover:underline"  href="{{ $userinfo->soundcloud_permalink_url ?? '' }}">{{ $userinfo->soundcloud_permalink_url ?? "N/A" }}
-                       </a>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud Permalink</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->soundcloud_permalink ?? "N/A" }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud URI</h4>
-                    <a href="{{ $userinfo->soundcloud_uri ?? '' }}" class="hover:underline text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->soundcloud_uri ?? "N/A" }}</a>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud Created At</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->soundcloud_created_at ?? "N/A" }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Soundcloud Last Modified</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->soundcloud_last_modified ?? "N/A" }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Description</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->description ?? "N/A" }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Country</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->country ?? "N/A" }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">City</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->city  ?? "N/A" }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">track_count</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->track_count ?? "0" }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">public_favorites_count</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->public_favorites_count ?? "0" }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">reposts_count</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->reposts_count ?? "0" }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">followers_count</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->followers_count ?? "0" }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Plan</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->plan ?? "N/A" }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Myspace Name</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->myspace_name ?? "N/A" }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Discogs Name</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->discogs_name ?? "N/A" }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Website Title</h4>
-                    <a href="{{ $userinfo->website_title ?? '' }}" class=" hover:underline text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->website_title ?? "N/A" }}</a>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Website</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->website ?? "N/A" }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Online</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->online ?? 'N/A' }}</p>
-                </div>
-
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Comments Count</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->comments_count ?? '0' }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Like Count</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->like_count ?? '0' }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Playlist Count</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->playlist_count ?? '0' }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Private Playlist Count</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->private_playlist_count ?? '0' }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Private Tracks Count</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->private_tracks_count ?? 'N/A' }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Primary Email Confirmed</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->primary_email_confirmed ?? 'N/A' }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Local</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->local ?? 'N/A' }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Upload Seconds Left</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->upload_seconds_left ?? 'N/A' }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Created At</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->created_at_formatted ?? 'N/A' }}</p>
-                </div>
-                <div class="bg-gray-100 dark:bg-slate-800 p-5 rounded-lg shadow">
-                    <h4 class="text-gray-600 dark:text-gray-400 text-sm">Updated At</h4>
-                    <p class="text-xl font-bold text-black dark:text-white">
-                        {{ $userinfo->updated_at_formatted ?? 'N/A' }}</p>
-                </div>
-               
-
-
-
-            </div>
-
-
-        </div>
-
-    </div>
-
+    <style>
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
 </x-admin::layout>

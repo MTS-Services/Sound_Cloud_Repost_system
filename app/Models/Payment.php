@@ -53,6 +53,7 @@ class Payment extends BaseModel
         $this->appends = array_merge(parent::getAppends(), [
             'status_label',
             'status_color',
+            
             'payment_gateway_label',
             'payment_gateway_color',
         ]);
@@ -91,16 +92,35 @@ class Payment extends BaseModel
             self::STATUS_FAILED => 'Failed',
         ];
     }
+         public function getStatusColorAttribute()
+    {
+        return [
+            self::STATUS_SUCCEEDED => 'badge-success',
+            self::STATUS_PROCESSING => 'badge-warning',
+            self::STATUS_FAILED => 'badge-info',
+            self::STATUS_REQUIRES_ACTION => 'badge-error',
+        ][$this->status] ?? 'badge-secondary';
+    }
+
+    public function getStatusBtnColorAttribute()
+    {
+        return [
+            self::STATUS_SUCCEEDED => 'btn-success',
+            self::STATUS_PROCESSING => 'btn-warning',
+            self::STATUS_FAILED => 'btn-info',
+            self::STATUS_REQUIRES_ACTION => 'btn-error',
+        ][$this->status] ?? 'btn-secondary';
+    }
 
 
     public function getStatusLabelAttribute()
     {
         return isset($this->status) ? $this->getStatusList()[$this->status] : 'Unknown';
     }
-    public function getStatusColorAttribute()
-    {
-        return isset($this->status) ? $this->getStatusColorList()[$this->status] : 'gray';
-    }
+    // public function getStatusColorAttribute()
+    // {
+    //     return isset($this->status) ? $this->getStatusColorList()[$this->status] : 'gray';
+    // }
 
 
     public const PAYMENT_GATEWAY_STRIPE = 1;

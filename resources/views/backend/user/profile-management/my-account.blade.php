@@ -17,11 +17,9 @@
                             <p class="text-gray-600 dark:text-white">Update your personal information and preferences
                             </p>
                         </div>
-                        <!-- Back Button -->
-                        <a href="{{ route('user.pm.my-account') }}" class="btn btn-primary dark:text-white">
-                            <x-heroicon-o-arrow-left class="w-4 h-4" />
-                            <span>Back</span>
-                        </a>
+                        <x-gbutton variant="primary" wire:navigate
+                            href="{{ route('user.pm.my-account') }}"><span><x-heroicon-o-arrow-left
+                                    class="w-4 h-4 mr-1" /></span>Back</x-gbutton>
 
 
                     </div>
@@ -106,21 +104,16 @@
                                     <label for="email"
                                         class="block text-sm font-medium text-gray-700 dark:text-white">Email
                                         Address</label>
-                                    <input type="email" id="email" name="email" value="john.doe@example.com"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-gray-400" />
+                                    <input type="email" id="email" name="email" value="{{ user()->email }}"
+                                        placeholder="Enter your email address"
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-gray-400 dark:bg-gray-600 dark:text-white" />
                                 </div>
                             </div>
 
                             {{-- Action Buttons --}}
                             <div class="flex flex-wrap justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
-                                <button type="button"
-                                    class="px-4 py-2flex-1 sm:flex-none px-6 py-3 border text-white dark:text-white border-gray-300 bg-gray-800 rounded-lg hover:bg-gray-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-200 font-medium">
-                                    Cancel
-                                </button>
-                                <button type="submit"
-                                    class=" px-4 py-2flex-1 sm:flex-none px-8 py-3 bg-orange-500 text-white dark:text-white rounded-lg hover:from-primary-600 hover:to-primary-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-200 font-medium shadow-lg hover:shadow-xl">
-                                    Profile Update
-                                </button>
+                                <x-gbutton variant="secondary" wire:click="closeEditProfileModal">Cancle</x-gbutton>
+                                <x-gbutton type="submit" variant="primary">Profile Update</x-gbutton>
                             </div>
                         </form>
                     </div>
@@ -147,7 +140,7 @@
                         <div class="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-6">
                             {{-- Avatar --}}
                             <div class="flex-shrink-0 mx-auto sm:mx-0">
-                                <img src="{{ auth_storage_url(user()->avatar) }}" alt="{{ user()->name ?? 'name' }}"
+                                <img src="{{ auth_storage_url($user->avatar) }}" alt="{{ $user->name ?? 'name' }}"
                                     class="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white dark:border-gray-300 shadow-lg" />
                             </div>
 
@@ -156,7 +149,7 @@
                                 <div
                                     class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 mb-2">
                                     <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-                                        {{ user()->name ?? 'name' }}
+                                        {{ $user->name ?? 'name' }}
                                     </h1>
                                     <span
                                         class="px-3 py-1 bg-orange-500 dark:bg-orange-400 text-white dark:text-gray-900 text-sm font-medium rounded-full self-center">
@@ -180,8 +173,9 @@
                                     </div>
                                     <div class="flex items-center space-x-1">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                            stroke-linejoin="round" class="w-3 h-3 sm:w-4 sm:h-4">
+                                            fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="w-3 h-3 sm:w-4 sm:h-4">
                                             <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
                                             <circle cx="12" cy="10" r="3"></circle>
                                         </svg>
@@ -194,7 +188,7 @@
                             {{-- Buttons --}}
                             <div
                                 class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
-                                <a href="{{ $user->userInfo->soundcloud_permalink_url ?? '#' }}"
+                                <a href="{{ user()->soundcloud_permalink_url ?? '#' }}"
                                     class="bg-gray-300 hover:bg-gray-400 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-900 dark:text-white px-3 py-1 sm:px-4 sm:py-2 rounded-lg transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -205,16 +199,18 @@
                                     </svg>
                                     <span>Visit on SoundCloud</span>
                                 </a>
-                                <button wire:click="profileUpdated({{ $user->id }})"
-                                    class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 sm:px-4 sm:py-2 rounded-lg transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="w-3 h-3 sm:w-4 sm:h-4">
-                                        <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                        <path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"></path>
-                                    </svg>
-                                    <span>Edit</span>
-                                </button>
+                                @if (user()->urn == $user->urn)
+                                    <x-gbutton variant="primary" wire:click="profileUpdated({{ user()->id }})">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="w-3 h-3 sm:w-4 sm:h-4">
+                                            <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                            <path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"></path>
+                                        </svg>
+                                        <span class="ms-1">Edit</span>
+                                    </x-gbutton>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -323,15 +319,17 @@
                                         Recent reposts
                                     </button>
 
-                                    <button type="button"
-                                        :class="{
-                                            'text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400': activeTab === 'transaction',
-                                            'text-gray-500 border-transparent dark:text-slate-400': activeTab !== 'transaction'
-                                        }"
-                                        @click="activeTab = 'transaction'"
-                                        class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors">
-                                        Transaction
-                                    </button>
+                                    @if (user()->urn == $user->urn)
+                                        <button type="button"
+                                            :class="{
+                                                'text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400': activeTab === 'transaction',
+                                                'text-gray-500 border-transparent dark:text-slate-400': activeTab !== 'transaction'
+                                            }"
+                                            @click="activeTab = 'transaction'"
+                                            class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors">
+                                            Transaction
+                                        </button>
+                                    @endif
                                 </div>
 
                                 {{-- Tab Panels --}}
@@ -583,7 +581,7 @@
                                                 New & popular tracks from
                                                 <span
                                                     class="text-orange-500 dark:text-orange-400 hover:text-orange-400/90 dark:hover:text-orange-300">
-                                                    {{ user()->name }}
+                                                    {{ $user->name }}
                                                 </span>
                                             </h2>
                                             <a href="#"
@@ -636,7 +634,7 @@
                                                     New & popular playlists from
                                                     <span
                                                         class="text-orange-500 dark:text-orange-400 hover:text-orange-400/90 dark:hover:text-orange-300">
-                                                        {{ user()->name }}
+                                                        {{ $user->name }}
                                                     </span>
                                                 </h2>
                                                 <a href="#"
@@ -950,44 +948,48 @@
                                         @endforeach
                                     </div>
 
-                                    {{-- Transaction Tab --}}
-                                    <div class="tab-panel mt-4" x-show="activeTab === 'transaction'" x-transition>
-                                        <div class="w-full overflow-x-auto">
-                                            <table
-                                                class="min-w-[900px] w-full table-fixed text-sm text-left divide-y divide-gray-200 dark:divide-gray-700">
-                                                <thead
-                                                    class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white text-xs sm:text-sm">
-                                                    <tr>
-                                                        <th class="w-10 px-2 py-3">ID</th>
-                                                        <th class="w-28 px-2 py-3">Sender Name</th>
-                                                        <th class="w-20 px-2 py-3">Amount</th>
-                                                        <th class="w-20 px-2 py-3">Credits</th>
-                                                        <th class="w-24 px-2 py-3">Type</th>
-                                                        <th class="w-20 px-2 py-3">Status</th>
-                                                    </tr>
-                                                </thead>
-                                                @foreach ($transactions as $transaction)
-                                                    <tbody
-                                                        class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
-                                                        <tr class="border-b border-gray-200 dark:border-gray-700">
-                                                            <td class="px-2 py-2">{{ $loop->iteration }}</td>
-                                                            <td class="px-2 py-2">
-                                                                {{ $transaction->sender?->name ?? 'System' }}
-                                                            </td>
-                                                            <td class="px-2 py-2">{{ $transaction->amount ?? '0.00' }}
-                                                            </td>
-                                                            <td class="px-2 py-2">{{ $transaction->credits }}</td>
-                                                            <td class="px-2 py-2">{{ $transaction->transaction_type_name }}</td>
-                                                            <td class="px-2 py-2 text-green-600 font-semibold">
-                                                                <span
-                                                                    class="badge badge-soft badge-{{ $transaction->status_color }}">{{ $transaction->status_label }}</span>
-                                                            </td>
+                                    @if (user()->urn == $user->user_urn)
+                                        {{-- Transaction Tab --}}
+                                        <div class="tab-panel mt-4" x-show="activeTab === 'transaction'" x-transition>
+                                            <div class="w-full overflow-x-auto">
+                                                <table
+                                                    class="min-w-[900px] w-full table-fixed text-sm text-left divide-y divide-gray-200 dark:divide-gray-700">
+                                                    <thead
+                                                        class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white text-xs sm:text-sm">
+                                                        <tr>
+                                                            <th class="w-10 px-2 py-3">ID</th>
+                                                            <th class="w-28 px-2 py-3">Sender Name</th>
+                                                            <th class="w-20 px-2 py-3">Amount</th>
+                                                            <th class="w-20 px-2 py-3">Credits</th>
+                                                            <th class="w-24 px-2 py-3">Type</th>
+                                                            <th class="w-20 px-2 py-3">Status</th>
                                                         </tr>
-                                                    </tbody>
-                                                @endforeach
-                                            </table>
+                                                    </thead>
+                                                    @foreach ($transactions as $transaction)
+                                                        <tbody
+                                                            class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+                                                            <tr class="border-b border-gray-200 dark:border-gray-700">
+                                                                <td class="px-2 py-2">{{ $loop->iteration }}</td>
+                                                                <td class="px-2 py-2">
+                                                                    {{ $transaction->sender?->name ?? 'System' }}
+                                                                </td>
+                                                                <td class="px-2 py-2">
+                                                                    {{ $transaction->amount ?? '0.00' }}
+                                                                </td>
+                                                                <td class="px-2 py-2">{{ $transaction->credits }}</td>
+                                                                <td class="px-2 py-2">
+                                                                    {{ $transaction->transaction_type_name }}</td>
+                                                                <td class="px-2 py-2 text-green-600 font-semibold">
+                                                                    <span
+                                                                        class="badge badge-soft badge-{{ $transaction->status_color }}">{{ $transaction->status_label }}</span>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    @endforeach
+                                                </table>
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 </div>
                             </div>
                         </div> {{-- /Main Content --}}

@@ -20,7 +20,7 @@ use App\Services\Admin\Faq\FaqCategoryService;
 class FaqController extends Controller implements HasMiddleware
 {
     protected FaqService $faqService;
-     protected FaqCategoryService $faqCategoryService;
+    protected FaqCategoryService $faqCategoryService;
     use AuditRelationTraits;
     public function __construct(FaqService $faqService, FaqCategoryService $faqCategoryService)
     {
@@ -68,7 +68,7 @@ class FaqController extends Controller implements HasMiddleware
     {
 
         if ($request->ajax()) {
-            $query = $this->faqService->getFaqs()->with('faqCategory');
+            $query = $this->faqService->getFaqs();
             return DataTables::eloquent($query)
 
                 ->editColumn('faq_category_id', function ($faq) {
@@ -77,7 +77,7 @@ class FaqController extends Controller implements HasMiddleware
 
                 ->editColumn('status', fn($faq) => "<span class='badge badge-soft {$faq->status_color}'>{$faq->status_label}</span>")
 
-            
+
                 ->editColumn('created_by', function ($faq) {
                     // return $faq->creater_name;
                     return $this->creater_name($faq);
@@ -103,20 +103,20 @@ class FaqController extends Controller implements HasMiddleware
                 'data-id' => encrypt($model->id),
                 'className' => 'view',
                 'label' => 'Details',
-                'permissions' => ['permission-list', 'permission-delete', 'permission-status']
+                'permissions' => ['faq-details']
             ],
             [
                 'routeName' => 'fm.faq.edit',
                 'params' => [encrypt($model->id)],
                 'label' => 'Edit',
-                'permissions' => ['permission-edit']
+                'permissions' => ['faq-edit']
             ],
             [
                 'routeName' => 'fm.faq.status',
                 'params' => [encrypt($model->id)],
                 'label' => $model->status ? 'Deactivate' : 'Activate',
                 'status' => true,
-                'permissions' => ['permission-status']
+                'permissions' => ['faq-status']
             ],
 
             [
@@ -124,7 +124,7 @@ class FaqController extends Controller implements HasMiddleware
                 'params' => [encrypt($model->id)],
                 'label' => 'Delete',
                 'delete' => true,
-                'permissions' => ['permission-delete']
+                'permissions' => ['faq-delete']
             ],
 
 
@@ -162,9 +162,11 @@ class FaqController extends Controller implements HasMiddleware
      */
     public function show(Request $request, string $id)
     {
+        
         $data = $this->faqService->getFaq($id);
         $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
+        // dd($data);
         return response()->json($data);
     }
 
@@ -181,7 +183,7 @@ class FaqController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-   public function update(FaqRequest $request, string $id)
+    public function update(FaqRequest $request, string $id)
     {
         try {
             $validated = $request->validated();
@@ -259,7 +261,7 @@ class FaqController extends Controller implements HasMiddleware
             ]
 
         ];
-    } 
+    }
     public function restore(string $id): RedirectResponse
     {
         try {

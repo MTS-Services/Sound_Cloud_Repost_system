@@ -15,6 +15,7 @@ use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Livewire\User\Dashboard;
 use App\Livewire\User\FaqManagement\Faq;
 use App\Livewire\User\HelpAndSupport;
 use App\Livewire\User\MemberManagement\Member;
@@ -39,11 +40,13 @@ Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
 
 // User routes (The 'verified' middleware has been removed)
 Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user'], function () {
-    Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard', Dashboard::class)->name('dashboard');
+    // Route::get('/direct-repost/{requestId}', [DashboardController::class, 'directRepost'])->name('direct-repost');
+    // Route::get('/decline-repost/{requestId}', [DashboardController::class, 'declineRepost'])->name('decline-repost');
 
     Route::get('/profile-info', [ProfileController::class, 'emailAdd'])->name('email.add');
     Route::post('/profile-info/update', [ProfileController::class, 'emailStore'])->name('email.store');
-    Route::get('/user-profile', [ProfileController::class, 'profile'])->name('profile');
+    Route::get('/user-profile/{user_urn}', [ProfileController::class, 'profile'])->name('profile');
     Route::post('email/resend-verification', [ProfileController::class, 'resendEmailVerification'])->middleware(['auth', 'throttle:6,1'])->name('email.resend.verification');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -73,7 +76,7 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
     Route::get('reposts-request', RepostRequest::class)->name('reposts-request');
 
     Route::group(['as' => 'pm.', 'prefix' => 'profile-management'], function () {
-        Route::get('/my-account', MyAccount::class)->name('my-account');
+        Route::get('/my-account/{user_urn?}', MyAccount::class)->name('my-account');
     });
 
     // Help Support

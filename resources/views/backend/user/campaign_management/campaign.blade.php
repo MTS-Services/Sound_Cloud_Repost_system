@@ -30,8 +30,8 @@
                 </div>
             </div>
 
-            <x-button variant="primary" wire:click="toggleCampaignsModal"
-                class="mb-2">{{ __('Start a new campaign') }}</x-button>
+            <x-gbutton variant="primary" wire:click="toggleCampaignsModal"
+                class="mb-2">{{ __('Start a new campaign') }}</x-gbutton>
         </div>
     </div>
 
@@ -252,7 +252,7 @@
                                                 target="_blank"
                                                 class="block hover:bg-gray-800 px-3 py-1 rounded">Visit SoundCloud
                                                 Profile</a>
-                                            <a href="{{ route('user.profile') }}" wire:navigate
+                                            <a href="{{ route('user.pm.my-account', $campaign_->user_urn) }}" wire:navigate
                                                 class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                 RepostChain Profile</a>
                                             {{-- <button
@@ -286,7 +286,7 @@
                                         <!-- Repost Button -->
                                         <button wire:click="confirmRepost('{{ $campaign_->id }}')"
                                             @class([
-                                                'flex items-center gap-2 py-2 px-3 sm:px-5 sm:pl-8 rounded-md shadow-sm text-sm sm:text-base transition-colors',
+                                                'flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-colors',
                                                 'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white dark:text-gray-300 cursor-pointer' => $this->canRepost(
                                                     $campaign_->id),
                                                 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
@@ -587,23 +587,15 @@
                             {{-- Load More Button for Tracks --}}
                             @if ($hasMoreTracks)
                                 <div class="text-center mt-4">
-                                    {{-- <button wire:click="loadMoreTracks" wire:loading.attr="disabled"
-                                        class="bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors duration-200 disabled:bg-orange-300 disabled:cursor-not-allowed">
+                                    <button wire:click="loadMoreTracks" wire:loading.attr="disabled"
+                                        class="bg-orange-500 text-white font-semibold px-3 py-1.5 text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 hover:bg-orange-600 transition-colors duration-200 disabled:bg-orange-300 disabled:cursor-not-allowed">
                                         <span wire:loading.remove wire:target="loadMoreTracks">
                                             Load More
                                         </span>
                                         <span wire:loading wire:target="loadMoreTracks">
                                             Loading...
                                         </span>
-                                    </button> --}}
-                                    <x-button variant="primary" wire:click="loadMoreTracks" wire:loading.attr="disabled">
-                                        <span wire:loading.remove wire:target="loadMoreTracks">
-                                            Load More
-                                        </span>
-                                        <span wire:loading wire:target="loadMoreTracks">
-                                            Loading...
-                                        </span>
-                                    </x-button>
+                                    </button>
                                 </div>
                             @endif
                         </div>
@@ -650,7 +642,7 @@
                             @if ($hasMorePlaylists)
                                 <div class="text-center mt-4">
                                     <button wire:click="loadMorePlaylists" wire:loading.attr="disabled"
-                                        class="bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors duration-200 disabled:bg-orange-300 disabled:cursor-not-allowed">
+                                        class="bg-orange-500 text-white font-semibold px-3 py-1.5 text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 hover:bg-orange-600 transition-colors duration-200 disabled:bg-orange-300 disabled:cursor-not-allowed">
                                         <span wire:loading.remove wire:target="loadMorePlaylists">
                                             Load More
                                         </span>
@@ -1043,8 +1035,8 @@
                     <x-lucide-plus class="w-5 h-5 inline mr-2" />
                     {{ __('Buy Credits Now') }}
                 </a> --}}
-                <x-button :full-width="true" variant="primary" wire:navigate href="{{ route('user.add-credits') }}"
-                    class="mb-2">{{ __('Buy Credits Now') }}</x-button>
+                <x-gbutton :full-width="true" variant="primary" wire:navigate href="{{ route('user.add-credits') }}"
+                    class="mb-2">{{ __('Buy Credits Now') }}</x-gbutton>
             </div>
         </div>
     </div>
