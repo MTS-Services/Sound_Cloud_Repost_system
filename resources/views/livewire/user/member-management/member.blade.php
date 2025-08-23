@@ -64,7 +64,7 @@
                 <div class="flex items-center gap-3 mb-6">
                     <div class="relative">
                         <a class="cursor-pointer" wire:navigate
-                            href="{{ route('user.profile', encrypt($user_->urn)) }}">
+                            href="{{ route('user.pm.my-account', $user_->urn) }}">
                             <img src="{{ auth_storage_url($user_->avatar) }}" alt="{{ $user_->name }}"
                                 class="w-12 h-12 rounded-full">
                             <div
@@ -74,7 +74,7 @@
                     </div>
                     <div>
                         <a class="cursor-pointer" wire:navigate
-                            href="{{ route('user.profile', encrypt($user_->urn)) }}">
+                            href="{{ route('user.pm.my-account', $user_->urn) }}">
                             <h3 class="font-semibold text-lg dark:text-white hover:underline">{{ $user_->name }}</h3>
                         </a>
                         <p class="text-text-gray text-sm dark:text-white">{{ $user_->created_at->format('M d, Y') }}

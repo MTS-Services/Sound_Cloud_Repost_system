@@ -76,7 +76,7 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
     Route::get('reposts-request', RepostRequest::class)->name('reposts-request');
 
     Route::group(['as' => 'pm.', 'prefix' => 'profile-management'], function () {
-        Route::get('/my-account', MyAccount::class)->name('my-account');
+        Route::get('/my-account/{user_urn?}', MyAccount::class)->name('my-account');
     });
 
     // Help Support

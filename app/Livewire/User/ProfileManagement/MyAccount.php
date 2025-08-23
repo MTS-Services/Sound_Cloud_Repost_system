@@ -38,6 +38,7 @@ class MyAccount extends Component
     #[Url(as: 'playlistTracksPage')]
     public ?int $playlistTracksPage = 1;
 
+    protected $user_urn = null;
     // Dependencies (non-serializable) — keep private
     private UserService $userService;
     private CreditTransactionService $creditTransactionService;
@@ -49,8 +50,9 @@ class MyAccount extends Component
         $this->creditTransactionService = $creditTransactionService;
     }
 
-    public function mount(): void
+    public function mount($user_urn = null): void
     {
+        $this->user_urn = $user_urn;
         // If a playlist is in the URL, ensure we land on the right tab/view
         if ($this->selectedPlaylistId) {
             $this->activeTab = 'playlists';
@@ -104,17 +106,23 @@ class MyAccount extends Component
         $this->showEditProfileModal = true;
     }
 
+    public function closeEditProfileModal(): void
+    {
+        $this->showEditProfileModal = false;
+    }
+
     public function render()
     {
-        $user = $this->userService->getMyAccountUser();
+        $user_urn = $this->user_urn ?? user()->urn;
+        $user = $this->userService->getUser(encrypt($user_urn), 'urn');
 
         // Tracks pagination
-        $tracks = Track::where('user_urn', user()->urn)
+        $tracks = Track::where('user_urn', $user_urn)
             ->latest('created_at')
             ->paginate(6, ['*'], 'tracksPage', $this->tracksPage);
 
         // Playlists pagination
-        $playlists = Playlist::where('user_urn', user()->urn)
+        $playlists = Playlist::where('user_urn', $user_urn)
             ->latest('created_at')
             ->paginate(8, ['*'], 'playlistsPage', $this->playlistsPage);
 
@@ -124,7 +132,7 @@ class MyAccount extends Component
 
         if ($this->showPlaylistTracks && $this->selectedPlaylistId) {
             $selectedPlaylist = Playlist::where('id', $this->selectedPlaylistId)
-                ->where('user_urn', user()->urn)
+                ->where('user_urn', $user_urn)
                 ->first();
 
             if ($selectedPlaylist) {
@@ -137,7 +145,7 @@ class MyAccount extends Component
 
         // Recent reposts (not paginated here)
         $reposts = Repost::with(['campaign.music', 'request.track'])
-            ->where('reposter_urn', user()->urn)->where(function ($query) {
+            ->where('reposter_urn', $user_urn)->where(function ($query) {
                 $query->whereNotNull('campaign_id')->orWhereNotNull('repost_request_id');
             })
             ->orderByDesc('reposted_at')
