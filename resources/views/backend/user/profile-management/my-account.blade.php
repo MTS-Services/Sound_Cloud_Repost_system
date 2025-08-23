@@ -319,7 +319,7 @@
                                         Recent reposts
                                     </button>
 
-                                    @if (user()->urn != $user->urn)
+                                    @if (user()->urn == $user->urn)
                                         <button type="button"
                                             :class="{
                                                 'text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400': activeTab === 'transaction',
