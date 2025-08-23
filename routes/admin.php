@@ -9,6 +9,7 @@ use App\Http\Controllers\Backend\Admin\PackageManagement\PlanController;
 use App\Http\Controllers\Backend\Admin\PackageManagement\CreditController;
 use App\Http\Controllers\Backend\Admin\PackageManagement\FeatureController;
 use App\Http\Controllers\Backend\Admin\AdminManagement\PermissionController;
+use App\Http\Controllers\Backend\Admin\ApplicationSettingController;
 use App\Http\Controllers\Backend\Admin\CampaignManagement\CampaignController;
 use App\Http\Controllers\Backend\Admin\UserManagement\UserPlaylistController;
 use App\Http\Controllers\Backend\Admin\UserManagement\UserTracklistController;
@@ -228,5 +229,13 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         Route::post('/mark-as-read', 'markAsRead')->name('mark-as-read');
         Route::post('/mark-all-read', 'markAllAsRead')->name('mark-all-read');
         Route::delete('/delete', 'destroy')->name('destroy');
+    });
+
+    // Application Settings 
+    Route::controller(ApplicationSettingController::class)->name('app-settings.')->prefix('application-settings')->group(function () {
+        Route::post('/update-settings', 'updateSettings')->name('update-settings');
+        Route::get('/', 'general')->name('general');
+        Route::get('/database', 'database')->name('database');
+        Route::get('/smtp', 'smtp')->name('smtp');
     });
 });

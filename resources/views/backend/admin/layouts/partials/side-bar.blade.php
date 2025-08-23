@@ -73,13 +73,14 @@
                         'active' => 'user',
                         'permission' => 'user-list',
                     ],
-
+                
                     [
                         'name' => 'User Plan',
                         'route' => route('um.user-plane.index'),
                         'icon' => 'user',
                         'active' => 'users_plane',
-                        'permission' => 'user-plane-list',]
+                        'permission' => 'user-plane-list',
+                    ],
                     // [
                     //     'name' => 'Top Reposters',
                     //     'route' => '#',
@@ -192,8 +193,30 @@
                         'active' => 'faq',
                         'permission' => 'faq-list',
                     ],
-                     
                 ]" />
+            <x-admin.navlink icon="settings" name="Settings" :page_slug="$active" :items="[
+                [
+                    'name' => 'General Settings',
+                    'route' => route('app-settings.general'),
+                    'icon' => 'sliders',
+                    'active' => 'app-general-settings',
+                    'permission' => 'application-setting-general',
+                ],
+                [
+                    'name' => 'Database Settings',
+                    'route' => route('app-settings.database'),
+                    'icon' => 'database',
+                    'active' => 'app-database-settings',
+                    'permission' => 'application-setting-database',
+                ],
+                [
+                    'name' => 'Email Settings',
+                    'route' => route('app-settings.smtp'),
+                    'icon' => 'server',
+                    'active' => 'app-smtp-settings',
+                    'permission' => 'application-setting-smtp',
+                ],
+            ]" />
         </nav>
     </div>
 </aside>
