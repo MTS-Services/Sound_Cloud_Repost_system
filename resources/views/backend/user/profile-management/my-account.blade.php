@@ -1,6 +1,5 @@
 <section>
-    <x-slot name="page_slug">my-account</x-slot>
-
+    <x-slot name="page_slug">{{ user()->urn == $user->urn ? 'my-account' : '' }}</x-slot>
     @if ($showEditProfileModal)
         <section>
             <div class="container mx-auto px-4 py-8 lg:py-12">
