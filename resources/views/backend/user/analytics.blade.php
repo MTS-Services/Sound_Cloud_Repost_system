@@ -6,24 +6,25 @@
         <div class="mx-auto space-y-8">
             <div>
                 <h1 class="text-3xl font-bold dark:text-white text-gray-800">Analytics Dashboard</h1>
-                <p class="text-gray-500">Comprehensive insights into your campaign performance and audience engagement
+                <p class="text-gray-600 dark:text-gray-300">Comprehensive insights into your campaign performance and audience engagement
                 </p>
             </div>
 
-            <div class="flex flex-wrap gap-2 sm:flex-nowrap sm:space-x-4">
-                <button class="px-4 py-2 bg-orange-500 text-white rounded-lg font-medium w-full sm:w-auto">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <button @click="filter = 'last_7_days'"
+                class="px-4 py-2 bg-orange-500 text-white rounded-lg font-medium w-full sm:w-auto">
                     Last 7 days
                 </button>
-                <button
-                    class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 w-full sm:w-auto">
+                <button @click="filter = 'last_30_days'"
+                    class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg font-medium hover:bg-orange-500 hover:text-white w-full sm:w-auto">
                     Last 30 days
                 </button>
-                <button
-                    class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 w-full sm:w-auto">
+                <button @click="filter = 'last_90_days'"
+                    class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg font-medium hover:bg-orange-500 hover:text-white w-full sm:w-auto">
                     Last 90 days
                 </button>
-                <button
-                    class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 w-full sm:w-auto">
+                <button @click="filter = 'custom_range'"
+                    class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg font-medium hover:bg-orange-500 hover:text-white w-full sm:w-auto">
                     Custom Range
                 </button>
             </div>
@@ -31,7 +32,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                <div class="dark:bg-gray-800 bg-white p-6 rounded-lg custom-shadow border border-gray-200">
+                <div class="dark:bg-gray-800 bg-white p-6 rounded-lg custom-shadow border border-gray-200 dark:border-gray-700">
                     <div class="flex justify-between items-start mb-4">
                         <h2 class="dark:text-white text-gray-800 font-medium">Total Impressions</h2>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
@@ -52,7 +53,7 @@
                     </div>
                 </div>
 
-                <div class="dark:bg-gray-800 bg-white p-6 rounded-lg custom-shadow border border-gray-200">
+                <div class="dark:bg-gray-800 bg-white p-6 rounded-lg custom-shadow border border-gray-200 dark:border-gray-700">
                     <div class="flex justify-between items-start mb-4">
                         <h2 class="dark:text-white text-gray-800 font-medium">Click-through Rate</h2>
                         <span class="text-orange-500 font-bold">👆</span>
@@ -66,7 +67,7 @@
                     </div>
                 </div>
 
-                <div class="dark:bg-gray-800 bg-white p-6 rounded-lg custom-shadow border border-gray-200">
+                <div class="dark:bg-gray-800 bg-white p-6 rounded-lg custom-shadow border border-gray-200 dark:border-gray-700">
                     <div class="flex justify-between items-start mb-4">
                         <h2 class="text-gray-800 dark:text-gray-300 font-medium">Cost Per Click</h2>
                         <span class="text-green-500 font-bold">$</span>
@@ -82,44 +83,44 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="dark:bg-gray-800 bg-white p-6 rounded-lg custom-shadow border border-gray-200">
+                <div class="dark:bg-gray-800 bg-white p-6 rounded-lg custom-shadow border border-gray-200 dark:border-gray-700">
                     <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-300 mb-6">Top Performing Campaigns
                     </h2>
                     <div class="space-y-6">
                         <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 da rounded-lg">
                             <div>
                                 <p class="font-medium text-gray-800 dark:text-gray-200">Summer Music Festival</p>
-                                <p class="text-sm text-gray-300">Active • 12 days remaining</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Active • 12 days remaining</p>
                             </div>
                             <div class="text-right">
                                 <p class="font-bold text-gray-800 dark:text-gray-200">15.2K</p>
-                                <p class="text-sm text-gray-300">impressions</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">impressions</p>
                             </div>
                         </div>
                         <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                             <div>
                                 <p class="font-medium text-gray-800 dark:text-gray-200">New Album Launch</p>
-                                <p class="text-sm text-gray-300">Active • 8 days remaining</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Active • 8 days remaining</p>
                             </div>
                             <div class="text-right">
                                 <p class="font-bold text-gray-800 dark:text-gray-200">12.8K</p>
-                                <p class="text-sm text-gray-300">impressions</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">impressions</p>
                             </div>
                         </div>
                         <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                             <div>
                                 <p class="font-medium text-gray-800 dark:text-gray-200">Artist Collaboration</p>
-                                <p class="text-sm text-gray-300">Completed</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Completed</p>
                             </div>
                             <div class="text-right">
                                 <p class="font-bold text-gray-800 dark:text-gray-200">9.4K</p>
-                                <p class="text-sm text-gray-300">impressions</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">impressions</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="dark:bg-gray-800 bg-white p-6 rounded-lg custom-shadow border border-gray-200">
+                <div class="dark:bg-gray-800 bg-white p-6 rounded-lg custom-shadow border border-gray-200 dark:border-gray-700">
                     <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-300 mb-6">Audience Demographics</h2>
                     <div class="space-y-6">
                         <div>
@@ -162,10 +163,10 @@
                 </div>
             </div>
 
-            <div class= "mt-8 dark:bg-gray-800 bg-white p-6 rounded-lg p-6 border border-gray-200">
+            <div class= "mt-8 dark:bg-gray-800 bg-white p-6 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
                 <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-300 mb-6">Recent Activity</h2>
                 <div class="space-y-4">
-                    <div class="flex items-center space-x-4 p-4 border-l-4 border-orange-500 bg-orange-50">
+                    <div class="flex items-center space-x-4 p-4 border-l-4 border-orange-500 bg-orange-50 rounded-md">
                         <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                 stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">
@@ -178,7 +179,7 @@
                             <div class="text-sm text-gray-500">2 hours ago</div>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-4 p-4 border-l-4 border-blue-500 bg-blue-50">
+                    <div class="flex items-center space-x-4 p-4 border-l-4 border-blue-500 bg-blue-50 rounded-md">
                         <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                 stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">
@@ -192,7 +193,7 @@
                             <div class="text-sm text-gray-500">5 hours ago</div>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-4 p-4 border-l-4 border-green-500 bg-green-50">
+                    <div class="flex items-center space-x-4 p-4 border-l-4 border-green-500 bg-green-50 rounded-md">
                         <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                 stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">
