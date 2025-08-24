@@ -120,8 +120,12 @@
                 </div>
 
                 <!-- Request Button -->
-                <x-gbutton variant="primary" :full-width="true"
+                @if ($user_->request_receiveable)
+                    <x-gbutton variant="primary" :full-width="true"
                     wire:click="openModal('{{ $user_->urn }}')">Request</x-gbutton>
+                @else
+                <x-gbutton variant="primary" :full-width="true" wire:navigate onclick="window.location.href='{{ route('user.pm.my-account', $user_->urn) }}'">Profile</x-gbutton>
+                @endif
             </div>
         @empty
             <div class="col-span-full text-center py-8">

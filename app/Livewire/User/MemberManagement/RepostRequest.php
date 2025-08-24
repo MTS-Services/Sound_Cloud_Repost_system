@@ -7,6 +7,7 @@ use App\Models\RepostRequest as ModelsRepostRequest;
 use App\Models\Repost;
 use App\Models\Track;
 use App\Models\Playlist;
+use App\Models\User;
 use App\Services\SoundCloud\SoundCloudService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -30,6 +31,8 @@ class RepostRequest extends Component
     public $repostedRequests = [];
     public $playCount = false;
 
+    public $requestReceiveable = null;
+
     // Listeners for browser events
     protected $listeners = [
         'audioPlay' => 'handleAudioPlay',
@@ -47,6 +50,7 @@ class RepostRequest extends Component
 
     public function mount()
     {
+        $this->requestReceiveable = user()->request_receiveable ? true : false;
         $this->dataLoad();
 
         // Initialize tracking arrays
@@ -395,6 +399,12 @@ class RepostRequest extends Component
             ]);
             session()->flash('error', 'Failed to cancel repost request. Please try again.');
         }
+    }
+    public function requestReceiveableToggle()
+    {
+        $requestable = user()->request_receiveable;
+        User::where('urn', user()->urn)->update(['request_receiveable' => !$requestable]);
+        $this->dataLoad();
     }
     public function setActiveTab($tab)
     {

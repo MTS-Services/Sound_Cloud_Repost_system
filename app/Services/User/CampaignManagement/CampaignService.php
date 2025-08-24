@@ -12,7 +12,7 @@ use Throwable;
 
 class CampaignService
 {
-    public function getCampaigns($orderBy = 'sort_order', $order = 'asc')
+    public function getCampaigns($orderBy = 'is_featured', $order = 'desc')
     {
         return Campaign::orderBy($orderBy, $order)->latest();
     }

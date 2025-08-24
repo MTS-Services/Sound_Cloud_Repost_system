@@ -8,7 +8,8 @@
                 <h1 class="text-xl text-black dark:text-gray-100 font-bold">{{ __('My Campaigns') }}</h1>
             </div>
             <x-gbutton variant="primary" wire:click="toggleCampaignsModal"
-                x-on:click="showCampaignsModal = true"><span><x-lucide-plus class="w-5 h-5 mr-1" /></span>{{ __('Start a new campaign') }}</x-gbutton>
+                x-on:click="showCampaignsModal = true"><span><x-lucide-plus
+                        class="w-5 h-5 mr-1" /></span>{{ __('Start a new campaign') }}</x-gbutton>
         </div>
 
         <div class="mb-8">
@@ -164,9 +165,17 @@
                                 <div class="flex flex-col sm:flex-row sm:justify-between items-center gap-4">
                                     <span></span>
 
-                                    <div class="flex flex-wrap justify-center sm:justify-end gap-4">
-                                        <x-gbutton variant="secondary">{{ __('Set Featured') }}</x-gbutton>
-                                    </div>
+                                    @if (!$is_featured)
+                                        <div class="flex flex-wrap justify-center sm:justify-end gap-4">
+                                            @if ($is_pro)
+                                                <x-gbutton variant="secondary" wire:click="setFeatured({{ $campaign_->id }})">{{ __('Set Featured') }}</x-gbutton>
+                                            @else
+                                                <x-gbutton variant="primary" wire:navigate
+                                                    onclick="window.location.href = '{{ route('user.pkm.pricing') }}'"
+                                                    x-on:click="showUpgradeModal = true">Upgrade Plan</x-gbutton>
+                                            @endif
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -271,7 +280,13 @@
                             </div>
                         </div>
                         <div class="flex justify-center">
-                            <x-gbutton variant="primary">Get featured</x-gbutton>
+                            @if ($is_pro)
+                                <x-gbutton variant="primary">Get featured</x-gbutton>
+                            @else
+                                <x-gbutton variant="primary" wire:navigate
+                                    onclick="window.location.href = '{{ route('user.pkm.pricing') }}'"
+                                    x-on:click="showUpgradeModal = true">Upgrade Plan</x-gbutton>
+                            @endif
                         </div>
                     </div>
                 </aside>
@@ -837,7 +852,7 @@
                                 following genres:</p>
                             <div class="space-y-2 ml-4">
                                 <div class="flex items-center space-x-2">
-                                    <input type="radio" name="genre" value="anyGenre"
+                                    <input type="radio" name="genre" value="anyGenre" checked
                                         @click="showGenreRadios = false" wire:model="anyGenre"
                                         class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
                                     <span class="text-sm text-gray-700 dark:text-gray-400">Open to all music
