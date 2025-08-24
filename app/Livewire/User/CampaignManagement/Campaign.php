@@ -119,7 +119,7 @@ class Campaign extends Component
     public $maxFollower = 0;
     public $maxRepostLast24h = 0;
     public $maxRepostsPerDay = 0;
-    public $anyGenre = '';
+    public $anyGenre = 'anyGenre';
     public $trackGenre = '';
     public $targetGenre = '';
     public $user = null;

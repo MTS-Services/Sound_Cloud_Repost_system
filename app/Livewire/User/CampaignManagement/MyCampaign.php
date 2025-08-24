@@ -10,6 +10,7 @@ use App\Models\Faq;
 use App\Models\Track;
 use App\Models\Playlist;
 use App\Models\User;
+use App\Models\UserPlan;
 use App\Services\Admin\UserManagement\UserService;
 use App\Services\TrackService;
 use Illuminate\Database\Eloquent\Builder;
@@ -80,7 +81,7 @@ class MyCampaign extends Component
     public $maxFollower = 0;
     public $maxRepostLast24h = 0;
     public $maxRepostsPerDay = 0;
-    public $anyGenre = '';
+    public $anyGenre = 'anyGenre';
     public $trackGenre = '';
     public $targetGenre = '';
     public $user = null;
@@ -791,6 +792,15 @@ class MyCampaign extends Component
         ]);
     }
 
+    public function setFeatured($id)
+    {
+        $campaign = Campaign::find($id);
+        $campaign->is_featured = !$campaign->is_featured;
+        // $campaign->is_featured_at = now();
+        $campaign->save();
+        $this->mount();
+    }
+
     public function mount($categoryId = null)
     {
         $this->faqs = Faq::when($categoryId, function ($query) use ($categoryId) {
@@ -817,7 +827,8 @@ class MyCampaign extends Component
                     ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage)
             };
-            $data['is_pro'] = Campaign::where('user_urn', user()->urn)->where('pro_feature', 1)->exists();
+            $data['is_pro'] = UserPlan::where('user_urn', user()->urn)->active()->exists();
+            $data['is_featured'] = Campaign::where('user_urn', user()->urn)->featured()->exists();
         } catch (\Exception $e) {
             $data['campaigns'] = collect();
             $this->handleError('Failed to load campaigns', $e);
