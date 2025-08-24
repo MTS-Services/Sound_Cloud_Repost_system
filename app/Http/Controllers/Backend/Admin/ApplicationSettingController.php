@@ -39,7 +39,7 @@ class ApplicationSettingController extends Controller implements HasMiddleware
      */
     public function general(): View
     {
-        $data['general_settings'] = ApplicationSetting::whereIn('key', ['application_name', 'library_name', 'application_short_name', 'timezone', 'date_format', 'time_format', 'theme_mode', 'app_logo', 'favicon', 'public_registration', 'registration_approval', 'environment', 'app_debug', 'debugbar'])->pluck('value', 'key')->all();
+        $data['general_settings'] = ApplicationSetting::whereIn('key', ['application_name', 'application_short_name', 'timezone', 'date_format', 'time_format', 'theme_mode', 'app_logo', 'favicon', 'public_registration', 'registration_approval', 'environment', 'app_debug', 'debugbar'])->pluck('value', 'key')->all();
         $data['timezones'] = availableTimezones();
         return view('backend.admin.application-settings.general', $data);
     }
@@ -70,6 +70,11 @@ class ApplicationSettingController extends Controller implements HasMiddleware
                     $value = $this->handleFileUpload($value, 'application_settings', $key);
                 }
 
+                // $applicationSetting = ApplicationSetting::updateOrCreate(['key' => $key], ['value' => $value]);
+
+                // if (!empty($applicationSetting->env_key)) {
+                //     $env = $this->set($applicationSetting->env_key, '"' . html_entity_decode($value) . '"', $env);
+                // }
                 $applicationSetting = ApplicationSetting::updateOrCreate(['key' => $key], ['value' => $value]);
 
                 if (!empty($applicationSetting->env_key)) {

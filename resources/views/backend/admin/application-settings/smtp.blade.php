@@ -10,92 +10,55 @@
                     @csrf
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 h-fit">
                         <div class="space-y-2">
-                            <p class="label">{{ __('Mailer') }}</p>
-                            <select name="smtp_driver" class="select">
-                                <option value="" selected hidden>{{ __('Select mailer driver') }}</option>
-                                @foreach (App\Models\ApplicationSetting::getSmtpDriverInfos() as $key => $info)
-                                    <option value="{{ $key }}"
-                                        @if (isset($smtp_settings['smtp_driver']) && $smtp_settings['smtp_driver'] == $key) selected @endif>
-                                        {{ $info }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <x-input-error class="mt-2" :messages="$errors->get('smtp_driver')" />
+                            <x-inputs.select name="smtp_driver" label="{{ __('Mail Driver') }}"
+                                :options="App\Models\ApplicationSetting::getSmtpDriverInfos()"
+                                value="{{ $smtp_settings['smtp_driver'] ?? '' }}" :messages="$errors->get('smtp_driver')" />
                         </div>
 
                         <div class="space-y-2">
-                            <p class="label">{{ __('Mailer Host') }}</p>
-                            <label class="input flex items-center px-2">
-                                <input type="text" placeholder="Mailer Host"
-                                    value="{{ $smtp_settings['smtp_host'] ?? '' }}" name="smtp_host"
-                                    class="flex-1" />
-                            </label>
-                            <x-input-error class="mt-2" :messages="$errors->get('smtp_host')" />
+                                <x-inputs.input name="smtp_host" label="{{ __('Mailer Host') }}"
+                                    placeholder="Mailer Host" value="{{ $smtp_settings['smtp_host'] ?? '' }}"
+                                    :messages="$errors->get('smtp_host')" />
                         </div>
                         <div class="space-y-2">
                             <p class="label">{{ __('Mailer Port') }}</p>
                             <label class="input flex items-center px-2">
                                 <input type="text" placeholder="Mailer Port"
-                                    value="{{ $smtp_settings['smtp_port'] ?? '' }}" name="smtp_port"
-                                    class="flex-1" />
+                                    value="{{ $smtp_settings['smtp_port'] ?? '' }}" name="smtp_port" class="flex-1" />
                             </label>
                             <x-input-error class="mt-2" :messages="$errors->get('smtp_port')" />
                         </div>
                         <div class="space-y-2">
-                            <p class="label">{{ __('Mail username') }}</p>
-                            <label class="input flex items-center px-2">
-                                <input type="text" placeholder="Mail username"
-                                    value="{{ $smtp_settings['smtp_username'] ?? '' }}" name="smtp_username"
-                                    class="flex-1" />
-                            </label>
-                            <x-input-error class="mt-2" :messages="$errors->get('smtp_username')" />
+                                <x-inputs.input name="smtp_username" label="{{ __('Mail username') }}"
+                                    placeholder="Enter Username" value="{{ $smtp_settings['smtp_username'] ?? '' }}"
+                                    :messages="$errors->get('smtp_username')" />
                         </div>
                         <div class="space-y-2">
-                            <p class="label">{{ __('Mail password') }}</p>
-                            <label class="input flex items-center px-2">
-                                <input type="password" placeholder="Mail password"
-                                    value="{{ $smtp_settings['smtp_password'] ?? '' }}" name="smtp_password"
-                                    class="flex-1" />
-                            </label>
-                            <x-input-error class="mt-2" :messages="$errors->get('smtp_password')" />
+                                <x-inputs.input name="smtp_password" label="{{ __('Mail password') }}" type="password"
+                                    placeholder="Enter Password" :messages="$errors->get('smtp_password')" />
                         </div>
 
                         <div class="space-y-2">
-                            <p class="label">{{ __('Mail Encryption') }}</p>
-                            <select name="smtp_encryption" class="select">
-                                <option value="" selected hidden>{{ __('Select mailer encryption') }}</option>
-                                @foreach (App\Models\ApplicationSetting::getSmtpEncryptionInfos() as $key => $info)
-                                    <option value="{{ $key }}"
-                                        @if (isset($smtp_settings['smtp_encryption']) && $smtp_settings['smtp_encryption'] == $key) selected @endif>
-                                        {{ $info }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <x-input-error class="mt-2" :messages="$errors->get('smtp_encryption')" />
+                            <x-inputs.select name="smtp_encryption" label="{{ __('Mail Encryption') }}"
+                                :options="App\Models\ApplicationSetting::getSmtpEncryptionInfos()"
+                                value="{{ old('smtp_encryption') ?? ($smtp_settings['smtp_encryption'] ?? '') }}"
+                                :messages="$errors->get('smtp_encryption')" />
                         </div>
 
-                        <div class="space-y-2">
-                            <p class="label">{{ __('Mail from address') }}</p>
-                            <label class="input flex items-center px-2">
-                                <input type="text" placeholder="Mail from address"
-                                    value="{{ $smtp_settings['smtp_from_address'] ?? '' }}" name="smtp_from_address"
-                                    class="flex-1" />
-                            </label>
-                            <x-input-error class="mt-2" :messages="$errors->get('smtp_from_address')" />
+                        <div class="space-y-2">f
+                            <x-inputs.input name="smtp_from_address" label="{{ __('Mail from address') }}"
+                                placeholder="Mail from address" value="{{ $smtp_settings['smtp_from_address'] ?? '' }}"
+                                :messages="$errors->get('smtp_from_address')"></x-admin.inputs.input>
                         </div>
                         <div class="space-y-2">
-                            <p class="label">{{ __('Mail from name') }}</p>
-                            <label class="input flex items-center px-2">
-                                <input type="text" placeholder="Mail from name"
-                                    value="{{ $smtp_settings['smtp_from_name'] ?? '' }}" name="smtp_from_name"
-                                    class="flex-1" />
-                            </label>
-                            <x-input-error class="mt-2" :messages="$errors->get('smtp_from_name')" />
+                            <x-inputs.input name="smtp_from_name" label="{{ __('Mail from name') }}"
+                                placeholder="Mail from name" value="{{ $smtp_settings['smtp_from_name'] ?? '' }}"
+                                :messages="$errors->get('smtp_from_name')"></x-admin.inputs.input>
                         </div>
 
                     </div>
                     <div class="flex justify-end mt-5">
-                        <x-button>{{ __('Save') }}</x-button>
+                        <x-button type="accent" :button="true" icon="save">{{ __('Save') }}</x-button>
                     </div>
                 </form>
             </div>

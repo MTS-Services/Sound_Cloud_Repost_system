@@ -8,15 +8,15 @@
             <div class="glass-card rounded-2xl p-6 md:col-span-5">
                 <form action="{{ route('app-settings.update-settings') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <div class="grid grid-cols-1 2xl:grid-cols-9 gap-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div class="2xl:col-span-6 grid grid-cols-1 gap-5 sm:grid-cols-2 h-fit">
                             <div class="space-y-2">
                                 <x-inputs.input name="application_name" label="{{ __('Application Name') }}"
-                                    placeholder="Enter Your Name" value="{{ old('application_name') }}" :messages="$errors->get('application_name')" />
+                                    placeholder="Enter Your Name" value="{{ $general_settings['application_name'] ?? old('application_name') }}" :messages="$errors->get('application_name')" />
                             </div>
                             <div class="space-y-2">
                                 <x-inputs.input name="application_short_name" label="{{ __('Application Short Name') }}"
-                                    placeholder="Enter Application Short Name" value="{{ old('application_short_name') }}"
+                                    placeholder="Enter Application Short Name" value="{{ $general_settings['application_short_name'] ?? old('application_short_name') }}"
                                     :messages="$errors->get('application_short_name')" />
                             </div>
                             <div class="space-y-2">
@@ -62,7 +62,7 @@
                         </div>
                     </div>
                     <div class="flex justify-end mt-5">
-                        <x-button>{{ __('Save') }}</x-button>
+                        <x-button type="accent" :button="true" icon="save">{{ __('Save') }}</x-button>
                     </div>
                 </form>
             </div>

@@ -26,8 +26,7 @@ class ApplicationSettingRequest extends FormRequest
         return [
             // General Settings 
             'application_name'          => 'sometimes|nullable|string|min:3|max:255',
-            'library_name'              => 'sometimes|required|string|min:3|max:255',
-            'application_short_name'        => 'sometimes|required|string|max:200',
+            'application_short_name'    => 'sometimes|required|string|min:3|max:255',
             'timezone'                  => 'sometimes|required|string',
             'date_format'               => 'sometimes|required|string',
             'time_format'               => 'sometimes|required|string',
@@ -43,8 +42,6 @@ class ApplicationSettingRequest extends FormRequest
             Rule::in([App::ENVIRONMENT_DEVELOPMENT, App::ENVIRONMENT_PRODUCTION]),
             'app_debug'                 => 'sometimes|required|integer',
             Rule::in([App::APP_DEBUG_TRUE, App::APP_DEBUG_FALSE]),
-            'debugbar'                  => 'sometimes|required|integer',
-            Rule::in([App::ENABLE_DEBUGBAR, App::DISABLE_DEBUGBAR]),
 
             // Database Settings
             'database_driver'           => 'sometimes|required|string',
@@ -75,9 +72,8 @@ class ApplicationSettingRequest extends FormRequest
         return [
 
             // General Settings
-            'application_name'          => 'Institution Name',
-            'library_name'              => 'Library Name',
-            'application_short_name'        => 'Library Short Name',
+            'application_name'          => 'Application Name',
+            'application_short_name'        => 'Application Short Name',
             'timezone'                  => 'Timezone',
             'date_format'               => 'Date Format',
             'time_format'               => 'Time Format',

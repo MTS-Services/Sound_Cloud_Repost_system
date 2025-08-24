@@ -14,7 +14,11 @@
             <div class="flex items-center gap-4">
                 <div
                     class="w-10 h-10 glass-card shadow inset-shadow-lg bg-bg-white dark:bg-bg-black p-0 rounded-xl flex items-center justify-center">
-                    <i data-lucide="zap" class="!w-4 !h-4"></i>
+                    @if (env('APP_LOGO'))
+                        <img src="{{ storage_url(env('APP_LOGO')) }}" alt="{{ env('APP_NAME') }}" class="w-full h-full">
+                    @else
+                        <i data-lucide="zap" class="!w-4 !h-4"></i>
+                    @endif
                 </div>
                 <div x-show="(desktop && sidebar_expanded) || (!desktop && mobile_menu_open)"
                     x-transition:enter="transition-all duration-300 delay-75"

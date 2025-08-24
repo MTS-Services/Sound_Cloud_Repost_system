@@ -15,9 +15,8 @@ class ApplicationSettingSeeder extends Seeder
     {
         $settings = [
             // General Settings
-            ['key' => 'library_name', 'value' => 'Laravel', 'env_key' => 'APP_NAME'],
-            ['key' => 'application_short_name', 'value' => 'LV', 'env_key' => 'APP_SORT_NAME'],
-            ['key' => 'application_name', 'value' => 'laravel', 'env_key' => 'COMPANY_NAME'],
+            ['key' => 'application_short_name', 'value' => 'LV', 'env_key' => 'APPLICATION_SHORT_NAME'],
+            ['key' => 'application_name', 'value' => 'laravel', 'env_key' => 'APPLICATION_NAME'],
             ['key' => 'timezone', 'value' => 'Asia/Dhaka', 'env_key' => 'TIMEZONE'],
             ['key' => 'date_format', 'value' => 'd/m/Y', 'env_key' => 'DATE_FORMAT'],
             ['key' => 'time_format', 'value' => 'H:i:s', 'env_key' => 'TIME_FORMAT'],
@@ -28,7 +27,6 @@ class ApplicationSettingSeeder extends Seeder
             ['key' => 'registration_approval', 'value' => '1', 'env_key' => 'REGISTRATION_APPROVAL'],
             ['key' => 'environment', 'value' => '1', 'env_key' => 'APP_ENV'],
             ['key' => 'app_debug', 'value' => '1', 'env_key' => 'APP_DEBUG'],
-            ['key' => 'debugbar', 'value' => '1', 'env_key' => 'DEBUGBAR'],
 
             // Database Settings
             ['key' => 'database_driver', 'value' => '1', 'env_key' => 'DB_CONNECTION'],

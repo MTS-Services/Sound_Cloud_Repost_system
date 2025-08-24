@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="shortcut icon" href="{{ asset('default_img/logo.svg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ env("FAVICON") ? storage_url(env("FAVICON")) : asset('default_img/logo.svg') }}" type="image/x-icon">
     <title>
         {{ isset($title) ? $title . ' - ' : '' }}
         {{ config('app.name', 'RepostChain') }}
