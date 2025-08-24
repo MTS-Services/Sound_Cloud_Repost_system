@@ -402,8 +402,8 @@ class RepostRequest extends Component
     }
     public function requestReceiveableToggle()
     {
-        $requestable = $this->requestReceiveable ? 0 : 1;
-        User::where('urn', user()->urn)->update(['request_receiveable' => $requestable]);
+        $requestable = user()->request_receiveable;
+        User::where('urn', user()->urn)->update(['request_receiveable' => !$requestable]);
         $this->dataLoad();
     }
     public function setActiveTab($tab)
