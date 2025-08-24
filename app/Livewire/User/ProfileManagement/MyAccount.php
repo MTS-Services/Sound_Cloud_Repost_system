@@ -8,6 +8,7 @@ use App\Models\Repost;
 use App\Models\Track;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\Admin\UserManagement\UserService;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -16,6 +17,8 @@ use Livewire\WithPagination;
 class MyAccount extends Component
 {
     use WithPagination;
+
+    protected string $baseUrl = 'https://api.soundcloud.com';
 
     // UI state
     #[Url(as: 'tab', except: 'insights')]
@@ -53,6 +56,7 @@ class MyAccount extends Component
 
     public function mount($user_urn = null): void
     {
+        $this->soundecloudTracks();
         $this->user_urn = $user_urn ?? user()->urn;
 
         Log::info('MyAccount mount', ['user_urn' => $this->user_urn]);
@@ -112,6 +116,17 @@ class MyAccount extends Component
     public function closeEditProfileModal(): void
     {
         $this->showEditProfileModal = false;
+    }
+
+    public function soundecloudTracks()
+    {
+        $httpClient = Http::withHeaders([
+                'Authorization' => 'OAuth ' . user()->token,
+            ]);
+
+            // Repost the track to SoundCloud
+            $response = $httpClient->get("{$this->baseUrl}/me/tracks");
+            Log::info('SoundCloud tracks', ['response' => $response->json()]);
     }
 
     public function render()
