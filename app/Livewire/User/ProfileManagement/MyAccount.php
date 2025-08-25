@@ -2,6 +2,8 @@
 
 namespace App\Livewire\User\ProfileManagement;
 
+use App\Jobs\SyncedPlaylists;
+use App\Jobs\SyncedTracks;
 use App\Models\CreditTransaction;
 use App\Models\Playlist;
 use App\Models\Repost;
@@ -65,7 +67,6 @@ class MyAccount extends Component
 
     public function mount($user_urn = null): void
     {
-        $this->soundecloudTracks();
         $this->user_urn = $user_urn ?? user()->urn;
 
         Log::info('MyAccount mount', ['user_urn' => $this->user_urn]);
@@ -87,10 +88,10 @@ class MyAccount extends Component
         // Reset the relevant pager when switching tabs
         if ($tab === 'tracks') {
             $this->resetPage('tracksPage');
-            $this->soundecloudTracks();
+            $this->syncTracks();
         } elseif ($tab === 'playlists') {
             $this->resetPage('playlistsPage');
-            $this->soundecloudPlaylists();
+            $this->syncPlaylists();
         }
     }
 
@@ -129,43 +130,16 @@ class MyAccount extends Component
         $this->showEditProfileModal = false;
     }
 
-    public function soundecloudTracks()
+    public function syncTracks()
     {
-        $this->soundCloudService->ensureSoundCloudConnection(user());
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
-        $httpClient = Http::withHeaders([
-            'Authorization' => 'OAuth ' . user()->token,
-        ]);
-
-        $response = $httpClient->get("{$this->baseUrl}/me/tracks");
-
-        if ($response->failed()) {
-            return;
-        }
-        $tracks = $response->json();
-        foreach ($tracks as $track) {
-            $this->trackService->UpdateOrCreateSoundCloudTrack($track);
-        }
-
-        Log::info('SoundCloud tracks synced successfully');
+        SyncedTracks::dispatch(user()->id);
+        return back()->with('success', 'Track sync started in background. Please check later.');
     }
-    public function soundecloudPlaylists()
+    public function syncPlaylists()
     {
-        $this->soundCloudService->ensureSoundCloudConnection(user());
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
-        $httpClient = Http::withHeaders([
-            'Authorization' => 'OAuth ' . user()->token,
-        ]);
+        SyncedPlaylists::dispatch(user()->id);
 
-        $response = $httpClient->get("{$this->baseUrl}/me/playlists");
-
-        if ($response->failed()) {
-            return;
-        }
-
-        $playlists = $response->json();
-        $this->playlistService->UpdateOrCreateSoundCloudPlaylistTrack($playlists);
-        Log::info('SoundCloud playlists synced successfully');
+        return back()->with('success', 'Playlist sync started in background.');
     }
 
     public function render()
