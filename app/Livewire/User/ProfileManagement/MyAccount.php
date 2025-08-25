@@ -8,6 +8,7 @@ use App\Models\Repost;
 use App\Models\Track;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\Admin\UserManagement\UserService;
+use App\Services\PlaylistService;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\TrackService;
 use Illuminate\Support\Facades\Http;
@@ -49,10 +50,11 @@ class MyAccount extends Component
     private UserService $userService;
     private CreditTransactionService $creditTransactionService;
     private TrackService $trackService;
+    private PlaylistService $playlistService;
     private SoundCloudService $soundCloudService;
 
     // Livewire v3: boot runs on every request (initial + subsequent)
-    public function boot(UserService $userService, CreditTransactionService $creditTransactionService , TrackService $trackService, SoundCloudService $soundCloudService): void
+    public function boot(UserService $userService, CreditTransactionService $creditTransactionService, TrackService $trackService, SoundCloudService $soundCloudService, PlaylistService $playlistService): void
     {
         $this->userService = $userService;
         $this->creditTransactionService = $creditTransactionService;
@@ -140,15 +142,16 @@ class MyAccount extends Component
             return;
         }
         $tracks = $response->json();
+        foreach ($tracks as $track) {
+            $this->trackService->UpdateOrCreateSoundCloudTrack($track);
+        }
 
-        $this->trackService->UpdateOrCreateSoundCloudTrack($tracks);
-        
         Log::info('SoundCloud tracks synced successfully');
     }
     public function soundecloudPlaylists()
     {
-        // $this->soundCloudService->ensureSoundCloudConnection(user());
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->ensureSoundCloudConnection(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $httpClient = Http::withHeaders([
             'Authorization' => 'OAuth ' . user()->token,
         ]);
@@ -156,16 +159,12 @@ class MyAccount extends Component
         $response = $httpClient->get("{$this->baseUrl}/me/playlists");
 
         if ($response->failed()) {
-            // Log::error('SoundCloud API failed', ['response' => $response->body()]);
             return;
         }
 
         $playlists = $response->json();
-        dd($playlists);
-        Log::info('SoundCloud playlists synced successfully'. json_encode($playlists));
-
-        // $this->playlistservice->UpdateOrCreateSoundCloudTrack($playlists);
-        
+        $this->playlistService->UpdateOrCreateSoundCloudPlaylistTrack($playlists);
+        Log::info('SoundCloud playlists synced successfully');
     }
 
     public function render()
