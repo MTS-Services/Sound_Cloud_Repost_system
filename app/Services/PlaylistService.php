@@ -22,4 +22,8 @@ class PlaylistService
     {
         return Playlist::where($field, decrypt($encryptedValue))->first();
     }
+    public function UpdateOrCreateSoundCloudTrack(array $playlists)
+    {
+        // 
+    }
 }

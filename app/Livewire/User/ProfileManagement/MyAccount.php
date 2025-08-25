@@ -84,8 +84,10 @@ class MyAccount extends Component
         // Reset the relevant pager when switching tabs
         if ($tab === 'tracks') {
             $this->resetPage('tracksPage');
+            $this->soundecloudTracks();
         } elseif ($tab === 'playlists') {
             $this->resetPage('playlistsPage');
+            $this->soundecloudPlaylists();
         }
     }
 
@@ -135,15 +137,34 @@ class MyAccount extends Component
         $response = $httpClient->get("{$this->baseUrl}/me/tracks");
 
         if ($response->failed()) {
-            Log::error('SoundCloud API failed', ['response' => $response->body()]);
             return;
         }
-
         $tracks = $response->json();
 
         $this->trackService->UpdateOrCreateSoundCloudTrack($tracks);
         
         Log::info('SoundCloud tracks synced successfully');
+    }
+    public function soundecloudPlaylists()
+    {
+        // $this->soundCloudService->ensureSoundCloudConnection(user());
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $httpClient = Http::withHeaders([
+            'Authorization' => 'OAuth ' . user()->token,
+        ]);
+
+        $response = $httpClient->get("{$this->baseUrl}/me/playlists");
+
+        if ($response->failed()) {
+            // Log::error('SoundCloud API failed', ['response' => $response->body()]);
+            return;
+        }
+
+        $playlists = $response->json();
+        Log::info('SoundCloud playlists synced successfully'. json_encode($playlists));
+
+        // $this->playlistservice->UpdateOrCreateSoundCloudTrack($playlists);
+        
     }
 
     public function render()
