@@ -88,7 +88,7 @@
                 <!-- Edit Profile -->
                 <div class="p-6">
                     <div x-data="{ open: true }" x-show="open"
-                        class="bg-blue-50 border-l-4 border-orange-600 p-4 rounded-md mb-6 flex items-center gap-4">
+                        class="bg-blue-50 border-l-4 border-l-orange-500 p-4 rounded-md mb-6 flex items-center gap-4">
                         <!-- Icon + Quick Tip -->
                         <div class="flex items-center gap-2 flex-shrink-0">
                             <!-- Light bulb icon -->
@@ -327,7 +327,7 @@
                     </div>
                 </div>
                 <!-- Push Notification Disabled Warning -->
-                <div class="flex items-start bg-light-orange border-l-4 border-orange-400 p-3 rounded shadow-md mb-2">
+                <div class="flex items-start bg-light-orange border-l-4 border-l-orange-400 p-3 rounded-md shadow-md mb-2">
                     <svg class="h-6 w-6 text-white bg-orange-400 rounded-full mr-3 mt-1 flex-shrink-0"
                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0
