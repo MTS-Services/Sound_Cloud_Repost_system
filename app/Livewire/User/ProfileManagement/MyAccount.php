@@ -87,11 +87,11 @@ class MyAccount extends Component
 
         // Reset the relevant pager when switching tabs
         if ($tab === 'tracks') {
-            $this->resetPage('tracksPage');
             $this->syncTracks();
+            $this->resetPage('tracksPage');
         } elseif ($tab === 'playlists') {
-            $this->resetPage('playlistsPage');
             $this->syncPlaylists();
+            $this->resetPage('playlistsPage');
         }
     }
 
@@ -137,16 +137,6 @@ class MyAccount extends Component
     }
     public function syncPlaylists()
     {
-
-        $httpClient = Http::withHeaders([
-            'Authorization' => 'OAuth ' . user()->token,
-        ]);
-
-        $response = $httpClient->get("https://api.soundcloud.com/me/playlists");
-
-        dd($response->json());
-        Log::info('SoundCloud API request for user ' . $response);
-
         SyncedPlaylists::dispatch(user()->urn);
 
         return back()->with('success', 'Playlist sync started in background.');

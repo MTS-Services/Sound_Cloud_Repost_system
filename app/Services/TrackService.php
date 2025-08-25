@@ -25,7 +25,7 @@ class TrackService
                 'soundcloud_track_id' => $track['id'], // unique check
             ],
             [
-                'user_urn'                 => $track['user_urn'] ?? null,
+                'user_urn'                 => $track['user']['urn'] ?? null,
                 'kind'                     => $track['kind'] ?? null,
                 'urn'                      => $track['urn'] ?? null,
                 'duration'                 => $track['duration'] ?? 0,
