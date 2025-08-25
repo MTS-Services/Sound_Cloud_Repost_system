@@ -8,6 +8,9 @@ use App\Models\Repost;
 use App\Models\Track;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\Admin\UserManagement\UserService;
+use App\Services\PlaylistService;
+use App\Services\SoundCloud\SoundCloudService;
+use App\Services\TrackService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Url;
@@ -46,12 +49,18 @@ class MyAccount extends Component
     // Dependencies (non-serializable) — keep private
     private UserService $userService;
     private CreditTransactionService $creditTransactionService;
+    private TrackService $trackService;
+    private PlaylistService $playlistService;
+    private SoundCloudService $soundCloudService;
 
     // Livewire v3: boot runs on every request (initial + subsequent)
-    public function boot(UserService $userService, CreditTransactionService $creditTransactionService): void
+    public function boot(UserService $userService, CreditTransactionService $creditTransactionService, TrackService $trackService, SoundCloudService $soundCloudService, PlaylistService $playlistService): void
     {
         $this->userService = $userService;
         $this->creditTransactionService = $creditTransactionService;
+        $this->trackService = $trackService;
+        $this->soundCloudService = $soundCloudService;
+        $this->playlistService = $playlistService;
     }
 
     public function mount($user_urn = null): void
@@ -78,8 +87,10 @@ class MyAccount extends Component
         // Reset the relevant pager when switching tabs
         if ($tab === 'tracks') {
             $this->resetPage('tracksPage');
+            $this->soundecloudTracks();
         } elseif ($tab === 'playlists') {
             $this->resetPage('playlistsPage');
+            $this->soundecloudPlaylists();
         }
     }
 
@@ -120,13 +131,41 @@ class MyAccount extends Component
 
     public function soundecloudTracks()
     {
+        $this->soundCloudService->ensureSoundCloudConnection(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $httpClient = Http::withHeaders([
-                'Authorization' => 'OAuth ' . user()->token,
-            ]);
+            'Authorization' => 'OAuth ' . user()->token,
+        ]);
 
-            // Repost the track to SoundCloud
-            $response = $httpClient->get("{$this->baseUrl}/me/tracks");
-            Log::info('SoundCloud tracks', ['response' => $response->json()]);
+        $response = $httpClient->get("{$this->baseUrl}/me/tracks");
+
+        if ($response->failed()) {
+            return;
+        }
+        $tracks = $response->json();
+        foreach ($tracks as $track) {
+            $this->trackService->UpdateOrCreateSoundCloudTrack($track);
+        }
+
+        Log::info('SoundCloud tracks synced successfully');
+    }
+    public function soundecloudPlaylists()
+    {
+        $this->soundCloudService->ensureSoundCloudConnection(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $httpClient = Http::withHeaders([
+            'Authorization' => 'OAuth ' . user()->token,
+        ]);
+
+        $response = $httpClient->get("{$this->baseUrl}/me/playlists");
+
+        if ($response->failed()) {
+            return;
+        }
+
+        $playlists = $response->json();
+        $this->playlistService->UpdateOrCreateSoundCloudPlaylistTrack($playlists);
+        Log::info('SoundCloud playlists synced successfully');
     }
 
     public function render()
