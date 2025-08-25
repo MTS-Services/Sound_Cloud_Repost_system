@@ -132,12 +132,12 @@ class MyAccount extends Component
 
     public function syncTracks()
     {
-        SyncedTracks::dispatch(user()->id);
+        SyncedTracks::dispatch(user()->urn);
         return back()->with('success', 'Track sync started in background. Please check later.');
     }
     public function syncPlaylists()
     {
-        SyncedPlaylists::dispatch(user()->id);
+        SyncedPlaylists::dispatch(user()->urn);
 
         return back()->with('success', 'Playlist sync started in background.');
     }

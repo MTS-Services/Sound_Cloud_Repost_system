@@ -26,7 +26,7 @@ class SyncedPlaylists implements ShouldQueue
 
     public function handle(SoundCloudService $soundCloudService, PlaylistService $playlistService)
     {
-        $user = User::find($this->userUrn);
+        $user = User::where('urn', $this->userUrn)->first();
         if (! $user) {
             return;
         }
