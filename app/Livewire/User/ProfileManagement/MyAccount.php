@@ -161,6 +161,7 @@ class MyAccount extends Component
         }
 
         $playlists = $response->json();
+        dd($playlists);
         Log::info('SoundCloud playlists synced successfully'. json_encode($playlists));
 
         // $this->playlistservice->UpdateOrCreateSoundCloudTrack($playlists);
