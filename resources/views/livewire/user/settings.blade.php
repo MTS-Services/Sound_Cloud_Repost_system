@@ -127,7 +127,7 @@
                                 @if (!user()->email_verified_at)
                                     <p class="mt-1 text-xs text-red-500">
                                         Email not verified.
-                                        <a wire:navigate href="{{ route('user.email.resend.verification') }}"
+                                        <a wire:navigate href="#"
                                             class="font-semibold hover:underline">Resend confirmation
                                             email</a>
                                     </p>
