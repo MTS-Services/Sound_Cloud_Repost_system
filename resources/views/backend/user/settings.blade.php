@@ -264,7 +264,7 @@
 
                                 <!-- TikTok -->
                                 <div
-                                    class="flex items-center p-4 bg-gray-100 dark:bg-gray-800 rounded-lg sm:col-span-2 w-[70%]">
+                                    class="flex items-center p-4 bg-gray-100 dark:bg-gray-800 rounded-lg  w-[70%]">
                                     <div class="text-2xl mr-4 text-black dark:text-white">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor"
                                             viewBox="0 0 24 24">
