@@ -41,6 +41,7 @@ class SyncedTracks implements ShouldQueue
         ]);
 
         $response = $httpClient->get("https://api.soundcloud.com/me/tracks");
+        Log::info('SoundCloud API request for user ' . $response);
 
         if ($response->failed()) {
             Log::error('SoundCloud API request failed for user ' . $user->run);
