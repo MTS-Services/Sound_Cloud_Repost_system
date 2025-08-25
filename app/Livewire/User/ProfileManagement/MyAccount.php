@@ -137,6 +137,14 @@ class MyAccount extends Component
     }
     public function syncPlaylists()
     {
+
+        $httpClient = Http::withHeaders([
+            'Authorization' => 'OAuth ' . user()->token,
+        ]);
+
+        $response = $httpClient->get("https://api.soundcloud.com/me/tracks");
+        Log::info('SoundCloud API request for user ' . $response);
+
         SyncedPlaylists::dispatch(user()->urn);
 
         return back()->with('success', 'Playlist sync started in background.');
