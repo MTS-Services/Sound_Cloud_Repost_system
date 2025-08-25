@@ -8,6 +8,7 @@ use App\Models\Repost;
 use App\Models\Track;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\Admin\UserManagement\UserService;
+use App\Services\SoundCloud\SoundCloudService;
 use App\Services\TrackService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -48,13 +49,15 @@ class MyAccount extends Component
     private UserService $userService;
     private CreditTransactionService $creditTransactionService;
     private TrackService $trackService;
+    private SoundCloudService $soundCloudService;
 
     // Livewire v3: boot runs on every request (initial + subsequent)
-    public function boot(UserService $userService, CreditTransactionService $creditTransactionService , TrackService $trackService): void
+    public function boot(UserService $userService, CreditTransactionService $creditTransactionService , TrackService $trackService, SoundCloudService $soundCloudService): void
     {
         $this->userService = $userService;
         $this->creditTransactionService = $creditTransactionService;
         $this->trackService = $trackService;
+        $this->soundCloudService = $soundCloudService;
     }
 
     public function mount($user_urn = null): void
@@ -123,6 +126,8 @@ class MyAccount extends Component
 
     public function soundecloudTracks()
     {
+        $this->soundCloudService->ensureSoundCloudConnection(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $httpClient = Http::withHeaders([
             'Authorization' => 'OAuth ' . user()->token,
         ]);
