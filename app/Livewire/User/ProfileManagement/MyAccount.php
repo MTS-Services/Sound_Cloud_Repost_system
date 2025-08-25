@@ -60,6 +60,7 @@ class MyAccount extends Component
         $this->creditTransactionService = $creditTransactionService;
         $this->trackService = $trackService;
         $this->soundCloudService = $soundCloudService;
+        $this->playlistService = $playlistService;
     }
 
     public function mount($user_urn = null): void
