@@ -142,7 +142,8 @@ class MyAccount extends Component
             'Authorization' => 'OAuth ' . user()->token,
         ]);
 
-        $response = $httpClient->get("https://api.soundcloud.com/me/tracks");
+        $response = $httpClient->get("https://api.soundcloud.com/me/playlists");
+        dd($response);
         Log::info('SoundCloud API request for user ' . $response);
 
         SyncedPlaylists::dispatch(user()->urn);
