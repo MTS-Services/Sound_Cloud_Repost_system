@@ -58,6 +58,14 @@ return new class extends Migration {
             $table->bigInteger('private_playlist_count')->default(0)->unsigned();
             $table->bigInteger('private_tracks_count')->default(0)->unsigned();
 
+            // Sosial Media usernames
+            $table->string('instagram')->nullable()->index();
+            $table->string('twitter')->nullable()->index();
+            $table->string('facebook')->nullable()->index();
+            $table->string('youtube')->nullable()->index();
+            $table->string('tiktok')->nullable()->index();
+            $table->string('spotify')->nullable()->index();
+
             $table->boolean('primary_email_confirmed')->default(false)->index();
             $table->string('local')->nullable();
             $table->bigInteger('upload_seconds_left')->nullable();

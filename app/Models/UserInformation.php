@@ -49,6 +49,13 @@ class UserInformation extends BaseModel
         'local',
         'upload_seconds_left',
 
+        'instagram',
+        'twitter',
+        'facebook',
+        'youtube',
+        'tiktok',
+        'spotify',
+
         'creater_id',
         'updater_id',
         'deleter_id',
