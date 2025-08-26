@@ -568,28 +568,31 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
-                                    25 Aug 2025 08:41 AM
-                                </td>
-                                <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
-                                    Free credits on sign up
-                                </td>
-                                <td
-                                    class="px-5 p-3 text-orange-500 font-semibold flex items-center gap-1 whitespace-nowrap">
-                                    <svg class="w-8 h-" width="26" height="18" viewBox="0 0 26 18"
-                                        fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <rect x="1" y="1" width="24" height="16" rx="3"
-                                            fill="none" stroke="currentColor" stroke-width="2" />
-                                        <circle cx="8" cy="9" r="3" fill="none"
-                                            stroke="currentColor" stroke-width="2" />
-                                    </svg>
-                                    +30
-                                </td>
-                                <td class="px-5 p-3 text-gray-800 font-medium whitespace-nowrap">
-                                    30
-                                </td>
-                            </tr>
+                            @forelse ($credits as $credit)
+                                <tr class="hover:bg-gray-50 transition">
+                                    <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
+                                        {{ $credit->created_at_formatted}}
+                                    </td>
+                                    <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
+                                        {{ $credit->description }}
+                                    </td>
+                                    <td
+                                        class="px-5 p-3 text-orange-500 font-semibold flex items-center gap-1 whitespace-nowrap">
+                                        <svg class="w-8 h-" width="26" height="18" viewBox="0 0 26 18"
+                                            fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <rect x="1" y="1" width="24" height="16" rx="3"
+                                                fill="none" stroke="currentColor" stroke-width="2" />
+                                            <circle cx="8" cy="9" r="3" fill="none"
+                                                stroke="currentColor" stroke-width="2" />
+                                        </svg>
+                                        {{ $credit->credits }}
+                                    </td>
+                                    <td class="px-5 p-3 text-gray-800 font-medium whitespace-nowrap">
+                                        {{ $credit->amount }}
+                                    </td>
+                                </tr>
+                            @empty
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
