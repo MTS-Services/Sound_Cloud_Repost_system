@@ -6,18 +6,22 @@ use App\Models\CreditTransaction;
 use App\Models\User;
 use App\Models\UserGenre;
 use App\Models\UserInformation;
+use App\Models\UserSetting;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
+use PhpParser\Node\Expr\FuncCall;
 
 class Settings extends Component
 {
     public $credits = [];
+    public $user_infos = [];
     // Genre Filter Properties
     public $selectedGenres = [];
     public $searchTerm = '';
-    public $isGenreDropdownOpen = true;
+    public $isGenreDropdownOpen = false;
     public $maxGenres = 5;
+    public $minGenres = 1;
 
     // Social Media Properties
     public $instagram_username = '';
@@ -29,11 +33,12 @@ class Settings extends Component
 
     // Validation error state
     public $genreLimitError = false;
+    public $genreCountError = false;
 
     public $availableGenres = [];
 
     protected $rules = [
-        'selectedGenres' => 'array|max:5',
+        'selectedGenres' => 'array|max:5|min:1',
         'instagram_username' => 'nullable|string|max:255',
         'twitter_username' => 'nullable|string|max:255',
         'facebook_username' => 'nullable|string|max:255',
@@ -45,26 +50,227 @@ class Settings extends Component
     public function mount()
     {
         $this->dataLoad();
+        $this->loadSettings();
+        $this->loadUserInfo();
     }
     public function dataLoad()
     {
         $this->availableGenres = AllGenres();
         $this->selectedGenres = UserGenre::where('user_urn', user()->urn)->pluck('genre')->toArray();
         $this->credits = CreditTransaction::where('receiver_urn', user()->urn)->credit()->get();
+        $this->user_infos = UserInformation::where('user_urn', user()->urn)->first();
+    }
+    ####################### Notification Settings Start ############################
+    // Email alerts
+    public $em_new_repost = false;
+    public $em_repost_accepted = false;
+    public $em_repost_declined = false;
+    public $em_repost_expired = false;
+    public $em_campaign_summary = false;
+    public $em_free_boost = false;
+    public $em_feedback_campaign = false;
+    public $em_feedback_rated = false;
+    public $em_referrals = false;
+    public $em_reputation = false;
+    public $em_inactivity_warn = false;
+    public $em_marketing = false;
+    public $em_chart_entry = false;
+    public $em_mystery_box = false;
+    public $em_discussions = false;
+    public $em_competitions = false;
+
+    // Push notifications
+    public $ps_new_repost = false;
+    public $ps_repost_accepted = false;
+    public $ps_repost_declined = false;
+    public $ps_repost_expired = false;
+    public $ps_campaign_summary = false;
+    public $ps_free_boost = false;
+    public $ps_feedback_campaign = false;
+    public $ps_feedback_rated = false;
+    public $ps_referrals = false;
+    public $ps_reputation = false;
+    public $ps_inactivity_warn = false;
+    public $ps_marketing = false;
+    public $ps_chart_entry = false;
+    public $ps_mystery_box = false;
+    public $ps_discussions = false;
+    public $ps_competitions = false;
+
+    // My Requests
+    public $accept_repost = false;
+    public $block_mismatch_genre = false;
+
+    // Additional Features
+    public $opt_mystery_box = false;
+    public $auto_boost = false;
+    public $enable_react = true;
+
+    // Subscription
+    public $sub_plan = 'Free Forever Plan';
+
+    public function loadSettings()
+    {
+        $userUrn = user()->urn;
+        $settings = UserSetting::where('user_urn', $userUrn)->first();
+
+        if ($settings) {
+            // Email alerts
+            $this->em_new_repost = $settings->em_new_repost ? true : false;
+            $this->em_repost_accepted = $settings->em_repost_accepted ? true : false;
+            $this->em_repost_declined = $settings->em_repost_declined ? true : false;
+            $this->em_repost_expired = $settings->em_repost_expired ? true : false;
+            $this->em_campaign_summary = $settings->em_campaign_summary ? true : false;
+            $this->em_free_boost = $settings->em_free_boost ? true : false;
+            $this->em_feedback_campaign = $settings->em_feedback_campaign ? true : false;
+            $this->em_feedback_rated = $settings->em_feedback_rated ? true : false;
+            $this->em_referrals = $settings->em_referrals ? true : false;
+            $this->em_reputation = $settings->em_reputation ? true : false;
+            $this->em_inactivity_warn = $settings->em_inactivity_warn ? true : false;
+            $this->em_marketing = $settings->em_marketing ? true : false;
+            $this->em_chart_entry = $settings->em_chart_entry ? true : false;
+            $this->em_mystery_box = $settings->em_mystery_box ? true : false;
+            $this->em_discussions = $settings->em_discussions ? true : false;
+            $this->em_competitions = $settings->em_competitions ? true : false;
+
+            // Push notifications
+            $this->ps_new_repost = $settings->ps_new_repost ? true : false;
+            $this->ps_repost_accepted = $settings->ps_repost_accepted ? true : false;
+            $this->ps_repost_declined = $settings->ps_repost_declined ? true : false;
+            $this->ps_repost_expired = $settings->ps_repost_expired ? true : false;
+            $this->ps_campaign_summary = $settings->ps_campaign_summary ? true : false;
+            $this->ps_free_boost = $settings->ps_free_boost ? true : false;
+            $this->ps_feedback_campaign = $settings->ps_feedback_campaign ? true : false;
+            $this->ps_feedback_rated = $settings->ps_feedback_rated ? true : false;
+            $this->ps_referrals = $settings->ps_referrals ? true : false;
+            $this->ps_reputation = $settings->ps_reputation ? true : false;
+            $this->ps_inactivity_warn = $settings->ps_inactivity_warn ? true : false;
+            $this->ps_marketing = $settings->ps_marketing ? true : false;
+            $this->ps_chart_entry = $settings->ps_chart_entry ? true : false;
+            $this->ps_mystery_box = $settings->ps_mystery_box ? true : false;
+            $this->ps_discussions = $settings->ps_discussions ? true : false;
+            $this->ps_competitions = $settings->ps_competitions ? true : false;
+
+            // My Requests
+            $this->accept_repost = $settings->accept_repost;
+            $this->block_mismatch_genre = $settings->block_mismatch_genre;
+
+            // Additional Features
+            $this->opt_mystery_box = $settings->opt_mystery_box;
+            $this->auto_boost = $settings->auto_boost;
+            $this->enable_react = $settings->enable_react;
+        }
     }
 
+    public function createOrUpdate()
+    {
+        $userUrn = user()->urn;
+
+        $data = [
+            'user_urn' => $userUrn,
+            // Email alerts
+            'em_new_repost' => $this->em_new_repost ? 1 : 0,
+            'em_repost_accepted' => $this->em_repost_accepted ? 1 : 0,
+            'em_repost_declined' => $this->em_repost_declined ? 1 : 0,
+            'em_repost_expired' => $this->em_repost_expired ? 1 : 0,
+            'em_campaign_summary' => $this->em_campaign_summary ? 1 : 0,
+            'em_free_boost' => $this->em_free_boost ? 1 : 0,
+            'em_feedback_campaign' => $this->em_feedback_campaign ? 1 : 0,
+            'em_feedback_rated' => $this->em_feedback_rated ? 1 : 0,
+            'em_referrals' => $this->em_referrals ? 1 : 0,
+            'em_reputation' => $this->em_reputation ? 1 : 0,
+            'em_inactivity_warn' => $this->em_inactivity_warn ? 1 : 0,
+            'em_marketing' => $this->em_marketing ? 1 : 0,
+            'em_chart_entry' => $this->em_chart_entry ? 1 : 0,
+            'em_mystery_box' => $this->em_mystery_box ? 1 : 0,
+            'em_discussions' => $this->em_discussions ? 1 : 0,
+            'em_competitions' => $this->em_competitions ? 1 : 0,
+
+            // Push notifications
+            'ps_new_repost' => $this->ps_new_repost ? 1 : 0,
+            'ps_repost_accepted' => $this->ps_repost_accepted ? 1 : 0,
+            'ps_repost_declined' => $this->ps_repost_declined ? 1 : 0,
+            'ps_repost_expired' => $this->ps_repost_expired ? 1 : 0,
+            'ps_campaign_summary' => $this->ps_campaign_summary ? 1 : 0,
+            'ps_free_boost' => $this->ps_free_boost ? 1 : 0,
+            'ps_feedback_campaign' => $this->ps_feedback_campaign ? 1 : 0,
+            'ps_feedback_rated' => $this->ps_feedback_rated ? 1 : 0,
+            'ps_referrals' => $this->ps_referrals ? 1 : 0,
+            'ps_reputation' => $this->ps_reputation ? 1 : 0,
+            'ps_inactivity_warn' => $this->ps_inactivity_warn ? 1 : 0,
+            'ps_marketing' => $this->ps_marketing ? 1 : 0,
+            'ps_chart_entry' => $this->ps_chart_entry ? 1 : 0,
+            'ps_mystery_box' => $this->ps_mystery_box ? 1 : 0,
+            'ps_discussions' => $this->ps_discussions ? 1 : 0,
+            'ps_competitions' => $this->ps_competitions ? 1 : 0,
+
+            // My Requests
+            'accept_repost' => $this->accept_repost ? 1 : 0,
+            'block_mismatch_genre' => $this->block_mismatch_genre ? 1 : 0,
+
+            // Additional Features
+            'opt_mystery_box' => $this->opt_mystery_box ? 1 : 0,
+            'auto_boost' => $this->auto_boost ? 1 : 0,
+            'enable_react' => $this->enable_react ? 1 : 0,
+        ];
+
+        UserSetting::updateOrCreate(
+            ['user_urn' => $userUrn],
+            $data
+        );
+        $this->reset();
+        $this->loadSettings();
+
+        session()->flash('message', 'Settings updated successfully!');
+    }
+
+    public function getAlertsProperty()
+    {
+        return [
+            ['id' => 1, 'name' => 'New Repost Requests', 'email_key' => 'em_new_repost', 'push_key' => 'ps_new_repost'],
+            ['id' => 2, 'name' => 'Repost Requests Accepted', 'email_key' => 'em_repost_accepted', 'push_key' => 'ps_repost_accepted'],
+            ['id' => 3, 'name' => 'Repost Requests Declined', 'email_key' => 'em_repost_declined', 'push_key' => 'ps_repost_declined'],
+            ['id' => 4, 'name' => 'Repost Requests Expired', 'email_key' => 'em_repost_expired', 'push_key' => 'ps_repost_expired'],
+            ['id' => 5, 'name' => 'Campaign Summary & finished alert', 'email_key' => 'em_campaign_summary', 'push_key' => 'ps_campaign_summary'],
+            ['id' => 6, 'name' => 'Free Boost Award', 'email_key' => 'em_free_boost', 'push_key' => 'ps_free_boost'],
+            ['id' => 7, 'name' => 'Feedback Campaign Events', 'email_key' => 'em_feedback_campaign', 'push_key' => 'ps_feedback_campaign'],
+            ['id' => 8, 'name' => 'Feedback Rated', 'email_key' => 'em_feedback_rated', 'push_key' => 'ps_feedback_rated'],
+            ['id' => 9, 'name' => 'Referrals', 'email_key' => 'em_referrals', 'push_key' => 'ps_referrals'],
+            ['id' => 10, 'name' => 'Reputation Changes', 'email_key' => 'em_reputation', 'push_key' => 'ps_reputation'],
+            ['id' => 11, 'name' => 'Account inactivity Warning', 'email_key' => 'em_inactivity_warn', 'push_key' => 'ps_inactivity_warn'],
+            ['id' => 12, 'name' => 'Marketing Communications', 'email_key' => 'em_marketing', 'push_key' => 'ps_marketing'],
+            ['id' => 13, 'name' => 'Chart Entry', 'email_key' => 'em_chart_entry', 'push_key' => 'ps_chart_entry'],
+            ['id' => 14, 'name' => 'Mystery Box Draw', 'email_key' => 'em_mystery_box', 'push_key' => 'ps_mystery_box'],
+            ['id' => 15, 'name' => 'Discussions', 'email_key' => 'em_discussions', 'push_key' => 'ps_discussions'],
+            ['id' => 16, 'name' => 'Competitions', 'email_key' => 'em_competitions', 'push_key' => 'ps_competitions']
+        ];
+    }
+    ####################### Notification Settings End ############################
+
+    public function loadUserInfo()
+    {
+        $userInfos = UserInformation::where('user_urn', user()->urn)->first();
+
+        if ($this->user_infos) {
+            $this->instagram_username = $userInfos->instagram;
+            $this->twitter_username = $userInfos->twitter;
+            $this->tiktok_username = $userInfos->tiktok;
+            $this->facebook_username = $userInfos->facebook;
+            $this->youtube_channel_id = $userInfos->youtube;
+            $this->spotify_artist_link = $userInfos->spotify;
+        }
+    }
     public function addGenre($genre)
     {
         if (count($this->selectedGenres) >= $this->maxGenres) {
             $this->genreLimitError = true;
             return;
         }
-
+        $this->genreCountError = false;
         if (!in_array($genre, $this->selectedGenres)) {
             $this->selectedGenres[] = $genre;
             $this->genreLimitError = false;
         }
-
         $this->searchTerm = '';
         $this->isGenreDropdownOpen = false;
     }
@@ -74,6 +280,12 @@ class Settings extends Component
         $this->selectedGenres = array_values(array_filter($this->selectedGenres, function ($selected) use ($genre) {
             return $selected !== $genre;
         }));
+        if (count($this->selectedGenres) < $this->minGenres) {
+            $this->genreCountError = true;
+            $this->isGenreDropdownOpen = true;
+            return;
+        }
+        $this->genreCountError = false;
         $this->genreLimitError = false;
     }
 
