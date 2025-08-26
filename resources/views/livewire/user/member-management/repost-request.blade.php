@@ -73,10 +73,10 @@
                             class="text-gray-900 dark:text-white">Response rate.</span></span>
                     <a href="#" class="text-xs text-red-500 underline">Reset</a>
                 </div>
-                <div x-data="{ on: false }" class="inline-flex items-center cursor-pointer"
-                    wire:click="setActiveTab('accept_requests')">
+                <div x-data="{ on: {{ $requestReceiveable ? 'true' : 'false' }} }" class="inline-flex items-center cursor-pointer"
+                    wire:click="requestReceiveableToggle">
                     <!-- Hidden Checkbox -->
-                    <input type="checkbox" class="sr-only peer">
+                    <input type="checkbox" class="sr-only peer" wire:model.live="requestReceiveable" {{ $requestReceiveable ? 'checked' : '' }}>
 
                     <div class="flex items-center space-x-2">
                         <!-- Toggle Switch -->

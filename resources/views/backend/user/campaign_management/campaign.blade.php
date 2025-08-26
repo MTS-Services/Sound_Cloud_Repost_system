@@ -31,7 +31,9 @@
             </div>
 
             <x-gbutton variant="primary" wire:click="toggleCampaignsModal"
-                class="mb-2">{{ __('Start a new campaign') }}</x-gbutton>
+                class="mb-2">
+                <span><x-lucide-plus class="w-5 h-5 mr-1" /></span>
+                {{ __('Start a new campaign') }}</x-gbutton>
         </div>
     </div>
 
@@ -921,7 +923,7 @@
                                 following genres:</p>
                             <div class="space-y-2 ml-4">
                                 <div class="flex items-center space-x-2">
-                                    <input type="radio" name="genre" value="anyGenre"
+                                    <input type="radio" name="genre" value="anyGenre" checked
                                         @click="showGenreRadios = false" wire:model="anyGenre"
                                         class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
                                     <span class="text-sm text-gray-700 dark:text-gray-400">Open to all music

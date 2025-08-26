@@ -2,12 +2,18 @@
 
 namespace App\Livewire\User\ProfileManagement;
 
+use App\Jobs\SyncedPlaylists;
+use App\Jobs\SyncedTracks;
 use App\Models\CreditTransaction;
 use App\Models\Playlist;
 use App\Models\Repost;
 use App\Models\Track;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\Admin\UserManagement\UserService;
+use App\Services\PlaylistService;
+use App\Services\SoundCloud\SoundCloudService;
+use App\Services\TrackService;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -16,6 +22,8 @@ use Livewire\WithPagination;
 class MyAccount extends Component
 {
     use WithPagination;
+
+    protected string $baseUrl = 'https://api.soundcloud.com';
 
     // UI state
     #[Url(as: 'tab', except: 'insights')]
@@ -43,12 +51,18 @@ class MyAccount extends Component
     // Dependencies (non-serializable) — keep private
     private UserService $userService;
     private CreditTransactionService $creditTransactionService;
+    private TrackService $trackService;
+    private PlaylistService $playlistService;
+    private SoundCloudService $soundCloudService;
 
     // Livewire v3: boot runs on every request (initial + subsequent)
-    public function boot(UserService $userService, CreditTransactionService $creditTransactionService): void
+    public function boot(UserService $userService, CreditTransactionService $creditTransactionService, TrackService $trackService, SoundCloudService $soundCloudService, PlaylistService $playlistService): void
     {
         $this->userService = $userService;
         $this->creditTransactionService = $creditTransactionService;
+        $this->trackService = $trackService;
+        $this->soundCloudService = $soundCloudService;
+        $this->playlistService = $playlistService;
     }
 
     public function mount($user_urn = null): void
@@ -73,8 +87,10 @@ class MyAccount extends Component
 
         // Reset the relevant pager when switching tabs
         if ($tab === 'tracks') {
+            $this->syncTracks();
             $this->resetPage('tracksPage');
         } elseif ($tab === 'playlists') {
+            $this->syncPlaylists();
             $this->resetPage('playlistsPage');
         }
     }
@@ -112,6 +128,18 @@ class MyAccount extends Component
     public function closeEditProfileModal(): void
     {
         $this->showEditProfileModal = false;
+    }
+
+    public function syncTracks()
+    {
+        SyncedTracks::dispatch(user()->urn);
+        return back()->with('success', 'Track sync started in background. Please check later.');
+    }
+    public function syncPlaylists()
+    {
+        SyncedPlaylists::dispatch(user()->urn);
+
+        return back()->with('success', 'Playlist sync started in background.');
     }
 
     public function render()

@@ -246,14 +246,19 @@ class Member extends Component
             'playListTrackShow',
         ]);
         $this->selectedUserUrn = $userUrn;
-        $this->showModal = true;
-        $this->activeTab = 'tracks';
         $this->user = User::with('userInfo')->where('urn', $this->selectedUserUrn)->first();
-        $this->user_urn = $this->user->urn;
-        $this->allTracks = Track::self()->get();
-        $this->tracks = $this->allTracks->take($this->trackLimit);
-        $this->allPlaylists = Playlist::self()->get();
-        $this->playlists = $this->allPlaylists->take($this->playlistLimit);
+        if($this->user->request_receiveable) {
+            $this->showModal = true;
+            $this->activeTab = 'tracks';
+    
+            $this->user_urn = $this->user->urn;
+            $this->allTracks = Track::self()->get();
+            $this->tracks = $this->allTracks->take($this->trackLimit);
+            $this->allPlaylists = Playlist::self()->get();
+            $this->playlists = $this->allPlaylists->take($this->playlistLimit);
+        }else{
+            return redirect()->back()->with('error', 'User is Not Request Receiveable');
+        }
     }
 
     public function closeModal()

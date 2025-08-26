@@ -24,6 +24,7 @@ use App\Livewire\User\Notification\NotificationList;
 use App\Livewire\User\Notification\NotificationShow;
 use App\Livewire\User\PackageManagement\Pricing;
 use App\Livewire\User\ProfileManagement\MyAccount;
+use App\Livewire\User\Settings;
 use App\Livewire\User\TrackSubmit;
 use App\Models\Faq as ModelsFaq;
 use Illuminate\Validation\Rules\Unique;
@@ -90,12 +91,14 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
 
     // Track Submit Routes
     Route::get('/track/submit', TrackSubmit::class)->name('track.submit');
+
+    // Settings Routes
+    Route::get('/settings', Settings::class)->name('settings');
 });
 
 // Faq Management
 Route::get('user/frequently-asked-questions', Faq::class)->name('user.faq')->middleware('auth:web');
 
 // Static page routes
-Route::view('user/settings', 'backend.user.settings')->name('settings')->middleware('auth:web');
 Route::view('user/page', 'backend.user.dummy-page')->name('page')->middleware('auth:web');
 Route::view('user/charts', 'backend.user.chart')->name('charts')->middleware('auth:web');
