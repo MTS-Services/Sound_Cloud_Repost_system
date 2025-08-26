@@ -192,9 +192,9 @@
                     <div class="h-60 sm:h-96 flex flex-col justify-between">
                         <div class="flex-grow flex items-center justify-center my-4">
                             <div
-                                class="bg-slate-700/50 rounded-full w-36 h-36 sm:w-40 sm:h-40 flex items-center justify-center">
-                                <img src="https://imgs.search.brave.com/2rHUZ109YlFZLs4tiya8jxlxjLsE_WEUoUMpvFfZANQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NzFRTnBFbDhjckwu/anBn"
-                                    alt="">
+                                class="bg-slate-700/50 rounded-lg w-full h-full sm:w-40 sm:h-40 flex items-center justify-center">
+                                <img src="https://www.musiikkiluvat.fi/wp-content/uploads/2022/09/istock-1324006497-kopio-768x512.jpg"
+                                    class="w-full h-full rounded-xl" alt="">
                             </div>
                         </div>
                         <div class="flex flex-wrap justify-center gap-x-2 gap-y-2 text-xs">
