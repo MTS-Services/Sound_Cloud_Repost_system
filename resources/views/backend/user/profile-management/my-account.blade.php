@@ -293,7 +293,7 @@
                                             'text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400': activeTab === 'tracks',
                                             'text-gray-500 border-transparent dark:text-slate-400': activeTab !== 'tracks'
                                         }"
-                                        @click="activeTab = 'tracks'"
+                                        @click="activeTab = 'tracks'" wire:click="setActiveTab('tracks')"
                                         class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors">
                                         Tracks
                                     </button>
@@ -303,7 +303,7 @@
                                             'text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400': activeTab === 'playlists',
                                             'text-gray-500 border-transparent dark:text-slate-400': activeTab !== 'playlists'
                                         }"
-                                        @click="activeTab = 'playlists'"
+                                        @click="activeTab = 'playlists'" wire:click="setActiveTab('playlists')"
                                         class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors">
                                         Playlists
                                     </button>
@@ -947,7 +947,7 @@
                                         @endforeach
                                     </div>
 
-                                    @if (user()->urn == $user->user_urn)
+                                    @if (user()->urn == $user->urn)
                                         {{-- Transaction Tab --}}
                                         <div class="tab-panel mt-4" x-show="activeTab === 'transaction'" x-transition>
                                             <div class="w-full overflow-x-auto">
@@ -964,7 +964,7 @@
                                                             <th class="w-20 px-2 py-3">Status</th>
                                                         </tr>
                                                     </thead>
-                                                    @foreach ($transactions as $transaction)
+                                                    @forelse ($transactions as $transaction)
                                                         <tbody
                                                             class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
                                                             <tr class="border-b border-gray-200 dark:border-gray-700">
@@ -984,7 +984,16 @@
                                                                 </td>
                                                             </tr>
                                                         </tbody>
-                                                    @endforeach
+                                                    @empty
+                                                        <tbody
+                                                            class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+                                                            <tr class="border-b border-gray-200 dark:border-gray-700">
+                                                                <td colspan="6" class="px-2 py-2 text-center font-medium">
+                                                                    No transactions found.
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    @endforelse
                                                 </table>
                                             </div>
                                         </div>
