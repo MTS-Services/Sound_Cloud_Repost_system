@@ -199,7 +199,7 @@
                                     <span>Visit on SoundCloud</span>
                                 </a>
                                 @if (user()->urn == $user->urn)
-                                    <x-gbutton variant="primary" wire:click="profileUpdated({{ user()->id }})">
+                                    {{-- <x-gbutton variant="primary" wire:click="profileUpdated({{ user()->id }})">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                             fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round"
@@ -208,7 +208,17 @@
                                             <path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"></path>
                                         </svg>
                                         <span class="ms-1">Edit</span>
-                                    </x-gbutton>
+                                    </x-gbutton> --}}
+                                    <x-gabutton variant="primary" wire:navigate href="{{ route('user.settings') }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="w-3 h-3 sm:w-4 sm:h-4">
+                                            <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                            <path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"></path>
+                                        </svg>
+                                        <span class="ms-1">Edit</span>
+                                    </x-gabutton>
                                 @endif
                             </div>
                         </div>
@@ -988,7 +998,8 @@
                                                         <tbody
                                                             class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
                                                             <tr class="border-b border-gray-200 dark:border-gray-700">
-                                                                <td colspan="6" class="px-2 py-2 text-center font-medium">
+                                                                <td colspan="6"
+                                                                    class="px-2 py-2 text-center font-medium">
                                                                     No transactions found.
                                                                 </td>
                                                             </tr>
