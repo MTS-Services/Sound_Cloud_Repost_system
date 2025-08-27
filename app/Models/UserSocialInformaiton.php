@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Models;
+
+use App\Models\BaseModel;
+
+class UserSocialInformaiton extends BaseModel
+{
+    protected $fillable = [
+        'user_urn',
+        'instagram',
+        'twitter',
+        'facebook',
+        'youtube',
+        'tiktok',
+        'spotify',
+
+        'created_by',
+        'updated_by',
+        'deleted_by',
+    ];
+
+    /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
+                Start of RELATIONSHIPS
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_urn', 'urn');
+    }
+
+    /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
+                End of RELATIONSHIPS
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->appends = array_merge(parent::getAppends(), [
+            //
+        ]);
+    }
+}

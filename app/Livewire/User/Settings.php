@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\UserGenre;
 use App\Models\UserInformation;
 use App\Models\UserSetting;
+use App\Models\UserSocialInformaiton;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
@@ -39,26 +40,45 @@ class Settings extends Component
 
     protected $rules = [
         'selectedGenres' => 'array|max:5|min:1',
-        'instagram_username' => 'nullable|string|max:255',
-        'twitter_username' => 'nullable|string|max:255',
-        'facebook_username' => 'nullable|string|max:255',
-        'youtube_channel_id' => 'nullable|string|max:255',
-        'tiktok_username' => 'nullable|string|max:255',
-        'spotify_artist_link' => 'nullable|string|max:255',
+
+        'instagram_username' => 'nullable|string|max:30|regex:/^[A-Za-z0-9._]+$/',
+        'twitter_username'   => 'nullable|string|max:30|regex:/^[A-Za-z0-9_]+$/',
+        'facebook_username'  => 'nullable|string|max:50|regex:/^[A-Za-z0-9.]+$/',
+        'youtube_channel_id' => 'nullable|string|max:100|regex:/^[A-Za-z0-9_-]+$/',
+        'tiktok_username'    => 'nullable|string|max:30|regex:/^[A-Za-z0-9._]+$/',
+        'spotify_artist_link' => 'nullable|string|max:100|url',
+    ];
+    protected $messages = [
+        'selectedGenres.required' => 'Please select at least 1 genre.',
+        'selectedGenres.max'      => 'You can select up to 5 genres only.',
+
+        'instagram_username.regex' => 'Instagram username may only contain letters, numbers, dots (.) and underscores (_).',
+        'instagram_username.max'   => 'Instagram username cannot be longer than 30 characters.',
+
+        'twitter_username.regex' => 'Twitter username may only contain letters, numbers, and underscores (_).',
+        'twitter_username.max'   => 'Twitter username cannot be longer than 15 characters.',
+
+        'facebook_username.regex' => 'Facebook username may only contain letters, numbers, and dots (.).',
+        'facebook_username.max'   => 'Facebook username cannot be longer than 50 characters.',
+
+        'youtube_channel_id.regex' => 'YouTube channel ID may only contain letters, numbers, dashes (-), and underscores (_).',
+        'youtube_channel_id.max'   => 'YouTube channel ID cannot be longer than 100 characters.',
+
+        'tiktok_username.regex' => 'TikTok username may only contain letters, numbers, dots (.) and underscores (_).',
+        'tiktok_username.max'   => 'TikTok username cannot be longer than 24 characters.',
+
+        'spotify_artist_link.url' => 'Spotify artist ID must be a valid URL.',
+        'spotify_artist_link.max'   => 'Spotify artist ID cannot be longer than 50 characters.',
     ];
 
+
     public function mount()
-    {
-        $this->dataLoad();
-        $this->loadSettings();
-        $this->loadUserInfo();
-    }
-    public function dataLoad()
     {
         $this->availableGenres = AllGenres();
         $this->selectedGenres = UserGenre::where('user_urn', user()->urn)->pluck('genre')->toArray();
         $this->credits = CreditTransaction::where('receiver_urn', user()->urn)->credit()->get();
-        $this->user_infos = UserInformation::where('user_urn', user()->urn)->first();
+        $this->loadSettings();
+        $this->loadUserInfo();
     }
     ####################### Notification Settings Start ############################
     // Email alerts
@@ -164,64 +184,68 @@ class Settings extends Component
 
     public function createOrUpdate()
     {
-        $userUrn = user()->urn;
+        try {
+            $userUrn = user()->urn;
 
-        $data = [
-            'user_urn' => $userUrn,
-            // Email alerts
-            'em_new_repost' => $this->em_new_repost ? 1 : 0,
-            'em_repost_accepted' => $this->em_repost_accepted ? 1 : 0,
-            'em_repost_declined' => $this->em_repost_declined ? 1 : 0,
-            'em_repost_expired' => $this->em_repost_expired ? 1 : 0,
-            'em_campaign_summary' => $this->em_campaign_summary ? 1 : 0,
-            'em_free_boost' => $this->em_free_boost ? 1 : 0,
-            'em_feedback_campaign' => $this->em_feedback_campaign ? 1 : 0,
-            'em_feedback_rated' => $this->em_feedback_rated ? 1 : 0,
-            'em_referrals' => $this->em_referrals ? 1 : 0,
-            'em_reputation' => $this->em_reputation ? 1 : 0,
-            'em_inactivity_warn' => $this->em_inactivity_warn ? 1 : 0,
-            'em_marketing' => $this->em_marketing ? 1 : 0,
-            'em_chart_entry' => $this->em_chart_entry ? 1 : 0,
-            'em_mystery_box' => $this->em_mystery_box ? 1 : 0,
-            'em_discussions' => $this->em_discussions ? 1 : 0,
-            'em_competitions' => $this->em_competitions ? 1 : 0,
+            $data = [
+                'user_urn' => $userUrn,
+                // Email alerts
+                'em_new_repost' => $this->em_new_repost ? 1 : 0,
+                'em_repost_accepted' => $this->em_repost_accepted ? 1 : 0,
+                'em_repost_declined' => $this->em_repost_declined ? 1 : 0,
+                'em_repost_expired' => $this->em_repost_expired ? 1 : 0,
+                'em_campaign_summary' => $this->em_campaign_summary ? 1 : 0,
+                'em_free_boost' => $this->em_free_boost ? 1 : 0,
+                'em_feedback_campaign' => $this->em_feedback_campaign ? 1 : 0,
+                'em_feedback_rated' => $this->em_feedback_rated ? 1 : 0,
+                'em_referrals' => $this->em_referrals ? 1 : 0,
+                'em_reputation' => $this->em_reputation ? 1 : 0,
+                'em_inactivity_warn' => $this->em_inactivity_warn ? 1 : 0,
+                'em_marketing' => $this->em_marketing ? 1 : 0,
+                'em_chart_entry' => $this->em_chart_entry ? 1 : 0,
+                'em_mystery_box' => $this->em_mystery_box ? 1 : 0,
+                'em_discussions' => $this->em_discussions ? 1 : 0,
+                'em_competitions' => $this->em_competitions ? 1 : 0,
 
-            // Push notifications
-            'ps_new_repost' => $this->ps_new_repost ? 1 : 0,
-            'ps_repost_accepted' => $this->ps_repost_accepted ? 1 : 0,
-            'ps_repost_declined' => $this->ps_repost_declined ? 1 : 0,
-            'ps_repost_expired' => $this->ps_repost_expired ? 1 : 0,
-            'ps_campaign_summary' => $this->ps_campaign_summary ? 1 : 0,
-            'ps_free_boost' => $this->ps_free_boost ? 1 : 0,
-            'ps_feedback_campaign' => $this->ps_feedback_campaign ? 1 : 0,
-            'ps_feedback_rated' => $this->ps_feedback_rated ? 1 : 0,
-            'ps_referrals' => $this->ps_referrals ? 1 : 0,
-            'ps_reputation' => $this->ps_reputation ? 1 : 0,
-            'ps_inactivity_warn' => $this->ps_inactivity_warn ? 1 : 0,
-            'ps_marketing' => $this->ps_marketing ? 1 : 0,
-            'ps_chart_entry' => $this->ps_chart_entry ? 1 : 0,
-            'ps_mystery_box' => $this->ps_mystery_box ? 1 : 0,
-            'ps_discussions' => $this->ps_discussions ? 1 : 0,
-            'ps_competitions' => $this->ps_competitions ? 1 : 0,
+                // Push notifications
+                'ps_new_repost' => $this->ps_new_repost ? 1 : 0,
+                'ps_repost_accepted' => $this->ps_repost_accepted ? 1 : 0,
+                'ps_repost_declined' => $this->ps_repost_declined ? 1 : 0,
+                'ps_repost_expired' => $this->ps_repost_expired ? 1 : 0,
+                'ps_campaign_summary' => $this->ps_campaign_summary ? 1 : 0,
+                'ps_free_boost' => $this->ps_free_boost ? 1 : 0,
+                'ps_feedback_campaign' => $this->ps_feedback_campaign ? 1 : 0,
+                'ps_feedback_rated' => $this->ps_feedback_rated ? 1 : 0,
+                'ps_referrals' => $this->ps_referrals ? 1 : 0,
+                'ps_reputation' => $this->ps_reputation ? 1 : 0,
+                'ps_inactivity_warn' => $this->ps_inactivity_warn ? 1 : 0,
+                'ps_marketing' => $this->ps_marketing ? 1 : 0,
+                'ps_chart_entry' => $this->ps_chart_entry ? 1 : 0,
+                'ps_mystery_box' => $this->ps_mystery_box ? 1 : 0,
+                'ps_discussions' => $this->ps_discussions ? 1 : 0,
+                'ps_competitions' => $this->ps_competitions ? 1 : 0,
 
-            // My Requests
-            'accept_repost' => $this->accept_repost ? 1 : 0,
-            'block_mismatch_genre' => $this->block_mismatch_genre ? 1 : 0,
+                // My Requests
+                'accept_repost' => $this->accept_repost ? 1 : 0,
+                'block_mismatch_genre' => $this->block_mismatch_genre ? 1 : 0,
 
-            // Additional Features
-            'opt_mystery_box' => $this->opt_mystery_box ? 1 : 0,
-            'auto_boost' => $this->auto_boost ? 1 : 0,
-            'enable_react' => $this->enable_react ? 1 : 0,
-        ];
+                // Additional Features
+                'opt_mystery_box' => $this->opt_mystery_box ? 1 : 0,
+                'auto_boost' => $this->auto_boost ? 1 : 0,
+                'enable_react' => $this->enable_react ? 1 : 0,
+            ];
 
-        UserSetting::updateOrCreate(
-            ['user_urn' => $userUrn],
-            $data
-        );
-        $this->reset();
-        $this->loadSettings();
+            UserSetting::updateOrCreate(
+                ['user_urn' => $userUrn],
+                $data
+            );
+            $this->reset();
+            $this->loadSettings();
 
-        session()->flash('message', 'Settings updated successfully!');
+            session()->flash('message', 'Settings updated successfully!');
+        } catch (\Exception $e) {
+            session()->flash('error', $e->getMessage());
+        }
     }
 
     public function getAlertsProperty()
@@ -249,15 +273,15 @@ class Settings extends Component
 
     public function loadUserInfo()
     {
-        $userInfos = UserInformation::where('user_urn', user()->urn)->first();
+        $socialInfos = UserSocialInformaiton::where('user_urn', user()->urn)->first();
 
-        if ($this->user_infos) {
-            $this->instagram_username = $userInfos->instagram;
-            $this->twitter_username = $userInfos->twitter;
-            $this->tiktok_username = $userInfos->tiktok;
-            $this->facebook_username = $userInfos->facebook;
-            $this->youtube_channel_id = $userInfos->youtube;
-            $this->spotify_artist_link = $userInfos->spotify;
+        if ($socialInfos) {
+            $this->instagram_username = $socialInfos->instagram ?? '';
+            $this->twitter_username = $socialInfos->twitter ?? '';
+            $this->tiktok_username = $socialInfos->tiktok ?? '';
+            $this->facebook_username = $socialInfos->facebook ?? '';
+            $this->youtube_channel_id = $socialInfos->youtube ?? '';
+            $this->spotify_artist_link = $socialInfos->spotify ?? '';
         }
     }
     public function addGenre($genre)
@@ -307,13 +331,13 @@ class Settings extends Component
     {
         $this->validate();
 
-        $user_info = UserInformation::firstOrCreate(
+        $social_info = UserSocialInformaiton::firstOrCreate(
             ['user_urn' => user()->urn],
             ['creater_id' => user()->id, 'creater_type' => get_class(user())]
         );
 
         try {
-            DB::transaction(function () use ($user_info) {
+            DB::transaction(function () use ($social_info) {
                 UserGenre::where('user_urn', user()->urn)->delete();
 
                 $genres = collect($this->selectedGenres)->map(fn($genre) => [
@@ -325,7 +349,7 @@ class Settings extends Component
 
                 UserGenre::insert($genres);
 
-                $user_info->update([
+                $social_info->update([
                     'instagram' => $this->instagram_username,
                     'twitter'   => $this->twitter_username,
                     'facebook'  => $this->facebook_username,
@@ -336,7 +360,7 @@ class Settings extends Component
             });
 
             $this->reset(['selectedGenres', 'instagram_username', 'twitter_username', 'facebook_username', 'youtube_channel_id', 'tiktok_username', 'spotify_artist_link']);
-            $this->dataLoad();
+            $this->mount();
 
             session()->flash('success', 'Profile updated successfully!');
         } catch (\Throwable $e) {
