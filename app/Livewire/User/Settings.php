@@ -43,33 +43,33 @@ class Settings extends Component
         'selectedGenres' => 'array|max:5|min:1',
 
         'instagram_username' => 'nullable|string|max:30|regex:/^[A-Za-z0-9._]+$/',
-        'twitter_username'   => 'nullable|string|max:30|regex:/^[A-Za-z0-9_]+$/',
-        'facebook_username'  => 'nullable|string|max:50|regex:/^[A-Za-z0-9.]+$/',
+        'twitter_username' => 'nullable|string|max:30|regex:/^[A-Za-z0-9_]+$/',
+        'facebook_username' => 'nullable|string|max:50|regex:/^[A-Za-z0-9.]+$/',
         'youtube_channel_id' => 'nullable|string|max:100|regex:/^[A-Za-z0-9_-]+$/',
-        'tiktok_username'    => 'nullable|string|max:30|regex:/^[A-Za-z0-9._]+$/',
+        'tiktok_username' => 'nullable|string|max:30|regex:/^[A-Za-z0-9._]+$/',
         'spotify_artist_link' => 'nullable|string|max:100|url',
     ];
     protected $messages = [
         'selectedGenres.required' => 'Please select at least 1 genre.',
-        'selectedGenres.max'      => 'You can select up to 5 genres only.',
+        'selectedGenres.max' => 'You can select up to 5 genres only.',
 
         'instagram_username.regex' => 'Instagram username may only contain letters, numbers, dots (.) and underscores (_).',
-        'instagram_username.max'   => 'Instagram username cannot be longer than 30 characters.',
+        'instagram_username.max' => 'Instagram username cannot be longer than 30 characters.',
 
         'twitter_username.regex' => 'Twitter username may only contain letters, numbers, and underscores (_).',
-        'twitter_username.max'   => 'Twitter username cannot be longer than 15 characters.',
+        'twitter_username.max' => 'Twitter username cannot be longer than 15 characters.',
 
         'facebook_username.regex' => 'Facebook username may only contain letters, numbers, and dots (.).',
-        'facebook_username.max'   => 'Facebook username cannot be longer than 50 characters.',
+        'facebook_username.max' => 'Facebook username cannot be longer than 50 characters.',
 
         'youtube_channel_id.regex' => 'YouTube channel ID may only contain letters, numbers, dashes (-), and underscores (_).',
-        'youtube_channel_id.max'   => 'YouTube channel ID cannot be longer than 100 characters.',
+        'youtube_channel_id.max' => 'YouTube channel ID cannot be longer than 100 characters.',
 
         'tiktok_username.regex' => 'TikTok username may only contain letters, numbers, dots (.) and underscores (_).',
-        'tiktok_username.max'   => 'TikTok username cannot be longer than 24 characters.',
+        'tiktok_username.max' => 'TikTok username cannot be longer than 24 characters.',
 
         'spotify_artist_link.url' => 'Spotify artist ID must be a valid URL.',
-        'spotify_artist_link.max'   => 'Spotify artist ID cannot be longer than 50 characters.',
+        'spotify_artist_link.max' => 'Spotify artist ID cannot be longer than 50 characters.',
     ];
 
 
@@ -242,10 +242,9 @@ class Settings extends Component
             );
             $this->reset();
             $this->loadSettings();
-
-            session()->flash('message', 'Settings updated successfully!');
+            $this->dispatch('alert', 'success', 'Settings updated successfully!');
         } catch (\Exception $e) {
-            session()->flash('error', $e->getMessage());
+            $this->dispatch('alert', 'error', $e->getMessage());
         }
     }
 
@@ -355,21 +354,21 @@ class Settings extends Component
 
                 $social_info->update([
                     'instagram' => $this->instagram_username,
-                    'twitter'   => $this->twitter_username,
-                    'facebook'  => $this->facebook_username,
-                    'youtube'   => $this->youtube_channel_id,
-                    'tiktok'    => $this->tiktok_username,
-                    'spotify'   => $this->spotify_artist_link,
+                    'twitter' => $this->twitter_username,
+                    'facebook' => $this->facebook_username,
+                    'youtube' => $this->youtube_channel_id,
+                    'tiktok' => $this->tiktok_username,
+                    'spotify' => $this->spotify_artist_link,
                 ]);
             });
 
             $this->reset(['selectedGenres', 'instagram_username', 'twitter_username', 'facebook_username', 'youtube_channel_id', 'tiktok_username', 'spotify_artist_link']);
             $this->mount();
 
-            session()->flash('success', 'Profile updated successfully!');
+            $this->dispatch('alert', 'success', 'Profile updated successfully!');
         } catch (\Throwable $e) {
             Log::error($e->getMessage());
-            session()->flash('error', 'Profile update failed!');
+            $this->dispatch('alert', 'error', 'Profile update failed!');
         }
     }
 
@@ -385,7 +384,7 @@ class Settings extends Component
             return redirect()->route('f.landing')->with('success', 'Account deleted successfully!');
         } catch (\Throwable $e) {
             Log::error($e->getMessage());
-            session()->flash('error', 'Account delete failed!');
+            $this->dispatch('alert', 'error', 'Account delete failed!');
         }
     }
 
