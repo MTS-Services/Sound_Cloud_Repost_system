@@ -5,13 +5,11 @@ namespace App\Livewire\User;
 use App\Models\CreditTransaction;
 use App\Models\User;
 use App\Models\UserGenre;
-use App\Models\UserInformation;
 use App\Models\UserSetting;
-use App\Models\UserSocialInformaiton;
+use App\Models\UserSocialInformation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
-use PhpParser\Node\Expr\FuncCall;
 
 class Settings extends Component
 {
@@ -273,7 +271,7 @@ class Settings extends Component
 
     public function loadUserInfo()
     {
-        $socialInfos = UserSocialInformaiton::where('user_urn', user()->urn)->first();
+        $socialInfos = UserSocialInformation::where('user_urn', user()->urn)->first();
 
         if ($socialInfos) {
             $this->instagram_username = $socialInfos->instagram ?? '';
@@ -331,7 +329,7 @@ class Settings extends Component
     {
         $this->validate();
 
-        $social_info = UserSocialInformaiton::firstOrCreate(
+        $social_info = UserSocialInformation::firstOrCreate(
             ['user_urn' => user()->urn],
             ['creater_id' => user()->id, 'creater_type' => get_class(user())]
         );

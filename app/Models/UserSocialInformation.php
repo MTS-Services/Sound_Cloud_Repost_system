@@ -4,8 +4,9 @@ namespace App\Models;
 
 use App\Models\BaseModel;
 
-class UserSocialInformaiton extends BaseModel
+class UserSocialInformation extends BaseModel
 {
+    protected $table = 'user_social_informations';
     protected $fillable = [
         'user_urn',
         'instagram',
