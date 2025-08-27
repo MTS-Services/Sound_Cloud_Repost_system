@@ -29,7 +29,7 @@
                 <div class="flex flex-col items-center text-center">
                     <p class="text-sm text-gray-600 dark:text-gray-300">
                         Please confirm your email address to unlock core platform features.
-                        <a href="#" class="font-semibold text-orange-600 hover:underline">Confirm email</a>
+                        <a href="{{ route('user.email.resend.verification') }}" class="font-semibold text-orange-600 hover:underline">Confirm email</a>
                     </p>
                     <button><x-lucide-x class="absolute top-4 right-4 w-4 h-4" @click="open = false" /></button>
                 </div>
@@ -106,7 +106,7 @@
 
                         <!-- Description -->
                         <p class="text-sm text-gray-700 dark:text-gray-300 flex-1">
-                            Customise your genres to personalise your RepostExchange experience.
+                            Customise your genres to personalise your Repostchaine experience.
                         </p>
 
                         <!-- Close button -->
@@ -397,7 +397,8 @@
                     <!-- Small content below buttons -->
                     <div
                         class="border-t border-gray-300 dark:border-gray-600 mt-4 pt-2 text-sm text-gray-500 dark:text-gray-400">
-                        Looking to delete your account?<a href="#" class="font-semibold hover:underline">Click
+                        Looking to delete your account?<a href="javascript:void(0)" wire:click="deleteConfirmation"
+                            class="font-semibold hover:underline">Click
                             <span class="text-red-500"> here</a>.
                     </div>
                 </div>
@@ -723,8 +724,45 @@
                     </table>
                 </div>
             </div>
-
         </div>
+    </div>
+    <div x-data="{ confirmModal: @entangle('confirmModal').live }" x-show="confirmModal" x-cloak x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
 
+        <div
+            class="w-full max-w-96 mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col max-h-[80vh] overflow-hidden">
+
+            {{-- HEADER --}}
+            <div
+                class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
+                <div class="flex items-center gap-3">
+                    <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                        <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">
+                        {{ __('Delete Your Account') }}
+                    </h2>
+                </div>
+                <button x-on:click="confirmModal = false"
+                    class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
+                    <x-heroicon-s-x-mark class="w-5 h-5" />
+                </button>
+            </div>
+
+            @if ($confirmModal)
+                <div class=" p-6">
+                    <p class="text-gray-600 dark:text-gray-300 mb-6 text-center">
+                        Are you sure you want to delete your account?
+                    </p>
+
+                    <div class="flex justify-center">
+                        <x-gbutton wire:click="deleteAccount" variant="primary">Yes, Delete Account</x-gbutton>
+                    </div>
+                </div>
+            @endif
+        </div>
     </div>
 </section>

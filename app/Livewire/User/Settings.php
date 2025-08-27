@@ -36,6 +36,8 @@ class Settings extends Component
 
     public $availableGenres = [];
 
+    public $confirmModal = false;
+
     protected $rules = [
         'selectedGenres' => 'array|max:5|min:1',
 
@@ -364,6 +366,22 @@ class Settings extends Component
         } catch (\Throwable $e) {
             Log::error($e->getMessage());
             session()->flash('error', 'Profile update failed!');
+        }
+    }
+
+    public function deleteConfirmation()
+    {
+        $this->confirmModal = true;
+    }
+
+    public function deleteAccount()
+    {
+        try {
+            User::where('urn', user()->urn)->delete();
+            return redirect()->route('f.landing')->with('success', 'Account deleted successfully!');
+        } catch (\Throwable $e) {
+            Log::error($e->getMessage());
+            session()->flash('error', 'Account delete failed!');
         }
     }
 
