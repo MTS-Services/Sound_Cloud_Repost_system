@@ -77,7 +77,7 @@ class Settings extends Component
     {
         $this->availableGenres = AllGenres();
         $this->selectedGenres = UserGenre::where('user_urn', user()->urn)->pluck('genre')->toArray();
-        $this->credits = CreditTransaction::where('receiver_urn', user()->urn)->credit()->get();
+        $this->credits = CreditTransaction::where('receiver_urn', user()->urn)->get();
         $this->loadSettings();
         $this->loadUserInfo();
     }

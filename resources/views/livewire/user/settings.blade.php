@@ -24,7 +24,7 @@
     <div x-data="{ open: true, activeTab: 'edit', isGenreDropdownOpen: false }" class="">
         @if (!user()->email_verified_at)
             <div x-show="open" x-transition.opacity.duration.300ms
-                class=" top-0  mb-8 max-w-8xl mx-auto  bg-gray-50 dark:bg-gray-800 border-l-4 border-orange-500 text-black dark:text-white  p-4 shadow-sm flex items-center justify-center z-50 rounded-md relative"
+                class=" top-0  mb-8 max-w-8xl mx-auto  bg-gray-50 dark:bg-gray-800 border-l-4 border-orange-500 text-black dark:text-white  p-4 shadow-sm flex items-center justify-center z-1 rounded-md relative"
                 role="alert">
                 <div class="flex flex justify-center items-center gap-1">
                     <p class="text-sm text-gray-600 dark:text-gray-300">
@@ -690,7 +690,7 @@
                                         {{ $credit->credits }}
                                     </td>
                                     <td class="px-5 p-3 text-gray-800 font-medium whitespace-nowrap">
-                                        {{ $credit->amount }}
+                                        {{ $credit->balance }}
                                     </td>
                                 </tr>
                             @empty

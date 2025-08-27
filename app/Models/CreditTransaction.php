@@ -52,9 +52,24 @@ class CreditTransaction extends BaseModel
             'calculation_type_color',
             'status_label',
             'status_color',
+            'balance',
 
             'transaction_type_name',
         ]);
+    }
+
+    // 👇 Credit balance attribute
+    public function getBalanceAttribute()
+    {
+        $credit = $this->where('receiver_urn', $this->receiver_urn)
+            ->where('calculation_type', self::CALCULATION_TYPE_CREDIT)
+            ->sum('credits');
+
+        $debit = $this->where('receiver_urn', $this->receiver_urn)
+            ->where('calculation_type', self::CALCULATION_TYPE_DEBIT)
+            ->sum('credits');
+
+        return $credit - $debit;
     }
 
     public function getStatusList(): array
@@ -78,7 +93,7 @@ class CreditTransaction extends BaseModel
         ];
     }
 
-        public function getStatusColorAttribute()
+    public function getStatusColorAttribute()
     {
         return [
             self::STATUS_SUCCEEDED => 'badge-success',
@@ -101,8 +116,8 @@ class CreditTransaction extends BaseModel
     {
         return isset($this->status) ? $this->getStatusList()[$this->status] : 'Unknown';
     }
-   
-    
+
+
 
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
