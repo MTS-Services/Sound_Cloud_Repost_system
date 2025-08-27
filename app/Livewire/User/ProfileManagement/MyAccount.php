@@ -8,6 +8,7 @@ use App\Models\CreditTransaction;
 use App\Models\Playlist;
 use App\Models\Repost;
 use App\Models\Track;
+use App\Models\UserSocialInformation;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\Admin\UserManagement\UserService;
 use App\Services\PlaylistService;
@@ -75,6 +76,7 @@ class MyAccount extends Component
             $this->activeTab = 'playlists';
             $this->showPlaylistTracks = true;
         }
+        $this->socialLinks();
     }
 
     public function setActiveTab(string $tab): void
@@ -140,6 +142,25 @@ class MyAccount extends Component
         SyncedPlaylists::dispatch(user()->urn);
 
         return back()->with('success', 'Playlist sync started in background.');
+    }
+    public $instagram = null;
+    public $twitter = null;
+    public $tiktok = null;
+    public $facebook = null;
+    public $youtube = null;
+    public $spotify = null;
+    public $socialLink = [];
+
+    public function socialLinks()
+    {
+        $social_link = UserSocialInformation::where('user_urn', $this->user_urn)->first();
+        $this->socialLink = $social_link;
+        $this->instagram = $social_link->instagram ?? '';
+        $this->twitter = $social_link->twitter ?? '';
+        $this->tiktok = $social_link->tiktok ?? '';
+        $this->facebook = $social_link->facebook ?? '';
+        $this->youtube = $social_link->youtube ?? '';
+        $this->spotify = $social_link->spotify ?? '';
     }
 
     public function render()
