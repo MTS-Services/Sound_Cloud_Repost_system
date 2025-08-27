@@ -137,7 +137,7 @@
                             <!-- Email -->
                             <div class="mb-6">
                                 <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                <input type="email" id="email" value="{{ user()->email }}"
+                                <input type="email" id="email" wire:model="email"
                                     class="mt-1 block max-w-md w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm outline-none">
                                 @if (!user()->email_verified_at)
                                     <p class="mt-1 text-xs text-red-500">

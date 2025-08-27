@@ -15,6 +15,7 @@ class Settings extends Component
 {
     public $credits = [];
     public $user_infos = [];
+    public $email = '';
     // Genre Filter Properties
     public $selectedGenres = [];
     public $searchTerm = '';
@@ -275,6 +276,8 @@ class Settings extends Component
     {
         $socialInfos = UserSocialInformation::where('user_urn', user()->urn)->first();
 
+        $this->email = User::where('urn', user()->urn)->first()->email;
+
         if ($socialInfos) {
             $this->instagram_username = $socialInfos->instagram ?? '';
             $this->twitter_username = $socialInfos->twitter ?? '';
@@ -338,6 +341,7 @@ class Settings extends Component
 
         try {
             DB::transaction(function () use ($social_info) {
+                User::where('urn', user()->urn)->update(['email' => $this->email]);
                 UserGenre::where('user_urn', user()->urn)->delete();
 
                 $genres = collect($this->selectedGenres)->map(fn($genre) => [
