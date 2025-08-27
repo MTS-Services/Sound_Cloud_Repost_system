@@ -24,14 +24,30 @@
     <div x-data="{ open: true, activeTab: 'edit', isGenreDropdownOpen: false }" class="">
         @if (!user()->email_verified_at)
             <div x-show="open" x-transition.opacity.duration.300ms
-                class=" top-0  mb-8 max-w-8xl mx-auto  bg-gray-50 dark:bg-gray-800 border-l-4 border-orange-500 text-black dark:text-white  p-4 shadow-sm flex items-center justify-center z-50 rounded-md"
+                class=" top-0  mb-8 max-w-8xl mx-auto  bg-gray-50 dark:bg-gray-800 border-l-4 border-orange-500 text-black dark:text-white  p-4 shadow-sm flex items-center justify-center z-50 rounded-md relative"
                 role="alert">
-                <div class="flex flex-col items-center text-center">
+                <div class="flex flex justify-center items-center gap-1">
                     <p class="text-sm text-gray-600 dark:text-gray-300">
                         Please confirm your email address to unlock core platform features.
-                        <a href="{{ route('user.email.resend.verification') }}" class="font-semibold text-orange-600 hover:underline">Confirm email</a>
+                    <form x-data="{ loading: false }" x-ref="form" method="POST"
+                        action="{{ route('user.email.resend.verification') }}"
+                        @submit.prevent="loading = true; $refs.submitButton.disabled = true; $refs.form.submit();">
+                        @csrf
+                        <button type="submit" x-ref="submitButton" :disabled="loading"
+                            class="text-sm font-semibold text-orange-600 hover:underline">
+                            <template x-if="!loading">
+                                <span>Resend confirmation</span>
+                            </template>
+                            <template x-if="loading">
+                                <span>Sending...</span>
+                            </template>
+                        </button>
+                    </form>
                     </p>
-                    <button><x-lucide-x class="absolute top-4 right-4 w-4 h-4" @click="open = false" /></button>
+                    {{-- <button class="absolute top-1/2 right-4 transform -translate-y-1/2 transition-colors text-gray-500 dark:text-gray-400 hover:text-gray-700 flex-shrink-0"
+                        @click="open = false">
+                        <x-lucide-x class="w-5 h-5" />
+                    </button> --}}
                 </div>
             </div>
         @endif
@@ -113,10 +129,7 @@
                         <button
                             class="transition-colors text-gray-500 dark:text-gray-400 hover:text-gray-700 flex-shrink-0"
                             @click="open = false">
-                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
+                            <x-lucide-x class="w-5 h-5" />
                         </button>
                     </div>
                     @if (session()->has('success'))
@@ -140,12 +153,37 @@
                                 <input type="email" id="email" wire:model="email"
                                     class="mt-1 block max-w-md w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm outline-none">
                                 @if (!user()->email_verified_at)
-                                    <p class="mt-1 text-xs text-red-500">
-                                        Email not verified.
-                                        <a wire:navigate href="#" class="font-semibold hover:underline">Resend
+                                    <div class="flex items-center gap-1">
+                                        <p class="mt-1 text-xs text-red-500">
+                                            Email not verified.
+                                            {{-- <a wire:navigate href="#" class="font-semibold hover:underline">Resend
                                             confirmation
-                                            email</a>
-                                    </p>
+                                            email</a> --}}
+                                        </p>
+                                        <div x-data="{
+                                            loading: false,
+                                            async send() {
+                                                this.loading = true;
+                                                try {
+                                                    await axios.post('{{ route('user.email.resend.verification') }}');
+                                                } catch (e) {
+                                                    console.error(e);
+                                                } finally {
+                                                    this.loading = false;
+                                                }
+                                            }
+                                        }" class="inline-block">
+                                            <button @click="send()" x-bind:disabled="loading"
+                                                class="text-sm font-semibold text-orange-600 hover:underline">
+                                                <template x-if="!loading">
+                                                    <span>Resend confirmation</span>
+                                                </template>
+                                                <template x-if="loading">
+                                                    <span>Sending...</span>
+                                                </template>
+                                            </button>
+                                        </div>
+                                    </div>
                                 @endif
                             </div>
 

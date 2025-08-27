@@ -173,6 +173,7 @@ class ProfileController extends Controller
 
     public function resendEmailVerification(Request $request): RedirectResponse
     {
+        // dd($request->all());
         // Ensure the user is authenticated
         $user = $request->user(); // Assuming the user is logged in
         if (!$user) {
