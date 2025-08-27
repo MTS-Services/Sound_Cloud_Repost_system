@@ -195,6 +195,7 @@ class Campaign extends Component
     public function mount()
     {
         $this->getAllGenres();
+        $this->getAllTrackTypes();
         $this->totalCampaigns();
         // Initialize play tracking for campaigns (will be done in render method)
     }
@@ -670,12 +671,7 @@ class Campaign extends Component
 
     public function getAllGenres()
     {
-        $this->genres = $this->trackService->getTracks()
-            ->where('user_urn', '!=', user()->urn)
-            ->pluck('genre')
-            ->unique()
-            ->values()
-            ->toArray();
+        $this->genres = User::where('urn', user()->urn)->first()->genres()->pluck('genre')->toArray();
     }
 
     public function profeature($isChecked)

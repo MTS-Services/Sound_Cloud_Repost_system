@@ -272,10 +272,10 @@
                                 </div>
                                 <div class="flex space-x-2">
                                     <div class="flex-1"> 
-                                    <x-gbutton variant="secondary" :full-width="true" wire:navigate onclick="window.location.href = '{{ route('user.decline-repost', encrypt($request->id)) }}'">Decline</x-gbutton>
+                                    <x-gabutton variant="secondary" :full-width="true" wire:navigate href="{{ route('user.decline-repost', encrypt($request->id)) }}">Decline</x-gabutton>
                                     </div>
                                     <div class="flex-1">
-                                    <x-gbutton variant="primary" :full-width="true" wire:navigate onclick="window.location.href = '{{ route('user.direct-repost', encrypt($request->id)) }}'">Reposts</x-gbutton>
+                                    <x-gabutton variant="primary" :full-width="true" wire:navigate href="{{ route('user.direct-repost', encrypt($request->id)) }}">Reposts</x-gabutton>
                                     </div>
                                 </div>
                             </div>

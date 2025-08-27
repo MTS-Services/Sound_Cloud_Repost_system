@@ -170,9 +170,8 @@
                                             @if ($is_pro)
                                                 <x-gbutton variant="secondary" wire:click="setFeatured({{ $campaign_->id }})">{{ __('Set Featured') }}</x-gbutton>
                                             @else
-                                                <x-gbutton variant="primary" wire:navigate
-                                                    onclick="window.location.href = '{{ route('user.pkm.pricing') }}'"
-                                                    x-on:click="showUpgradeModal = true">Upgrade Plan</x-gbutton>
+                                                <x-gabutton variant="primary" wire:navigate href="{{ route('user.pkm.pricing') }}"
+                                                    x-on:click="showUpgradeModal = true">Upgrade Plan</x-gabutton>
                                             @endif
                                         </div>
                                     @endif
@@ -283,9 +282,8 @@
                             @if ($is_pro)
                                 <x-gbutton variant="primary">Get featured</x-gbutton>
                             @else
-                                <x-gbutton variant="primary" wire:navigate
-                                    onclick="window.location.href = '{{ route('user.pkm.pricing') }}'"
-                                    x-on:click="showUpgradeModal = true">Upgrade Plan</x-gbutton>
+                                <x-gabutton variant="primary" wire:navigate href="{{ route('user.pkm.pricing') }}"
+                                    x-on:click="showUpgradeModal = true">Upgrade Plan</x-gabutton>
                             @endif
                         </div>
                     </div>

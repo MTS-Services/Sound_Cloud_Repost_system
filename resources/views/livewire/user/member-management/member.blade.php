@@ -124,7 +124,7 @@
                     <x-gbutton variant="primary" :full-width="true"
                     wire:click="openModal('{{ $user_->urn }}')">Request</x-gbutton>
                 @else
-                <x-gbutton variant="primary" :full-width="true" wire:navigate onclick="window.location.href='{{ route('user.pm.my-account', $user_->urn) }}'">Profile</x-gbutton>
+                <x-gabutton variant="primary" :full-width="true" wire:navigate href="{{ route('user.pm.my-account', $user_->urn) }}">Profile</x-gabutton>
                 @endif
             </div>
         @empty
