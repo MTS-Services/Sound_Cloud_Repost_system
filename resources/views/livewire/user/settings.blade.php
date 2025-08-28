@@ -21,7 +21,7 @@
         }
     </style>
 
-    <div x-data="{ open: true, activeTab: 'invoices', isGenreDropdownOpen: false }" class="">
+    <div x-data="{ open: true, activeTab: 'edit', isGenreDropdownOpen: false }" class="">
         @if (!user()->email_verified_at)
             <div x-show="open" x-transition.opacity.duration.300ms
                 class=" top-0  mb-8 max-w-8xl mx-auto  bg-gray-50 dark:bg-gray-800 border-l-4 border-orange-500 text-black dark:text-white  p-4 shadow-sm flex items-center justify-center z-1 rounded-md relative"
@@ -466,7 +466,8 @@
                     class="flex items-start bg-light-orange dark:bg-gray-700 border-l-4 border-l-orange-400 p-3 rounded-md shadow-md my-4">
                     <svg class="h-6 w-6 text-white bg-orange-400 rounded-full mr-3 mt-1 flex-shrink-0" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0  0118 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0  0118 0z" />
                     </svg>
                     <span class="text-sm font-medium text-dark-gray dark:text-white">
                         Your push notifications are disabled because you haven't installed the mobile app
@@ -537,7 +538,8 @@
                             <!-- Block Requests -->
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
                                 <div>
-                                    <p class="text-gray-700 dark:text-white">Block direct repost requests for tracks which do not match
+                                    <p class="text-gray-700 dark:text-white">Block direct repost requests for tracks
+                                        which do not match
                                         my
                                         profile genres</p>
                                 </div>
@@ -559,7 +561,8 @@
                         </div>
 
                         <!-- Additional Features -->
-                        <div class="border-b border-gray-200 dark:border-gray-700 datak:border-gray-700 py-6 mb-6 mt-6">
+                        <div
+                            class="border-b border-gray-200 dark:border-gray-700 datak:border-gray-700 py-6 mb-6 mt-6">
                             <h1 class="text-xl font-semibold text-gray-800 dark:text-white">Additional features</h1>
                         </div>
 
@@ -765,7 +768,8 @@
                                             </div>
                                         @endif
                                     </td>
-                                    <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap font-semibold">
+                                    <td
+                                        class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap font-semibold">
                                         {{ ($payment->amount ?? '0.00') . ' ' . $payment->currency }}
                                     </td>
                                     <td class="px-5 p-3 text-gray-800 font-medium whitespace-nowrap">
