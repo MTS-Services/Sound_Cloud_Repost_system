@@ -2,17 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DetailsController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Backend\DatatableController;
 use App\Http\Controllers\Backend\FileManagementController;
-use App\Http\Controllers\Backend\Admin\CampaignManagement\CampaignController;
-use App\Livewire\NotificationList;
-use App\Livewire\NotificationShow;
-use App\Livewire\StatsCard;
-use Illuminate\Support\Facades\Broadcast;
-use App\Http\Controllers\NotificationController;
-use App\Livewire\RefreshSoundcloudToken;
-
+use App\Http\Controllers\BlogController;
 Route::post('update/sort/order', [DatatableController::class, 'updateSortOrder'])->name('update.sort.order');
 Route::post('/content-image/upload', [FileManagementController::class, 'contentImageUpload'])->name('file.ci_upload');
 Route::get('/details', [DetailsController::class, 'details'])->name('detils.show');
@@ -33,3 +25,5 @@ Route::post('/send-notification', [App\Http\Controllers\TestController::class, '
 Route::get('/buttons', function () {
     return view('button-showcase');
 });
+
+Route::get('/blog', [BlogController::class, 'index'])->name('blog');

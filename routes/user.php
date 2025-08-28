@@ -100,5 +100,4 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
 Route::get('user/frequently-asked-questions', Faq::class)->name('user.faq')->middleware('auth:web');
 
 // Static page routes
-Route::view('user/page', 'backend.user.dummy-page')->name('page')->middleware('auth:web');
 Route::view('user/charts', 'backend.user.chart')->name('charts')->middleware('auth:web');
