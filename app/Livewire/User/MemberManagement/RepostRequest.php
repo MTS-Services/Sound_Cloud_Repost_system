@@ -8,6 +8,7 @@ use App\Models\Repost;
 use App\Models\Track;
 use App\Models\Playlist;
 use App\Models\User;
+use App\Models\UserSetting;
 use App\Services\SoundCloud\SoundCloudService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -50,7 +51,7 @@ class RepostRequest extends Component
 
     public function mount()
     {
-        $this->requestReceiveable = user()->request_receiveable ? true : false;
+        $this->requestReceiveable = UserSetting::where('user_urn', user()->urn)->value('accept_repost') ? true : false;
         $this->dataLoad();
 
         // Initialize tracking arrays
@@ -402,8 +403,8 @@ class RepostRequest extends Component
     }
     public function requestReceiveableToggle()
     {
-        $requestable = user()->request_receiveable;
-        User::where('urn', user()->urn)->update(['request_receiveable' => !$requestable]);
+        $requestable = UserSetting::where('user_urn', user()->urn)->value('accept_repost');
+        UserSetting::where('user_urn', user()->urn)->update(['accept_repost' => !$requestable]);
         $this->dataLoad();
     }
     public function setActiveTab($tab)

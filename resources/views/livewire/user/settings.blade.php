@@ -498,129 +498,138 @@
             <!-- Settings Section -->
             <div x-show="activeTab === 'settings'" x-cloak>
                 <div class="w-full max-w-8xl bg-white rounded-lg shadow-lg p-6 ">
-                    <!-- Section: My Requests -->
-                    <div class="border-b border-gray-200 pb-4 mb-6">
-                        <h1 class="text-xl font-semibold text-gray-800">My requests</h1>
-                    </div>
+                    <form wire:submit.prevent="saveSettings" method="POST">
+                        @csrf
+                        <!-- Section: My Requests -->
+                        <div class="border-b border-gray-200 pb-4 mb-6">
+                            <h1 class="text-xl font-semibold text-gray-800">My requests</h1>
+                        </div>
 
-                    <div class="space-y-6">
-                        <!-- Accept Direct Requests -->
-                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                            <div>
-                                <p class="text-gray-700">Accept Direct repost requests</p>
-                                <p class="text-sm text-red-500">You must confirm your email address to accept direct
-                                    repost
-                                    requests</p>
+                        <div class="space-y-6">
+                            <!-- Accept Direct Requests -->
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                                <div>
+                                    <p class="text-gray-700">Accept Direct repost requests</p>
+                                    <p class="text-sm text-red-500">You must confirm your email address to accept
+                                        direct
+                                        repost
+                                        requests</p>
+                                </div>
+                                <div class="flex items-center gap-6">
+                                    <label class="flex items-center gap-1">
+                                        <input type="radio" name="acceptRequests" wire:model="accept_repost" value="1"
+                                            class="text-orange-500">
+                                        <span class="text-gray-600">Yes</span>
+                                    </label>
+                                    <label class="flex items-center gap-1">
+                                        <input type="radio" name="acceptRequests" wire:model="accept_repost" value="0"
+                                            class="text-orange-500">
+                                        <span class="text-gray-600">No</span>
+                                    </label>
+                                </div>
                             </div>
-                            <div class="flex items-center gap-6">
-                                <label class="flex items-center gap-1">
-                                    <input type="radio" name="acceptRequests" value="true"
-                                        class="text-orange-500">
-                                    <span class="text-gray-600">Yes</span>
-                                </label>
-                                <label class="flex items-center gap-1">
-                                    <input type="radio" name="acceptRequests" value="false" checked
-                                        class="text-orange-500">
-                                    <span class="text-gray-600">No</span>
-                                </label>
+
+                            <!-- Block Requests -->
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                                <div>
+                                    <p class="text-gray-700">Block direct repost requests for tracks which do not match
+                                        my
+                                        profile genres</p>
+                                </div>
+                                <div class="flex items-center gap-6">
+                                    <label class="flex items-center gap-1">
+                                        <input type="radio" name="blockRequests" wire:model="block_mismatch_genre"
+                                            value="1" class="text-orange-500">
+                                        <span class="text-gray-600">Yes</span>
+                                    </label>
+
+                                    <label class="flex items-center gap-1">
+                                        <input type="radio" name="blockRequests" wire:model="block_mismatch_genre"
+                                            value="0" class="text-orange-500">
+                                        <span class="text-gray-600">No</span>
+                                    </label>
+                                </div>
+
                             </div>
                         </div>
 
-                        <!-- Block Requests -->
-                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                            <div>
-                                <p class="text-gray-700">Block direct repost requests for tracks which do not match my
-                                    profile genres</p>
-                            </div>
-                            <div class="flex items-center gap-6">
-                                <label class="flex items-center gap-1">
-                                    <input type="radio" name="blockRequests" value="true"
-                                        class="text-orange-500">
-                                    <span class="text-gray-600">Yes</span>
-                                </label>
-                                <label class="flex items-center gap-1">
-                                    <input type="radio" name="blockRequests" value="false" checked
-                                        class="text-orange-500">
-                                    <span class="text-gray-600">No</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Additional Features -->
-                    <div class="border-b border-gray-200 py-6 mb-6 mt-6">
-                        <h1 class="text-xl font-semibold text-gray-800">Additional features</h1>
-                    </div>
-
-                    <div class="space-y-6">
-                        <!-- Mystery Box -->
-                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                            <p class="text-gray-700">Opt In to Mystery Box Draws</p>
-                            <div class="flex items-center gap-6">
-                                <label class="flex items-center gap-1">
-                                    <input type="radio" name="mysteryBox" value="true" checked
-                                        class="text-orange-500">
-                                    <span class="text-gray-600">Yes</span>
-                                </label>
-                                <label class="flex items-center gap-1">
-                                    <input type="radio" name="mysteryBox" value="false" class="text-orange-500">
-                                    <span class="text-gray-600">No</span>
-                                </label>
-                            </div>
+                        <!-- Additional Features -->
+                        <div class="border-b border-gray-200 py-6 mb-6 mt-6">
+                            <h1 class="text-xl font-semibold text-gray-800">Additional features</h1>
                         </div>
 
-                        <!-- Auto Boost -->
-                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                            <div>
-                                <p class="text-gray-700">Auto Free Boost <span
-                                        class="text-gray-400 text-sm">(i)</span>
-                                </p>
+                        <div class="space-y-6">
+                            <!-- Mystery Box -->
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                                <p class="text-gray-700">Opt In to Mystery Box Draws</p>
+                                <div class="flex items-center gap-6">
+                                    <label class="flex items-center gap-1">
+                                        <input type="radio" name="mysteryBox" wire:model="opt_mystery_box" value="1"
+                                            class="text-orange-500">
+                                        <span class="text-gray-600">Yes</span>
+                                    </label>
+                                    <label class="flex items-center gap-1">
+                                        <input type="radio" name="mysteryBox" wire:model="opt_mystery_box" value="0"
+                                            class="text-orange-500">
+                                        <span class="text-gray-600">No</span>
+                                    </label>
+                                </div>
                             </div>
-                            <div class="flex items-center gap-6">
-                                <label class="flex items-center gap-1">
-                                    <input type="radio" name="autoBoost" value="true" class="text-orange-500">
-                                    <span class="text-gray-600">Yes</span>
-                                </label>
-                                <label class="flex items-center gap-1">
-                                    <input type="radio" name="autoBoost" value="false" checked
-                                        class="text-orange-500">
-                                    <span class="text-gray-600">No</span>
-                                </label>
+
+                            <!-- Auto Boost -->
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                                <div>
+                                    <p class="text-gray-700">Auto Free Boost <span
+                                            class="text-gray-400 text-sm">(i)</span>
+                                    </p>
+                                </div>
+                                <div class="flex items-center gap-6">
+                                    <label class="flex items-center gap-1">
+                                        <input type="radio" name="autoBoost" wire:model="auto_boost" value="1"
+                                            class="text-orange-500">
+                                        <span class="text-gray-600">Yes</span>
+                                    </label>
+                                    <label class="flex items-center gap-1">
+                                        <input type="radio" name="autoBoost" wire:model="auto_boost" value="0"
+                                            class="text-orange-500">
+                                        <span class="text-gray-600">No</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Reactions -->
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                                <p class="text-gray-700">Enable Reactions</p>
+                                <div class="flex items-center gap-6">
+                                    <label class="flex items-center gap-1">
+                                        <input type="radio" name="reactions" wire:model="enable_react" value="1"
+                                            class="text-orange-500">
+                                        <span class="text-gray-600">Yes</span>
+                                    </label>
+                                    <label class="flex items-center gap-1">
+                                        <input type="radio" name="reactions" wire:model="enable_react" value="0"
+                                            class="text-orange-500">
+                                        <span class="text-gray-600">No</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Reactions -->
-                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                            <p class="text-gray-700">Enable Reactions</p>
-                            <div class="flex items-center gap-6">
-                                <label class="flex items-center gap-1">
-                                    <input type="radio" name="reactions" value="true" checked
-                                        class="text-orange-500">
-                                    <span class="text-gray-600">Yes</span>
-                                </label>
-                                <label class="flex items-center gap-1">
-                                    <input type="radio" name="reactions" value="false" class="text-orange-500">
-                                    <span class="text-gray-600">No</span>
-                                </label>
+                        <!-- Subscription -->
+                        <div class="border-b border-gray-200 py-6 mb-6 mt-6">
+                            <h1 class="text-xl font-semibold text-gray-800">Subscription</h1>
+                            <div class="mt-2 text-sm text-gray-600">
+                                <p class="text-gray-700">Free Forever Plan <a wire:navigate
+                                        href="{{ route('user.pkm.pricing') }}"
+                                        class="text-orange-500 cursor-pointer hover:underline">Change</a></p>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Subscription -->
-                    <div class="border-b border-gray-200 py-6 mb-6 mt-6">
-                        <h1 class="text-xl font-semibold text-gray-800">Subscription</h1>
-                        <div class="mt-2 text-sm text-gray-600">
-                            <p class="text-gray-700">Free Forever Plan <a wire:navigate
-                                    href="{{ route('user.pkm.pricing') }}"
-                                    class="text-orange-500 cursor-pointer hover:underline">Change</a></p>
+                        <div class="mt-8 flex justify-end space-x-4">
+                            <x-gbutton variant="secondary">Cancel</x-gbutton>
+                            <x-gbutton type="submit" variant="primary">Save Profile</x-gbutton>
                         </div>
-                    </div>
-
-                    <div class="mt-8 flex justify-end space-x-4">
-                        <x-gbutton variant="secondary">Cancel</x-gbutton>
-                        <x-gbutton type="submit" variant="primary">Save Profile</x-gbutton>
-                    </div>
-
+                    </form>
                 </div>
             </div>
 

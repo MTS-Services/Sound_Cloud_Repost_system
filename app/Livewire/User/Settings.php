@@ -81,7 +81,6 @@ class Settings extends Component
         $this->selectedGenres = UserGenre::where('user_urn', user()->urn)->pluck('genre')->toArray();
         $this->credits = CreditTransaction::where('receiver_urn', user()->urn)->latest()->get();
         $this->payments = Payment::where('user_urn', user()->urn)->with('order.source')->latest()->get();
-        // dd($this->payments);
         $this->loadSettings();
         $this->loadUserInfo();
     }
@@ -123,13 +122,13 @@ class Settings extends Component
     public $ps_competitions = false;
 
     // My Requests
-    public $accept_repost = false;
-    public $block_mismatch_genre = false;
+    public $accept_repost = 1;
+    public $block_mismatch_genre = 1;
 
     // Additional Features
-    public $opt_mystery_box = false;
-    public $auto_boost = false;
-    public $enable_react = true;
+    public $opt_mystery_box = 0;
+    public $auto_boost = 0;
+    public $enable_react = 1;
 
     // Subscription
     public $sub_plan = 'Free Forever Plan';
@@ -229,15 +228,6 @@ class Settings extends Component
                 'ps_mystery_box' => $this->ps_mystery_box ? 1 : 0,
                 'ps_discussions' => $this->ps_discussions ? 1 : 0,
                 'ps_competitions' => $this->ps_competitions ? 1 : 0,
-
-                // My Requests
-                'accept_repost' => $this->accept_repost ? 1 : 0,
-                'block_mismatch_genre' => $this->block_mismatch_genre ? 1 : 0,
-
-                // Additional Features
-                'opt_mystery_box' => $this->opt_mystery_box ? 1 : 0,
-                'auto_boost' => $this->auto_boost ? 1 : 0,
-                'enable_react' => $this->enable_react ? 1 : 0,
             ];
 
             UserSetting::updateOrCreate(
@@ -272,6 +262,31 @@ class Settings extends Component
             ['id' => 15, 'name' => 'Discussions', 'email_key' => 'em_discussions', 'push_key' => 'ps_discussions'],
             ['id' => 16, 'name' => 'Competitions', 'email_key' => 'em_competitions', 'push_key' => 'ps_competitions']
         ];
+    }
+
+    public function saveSettings()
+    {
+        try {
+            $userUrn = user()->urn;
+            $data = [
+                'accept_repost' => $this->accept_repost,
+                'block_mismatch_genre' => $this->block_mismatch_genre,
+
+                // Additional Features
+                'opt_mystery_box' => $this->opt_mystery_box,
+                'auto_boost' => $this->auto_boost,
+                'enable_react' => $this->enable_react,
+            ];
+            UserSetting::updateOrCreate(
+                ['user_urn' => $userUrn],
+                $data
+            );
+            $this->reset();
+            $this->loadSettings();
+            $this->dispatch('alert', 'success', 'Settings updated successfully!');
+        } catch (\Exception $e) {
+            $this->dispatch('alert', 'error', $e->getMessage());
+        }
     }
     ####################### Notification Settings End ############################
 
@@ -350,7 +365,7 @@ class Settings extends Component
                 ])->toArray();
 
                 UserGenre::insert($genres);
-               $socialData = [
+                $socialData = [
                     'user_urn'  => user()->urn,
                     'instagram' => $this->instagram_username,
                     'twitter'   => $this->twitter_username,
@@ -374,8 +389,6 @@ class Settings extends Component
                 } elseif ($socialInfo && !$hasAnySocial) {
                     $socialInfo->delete();
                 }
-
-
             });
 
             $this->reset(['selectedGenres', 'instagram_username', 'twitter_username', 'facebook_username', 'youtube_channel_id', 'tiktok_username', 'spotify_artist_link']);
