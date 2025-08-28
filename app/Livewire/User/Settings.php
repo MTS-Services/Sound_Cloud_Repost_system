@@ -130,6 +130,13 @@ class Settings extends Component
     public $auto_boost = 0;
     public $enable_react = 1;
 
+    public $invoiceShow = false;
+
+    public function showInvoice()
+    {
+        $this->invoiceShow = true;
+    }
+
     // Subscription
     public $sub_plan = 'Free Forever Plan';
 
@@ -366,13 +373,13 @@ class Settings extends Component
 
                 UserGenre::insert($genres);
                 $socialData = [
-                    'user_urn'  => user()->urn,
+                    'user_urn' => user()->urn,
                     'instagram' => $this->instagram_username,
-                    'twitter'   => $this->twitter_username,
-                    'facebook'  => $this->facebook_username,
-                    'youtube'   => $this->youtube_channel_id,
-                    'tiktok'    => $this->tiktok_username,
-                    'spotify'   => $this->spotify_artist_link,
+                    'twitter' => $this->twitter_username,
+                    'facebook' => $this->facebook_username,
+                    'youtube' => $this->youtube_channel_id,
+                    'tiktok' => $this->tiktok_username,
+                    'spotify' => $this->spotify_artist_link,
                 ];
 
                 $socialInfo = UserSocialInformation::self()->first();
