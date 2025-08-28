@@ -21,7 +21,7 @@
         }
     </style>
 
-    <div x-data="{ open: true, activeTab: 'edit', isGenreDropdownOpen: false }" class="">
+    <div x-data="{ open: true, activeTab: 'invoices', isGenreDropdownOpen: false }" class="">
         @if (!user()->email_verified_at)
             <div x-show="open" x-transition.opacity.duration.300ms
                 class=" top-0  mb-8 max-w-8xl mx-auto  bg-gray-50 dark:bg-gray-800 border-l-4 border-orange-500 text-black dark:text-white  p-4 shadow-sm flex items-center justify-center z-1 rounded-md relative"
@@ -563,13 +563,13 @@
                                 <p class="text-gray-700">Opt In to Mystery Box Draws</p>
                                 <div class="flex items-center gap-6">
                                     <label class="flex items-center gap-1">
-                                        <input type="radio" name="mysteryBox" wire:model="opt_mystery_box" value="1"
-                                            class="text-orange-500">
+                                        <input type="radio" name="mysteryBox" wire:model="opt_mystery_box"
+                                            value="1" class="text-orange-500">
                                         <span class="text-gray-600">Yes</span>
                                     </label>
                                     <label class="flex items-center gap-1">
-                                        <input type="radio" name="mysteryBox" wire:model="opt_mystery_box" value="0"
-                                            class="text-orange-500">
+                                        <input type="radio" name="mysteryBox" wire:model="opt_mystery_box"
+                                            value="0" class="text-orange-500">
                                         <span class="text-gray-600">No</span>
                                     </label>
                                 </div>
@@ -584,13 +584,13 @@
                                 </div>
                                 <div class="flex items-center gap-6">
                                     <label class="flex items-center gap-1">
-                                        <input type="radio" name="autoBoost" wire:model="auto_boost" value="1"
-                                            class="text-orange-500">
+                                        <input type="radio" name="autoBoost" wire:model="auto_boost"
+                                            value="1" class="text-orange-500">
                                         <span class="text-gray-600">Yes</span>
                                     </label>
                                     <label class="flex items-center gap-1">
-                                        <input type="radio" name="autoBoost" wire:model="auto_boost" value="0"
-                                            class="text-orange-500">
+                                        <input type="radio" name="autoBoost" wire:model="auto_boost"
+                                            value="0" class="text-orange-500">
                                         <span class="text-gray-600">No</span>
                                     </label>
                                 </div>
@@ -601,13 +601,13 @@
                                 <p class="text-gray-700">Enable Reactions</p>
                                 <div class="flex items-center gap-6">
                                     <label class="flex items-center gap-1">
-                                        <input type="radio" name="reactions" wire:model="enable_react" value="1"
-                                            class="text-orange-500">
+                                        <input type="radio" name="reactions" wire:model="enable_react"
+                                            value="1" class="text-orange-500">
                                         <span class="text-gray-600">Yes</span>
                                     </label>
                                     <label class="flex items-center gap-1">
-                                        <input type="radio" name="reactions" wire:model="enable_react" value="0"
-                                            class="text-orange-500">
+                                        <input type="radio" name="reactions" wire:model="enable_react"
+                                            value="0" class="text-orange-500">
                                         <span class="text-gray-600">No</span>
                                     </label>
                                 </div>
@@ -760,14 +760,22 @@
                                         @endif
                                     </td>
                                     <td class="px-5 p-3 text-gray-700 whitespace-nowrap font-semibold">
-                                        ${{ $payment->amount }}
+                                        {{ ($payment->amount ?? '0.00') . ' ' . $payment->currency }}
                                     </td>
                                     <td class="px-5 p-3 text-gray-800 font-medium whitespace-nowrap">
-                                        <a href="#" class="text-blue-600 hover:underline">
+                                        <a href="javascript:void(0);" wire:click="showInvoice()"
+                                            class="text-blue-600 hover:underline">
                                             <x-lucide-file-down class="w-6 h-6" />
                                         </a>
                                     </td>
                                 </tr>
+                                @if ($invoiceShow)
+                                    <tr>
+                                        <x-user.settings.invoice-pdf :payment="$payment" />
+                                    </tr>
+                                @endif
+
+
                             @empty
                                 <tr class="hover:bg-gray-50 transition">
                                     <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
@@ -778,6 +786,10 @@
                         </tbody>
                     </table>
                 </div>
+
+
+
+
             </div>
         </div>
     </div>

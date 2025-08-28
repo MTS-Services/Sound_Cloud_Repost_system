@@ -234,14 +234,23 @@ function SouceClassName($className)
 function generateOrderID()
 {
 
-    $prefix = 'ORDER-';
+    // $prefix = 'ORDER-';
+    $prefix = 'OIDRC-';
 
-    $microseconds = explode(' ', microtime(true))[0];
+    // $microseconds = explode(' ', microtime(true))[0];
 
-    $date = date('ymd');
-    $time = date('is');
+    // $date = date('ymd');
+    $time = date('his');
+    $order_id = $prefix . $time . mt_rand(10, 99);
+    $order = Order::where('order_id', $order_id)->first();
+    if ($order) {
+        return generateOrderID();
+    }
+    return $order_id;
 
-    return $prefix . $date . $time . mt_rand(10000, 99999);
+
+
+    // return $prefix . $date . $time . mt_rand(10000, 99999);
 }
 function totalReposts($campaign = null)
 {
@@ -676,4 +685,8 @@ function requestReceiveable($userUrn)
 {
     $requestReceiveable = UserSetting::where('user_urn', $userUrn)->value('accept_repost') ?? 0;
     return $requestReceiveable;
+}
+function invoiceId()
+{
+    return 'INV-' . date('Y') . '-0' . date('his');
 }
