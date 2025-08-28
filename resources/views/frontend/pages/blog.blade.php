@@ -38,7 +38,7 @@
 
         <!-- Optional CTA -->
         <div class="mt-10">
-            <a href="/"
+            <a href="{{ route('user.dashboard') }}"
                 class="px-6 py-2 bg-gradient-to-r from-indigo-500 to-pink-500 text-white rounded-full shadow-lg hover:opacity-90 transition">
                 Back to Home
             </a>
