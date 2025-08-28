@@ -419,7 +419,6 @@
                                 <span class="text-orange-500 dark:text-orange-400 font-bold">1 Credit</span>
                             </div>
                         </div>
-                        {{-- blockMismatchGenre message --}}
                         @if ($blockMismatchGenre && !$userMismatchGenre)
                             <div class="p-4 bg-gray-50 dark:bg-slate-700 rounded-xl border-l-4 border-orange-500 mt-4">
                                 <p class="text-red-500 text-sm leading-relaxed">

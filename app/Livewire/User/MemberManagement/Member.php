@@ -293,9 +293,11 @@ class Member extends Component
 
     public function openRepostsModal(int $trackId)
     {
-        $this->blockMismatchGenre = UserSetting::where('user_urn', user()->urn)->value('block_mismatch_genre');
+        $this->blockMismatchGenre = UserSetting::where('user_urn', $this->user->urn)->value('block_mismatch_genre');
+        // dd($this->blockMismatchGenre);
         $trackGenre = $this->trackService->getTrack(encrypt($trackId))->genre;
-        $this->userMismatchGenre = UserGenre::where('user_urn', user()->urn)->where('genre', $trackGenre)->first();
+        $this->userMismatchGenre = UserGenre::where('user_urn', $this->user->urn)->where('genre', $trackGenre)->first();
+        // dd($trackGenre, $this->userMismatchGenre);
         $this->reset(['track']);
         $this->selectedTrackId = $trackId;
         $this->track = Track::find($trackId);
