@@ -3,9 +3,7 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
-use Faker\Core\Color;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CreditTransaction extends BaseModel
 {
@@ -82,7 +80,7 @@ class CreditTransaction extends BaseModel
                 ->where('calculation_type', self::CALCULATION_TYPE_DEBIT)
                 ->sum('credits');
 
-            return $credit - $debit;
+            return  $debit - $credit;
         }
     }
 

@@ -626,8 +626,8 @@
                     <div class="border-b border-gray-200 py-6 mb-6 mt-6">
                         <h1 class="text-xl font-semibold text-gray-800">Subscription</h1>
                         <div class="mt-2 text-sm text-gray-600">
-                            <p class="text-gray-700">Free Forever Plan <span
-                                    class="text-orange-500 cursor-pointer">Change</span></p>
+                            <p class="text-gray-700">Free Forever Plan <a wire:navigate href="{{ route('user.pkm.pricing') }}"
+                                    class="text-orange-500 cursor-pointer hover:underline">Change</a></p>
                         </div>
                     </div>
 
@@ -665,6 +665,7 @@
                             <tr>
                                 <th class="px-5 p-3 font-medium text-gray-600">Date</th>
                                 <th class="px-5 p-3 font-medium text-gray-600">Description</th>
+                                <th class="px-5 p-3 font-medium text-gray-600">Type</th>
                                 <th class="px-5 p-3 font-medium text-gray-600">Credits</th>
                                 <th class="px-5 p-3 font-medium text-gray-600">Balance</th>
                             </tr>
@@ -678,8 +679,11 @@
                                     <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
                                         {{ $credit->description }}
                                     </td>
+                                    <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
+                                        {{ $credit->calculation_type_name }}
+                                    </td>
                                     <td
-                                        class="px-5 p-3 text-orange-500 font-semibold flex items-center gap-1 whitespace-nowrap">
+                                        class="px-5 p-3 {{ $credit->calculation_type == App\Models\CreditTransaction::CALCULATION_TYPE_CREDIT ? 'text-red-500' : 'text-green-500' }} font-semibold flex items-center gap-1 whitespace-nowrap">
                                         <svg class="w-8 h-" width="26" height="18" viewBox="0 0 26 18"
                                             fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <rect x="1" y="1" width="24" height="16" rx="3"
@@ -687,10 +691,10 @@
                                             <circle cx="8" cy="9" r="3" fill="none"
                                                 stroke="currentColor" stroke-width="2" />
                                         </svg>
-                                        {{ $credit->credits }}
+                                        {{ ($credit->calculation_type == App\Models\CreditTransaction::CALCULATION_TYPE_CREDIT ? '-' : '+'). $credit->credits }}
                                     </td>
                                     <td class="px-5 p-3 text-gray-800 font-medium whitespace-nowrap">
-                                        {{ $credit->balance }}
+                                        {{ $credit->balance }} credits
                                     </td>
                                 </tr>
                             @empty
