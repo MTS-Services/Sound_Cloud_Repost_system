@@ -733,28 +733,28 @@
                                         @if ($payment->order->type == App\Models\Order::TYPE_PLAN)
                                             {{ $payment->order->source->name ?? 'N/A' }} Plan Subscription
                                         @else
-                                            <span
-                                                class="text-orange-500 font-semibold">{{ $payment->order->credits }}</span>
-                                            Credits
+                                            <div class="flex items-center gap-1">
+                                                <span class="flex items-center gap-1 font-semibold text-orange-500">
+                                                    <svg class="w-8 h-" width="26" height="18"
+                                                        viewBox="0 0 26 18" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <rect x="1" y="1" width="24" height="16"
+                                                            rx="3" fill="none" stroke="currentColor"
+                                                            stroke-width="2" />
+                                                        <circle cx="8" cy="9" r="3" fill="none"
+                                                            stroke="currentColor" stroke-width="2" />
+                                                    </svg>
+                                                    {{ $payment->order->credits }}
+                                                </span>
+                                                <span>Credits</span>
+                                            </div>
                                         @endif
                                     </td>
                                     <td class="px-5 p-3 text-gray-700 whitespace-nowrap font-semibold">
                                         ${{ $payment->amount }}
                                     </td>
-                                    {{-- <td
-                                    class="px-5 p-3 text-orange-500 font-semibold flex items-center gap-1 whitespace-nowrap">
-                                    <svg class="w-8 h-" width="26" height="18" viewBox="0 0 26 18"
-                                        fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <rect x="1" y="1" width="24" height="16" rx="3"
-                                            fill="none" stroke="currentColor" stroke-width="2" />
-                                        <circle cx="8" cy="9" r="3" fill="none"
-                                            stroke="currentColor" stroke-width="2" />
-                                    </svg>
-                                    +30
-                                </td> --}}
                                     <td class="px-5 p-3 text-gray-800 font-medium whitespace-nowrap">
                                         <a href="#" class="text-blue-600 hover:underline">
-                                            {{-- icon --}}
                                             <x-lucide-file-down class="w-6 h-6" />
                                         </a>
                                     </td>
