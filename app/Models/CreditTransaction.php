@@ -61,15 +61,29 @@ class CreditTransaction extends BaseModel
     // 👇 Credit balance attribute
     public function getBalanceAttribute()
     {
-        $credit = $this->where('receiver_urn', $this->receiver_urn)
-            ->where('calculation_type', self::CALCULATION_TYPE_CREDIT)
-            ->sum('credits');
+        // $credit = $this->where('receiver_urn', $this->receiver_urn)
+        //     ->where('calculation_type', self::CALCULATION_TYPE_CREDIT)
+        //     ->sum('credits');
 
-        $debit = $this->where('receiver_urn', $this->receiver_urn)
-            ->where('calculation_type', self::CALCULATION_TYPE_DEBIT)
-            ->sum('credits');
+        // $debit = $this->where('receiver_urn', $this->receiver_urn)
+        //     ->where('calculation_type', self::CALCULATION_TYPE_DEBIT)
+        //     ->sum('credits');
 
-        return $credit - $debit;
+        // return $credit - $debit;
+
+        if ($this->receiver_urn == user()->urn) {
+            $credit = $this->where('receiver_urn', $this->receiver_urn)
+                ->whereTime('created_at', '<=', $this->created_at)
+                ->where('calculation_type', self::CALCULATION_TYPE_CREDIT)
+                ->sum('credits');
+
+            $debit = $this->where('receiver_urn', $this->receiver_urn)
+                ->whereTime('created_at', '<=', $this->created_at)
+                ->where('calculation_type', self::CALCULATION_TYPE_DEBIT)
+                ->sum('credits');
+
+            return $credit - $debit;
+        }
     }
 
     public function getStatusList(): array
