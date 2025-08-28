@@ -74,23 +74,26 @@
                     <a href="#" class="text-xs text-red-500 underline">Reset</a>
                 </div>
                 <div x-data="{ on: {{ $requestReceiveable ? 'true' : 'false' }} }" class="inline-flex items-center cursor-pointer"
-                    wire:click="requestReceiveableToggle">
-                    <!-- Hidden Checkbox -->
-                    <input type="checkbox" class="sr-only peer" wire:model.live="requestReceiveable" {{ $requestReceiveable ? 'checked' : '' }}>
+                    @if (user()->email_verified_at) wire:click="requestReceiveableToggle" @endif>
+                    <input type="checkbox" class="sr-only peer" wire:model.live="requestReceiveable"
+                        {{ $requestReceiveable ? 'checked' : '' }} {{ user()->email_verified_at ? '' : 'disabled' }}>
 
                     <div class="flex items-center space-x-2">
-                        <!-- Toggle Switch -->
-                        <div class="w-7 h-4 rounded-full relative cursor-pointer transition-colors"
-                            :class="on ? 'bg-green-500' : 'bg-gray-300'" @click="on = !on">
+                        <div class="w-7 h-4 rounded-full relative transition-colors"
+                            :class="on ? 'bg-green-500' : 'bg-gray-300'"
+                            @if (user()->email_verified_at) @click="on = !on" @endif>
                             <div class="absolute top-0 left-0 w-4 h-4 bg-white rounded-full shadow transition-transform duration-300"
                                 :class="on ? 'translate-x-4' : 'translate-x-0'">
                             </div>
                         </div>
-                        <!-- Label -->
-                        <span class="text-sm text-gray-700 dark:text-white">Accepting Requests</span>
+                        <span class="text-sm text-gray-700 dark:text-white">
+                            Accepting Requests
+                            @unless (user()->email_verified_at)
+                                <span class="ml-2 text-red-500">(Verify email first)</span>
+                            @endunless
+                        </span>
                     </div>
                 </div>
-
             </div>
         </div>
     @endif
@@ -271,7 +274,8 @@
                                     </div>
                                     @if ($activeMainTab == 'outgoing_request')
                                         <div class="flex justify-end gap-3">
-                                            <a class="cursor-pointer" wire:navigate href="{{ route('user.pm.my-account', $repostRequest->targetUser->urn) }}" >
+                                            <a class="cursor-pointer" wire:navigate
+                                                href="{{ route('user.pm.my-account', $repostRequest->targetUser->urn) }}">
                                                 <img class="w-10 h-10 rounded-full object-cover"
                                                     src="{{ auth_storage_url($repostRequest->targetUser->avatar) }}"
                                                     alt="{{ $repostRequest->targetUser->name }} avatar">

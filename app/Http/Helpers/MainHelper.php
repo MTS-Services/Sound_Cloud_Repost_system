@@ -2,6 +2,7 @@
 
 use App\Models\Order;
 use App\Models\Permission;
+use App\Models\UserSetting;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use League\Csv\Writer;
@@ -669,4 +670,10 @@ function searchableRoutes()
     ];
 
     return json_encode($searchableData);
+}
+
+function requestReceiveable($userUrn)
+{
+    $requestReceiveable = UserSetting::where('user_urn', $userUrn)->value('accept_repost') ?? 0;
+    return $requestReceiveable;
 }

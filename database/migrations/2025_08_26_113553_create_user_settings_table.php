@@ -55,8 +55,8 @@ return new class extends Migration
             $table->boolean('ps_competitions')->default(false);
 
             // My Requests
-            $table->boolean('accept_repost')->default(true);
-            $table->boolean('block_mismatch_genre')->default(true);
+            $table->boolean('accept_repost')->default(false);
+            $table->boolean('block_mismatch_genre')->default(false);
 
             // Additional Features
             $table->boolean('opt_mystery_box')->default(false);

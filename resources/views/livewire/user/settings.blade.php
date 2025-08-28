@@ -510,20 +510,19 @@
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
                                 <div>
                                     <p class="text-gray-700">Accept Direct repost requests</p>
-                                    <p class="text-sm text-red-500">You must confirm your email address to accept
-                                        direct
-                                        repost
-                                        requests</p>
+                                    @if (!user()->email_verified_at)
+                                        <p class="text-sm text-red-500">You must confirm your email address to accept direct repost requests</p>
+                                    @endif
                                 </div>
                                 <div class="flex items-center gap-6">
                                     <label class="flex items-center gap-1">
-                                        <input type="radio" name="acceptRequests" wire:model="accept_repost" value="1"
-                                            class="text-orange-500">
+                                        <input type="radio" name="acceptRequests" wire:model="accept_repost" value="1" {{ user()->email_verified_at ? '' : 'disabled' }}
+                                            class="text-orange-500 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
                                         <span class="text-gray-600">Yes</span>
                                     </label>
                                     <label class="flex items-center gap-1">
-                                        <input type="radio" name="acceptRequests" wire:model="accept_repost" value="0"
-                                            class="text-orange-500">
+                                        <input type="radio" name="acceptRequests" wire:model="accept_repost" value="0" {{ user()->email_verified_at ? '' : 'disabled' }}
+                                            class="text-orange-500 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
                                         <span class="text-gray-600">No</span>
                                     </label>
                                 </div>

@@ -32,7 +32,7 @@ class RepostRequest extends Component
     public $repostedRequests = [];
     public $playCount = false;
 
-    public $requestReceiveable = null;
+    public $requestReceiveable = false;
 
     // Listeners for browser events
     protected $listeners = [
@@ -51,7 +51,7 @@ class RepostRequest extends Component
 
     public function mount()
     {
-        $this->requestReceiveable = UserSetting::where('user_urn', user()->urn)->value('accept_repost') ? true : false;
+        $this->requestReceiveable = UserSetting::where('user_urn', user()->urn)->value('accept_repost')?? 0 ? true : false;
         $this->dataLoad();
 
         // Initialize tracking arrays

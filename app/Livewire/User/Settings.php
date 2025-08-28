@@ -122,7 +122,7 @@ class Settings extends Component
     public $ps_competitions = false;
 
     // My Requests
-    public $accept_repost = 1;
+    public $accept_repost = 0;
     public $block_mismatch_genre = 1;
 
     // Additional Features

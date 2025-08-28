@@ -118,7 +118,7 @@
                 </div>
 
                 <!-- Request Button -->
-                @if ($user_->request_receiveable)
+                @if (requestReceiveable($user_->urn))
                     <x-gbutton variant="primary" :full-width="true"
                         wire:click="openModal('{{ $user_->urn }}')">Request</x-gbutton>
                 @else
@@ -422,7 +422,8 @@
                         @if ($blockMismatchGenre && !$userMismatchGenre)
                             <div class="p-4 bg-gray-50 dark:bg-slate-700 rounded-xl border-l-4 border-orange-500 mt-4">
                                 <p class="text-red-500 text-sm leading-relaxed">
-                                    “This user has blocked repost requests for tracks that don’t match their profile genre. You cannot send them a repost request.”
+                                    “This user has blocked repost requests for tracks that don’t match their profile
+                                    genre. You cannot send them a repost request.”
                                 </p>
                             </div>
                         @else
