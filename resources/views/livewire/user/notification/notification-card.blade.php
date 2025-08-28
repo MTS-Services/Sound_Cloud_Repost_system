@@ -22,7 +22,7 @@
                         </div>
                     </div>
                     <div class="flex-shrink-0">
-                        <x-lucide-home class="w-6 h-6" />                        
+                        <i data-lucide="{{ $this->getNotificationIcon() }}" class="w-8 h-8 text-orange-400"></i>
                     </div>
                 </div>
             </div>
@@ -42,9 +42,8 @@
 
                     {{-- Icon --}}
                     <div class="flex-shrink-0 bg-orange-500 rounded-full">
-                        <div
-                            class="w-12 h-12  rounded-2xl flex items-center justify-center shadow-lg  bg-orange-500">
-                            <x-lucide-home class="w-6 h-6 bg-orange-500"/>
+                        <div class="w-12 h-12  rounded-2xl flex items-center justify-center shadow-lg  bg-orange-500">
+                            <x-lucide-home class="w-6 h-6 bg-orange-500" />
                         </div>
                     </div>
 
@@ -74,25 +73,29 @@
                             @if ($showActions)
                                 <div class="flex-shrink-0" wire:click.stop>
                                     <div class="dropdown dropdown-end">
-                                        <div tabindex="0" role="button" class="btn btn-ghost btn-sm">
-                                          <i class="fas fa-ellipsis-v"></i>
+                                        <div tabindex="0" role="button" class="btn btn-ghost btn-sm text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-900">
+                                            <x-lucide-more-vertical class="w-5 h-5" />
 
                                         </div>
                                         <ul tabindex="0"
                                             class="dropdown-content menu bg-white dark:bg-gray-800 rounded-box z-[1] w-52 p-2 shadow-xl border border-gray-200 dark:border-gray-700">
                                             <li>
                                                 <a wire:click="toggleRead"
-                                                    class="hover:bg-orange-100 dark:hover:bg-orange-900/30">
-                                                    <i
-                                                        class="fas fa-{{ $this->isRead ? 'eye-slash' : 'eye' }} mr-2"></i>
+                                                    class="hover:bg-orange-100 dark:hover:bg-orange-900/50 text-gray-800 dark:text-gray-200">
+                                                    @if ($this->isRead)
+                                                    <x-lucide-eye-off class="w-4 h-4 mr-2" />
+                                                    @else
+                                                    <x-lucide-eye class="w-4 h-4 mr-2" />
+                                                    @endif
+                                                        
                                                     {{ $this->isRead ? 'Mark Unread' : 'Mark Read' }}
                                                 </a>
                                             </li>
                                             <li>
                                                 <a wire:click="deleteNotification"
                                                     wire:confirm="Are you sure you want to delete this notification?"
-                                                    class="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30">
-                                                    <i class="fas fa-trash mr-2"></i>
+                                                    class="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50">
+                                                    <x-lucide-trash class="w-4 h-4 mr-2" />
                                                     Delete
                                                 </a>
                                             </li>

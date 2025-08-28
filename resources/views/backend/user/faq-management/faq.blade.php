@@ -77,11 +77,11 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto animate-fade-in"
                 style="animation-delay: 0.4s;">
                 <div class="bg-white/60 backdrop-blur-md rounded-xl p-6 border border-white/30">
-                    <div class="text-3xl font-bold text-primary-600 mb-2">150+</div>
+                    <div class="text-3xl font-bold text-primary-600 mb-2">{{ $faqCount }}</div>
                     <div class="text-slate-600">Questions Answered</div>
                 </div>
                 <div class="bg-white/60 backdrop-blur-md rounded-xl p-6 border border-white/30">
-                    <div class="text-3xl font-bold text-accent-500 mb-2">8</div>
+                    <div class="text-3xl font-bold text-accent-500 mb-2">{{ $categoryCount }}</div>
                     <div class="text-slate-600">Categories</div>
                 </div>
                 <div class="bg-white/60 backdrop-blur-md rounded-xl p-6 border border-white/30">
@@ -102,7 +102,7 @@
 
             <div class="flex flex-wrap justify-center gap-4" id="categoryNav">
                 @foreach ($faqCategories as $faqCategory)
-                    <button 
+                    <button
                         class="category-btn active px-6 py-3 rounded-full bg-primary-500 text- font-medium   hover:bg-primary-600 "
                         data-category="{{ $faqCategory->slug }}">
                         {{ $faqCategory->name }}
@@ -118,36 +118,36 @@
     <main class="relative z-10 py-16">
         <div class="container mx-auto px-4">
             <!-- Getting Started Category -->
-            
+
             @foreach ($faqCategories as $category)
                 @if ($category->faqs_count > 0)
                     <div class="faq-category mb-16" data-category="{{ $category->slug }}">
-                    <div class="flex items-center mb-8">
-                        <div
-                            class="w-12 h-12 bg-gradient-to-r from-green-400 to-green-600 bg-green-600 rounded-xl flex items-center justify-center mr-4">
-                            <i data-lucide="play-circle" class="h-6 w-6 text-white"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-3xl font-bold text-slate-800">{{ $category->name }}</h2>
-                        </div>
-                    </div>
-                    <div class="grid gap-4">
-                        @foreach ($category->faqs as $faq)
+                        <div class="flex items-center mb-8">
                             <div
-                            class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
-                            <button
-                                class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
-                                <span class="font-semibold text-slate-800 pr-4">{{ $faq->question }}</span>
-                                <i data-lucide="chevron-down"
-                                    class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
-                            </button>
-                            <div class="faq-content px-6 text-slate-600 leading-relaxed">
-                                <p>{{ $faq->description }}</p>
+                                class="w-12 h-12 bg-gradient-to-r from-green-400 to-green-600 bg-green-600 rounded-xl flex items-center justify-center mr-4">
+                                <i data-lucide="play-circle" class="h-6 w-6 text-white"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-3xl font-bold text-slate-800">{{ $category->name }}</h2>
                             </div>
                         </div>
-                        @endforeach
+                        <div class="grid gap-4">
+                            @foreach ($category->faqs as $faq)
+                                <div
+                                    class="faq-item bg-white/70 backdrop-blur-md rounded-xl border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
+                                    <button
+                                        class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/50 transition-colors duration-200">
+                                        <span class="font-semibold text-slate-800 pr-4">{{ $faq->question }}</span>
+                                        <i data-lucide="chevron-down"
+                                            class="h-5 w-5 text-slate-500 transform transition-transform duration-200"></i>
+                                    </button>
+                                    <div class="faq-content px-6 text-slate-600 leading-relaxed">
+                                        <p>{{ $faq->description }}</p>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
-                </div>
                 @endif
             @endforeach
         </div>

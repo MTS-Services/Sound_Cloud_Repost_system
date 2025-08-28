@@ -58,6 +58,7 @@ return new class extends Migration {
             $table->bigInteger('private_playlist_count')->default(0)->unsigned();
             $table->bigInteger('private_tracks_count')->default(0)->unsigned();
 
+            
             $table->boolean('primary_email_confirmed')->default(false)->index();
             $table->string('local')->nullable();
             $table->bigInteger('upload_seconds_left')->nullable();

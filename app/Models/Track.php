@@ -21,7 +21,7 @@ class Track extends BaseModel
         'commentable',
         'comment_count',
         'sharing',
-        'tag_lsit',
+        'tag_list',
         'streamable',
         'embeddable_by',
         'purchase_url',
@@ -36,6 +36,7 @@ class Track extends BaseModel
         'bpm',
         'release_year',
         'release_month',
+        'release_day',
         'license',
         'uri',
         'permalink_url',
@@ -58,6 +59,7 @@ class Track extends BaseModel
         'metadata_artist',
         'created_at_soundcloud',
         'type',
+
         'author_username',
         'author_soundcloud_id',
         'author_soundcloud_urn',
@@ -65,6 +67,7 @@ class Track extends BaseModel
         'author_soundcloud_permalink_url',
         'author_soundcloud_permalink',
         'author_soundcloud_uri',
+        
         'last_sync_at',
 
         'creater_id',

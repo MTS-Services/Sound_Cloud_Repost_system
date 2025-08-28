@@ -3,9 +3,7 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
-use Faker\Core\Color;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CreditTransaction extends BaseModel
 {
@@ -52,8 +50,38 @@ class CreditTransaction extends BaseModel
             'calculation_type_color',
             'status_label',
             'status_color',
+            'balance',
+
             'transaction_type_name',
         ]);
+    }
+
+    // 👇 Credit balance attribute
+    public function getBalanceAttribute()
+    {
+        // $credit = $this->where('receiver_urn', $this->receiver_urn)
+        //     ->where('calculation_type', self::CALCULATION_TYPE_CREDIT)
+        //     ->sum('credits');
+
+        // $debit = $this->where('receiver_urn', $this->receiver_urn)
+        //     ->where('calculation_type', self::CALCULATION_TYPE_DEBIT)
+        //     ->sum('credits');
+
+        // return $credit - $debit;
+
+        if ($this->receiver_urn == user()->urn) {
+            $credit = $this->where('receiver_urn', $this->receiver_urn)
+                ->whereTime('created_at', '<=', $this->created_at)
+                ->where('calculation_type', self::CALCULATION_TYPE_CREDIT)
+                ->sum('credits');
+
+            $debit = $this->where('receiver_urn', $this->receiver_urn)
+                ->whereTime('created_at', '<=', $this->created_at)
+                ->where('calculation_type', self::CALCULATION_TYPE_DEBIT)
+                ->sum('credits');
+
+            return  $debit - $credit;
+        }
     }
 
     public function getStatusList(): array
@@ -77,14 +105,31 @@ class CreditTransaction extends BaseModel
         ];
     }
 
+    public function getStatusColorAttribute()
+    {
+        return [
+            self::STATUS_SUCCEEDED => 'badge-success',
+            self::STATUS_PROCESSING => 'badge-warning',
+            self::STATUS_FAILED => 'badge-info',
+            self::STATUS_REFUNDED => 'badge-error',
+        ][$this->status] ?? 'badge-secondary';
+    }
+
+    public function getStatusBtnColorAttribute()
+    {
+        return [
+            self::STATUS_SUCCEEDED => 'btn-success',
+            self::STATUS_PROCESSING => 'btn-warning',
+            self::STATUS_FAILED => 'btn-info',
+            self::STATUS_REFUNDED => 'btn-error',
+        ][$this->status] ?? 'btn-secondary';
+    }
     public function getStatusLabelAttribute(): string
     {
         return isset($this->status) ? $this->getStatusList()[$this->status] : 'Unknown';
     }
-    public function getStatusColorAttribute(): string
-    {
-        return isset($this->status) ? $this->getStatusClassList()[$this->status] : 'primary';
-    }
+
+
 
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
@@ -168,7 +213,7 @@ class CreditTransaction extends BaseModel
     }
     public function getTransactionTypeNameAttribute(): string
     {
-        return isset($this->transaction_typ) ? self::getTypes()[$this->transaction_type] : 'Unknown';
+        return isset($this->transaction_type) ? self::getTypes()[$this->transaction_type] : 'Unknown';
     }
 
 

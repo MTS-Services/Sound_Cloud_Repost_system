@@ -1,63 +1,79 @@
-<style>
-    .gsc-control-cse {
-        background: transparent;
-        padding: 5px !important;
-        width: 500px;
-        border-radius: 8px;
-        /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
-    }
-
-    .gsc-control-cse .gsc-input {
-        background: #f0e7e7;
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-
-    .gsc-control-cse .gsib_a {
-        background: #fdfdfd;
-
-    }
-
-    #gs_tti50 {
-        border: none !important;
-        /* padding: 0 !important; */
-    }
-
-    .gsc-control-cse .gsc-search-button {
-        background: rgb(224, 81, 62);
-        border: none;
-        border-radius: 4px;
-        padding: 0.5rem 0.75rem;
-        color: #000 !important;
-    }
-
-    .gsc-control-cse .gsib_a {
-        padding: 0.5rem !important;
-    }
-
-    #gsc-i-id1 {
-        background: #ffffff;
-        background-image: none !important;
-
-        transition: all 0.3s ease-in-out;
-        margin: 0 !important outline: none !important;
-    }
-
-    #gsc-i-id1:focus {
-        box-shadow: 0 0 0 3px rgba(255, 165, 0, 0.5);
-        border-color: orange !important;
-    }
-</style>
-
 <header
-    class="bg-white h-[9vh] dark:bg-slate-800 z-41 border-b border-gray-100 dark:border-slate-700 px-4 md:px-6 py-3 md:py-5 sticky top-0">
+    class="bg-white dark:bg-slate-800 z-41 border-b border-gray-100 dark:border-slate-700 px-4 md:px-6 py-3 md:py-5 sticky top-0"
+    x-data="{
+        searchModalOpen: false,
+        searchQuery: '',
+        selectedIndex: -1,
+        suggestions: {{ searchableRoutes() }},
+        filteredSuggestions: [],
+    
+        init() {
+            // No initial filtering. The list will be empty by default.
+        },
+    
+        filterSuggestions() {
+            if (!Array.isArray(this.suggestions)) {
+                console.error('Suggestions data is not a valid array.');
+                return;
+            }
+    
+            const query = this.searchQuery.trim().toLowerCase();
+    
+            // ✅ Only filter if the query is not empty.
+            if (query === '') {
+                this.filteredSuggestions = [];
+            } else {
+                this.filteredSuggestions = this.suggestions.filter(item => {
+                    if (!item || !item.title || !item.keywords) return false;
+    
+                    // Check if the query matches the title
+                    const titleMatch = item.title.toLowerCase().includes(query);
+    
+                    // Check if the query matches any of the keywords
+                    const keywordMatch = item.keywords.some(keyword =>
+                        keyword.toLowerCase().includes(query)
+                    );
+    
+                    return titleMatch || keywordMatch;
+                });
+            }
+            this.selectedIndex = -1;
+        },
+    
+        selectSuggestion(index) {
+            this.selectedIndex = index;
+        },
+    
+        handleKeydown(event) {
+            if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                this.selectedIndex = Math.min(this.selectedIndex + 1, this.filteredSuggestions.length - 1);
+            } else if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                this.selectedIndex = Math.max(this.selectedIndex - 1, -1);
+            } else if (event.key === 'Enter') {
+                event.preventDefault();
+                if (this.selectedIndex >= 0) {
+                    const selectedRoute = this.filteredSuggestions[this.selectedIndex].route;
+                    window.location.href = selectedRoute; // Fallback for `wire:navigate`
+                }
+            } else if (event.key === 'Escape') {
+                this.searchModalOpen = false;
+            }
+        },
+    
+        // `performSearch` is no longer needed since we are using <a> tags
+        performSearch(url) {
+            this.searchModalOpen = false;
+        }
+    }">
     <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2">
             <button @click="sidebarOpen = !sidebarOpen"
                 class="lg:hidden p-1 md:p-2 rounded-md text-gray-900 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700">
                 <x-lucide-menu class="w-5 h-5 md:w-6 md:h-6" />
             </button>
-            <a class="flex items-center space-x-2" href="/dashboard" data-discover="true" wire:navigate>
+            <a class="flex items-center space-x-2" href="{{ route('user.dashboard') }}" data-discover="true" wire:navigate>
                 <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
                     <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
                 </div>
@@ -66,52 +82,33 @@
                 </span>
             </a>
         </div>
-
-        <div class="flex-1 flex justify-center px-2 md:px-4 lg:px-0 lg:ml-8 ">
-            {{-- <form class="relative w-full max-w-md items-center hidden sm:flex">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-4">
-
-                    <x-lucide-search class="w-5 h-5 text-slate-800 dark:text-slate-300" />
-                </span>
-                <input type="search" placeholder="Search..."
-                    class="w-full pl-12 placeholder-slate-400 pr-4 py-2 rounded-lg bg-white dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600
-                    focus:border-[#F54A00]! dark:focus:border-[#F54A00]!
-                    text-gray-900 dark:text-gray-200 dark:placeholder:text-slate-300
-                    dark:shadow-sm outline-none transition" />
-            </form> --}}
-            <div class="gcse-search"></div>
+        <div class="flex-1 flex justify-center px-2 md:px-4 lg:px-0 lg:ml-8 md:mr-3">
+            <button @click="searchModalOpen = true"
+                class="relative w-full max-w-md items-center hidden lg:flex bg-white dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600 rounded-lg px-4 py-2 hover:border-orange-500 dark:hover:border-orange-500 transition-colors group">
+                <x-lucide-search
+                    class="w-5 h-5 text-slate-800 dark:text-slate-300 group-hover:text-orange-500 transition-colors" />
+                <span class="ml-3 text-slate-400 dark:text-slate-300 text-left flex-1">Search...</span>
+                {{-- <kbd
+                    class="hidden md:inline-flex items-center px-2 py-1 text-xs font-medium text-slate-400 bg-slate-100 dark:bg-slate-600 dark:text-slate-300 rounded border">
+                    ⌘K
+                </kbd> --}}
+            </button>
         </div>
-
         <div class="flex items-center space-x-1 md:space-x-2">
-            <!-- Navigation items - hide on mobile -->
             <nav class="hidden lg:flex items-center space-x-2 md:space-x-4 text-sm" x-data="{ activeButton: '' }">
                 <a class="text-orange-500 hover:text-orange-400 font-medium" href="{{ route('user.pkm.pricing') }}"
                     wire:navigate data-discover="true">{{ __('Upgrade My Plan') }}</a>
-
                 <a x-bind:class="{ 'text-orange-500': activeButton === 'charts', 'hover:text-orange-400': activeButton !== 'charts' }"
                     class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
                     wire:navigate href="{{ route('charts') }}" data-discover="true" @click="activeButton = 'charts'">
                     Charts
                 </a>
-
                 <a x-bind:class="{ 'text-orange-500': activeButton === 'blog', 'hover:text-orange-400': activeButton !== 'blog' }"
                     class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
                     wire:navigate href="{{ route('page') }}" data-discover="true" @click="activeButton = 'blog'">
                     Blog
                 </a>
-
-                <div x-data="{ open: false }" class="relative text-left  rounded-lg  flex justify-center">
-                    <!-- Trigger Button -->
-                    {{-- <button @click="open = !open"
-                        class="p-2 text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50 flex px-3 aline-center py-2 rounded-lg   focus:outline-none focus:ring-offset-2    left-4">
-                        <span class="m-2">help</span>
-
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" class="lucide lucide-chevron-down w-5 h-5">
-                            <path d="m6 9 6 6 6-6"></path>
-                        </svg>
-                    </button> --}}
+                <div x-data="{ open: false }" class="relative text-left rounded-lg flex justify-center">
                     <button @click="open = !open"
                         x-bind:class="{ 'text-orange-500': activeButton === 'help', 'hover:text-orange-400': activeButton !== 'help' }"
                         class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50 flex items-center space-x-1"
@@ -123,23 +120,20 @@
                             <path d="m6 9 6 6 6-6"></path>
                         </svg>
                     </button>
-
-                    <!-- Dropdown Menu -->
                     <div x-show="open" @click.outside="open = false" x-transition x-cloak
                         class="absolute right-2 mt-5 w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
                         <ul class="p-0 text-sm text-gray-700 dark:text-gray-200">
                             <li>
-                                <a href="#"
+                                <a href="{{ route('user.settings') }}" wire:navigate
                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Getting Started') }}</a>
                             </li>
                             <li>
-                                <a href="#"
+                                <a href="{{ route('user.settings') }}"
                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Contact Support') }}</a>
                             </li>
                             <li>
-                                <a href="#"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Help
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Center') }}</a>
+                                <a href="{{ route('user.settings') }}"
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Help Center') }}</a>
                             </li>
                             <li>
                                 <a href="{{ route('user.pkm.pricing') }}" wire:navigate
@@ -147,59 +141,38 @@
                             </li>
                             <li>
                                 <a href="{{ route('user.faq') }}"
-                                    class="block px-4 py-2   hover:bg-red-100  dark:hover:bg-gray-700">{{ __('FAQs') }}</a>
+                                    class="block px-4 py-2  hover:bg-red-100 dark:hover:bg-gray-700">{{ __('FAQs') }}</a>
                             </li>
                         </ul>
                     </div>
-
                 </div>
             </nav>
-
-
-
-            <!-- Mobile search button -->
-            <button @click="mobileSearchOpen = !mobileSearchOpen"
-                class="lg:hidden p-1 md:p-2 rounded-md text-gray-900 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700">
-                <x-lucide-search class="w-5 h-5 text-slate-800 dark:text-slate-300" />
+            <button @click="searchModalOpen = true"
+                class="lg:hidden p-1 md:p-2 rounded-md text-gray-900 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-orange-500 transition-colors">
+                <x-lucide-search class="w-5 h-5" />
             </button>
-
-            <!-- Mobile search overlay -->
-            <div x-show="mobileSearchOpen" @click.away="mobileSearchOpen = false"
-                class="fixed inset-0 bg-black bg-opacity-50 z-50 lg:hidden" x-cloak>
-                <div class="bg-white dark:bg-slate-800 p-4">
-                    <form class="relative w-full">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                            <x-lucide-search class="w-5 h-5 text-slate-800 dark:text-slate-300" />
-                        </span>
-                        <input type="search" placeholder="Search..."
-                            class="w-full pl-10 placeholder-slate-400 pr-4 py-2 rounded-lg bg-white dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600
-                            focus:border-[#F54A00]! dark:focus:border-[#F54A00]!
-                            text-gray-900 dark:text-gray-200 dark:placeholder:text-slate-300
-                            dark:shadow-sm outline-none transition" />
-                    </form>
-                </div>
-            </div>
-
-            <!-- Notification -->
-            {{-- <div class="relative ml-1 md:ml-1.5">
-                <x-lucide-bell class="w-5 h-5 text-gray-800 dark:text-slate-300" />
-                <span
-                    class="absolute -top-1.5 -right-1 bg-red-500 text-white text-[10px] md:text-xs rounded-full w-3 h-3 md:w-4 md:h-4 flex items-center justify-center">1</span>
-            </div> --}}
-            {{-- Notification Panel --}}
             <livewire:user.notification.notification-panel />
-
-            <!-- Theme toggle -->
             <button @click="$store.theme.toggleTheme()"
                 class="p-2 rounded-xl hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
                 data-tooltip="Toggle theme"
                 :title="$store.theme.current.charAt(0).toUpperCase() + $store.theme.current.slice(1) + ' mode'">
-                <x-heroicon-o-sun x-show="!$store.theme.darkMode"
+                <x-heroicon-o-sun x-show="$store.theme.darkMode"
                     class="w-5 h-5 text-text-light-primary dark:text-text-white" />
-                <x-heroicon-o-moon x-show="$store.theme.darkMode"
+                <x-heroicon-o-moon x-show="!$store.theme.darkMode"
                     class="w-5 h-5 text-text-light-primary dark:text-text-white" />
             </button>
-            <!-- User dropdown -->
+            {{-- <button @click="$store.theme.toggleTheme()"
+                class="p-2 rounded-xl hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+                data-tooltip="Toggle theme"
+                :title="$store.theme.current.charAt(0).toUpperCase() + $store.theme.current.slice(1) + ' mode'">
+                <!-- Sun icon for light mode -->
+                <i data-lucide="sun" x-show="!$store.theme.darkMode" x-cloak
+                    class="w-5 h-5 text-text-light-primary dark:text-text-white"></i>
+
+                <!-- Moon icon for dark mode -->
+                <i data-lucide="moon" x-show="$store.theme.darkMode" x-cloak
+                    class="w-5 h-5 text-text-light-primary dark:text-text-white"></i>
+            </button> --}}
             <div class="dropdown dropdown-end">
                 <div tabindex="0" role="button" class="flex items-center space-x-1 md:space-x-2">
                     <img src="{{ auth_storage_url(user()->avatar) }}" alt="{{ user()->name ?? 'name' }}"
@@ -214,10 +187,8 @@
                 </div>
                 <ul tabindex="0"
                     class="menu menu-sm dropdown-content bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-lg shadow-lg z-10 mt-3 w-64 py-2 space-y-1">
-
-                    <!-- View Profile -->
                     <li>
-                        <a href="{{ route('user.profile') }}"wire:navigate
+                        <a href="{{ route('user.pm.my-account') }}" wire:navigate
                             class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -227,41 +198,28 @@
                             View Profile
                         </a>
                     </li>
-
-                    <!-- Current Plan -->
                     <li class="px-4 py-2 border-t border-gray-200 dark:border-slate-700">
                         <div class="text-xs flex justify-between items-center text-gray-500 dark:text-gray-300 mb-0.5">
                             <span>Current Plan</span>
                         </div>
                         <div class="text-sm flex justify-between items-center">
-                            <span class="font-semibold text-slate-800 dark:text-white">{{ __('Free Plan') }}</span>
+                            <span class="font-semibold text-slate-800 dark:text-white">
+                                @if (empty(user()->activePlan()) || user()->activePlan()->price == 0)
+                                    {{ __('Free Plan') }}
+                                @else
+                                    {{ user()->activePlan()->plan?->name }}
+                                @endif
+                            </span>
                             <a href="{{ route('user.pkm.pricing') }}" wire:navigate
                                 class="text-orange-500 text-xs hover:underline">{{ __('View All Plans') }}</a>
                         </div>
                     </li>
-
-                    <!-- Settings & Preferences -->
                     <li>
                         <a href="#"
                             class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm block">
                             Settings & Preferences
                         </a>
                     </li>
-
-                    <!-- Purchase History -->
-                    <li>
-                        <a href="#" wire:navigate
-                            class="px-2 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 " fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1 2h13m-6 4a1 1 0 100-2 1 1 0 000 2zm-6 0a1 1 0 100-2 1 1 0 000 2z" />
-                            </svg>
-                            Purchase History
-                        </a>
-                    </li>
-
-                    <!-- Logout -->
                     <li class="border-t border-gray-200 dark:border-slate-700 pt-2">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -280,114 +238,115 @@
             </div>
         </div>
     </div>
-</header>
-
-
-{{-- <div class="gsc-control-cse gsc-control-cse-en">
-    <div class="gsc-control-wrapper-cse" dir="ltr">
-        <form class="gsc-search-box gsc-search-box-tools" accept-charset="utf-8">
-            <table cellspacing="0" cellpadding="0" role="presentation" class="gsc-search-box">
-                <tbody>
-                    <tr>
-                        <td class="gsc-input">
-                            <div class="gsc-input-box" id="gsc-iw-id1">
-                                <table cellspacing="0" cellpadding="0" role="presentation" id="gs_id50"
-                                    class="gstl_50 gsc-input" style="width: 100%; padding: 0px;">
-                                    <tbody>
-                                        <tr>
-                                            <td id="gs_tti50" class="gsib_a"><input autocomplete="off"
-                                                    type="text" size="10" class="gsc-input" name="search"
-                                                    title="search" aria-label="search" id="gsc-i-id1"
-                                                    style="width: 100%; padding: 0px; border: none; margin: 0px; height: auto; background: url(&quot;https://www.google.com/cse/static/images/1x/en/branding.png&quot;) left center no-repeat rgb(255, 255, 255); outline: none;"
-                                                    dir="ltr" spellcheck="false"></td>
-                                            <td class="gsib_b">
-                                                <div class="gsst_b" id="gs_st50" dir="ltr"><a class="gsst_a"
-                                                        href="javascript:void(0)" title="Clear search box"
-                                                        role="button" style="display: none;"><span class="gscb_a"
-                                                            id="gs_cb50" aria-hidden="true">×</span></a></div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </td>
-                        <td class="gsc-search-button"><button class="gsc-search-button gsc-search-button-v2"><svg
-                                    width="13" height="13" viewBox="0 0 13 13">
-                                    <title>search</title>
-                                    <path
-                                        d="m4.8495 7.8226c0.82666 0 1.5262-0.29146 2.0985-0.87438 0.57232-0.58292 0.86378-1.2877 0.87438-2.1144 0.010599-0.82666-0.28086-1.5262-0.87438-2.0985-0.59352-0.57232-1.293-0.86378-2.0985-0.87438-0.8055-0.010599-1.5103 0.28086-2.1144 0.87438-0.60414 0.59352-0.8956 1.293-0.87438 2.0985 0.021197 0.8055 0.31266 1.5103 0.87438 2.1144 0.56172 0.60414 1.2665 0.8956 2.1144 0.87438zm4.4695 0.2115 3.681 3.6819-1.259 1.284-3.6817-3.7 0.0019784-0.69479-0.090043-0.098846c-0.87973 0.76087-1.92 1.1413-3.1207 1.1413-1.3553 0-2.5025-0.46363-3.4417-1.3909s-1.4088-2.0686-1.4088-3.4239c0-1.3553 0.4696-2.4966 1.4088-3.4239 0.9392-0.92727 2.0864-1.3969 3.4417-1.4088 1.3553-0.011889 2.4906 0.45771 3.406 1.4088 0.9154 0.95107 1.379 2.0924 1.3909 3.4239 0 1.2126-0.38043 2.2588-1.1413 3.1385l0.098834 0.090049z">
-                                    </path>
-                                </svg></button></td>
-                        <td class="gsc-clear-button">
-                            <div class="gsc-clear-button" title="clear results">&nbsp;</div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </form>
-        <div class="gsc-results-wrapper-overlay">
-            <div class="gsc-results-close-btn" tabindex="0"></div>
-            <div class="gsc-positioningWrapper">
-                <div class="gsc-tabsAreaInvisible">
-                    <div aria-label="refinement" role="tab"
-                        class="gsc-tabHeader gsc-inline-block gsc-tabhActive">Web</div><span class="gs-spacer">
-                    </span>
-                    <div tabindex="0" aria-label="refinement" role="tab"
-                        class="gsc-tabHeader gsc-tabhInactive gsc-inline-block">Image</div><span class="gs-spacer">
-                    </span>
+    <div x-show="searchModalOpen" x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0" @click.self="searchModalOpen = false"
+        @keydown.escape.window="searchModalOpen = false"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-16 md:pt-24 hidden"
+        :class="{ 'hidden': !searchModalOpen }">
+        <div x-show="searchModalOpen" x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+            class="w-full max-w-2xl mx-4 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden">
+            <div class="p-4 border-b border-gray-200 dark:border-slate-700">
+                <div class="relative">
+                    <x-lucide-search
+                        class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-orange-500" />
+                    <input x-model="searchQuery" @input="filterSuggestions()" @keydown="handleKeydown($event)"
+                        x-ref="searchInput" type="text" placeholder="Search anything..."
+                        class="w-full pl-12 pr-4 py-3 text-lg bg-transparent border-2 border-gray-200 rounded-lg focus:border-orange-500 dark:focus:border-orange-500 focus:outline-none text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-300 focus-within:outline-none transition-colors">
+                    <button @click="searchModalOpen = false"
+                        class="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
                 </div>
             </div>
-            <div class="gsc-positioningWrapper">
-                <div class="gsc-refinementsAreaInvisible"></div>
-            </div>
-            <div class="gsc-above-wrapper-area-invisible">
-                <div class="gsc-above-wrapper-area-backfill-container"></div>
-                <table cellspacing="0" cellpadding="0" role="presentation" class="gsc-above-wrapper-area-container">
-                    <tbody>
-                        <tr>
-                            <td class="gsc-result-info-container">
-                                <div class="gsc-result-info-invisible"></div>
-                            </td>
-                            <td class="gsc-orderby-container">
-                                <div class="gsc-orderby-invisible">
-                                    <div class="gsc-orderby-label gsc-inline-block">Sort by:</div>
-                                    <div class="gsc-option-menu-container gsc-inline-block">
-                                        <div class="gsc-selected-option-container gsc-inline-block">
-                                            <div class="gsc-selected-option">Relevance</div>
-                                            <div class="gsc-option-selector"></div>
-                                        </div>
-                                        <div class="gsc-option-menu-invisible">
-                                            <div class="gsc-option-menu-item gsc-option-menu-item-highlighted">
-                                                <div class="gsc-option">Relevance</div>
-                                            </div>
-                                            <div class="gsc-option-menu-item">
-                                                <div class="gsc-option">Date</div>
-                                            </div>
-                                        </div>
+            <div class="max-h-96 overflow-y-auto">
+                {{-- ✅ Show results only when searchQuery is not empty --}}
+                <template x-if="searchQuery !== ''">
+                    <template x-if="filteredSuggestions.length > 0">
+                        <div class="p-2">
+                            <div
+                                class="text-xs font-medium text-slate-500 dark:text-slate-400 px-3 py-2 uppercase tracking-wide">
+                                <span x-text="`Showing ${filteredSuggestions.length} results`"></span>
+                            </div>
+                            <template x-for="(suggestion, index) in filteredSuggestions" :key="index">
+                                <a x-bind:href="suggestion.route" wire:navigate @mouseenter="selectSuggestion(index)"
+                                    :class="selectedIndex === index ?
+                                        'bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800' :
+                                        'hover:bg-gray-50 dark:hover:bg-slate-700'"
+                                    class="w-full flex items-center gap-3 px-3 py-3 rounded-lg border border-transparent transition-all duration-150 text-left group">
+                                    <x-lucide-link class="w-5 h-5 text-sm" />
+                                    <div class="flex-1 min-w-0">
+                                        <div class="font-medium text-slate-800 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors"
+                                            x-text="suggestion.title"></div>
                                     </div>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="gsc-adBlockInvisible"></div>
-            <div class="gsc-wrapper">
-                <div class="gsc-adBlockInvisible"></div>
-                <div class="gsc-resultsbox-invisible">
-                    <div class="gsc-resultsRoot gsc-tabData gsc-tabdActive">
-                        <div>
-                            <div class="gsc-expansionArea"></div>
+                                    <svg class="w-4 h-4 text-slate-400 group-hover:text-orange-500 transition-colors opacity-0 group-hover:opacity-100"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </a>
+                            </template>
                         </div>
+                    </template>
+                    <template x-if="filteredSuggestions.length === 0 && searchQuery !== ''">
+                        <div class="p-8 text-center">
+                            <div class="text-slate-400 dark:text-slate-500 mb-2">
+                                <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
+                            <p class="text-slate-600 dark:text-slate-300 font-medium">No results found</p>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Try searching for something else
+                            </p>
+                        </div>
+                    </template>
+                </template>
+                {{-- ✅ New Section: Default State when search bar is empty --}}
+                <template x-if="searchQuery === ''">
+                    <div class="p-8 text-center">
+                        <div class="text-slate-400 dark:text-slate-500 mb-2">
+                            <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-slate-600 dark:text-slate-300 font-medium">Start typing to search...</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Search campaigns, pages, and more.
+                        </p>
                     </div>
-                    <div class="gsc-resultsRoot gsc-tabData gsc-tabdInactive">
-                        <div>
-                            <div class="gsc-expansionArea"></div>
-                        </div>
+                </template>
+            </div>
+            <div class="px-4 py-3 bg-gray-50 dark:bg-slate-700/50 border-t border-gray-200 dark:border-slate-700">
+                <div class="flex items-center justify-center text-xs text-slate-500 dark:text-slate-400">
+                    <div class="flex items-center gap-4">
+                        <span class="flex items-center gap-1">
+                            <kbd class="px-2 py-1 bg-white dark:bg-slate-600 rounded border text-xs">↑↓</kbd>
+                            Navigate
+                        </span>
+                        <span class="flex items-center gap-1">
+                            <kbd class="px-2 py-1 bg-white dark:bg-slate-600 rounded border text-xs">Enter</kbd>
+                            Select
+                        </span>
+                        <span class="flex items-center gap-1">
+                            <kbd class="px-2 py-1 bg-white dark:bg-slate-600 rounded border text-xs">Esc</kbd>
+                            Close
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="gsc-modal-background-image" tabindex="0"></div>
     </div>
-</div> --}}
+    <div x-init="$watch('searchModalOpen', value => { if (value) { $nextTick(() => $refs.searchInput?.focus()) } })"></div>
+</header>

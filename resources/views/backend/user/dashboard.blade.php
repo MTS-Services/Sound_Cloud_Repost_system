@@ -1,9 +1,10 @@
 <x-user::layout>
     <x-slot name="page_slug">dashboard</x-slot>
     <!-- Dashboard Content (Default) -->
+
     <div id="content-dashboard" class="page-content py-2 px-2 ">
         <div
-            class="px-2 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 w-full">
+            class="tablet:px-2 px-0.5 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 w-full">
             <!-- Left: Title and subtitle -->
             <div class="w-full sm:w-auto">
                 <h2 class="text-2xl text-black dark:text-white font-semibold mb-2">Dashboard</h2>
@@ -14,30 +15,40 @@
                 </p>
             </div>
             <!-- Right: Buttons group -->
-            <div class="flex flex-col sm:flex-row gap-3 sm:gap-2 w-full sm:w-auto">
+            <div class="flex flex-col lg:flex-row gap-3 sm:gap-2 w-full sm:w-auto">
                 <!-- Earn Credits -->
-                <div
+                {{-- <div
                     class="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 dark:bg-slate-800 dark:hover:bg-slate-700 text-white dark:text-gray-200 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer w-full sm:w-auto justify-center">
                     <span class="flex items-center gap-1 text-base sm:text-sm">
-                        💰
-                        <a href="{{ route('user.cm.my-campaigns') }}" wire:navigate
-                            class="hover:underline text-white dark:text-gray-200 text-base sm:text-sm">
+                        
+                        <a href="{{ route('user.cm.campaigns') }}" wire:navigate
+                            class="hover:underline text-white dark:text-gray-200 text-base sm:text-xs lg:text-base">
                             {{ __('Earn Credits') }}
                         </a>
                     </span>
-                </div>
+                </div> --}}
+                <x-gbutton variant="secondary" wire:navigate href="{{ route('user.cm.campaigns') }}">
+                    <span>💰</span>{{ __('Earn Credits') }}
+                </x-gbutton>
                 <!-- Submit Track -->
-                <div
-                    class="flex items-center gap-2 bg-orange-600 text-white py-2 px-3 rounded-md hover:bg-orange-700 w-full sm:w-auto justify-center">
-                    <span class="flex items-center">
-                        <i data-lucide="music" class="inline-block text-center h-5 w-6 text-purple-800"></i>
-                    </span>
-                    <a href="#" class="text-base sm:text-sm">{{ __('Submit Track') }}</a>
-                </div>
+                {{-- <div
+                    class="flex items-center gap-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 w-full sm:w-auto justify-center py-2 px-3">
+                    <a href="{{ route('user.track.submit') }}" class="text-base sm:text-xs lg:text-base  "
+                        wire:navigate>
+                        <span>
+                            <x-lucide-music class="inline-block text-center h-4 w-4 text-purple-800" />
+                        </span>
+                        {{ __('Submit Track') }}</a>
+                </div> --}}
+                <x-gbutton variant="primary" wire:navigate href="{{ route('user.track.submit') }}">
+                    <span>
+                        <x-lucide-music class="inline-block text-center h-4 w-4 text-white mr-1" />
+                    </span>{{ __('Submit Track') }}
+                </x-gbutton>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             <div
                 class="bg-white  dark:bg-slate-800 rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
                 <div class="flex items-center justify-between mb-4">
@@ -50,9 +61,23 @@
                         </svg></div>
                 </div>
                 <div class="space-y-2">
-                    <p class="text-2xl  font-bold text-slate-700 dark:text-white">{{ $total_credits }}</p>
-                    <p class="text-sm flex items-center space-x-1 text-green-400"><span>+12% from last week</span></p>
+                    <p class="text-2xl font-bold text-slate-700 dark:text-white">{{ userCredits() }}</p>
+
+                    @if ($creditPercentage >= 0)
+                        <p class="text-sm flex items-center space-x-1 text-green-400">
+                            <span>+{{ $creditPercentage }}% from last week</span>
+                        </p>
+                    @elseif($creditPercentage < 0)
+                        <p class="text-sm flex items-center space-x-1 text-red-400">
+                            <span>{{ $creditPercentage }}% from last week</span>
+                        </p>
+                    @else
+                        <p class="text-sm flex items-center space-x-1 text-gray-400">
+                            <span>0% from last week</span>
+                        </p>
+                    @endif
                 </div>
+
             </div>
 
             <div
@@ -69,8 +94,20 @@
                     </div>
                 </div>
                 <div class="space-y-2">
-                    <p class="text-2xl  font-bold text-slate-700 dark:text-white">1</p>
-                    <p class="text-sm flex items-center space-x-1 text-green-400"><span>+0% from last week</span></p>
+                    <p class="text-2xl  font-bold text-slate-700 dark:text-white">{{ $totalCams }}</p>
+                    @if ($campaignPercentage >= 0)
+                        <p class="text-sm flex items-center space-x-1 text-green-400">
+                            <span>+{{ $campaignPercentage }}% from last week</span>
+                        </p>
+                    @elseif($campaignPercentage < 0)
+                        <p class="text-sm flex items-center space-x-1 text-red-400">
+                            <span>{{ $campaignPercentage }}% from last week</span>
+                        </p>
+                    @else
+                        <p class="text-sm flex items-center space-x-1 text-gray-400">
+                            <span>0% from last week</span>
+                        </p>
+                    @endif
                 </div>
             </div>
 
@@ -89,8 +126,20 @@
                         </svg></div>
                 </div>
                 <div class="space-y-2">
-                    <p class="text-2xl  font-bold text-slate-700 dark:text-white">{{ ($totalCount) }}</p>
-                    <p class="text-sm flex items-center space-x-1 text-green-400"><span>+8.5% from last week</span></p>
+                    <p class="text-2xl  font-bold text-slate-700 dark:text-white">{{ $totalCount }}</p>
+                    @if ($repostRequestPercentage >= 0)
+                        <p class="text-sm flex items-center space-x-1 text-green-400">
+                            <span>+{{ $repostRequestPercentage }}% from last week</span>
+                        </p>
+                    @elseif($repostRequestPercentage < 0)
+                        <p class="text-sm flex items-center space-x-1 text-red-400">
+                            <span>{{ $repostRequestPercentage }}% from last week</span>
+                        </p>
+                    @else
+                        <p class="text-sm flex items-center space-x-1 text-gray-400">
+                            <span>0% from last week</span>
+                        </p>
+                    @endif
                 </div>
             </div>
 
@@ -143,27 +192,18 @@
                     <div class="h-60 sm:h-96 flex flex-col justify-between">
                         <div class="flex-grow flex items-center justify-center my-4">
                             <div
-                                class="bg-slate-700/50 rounded-full w-36 h-36 sm:w-40 sm:h-40 flex items-center justify-center">
-                                <img src="https://imgs.search.brave.com/2rHUZ109YlFZLs4tiya8jxlxjLsE_WEUoUMpvFfZANQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NzFRTnBFbDhjckwu/anBn"
-                                    alt="">
+                                class="bg-slate-700/50 rounded-lg w-full h-full sm:w-40 sm:h-40 flex items-center justify-center">
+                                <img src="https://www.musiikkiluvat.fi/wp-content/uploads/2022/09/istock-1324006497-kopio-768x512.jpg"
+                                    class="w-full h-full rounded-xl" alt="">
                             </div>
                         </div>
                         <div class="flex flex-wrap justify-center gap-x-2 gap-y-2 text-xs">
-                            <div class="flex items-center gap-2"><span
-                                    class="w-3 h-3 rounded-full bg-violet-500"></span><span
-                                    class="text-slate-400">Electronic</span></div>
-                            <div class="flex items-center gap-2"><span
-                                    class="w-3 h-3 rounded-full bg-orange-500"></span><span
-                                    class="text-slate-400">Hip-Hop</span></div>
-                            <div class="flex items-center gap-2"><span
-                                    class="w-3 h-3 rounded-full bg-blue-500"></span><span
-                                    class="text-slate-400">Pop</span></div>
-                            <div class="flex items-center gap-2"><span
-                                    class="w-3 h-3 rounded-full bg-green-500"></span><span
-                                    class="text-slate-400">R&B</span></div>
-                            <div class="flex items-center gap-2"><span
-                                    class="w-3 h-3 rounded-full bg-yellow-500"></span><span
-                                    class="text-slate-400">Rock</span></div>
+                            @foreach (user()->genres as $genre)
+                                <div class="flex items-center gap-2"><span
+                                        class="text-slate-400">{{ $genre->genre }}</span></div>
+                            @endforeach
+
+
                         </div>
                     </div>
                 </div>
@@ -200,10 +240,8 @@
                         </div>
                         <h4 class="font-medium mb-2">No upcoming campaigns scheduled</h4>
                         <p class="text-slate-400 text-sm mb-4">Submit a track to start a new campaign</p>
-                        <a href="{{ route('user.cm.my-campaigns') }}"
-                            class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                            Create Campaign
-                        </a>
+                        <x-gbutton variant="primary" wire:navigate href="{{ route('user.cm.my-campaigns') }}">
+                           <span><x-lucide-plus class="inline-block text-center h-4 w-4 text-white mr-1" /></span> Create Campaign</x-gbutton>
                     </div>
                 </div>
 
@@ -212,10 +250,12 @@
                     <div class="flex items-center justify-between p-2">
                         <div>
                             <h3 class="text-lg font-semibold">Latest Repost Requests</h3>
-                            <p class="text-slate-400 text-sm">{{ $totalCount }} requests</p>
                         </div>
-                        <a class="text-orange-500 hover:text-orange-400 text-sm font-medium" href="/requests">View all
-                            →</a>
+                        @if ($repostRequests->count() > 0)
+                            <a class="text-orange-500 hover:text-orange-400 text-sm font-medium"
+                                href="{{ route('user.reposts-request') }}">View all
+                                →</a>
+                        @endif
                     </div>
                     @foreach ($repostRequests as $request)
                         <div class="space-y-4">
@@ -231,10 +271,12 @@
                                         credits</span>
                                 </div>
                                 <div class="flex space-x-2">
-                                    <button
-                                        class="flex-1 bg-slate-600 hover:bg-slate-500 text-white text-sm py-2 rounded-lg">Decline</button>
-                                    <button
-                                        class="flex-1 bg-orange-500 hover:bg-orange-600 text-white text-sm py-2 rounded-lg">Repost</button>
+                                    <div class="flex-1"> 
+                                    <x-gabutton variant="secondary" :full-width="true" wire:navigate href="{{ route('user.decline-repost', encrypt($request->id)) }}">Decline</x-gabutton>
+                                    </div>
+                                    <div class="flex-1">
+                                    <x-gabutton variant="primary" :full-width="true" wire:navigate href="{{ route('user.direct-repost', encrypt($request->id)) }}">Reposts</x-gabutton>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -281,92 +323,107 @@
         <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
 
         <script>
-            const ctx = document.getElementById('campaignChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                    datasets: [{
-                        label: 'Performance',
-                        data: [950, 1700, 2300, 2850, 2700, 3800],
-                        borderColor: '#f97316', // Orange-500
-                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                        pointBackgroundColor: '#f97316',
-                        pointBorderColor: '#ffffff',
-                        pointHoverRadius: 7,
-                        pointHoverBorderWidth: 2,
-                        pointRadius: 5,
-                        borderWidth: 2.5,
-                        tension: 0.4,
-                        fill: true,
-                    }, {
-                        label: 'Baseline',
-                        data: [100, 150, 120, 180, 250, 200],
-                        borderColor: '#22c55e', // Green-500
-                        backgroundColor: 'transparent',
-                        pointBackgroundColor: '#22c55e',
-                        borderWidth: 2,
-                        pointRadius: 5,
-                        tension: 0.4,
-                    }]
-                },
-                options: {
-                    responsive: true, // This is key for responsiveness
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                color: '#94a3b8', // slate-400
-                                font: {
-                                    size: 10
-                                }
-                            },
-                            grid: {
-                                color: '#334155', // slate-700
-                                drawBorder: false,
-                            },
+            // Define a function to create the chart
+            function createCampaignChart() {
+                const ctx = document.getElementById('campaignChart');
+
+                // Check if the canvas element exists before trying to create a chart
+                if (ctx) {
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                            datasets: [{
+                                label: 'Performance',
+                                data: [950, 1700, 2300, 2850, 2700, 3800],
+                                borderColor: '#f97316',
+                                backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                                pointBackgroundColor: '#f97316',
+                                pointBorderColor: '#ffffff',
+                                pointHoverRadius: 7,
+                                pointHoverBorderWidth: 2,
+                                pointRadius: 5,
+                                borderWidth: 2.5,
+                                tension: 0.4,
+                                fill: true,
+                            }, {
+                                label: 'Baseline',
+                                data: [100, 150, 120, 180, 250, 200],
+                                borderColor: '#22c55e',
+                                backgroundColor: 'transparent',
+                                pointBackgroundColor: '#22c55e',
+                                borderWidth: 2,
+                                pointRadius: 5,
+                                tension: 0.4,
+                            }]
                         },
-                        x: {
-                            ticks: {
-                                color: '#94a3b8', // slate-400
-                                font: {
-                                    size: 10
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        color: '#94a3b8',
+                                        font: {
+                                            size: 10
+                                        }
+                                    },
+                                    grid: {
+                                        color: '#334155',
+                                        drawBorder: false,
+                                    },
+                                },
+                                x: {
+                                    ticks: {
+                                        color: '#94a3b8',
+                                        font: {
+                                            size: 10
+                                        }
+                                    },
+                                    grid: {
+                                        display: false,
+                                    },
                                 }
                             },
-                            grid: {
-                                display: false,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                    align: 'end',
+                                    labels: {
+                                        color: '#e2e8f0',
+                                        boxWidth: 12,
+                                        font: {
+                                            size: 12
+                                        }
+                                    }
+                                },
+                                tooltip: {
+                                    backgroundColor: '#0f172a',
+                                    titleColor: '#ffffff',
+                                    bodyColor: '#cbd5e1',
+                                    borderColor: '#334155',
+                                    borderWidth: 1,
+                                    padding: 12,
+                                    cornerRadius: 8,
+                                }
+                            },
+                            interaction: {
+                                intersect: false,
+                                mode: 'index',
                             },
                         }
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            align: 'end',
-                            labels: {
-                                color: '#e2e8f0', // slate-200
-                                boxWidth: 12,
-                                font: {
-                                    size: 12
-                                }
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: '#0f172a', // slate-900
-                            titleColor: '#ffffff',
-                            bodyColor: '#cbd5e1', // slate-300
-                            borderColor: '#334155', // slate-700
-                            borderWidth: 1,
-                            padding: 12,
-                            cornerRadius: 8,
-                        }
-                    },
-                    interaction: {
-                        intersect: false,
-                        mode: 'index',
-                    },
+                    });
                 }
+            }
+
+            // Listen for the livewire:navigated event to re-initialize the chart
+            document.addEventListener('livewire:navigated', () => {
+                createCampaignChart();
             });
+
+            // Also call the function on the initial page load
+            createCampaignChart();
         </script>
     @endpush
 </x-user::layout>

@@ -15,6 +15,9 @@ class CustomNotificationStatus extends BaseModel
         'notification_id',
         'read_at',
     ];
+    protected $casts = [
+        'read_at' => 'datetime',
+    ];
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 Start of RELATIONSHIPS
@@ -39,7 +42,7 @@ class CustomNotificationStatus extends BaseModel
     {
         parent::__construct($attributes);
         $this->appends = array_merge(parent::getAppends(), [
-            //
+            'read_at_formated',
         ]);
     }
 
@@ -52,5 +55,10 @@ class CustomNotificationStatus extends BaseModel
     {
         return $query->where('user_id', admin()->id)
             ->where('user_type', get_class(admin()));
+    }
+
+    public function getReadAtFormattedAttribute()
+    {
+        return $this->read_at ? timeFormat($this->read_at) : 'N/A';
     }
 }

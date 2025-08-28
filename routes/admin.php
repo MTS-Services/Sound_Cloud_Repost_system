@@ -9,6 +9,7 @@ use App\Http\Controllers\Backend\Admin\PackageManagement\PlanController;
 use App\Http\Controllers\Backend\Admin\PackageManagement\CreditController;
 use App\Http\Controllers\Backend\Admin\PackageManagement\FeatureController;
 use App\Http\Controllers\Backend\Admin\AdminManagement\PermissionController;
+use App\Http\Controllers\Backend\Admin\ApplicationSettingController;
 use App\Http\Controllers\Backend\Admin\CampaignManagement\CampaignController;
 use App\Http\Controllers\Backend\Admin\UserManagement\UserPlaylistController;
 use App\Http\Controllers\Backend\Admin\UserManagement\UserTracklistController;
@@ -116,8 +117,9 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::get('/tracklist/{user}', 'tracklist')->name('tracklist'); // all tracklist
             Route::get('/details/{tracklist}', 'tracklistDetail')->name('tracklist.detail');
             Route::post('/tracklist/{urn}', 'tracklistShow')->name('tracklist.show');
-            Route::post('/add-credit/{user_urn}', 'addCredit')->name('add-credit');
             Route::get('/detail/{user}', 'detail')->name('detail');
+            Route::post('/add-credit/{user_urn}', 'addCredit')->name('add-credit');
+            Route::post('/add-plan', 'addPlan')->name('add-plan');
         });
 
         Route::resource('user-plane', UserPlaneController::class);
@@ -219,19 +221,21 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
 
 
     // Admin Notification Routes
-    Route::prefix('notifications')->name('admin.notifications.')->group(function () {
-        // Main notifications page
-        Route::get('/', [NotificationController::class, 'index'])->name('index');
+    Route::controller(NotificationController::class)->prefix('notifications')->name('admin.notifications.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/show/{encryptedId}', 'show')->name('show');
+        Route::get('/api', 'getNotifications')->name('api');
+        Route::get('/unread-count', 'getUnreadCount')->name('unread-count');
+        Route::post('/mark-as-read', 'markAsRead')->name('mark-as-read');
+        Route::post('/mark-all-read', 'markAllAsRead')->name('mark-all-read');
+        Route::delete('/delete', 'destroy')->name('destroy');
+    });
 
-        // API endpoints for AJAX requests
-        Route::get('/api', [NotificationController::class, 'getNotifications'])->name('api');
-        Route::get('/unread-count', [NotificationController::class, 'getUnreadCount'])->name('unread-count');
-
-        // Mark notifications as read
-        Route::post('/mark-as-read', [NotificationController::class, 'markAsRead'])->name('mark-as-read');
-        Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('mark-all-read');
-
-        // Delete notification (only for private notifications)
-        Route::delete('/delete', [NotificationController::class, 'destroy'])->name('destroy');
+    // Application Settings 
+    Route::controller(ApplicationSettingController::class)->name('app-settings.')->prefix('application-settings')->group(function () {
+        Route::post('/update-settings', 'updateSettings')->name('update-settings');
+        Route::get('/', 'general')->name('general');
+        Route::get('/database', 'database')->name('database');
+        Route::get('/smtp', 'smtp')->name('smtp');
     });
 });

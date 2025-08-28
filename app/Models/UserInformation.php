@@ -49,6 +49,7 @@ class UserInformation extends BaseModel
         'local',
         'upload_seconds_left',
 
+
         'creater_id',
         'updater_id',
         'deleter_id',

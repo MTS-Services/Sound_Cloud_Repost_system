@@ -101,5 +101,4 @@ class Plan extends BaseModel
     {
         return ($this->monthly_price * 12) - $this->yearly_price;
     }
-
 }

@@ -14,7 +14,11 @@
             <div class="flex items-center gap-4">
                 <div
                     class="w-10 h-10 glass-card shadow inset-shadow-lg bg-bg-white dark:bg-bg-black p-0 rounded-xl flex items-center justify-center">
-                    <i data-lucide="zap" class="!w-4 !h-4"></i>
+                    @if (env('APP_LOGO'))
+                        <img src="{{ storage_url(env('APP_LOGO')) }}" alt="{{ env('APP_NAME') }}" class="w-full h-full">
+                    @else
+                        <i data-lucide="zap" class="!w-4 !h-4"></i>
+                    @endif
                 </div>
                 <div x-show="(desktop && sidebar_expanded) || (!desktop && mobile_menu_open)"
                     x-transition:enter="transition-all duration-300 delay-75"
@@ -73,13 +77,14 @@
                         'active' => 'user',
                         'permission' => 'user-list',
                     ],
-
+                
                     [
-                        'name' => ' Users Plane',
+                        'name' => 'User Plan',
                         'route' => route('um.user-plane.index'),
                         'icon' => 'user',
                         'active' => 'users_plane',
-                        'permission' => 'user-plane-list',]
+                        'permission' => 'user-plane-list',
+                    ],
                     // [
                     //     'name' => 'Top Reposters',
                     //     'route' => '#',
@@ -192,8 +197,30 @@
                         'active' => 'faq',
                         'permission' => 'faq-list',
                     ],
-                     
                 ]" />
+            <x-admin.navlink icon="settings" name="Settings" :page_slug="$active" :items="[
+                [
+                    'name' => 'General Settings',
+                    'route' => route('app-settings.general'),
+                    'icon' => 'sliders',
+                    'active' => 'app-general-settings',
+                    'permission' => 'application-setting-general',
+                ],
+                [
+                    'name' => 'Database Settings',
+                    'route' => route('app-settings.database'),
+                    'icon' => 'database',
+                    'active' => 'app-database-settings',
+                    'permission' => 'application-setting-database',
+                ],
+                [
+                    'name' => 'Email Settings',
+                    'route' => route('app-settings.smtp'),
+                    'icon' => 'server',
+                    'active' => 'app-smtp-settings',
+                    'permission' => 'application-setting-smtp',
+                ],
+            ]" />
         </nav>
     </div>
 </aside>

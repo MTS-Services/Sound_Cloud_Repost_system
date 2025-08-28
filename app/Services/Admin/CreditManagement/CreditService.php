@@ -24,6 +24,7 @@ class CreditService
                     'source_type' => $data['source_type'],
                     'credits' => $data['credits'],
                     'amount' => $data['amount'],
+                    'notes' => $data['description'] ?? null,
                     'type' => $data['order_type'],
                     'creater_id' => $data['creater_id'],
                     'creater_type' => $data['creater_type'],
@@ -52,6 +53,7 @@ class CreditService
                     'reference' => $data['reference'] ?? null,
                     'user_urn' => $data['receiver_urn'],
                     'order_id' => $order->id,
+                    'notes' => $data['description'] ?? null,
                     'payment_method' => $data['payment_method'] ?? null,
 
                     'payment_gateway' => $data['payment_gateway'] ?? Payment::PAYMENT_GATEWAY_UNKNOWN,

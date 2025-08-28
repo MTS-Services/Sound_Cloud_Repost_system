@@ -15,6 +15,7 @@ use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Livewire\User\Dashboard;
 use App\Livewire\User\FaqManagement\Faq;
 use App\Livewire\User\HelpAndSupport;
 use App\Livewire\User\MemberManagement\Member;
@@ -23,10 +24,14 @@ use App\Livewire\User\Notification\NotificationList;
 use App\Livewire\User\Notification\NotificationShow;
 use App\Livewire\User\PackageManagement\Pricing;
 use App\Livewire\User\ProfileManagement\MyAccount;
+use App\Livewire\User\Settings;
+use App\Livewire\User\TrackSubmit;
 use App\Models\Faq as ModelsFaq;
 use Illuminate\Validation\Rules\Unique;
 use PHPUnit\TextUI\Help;
 
+
+// SoundCloud Routes
 Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
     Route::get('redirect', [SoundCloudController::class, 'redirect'])->name('redirect');
     Route::get('callback', [SoundCloudController::class, 'callback'])->name('callback');
@@ -34,13 +39,17 @@ Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
     Route::post('sync', [SoundCloudController::class, 'sync'])->name('sync')->middleware('auth:web');
 });
 
-// Dashboard and other routes
+// User routes (The 'verified' middleware has been removed)
 Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user'], function () {
-    Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard', Dashboard::class)->name('dashboard');
+    // Route::get('/direct-repost/{requestId}', [DashboardController::class, 'directRepost'])->name('direct-repost');
+    // Route::get('/decline-repost/{requestId}', [DashboardController::class, 'declineRepost'])->name('decline-repost');
 
+    Route::get('/profile-info', [ProfileController::class, 'emailAdd'])->name('email.add');
+    Route::post('/profile-info/update', [ProfileController::class, 'emailStore'])->name('email.store');
+    Route::get('/user-profile/{user_urn}', [ProfileController::class, 'profile'])->name('profile');
+    Route::post('email/resend-verification', [ProfileController::class, 'resendEmailVerification'])->middleware(['auth', 'throttle:6,1'])->name('email.resend.verification');
 
-
-    Route::get('/user-profile', [ProfileController::class, 'profile'])->name('profile');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -51,33 +60,24 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
 
     // Campaign Management
     Route::group(['as' => 'cm.', 'prefix' => 'campaign-management'], function () {
-        // Campaign Routes
         Route::get('/my-campaigns', MyCampaign::class)->name('my-campaigns');
         Route::get('/campaigns', Campaign::class)->name('campaigns');
     });
     Route::group(['as' => 'pkm.', 'prefix' => 'package-management'], function () {
         Route::get('/pricing', Pricing::class)->name('pricing');
-
     });
-
 
     // Member Management
     Route::group(['as' => 'mm.', 'prefix' => 'member-management'], function () {
-        // Member Routes
         Route::get('/members', [MemberController::class, 'index'])->name('members.index');
         Route::get('/members/request', [MemberController::class, 'request'])->name('members.request');
         Route::post('/confirm/repost/{id}', [MemberController::class, 'confirmRepost'])->name('repost.confirm');
     });
     Route::get('members', Member::class)->name('members');
     Route::get('reposts-request', RepostRequest::class)->name('reposts-request');
-    // Order Manaagement Routes
-    // Route::controller(UserOrderController::class)->name('order.')->prefix('order')->group(function () {
-    //     Route::post('/store', 'store')->name('store');
-    // });
 
     Route::group(['as' => 'pm.', 'prefix' => 'profile-management'], function () {
-
-        Route::get('/my-account', MyAccount::class)->name('my-account');
+        Route::get('/my-account/{user_urn?}', MyAccount::class)->name('my-account');
     });
 
     // Help Support
@@ -88,18 +88,17 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
         Route::get('/', NotificationList::class)->name('index');
         Route::get('/{encryptedId}', NotificationShow::class)->name('show');
     });
+
+    // Track Submit Routes
+    Route::get('/track/submit', TrackSubmit::class)->name('track.submit');
+
+    // Settings Routes
+    Route::get('/settings', Settings::class)->name('settings');
 });
 
-//Faq Management
-
-// Route::get('/faq', FaqManagementFaqController::class, 'index')->name('faq.index');
+// Faq Management
 Route::get('user/frequently-asked-questions', Faq::class)->name('user.faq')->middleware('auth:web');
 
-
-
-// static page route
-
-// Route::view('/help-support', 'backend.user.help-support')->name('help-support');
-Route::view('user/settings', 'backend.user.settings')->name('settings')->middleware('auth:web');
+// Static page routes
 Route::view('user/page', 'backend.user.dummy-page')->name('page')->middleware('auth:web');
 Route::view('user/charts', 'backend.user.chart')->name('charts')->middleware('auth:web');

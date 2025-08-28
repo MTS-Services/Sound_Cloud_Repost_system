@@ -27,7 +27,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-16">
             @foreach ($plans as $plan)
-                <div class="relative bg-white dark:bg-slate-800 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:border-orange-500 hover:border-1"
+                <div class="relative {{ user()->activePlan()?->plan?->id == $plan->id ? 'opacity-50 pointer-events-none' : '' }} bg-white dark:bg-slate-800 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:border-orange-500 hover:border-1"
                     x-intersect="$el.classList.add('fade-in-up ')"
                     x-intersect:leave="$el.classList.remove('fade-in-up')"
                     :style="`transition-delay: {{ $loop->index * 100 }}ms`"
@@ -70,10 +70,18 @@
                         </div>
                     </div>
                     <div class="p-6 pt-0 w-full ">
-                        <button wire:click="subscribe('{{ encrypt($plan->id) }}')"
-                            class="w-full bg-orange-500 hover:bg-orange-600 text-white text-sm md:text-base py-1.5 md:py-2 px-3 md:px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors">
-                            {{ $plan->monthly_price == 0 ? 'Get Started' : 'Choose Plan' }}
-                        </button>
+                        @if ($plan->monthly_price == 0)
+                            <a href="{{ route('user.dashboard') }}" wire:navigate
+                                class="w-full bg-orange-500 hover:bg-orange-600 text-white text-sm md:text-base py-1.5 md:py-2 px-3 md:px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors">
+                                {{ $plan->monthly_price == 0 ? 'Get Started' : 'Choose Plan' }}
+                            </a>
+                        @else
+                            <button wire:click="subscribe('{{ encrypt($plan->id) }}')"
+                                class="w-full bg-orange-500 hover:bg-orange-600 text-white text-sm md:text-base py-1.5 md:py-2 px-3 md:px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors">
+                                {{ $plan->monthly_price == 0 ? 'Get Started' : 'Choose Plan' }}
+                            </button>
+                        @endif
+
                     </div>
                 </div>
             @endforeach

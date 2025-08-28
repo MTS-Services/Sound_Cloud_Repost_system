@@ -18,6 +18,8 @@
     'dashed' => false,
     'shape' => '',
     'button' => false,
+    'is_submit' => true,
+    'wire' => false,
 ])
 
 @php
@@ -92,48 +94,9 @@
 
 @if (!empty($permission))
     {{-- @if (Auth::user()->can($permission)) --}}
-        @if ($button)
-            <button {{ $disabled ? 'disabled' : '' }} {{ $mergedAttributes }}>
-                @if ($icon_position === 'left')
-                    @if ($loading)
-                        <span class="loading loading-spinner mr-1"></span>
-                    @elseif (!empty($icon))
-                        <i data-lucide="{{ $icon }}" class="w-4 h-4 mr-1"></i>
-                    @endif
-                @endif
-                {{ $slot }}
-                @if ($icon_position === 'right')
-                    @if ($loading)
-                        <span class="loading loading-spinner ml-1"></span>
-                    @elseif (!empty($icon))
-                        <i data-lucide="{{ $icon }}" class="w-4 h-4 ml-1"></i>
-                    @endif
-                @endif
-            </button>
-        @else
-            <a {{ $disabled ? 'disabled' : '' }} href="{{ $href }}" target="{{ $target }}"
-                {{ $mergedAttributes }}>
-                @if ($icon_position === 'left')
-                    @if ($loading)
-                        <span class="loading loading-spinner mr-1"></span>
-                    @elseif (!empty($icon))
-                        <i data-lucide="{{ $icon }}" class="w-4 h-4 mr-1"></i>
-                    @endif
-                @endif
-                {{ $slot }}
-                @if ($icon_position === 'right')
-                    @if ($loading)
-                        <span class="loading loading-spinner ml-1"></span>
-                    @elseif (!empty($icon))
-                        <i data-lucide="{{ $icon }}" class="w-4 h-4 ml-1"></i>
-                    @endif
-                @endif
-            </a>
-        @endif
-    {{-- @endif --}}
-@else
     @if ($button)
-        <button {{ $disabled ? 'disabled' : '' }} {{ $mergedAttributes }}>
+        <button {{ $disabled ? 'disabled' : '' }} {{ $mergedAttributes }}
+            type="{{ $is_submit ? 'submit' : 'button' }}}}">
             @if ($icon_position === 'left')
                 @if ($loading)
                     <span class="loading loading-spinner mr-1"></span>
@@ -152,7 +115,48 @@
         </button>
     @else
         <a {{ $disabled ? 'disabled' : '' }} href="{{ $href }}" target="{{ $target }}"
-            {{ $mergedAttributes }}>
+            {{ $wire ? 'wire:navigate' : '' }} {{ $mergedAttributes }}>
+            @if ($icon_position === 'left')
+                @if ($loading)
+                    <span class="loading loading-spinner mr-1"></span>
+                @elseif (!empty($icon))
+                    <i data-lucide="{{ $icon }}" class="w-4 h-4 mr-1"></i>
+                @endif
+            @endif
+            {{ $slot }}
+            @if ($icon_position === 'right')
+                @if ($loading)
+                    <span class="loading loading-spinner ml-1"></span>
+                @elseif (!empty($icon))
+                    <i data-lucide="{{ $icon }}" class="w-4 h-4 ml-1"></i>
+                @endif
+            @endif
+        </a>
+    @endif
+    {{-- @endif --}}
+@else
+    @if ($button)
+        <button {{ $disabled ? 'disabled' : '' }} {{ $mergedAttributes }}
+            type="{{ $is_submit ? 'submit' : 'button' }}">
+            @if ($icon_position === 'left')
+                @if ($loading)
+                    <span class="loading loading-spinner mr-1"></span>
+                @elseif (!empty($icon))
+                    <i data-lucide="{{ $icon }}" class="w-4 h-4 mr-1"></i>
+                @endif
+            @endif
+            {{ $slot }}
+            @if ($icon_position === 'right')
+                @if ($loading)
+                    <span class="loading loading-spinner ml-1"></span>
+                @elseif (!empty($icon))
+                    <i data-lucide="{{ $icon }}" class="w-4 h-4 ml-1"></i>
+                @endif
+            @endif
+        </button>
+    @else
+        <a {{ $disabled ? 'disabled' : '' }} href="{{ $href }}" target="{{ $target }}"
+            {{ $mergedAttributes }} {{ $wire ? 'wire:navigate' : '' }} {{ $mergedAttributes }}>
             @if ($icon_position === 'left')
                 @if ($loading)
                     <span class="loading loading-spinner mr-1"></span>

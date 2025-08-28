@@ -1,6 +1,6 @@
 <div x-show="sidebarOpen" @click.away="sidebarOpen = false" class="fixed z-30 lg:hidden" x-cloak></div>
 <div :class="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }"
-    class="fixed left-0 lg:top-18 top-17 w-64 lg:w-[15%]  h-[92vh] lg:h-[calc(100vh-9vh)] bg-white dark:bg-slate-800 border-r border-gray-100 dark:border-slate-700 flex flex-col z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0">
+    class="fixed left-0 lg:top-20 top-17 w-64 lg:w-[15%]  min-h-[92vh] lg:h-[calc(100vh-9vh)] bg-white dark:bg-slate-800 border-r border-gray-100 dark:border-slate-700 flex flex-col z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0">
 
     <!-- Profile Section -->
     <div class="p-3 md:p-4 border-b border-gray-100 dark:border-slate-700">
@@ -129,7 +129,7 @@
                 <span class="text-xs md:text-sm">My Account</span>
             </a>
 
-            <a href="{{ route('settings') }}" wire:navigate
+            <a href="{{ route('user.settings') }}" wire:navigate
                 class="flex items-center px-2 py-1.5 md:px-3 md:py-2 rounded-lg transition-colors
                 text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'settings') active sidebar-item @endif">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" fill="none"

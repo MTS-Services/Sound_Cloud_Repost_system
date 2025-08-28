@@ -24,6 +24,7 @@ class CustomNotification extends BaseModel
 
     protected $casts = [
         'message_data' => 'array',
+        'created_at' => 'datetime',
     ];
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
@@ -75,4 +76,5 @@ class CustomNotification extends BaseModel
     {
         return $query->where('sender_type', self::TYPE_ADMIN);
     }
+
 }

@@ -24,7 +24,7 @@ class StripeService
     {
         try {
             return PaymentIntent::create([
-                'amount' => $data['amount'] * 100, // Convert to cents
+                'amount' => round($data['amount']) * 100, // Convert to cents
                 'currency' => $data['currency'] ?? 'usd',
                 'customer' => $data['customer_id'] ?? null,
                 'metadata' => $data['metadata'] ?? [],

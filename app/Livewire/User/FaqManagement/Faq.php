@@ -4,11 +4,14 @@ namespace App\Livewire\User\FaqManagement;
 
 use Livewire\Component;
 use App\Models\FaqCategory;
+use App\Models\Faq as FaqModel;
 
 class Faq extends Component
 {
     public $faqCategories;
     public $selectedCategory = 'all';
+    public $categoryCount;
+    public $faqCount;
 
     public function mount()
     {
@@ -22,7 +25,15 @@ class Faq extends Component
             ->active()
             ->orderBy('name', 'asc');
 
+
+
         $this->faqCategories = $query->get();
+
+        $this->categoryCount = FaqCategory::with('faqs')
+            ->active()
+            ->whereHas('faqs')
+            ->count();
+        $this->faqCount = FaqModel::active()->count();
     }
 
     public function selectCategory($slug)

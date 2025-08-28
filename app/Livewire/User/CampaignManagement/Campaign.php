@@ -10,6 +10,7 @@ use App\Models\Track;
 use App\Models\User;
 use App\Models\UserInformation;
 use App\Services\PlaylistService;
+use App\Services\SoundCloud\SoundCloudService;
 use App\Services\TrackService;
 use App\Services\User\CampaignManagement\CampaignService;
 use Illuminate\Support\Facades\DB;
@@ -27,9 +28,7 @@ class Campaign extends Component
 {
     use WithPagination;
 
-    protected ?CampaignService $campaignService = null;
-    protected ?TrackService $trackService = null;
-    protected ?PlaylistService $playlistService = null;
+
 
     #[Locked]
     protected string $baseUrl = 'https://api.soundcloud.com';
@@ -101,6 +100,11 @@ class Campaign extends Component
     ];
 
     ############################## Campaign Creation ##########################
+    // Total number of campaigns
+    public $totalCampaign;
+    public $totalRecommended;
+    public $totalRecommendedPro;
+
     public $tracks = [];
     public $playlists = [];
     public $playlistTracks = [];
@@ -111,13 +115,14 @@ class Campaign extends Component
     public $commentable = true;
     public $likeable = true;
     public $proFeatureEnabled = false;
-    public $proFeatureValue = 1;
+    public $proFeatureValue = 0;
     public $maxFollower = 0;
     public $maxRepostLast24h = 0;
     public $maxRepostsPerDay = 0;
-    public $anyGenre = '';
+    public $anyGenre = 'anyGenre';
     public $trackGenre = '';
     public $targetGenre = '';
+    public $user = null;
 
     public $musicId = null;
     public $musicType = null;
@@ -150,13 +155,19 @@ class Campaign extends Component
     public $budgetWarningMessage = '';
     public $canSubmit = false;
 
+    // Confirmation Repost
+    public $totalRepostPrice = 0;
+    public $campaign = null;
+    public $liked = false;
+    public $commented = null;
+
     public $showSubmitModal = false;
     public $showCampaignsModal = false;
     public bool $showAddCreditModal = false;
     public bool $showEditCampaignModal = false;
     public bool $showCancelWarningModal = false;
     public bool $showLowCreditWarningModal = false;
-
+    public bool $showRepostConfirmationModal = false;
     ################################loadmore########################################
 
     // Properties for "Load More"
@@ -167,16 +178,25 @@ class Campaign extends Component
     public $hasMorePlaylists = false;
 
     ############################## Campaign Creation ##########################
-    public function boot(CampaignService $campaignService, TrackService $trackService, PlaylistService $playlistService)
+
+    protected ?CampaignService $campaignService = null;
+    protected ?TrackService $trackService = null;
+    protected ?PlaylistService $playlistService = null;
+    protected ?SoundCloudService $soundCloudService = null;
+
+    public function boot(CampaignService $campaignService, TrackService $trackService, PlaylistService $playlistService, SoundCloudService $soundCloudService)
     {
         $this->campaignService = $campaignService;
         $this->trackService = $trackService;
         $this->playlistService = $playlistService;
+        $this->soundCloudService = $soundCloudService;
     }
 
     public function mount()
     {
         $this->getAllGenres();
+        $this->getAllTrackTypes();
+        $this->totalCampaigns();
         // Initialize play tracking for campaigns (will be done in render method)
     }
 
@@ -227,7 +247,7 @@ class Campaign extends Component
      */
     private function getCampaignsQuery(): Builder
     {
-        $allowedTargetCredits = repostPrice(user());
+        $allowedTargetCredits = repostPrice(user(), true);
 
         return $this->campaignService->getCampaigns()
             ->where('budget_credits', '>=', $allowedTargetCredits)
@@ -438,7 +458,7 @@ class Campaign extends Component
             $this->hasMoreTracks = $this->tracks->count() === $this->perPage;
         } catch (\Exception $e) {
             $this->tracks = collect();
-            session()->flash('error', 'Failed to load tracks: ' . $e->getMessage());
+            $this->dispatch('alert', 'error', 'Failed to load tracks: ' . $e->getMessage());
         }
     }
 
@@ -466,7 +486,7 @@ class Campaign extends Component
             $this->hasMorePlaylists = $this->playlists->count() === $this->perPage;
         } catch (\Exception $e) {
             $this->playlists = collect();
-            session()->flash('error', 'Failed to load playlists: ' . $e->getMessage());
+            $this->dispatch('alert', 'error', 'Failed to load playlists: ' . $e->getMessage());
         }
     }
 
@@ -495,7 +515,7 @@ class Campaign extends Component
 
             if (!$playlist->soundcloud_urn) {
                 $this->playlistTracks = [];
-                session()->flash('error', 'Playlist SoundCloud URN is missing.');
+                $this->dispatch('alert', 'error', 'Playlist SoundCloud URN is missing.');
                 return;
             }
 
@@ -522,11 +542,11 @@ class Campaign extends Component
                 }
             } else {
                 $this->playlistTracks = [];
-                session()->flash('error', 'Failed to load playlist tracks from SoundCloud: ' . $response->status());
+                $this->dispatch('alert', 'error', 'Failed to load playlist tracks from SoundCloud: ' . $response->status());
             }
         } catch (\Exception $e) {
             $this->playlistTracks = [];
-            session()->flash('error', 'Failed to fetch playlist tracks: ' . $e->getMessage());
+            $this->dispatch('alert', 'error', 'Failed to fetch playlist tracks: ' . $e->getMessage());
             Log::error('Playlist tracks fetch error: ' . $e->getMessage(), [
                 'playlist_id' => $this->playlistId,
                 'user_urn' => user()->urn ?? 'unknown'
@@ -600,7 +620,9 @@ class Campaign extends Component
             'canSubmit',
         ]);
 
-        if (userCredits() < 100) {
+        $this->user = User::where('urn', user()->urn)->first()->activePlan();
+
+        if (userCredits() < 50) {
             $this->showLowCreditWarningModal = true;
             $this->showSubmitModal = false;
             return;
@@ -609,6 +631,7 @@ class Campaign extends Component
         }
 
         $this->showSubmitModal = true;
+        $this->getAllGenres();
 
         try {
             if ($type === 'track') {
@@ -634,7 +657,7 @@ class Campaign extends Component
                 $this->musicId = null;
             }
         } catch (\Exception $e) {
-            session()->flash('error', 'Failed to load content: ' . $e->getMessage());
+            $this->dispatch('alert', 'error', 'Failed to load content: ' . $e->getMessage());
             $this->showSubmitModal = false;
             $this->showCampaignsModal = true;
 
@@ -648,17 +671,12 @@ class Campaign extends Component
 
     public function getAllGenres()
     {
-        $this->genres = $this->trackService->getTracks()
-            ->where('user_urn', '!=', user()->urn)
-            ->pluck('genre')
-            ->unique()
-            ->values()
-            ->toArray();
+        $this->genres = User::where('urn', user()->urn)->first()->genres()->pluck('genre')->toArray();
     }
 
     public function profeature($isChecked)
     {
-        $this->proFeatureEnabled = $isChecked ? true : false;
+        $this->proFeatureEnabled = $isChecked ? false : true;
         $this->proFeatureValue = $isChecked ? 0 : 1;
     }
 
@@ -677,8 +695,7 @@ class Campaign extends Component
             DB::transaction(function () {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
-                $proFeatureEnabled = $this->proFeatureEnabled ? 1 : 0;
-
+                $proFeatureEnabled = $this->proFeatureEnabled && $this->user->status == User::STATUS_ACTIVE ? 1 : 0;
                 $campaign = ModelsCampaign::create([
                     'music_id' => $this->musicId,
                     'music_type' => $this->musicType,
@@ -693,7 +710,7 @@ class Campaign extends Component
                     'commentable' => $commentable,
                     'likeable' => $likeable,
                     'pro_feature' => $proFeatureEnabled,
-                    'momentum_price' => $proFeatureEnabled == 1 ? $this->credit/2 : 0,
+                    'momentum_price' => $proFeatureEnabled == 1 ? $this->credit / 2 : 0,
                     'max_repost_last_24_h' => $this->maxRepostLast24h,
                     'max_repost_per_day' => $this->maxRepostsPerDay,
                     'target_genre' => $this->targetGenre,
@@ -705,7 +722,7 @@ class Campaign extends Component
                     'source_id' => $campaign->id,
                     'source_type' => ModelsCampaign::class,
                     'transaction_type' => CreditTransaction::TYPE_SPEND,
-                    'status' => 'succeeded',
+                    'status' => CreditTransaction::STATUS_SUCCEEDED,
                     'credits' => ($campaign->budget_credits + $campaign->momentum_price),
                     'description' => 'Spent on campaign creation',
                     'metadata' => [
@@ -718,12 +735,6 @@ class Campaign extends Component
                     'creater_type' => get_class(user())
                 ]);
             });
-
-            session()->flash('message', 'Campaign created successfully!');
-            $this->dispatch('campaignCreated');
-
-            $this->showCampaignsModal = false;
-            $this->showSubmitModal = false;
 
             $this->reset([
                 'musicId',
@@ -747,14 +758,17 @@ class Campaign extends Component
                 'targetGenre',
                 'anyGenre',
                 'trackGenre',
-                'maxFollower',
                 'proFeatureEnabled',
             ]);
+            $this->dispatch('alert', 'success', 'Campaign created successfully!');
+            $this->dispatch('campaignCreated');
 
+            $this->showCampaignsModal = false;
+            $this->showSubmitModal = false;
             $this->resetValidation();
             $this->resetErrorBag();
         } catch (\Exception $e) {
-            session()->flash('error', 'Failed to create campaign: ' . $e->getMessage());
+            $this->dispatch('alert', 'error', 'Failed to create campaign: ' . $e->getMessage());
 
             Log::error('Campaign creation error: ' . $e->getMessage(), [
                 'music_id' => $this->musicId,
@@ -842,7 +856,7 @@ class Campaign extends Component
 
         if ($this->playTimes[$campaignId] >= 5 && !in_array($campaignId, $this->playedCampaigns)) {
             $this->playedCampaigns[] = $campaignId;
-            session()->flash('success', 'Campaign marked as played for 5+ seconds!');
+            $this->dispatch('alert', 'success', 'Campaign marked as played for 5+ seconds!');
         }
     }
 
@@ -881,31 +895,38 @@ class Campaign extends Component
         $playTime = $this->getPlayTime($campaignId);
         return max(0, 5 - $playTime);
     }
+    public function confirmRepost($campaignId)
+    {
+        $this->showRepostConfirmationModal = true;
+        $this->campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
+    }
 
     public function repost($campaignId)
     {
+        $this->soundCloudService->ensureSoundCloudConnection(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         try {
             if (!$this->canRepost($campaignId)) {
-                session()->flash('error', 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
+                $this->dispatch('alert', 'error', 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
                 return;
             }
 
             $currentUserUrn = user()->urn;
 
             if ($this->campaignService->getCampaigns()->where('id', $campaignId)->where('user_urn', $currentUserUrn)->exists()) {
-                session()->flash('error', 'You cannot repost your own campaign.');
+                $this->dispatch('alert', 'error', 'You cannot repost your own campaign.');
                 return;
             }
 
             if (Repost::where('reposter_urn', $currentUserUrn)->where('campaign_id', $campaignId)->exists()) {
-                session()->flash('error', 'You have already reposted this campaign.');
+                $this->dispatch('alert', 'error', 'You have already reposted this campaign.');
                 return;
             }
 
             $campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
 
             if (!$campaign->music) {
-                session()->flash('error', 'Track or Playlist not found for this campaign.');
+                $this->dispatch('alert', 'error', 'Track or Playlist not found for this campaign.');
                 return;
             }
 
@@ -914,30 +935,41 @@ class Campaign extends Component
             $httpClient = Http::withHeaders([
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
+            $commentSoundcloud = [
+                'comment' => [
+                    'body' => $this->commented,
+                    'timestamp' => time()
+                ]
+            ];
+
 
             switch ($campaign->music_type) {
                 case Track::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
+                    $response = $httpClient->post("{$this->baseUrl}/tracks/{$campaign->music->urn}/comments", $commentSoundcloud);
                     break;
                 case Playlist::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$campaign->music->urn}");
                     break;
                 default:
-                    session()->flash('error', 'Invalid music type specified for the campaign.');
+                    $this->dispatch('alert', 'error', 'Invalid music type specified for the campaign.');
                     return;
             }
-
+            $data = [
+                'likeable' => $this->liked,
+                'commentable' => $this->commented
+            ];
             if ($response->successful()) {
                 $soundcloudRepostId = $response->json('id');
-                $this->campaignService->syncReposts($campaign, $currentUserUrn, $soundcloudRepostId);
-                session()->flash('success', 'Campaign music reposted successfully.');
+                $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
+                $this->dispatch('alert', 'success', 'Campaign music reposted successfully.');
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [
                     'campaign_id' => $campaignId,
                     'user_urn' => $currentUserUrn,
                     'status' => $response->status(),
                 ]);
-                session()->flash('error', 'Failed to repost campaign music to SoundCloud. Please try again.');
+                $this->dispatch('alert', 'error', 'Failed to repost campaign music to SoundCloud. Please try again.');
             }
         } catch (Throwable $e) {
             Log::error("Error in repost method: " . $e->getMessage(), [
@@ -945,7 +977,7 @@ class Campaign extends Component
                 'campaign_id_input' => $campaignId,
                 'user_urn' => user()->urn ?? 'N/A',
             ]);
-            session()->flash('error', 'An unexpected error occurred. Please try again later.');
+            $this->dispatch('alert', 'error', 'An unexpected error occurred. Please try again later.');
             return;
         }
     }
@@ -1089,7 +1121,7 @@ class Campaign extends Component
                     $this->playlists = collect();
                 }
             }
-            session()->flash('error', 'Could not resolve the SoundCloud link. Please check the URL.');
+            $this->dispatch('alert', 'error', 'Could not resolve the SoundCloud link. Please check the URL.');
         }
     }
 
@@ -1118,7 +1150,7 @@ class Campaign extends Component
             default:
                 $this->allTracks = collect();
                 $this->tracks = collect();
-                session()->flash('error', 'The provided URL is not a track or playlist.');
+                $this->dispatch('alert', 'error', 'The provided URL is not a track or playlist.');
                 break;
         }
     }
@@ -1160,6 +1192,13 @@ class Campaign extends Component
     //     }
     // }
 
+    public function totalCampaigns()
+    {
+        $this->totalCampaign = $this->getCampaignsQuery()->count();
+        $this->totalRecommended = $this->getCampaignsQuery()->featured()->count();
+        $this->totalRecommendedPro = $this->getCampaignsQuery()->proFeatured()->count();
+    }
+
     /**
      * Main render method with optimized data loading and pagination
      */
@@ -1192,14 +1231,14 @@ class Campaign extends Component
                     //     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
 
 
-                    $campaigns  = $baseQuery->proFeatured()
+                    $campaigns = $baseQuery->proFeatured()
                         ->latest()
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
                     break;
 
                 case 'recommended':
 
-                    $campaigns  = $baseQuery->featured()
+                    $campaigns = $baseQuery->featured()
                         ->latest()
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
                     break;
@@ -1214,22 +1253,13 @@ class Campaign extends Component
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
                     break;
             }
-            // if ($campaigns && $campaigns->count() > 0) {
-            //     $this->initializePlayTimes($campaigns);
-            // }
+
             return view('backend.user.campaign_management.campaign', [
                 // 'featuredCampaigns' => $featuredCampaigns,
                 'campaigns' => $campaigns
             ]);
 
-            // // Initialize play times for all campaigns
-            // if ($featuredCampaigns->isNotEmpty()) {
-            //     $this->initializePlayTimes($featuredCampaigns);
-            // }
 
-            // if ($campaigns && $campaigns->count() > 0) {
-            //     $this->initializePlayTimes($campaigns);
-            // }
         } catch (\Exception $e) {
             // Handle errors gracefully
             Log::error('Failed to load campaigns: ' . $e->getMessage(), [
@@ -1239,16 +1269,7 @@ class Campaign extends Component
             ]);
             $campaigns = collect();
 
-            // $featuredCampaigns = collect();
-            // $campaigns = new \Illuminate\Pagination\LengthAwarePaginator(
-            //     collect(),
-            //     0,
-            //     self::ITEMS_PER_PAGE,
-            //     1,
-            //     ['path' => request()->url()]
-            // );
 
-            // session()->flash('error', 'Failed to load campaigns. Please try again.');
             return view('backend.user.campaign_management.campaign', [
                 'campaigns' => $campaigns
             ]);

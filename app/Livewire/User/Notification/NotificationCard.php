@@ -62,9 +62,9 @@ class NotificationCard extends Component
     public function openDetail()
     {
         $this->markAsRead();
-        if ($this->notification->url) {
-            return $this->redirect($this->notification->url, navigate: true);
-        }
+        // if ($this->notification->url) {
+        //     return $this->redirect($this->notification->url, navigate: true);
+        // }
         return $this->redirect(route('user.notifications.show', encrypt($this->notification->id)), navigate: true);
     }
 
@@ -109,7 +109,7 @@ class NotificationCard extends Component
 
     public function getNotificationIcon()
     {
-        return $this->notification->message_data['icon'] ?? 'fas fa-bell';
+        return $this->notification->message_data['icon'] ?? 'home';
     }
 
     public function getNotificationTime()
@@ -119,7 +119,7 @@ class NotificationCard extends Component
 
     public function getTypeLabel()
     {
-        return $this->notification->type === CustomNotification::TYPE_ADMIN ? 'Admin' : 'User';
+        return $this->notification->receiver_id === null  ? 'Public' : 'Private';
     }
 
     public function render()

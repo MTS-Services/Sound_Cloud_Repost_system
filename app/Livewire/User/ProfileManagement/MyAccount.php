@@ -2,11 +2,20 @@
 
 namespace App\Livewire\User\ProfileManagement;
 
+use App\Jobs\SyncedPlaylists;
+use App\Jobs\SyncedTracks;
+use App\Models\CreditTransaction;
 use App\Models\Playlist;
 use App\Models\Repost;
 use App\Models\Track;
+use App\Models\UserSocialInformation;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\Admin\UserManagement\UserService;
+use App\Services\PlaylistService;
+use App\Services\SoundCloud\SoundCloudService;
+use App\Services\TrackService;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -14,6 +23,8 @@ use Livewire\WithPagination;
 class MyAccount extends Component
 {
     use WithPagination;
+
+    protected string $baseUrl = 'https://api.soundcloud.com';
 
     // UI state
     #[Url(as: 'tab', except: 'insights')]
@@ -37,24 +48,35 @@ class MyAccount extends Component
     #[Url(as: 'playlistTracksPage')]
     public ?int $playlistTracksPage = 1;
 
+    public $user_urn = null;
     // Dependencies (non-serializable) — keep private
     private UserService $userService;
     private CreditTransactionService $creditTransactionService;
+    private TrackService $trackService;
+    private PlaylistService $playlistService;
+    private SoundCloudService $soundCloudService;
 
     // Livewire v3: boot runs on every request (initial + subsequent)
-    public function boot(UserService $userService, CreditTransactionService $creditTransactionService): void
+    public function boot(UserService $userService, CreditTransactionService $creditTransactionService, TrackService $trackService, SoundCloudService $soundCloudService, PlaylistService $playlistService): void
     {
         $this->userService = $userService;
         $this->creditTransactionService = $creditTransactionService;
+        $this->trackService = $trackService;
+        $this->soundCloudService = $soundCloudService;
+        $this->playlistService = $playlistService;
     }
 
-    public function mount(): void
+    public function mount($user_urn = null): void
     {
+        $this->user_urn = $user_urn ?? user()->urn;
+
+        Log::info('MyAccount mount', ['user_urn' => $this->user_urn]);
         // If a playlist is in the URL, ensure we land on the right tab/view
         if ($this->selectedPlaylistId) {
             $this->activeTab = 'playlists';
             $this->showPlaylistTracks = true;
         }
+        $this->socialLinks();
     }
 
     public function setActiveTab(string $tab): void
@@ -67,8 +89,10 @@ class MyAccount extends Component
 
         // Reset the relevant pager when switching tabs
         if ($tab === 'tracks') {
+            $this->syncTracks();
             $this->resetPage('tracksPage');
         } elseif ($tab === 'playlists') {
+            $this->syncPlaylists();
             $this->resetPage('playlistsPage');
         }
     }
@@ -76,7 +100,7 @@ class MyAccount extends Component
     public function selectPlaylist(int $playlistId): void
     {
         $exists = Playlist::where('id', $playlistId)
-            ->where('user_urn', user()->urn)
+            ->where('user_urn', $this->user_urn)
             ->exists();
 
         if ($exists) {
@@ -103,17 +127,54 @@ class MyAccount extends Component
         $this->showEditProfileModal = true;
     }
 
+    public function closeEditProfileModal(): void
+    {
+        $this->showEditProfileModal = false;
+    }
+
+    public function syncTracks()
+    {
+        SyncedTracks::dispatch(user()->urn);
+        return back()->with('success', 'Track sync started in background. Please check later.');
+    }
+    public function syncPlaylists()
+    {
+        SyncedPlaylists::dispatch(user()->urn);
+
+        return back()->with('success', 'Playlist sync started in background.');
+    }
+    public $instagram = null;
+    public $twitter = null;
+    public $tiktok = null;
+    public $facebook = null;
+    public $youtube = null;
+    public $spotify = null;
+    public $socialLink = [];
+
+    public function socialLinks()
+    {
+        $social_link = UserSocialInformation::where('user_urn', $this->user_urn)->first();
+        $this->socialLink = $social_link;
+        $this->instagram = $social_link->instagram ?? '';
+        $this->twitter = $social_link->twitter ?? '';
+        $this->tiktok = $social_link->tiktok ?? '';
+        $this->facebook = $social_link->facebook ?? '';
+        $this->youtube = $social_link->youtube ?? '';
+        $this->spotify = $social_link->spotify ?? '';
+    }
+
     public function render()
     {
-        $user = $this->userService->getMyAccountUser();
+        Log::info('MyAccount render', ['user_urn' => $this->user_urn]);
+        $user = $this->userService->getUser(encrypt($this->user_urn), 'urn');
 
         // Tracks pagination
-        $tracks = Track::where('user_urn', user()->urn)
+        $tracks = Track::where('user_urn', $this->user_urn)
             ->latest('created_at')
             ->paginate(6, ['*'], 'tracksPage', $this->tracksPage);
 
         // Playlists pagination
-        $playlists = Playlist::where('user_urn', user()->urn)
+        $playlists = Playlist::where('user_urn', $this->user_urn)
             ->latest('created_at')
             ->paginate(8, ['*'], 'playlistsPage', $this->playlistsPage);
 
@@ -123,7 +184,7 @@ class MyAccount extends Component
 
         if ($this->showPlaylistTracks && $this->selectedPlaylistId) {
             $selectedPlaylist = Playlist::where('id', $this->selectedPlaylistId)
-                ->where('user_urn', user()->urn)
+                ->where('user_urn', $this->user_urn)
                 ->first();
 
             if ($selectedPlaylist) {
@@ -136,7 +197,9 @@ class MyAccount extends Component
 
         // Recent reposts (not paginated here)
         $reposts = Repost::with(['campaign.music', 'request.track'])
-            ->where('reposter_urn', user()->urn)
+            ->where('reposter_urn', $this->user_urn)->where(function ($query) {
+                $query->whereNotNull('campaign_id')->orWhereNotNull('repost_request_id');
+            })
             ->orderByDesc('reposted_at')
             ->take(10)
             ->get()
@@ -150,7 +213,7 @@ class MyAccount extends Component
 
         // Transactions (top 10)
         $transactions = $this->creditTransactionService->getUserTransactions()
-            ->where('status', 'succeeded')
+            ->where('status', CreditTransaction::STATUS_SUCCEEDED)
             ->sortByDesc('created_at')
             ->take(10);
 

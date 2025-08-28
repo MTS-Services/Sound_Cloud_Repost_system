@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="shortcut icon" href="{{ asset('default_img/logo.svg') }}" type="image/x-icon">
     
     @vite(['resources/css/frontend.css'])
     <link rel="stylesheet" href="{{ asset('assets/landing/css/landing.css') }}">

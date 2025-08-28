@@ -5,25 +5,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Sound Cloud') }}</title>
+    <link rel="shortcut icon" href="{{ asset('default_img/logo.svg') }}" type="image/x-icon">
+
+    <title>
+        {{ isset($title) ? $title . ' - ' : '' }}
+        {{ config('app.name', 'RepostChain') }}
+    </title>
 
     <script>
         (function() {
-            let theme = localStorage.getItem('theme') || 'system';
+            function applyThemeImmediately() {
+                const theme = localStorage.getItem('theme') || 'light';
+                const isDark = theme === 'dark';
 
-            if (theme === 'system') {
-                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                document.documentElement.classList.toggle('dark', systemPrefersDark);
-                document.documentElement.setAttribute('data-theme', systemPrefersDark ? 'dark' : 'light');
-            } else {
-                document.documentElement.classList.toggle('dark', theme === 'dark');
-                document.documentElement.setAttribute('data-theme', theme);
+                document.documentElement.classList.toggle('dark', isDark);
+                document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
             }
+
+            // Apply theme immediately on script execution
+            applyThemeImmediately();
+
+            // Apply theme before Livewire navigation starts
+            document.addEventListener('livewire:navigating', function() {
+                applyThemeImmediately();
+            });
+
+            // Apply theme immediately after navigation (backup)
+            document.addEventListener('livewire:navigated', function() {
+                applyThemeImmediately();
+
+                // Refresh icons after navigation
+                setTimeout(() => {
+                    if (window.lucide && lucide.createIcons) {
+                        lucide.createIcons();
+                    }
+                }, 10);
+            });
         })();
     </script>
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/custome.css') }}">
     <!-- Scripts -->
-    <script src="{{ asset('assets/js/toggle-theme.js') }}"></script>
+    <script src="{{ asset('assets/js/toggle-theme-3.js') }}"></script>
 
     @vite(['resources/css/user-dashboard.css', 'resources/js/user-dashboard.js'])
 
@@ -47,6 +69,11 @@
             @if (session('warning'))
                 showAlert('warning', "{!! session('warning') !!}");
             @endif
+            document.addEventListener('livewire:load', function() {
+                Livewire.on('alert', (type, message) => {
+                    showAlert(type, message);
+                });
+            });
         });
     </script>
 
@@ -81,7 +108,7 @@
 
     <!-- Main Content -->
     <div class="ml-auto lg:w-[calc(100%-15%)] w-full">
-        <div class="p-4 md:p-6 h-[calc(100vh-9vh)]  overflow-y-auto">
+        <div class="p-4 md:p-6 min-h-[calc(100vh-64px)]">
             {{ $slot }}
         </div>
     </div>
@@ -89,8 +116,11 @@
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
     {{-- <script src="{{ asset('assets/frontend/js/custome.js') }}"></script> --}}
     <script>
+        lucide.createIcons();
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         document.addEventListener('alpine:init', () => {
             lucide.createIcons();
+            if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         })
     </script>
     @livewireScripts()

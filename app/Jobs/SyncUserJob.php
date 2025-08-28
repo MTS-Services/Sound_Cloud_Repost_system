@@ -55,7 +55,7 @@ class SyncUserJob implements ShouldQueue
         DB::transaction(function () use ($soundCloudService) {
             // Sync user information first, as other sync operations might depend on it
             $soundCloudService->syncUserInformation($this->user, $this->soundCloudUser);
-            $soundCloudService->syncUserTracks($this->user);
+            $soundCloudService->syncUserTracks($this->user, []);
             $soundCloudService->syncUserPlaylists($this->user);
             $soundCloudService->syncUserProductsAndSubscriptions($this->user, $this->soundCloudUser);
 

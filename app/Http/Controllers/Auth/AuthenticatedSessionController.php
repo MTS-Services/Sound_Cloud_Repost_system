@@ -18,9 +18,10 @@ class AuthenticatedSessionController extends Controller
     public function create(): View|RedirectResponse
     {
         if (Auth::guard('web')->check()) {
-            return redirect()->intended(route('user.dashboard', absolute: false));
+            return redirect()->intended(route('user.pm.my-account', absolute: false));
         }
         return view('auth.login');
+        // return redirect()->route('soundcloud.redirect');
         // return redirect()->route('f.landing');
     }
 
@@ -32,8 +33,8 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
-
-        return redirect()->intended(route('user.dashboard', absolute: false));
+        session()->flash('success', 'Login successful!');
+        return redirect()->intended(route('user.pm.my-account', absolute: false));
     }
 
     /**
@@ -51,10 +52,10 @@ class AuthenticatedSessionController extends Controller
 
         Auth::guard('web')->logout();
 
-        $request->session()->invalidate();
-
+        $sessionKey = 'login_web_' . sha1(config('auth.providers.users.model'));
+        $request->session()->forget($sessionKey);
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()->route('f.landing');
     }
 }

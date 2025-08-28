@@ -1,6 +1,7 @@
 <div x-data="{
     showModal: @entangle('showModal').live,
-    showRepostsModal: @entangle('showRepostsModal').live}">
+    showRepostsModal: @entangle('showRepostsModal').live
+}">
 
     <!-- Header -->
     <div class="mb-8">
@@ -35,7 +36,7 @@
             </select> --}}
 
             <select wire:model.live="genreFilter"
-                class="bg-card-blue border border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-4 py-3 text-text-gray hover:border-orange-500 transition-colors min-w-[160px] focus:outline-none focus:border-orange-500">
+                class="bg-card-blue border border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-7 py-3 text-text-gray hover:border-orange-500 transition-colors min-w-[160px] focus:outline-none focus:border-orange-500">
                 <option class="hidden" value="">Filter by genre</option>
                 @forelse ($genres as $genre)
                     <option value="{{ $genre }}">{{ $genre }}</option>
@@ -62,24 +63,31 @@
                 <!-- Profile Header -->
                 <div class="flex items-center gap-3 mb-6">
                     <div class="relative">
-                        <img src="{{ auth_storage_url($user_->avatar) }}" alt="{{ $user_->name }}"
-                            class="w-12 h-12 rounded-full">
-                        <div
-                            class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-card-blue">
-                        </div>
+                        <a class="cursor-pointer" wire:navigate
+                            href="{{ route('user.pm.my-account', $user_->urn) }}">
+                            <img src="{{ auth_storage_url($user_->avatar) }}" alt="{{ $user_->name }}"
+                                class="w-12 h-12 rounded-full">
+                            <div
+                                class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-card-blue">
+                            </div>
+                        </a>
                     </div>
                     <div>
-                        <h3 class="font-semibold text-lg dark:text-white">{{ $user_->name }}</h3>
-                        <p class="text-text-gray text-sm dark:text-white">{{ $user_->created_at->format('M d, Y') }}</p>
+                        <a class="cursor-pointer" wire:navigate
+                            href="{{ route('user.pm.my-account', $user_->urn) }}">
+                            <h3 class="font-semibold text-lg dark:text-white hover:underline">{{ $user_->name }}</h3>
+                        </a>
+                        <p class="text-text-gray text-sm dark:text-white">{{ $user_->created_at->format('M d, Y') }}
+                        </p>
                     </div>
                 </div>
-
                 <!-- Genre Tags -->
                 <div class="flex flex-wrap gap-2 mb-4">
-                    <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">Ambient</span>
-                    <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">Dubstep</span>
-                    <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">Electronic</span>
-                    <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">Techno</span>
+                    @forelse ($user_->genres as $genre)
+                        <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">{{ $genre->genre }}</span>
+                    @empty
+                        <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">No genres</span>
+                    @endforelse
                 </div>
 
                 <!-- Repost Price -->
@@ -112,10 +120,12 @@
                 </div>
 
                 <!-- Request Button -->
-                <button wire:click="openModal('{{ $user_->urn }}')"
-                    class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors dark:text-white">
-                    Request
-                </button>
+                @if ($user_->request_receiveable)
+                    <x-gbutton variant="primary" :full-width="true"
+                    wire:click="openModal('{{ $user_->urn }}')">Request</x-gbutton>
+                @else
+                <x-gabutton variant="primary" :full-width="true" wire:navigate href="{{ route('user.pm.my-account', $user_->urn) }}">Profile</x-gabutton>
+                @endif
             </div>
         @empty
             <div class="col-span-full text-center py-8">
@@ -245,10 +255,8 @@
 
                             @if (count($tracks) < count($allTracks))
                                 <div class="text-center mt-6">
-                                    <button wire:click="loadMoreTracks"
-                                        class="font-semibold text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 transition-colors duration-200">
-                                        Load more
-                                    </button>
+                                    <x-gbutton variant="primary" size="sm" wire:click="loadMoreTracks">Load
+                                        more</x-gbutton>
                                 </div>
                             @endif
                         @elseif($activeTab === 'playlists')
@@ -290,10 +298,8 @@
 
                             @if (count($playlists) < count($allPlaylists))
                                 <div class="text-center mt-6">
-                                    <button wire:click="loadMorePlaylists"
-                                        class="font-semibold text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 transition-colors duration-200">
-                                        Load more
-                                    </button>
+                                    <x-gbutton variant="primary" size="sm" wire:click="loadMorePlaylists">Load
+                                        more</x-gbutton>
                                 </div>
                             @endif
                         @endif
@@ -302,102 +308,7 @@
             @endif
         </div>
     </div>
-    {{-- Playlist Tracks Modal --}}
-    {{-- <div x-data="{ showPlaylistTracksModal: @entangle('showPlaylistTracksModal').live }" x-show="showPlaylistTracksModal" x-cloak
-        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
-        x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
 
-        <div wire:click.away="showRepostsModal = false"
-            class="w-full max-w-3xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col max-h-[80vh] overflow-hidden">
-
-            <div
-                class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
-                <div class="flex items-center gap-3">
-                    <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                        <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                        {{ __('Playlist Tracks') }}
-                    </h2>
-                </div>
-                <button x-on:click="showPlaylistTracksModal= false"
-                    class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                    <x-heroicon-s-x-mark class="w-5 h-5" />
-                </button>
-            </div>
-
-            <div class="flex-1 overflow-y-auto">
-                <div class="p-6">
-                    @if (!empty($playlistTracks) && count($playlistTracks) > 0)
-                        <div class="p-4">
-                            <label for="playlist-track-link-search"
-                                class="text-xl font-semibold text-gray-700 dark:text-gray-200">
-                                Paste a SoundCloud profile or tracks link
-                            </label>
-                            <div class="flex w-full mt-2">
-                                <input wire:model.live.debounce.500ms="searchQuery" type="text"
-                                    id="playlist-track-link-search"
-                                    placeholder="Paste a SoundCloud profile or track link"
-                                    class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 border border-gray-300 dark:border-gray-600 ">
-                                <button wire:click="searchSoundcloud" type="button"
-                                    class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200 ">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    @endif
-                    @forelse ($playlistTracks as $playlistTrack)
-                        
-
-                        <div wire:click="openRepostsModal({{ $playlistTrack->id }})"
-                            class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">
-                            <div class="flex-shrink-0">
-                                <img class="h-12 w-12 rounded object-cover shadow"
-                                    src="{{ soundcloud_image($playlistTrack->artwork_url) }}"
-                                    alt="{{ $playlistTrack->title }}" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                    {{ $playlistTrack->type }} • {{ $playlistTrack->author_username }}
-                                </p>
-                                <p class="font-semibold text-gray-800 dark:text-white truncate">
-                                    {{ $playlistTrack->title }}
-                                </p>
-                            </div>
-                            <div class="flex-shrink-0">
-                                <i data-lucide="chevron-right"
-                                    class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="text-center py-12 text-gray-500 dark:text-gray-400">
-                            <i data-lucide="music"
-                                class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-3"></i>
-                            <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">No playlist tracks found
-                            </h3>
-                            <p>No matching tracks found for your search.</p>
-                        </div>
-                    @endforelse
-
-                    @if (count($playlistTracks) < count($allPlaylistTracks))
-                        <div class="text-center mt-6">
-                            <button wire:click="loadMorePlaylistTracks"
-                                class="font-semibold text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 transition-colors duration-200">
-                                Load more
-                            </button>
-                        </div>
-                    @endif
-
-                </div>
-            </div>
-        </div>
-    </div> --}}
     {{-- Reposts Modal --}}
     <div x-data="{ showRepostsModal: @entangle('showRepostsModal').live }" x-show="showRepostsModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
@@ -517,14 +428,8 @@
                         </div>
                         <!-- Confirm Button -->
                         <div class="mt-6 flex justify-center gap-3">
-                            <button wire:click="closeRepostModal"
-                                class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
-                                Cancel
-                            </button>
-                            <button wire:click="createRepostsRequest()"
-                                class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700">
-                                Send Request
-                            </button>
+                            <x-gbutton variant="secondary" wire:click="closeRepostModal">Cancel</x-gbutton>
+                            <x-gbutton variant="primary" wire:click="createRepostsRequest">Send Request</x-gbutton>
                         </div>
                     @endif
                 </div>

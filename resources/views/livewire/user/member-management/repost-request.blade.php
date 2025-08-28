@@ -5,11 +5,13 @@
             <h1 class="text-xl text-black dark:text-gray-100 font-bold">{{ __('Repost Requests') }}</h1>
         </div>
         {{-- Set Route --}}
-        <a href="{{ route('user.mm.members.index') }}" wire:navigate
+        {{-- <a href="{{ route('user.mm.members.index') }}" wire:navigate
             class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 rounded-xl flex items-center gap-3 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-            <x-lucide-plus class="w-5 h-5" />
+            
             {{ __('Send a New Request') }}
-        </a>
+        </a> --}}
+        <x-gbutton variant="primary" wire:navigate href="{{ route('user.mm.members.index') }}"><span><x-lucide-plus
+                    class="w-5 h-5 mr-1" /></span> Send a New Request</x-gbutton>
     </div>
 
     <div class="mb-8">
@@ -71,10 +73,10 @@
                             class="text-gray-900 dark:text-white">Response rate.</span></span>
                     <a href="#" class="text-xs text-red-500 underline">Reset</a>
                 </div>
-                <div x-data="{ on: false }" class="inline-flex items-center cursor-pointer"
-                    wire:click="setActiveTab('accept_requests')">
+                <div x-data="{ on: {{ $requestReceiveable ? 'true' : 'false' }} }" class="inline-flex items-center cursor-pointer"
+                    wire:click="requestReceiveableToggle">
                     <!-- Hidden Checkbox -->
-                    <input type="checkbox" class="sr-only peer">
+                    <input type="checkbox" class="sr-only peer" wire:model.live="requestReceiveable" {{ $requestReceiveable ? 'checked' : '' }}>
 
                     <div class="flex items-center space-x-2">
                         <!-- Toggle Switch -->
@@ -166,7 +168,7 @@
                                             <a href="{{ $repostRequest->requester->soundcloud_url ?? '#' }}"
                                                 target="_blank" class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                 SoundCloud Profile</a>
-                                            <a href="{{ route('user.profile', $repostRequest->requester->username ?? $repostRequest->requester->id) }}"
+                                            <a href="{{ route('user.pm.my-account', $repostRequest->requester->urn) }}"
                                                 wire:navigate class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                 RepostChain Profile</a>
                                         </div>
@@ -269,13 +271,18 @@
                                     </div>
                                     @if ($activeMainTab == 'outgoing_request')
                                         <div class="flex justify-end gap-3">
-                                            <img class="w-10 h-10 rounded-full object-cover"
-                                                src="{{ auth_storage_url($repostRequest->targetUser->avatar) }}"
-                                                alt="{{ $repostRequest->targetUser->name }} avatar">
+                                            <a class="cursor-pointer" wire:navigate href="{{ route('user.pm.my-account', $repostRequest->targetUser->urn) }}" >
+                                                <img class="w-10 h-10 rounded-full object-cover"
+                                                    src="{{ auth_storage_url($repostRequest->targetUser->avatar) }}"
+                                                    alt="{{ $repostRequest->targetUser->name }} avatar">
+                                            </a>
                                             <div x-data="{ open: false }" class="inline-block text-left">
                                                 <div class="flex items-center gap-1 cursor-pointer">
-                                                    <span
-                                                        class="text-slate-700 dark:text-gray-300 font-medium">{{ $repostRequest->targetUser->name }}</span>
+                                                    <a class="text-slate-700 dark:text-gray-300 font-medium cursor-pointer hover:underline"
+                                                        wire:navigate
+                                                        href="{{ route('user.pm.my-account', $repostRequest->targetUser->urn) }}">
+                                                        {{ $repostRequest->targetUser->name }}
+                                                    </a>
                                                 </div>
 
                                                 <!-- Rating Stars -->
@@ -310,8 +317,10 @@
                                     </div>
                                     <div class="text-right">
                                         @if ($activeMainTab == 'outgoing_request' && $repostRequest->status !== App\Models\RepostRequest::STATUS_APPROVED)
-                                            <button wire:click="cancleRepostRequest({{ $repostRequest->id }})"
-                                                class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Cancle</button>
+                                            {{-- <button wire:click="cancleRepostRequest({{ $repostRequest->id }})"
+                                                class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Cancle</button> --}}
+                                            <x-gbutton variant="primary" size="sm"
+                                                wire:click="cancleRepostRequest({{ $repostRequest->id }})">Cancle</x-gbutton>
                                         @else
                                             @if ($repostRequest->status == App\Models\RepostRequest::STATUS_PENDING && $activeMainTab == 'incoming_request')
                                                 <button wire:click="declineRepostRequest({{ $repostRequest->id }})"

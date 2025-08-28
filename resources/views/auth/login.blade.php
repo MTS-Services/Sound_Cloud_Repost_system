@@ -2,7 +2,7 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('login') }}">
+    <form method="POST" wire:submit.prevent="login" >
         @csrf
 
         <!-- Email Address -->
@@ -41,19 +41,18 @@
 
 
         <div class="flex items-center justify-between mt-4">
-            <x-primary-button>
+            <x-gbutton variant="secondary" type="submit">
                 {{ __('Log in') }}
-            </x-primary-button>
+            </x-gbutton>
 
             <div class="">
-                <a href="{{ route('soundcloud.redirect') }}"
-                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
-                    <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                <x-gbutton variant="primary" onclick="window.location.href='{{ route('soundcloud.redirect') }}'">
+                    <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor" class="mr-1">
                         <path
                             d="M7 12.5c0 .28-.22.5-.5.5s-.5-.22-.5-.5.22-.5.5-.5.5.22.5.5zm1.5-.5c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5zm1.5.5c0-.28.22-.5.5-.5s.5.22.5.5-.22.5-.5.5-.5-.22-.5-.5zm2.5-.5c.28 0 .5.22.5.5s-.22.5-.5.5-.5-.22-.5-.5.22-.5.5-.5zm1.5.5c0 .28-.22.5-.5.5s-.5-.22-.5-.5.22-.5.5-.5.5.22.5.5zm1.5-.5c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5zm2.5.5c0-.28.22-.5.5-.5s.5.22.5.5-.22.5-.5.5-.5-.22-.5-.5zm-12-2c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5zm2 0c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5z" />
                     </svg>
                     Continue with SoundCloud
-                </a>
+                </x-gbutton>
             </div>
         </div>
     </form>

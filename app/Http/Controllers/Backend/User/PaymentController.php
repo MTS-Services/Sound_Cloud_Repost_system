@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Backend\User;
 
+use App\Events\AdminNotificationSent;
+use App\Events\UserNotificationSent;
 use App\Http\Controllers\Controller;
 use App\Models\Credit;
 use App\Models\CreditTransaction;
+use App\Models\CustomNotification;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\User;
@@ -49,14 +52,14 @@ class PaymentController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email_address' => 'required|email',
-            'currency' => 'sometimes|string|size:3',
+            // 'currency' => 'sometimes|string|size:3',
             'customer_email' => 'sometimes|email',
         ]);
         $order = $this->orderService->getOrder(encrypt($request->order_id));
         try {
             $paymentIntent = $this->stripeService->createPaymentIntent([
                 'amount' => $order->amount,
-                'currency' => $request->currency ?? 'usd',
+                'currency' => 'usd',
                 'metadata' => [
                     'order_id' => $request->order_id ?? null,
                     'customer_email' => $request->customer_email ?? null,
@@ -114,10 +117,10 @@ class PaymentController extends Controller
                 'payment_intent_id' => Crypt::encryptString($paymentIntent->id),
             ]);
         } catch (\Exception $e) {
-            Log::error('Payment intent creation failed: ' . $e->getMessage());
+            Log::error($e->getMessage());
 
             return response()->json([
-                'error' => 'Failed to create payment intent ' . $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -143,6 +146,61 @@ class PaymentController extends Controller
                     'processed_at' => $paymentIntent->status === 'succeeded' ? now() : null,
                 ]);
             }
+
+            DB::transaction(function () use ($paymentIntent, $payment) {
+
+                $additionalData = [];
+                if (isset($payment->name)) {
+                    $additionalData['Name'] = $payment->name;
+                }
+                if (isset($payment->email_address)) {
+                    $additionalData['Email'] = $payment->email_address;
+                }
+                if (isset($payment->address)) {
+                    $additionalData['Address'] = $payment->address;
+                }
+                if (isset($payment->reference)) {
+                    $additionalData['Reference'] = $payment->reference;
+                }
+                $additionalData['Order ID'] = $payment->order_id;
+                $additionalData['Payment Gateway'] = $payment->payment_gateway_label;
+                $additionalData['Amount'] = $payment->amount;
+                $additionalData['Currency'] = $payment->currency;
+                if (isset($payment->credits_purchased)) {
+                    $additionalData['Credits'] = $payment->credits_purchased;
+                }
+                if (isset($payment->receipt_url)) {
+                    $additionalData['Receipt URL'] = $payment->receipt_url;
+                }
+
+                $userNotification = CustomNotification::create([
+                    'receiver_id' => user()->id,
+                    'receiver_type' => User::class,
+                    'type' => CustomNotification::TYPE_USER,
+                    'message_data' => [
+                        'title' => 'Payment successful',
+                        'message' => 'You have successfully made a payment.',
+                        'description' => 'You have successfully made a payment.' . ' ' . $paymentIntent->amount . ' ' . $paymentIntent->currency,
+                        'icon' => 'dollar-sign',
+                        'additional_data' => $additionalData
+                    ]
+                ]);
+                $adminNotification = CustomNotification::create([
+                    'sender_id' => user()->id,
+                    'sender_type' => User::class,
+                    'type' => CustomNotification::TYPE_ADMIN,
+                    'message_data' => [
+                        'title' => 'Payment successful',
+                        'message' => 'User ' . user()->name . ' has successfully made a payment.',
+                        'description' => 'User ' . user()->name . ' has successfully made a payment.' . ' ' . $paymentIntent->amount . ' ' . $paymentIntent->currency,
+                        'icon' => 'dollar-sign',
+                        'additional_data' => $additionalData
+                    ]
+                ]);
+                broadcast(new UserNotificationSent($userNotification));
+                broadcast(new AdminNotificationSent($adminNotification));
+            });
+
             return view('backend.admin.payments.success', compact('payment', 'paymentIntent'));
         } catch (\Exception $e) {
             Log::error('Payment success handling failed: ' . $e->getMessage());

@@ -71,7 +71,7 @@ class RepostController extends Controller implements HasMiddleware
                     return $repost->reposter->name ?? '';
                 })
                 ->editColumn('reposte_at_format', function ($repost) {
-                    return $repost->repost_at_formatted;
+                    return $repost->reposted_at_human;
                 })
 
                  ->editColumn('created_by', function ($repost) {
@@ -107,7 +107,8 @@ class RepostController extends Controller implements HasMiddleware
     }
   public function detail($id)
   {
-      $data['reposts'] = Repost::where('id', decrypt($id))->first();
+      $data['reposts'] = Repost::findOrFail(decrypt($id));
+      $data['updater_name'] = $this->updater_name($data['reposts']);
       return view('backend.admin.repost-management.repost.detail',$data);
   }
     public function show($id)

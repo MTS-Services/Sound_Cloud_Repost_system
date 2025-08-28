@@ -1,7 +1,7 @@
 <x-user::layout>
 
     <x-slot name="page_slug">add-credits</x-slot>
-    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 h-full">
         <div class="text-center mb-10">
             <h2 class="text-2xl font-extrabold text-black dark:text-white">Top up credits</h2>
             <p class="mt-2 text-sm text-gray-600 dark:text-white">Get your music in front of more people</p>
@@ -12,7 +12,7 @@
         <div class="grid grid-cols-2 gap-x-4 gap-y-6 justify-center md:grid-cols-3 lg:grid-cols-5 gap-6 items-stretch ">
             @foreach ($credits as $credit)
                 <!-- 2500 Credits -->
-                <div class="bg-white dark:bg-gray-600 rounded border overflow-hidden flex flex-col mb-4 lg:mb-112">
+                <div class="bg-white dark:bg-gray-600 rounded border overflow-hidden flex flex-col">
                     <div class="relative">
                         <div class="absolute   w-full text-white dark:text-white text-xs font-bold text-center   flex">
                             <div class="bg-black flex-grow h-6" style="flex-basis: 67%;"></div>
@@ -41,11 +41,7 @@
                             <input type="hidden" name="credits" value="{{ $credit->credits }}">
                             <input type="hidden" name="amount" value="{{ $credit->price }}">
                             <input type="hidden" name="credit_id" value="{{ encrypt($credit->id) }}">
-                            <button type="submit"
-                                class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold text-sm py-2 px-4 rounded-md transition duration-200 whitespace-nowrap"
-                                style="background-color: #fb3802;">
-                                {{ __('Buy Now') }}
-                            </button>
+                            <x-gbutton :full-width="true" variant="primary" class="w-full" type="submit">Buy Now</x-gbutton>
                         </form>
                     </div>
                 </div>

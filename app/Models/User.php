@@ -3,16 +3,18 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\AuthBaseModel;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
 
-class User extends AuthBaseModel
+class User extends AuthBaseModel implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use  HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -27,11 +29,21 @@ class User extends AuthBaseModel
         'nickname',
         'avatar',
         'token',
+        'email_token',
         'refresh_token',
         'expires_in',
-        'last_sync_at',
+        'last_synced_at',
         'status',
         'urn',
+        'email',
+
+
+       'creater_id',
+        'creater_type',
+        'updater_id',
+        'updater_type',
+        'deleter_id',
+        'deleter_type',
     ];
 
     /**
@@ -56,7 +68,7 @@ class User extends AuthBaseModel
         return [
             'expires_in' => 'integer',
             'email_verified_at' => 'datetime',
-            'last_sync_at' => 'datetime',
+            'last_synced_at' => 'datetime',
             'urn' => 'string',
         ];
     }
@@ -147,6 +159,7 @@ class User extends AuthBaseModel
         return $this->creditTransactions()->succeeded();
     }
 
+    
 
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
@@ -210,6 +223,7 @@ class User extends AuthBaseModel
     {
         return $this->status == self::STATUS_ACTIVE ? self::statusList()[self::STATUS_INACTIVE] : self::statusList()[self::STATUS_ACTIVE];
     }
+    
 
     public function getStatusBtnColorAttribute()
     {
@@ -218,5 +232,24 @@ class User extends AuthBaseModel
     public function getModifiedImageAttribute()
     {
         return auth_storage_url($this->image);
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_ACTIVE);
+    }
+
+    public function genres(): HasMany
+    {
+        return $this->hasMany(UserGenre::class, 'user_urn', 'urn');
+    }
+    public function userPlans(): HasMany
+    {
+        return $this->hasMany(UserPlan::class, 'user_urn', 'urn');
+    }
+
+    public function activePlan()
+    {
+        return $this->userPlans->where('status', UserPlan::STATUS_ACTIVE)->first();
     }
 }

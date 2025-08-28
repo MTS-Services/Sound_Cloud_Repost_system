@@ -1,42 +1,33 @@
+
+
+// Alpine.js store - simplified and optimized
 document.addEventListener('alpine:init', () => {
     Alpine.store('theme', {
-        current: localStorage.getItem('theme') || 'system',
+        current: localStorage.getItem('theme') || 'light',
 
         init() {
-            this.updateTheme();
-
-            // Watch for system preference changes
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-                if (this.current === 'system') {
-                    this.updateTheme();
-                }
-            });
-        },
-
-        updateTheme() {
-            localStorage.setItem('theme', this.current);
-
-            if (this.current === 'system') {
-                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                document.documentElement.classList.toggle('dark', systemPrefersDark);
-                document.documentElement.setAttribute('data-theme', systemPrefersDark ? 'dark' : 'light');
-            } else {
-                document.documentElement.classList.toggle('dark', this.current === 'dark');
-                document.documentElement.setAttribute('data-theme', this.current);
+            // Don't reapply theme here since it's already applied
+            // Just ensure icons are refreshed
+            if (window.lucide && lucide.createIcons) {
+                lucide.createIcons();
             }
         },
 
         toggleTheme() {
-            const options = ['system', 'light', 'dark'];
-            const nextIndex = (options.indexOf(this.current) + 1) % options.length;
-            this.current = options[nextIndex];
-            this.updateTheme();
+            this.current = this.current === 'light' ? 'dark' : 'light';
+            localStorage.setItem('theme', this.current);
+            
+            const isDark = this.current === 'dark';
+            document.documentElement.classList.toggle('dark', isDark);
+            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            
+            // Refresh icons after theme change
+            if (window.lucide && lucide.createIcons) {
+                lucide.createIcons();
+            }
         },
 
         get darkMode() {
-            if (this.current === 'system') {
-                return window.matchMedia('(prefers-color-scheme: dark)').matches;
-            }
             return this.current === 'dark';
         }
     });

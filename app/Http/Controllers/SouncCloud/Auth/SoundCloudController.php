@@ -27,7 +27,9 @@ use Throwable;
 
 class SoundCloudController extends Controller
 {
-    public function __construct(protected SoundCloudService $soundCloudService) {}
+    public function __construct(protected SoundCloudService $soundCloudService)
+    {
+    }
 
     public function redirect(): RedirectResponse
     {
@@ -38,7 +40,7 @@ class SoundCloudController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return redirect()->route('login')
+            return redirect()->route('f.landing')
                 ->with('error', 'Unable to connect to SoundCloud. Please try again.');
         }
     }
@@ -48,7 +50,7 @@ class SoundCloudController extends Controller
 
         // Check for error from SoundCloud
         if ($request->has('error')) {
-            return redirect()->route('login')
+            return redirect()->route('f.landing')
                 ->with('error', 'SoundCloud authentication was cancelled or failed.');
         }
 
@@ -64,7 +66,7 @@ class SoundCloudController extends Controller
 
             Auth::guard('web')->login($user, true);
 
-            return redirect()->route('user.dashboard')
+            return redirect()->intended(route('user.pm.my-account', absolute: false))
                 ->with('success', 'Successfully connected to SoundCloud!');
         } catch (\Exception $e) {
             Log::error('SoundCloud callback error', [
@@ -72,7 +74,7 @@ class SoundCloudController extends Controller
                 'user_id' => Auth::guard('web')->id(),
             ]);
 
-            return redirect()->route('login')
+            return redirect()->route('f.landing')
                 ->with('error', 'Failed to authenticate with SoundCloud. Please try again.');
         }
     }
@@ -82,7 +84,7 @@ class SoundCloudController extends Controller
         $user = Auth::guard('web')->user();
 
         if (!$user) {
-            return redirect()->route('login');
+            return redirect()->route('f.landing');
         }
 
         try {
@@ -119,7 +121,7 @@ class SoundCloudController extends Controller
     {
         try {
             DB::transaction(function () use ($user, $soundCloudUser) {
-                $this->soundCloudService->syncUserTracks($user);
+                $this->soundCloudService->syncUserTracks($user, []);
                 $this->soundCloudService->syncUserProductsAndSubscriptions($user, $soundCloudUser);
                 $this->soundCloudService->syncUserPlaylists($user);
                 $this->soundCloudService->syncUserInformation($user, $soundCloudUser);
@@ -177,7 +179,7 @@ class SoundCloudController extends Controller
                     'nickname' => $soundCloudUser->getNickname(),
                     'avatar' => $soundCloudUser->getAvatar(),
                     'token' => $soundCloudUser->token,
-                    'soundcloud_permalink_url' => $soundCloudUser->getRaw()['permalink_url'] ,
+                    'soundcloud_permalink_url' => $soundCloudUser->getRaw()['permalink_url'],
                     'refresh_token' => $soundCloudUser->refreshToken,
                     'expires_in' => $soundCloudUser->expiresIn,
                     'last_synced_at' => now(),
