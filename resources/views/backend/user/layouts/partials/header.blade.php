@@ -105,7 +105,7 @@
                 </a>
                 <a x-bind:class="{ 'text-orange-500': activeButton === 'blog', 'hover:text-orange-400': activeButton !== 'blog' }"
                     class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
-                    wire:navigate href="{{ route('page') }}" data-discover="true" @click="activeButton = 'blog'">
+                    wire:navigate href="{{ route('blog') }}" data-discover="true" @click="activeButton = 'blog'">
                     Blog
                 </a>
                 <div x-data="{ open: false }" class="relative text-left rounded-lg flex justify-center">
