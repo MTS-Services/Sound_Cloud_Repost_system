@@ -3,6 +3,7 @@
 namespace App\Livewire\User;
 
 use App\Models\CreditTransaction;
+use App\Models\Payment;
 use App\Models\User;
 use App\Models\UserGenre;
 use App\Models\UserSetting;
@@ -14,6 +15,7 @@ use Livewire\Component;
 class Settings extends Component
 {
     public $credits = [];
+    public $payments = [];
     public $user_infos = [];
     public $email = '';
     // Genre Filter Properties
@@ -78,6 +80,8 @@ class Settings extends Component
         $this->availableGenres = AllGenres();
         $this->selectedGenres = UserGenre::where('user_urn', user()->urn)->pluck('genre')->toArray();
         $this->credits = CreditTransaction::where('receiver_urn', user()->urn)->latest()->get();
+        $this->payments = Payment::where('user_urn', user()->urn)->with('order.source')->latest()->get();
+        // dd($this->payments);
         $this->loadSettings();
         $this->loadUserInfo();
     }

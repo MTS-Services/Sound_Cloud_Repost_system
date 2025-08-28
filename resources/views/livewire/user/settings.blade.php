@@ -610,7 +610,8 @@
                     <div class="border-b border-gray-200 py-6 mb-6 mt-6">
                         <h1 class="text-xl font-semibold text-gray-800">Subscription</h1>
                         <div class="mt-2 text-sm text-gray-600">
-                            <p class="text-gray-700">Free Forever Plan <a wire:navigate href="{{ route('user.pkm.pricing') }}"
+                            <p class="text-gray-700">Free Forever Plan <a wire:navigate
+                                    href="{{ route('user.pkm.pricing') }}"
                                     class="text-orange-500 cursor-pointer hover:underline">Change</a></p>
                         </div>
                     </div>
@@ -675,7 +676,7 @@
                                             <circle cx="8" cy="9" r="3" fill="none"
                                                 stroke="currentColor" stroke-width="2" />
                                         </svg>
-                                        {{ ($credit->calculation_type == App\Models\CreditTransaction::CALCULATION_TYPE_CREDIT ? '-' : '+'). $credit->credits }}
+                                        {{ ($credit->calculation_type == App\Models\CreditTransaction::CALCULATION_TYPE_CREDIT ? '-' : '+') . $credit->credits }}
                                     </td>
                                     <td class="px-5 p-3 text-gray-800 font-medium whitespace-nowrap">
                                         {{ $credit->balance }} credits
@@ -714,19 +715,33 @@
                             <tr>
                                 <th class="px-5 p-3 font-medium text-gray-600">Date</th>
                                 <th class="px-5 p-3 font-medium text-gray-600">Description</th>
+                                <th class="px-5 p-3 font-medium text-gray-600">Source</th>
                                 <th class="px-5 p-3 font-medium text-gray-600">Total</th>
                                 <th class="px-5 p-3 font-medium text-gray-600">Invoice</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            {{-- <tr class="hover:bg-gray-50 transition">
-                                <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
-                                    25 Aug 2025 08:41 AM
-                                </td>
-                                <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
-                                    Free credits on sign up
-                                </td>
-                                <td
+                            @forelse ($payments as $payment)
+                                <tr class="hover:bg-gray-50 transition">
+                                    <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
+                                        {{ $payment->created_at_formatted }}
+                                    </td>
+                                    <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
+                                        {{ $payment->notes ?? 'N/A' }}
+                                    </td>
+                                    <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
+                                        @if ($payment->order->type == App\Models\Order::TYPE_PLAN)
+                                            {{ $payment->order->source->name ?? 'N/A' }} Plan Subscription
+                                        @else
+                                            <span
+                                                class="text-orange-500 font-semibold">{{ $payment->order->credits }}</span>
+                                            Credits
+                                        @endif
+                                    </td>
+                                    <td class="px-5 p-3 text-gray-700 whitespace-nowrap font-semibold">
+                                        ${{ $payment->amount }}
+                                    </td>
+                                    {{-- <td
                                     class="px-5 p-3 text-orange-500 font-semibold flex items-center gap-1 whitespace-nowrap">
                                     <svg class="w-8 h-" width="26" height="18" viewBox="0 0 26 18"
                                         fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -736,16 +751,21 @@
                                             stroke="currentColor" stroke-width="2" />
                                     </svg>
                                     +30
-                                </td>
-                                <td class="px-5 p-3 text-gray-800 font-medium whitespace-nowrap">
-                                    30
-                                </td>
-                            </tr> --}}
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
-                                    No transactions found.
-                                </td>
-                            </tr>
+                                </td> --}}
+                                    <td class="px-5 p-3 text-gray-800 font-medium whitespace-nowrap">
+                                        <a href="#" class="text-blue-600 hover:underline">
+                                            {{-- icon --}}
+                                            <x-lucide-file-down class="w-6 h-6" />
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr class="hover:bg-gray-50 transition">
+                                    <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
+                                        No transactions found.
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
