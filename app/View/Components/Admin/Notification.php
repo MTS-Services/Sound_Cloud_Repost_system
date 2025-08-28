@@ -12,9 +12,11 @@ class Notification extends Component
     public $notifications;
     public function __construct()
     {
-        $this->notifications = CustomNotification::with(['statuses' => function ($query) {
-            $query->forCurrentAdmin();
-        }])
+        $this->notifications = CustomNotification::with([
+            'statuses' => function ($query) {
+                $query->forCurrentAdmin();
+            }
+        ])
             ->where(function ($query) {
                 // Condition one for private messages
                 $query->where('receiver_id', admin()->id)
@@ -26,7 +28,7 @@ class Notification extends Component
                     ->where('type', CustomNotification::TYPE_ADMIN);
             })
             ->latest()
-            ->take(15)
+            ->take(6)
             ->get();
     }
 
