@@ -12,7 +12,7 @@ class NotificationPanel extends Component
 {
     public $showPanel = false;
     public $notifications;
-    public $maxDisplay = 15;
+    public $maxDisplay = 6;
     public $currentUserId;
     public $currentUserType;
 
@@ -32,9 +32,11 @@ class NotificationPanel extends Component
 
     public function loadNotifications()
     {
-        $query = CustomNotification::with(['statuses' => function ($q) {
-            $q->forCurrentUser();
-        }])
+        $query = CustomNotification::with([
+            'statuses' => function ($q) {
+                $q->forCurrentUser();
+            }
+        ])
             // Use a single, outer `where` closure to group the private and public conditions.
             // This ensures the `whereDoesntHave` clause is applied to both.
             ->where(function ($query) {

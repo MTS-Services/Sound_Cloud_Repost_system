@@ -80,7 +80,7 @@ class CreditTransaction extends BaseModel
                 ->where('calculation_type', self::CALCULATION_TYPE_DEBIT)
                 ->sum('credits');
 
-            return  $debit - $credit;
+            return $debit - $credit;
         }
     }
 
@@ -174,8 +174,8 @@ class CreditTransaction extends BaseModel
     public function getCalculationTypeColorAttribute(): string
     {
         return isset($this->calculation_type) ? [
-            self::CALCULATION_TYPE_DEBIT => 'badge-error',
-            self::CALCULATION_TYPE_CREDIT => 'badge-success',
+            self::CALCULATION_TYPE_DEBIT => 'badge-success',
+            self::CALCULATION_TYPE_CREDIT => 'badge-error',
         ][$this->calculation_type] : 'badge-secondary';
     }
 
