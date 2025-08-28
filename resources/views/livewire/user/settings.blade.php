@@ -624,7 +624,7 @@
                         <div class="border-b border-gray-200 dark:border-gray-700 py-6 mb-6 mt-6">
                             <h1 class="text-xl font-semibold text-gray-800">Subscription</h1>
                             <div class="mt-2 text-sm text-gray-600 dark:text-white">
-                                <p class="text-gray-700 dark:text-white">Free Forever Plan <a wire:navigate
+                                <p class="text-gray-700 dark:text-white">{{ $activePlan }} Plan <a wire:navigate
                                         href="{{ route('user.pkm.pricing') }}"
                                         class="text-orange-500 cursor-pointer hover:underline">Change</a></p>
                             </div>
@@ -660,7 +660,7 @@
                 <!-- Card Table -->
                 <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
                     <table class="w-full text-sm text-left">
-                        <thead class="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
                             <tr>
                                 <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Date</th>
                                 <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Description</th>
@@ -671,7 +671,7 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                             @forelse ($credits as $credit)
-                                <tr class="hover:bg-gray-50 transition">
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-600 transition">
                                     <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap">
                                         {{ $credit->created_at_formatted }}
                                     </td>
@@ -726,7 +726,7 @@
                 <!-- Card Table -->
                 <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
                     <table class="w-full text-sm text-left">
-                        <thead class="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
                             <tr>
                                 <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Date</th>
                                 <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Description</th>
