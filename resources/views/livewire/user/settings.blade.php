@@ -55,9 +55,9 @@
 
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg max-w-8xl mx-auto overflow-hidden">
             <div class="border-b border-gray-200 dark:border-gray-700">
-                <div class="flex text-gray-600 font-medium">
+                <div class="flex text-gray-600 dark:text-gray-300 font-medium">
                     <button @click="activeTab = 'edit'"
-                        :class="{ 'border-b-2 border-orange-500 text-orange-500': activeTab === 'edit', 'hover:bg-gray-50': activeTab !== 'edit' }"
+                        :class="{ 'border-b-2 border-orange-500 text-orange-500': activeTab === 'edit', 'hover:bg-gray-50 dark:hover:bg-gray-600': activeTab !== 'edit' }"
                         class="py-4 px-6 relative tab-link focus:outline-none transition-colors duration-200 ease-in-out">
                         Edit profile
                         <span :class="{ 'hidden': activeTab !== 'edit' }" class="tab-indicator"></span>
@@ -65,7 +65,7 @@
                     <button @click="activeTab = 'notifications'"
                         :class="{
                             'border-b-2 border-orange-500 text-orange-500': activeTab === 'notifications',
-                            'hover:bg-gray-50': activeTab !== 'notifications'
+                            'hover:bg-gray-50 dark:hover:bg-gray-600': activeTab !== 'notifications'
                         }"
                         class="py-4 px-6 relative tab-link focus:outline-none transition-colors duration-200 ease-in-out">
                         Notifications & alerts
@@ -74,7 +74,7 @@
                     <button @click="activeTab = 'settings'"
                         :class="{
                             'border-b-2 border-orange-500 text-orange-500': activeTab === 'settings',
-                            'hover:bg-gray-50 text-gray-600': activeTab !== 'settings'
+                            'hover:bg-gray-50 dark:hover:bg-gray-600': activeTab !== 'settings'
                         }"
                         class="py-4 px-6 relative tab-link focus:outline-none transition-colors duration-200 ease-in-out">
                         Settings
@@ -83,7 +83,7 @@
                     <button @click="activeTab = (activeTab === 'credit' ? '' : 'credit')"
                         :class="{
                             'border-b-2 border-orange-500 text-orange-500': activeTab === 'credit',
-                            'hover:bg-gray-50': activeTab !== 'credit'
+                            'hover:bg-gray-50 dark:hover:bg-gray-600': activeTab !== 'credit'
                         }"
                         class="py-4 px-6 relative tab-link focus:outline-none transition-colors duration-200 ease-in-out">
                         Credit history
@@ -92,7 +92,7 @@
                     <button @click="activeTab = (activeTab === 'invoices' ? '' : 'invoices')"
                         :class="{
                             'border-b-2 border-orange-500 text-orange-500': activeTab === 'invoices',
-                            'hover:bg-gray-50': activeTab !== 'invoices'
+                            'hover:bg-gray-50 dark:hover:bg-gray-600': activeTab !== 'invoices'
                         }"
                         class="py-4 px-6 relative tab-link focus:outline-none transition-colors duration-200 ease-in-out">
                         Invoices
@@ -136,9 +136,10 @@
                         <div class="w-full lg:w-1/2">
                             <!-- Email -->
                             <div class="mb-6">
-                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                <label for="email"
+                                    class="block text-sm font-medium text-gray-700 dark:text-white mb-1">Email</label>
                                 <input type="email" id="email" wire:model="email"
-                                    class="mt-1 block max-w-md w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm outline-none">
+                                    class="mt-1 block max-w-md w-full rounded-md bg-gray-50 dark:bg-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm outline-none">
                                 @if (!user()->email_verified_at)
                                     <div class="flex items-center gap-1">
                                         <p class="mt-1 text-xs text-red-500">
@@ -169,20 +170,20 @@
                             <!-- Genres -->
                             <div class="space-y-4">
                                 <!-- Header -->
-                                <div class="border-b border-gray-200 pb-2">
-                                    <h3 class="text-sm font-medium text-gray-700">Genres</h3>
+                                <div class="border-b border-gray-200 dark:border-gray-700 pb-2">
+                                    <h3 class="text-sm font-medium text-gray-700 dark:text-white">Genres</h3>
                                 </div>
 
                                 <!-- Selected Genres Tags -->
                                 <div class="relative">
                                     <div
-                                        class="flex flex-wrap gap-2 mb-2 min-h-[40px] items-center border border-gray-300 rounded px-3 py-2">
+                                        class="flex flex-wrap gap-2 mb-2 min-h-[40px] items-center border border-gray-300 dark:border-gray-600 dark:border-gray-600 rounded px-3 py-2">
                                         @foreach ($selectedGenres as $genre)
                                             <span
-                                                class="inline-flex items-center gap-1 px-2 py-1 text-sm bg-gray-100 text-gray-700 rounded border">
+                                                class="inline-flex items-center gap-1 px-2 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded border">
                                                 {{ $genre }}
                                                 <button type="button" wire:click="removeGenre('{{ $genre }}')"
-                                                    class="text-gray-500 hover:text-gray-700 text-sm font-bold ml-1">
+                                                    class="text-gray-500 dark:text-gray-200 hover:text-gray-700 dark:hover:text-gray-100 text-sm font-bold ml-1">
                                                     <x-lucide-x class="w-4 h-4" />
                                                 </button>
                                             </span>
@@ -193,7 +194,7 @@
                                             x-on:click="isGenreDropdownOpen = true"
                                             x-on:input="isGenreDropdownOpen = true"
                                             placeholder="{{ count($selectedGenres) === 0 ? 'Search genres...' : '' }}"
-                                            class="flex-1 outline-none focus:ring-0 border-none text-sm text-gray-700 placeholder-gray-400 min-w-[100px]"
+                                            class="flex-1 outline-none focus:ring-0 border-none text-sm bg-gray-50 dark:bg-gray-700 text-gray-700 placeholder-gray-400 dark:text-gray-200 dark:placeholder-gray-700 min-w-[100px]"
                                             @if (count($selectedGenres) >= $maxGenres) disabled @endif>
 
                                         <!-- Search Icon -->
@@ -236,12 +237,12 @@
                                         x-transition:leave="transition ease-in duration-75"
                                         x-transition:leave-start="opacity-100 scale-100"
                                         x-transition:leave-end="opacity-0 scale-95"
-                                        class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                                        class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-lg max-h-60 overflow-y-auto">
 
                                         @if (count($this->filteredGenres) > 0)
                                             @foreach ($this->filteredGenres as $genre)
                                                 <button type="button" wire:click="addGenre('{{ $genre }}')"
-                                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
+                                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-900 focus:bg-gray-100 focus:outline-none"
                                                     @if (count($selectedGenres) >= $maxGenres) disabled @endif>
                                                     {{ $genre }}
                                                 </button>
@@ -265,9 +266,9 @@
 
 
                             <!-- Artist link -->
-                            <div class="bg-white dark:bg-gray-900 font-sans text-gray-800 dark:text-gray-200">
+                            <div class="font-sans text-gray-800 dark:text-gray-200">
 
-                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                                <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">
                                     Connect social accounts (will be promoted after someone reposts one of your tracks
                                     if
                                     you have a Pro Plan)
@@ -277,7 +278,7 @@
                                     <!-- Instagram -->
                                     <div>
                                         <div
-                                            class="flex items-center px-2 rounded-md shadow-sm border border-gray-200 shadow-sm border border-gray-200">
+                                            class="flex items-center px-2 rounded-md shadow-sm border border-gray-200  dark:border-gray-700  dark:border-gray-700">
                                             <div
                                                 class="w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-md flex items-center justify-center">
                                                 <svg class="w-4 h-4 text-white" fill="currentColor"
@@ -299,7 +300,7 @@
                                     <!-- Twitter -->
                                     <div>
                                         <div
-                                            class="flex items-center px-2 rounded-md shadow-sm border border-gray-200">
+                                            class="flex items-center px-2 rounded-md shadow-sm border border-gray-200  dark:border-gray-700">
                                             <div
                                                 class="w-6 h-6 bg-blue-400 rounded-md flex items-center justify-center">
                                                 <svg class="w-4 h-4 text-white" fill="currentColor"
@@ -321,7 +322,7 @@
                                     <!-- Facebook -->
                                     <div>
                                         <div
-                                            class="flex items-center px-2 rounded-md shadow-sm border border-gray-200">
+                                            class="flex items-center px-2 rounded-md shadow-sm border border-gray-200  dark:border-gray-700">
                                             <div
                                                 class="w-6 h-6 bg-blue-600 rounded-md flex items-center justify-center">
                                                 <svg class="w-4 h-4 text-white" fill="currentColor"
@@ -343,7 +344,7 @@
                                     <!-- YouTube -->
                                     <div>
                                         <div
-                                            class="flex items-center px-2 rounded-md shadow-sm border border-gray-200">
+                                            class="flex items-center px-2 rounded-md shadow-sm border border-gray-200  dark:border-gray-700">
                                             <div
                                                 class="w-6 h-6 bg-red-600 rounded-md flex items-center justify-center">
                                                 <svg class="w-4 h-4 text-white" fill="currentColor"
@@ -363,7 +364,7 @@
                                     <!-- TikTok -->
                                     <div>
                                         <div
-                                            class="flex items-center px-2 rounded-md shadow-sm border border-gray-200">
+                                            class="flex items-center px-2 rounded-md shadow-sm border border-gray-200  dark:border-gray-700">
                                             <div class="w-6 h-6 bg-black rounded-md flex items-center justify-center">
                                                 <svg class="w-4 h-4 text-white" fill="currentColor"
                                                     viewBox="0 0 24 24">
@@ -384,7 +385,7 @@
                                 <!-- Spotify -->
                                 <div>
                                     <div
-                                        class="flex items-center px-2 rounded-md shadow-sm border border-gray-200 mt-3">
+                                        class="flex items-center px-2 rounded-md shadow-sm border border-gray-200  dark:border-gray-700 mt-3">
                                         <div class="w-6 h-6 bg-green-500 rounded-md flex items-center justify-center">
                                             <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                                                 <path
@@ -402,7 +403,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="mt-8 flex justify-end space-x-4  border-t border-gray-200 pt-4">
+                        <div
+                            class="mt-8 flex justify-end space-x-4  border-t border-gray-200 dark:border-gray-700 pt-4">
                             <x-gbutton variant="secondary">Cancel</x-gbutton>
                             <x-gbutton type="submit" variant="primary">Save Profile</x-gbutton>
                         </div>
@@ -426,13 +428,15 @@
                 </div>
             </div>
             <!-- Notifications -->
-            <div x-show="activeTab === 'notifications'" class="max-w-8xl w-full bg-white rounded-lg shadow-lg p-6">
-                <h2 class="text-2xl font-bold text-gray-800">Notifications & Alerts</h2>
-                <p class="mt-4 text-gray-600">Manage your email and push notification preferences.</p>
+            <div x-show="activeTab === 'notifications'"
+                class="max-w-8xl w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Notifications & Alerts</h2>
+                <p class="mt-4 text-gray-600 dark:text-gray-300">Manage your email and push notification preferences.
+                </p>
 
                 @if (session()->has('message'))
                     <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 2000)" x-show="show" x-transition
-                        class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mt-4 mb-4"
+                        class="bg-green-100 dark:bg-green-900 border border-green-400 text-green-700 px-4 py-3 rounded relative mt-4 mb-4"
                         role="alert">
                         <span class="block sm:inline">{{ session('message') }}</span>
                     </div>
@@ -445,13 +449,13 @@
                 @endif
 
 
-                <div class="flex justify-between items-center border-b border-gray-200 pb-4 mt-6">
+                <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-4 mt-6">
                     <!-- Top "Alerts" Section -->
                     <div class="w-full">
-                        <h1 class="text-xl font-semibold text-gray-800">Alerts</h1>
+                        <h1 class="text-xl font-semibold text-gray-800 dark:text-white">Alerts</h1>
                     </div>
                     <!-- Alerts Table Headers -->
-                    <div class="min-w-28 flex justify-between items-center">
+                    <div class="min-w-28 flex justify-between items-center dark:text-white">
                         <div class="">Email</div>
                         <div class="">Push</div>
                     </div>
@@ -459,13 +463,12 @@
 
                 <!-- Push Notification Disabled Warning -->
                 <div
-                    class="flex items-start bg-light-orange border-l-4 border-l-orange-400 p-3 rounded-md shadow-md mb-2">
+                    class="flex items-start bg-light-orange dark:bg-gray-700 border-l-4 border-l-orange-400 p-3 rounded-md shadow-md my-4">
                     <svg class="h-6 w-6 text-white bg-orange-400 rounded-full mr-3 mt-1 flex-shrink-0" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0
-        11-18 0 9 9 0 0118 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0  0118 0z" />
                     </svg>
-                    <span class="text-sm font-medium text-dark-gray">
+                    <span class="text-sm font-medium text-dark-gray dark:text-white">
                         Your push notifications are disabled because you haven't installed the mobile app
                     </span>
                 </div>
@@ -474,22 +477,22 @@
                 <form wire:submit.prevent="createOrUpdate">
                     @foreach ($this->alerts as $alert)
                         <div class="flex items-center py-3">
-                            <div class="w-full text-sm text-gray-800">{{ $alert['name'] }}</div>
+                            <div class="w-full text-sm text-gray-800 dark:text-white">{{ $alert['name'] }}</div>
                             <div class="min-w-28 flex justify-between items-center">
                                 <div class="">
                                     <input type="checkbox" wire:model="{{ $alert['email_key'] }}"
-                                        class="form-checkbox h-5 w-5 rounded border-gray-300 text-primary-orange focus:ring-primary-orange">
+                                        class="w-4 h-4 text-orange-600 border-gray-200 rounded focus:ring-orange-600">
                                 </div>
                                 <div class="">
                                     {{-- @dd($em_feedback_rated) --}}
                                     <input type="checkbox" wire:model="{{ $alert['push_key'] }}"
-                                        class="form-checkbox h-5 w-5 rounded border-gray-300 text-gray-400 focus:ring-gray-400">
+                                        class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                                 </div>
                             </div>
                         </div>
                     @endforeach
                     <!-- Action Buttons -->
-                    <div class="mt-8 flex justify-end space-x-4 border-t border-gray-200 pt-4">
+                    <div class="mt-8 flex justify-end space-x-4 border-t border-gray-200 dark:border-gray-700 pt-4">
                         <x-gbutton type="button" variant="secondary" wire:click="loadSettings">Cancel</x-gbutton>
                         <x-gbutton type="submit" variant="primary">Save Profile</x-gbutton>
                     </div>
@@ -497,33 +500,36 @@
             </div>
             <!-- Settings Section -->
             <div x-show="activeTab === 'settings'" x-cloak>
-                <div class="w-full max-w-8xl bg-white rounded-lg shadow-lg p-6 ">
+                <div class="w-full max-w-8xl bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 ">
                     <form wire:submit.prevent="saveSettings" method="POST">
                         @csrf
                         <!-- Section: My Requests -->
-                        <div class="border-b border-gray-200 pb-4 mb-6">
-                            <h1 class="text-xl font-semibold text-gray-800">My requests</h1>
+                        <div class="border-b border-gray-200 dark:border-gray-700 pb-4 mb-6">
+                            <h1 class="text-xl font-semibold text-gray-800 dark:text-white">My requests</h1>
                         </div>
 
                         <div class="space-y-6">
                             <!-- Accept Direct Requests -->
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
                                 <div>
-                                    <p class="text-gray-700">Accept Direct repost requests</p>
+                                    <p class="text-gray-700 dark:text-white">Accept Direct repost requests</p>
                                     @if (!user()->email_verified_at)
-                                        <p class="text-sm text-red-500">You must confirm your email address to accept direct repost requests</p>
+                                        <p class="text-sm text-red-500">You must confirm your email address to accept
+                                            direct repost requests</p>
                                     @endif
                                 </div>
                                 <div class="flex items-center gap-6">
                                     <label class="flex items-center gap-1">
-                                        <input type="radio" name="acceptRequests" wire:model="accept_repost" value="1" {{ user()->email_verified_at ? '' : 'disabled' }}
-                                            class="text-orange-500 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
-                                        <span class="text-gray-600">Yes</span>
+                                        <input type="radio" name="acceptRequests" wire:model="accept_repost"
+                                            value="1" {{ user()->email_verified_at ? '' : 'disabled' }}
+                                            class="text-orange-500 focus:ring-orange-500 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
+                                        <span class="text-gray-600 dark:text-white">Yes</span>
                                     </label>
                                     <label class="flex items-center gap-1">
-                                        <input type="radio" name="acceptRequests" wire:model="accept_repost" value="0" {{ user()->email_verified_at ? '' : 'disabled' }}
-                                            class="text-orange-500 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
-                                        <span class="text-gray-600">No</span>
+                                        <input type="radio" name="acceptRequests" wire:model="accept_repost"
+                                            value="0" {{ user()->email_verified_at ? '' : 'disabled' }}
+                                            class="text-orange-500 focus:ring-orange-500 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
+                                        <span class="text-gray-600 dark:text-white">No</span>
                                     </label>
                                 </div>
                             </div>
@@ -531,21 +537,21 @@
                             <!-- Block Requests -->
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
                                 <div>
-                                    <p class="text-gray-700">Block direct repost requests for tracks which do not match
+                                    <p class="text-gray-700 dark:text-white">Block direct repost requests for tracks which do not match
                                         my
                                         profile genres</p>
                                 </div>
                                 <div class="flex items-center gap-6">
                                     <label class="flex items-center gap-1">
                                         <input type="radio" name="blockRequests" wire:model="block_mismatch_genre"
-                                            value="1" class="text-orange-500">
-                                        <span class="text-gray-600">Yes</span>
+                                            value="1" class="text-orange-500 focus:ring-orange-500">
+                                        <span class="text-gray-600 dark:text-white">Yes</span>
                                     </label>
 
                                     <label class="flex items-center gap-1">
                                         <input type="radio" name="blockRequests" wire:model="block_mismatch_genre"
-                                            value="0" class="text-orange-500">
-                                        <span class="text-gray-600">No</span>
+                                            value="0" class="text-orange-500 focus:ring-orange-500">
+                                        <span class="text-gray-600 dark:text-white">No</span>
                                     </label>
                                 </div>
 
@@ -553,24 +559,24 @@
                         </div>
 
                         <!-- Additional Features -->
-                        <div class="border-b border-gray-200 py-6 mb-6 mt-6">
-                            <h1 class="text-xl font-semibold text-gray-800">Additional features</h1>
+                        <div class="border-b border-gray-200 dark:border-gray-700 datak:border-gray-700 py-6 mb-6 mt-6">
+                            <h1 class="text-xl font-semibold text-gray-800 dark:text-white">Additional features</h1>
                         </div>
 
                         <div class="space-y-6">
                             <!-- Mystery Box -->
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                                <p class="text-gray-700">Opt In to Mystery Box Draws</p>
+                                <p class="text-gray-700 dark:text-white">Opt In to Mystery Box Draws</p>
                                 <div class="flex items-center gap-6">
                                     <label class="flex items-center gap-1">
                                         <input type="radio" name="mysteryBox" wire:model="opt_mystery_box"
-                                            value="1" class="text-orange-500">
-                                        <span class="text-gray-600">Yes</span>
+                                            value="1" class="text-orange-500 focus:ring-orange-500">
+                                        <span class="text-gray-600 dark:text-white">Yes</span>
                                     </label>
                                     <label class="flex items-center gap-1">
                                         <input type="radio" name="mysteryBox" wire:model="opt_mystery_box"
-                                            value="0" class="text-orange-500">
-                                        <span class="text-gray-600">No</span>
+                                            value="0" class="text-orange-500 focus:ring-orange-500">
+                                        <span class="text-gray-600 dark:text-white">No</span>
                                     </label>
                                 </div>
                             </div>
@@ -578,47 +584,47 @@
                             <!-- Auto Boost -->
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
                                 <div>
-                                    <p class="text-gray-700">Auto Free Boost <span
+                                    <p class="text-gray-700 dark:text-white">Auto Free Boost <span
                                             class="text-gray-400 text-sm">(i)</span>
                                     </p>
                                 </div>
                                 <div class="flex items-center gap-6">
                                     <label class="flex items-center gap-1">
                                         <input type="radio" name="autoBoost" wire:model="auto_boost"
-                                            value="1" class="text-orange-500">
-                                        <span class="text-gray-600">Yes</span>
+                                            value="1" class="text-orange-500 focus:ring-orange-500">
+                                        <span class="text-gray-600 dark:text-white">Yes</span>
                                     </label>
                                     <label class="flex items-center gap-1">
                                         <input type="radio" name="autoBoost" wire:model="auto_boost"
-                                            value="0" class="text-orange-500">
-                                        <span class="text-gray-600">No</span>
+                                            value="0" class="text-orange-500 focus:ring-orange-500">
+                                        <span class="text-gray-600 dark:text-white">No</span>
                                     </label>
                                 </div>
                             </div>
 
                             <!-- Reactions -->
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                                <p class="text-gray-700">Enable Reactions</p>
+                                <p class="text-gray-700 dark:text-white">Enable Reactions</p>
                                 <div class="flex items-center gap-6">
                                     <label class="flex items-center gap-1">
                                         <input type="radio" name="reactions" wire:model="enable_react"
-                                            value="1" class="text-orange-500">
-                                        <span class="text-gray-600">Yes</span>
+                                            value="1" class="text-orange-500 focus:ring-orange-500">
+                                        <span class="text-gray-600 dark:text-white">Yes</span>
                                     </label>
                                     <label class="flex items-center gap-1">
                                         <input type="radio" name="reactions" wire:model="enable_react"
-                                            value="0" class="text-orange-500">
-                                        <span class="text-gray-600">No</span>
+                                            value="0" class="text-orange-500 focus:ring-orange-500">
+                                        <span class="text-gray-600 dark:text-white">No</span>
                                     </label>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Subscription -->
-                        <div class="border-b border-gray-200 py-6 mb-6 mt-6">
+                        <div class="border-b border-gray-200 dark:border-gray-700 py-6 mb-6 mt-6">
                             <h1 class="text-xl font-semibold text-gray-800">Subscription</h1>
-                            <div class="mt-2 text-sm text-gray-600">
-                                <p class="text-gray-700">Free Forever Plan <a wire:navigate
+                            <div class="mt-2 text-sm text-gray-600 dark:text-white">
+                                <p class="text-gray-700 dark:text-white">Free Forever Plan <a wire:navigate
                                         href="{{ route('user.pkm.pricing') }}"
                                         class="text-orange-500 cursor-pointer hover:underline">Change</a></p>
                             </div>
@@ -652,27 +658,27 @@
                 </div> --}}
 
                 <!-- Card Table -->
-                <div class="overflow-hidden rounded-lg border border-gray-200 shadow-sm">
+                <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
                     <table class="w-full text-sm text-left">
-                        <thead class="bg-gray-50 border-b border-gray-200">
+                        <thead class="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
                             <tr>
-                                <th class="px-5 p-3 font-medium text-gray-600">Date</th>
-                                <th class="px-5 p-3 font-medium text-gray-600">Description</th>
-                                <th class="px-5 p-3 font-medium text-gray-600">Type</th>
-                                <th class="px-5 p-3 font-medium text-gray-600">Credits</th>
-                                <th class="px-5 p-3 font-medium text-gray-600">Balance</th>
+                                <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Date</th>
+                                <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Description</th>
+                                <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Type</th>
+                                <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Credits</th>
+                                <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Balance</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100">
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                             @forelse ($credits as $credit)
                                 <tr class="hover:bg-gray-50 transition">
-                                    <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
+                                    <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap">
                                         {{ $credit->created_at_formatted }}
                                     </td>
-                                    <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
+                                    <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap">
                                         {{ $credit->description }}
                                     </td>
-                                    <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
+                                    <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap">
                                         <span
                                             class="badge badge-soft {{ $credit->calculation_type_color }}">{{ $credit->calculation_type_name }}</span>
                                     </td>
@@ -718,27 +724,27 @@
                 </div> --}}
 
                 <!-- Card Table -->
-                <div class="overflow-hidden rounded-lg border border-gray-200 shadow-sm">
+                <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
                     <table class="w-full text-sm text-left">
-                        <thead class="bg-gray-50 border-b border-gray-200">
+                        <thead class="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
                             <tr>
-                                <th class="px-5 p-3 font-medium text-gray-600">Date</th>
-                                <th class="px-5 p-3 font-medium text-gray-600">Description</th>
-                                <th class="px-5 p-3 font-medium text-gray-600">Source</th>
-                                <th class="px-5 p-3 font-medium text-gray-600">Total</th>
-                                <th class="px-5 p-3 font-medium text-gray-600">Invoice</th>
+                                <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Date</th>
+                                <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Description</th>
+                                <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Source</th>
+                                <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Total</th>
+                                <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Invoice</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100">
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                             @forelse ($payments as $payment)
-                                <tr class="hover:bg-gray-50 transition">
-                                    <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-600 transition">
+                                    <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap">
                                         {{ $payment->created_at_formatted }}
                                     </td>
-                                    <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
+                                    <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap">
                                         {{ $payment->notes ?? 'N/A' }}
                                     </td>
-                                    <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
+                                    <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap">
                                         @if ($payment->order->type == App\Models\Order::TYPE_PLAN)
                                             {{ $payment->order->source->name ?? 'N/A' }} Plan Subscription
                                         @else
@@ -759,10 +765,10 @@
                                             </div>
                                         @endif
                                     </td>
-                                    <td class="px-5 p-3 text-gray-700 whitespace-nowrap font-semibold">
+                                    <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap font-semibold">
                                         {{ ($payment->amount ?? '0.00') . ' ' . $payment->currency }}
                                     </td>
-                                    <td class="px-5 p-3 text-gray-800 font-medium whitespace-nowrap">
+                                    <td class="px-5 p-3 text-gray-800 dark:text-white font-medium whitespace-nowrap">
                                         <a href="javascript:void(0);" wire:click="showInvoice()"
                                             class="text-blue-600 hover:underline">
                                             <x-lucide-file-down class="w-6 h-6" />
@@ -777,8 +783,8 @@
 
 
                             @empty
-                                <tr class="hover:bg-gray-50 transition">
-                                    <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
+                                <tr class="">
+                                    <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap">
                                         No transactions found.
                                     </td>
                                 </tr>
