@@ -16,7 +16,7 @@
                 <i data-lucide="x" class="w-5 h-5 text-orange-800 dark:text-orange-100 group-hover:text-orange-500"></i>
             </button>
         </div>
-        <div class="flex-1 space-y-4 h-full overflow-y-auto px-6" id="notification-container">
+        <div class="flex-1 space-y-4 h-full overflow-y-hidden px-6" id="notification-container">
             @foreach ($notifications as $notification)
                 <div class="notification-item">
                     <x-admin.notification-card :notification="$notification" :isRead="$notification->statuses->isEmpty() ? false : true" />
@@ -26,7 +26,7 @@
 
 
         <div class="flex items-center justify-between p-6 glass-card">
-            <x-button href="#" type="secondary"
+            <x-button href="javascript:void(0)" type="secondary"
                 onclick="window.notificationManager?.sendMarkAllAsReadRequest()">
                 {{ __('Mark All As Read') }}
             </x-button>
