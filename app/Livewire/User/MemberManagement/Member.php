@@ -182,7 +182,7 @@ class Member extends Component
             $this->processResolvedData($response->json());
         } else {
             $this->resetCollections();
-            session()->flash('error', 'Could not resolve the SoundCloud link. Please check the URL.');
+            $this->dispatch('alert', 'error', 'Could not resolve the SoundCloud link. Please check the URL.');
         }
     }
 
@@ -197,7 +197,7 @@ class Member extends Component
                 $this->fetchUserTracks($data['id']);
             } else {
                 $this->resetCollections();
-                session()->flash('error', 'The provided URL is not a track or user profile.');
+                $this->dispatch('alert', 'error', 'The provided URL is not a track or user profile.');
             }
         } elseif ($this->activeTab === 'playlists') {
             if ($data['kind'] === 'playlist') {
@@ -206,7 +206,7 @@ class Member extends Component
                 $this->playlists = $this->allPlaylists->take($this->playlistLimit);
             } else {
                 $this->resetCollections();
-                session()->flash('error', 'The provided URL is not a playlist.');
+                $this->dispatch('alert', 'error', 'The provided URL is not a playlist.');
             }
         }
     }
@@ -247,16 +247,16 @@ class Member extends Component
         ]);
         $this->selectedUserUrn = $userUrn;
         $this->user = User::with('userInfo')->where('urn', $this->selectedUserUrn)->first();
-        if($this->user->request_receiveable) {
+        if ($this->user->request_receiveable) {
             $this->showModal = true;
             $this->activeTab = 'tracks';
-    
+
             $this->user_urn = $this->user->urn;
             $this->allTracks = Track::self()->get();
             $this->tracks = $this->allTracks->take($this->trackLimit);
             $this->allPlaylists = Playlist::self()->get();
             $this->playlists = $this->allPlaylists->take($this->playlistLimit);
-        }else{
+        } else {
             return redirect()->back()->with('error', 'User is Not Request Receiveable');
         }
     }
@@ -304,7 +304,7 @@ class Member extends Component
         $requester = user();
 
         if (!$this->user || !$this->track) {
-            session()->flash('error', 'Target user or content not found.');
+            $this->dispatch('alert', 'error', 'Target user or content not found.');
             return;
         }
 
@@ -378,16 +378,16 @@ class Member extends Component
                 broadcast(new UserNotificationSent($requesterNotification));
                 broadcast(new UserNotificationSent($targetUserNotification));
             });
-            session()->flash('success', 'Repost request sent successfully!');
+            $this->dispatch('alert', 'success', 'Repost request sent successfully!');
             sleep(1);
             $this->closeRepostModal();
             $this->closeModal();
         } catch (InvalidArgumentException $e) {
             Log::info('Repost request failed', ['error' => $e->getMessage()]);
-            session()->flash('error', $e->getMessage());
+            $this->dispatch('alert', 'error', $e->getMessage());
         } catch (Exception $e) {
             Log::info('Repost request failed', ['error' => $e->getMessage()]);
-            session()->flash('error', 'Failed to send repost request. Please try again.');
+            $this->dispatch('alert', 'error', 'Failed to send repost request. Please try again.');
             logger()->error('Repost request failed', ['error' => $e->getMessage()]);
         }
     }

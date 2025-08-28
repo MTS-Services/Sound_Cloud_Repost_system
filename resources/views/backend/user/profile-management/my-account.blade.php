@@ -239,7 +239,7 @@
                                     <span class="text-orange-500 dark:text-orange-400">SOUNDCLOUD</span>
                                 </p>
                             </div>
-                            <div>
+                            @if($socialLink)
                                 <div
                                     class="bg-gray-100 dark:bg-slate-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-slate-700">
                                     <h3 class="text-gray-900 dark:text-white font-semibold mb-3 sm:mb-4">Social Links
@@ -297,8 +297,7 @@
                                         @endif
                                         @if ($tiktok)
                                             <a href="https://www.tiktok.com/@{{ $tiktok }}" target="_blank">
-                                                <div
-                                                    class="w-6 h-6 bg-black rounded-md flex items-center justify-center">
+                                                <div class="w-6 h-6 bg-black rounded-md flex items-center justify-center">
                                                     <svg class="w-4 h-4 text-white" fill="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path
@@ -308,8 +307,7 @@
                                             </a>
                                         @endif
                                         @if ($spotify)
-                                            <a href="https://open.spotify.com/user/{{ $spotify }}"
-                                                target="_blank">
+                                            <a href="{{ $spotify }}" target="_blank">
                                                 <div
                                                     class="w-6 h-6 bg-green-500 rounded-md flex items-center justify-center">
                                                     <svg class="w-4 h-4 text-white" fill="currentColor"
@@ -322,7 +320,7 @@
                                         @endif
                                     </div>
                                 </div>
-                            </div>
+                            @endif
 
                             <div
                                 class="bg-gray-100 dark:bg-slate-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-slate-700">

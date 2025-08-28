@@ -132,19 +132,6 @@
                             <x-lucide-x class="w-5 h-5" />
                         </button>
                     </div>
-                    @if (session()->has('success'))
-                        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 2000)" x-show="show" x-transition
-                            class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mt-4 mb-4"
-                            role="alert">
-                            <span class="block sm:inline">{{ session('success') }}</span>
-                        </div>
-                    @elseif (session()->has('error'))
-                        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" x-transition
-                            class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4 mb-4"
-                            role="alert">
-                            <span class="block sm:inline">{{ session('error') }}</span>
-                        </div>
-                    @endif
                     <form wire:submit.prevent="saveProfile">
                         <div class="w-full lg:w-1/2">
                             <!-- Email -->
@@ -160,20 +147,10 @@
                                             confirmation
                                             email</a> --}}
                                         </p>
-                                        <div x-data="{
-                                            loading: false,
-                                            async send() {
-                                                this.loading = true;
-                                                try {
-                                                    await axios.post('{{ route('user.email.resend.verification') }}');
-                                                } catch (e) {
-                                                    console.error(e);
-                                                } finally {
-                                                    this.loading = false;
-                                                }
-                                            }
-                                        }" class="inline-block">
-                                            <button @click="send()" x-bind:disabled="loading"
+                                        <div x-data="{ loading: false }" class="inline-block">
+                                            <button type="button"
+                                                @click="loading = true; document.getElementById('email-verification-form').submit();"
+                                                :disabled="loading"
                                                 class="text-sm font-semibold text-orange-600 hover:underline">
                                                 <template x-if="!loading">
                                                     <span>Resend confirmation</span>
@@ -183,6 +160,8 @@
                                                 </template>
                                             </button>
                                         </div>
+
+
                                     </div>
                                 @endif
                             </div>
@@ -427,6 +406,11 @@
                             <x-gbutton variant="secondary">Cancel</x-gbutton>
                             <x-gbutton type="submit" variant="primary">Save Profile</x-gbutton>
                         </div>
+                    </form>
+
+                    <form id="email-verification-form" action="{{ route('user.email.resend.verification') }}"
+                        method="POST">
+                        @csrf
                     </form>
 
 

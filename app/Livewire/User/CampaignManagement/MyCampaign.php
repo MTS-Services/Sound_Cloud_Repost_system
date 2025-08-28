@@ -419,7 +419,7 @@ class MyCampaign extends Component
 
     private function handleSubmissionError(\Exception $e, string $type, int $id): void
     {
-        session()->flash('error', 'Failed to load content: ' . $e->getMessage());
+        $this->dispatch('alert', 'error', 'Failed to load content: ' . $e->getMessage());
         $this->showSubmitModal = false;
         $this->showCampaignsModal = true;
 
@@ -514,7 +514,7 @@ class MyCampaign extends Component
                     $campaign->load('music.user');
                     $data = [];
                     if ($this->isEditing && $calculation > $oldBudget) {
-                        $data['Appended Budget']  = $calculation - $oldBudget;
+                        $data['Appended Budget'] = $calculation - $oldBudget;
                     }
                     $notification = CustomNotification::create([
                         'receiver_id' => user()->id,
@@ -532,9 +532,9 @@ class MyCampaign extends Component
                                 'Total Budget' => $calculation,
 
                                 'Moentum' => $campaign->momentum_price > 0 ? 'Enabled' : 'Disabled',
-                                'Exclude frequent reposters (24h)' => $campaign->max_repost_last_24_h > 0 ? $campaign->max_repost_last_24_h  : 'Not Applicable',
-                                'Limit max followers count' => $campaign->max_followers > 0 ? $campaign->max_followers  : 'Not Applicable',
-                                'Limit avg repost per day' => $campaign->max_repost_per_day > 0 ? $campaign->max_repost_per_day  : 'Not Applicable',
+                                'Exclude frequent reposters (24h)' => $campaign->max_repost_last_24_h > 0 ? $campaign->max_repost_last_24_h : 'Not Applicable',
+                                'Limit max followers count' => $campaign->max_followers > 0 ? $campaign->max_followers : 'Not Applicable',
+                                'Limit avg repost per day' => $campaign->max_repost_per_day > 0 ? $campaign->max_repost_per_day : 'Not Applicable',
                                 'Target Genre' => $campaign->target_genre ?? 'N/A',
                             ] + $data
                         ]
@@ -544,9 +544,9 @@ class MyCampaign extends Component
             });
 
             $this->resetAfterCampaignCreation();
-            session()->flash('message', 'Campaign created successfully!');
+            $this->dispatch('alert', 'success', 'Campaign ' . ($this->isEditing ? 'updated' : 'created') . ' successfully!');
         } catch (\Exception $e) {
-            session()->flash('error', 'Failed to create campaign: ' . $e->getMessage());
+            $this->dispatch('alert', 'error', 'Failed to create campaign: ' . $e->getMessage());
             $this->logCampaignError($e);
         }
     }
@@ -559,7 +559,7 @@ class MyCampaign extends Component
             ->first();
 
         if (!$this->editingCampaign) {
-            session()->flash('error', 'Campaign not found or cannot be edited.');
+            $this->dispatch('alert', 'error', 'Campaign not found or cannot be edited.');
             return;
         }
 
@@ -776,7 +776,7 @@ class MyCampaign extends Component
 
     private function handleError(string $message, \Exception $e, array $context = []): void
     {
-        session()->flash('error', $message . ': ' . $e->getMessage());
+        $this->dispatch('alert', 'error', $message . ': ' . $e->getMessage());
 
         Log::error($message . ': ' . $e->getMessage(), array_merge([
             'user_urn' => user()->urn ?? 'unknown'

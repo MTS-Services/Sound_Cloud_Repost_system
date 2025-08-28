@@ -13,7 +13,6 @@
     </title>
 
     <script>
-
         (function() {
             function applyThemeImmediately() {
                 const theme = localStorage.getItem('theme') || 'light';
@@ -70,6 +69,11 @@
             @if (session('warning'))
                 showAlert('warning', "{!! session('warning') !!}");
             @endif
+            document.addEventListener('livewire:load', function() {
+                Livewire.on('alert', (type, message) => {
+                    showAlert(type, message);
+                });
+            });
         });
     </script>
 

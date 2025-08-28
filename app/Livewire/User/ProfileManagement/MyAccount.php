@@ -149,16 +149,18 @@ class MyAccount extends Component
     public $facebook = null;
     public $youtube = null;
     public $spotify = null;
+    public $socialLink = [];
 
     public function socialLinks()
     {
-        $socialLinks = UserSocialInformation::where('user_urn', $this->user_urn)->first();
-        $this->instagram = $socialLinks->instagram;
-        $this->twitter = $socialLinks->twitter;
-        $this->tiktok = $socialLinks->tiktok;
-        $this->facebook = $socialLinks->facebook;
-        $this->youtube = $socialLinks->youtube;
-        $this->spotify = $socialLinks->spotify;
+        $social_link = UserSocialInformation::where('user_urn', $this->user_urn)->first();
+        $this->socialLink = $social_link;
+        $this->instagram = $social_link->instagram ?? '';
+        $this->twitter = $social_link->twitter ?? '';
+        $this->tiktok = $social_link->tiktok ?? '';
+        $this->facebook = $social_link->facebook ?? '';
+        $this->youtube = $social_link->youtube ?? '';
+        $this->spotify = $social_link->spotify ?? '';
     }
 
     public function render()

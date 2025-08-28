@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class UserSocialInformation extends BaseModel
 {
@@ -40,5 +41,10 @@ class UserSocialInformation extends BaseModel
         $this->appends = array_merge(parent::getAppends(), [
             //
         ]);
+    }
+
+    public function scopeSelf(Builder $query): Builder
+    {
+        return $query->where('user_urn', user()->urn);
     }
 }
