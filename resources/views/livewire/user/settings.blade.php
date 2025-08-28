@@ -671,7 +671,7 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                             @forelse ($credits as $credit)
-                                <tr class="hover:bg-gray-50 transition">
+                                <tr class="hover:bg-gray-50 dark:bg-gray-600 transition">
                                     <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap">
                                         {{ $credit->created_at_formatted }}
                                     </td>
