@@ -6,6 +6,7 @@ use App\Models\CreditTransaction;
 use App\Models\Payment;
 use App\Models\User;
 use App\Models\UserGenre;
+use App\Models\UserPlan;
 use App\Models\UserSetting;
 use App\Models\UserSocialInformation;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,7 @@ class Settings extends Component
     public $payments = [];
     public $user_infos = [];
     public $email = '';
+    public $activePlan = 'Free Forever';
     // Genre Filter Properties
     public $selectedGenres = [];
     public $searchTerm = '';
@@ -81,6 +83,7 @@ class Settings extends Component
         $this->selectedGenres = UserGenre::where('user_urn', user()->urn)->pluck('genre')->toArray();
         $this->credits = CreditTransaction::where('receiver_urn', user()->urn)->latest()->get();
         $this->payments = Payment::where('user_urn', user()->urn)->with('order.source')->latest()->get();
+        $this->activePlan = UserPlan::where('user_urn', user()->urn)->first()->plan->name;
         $this->loadSettings();
         $this->loadUserInfo();
     }
