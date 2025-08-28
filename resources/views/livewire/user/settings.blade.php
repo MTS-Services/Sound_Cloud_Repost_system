@@ -693,7 +693,7 @@
                                         </svg>
                                         {{ ($credit->calculation_type == App\Models\CreditTransaction::CALCULATION_TYPE_CREDIT ? '-' : '+') . $credit->credits }}
                                     </td>
-                                    <td class="px-5 p-3 text-gray-800 font-medium whitespace-nowrap">
+                                    <td class="px-5 p-3 text-gray-800 dark:text-white font-medium whitespace-nowrap">
                                         {{ $credit->balance }} credits
                                     </td>
                                 </tr>
