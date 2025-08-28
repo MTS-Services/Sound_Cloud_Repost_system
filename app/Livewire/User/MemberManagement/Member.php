@@ -9,7 +9,9 @@ use App\Models\Playlist;
 use App\Models\RepostRequest;
 use App\Models\Track;
 use App\Models\User;
+use App\Models\UserGenre;
 use App\Models\UserInformation;
+use App\Models\UserSetting;
 use App\Services\PlaylistService;
 use App\Services\TrackService;
 use Exception;
@@ -40,6 +42,9 @@ class Member extends Component
     public ?int $selectedTrackId = null;
     public string $searchQuery = '';
 
+    // block_mismatch_genre
+    public ?bool $blockMismatchGenre = null;
+    public $userMismatchGenre = null;
     public ?User $user = null;
     public ?string $user_urn = null;
     public ?UserInformation $userinfo = null;
@@ -288,6 +293,9 @@ class Member extends Component
 
     public function openRepostsModal(int $trackId)
     {
+        $this->blockMismatchGenre = UserSetting::where('user_urn', user()->urn)->value('block_mismatch_genre');
+        $trackGenre = $this->trackService->getTrack(encrypt($trackId))->genre;
+        $this->userMismatchGenre = UserGenre::where('user_urn', user()->urn)->where('genre', $trackGenre)->first();
         $this->reset(['track']);
         $this->selectedTrackId = $trackId;
         $this->track = Track::find($trackId);

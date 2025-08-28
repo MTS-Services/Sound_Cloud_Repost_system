@@ -63,8 +63,7 @@
                 <!-- Profile Header -->
                 <div class="flex items-center gap-3 mb-6">
                     <div class="relative">
-                        <a class="cursor-pointer" wire:navigate
-                            href="{{ route('user.pm.my-account', $user_->urn) }}">
+                        <a class="cursor-pointer" wire:navigate href="{{ route('user.pm.my-account', $user_->urn) }}">
                             <img src="{{ auth_storage_url($user_->avatar) }}" alt="{{ $user_->name }}"
                                 class="w-12 h-12 rounded-full">
                             <div
@@ -73,8 +72,7 @@
                         </a>
                     </div>
                     <div>
-                        <a class="cursor-pointer" wire:navigate
-                            href="{{ route('user.pm.my-account', $user_->urn) }}">
+                        <a class="cursor-pointer" wire:navigate href="{{ route('user.pm.my-account', $user_->urn) }}">
                             <h3 class="font-semibold text-lg dark:text-white hover:underline">{{ $user_->name }}</h3>
                         </a>
                         <p class="text-text-gray text-sm dark:text-white">{{ $user_->created_at->format('M d, Y') }}
@@ -122,9 +120,10 @@
                 <!-- Request Button -->
                 @if ($user_->request_receiveable)
                     <x-gbutton variant="primary" :full-width="true"
-                    wire:click="openModal('{{ $user_->urn }}')">Request</x-gbutton>
+                        wire:click="openModal('{{ $user_->urn }}')">Request</x-gbutton>
                 @else
-                <x-gabutton variant="primary" :full-width="true" wire:navigate href="{{ route('user.pm.my-account', $user_->urn) }}">Profile</x-gabutton>
+                    <x-gabutton variant="primary" :full-width="true" wire:navigate
+                        href="{{ route('user.pm.my-account', $user_->urn) }}">Profile</x-gabutton>
                 @endif
             </div>
         @empty
@@ -420,16 +419,29 @@
                                 <span class="text-orange-500 dark:text-orange-400 font-bold">1 Credit</span>
                             </div>
                         </div>
-                        <div class="p-4 bg-gray-50 dark:bg-slate-700 rounded-xl border-l-4 border-orange-500 mt-4">
-                            <p class="text-gray-400 dark:text-gray-300 text-sm leading-relaxed">
-                                Your track will be shared across our network of 50K+ followers on SoundCloud,. Expected
-                                reach: 10-15K impressions within 48 hours.
-                            </p>
-                        </div>
+                        {{-- blockMismatchGenre message --}}
+                        @if ($blockMismatchGenre && !$userMismatchGenre)
+                            <div class="p-4 bg-gray-50 dark:bg-slate-700 rounded-xl border-l-4 border-orange-500 mt-4">
+                                <p class="text-red-500 text-sm leading-relaxed">
+                                    “This user has blocked repost requests for tracks that don’t match their profile genre. You cannot send them a repost request.”
+                                </p>
+                            </div>
+                        @else
+                            <div class="p-4 bg-gray-50 dark:bg-slate-700 rounded-xl border-l-4 border-orange-500 mt-4">
+                                <p class="text-gray-500 dark:text-gray-300 text-sm leading-relaxed">
+                                    Your track will be shared across our network of 50K+ followers on SoundCloud,.
+                                    Expected
+                                    reach: 10-15K impressions within 48 hours.
+                                </p>
+                            </div>
+                        @endif
                         <!-- Confirm Button -->
                         <div class="mt-6 flex justify-center gap-3">
                             <x-gbutton variant="secondary" wire:click="closeRepostModal">Cancel</x-gbutton>
-                            <x-gbutton variant="primary" wire:click="createRepostsRequest">Send Request</x-gbutton>
+                            @if (($blockMismatchGenre && $userMismatchGenre) || !$blockMismatchGenre)
+                                <x-gbutton variant="primary" wire:click="createRepostsRequest">Send
+                                    Request</x-gbutton>
+                            @endif
                         </div>
                     @endif
                 </div>
