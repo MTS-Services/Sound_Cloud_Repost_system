@@ -768,20 +768,14 @@
                                     <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap font-semibold">
                                         {{ ($payment->amount ?? '0.00') . ' ' . $payment->currency }}
                                     </td>
-                                    <td class="px-5 p-3 text-gray-800 dark:text-white font-medium whitespace-nowrap">
-                                        <a href="javascript:void(0);" wire:click="showInvoice()"
+                                    <td class="px-5 p-3 text-gray-800 font-medium whitespace-nowrap">
+                                        <a href="javascript:void(0);"
+                                            wire:click="downloadInvoice({{ $payment->id }})"
                                             class="text-blue-600 hover:underline">
                                             <x-lucide-file-down class="w-6 h-6" />
                                         </a>
                                     </td>
                                 </tr>
-                                @if ($invoiceShow)
-                                    <tr>
-                                        <x-user.settings.invoice-pdf :payment="$payment" />
-                                    </tr>
-                                @endif
-
-
                             @empty
                                 <tr class="">
                                     <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap">
@@ -792,10 +786,6 @@
                         </tbody>
                     </table>
                 </div>
-
-
-
-
             </div>
         </div>
     </div>

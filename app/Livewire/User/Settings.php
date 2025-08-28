@@ -9,6 +9,8 @@ use App\Models\UserGenre;
 use App\Models\UserPlan;
 use App\Models\UserSetting;
 use App\Models\UserSocialInformation;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
@@ -133,11 +135,17 @@ class Settings extends Component
     public $auto_boost = 0;
     public $enable_react = 1;
 
-    public $invoiceShow = false;
-
-    public function showInvoice()
+    public function downloadInvoice(Payment $payment)
     {
-        $this->invoiceShow = true;
+        // dd($payment);
+
+        // Load the Blade view with the sanitized data
+        $pdf = Pdf::loadView('components.user.settings.invoice-pdf', [
+            'payment' => $payment
+        ]);
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, 'invoice-' . $payment->id . '.pdf');
     }
 
     // Subscription

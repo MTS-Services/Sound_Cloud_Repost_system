@@ -9,8 +9,8 @@ use Illuminate\View\Component;
 
 class InvoicePdf extends Component
 {
-    public Payment $payment;
-    public function __construct(Payment $payment)
+    public $payment;
+    public function __construct($payment)
     {
         $this->payment = $payment;
     }
@@ -20,7 +20,7 @@ class InvoicePdf extends Component
      */
     public function render(): View|Closure|string
     {
-        
+
         return view('components.user.settings.invoice-pdf');
     }
 }
