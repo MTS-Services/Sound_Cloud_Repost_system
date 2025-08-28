@@ -665,7 +665,8 @@
                                         {{ $credit->description }}
                                     </td>
                                     <td class="px-5 p-3 text-gray-700 whitespace-nowrap">
-                                        {{ $credit->calculation_type_name }}
+                                        <span
+                                            class="badge badge-soft {{ $credit->calculation_type_color }}">{{ $credit->calculation_type_name }}</span>
                                     </td>
                                     <td
                                         class="px-5 p-3 {{ $credit->calculation_type == App\Models\CreditTransaction::CALCULATION_TYPE_CREDIT ? 'text-red-500' : 'text-green-500' }} font-semibold flex items-center gap-1 whitespace-nowrap">
