@@ -977,7 +977,6 @@ class Campaign extends Component
                     $this->dispatch('alert', 'error', 'Invalid music type specified for the campaign.');
                     return;
             }
-            dd( $follow_response, $this->liked, $this->commented, $this->followed);
             $data = [
                 'likeable' => $like_response ? $this->liked : false,
                 'commentable' => $comment_response ? $this->commented : false,
