@@ -946,7 +946,7 @@ class Campaign extends Component
                 ]
             ];
 
-
+            $response = null;
             switch ($campaign->music_type) {
                 case Track::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
@@ -975,7 +975,7 @@ class Campaign extends Component
                 'commentable' => $this->commented
             ];
             if ($response->successful()) {
-                dd($response->json('id'));
+                dd($response->json());
                 $soundcloudRepostId = $response->json('id');
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
                 $this->dispatch('alert', 'success', 'Campaign music reposted successfully.');
