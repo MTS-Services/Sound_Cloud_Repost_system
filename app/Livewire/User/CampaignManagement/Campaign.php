@@ -970,7 +970,7 @@ class Campaign extends Component
                         $comment_response = $httpClient->post("{$this->baseUrl}/playlists/{$campaign->music->urn}/comments", $commentSoundcloud);
                     }
                     if($this->followed){
-                        $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->music->urn}");
+                        $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
                     }
                     break;
                 default:
