@@ -612,6 +612,9 @@ class SoundCloudService
     {
         $user = User::where('urn', user()->urn)->first();
 
+        $this->ensureSoundCloudConnection($user);
+        $this->refreshUserTokenIfNeeded($user);
+
         $httpClient = Http::withHeaders([
             'Authorization' => 'OAuth ' . $user->token,
         ]);
