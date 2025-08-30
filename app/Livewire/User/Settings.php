@@ -417,7 +417,7 @@ class Settings extends Component
             $this->reset(['selectedGenres', 'instagram_username', 'twitter_username', 'facebook_username', 'youtube_channel_id', 'tiktok_username', 'spotify_artist_link']);
             $this->mount();
 
-            $this->dispatch('alert', 'success', 'Profile updated successfully!');
+
         } catch (\Throwable $e) {
             Log::error($e->getMessage());
             $this->dispatch('alert', 'error', 'Profile update failed!');

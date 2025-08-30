@@ -6,44 +6,44 @@
         selectedIndex: -1,
         suggestions: {{ searchableRoutes() }},
         filteredSuggestions: [],
-    
+
         init() {
             // No initial filtering. The list will be empty by default.
         },
-    
+
         filterSuggestions() {
             if (!Array.isArray(this.suggestions)) {
                 console.error('Suggestions data is not a valid array.');
                 return;
             }
-    
+
             const query = this.searchQuery.trim().toLowerCase();
-    
+
             // ✅ Only filter if the query is not empty.
             if (query === '') {
                 this.filteredSuggestions = [];
             } else {
                 this.filteredSuggestions = this.suggestions.filter(item => {
                     if (!item || !item.title || !item.keywords) return false;
-    
+
                     // Check if the query matches the title
                     const titleMatch = item.title.toLowerCase().includes(query);
-    
+
                     // Check if the query matches any of the keywords
                     const keywordMatch = item.keywords.some(keyword =>
                         keyword.toLowerCase().includes(query)
                     );
-    
+
                     return titleMatch || keywordMatch;
                 });
             }
             this.selectedIndex = -1;
         },
-    
+
         selectSuggestion(index) {
             this.selectedIndex = index;
         },
-    
+
         handleKeydown(event) {
             if (event.key === 'ArrowDown') {
                 event.preventDefault();
@@ -61,7 +61,7 @@
                 this.searchModalOpen = false;
             }
         },
-    
+
         // `performSearch` is no longer needed since we are using <a> tags
         performSearch(url) {
             this.searchModalOpen = false;
@@ -190,8 +190,8 @@
                     <li>
                         <a href="{{ route('user.pm.my-account') }}" wire:navigate
                             class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M5.121 17.804A4 4 0 017 16h10a4 4 0 011.879.496M15 11a3 3 0 10-6 0 3 3 0 006 0z" />
                             </svg>

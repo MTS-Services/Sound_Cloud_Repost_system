@@ -1,21 +1,21 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-Y0kgjTCx.css",
+    "file": "assets/app-D5OJ1WhB.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/dashboard.css": {
-    "file": "assets/dashboard-BxvkkBHz.css",
+    "file": "assets/dashboard-DoLc6FQ1.css",
     "src": "resources/css/dashboard.css",
     "isEntry": true
   },
   "resources/css/frontend.css": {
-    "file": "assets/frontend-BJ_SVeaS.css",
+    "file": "assets/frontend-DnLIxq59.css",
     "src": "resources/css/frontend.css",
     "isEntry": true
   },
   "resources/css/user-dashboard.css": {
-    "file": "assets/user-dashboard-DbIOQDGS.css",
+    "file": "assets/user-dashboard-BflohldR.css",
     "src": "resources/css/user-dashboard.css",
     "isEntry": true
   },

@@ -226,7 +226,7 @@ class TrackSubmit extends Component
             if ($this->track['artwork_data']) {
                 $this->track['artwork_data']->delete();
             }
-            
+
             DB::transaction(function () use ($responseTrack) {
                 $track =  Track::create([
                     'user_urn' => user()->urn,
@@ -305,7 +305,8 @@ class TrackSubmit extends Component
                 broadcast(new UserNotificationSent($notification));
             });
 
-            session()->flash('message', 'Track submitted successfully!');
+            $this->dispatch('alert', 'success', 'Track submitted successfully!');
+
             $this->reset();
             return $this->redirect(route('user.pm.my-account') . '?tab=tracks', navigate: true);
         } catch (RequestException $e) {
@@ -334,7 +335,7 @@ class TrackSubmit extends Component
             session()->flash('error', $errorMessage);
         } catch (\Exception $e) {
             logger()->error('General Submission Error: ' . $e->getMessage());
-            session()->flash('error', 'An unexpected error occurred. Please try again.');
+            $this->dispatch('alert', 'error', 'An unexpected error occurred. Please try again.');
         }
     }
 

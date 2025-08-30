@@ -64,7 +64,9 @@ class Pricing extends Component
                 $activeUserPlan = $this->userPlanService->getUserActivePlan(user()->urn);
 
                 if ($activeUserPlan && $activeUserPlan->plan?->price > $plan->price) {
-                    session()->flash('error', "You have already subscribed to a plan with higher price. Cannot upgrade a lower price plan.");
+
+                    $this->dispatch('alert', 'error', 'You have already subscribed to a plan with higher price. Cannot upgrade a lower price plan.');
+
                     return null; // Return null here
                 } elseif ($activeUserPlan && $activeUserPlan->plan?->price < $plan->price) {
                     $data['amount'] = $this->yearly_plan == 1
@@ -96,7 +98,6 @@ class Pricing extends Component
                     navigate: true
                 );
             }
-
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             session()->flash('error', $e->getMessage());
