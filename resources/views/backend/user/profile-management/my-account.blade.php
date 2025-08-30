@@ -239,7 +239,7 @@
                                     <span class="text-orange-500 dark:text-orange-400">SOUNDCLOUD</span>
                                 </p>
                             </div>
-                            @if($socialLink)
+                            @if ($socialLink)
                                 <div
                                     class="bg-gray-100 dark:bg-slate-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-slate-700">
                                     <h3 class="text-gray-900 dark:text-white font-semibold mb-3 sm:mb-4">Social Links
@@ -297,7 +297,8 @@
                                         @endif
                                         @if ($tiktok)
                                             <a href="https://www.tiktok.com/@{{ $tiktok }}" target="_blank">
-                                                <div class="w-6 h-6 bg-black rounded-md flex items-center justify-center">
+                                                <div
+                                                    class="w-6 h-6 bg-black rounded-md flex items-center justify-center">
                                                     <svg class="w-4 h-4 text-white" fill="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path
@@ -650,19 +651,6 @@
                                             </div>
                                         </div>
                                     </div>
-
-                                    {{-- Add an anchor to scroll back to after page change --}}
-                                    {{-- <div id="my-account-top"></div> --}}
-
-                                    {{-- Alpine handler to scroll to the top after Livewire SPA navigation completes --}}
-                                    {{-- <div
-                                        x-data
-                                        x-init="document.addEventListener('livewire:navigated', () => {
-                                            const el = document.getElementById('my-account-top');
-                                            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                        });"
-                                    ></div> --}}
-
                                     {{-- Tracks Tab --}}
                                     <div class="tab-panel mt-4" x-show="activeTab === 'tracks'" x-transition>
                                         <div
@@ -1101,41 +1089,27 @@
     @endif
 
     {{-- TAB FUNCTIONALITY --}}
-    @push('js')
+    {{-- @push('js')
         <script>
-            // Updated JavaScript section for SoundCloud Widget integration
-            document.addEventListener('DOMContentLoaded', function() {
-                // Initialize SoundCloud Widget API integration with Livewire
-                function initializeSoundCloudWidgets() {
-                    if (typeof SC === 'undefined') {
-                        setTimeout(initializeSoundCloudWidgets, 500);
-                        return;
-                    }
-                    // Handle both regular track players and playlist track players
-                    const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
-                    playerContainers.forEach(container => {
-                        const campaignId = container.dataset.campaignId;
-                        const iframe = container.querySelector('iframe');
-                        if (iframe && campaignId) {
-                            const widget = SC.Widget(iframe);
-                            // Track play events and call Livewire methods
-                            // widget.bind(SC.Widget.Events.PLAY, () => {
-                            //     @this.call('handleAudioPlay', campaignId);
-                            // });
-                            // widget.bind(SC.Widget.Events.PAUSE, () => {
-                            //     @this.call('handleAudioPause', campaignId);
-                            // });
-                            // widget.bind(SC.Widget.Events.FINISH, () => {
-                            //     @this.call('handleAudioEnded', campaignId);
-                            // });
-                            // // Track position updates
-                            // widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-                            //     const currentTime = data.currentPosition / 1000;
-                            //     @this.call('handleAudioTimeUpdate', campaignId, currentTime);
-                            // });
-                        }
-                    });
+            function initializeSoundCloudWidgets() {
+                if (typeof SC === 'undefined') {
+                    // setTimeout(initializeSoundCloudWidgets, 500);
+                    return;
                 }
+                // Handle both regular track players and playlist track players
+                const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+                playerContainers.forEach(container => {
+                    const campaignId = container.dataset.campaignId;
+                    const iframe = container.querySelector('iframe');
+                    if (iframe && campaignId) {
+                        const widget = SC.Widget(iframe);
+                    }
+                });
+            }
+            // Updated JavaScript section for SoundCloud Widget integration
+            document.addEventListener('livewire:navigated', function() {
+                // Initialize SoundCloud Widget API integration with Livewire
+
 
                 // Initialize widgets on page load
                 initializeSoundCloudWidgets();
@@ -1151,5 +1125,5 @@
                 });
             });
         </script>
-    @endpush
+    @endpush --}}
 </section>
