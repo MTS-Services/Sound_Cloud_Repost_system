@@ -690,3 +690,6 @@ function invoiceId()
 {
     return 'INV-' . date('Y') . '-0' . date('his');
 }
+
+
+

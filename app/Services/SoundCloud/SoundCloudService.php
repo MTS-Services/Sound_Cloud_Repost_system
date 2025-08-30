@@ -310,6 +310,9 @@ class SoundCloudService
         }
     }
 
+
+
+
     public function getUserProfile(User $user): array
     {
         return $this->makeApiRequest(
@@ -554,5 +557,17 @@ class SoundCloudService
 
         $response->throw();
         return $responseData;
+    }
+
+
+    public function syncSelfTracks($tracksData, $playlist_urn = null): void
+    {
+        $user = User::where('urn', user()->urn)->first();
+        $this->syncUserPlaylists($user, $tracksData, $playlist_urn);
+    }
+
+    public function syncSelfPlaylists(){
+        $user = User::where('urn', user()->urn)->first();
+        $this->syncUserPlaylists($user);
     }
 }
