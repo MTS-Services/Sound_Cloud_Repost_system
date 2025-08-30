@@ -122,8 +122,7 @@
                     <x-gbutton variant="primary" :full-width="true"
                         wire:click="openModal('{{ $user_->urn }}')">Request</x-gbutton>
                 @else
-                    <x-gabutton variant="primary" :full-width="true" wire:navigate
-                        href="{{ route('user.pm.my-account', $user_->urn) }}">Profile</x-gabutton>
+                    <x-gbutton variant="primary" :full-width="true" disabled class="!cursor-not-allowed !py-3">Request Later</x-gbutton>
                 @endif
             </div>
         @empty

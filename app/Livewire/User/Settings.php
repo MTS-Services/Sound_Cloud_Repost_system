@@ -10,7 +10,6 @@ use App\Models\UserPlan;
 use App\Models\UserSetting;
 use App\Models\UserSocialInformation;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
@@ -85,7 +84,7 @@ class Settings extends Component
         $this->selectedGenres = UserGenre::where('user_urn', user()->urn)->pluck('genre')->toArray();
         $this->credits = CreditTransaction::where('receiver_urn', user()->urn)->latest()->get();
         $this->payments = Payment::where('user_urn', user()->urn)->with('order.source')->latest()->get();
-        $this->activePlan = UserPlan::where('user_urn', user()->urn)->first()->plan->name;
+        $this->activePlan = UserPlan::where('user_urn', user()->urn)->first()->plan->name ?? 'Free Forever';
         $this->loadSettings();
         $this->loadUserInfo();
     }
@@ -252,9 +251,10 @@ class Settings extends Component
                 ['user_urn' => $userUrn],
                 $data
             );
+            $this->dispatch('alert', 'success', 'Settings updated successfully!');
             $this->reset();
             $this->loadSettings();
-            $this->dispatch('alert', 'success', 'Settings updated successfully!');
+           
         } catch (\Exception $e) {
             $this->dispatch('alert', 'error', $e->getMessage());
         }
@@ -299,9 +299,9 @@ class Settings extends Component
                 ['user_urn' => $userUrn],
                 $data
             );
+            $this->dispatch('alert', 'success', 'Settings updated successfully!');
             $this->reset();
             $this->loadSettings();
-            $this->dispatch('alert', 'success', 'Settings updated successfully!');
         } catch (\Exception $e) {
             $this->dispatch('alert', 'error', $e->getMessage());
         }
