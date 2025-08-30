@@ -20,7 +20,7 @@
                 {{-- <div
                     class="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 dark:bg-slate-800 dark:hover:bg-slate-700 text-white dark:text-gray-200 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer w-full sm:w-auto justify-center">
                     <span class="flex items-center gap-1 text-base sm:text-sm">
-                        
+
                         <a href="{{ route('user.cm.campaigns') }}" wire:navigate
                             class="hover:underline text-white dark:text-gray-200 text-base sm:text-xs lg:text-base">
                             {{ __('Earn Credits') }}
@@ -271,7 +271,7 @@
                                         credits</span>
                                 </div>
                                 <div class="flex space-x-2">
-                                    <div class="flex-1"> 
+                                    <div class="flex-1">
                                     <x-gabutton variant="secondary" :full-width="true" wire:navigate href="{{ route('user.decline-repost', encrypt($request->id)) }}">Decline</x-gabutton>
                                     </div>
                                     <div class="flex-1">
@@ -422,8 +422,6 @@
                 createCampaignChart();
             });
 
-            // Also call the function on the initial page load
-            createCampaignChart();
         </script>
     @endpush
 </x-user::layout>

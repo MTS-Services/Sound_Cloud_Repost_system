@@ -421,14 +421,14 @@
             // --- Global Initialization ---
             let bottomPlayerInstance; // Declare a global variable for the player instance
 
-            document.addEventListener('DOMContentLoaded', () => {
+            document.addEventListener('livewire:navigated', function() {
                 // Initialize the bottom player. It will be hidden until a track is loaded.
                 bottomPlayerInstance = new SoundCloudBottomPlayer(SOUNDCLOUD_CLIENT_ID);
 
                 // Listen for messages from iframes (your SoundCloud embeds)
                 window.addEventListener('message', (event) => {
                     if (event.origin !== window.location.origin) return;
-                    
+
                     const data = event.data;
                     if (!data || !data.track) return;
 
@@ -438,16 +438,16 @@
                         case 'soundcloud-play':
                             bottomPlayerInstance.loadTrack(data.track, true, data.iframeId);
                             break;
-                            
+
                         case 'soundcloud-pause':
-                            if (bottomPlayerInstance.currentTrack && 
+                            if (bottomPlayerInstance.currentTrack &&
                                 bottomPlayerInstance.currentTrack.id === data.track.id) {
                                 bottomPlayerInstance.pauseTrack();
                             }
                             break;
-                            
+
                         case 'soundcloud-finish':
-                            if (bottomPlayerInstance.currentTrack && 
+                            if (bottomPlayerInstance.currentTrack &&
                                 bottomPlayerInstance.currentTrack.id === data.track.id) {
                                 // Auto-play next track if available
                                 bottomPlayerInstance.playNextTrack();
@@ -455,12 +455,6 @@
                             break;
                     }
                 });
-
-                // Optional: If you want to initially load a track into the bottom player on page load
-                // const initialTrackData = @json($initialTrack ?? null);
-                // if (initialTrackData) {
-                //     bottomPlayerInstance.loadTrack(initialTrackData, false); // Load but don't autoplay on page load
-                // }
             });
         </script>
     @endpush

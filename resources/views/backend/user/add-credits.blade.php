@@ -5,13 +5,11 @@
         <div class="text-center mb-10">
             <h2 class="text-2xl font-extrabold text-black dark:text-white">Top up credits</h2>
             <p class="mt-2 text-sm text-gray-600 dark:text-white">Get your music in front of more people</p>
-            {{-- <button class="mt-2 text-sm text-gray-600 dark:text-white "> <span
-                    class="font-bold border border-gray-600 rounded px-2">+</span> Apply a coupon</button> --}}
         </div>
 
         <div class="grid grid-cols-2 gap-x-4 gap-y-6 justify-center md:grid-cols-3 lg:grid-cols-5 gap-6 items-stretch ">
             @foreach ($credits as $credit)
-                <!-- 2500 Credits -->
+
                 <div class="bg-white dark:bg-gray-600 rounded border overflow-hidden flex flex-col">
                     <div class="relative">
                         <div class="absolute   w-full text-white dark:text-white text-xs font-bold text-center   flex">
@@ -45,7 +43,7 @@
                         </form>
                     </div>
                 </div>
-                <!-- 5000 Credits -->
+
             @endforeach
         </div>
     </div>
