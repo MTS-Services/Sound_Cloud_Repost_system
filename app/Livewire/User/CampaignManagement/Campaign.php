@@ -481,7 +481,7 @@ class Campaign extends Component
     {
         try {
             $this->soundCloudService->syncSelfPlaylists();
-            
+
             $this->playlistsPage = 1;
             $this->playlists = Playlist::where('user_urn', user()->urn)
                 ->latest()
@@ -968,6 +968,7 @@ class Campaign extends Component
                 'commentable' => $this->commented
             ];
             if ($response->successful()) {
+                dd($response);
                 $soundcloudRepostId = $response->json('id');
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
                 $this->dispatch('alert', 'success', 'Campaign music reposted successfully.');
