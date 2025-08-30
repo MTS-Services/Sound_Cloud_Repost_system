@@ -303,7 +303,6 @@ class SoundCloudService
                 }
             }
 
-            // Delete tracks that are no longer in the API response
             if (is_null($playlist_urn)) {
                 $tracksToDelete = Track::where('user_urn', $user->urn)
                     ->whereNotIn('soundcloud_track_id', $trackIdsInResponse)
@@ -314,7 +313,6 @@ class SoundCloudService
                     Log::info("Successfully deleted " . count($tracksToDelete) . " tracks for user {$user->urn} that are no longer present on SoundCloud.");
                 }
             } else {
-                // If it's a playlist sync, handle playlist tracks
                 $tracksToDelete = PlaylistTrack::where('playlist_urn', $playlist_urn)
                     ->whereNotIn('track_urn', array_map(function ($t) {
                         return $t['urn'];
@@ -617,7 +615,7 @@ class SoundCloudService
         $httpClient = Http::withHeaders([
             'Authorization' => 'OAuth ' . $user->token,
         ]);
-
+        
         $response = $httpClient->get($this->baseUrl . '/me/activities/tracks');
         Log::info('SoundCloud API request for user ' . $response);
 
@@ -626,7 +624,20 @@ class SoundCloudService
             return;
         }
 
-        $tracks = $response->json();
-        dd($tracks);
+        $reposts = $response->json();
+        $soundcloudRepostId = $response->json('id');
+
+        foreach ($reposts as $repost) {
+            dd($repost, $soundcloudRepostId);
+            Repost::UpdateOrCreate([
+                'soundcloud_repost_id' => $soundcloudRepostId,
+                'reposter_urn' => $user->urn,
+                'track_owner_urn' => $repost['track']['user']['id'],
+                'soundcloud_track_id' => $soundcloudRepostId,
+                'reposted_at' => now(),
+                'credits_earned' => 0
+
+            ]);
+        }
     }
 }
