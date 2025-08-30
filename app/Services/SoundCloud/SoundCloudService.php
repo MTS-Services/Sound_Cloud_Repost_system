@@ -188,127 +188,6 @@ class SoundCloudService
      * @return int The number of tracks synced.
      * @throws Exception If there's an error syncing tracks.
      */
-    // public function syncUserTracks(User $user, $tracksData, $playlist_urn = null): int
-    // {
-    //     try {
-    //         $limit = 200;
-    //         if (empty($tracksData)) {
-    //             $tracksData = $this->getUserTracks($user, $limit); // This call now handles the refresh
-    //         }
-
-    //         $syncedCount = 0;
-
-    //         foreach ($tracksData as $trackData) {
-    //             $userUrn = $trackData['user']['urn'];
-
-    //             $track_author = User::updateOrCreate([
-    //                 'urn' => $userUrn,
-    //             ], [
-    //                 'soundcloud_id' => $trackData['user']['id'],
-    //                 'name' => $trackData['user']['username'],
-    //                 'nickname' => $trackData['user']['username'],
-    //                 'avatar' => $trackData['user']['avatar_url'],
-    //                 'soundcloud_permalink_url' => $trackData['user']['permalink_url'],
-    //             ]);
-
-    //             if (is_null($track_author->last_synced_at)) {
-    //                 $track_author->update(['status' => User::STATUS_INACTIVE]);
-    //             }
-
-    //             $commonTrackData = [
-    //                 'user_urn' => $trackData['user']['urn'] ?? null,
-    //                 'kind' => $trackData['kind'] ?? null,
-    //                 'urn' => $trackData['urn'] ?? null,
-    //                 'duration' => $trackData['duration'] ?? 0,
-    //                 'commentable' => $trackData['commentable'] ?? false,
-    //                 'comment_count' => $trackData['comment_count'] ?? 0,
-    //                 'sharing' => $trackData['sharing'] ?? null,
-    //                 'tag_list' => $trackData['tag_list'] ?? '',
-    //                 'streamable' => $trackData['streamable'] ?? false,
-    //                 'embeddable_by' => $trackData['embeddable_by'] ?? null,
-    //                 'purchase_url' => $trackData['purchase_url'] ?? null,
-    //                 'purchase_title' => $trackData['purchase_title'] ?? null,
-    //                 'genre' => $trackData['genre'] ?? null,
-    //                 'title' => $trackData['title'] ?? null,
-    //                 'description' => $trackData['description'] ?? null,
-    //                 'label_name' => $trackData['label_name'] ?? null,
-    //                 'release' => $trackData['release'] ?? null,
-    //                 'key_signature' => $trackData['key_signature'] ?? null,
-    //                 'isrc' => $trackData['isrc'] ?? null,
-    //                 'bpm' => $trackData['bpm'] ?? null,
-    //                 'release_year' => $trackData['release_year'] ?? null,
-    //                 'release_month' => $trackData['release_month'] ?? null,
-    //                 'release_day' => $trackData['release_day'] ?? null,
-    //                 'license' => $trackData['license'] ?? null,
-    //                 'uri' => $trackData['uri'] ?? null,
-    //                 'permalink_url' => $trackData['permalink_url'] ?? null,
-    //                 'artwork_url' => $trackData['artwork_url'] ?? null,
-    //                 'stream_url' => $trackData['stream_url'] ?? null,
-    //                 'download_url' => $trackData['download_url'] ?? null,
-    //                 'waveform_url' => $trackData['waveform_url'] ?? null,
-    //                 'available_country_codes' => $trackData['available_country_codes'] ?? null,
-    //                 'secret_uri' => $trackData['secret_uri'] ?? null,
-    //                 'user_favorite' => $trackData['user_favorite'] ?? false,
-    //                 'user_playback_count' => $trackData['user_playback_count'] ?? 0,
-    //                 'playback_count' => $trackData['playback_count'] ?? 0,
-    //                 'download_count' => $trackData['download_count'] ?? 0,
-    //                 'favoritings_count' => $trackData['favoritings_count'] ?? 0,
-    //                 'reposts_count' => $trackData['reposts_count'] ?? 0,
-    //                 'downloadable' => $trackData['downloadable'] ?? false,
-    //                 'access' => $trackData['access'] ?? null,
-    //                 'policy' => $trackData['policy'] ?? null,
-    //                 'monetization_model' => $trackData['monetization_model'] ?? null,
-    //                 'metadata_artist' => $trackData['metadata_artist'] ?? null,
-    //                 'created_at_soundcloud' => isset($trackData['created_at']) ? Carbon::parse($trackData['created_at'])->toDateTimeString() : null,
-    //                 'type' => $trackData['type'] ?? null,
-    //                 'last_sync_at' => now(),
-    //                 'author_username' => $trackData['user']['username'] ?? null,
-    //                 'author_soundcloud_id' => $trackData['user']['id'] ?? null,
-    //                 'author_soundcloud_urn' => $trackData['user']['urn'] ?? null,
-    //                 'author_soundcloud_kind' => $trackData['user']['kind'] ?? null,
-    //                 'author_soundcloud_permalink_url' => $trackData['user']['permalink_url'] ?? null,
-    //                 'author_soundcloud_permalink' => $trackData['user']['permalink'] ?? null,
-    //                 'author_soundcloud_uri' => $trackData['user']['uri'] ?? null,
-    //             ];
-
-    //             $track = Track::updateOrCreate(
-    //                 ['soundcloud_track_id' => $trackData['id']],
-    //                 $commonTrackData
-    //             );
-
-    //             Log::info("Successfully synced track {$track->soundcloud_track_id} for user {$user->urn}.");
-
-    //             if ($track_author && $track_author->urn !== $user->urn && is_null($playlist_urn)) {
-    //                 Repost::create([
-    //                     'reposter_urn' => $user->urn,
-    //                     'track_owner_urn' => $track->user_urn,
-    //                     'track_id' => $track->id,
-    //                     'reposted_at' => $track->created_at_soundcloud
-    //                 ]);
-    //             } elseif ($playlist_urn) {
-    //                 if ($playlist_urn && $track->urn) {
-    //                     PlaylistTrack::updateOrCreate([
-    //                         'playlist_urn' => $playlist_urn,
-    //                         'track_urn' => $track->urn,
-    //                     ]);
-    //                 }
-    //             }
-
-    //             if ($track->wasRecentlyCreated) {
-    //                 $syncedCount++;
-    //             }
-    //         }
-
-    //         Log::info("Successfully synced {$syncedCount} tracks for user {$user->urn}.");
-    //         return $syncedCount;
-    //     } catch (Exception $e) {
-    //         Log::error('Error syncing user tracks in syncUserTracks', [
-    //             'user_urn' => $user->urn,
-    //             'error' => $e->getMessage(),
-    //         ]);
-    //         throw $e;
-    //     }
-    // }
 
     public function syncUserTracks(User $user, $tracksData, $playlist_urn = null): int
     {
@@ -427,8 +306,8 @@ class SoundCloudService
             // Delete tracks that are no longer in the API response
             if (is_null($playlist_urn)) {
                 $tracksToDelete = Track::where('user_urn', $user->urn)
-                                    ->whereNotIn('soundcloud_track_id', $trackIdsInResponse)
-                                    ->pluck('id');
+                    ->whereNotIn('soundcloud_track_id', $trackIdsInResponse)
+                    ->pluck('id');
 
                 if ($tracksToDelete->isNotEmpty()) {
                     Track::destroy($tracksToDelete);
@@ -437,8 +316,10 @@ class SoundCloudService
             } else {
                 // If it's a playlist sync, handle playlist tracks
                 $tracksToDelete = PlaylistTrack::where('playlist_urn', $playlist_urn)
-                                            ->whereNotIn('track_urn', array_map(function($t) { return $t['urn']; }, $tracksData))
-                                            ->pluck('id');
+                    ->whereNotIn('track_urn', array_map(function ($t) {
+                        return $t['urn'];
+                    }, $tracksData))
+                    ->pluck('id');
                 if ($tracksToDelete->isNotEmpty()) {
                     PlaylistTrack::destroy($tracksToDelete);
                     Log::info("Successfully deleted " . count($tracksToDelete) . " tracks from playlist {$playlist_urn} that are no longer present on SoundCloud.");
@@ -534,13 +415,84 @@ class SoundCloudService
         );
     }
 
-    public function syncUserPlaylists(User $user, int $limit = 200): int
+    // public function syncUserPlaylists(User $user, int $limit = 200): int
+    // {
+    //     try {
+    //         $playlistsData = $this->getUserPlaylists($user, $limit); // This call now handles the refresh
+    //         $syncedCount = 0;
+
+    //         foreach ($playlistsData as $playlistData) {
+    //             $playlist = Playlist::updateOrCreate(
+    //                 ['soundcloud_id' => $playlistData['id'] ?? null],
+    //                 [
+    //                     'user_urn' => $playlistData['user']['urn'] ?? $user->urn,
+    //                     'soundcloud_urn' => $playlistData['urn'] ?? null,
+    //                     'soundcloud_kind' => $playlistData['kind'] ?? null,
+    //                     'title' => $playlistData['title'] ?? null,
+    //                     'duration' => $playlistData['duration'] ?? 0,
+    //                     'description' => $playlistData['description'] ?? null,
+    //                     'permalink' => $playlistData['permalink'] ?? null,
+    //                     'permalink_url' => $playlistData['permalink_url'] ?? null,
+    //                     'sharing' => $playlistData['sharing'] ?? null,
+    //                     'tag_list' => $playlistData['tag_list'] ?? '',
+    //                     'tags' => $playlistData['tag_list'] ?? '',
+    //                     'genre' => $playlistData['genre'] ?? null,
+    //                     'release' => $playlistData['release'] ?? null,
+    //                     'release_day' => $playlistData['release_day'] ?? null,
+    //                     'release_month' => $playlistData['release_month'] ?? null,
+    //                     'release_year' => $playlistData['release_year'] ?? null,
+    //                     'label_name' => $playlistData['label_name'] ?? null,
+    //                     'label' => $playlistData['label'] ?? null,
+    //                     'label_id' => $playlistData['label_id'] ?? null,
+    //                     'track_count' => $playlistData['track_count'] ?? 0,
+    //                     'likes_count' => $playlistData['likes_count'] ?? 0,
+    //                     'streamable' => $playlistData['streamable'] ?? true,
+    //                     'downloadable' => $playlistData['downloadable'] ?? false,
+    //                     'purchase_title' => $playlistData['purchase_title'] ?? null,
+    //                     'purchase_url' => $playlistData['purchase_url'] ?? null,
+    //                     'artwork_url' => $playlistData['artwork_url'] ?? null,
+    //                     'embeddable_by' => $playlistData['embeddable_by'] ?? null,
+    //                     'uri' => $playlistData['uri'] ?? null,
+    //                     'secret_uri' => $playlistData['secret_uri'] ?? null,
+    //                     'secret_token' => $playlistData['secret_token'] ?? null,
+    //                     'tracks_uri' => $playlistData['tracks_uri'] ?? null,
+    //                     'playlist_type' => $playlistData['playlist_type'] ?? null,
+    //                     'type' => $playlistData['type'] ?? null,
+    //                     'soundcloud_created_at' => isset($playlistData['created_at']) ? Carbon::parse($playlistData['created_at'])->toDateTimeString() : null,
+    //                     'last_modified' => isset($playlistData['last_modified']) ? Carbon::parse($playlistData['last_modified'])->toDateTimeString() : null,
+    //                 ]
+    //             );
+
+    //             if (!empty($playlistData['tracks'])) {
+    //                 $this->syncUserTracks($user, $playlistData['tracks'], $playlist->soundcloud_urn);
+    //             }
+
+    //             if ($playlist->wasRecentlyCreated) {
+    //                 $syncedCount++;
+    //             }
+    //         }
+
+    //         Log::info("Successfully synced {$syncedCount} playlists for user {$user->urn}.");
+    //         return $syncedCount;
+    //     } catch (Exception $e) {
+    //         Log::error('Error syncing user playlists in syncUserPlaylists', [
+    //             'user_urn' => $user->urn,
+    //             'error' => $e->getMessage(),
+    //         ]);
+    //         throw $e;
+    //     }
+    // }
+
+    public function syncUserPlaylists(User $user): int
     {
         try {
-            $playlistsData = $this->getUserPlaylists($user, $limit); // This call now handles the refresh
+            $playlistsData = $this->getUserPlaylists($user); // The limit is removed here, assuming getUserPlaylists handles pagination to get all playlists.
             $syncedCount = 0;
+            $playlistIdsInResponse = [];
 
             foreach ($playlistsData as $playlistData) {
+                $playlistIdsInResponse[] = $playlistData['id'];
+
                 $playlist = Playlist::updateOrCreate(
                     ['soundcloud_id' => $playlistData['id'] ?? null],
                     [
@@ -589,6 +541,16 @@ class SoundCloudService
                 if ($playlist->wasRecentlyCreated) {
                     $syncedCount++;
                 }
+            }
+
+            // Deletion logic
+            $playlistsToDelete = Playlist::where('user_urn', $user->urn)
+                ->whereNotIn('soundcloud_id', $playlistIdsInResponse)
+                ->pluck('id');
+
+            if ($playlistsToDelete->isNotEmpty()) {
+                Playlist::destroy($playlistsToDelete);
+                Log::info("Successfully deleted " . count($playlistsToDelete) . " playlists for user {$user->urn} that are no longer present on SoundCloud.");
             }
 
             Log::info("Successfully synced {$syncedCount} playlists for user {$user->urn}.");
@@ -713,7 +675,8 @@ class SoundCloudService
     }
 
 
-    public function syncSelfPlaylists(){
+    public function syncSelfPlaylists()
+    {
         $user = User::where('urn', user()->urn)->first();
         $this->syncUserPlaylists($user);
     }
