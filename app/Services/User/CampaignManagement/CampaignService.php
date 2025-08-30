@@ -49,7 +49,7 @@ class CampaignService
                     $campaign->increment('favorite_count');
                 }
                 if ($likeCommentAbleData['likeable']) {
-                    $campaign->increment('emoji_count');
+                    $campaign->increment('like_count');
                 }
                 if ($likeCommentAbleData['followed']) {
                     $campaign->increment('follow_count');

@@ -28,6 +28,7 @@ return new class extends Migration
             $table->integer('max_repost_per_day')->nullable();
             $table->string('target_genre')->nullable();
             $table->boolean('pro_feature')->default(false);
+            $table->integer('like_count')->nullable();
             $table->integer('comment_count')->nullable();
             $table->integer('favorite_count')->nullable();
             $table->integer('follow_count')->nullable();
