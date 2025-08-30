@@ -450,8 +450,9 @@ class Campaign extends Component
     public function fetchTracks()
     {
         try {
-            $tracks = $this->soundCloudService->syncUserTracks(user(), []);
-            dd($tracks);
+            $user = User::where('urn', user()->urn)->first();
+            $tracks = $this->soundCloudService->syncUserTracks($user, []);
+            dd($tracks, $user);
             $this->tracksPage = 1;
             $this->tracks = Track::where('user_urn', user()->urn)
                 ->latest()
