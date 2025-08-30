@@ -481,7 +481,7 @@ class Campaign extends Component
     {
         try {
             $this->soundCloudService->syncSelfPlaylists();
-            
+
             $this->playlistsPage = 1;
             $this->playlists = Playlist::where('user_urn', user()->urn)
                 ->latest()
@@ -946,18 +946,25 @@ class Campaign extends Component
                 ]
             ];
 
-
+            $response = null;
             switch ($campaign->music_type) {
                 case Track::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
-                    $response = $httpClient->post("{$this->baseUrl}/tracks/{$campaign->music->urn}/comments", $commentSoundcloud);
+                    if($this->commented){
+                       $comment_response = $httpClient->post("{$this->baseUrl}/tracks/{$campaign->music->urn}/comments", $commentSoundcloud);
+                    }
                     if ($this->liked) {
-                        $response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$campaign->music->urn}");
+                        $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$campaign->music->urn}");
                     }
                     break;
                 case Playlist::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$campaign->music->urn}");
-                    $response = $httpClient->post("{$this->baseUrl}/playlists/{$campaign->music->urn}/comments", $commentSoundcloud);
+                    if ($this->liked) {
+                        $comment_response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$campaign->music->urn}");
+                    }
+                    if($this->commented){
+                        $like_response = $httpClient->post("{$this->baseUrl}/playlists/{$campaign->music->urn}/comments", $commentSoundcloud);
+                    }
                     break;
                 default:
                     $this->dispatch('alert', 'error', 'Invalid music type specified for the campaign.');

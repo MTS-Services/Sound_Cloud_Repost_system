@@ -86,6 +86,9 @@ class MyAccount extends Component
         if ($tab !== 'playlists') {
             $this->resetPlaylistView();
         }
+        if($tab == 'reposts') {
+            $this->soundCloudService->selfRepostTracks();
+        }
 
         // Reset the relevant pager when switching tabs
         if ($tab === 'tracks') {
@@ -134,14 +137,15 @@ class MyAccount extends Component
 
     public function syncTracks()
     {
-        SyncedTracks::dispatch(user()->urn);
-        return back()->with('success', 'Track sync started in background. Please check later.');
+        $this->soundCloudService->syncSelfTracks([]);
+        // SyncedTracks::dispatch(user()->urn);
+        // return back()->with('success', 'Track sync started in background. Please check later.');
     }
     public function syncPlaylists()
     {
-        SyncedPlaylists::dispatch(user()->urn);
-
-        return back()->with('success', 'Playlist sync started in background.');
+        $this->soundCloudService->syncSelfPlaylists();
+        // SyncedPlaylists::dispatch(user()->urn);
+        // return back()->with('success', 'Playlist sync started in background.');
     }
     public $instagram = null;
     public $twitter = null;
