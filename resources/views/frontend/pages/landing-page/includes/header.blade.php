@@ -11,6 +11,7 @@
 
          <nav class="hidden md:flex items-center space-x-8">
              <a href="#about" class="text-gray-300 hover:text-white transition-colors">About</a>
+             <a href="plans" class="text-gray-300 hover:text-white transition-colors">Plans</a>
              <a href="#how-it-works" class="text-gray-300 hover:text-white transition-colors">How it Works</a>
              <a href="#features" class="text-gray-300 hover:text-white transition-colors">Features</a>
              <a href="#testimonials" class="text-gray-300 hover:text-white transition-colors">Testimonials</a>
@@ -32,7 +33,8 @@
              @if (Auth::check())
                  {{-- <a href="{{ route('user.dashboard') }}"
                      class="bg-orange-600 rounded-md  px-3 py-1 text-white hover:bg-orange-700 transition-colors">{{ __('Dashboard') }}</a> --}}
-                     <x-gabutton variant="primary" wire:navigate href="{{ route('user.dashboard') }}">{{ __('Dashboard') }}</x-gabutton>
+                 <x-gabutton variant="primary" wire:navigate
+                     href="{{ route('user.dashboard') }}">{{ __('Dashboard') }}</x-gabutton>
              @else
                  {{-- <a href="{{ route('soundcloud.redirect') }}"
                      class="w-fit px-2 py-1 flex gap-2 items-center justify-center border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">

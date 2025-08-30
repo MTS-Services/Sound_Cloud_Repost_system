@@ -9,6 +9,7 @@ use App\Http\Controllers\Backend\User\FaqManagement\FaqController as FaqManageme
 use App\Livewire\User\CampaignManagement\Campaign;
 use App\Livewire\User\CampaignManagement\MyCampaign;
 use App\Http\Controllers\Backend\User\Members\MemberController;
+use App\Http\Controllers\Backend\User\PlanController;
 use App\Http\Controllers\Backend\User\PromoteController;
 use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
 
@@ -28,6 +29,7 @@ use App\Livewire\User\Settings;
 use App\Livewire\User\TrackSubmit;
 use App\Models\Faq as ModelsFaq;
 use Illuminate\Validation\Rules\Unique;
+use PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Round;
 use PHPUnit\TextUI\Help;
 
 
@@ -100,4 +102,6 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
 Route::get('user/frequently-asked-questions', Faq::class)->name('user.faq')->middleware('auth:web');
 
 // Static page routes
-Route::view('user/charts', 'backend.user.chart')->name('charts')->middleware('auth:web');
+// Route::view('user/charts', 'backend.user.chart')->name('charts')->middleware('auth:web');
+
+Route::get('plans', [PlanController::class, 'index'])->name('plans');

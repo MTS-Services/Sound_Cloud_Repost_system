@@ -26,7 +26,7 @@ use App\Models\Faq;
 
 Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], function () {
 
-    // Button UI Route 
+    // Button UI Route
     Route::get('/button-ui', function () {
         return view('backend.admin.ui.buttons');
     })->name('button-ui');
@@ -231,7 +231,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         Route::delete('/delete', 'destroy')->name('destroy');
     });
 
-    // Application Settings 
+    // Application Settings
     Route::controller(ApplicationSettingController::class)->name('app-settings.')->prefix('application-settings')->group(function () {
         Route::post('/update-settings', 'updateSettings')->name('update-settings');
         Route::get('/', 'general')->name('general');

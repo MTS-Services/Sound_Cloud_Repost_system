@@ -4,7 +4,7 @@
                     <h2 class="text-3xl md:text-4xl font-bold mb-6 text-white">What is RepostChain?</h2>
                     <p class="text-lg text-gray-300">RepostChain is a revolutionary platform that connects musicians and content creators, enabling organic growth through collaborative promotion and authentic engagement.</p>
                 </div>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="p-6 rounded-xl bg-dark-card">
                         <div class="flex items-start gap-4">
@@ -20,7 +20,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="p-6 rounded-xl bg-dark-card">
                         <div class="flex items-start gap-4">
                             <div class="p-3 rounded-lg bg-primary/10">
@@ -37,7 +37,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="p-6 rounded-xl bg-dark-card">
                         <div class="flex items-start gap-4">
                             <div class="p-3 rounded-lg bg-primary/10">
@@ -51,7 +51,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="p-6 rounded-xl bg-dark-card">
                         <div class="flex items-start gap-4">
                             <div class="p-3 rounded-lg bg-primary/10">
