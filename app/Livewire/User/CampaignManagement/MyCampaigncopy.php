@@ -411,7 +411,8 @@ class MyCampaigncopy extends Component
 
             if (!$playlist->soundcloud_urn) {
                 $this->playlistTracks = [];
-                session()->flash('error', 'Playlist SoundCloud URN is missing.');
+                $this->dispatch('alert', 'error', 'Playlist SoundCloud URN is missing.');
+
                 return;
             }
 
@@ -607,7 +608,8 @@ class MyCampaigncopy extends Component
                 }
             });
 
-            session()->flash('message', 'Campaign created successfully!');
+            $this->dispatch('alert', 'error', 'Campaign created successfully!');
+
             $this->dispatch('campaignCreated');
 
             // Close modal and complete reset
@@ -644,7 +646,7 @@ class MyCampaigncopy extends Component
 
             $this->resetValidation();
             $this->resetErrorBag();
-            session()->flash('message', 'Campaign created successfully!');
+            $this->dispatch('alert', 'success', 'Campaign created successfully!');
         } catch (\Exception $e) {
             session()->flash('error', 'Failed to create campaign: ' . $e->getMessage());
 
@@ -663,7 +665,8 @@ class MyCampaigncopy extends Component
             ->first();
 
         if (!$this->editingCampaign) {
-            session()->flash('error', 'Campaign not found or cannot be edited.');
+            $this->dispatch('alert', 'error', 'Campaign not found or cannot be edited!');
+
             return;
         }
 
@@ -754,7 +757,8 @@ class MyCampaigncopy extends Component
 
     private function handleSuccessfulCampaignCreation(): void
     {
-        session()->flash('message', 'Campaign created successfully!');
+        $this->dispatch('alert', 'success', 'Campaign created successfully!');
+
         $this->dispatch('campaignCreated');
         $this->closeAllModals();
         $this->resetAllFormData();
@@ -856,12 +860,15 @@ class MyCampaigncopy extends Component
             $creditDifference = $newBudgetCredits - $campaign->budget_credits;
 
             if ($creditDifference < 0) {
-                session()->flash('error', 'Campaign budget cannot be decreased.');
+                $this->dispatch('alert', 'error', 'Campaign budget cannot be decreased.');
+
                 return;
             }
 
             if ($creditDifference > 0 && $creditDifference > userCredits()) {
-                session()->flash('error', "You need {$creditDifference} more credits to update this campaign budget.");
+
+                $this->dispatch('alert', 'error', 'You need {$creditDifference} more credits to update this campaign budget.');
+
                 $this->showLowCreditWarningModal = true;
                 $this->showEditCampaignModal = false;
                 return;
@@ -875,7 +882,8 @@ class MyCampaigncopy extends Component
                 }
             });
 
-            session()->flash('success', 'Campaign updated successfully!');
+            $this->dispatch('alert', 'success', 'Campaign updated successfully!');
+
             $this->showEditCampaignModal = false;
         } catch (\Exception $e) {
             $this->handleError('Failed to update campaign', $e, [
@@ -1172,7 +1180,7 @@ class MyCampaigncopy extends Component
             $this->processResolvedData($response->json());
         } else {
             $this->resetCollections();
-            session()->flash('error', 'Could not resolve the SoundCloud link. Please check the URL.');
+            $this->dispatch('alert', 'error', 'Could not resolve the SoundCloud link. Please check the URL.');
         }
     }
 
@@ -1187,7 +1195,7 @@ class MyCampaigncopy extends Component
                 $this->fetchUserTracks($data['id']);
             } else {
                 $this->resetCollections();
-                session()->flash('error', 'The provided URL is not a track or user profile.');
+                $this->dispatch('alert', 'error', 'The provided URL is not a track or user profile.');
             }
         } elseif ($this->activeModalTab === 'playlists') {
             if ($data['kind'] === 'playlist') {
@@ -1196,7 +1204,7 @@ class MyCampaigncopy extends Component
                 $this->playlists = $this->allPlaylists->take($this->playlistLimit);
             } else {
                 $this->resetCollections();
-                session()->flash('error', 'The provided URL is not a playlist.');
+                $this->dispatch('alert', 'error', 'The provided URL is not a playlist.');
             }
         }
     }

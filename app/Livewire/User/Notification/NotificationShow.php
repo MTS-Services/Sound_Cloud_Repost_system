@@ -99,7 +99,8 @@ class NotificationShow extends Component
             'user_type' => $this->currentUserType,
         ]);
         $this->dispatch('notification-deleted', $this->customNotification->id);
-        session()->flash('success', 'Notification deleted successfully.');
+        $this->dispatch('alert', 'success', 'Notification deleted successfully.');
+
         return $this->redirect(route('user.notifications.index'), navigate: true);
     }
 

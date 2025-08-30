@@ -495,7 +495,8 @@ class Campaign extends Component
 
             if (!$playlist->soundcloud_urn) {
                 $this->playlistTracks = [];
-                session()->flash('error', 'Playlist SoundCloud URN is missing.');
+                $this->dispatch('alert', 'error', 'Playlist SoundCloud URN is missing.');
+
                 return;
             }
 
@@ -693,7 +694,7 @@ class Campaign extends Component
                     'commentable' => $commentable,
                     'likeable' => $likeable,
                     'pro_feature' => $proFeatureEnabled,
-                    'momentum_price' => $proFeatureEnabled == 1 ? $this->credit/2 : 0,
+                    'momentum_price' => $proFeatureEnabled == 1 ? $this->credit / 2 : 0,
                     'max_repost_last_24_h' => $this->maxRepostLast24h,
                     'max_repost_per_day' => $this->maxRepostsPerDay,
                     'target_genre' => $this->targetGenre,
@@ -719,7 +720,8 @@ class Campaign extends Component
                 ]);
             });
 
-            session()->flash('message', 'Campaign created successfully!');
+            $this->dispatch('alert', 'success', 'Campaign created successfully!');
+
             $this->dispatch('campaignCreated');
 
             $this->showCampaignsModal = false;
@@ -755,6 +757,7 @@ class Campaign extends Component
             $this->resetErrorBag();
         } catch (\Exception $e) {
             session()->flash('error', 'Failed to create campaign: ' . $e->getMessage());
+
 
             Log::error('Campaign creation error: ' . $e->getMessage(), [
                 'music_id' => $this->musicId,
@@ -842,7 +845,7 @@ class Campaign extends Component
 
         if ($this->playTimes[$campaignId] >= 5 && !in_array($campaignId, $this->playedCampaigns)) {
             $this->playedCampaigns[] = $campaignId;
-            session()->flash('success', 'Campaign marked as played for 5+ seconds!');
+            $this->dispatch('alert', 'success', 'Campaign marked as played for 5+ seconds!');
         }
     }
 
@@ -886,26 +889,31 @@ class Campaign extends Component
     {
         try {
             if (!$this->canRepost($campaignId)) {
-                session()->flash('error', 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
+                $this->dispatch('alert', 'error', 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
+
                 return;
             }
 
             $currentUserUrn = user()->urn;
 
             if ($this->campaignService->getCampaigns()->where('id', $campaignId)->where('user_urn', $currentUserUrn)->exists()) {
-                session()->flash('error', 'You cannot repost your own campaign.');
+
+                $this->dispatch('alert', 'error', 'You cannot repost your own campaign.');
+
                 return;
             }
 
             if (Repost::where('reposter_urn', $currentUserUrn)->where('campaign_id', $campaignId)->exists()) {
-                session()->flash('error', 'You have already reposted this campaign.');
+                $this->dispatch('alert', 'error', 'You have already reposted this campaign.');
+
                 return;
             }
 
             $campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
 
             if (!$campaign->music) {
-                session()->flash('error', 'Track or Playlist not found for this campaign.');
+                $this->dispatch('alert', 'error', 'Track or Playlist not found for this campaign.');
+
                 return;
             }
 
@@ -923,21 +931,22 @@ class Campaign extends Component
                     $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$campaign->music->urn}");
                     break;
                 default:
-                    session()->flash('error', 'Invalid music type specified for the campaign.');
+                    $this->dispatch('alert', 'error', 'Invalid music type specified for the campaign.');
+
                     return;
             }
 
             if ($response->successful()) {
                 $soundcloudRepostId = $response->json('id');
                 $this->campaignService->syncReposts($campaign, $currentUserUrn, $soundcloudRepostId);
-                session()->flash('success', 'Campaign music reposted successfully.');
+                $this->dispatch('alert', 'success', 'Campaign music reposted successfully.');
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [
                     'campaign_id' => $campaignId,
                     'user_urn' => $currentUserUrn,
                     'status' => $response->status(),
                 ]);
-                session()->flash('error', 'Failed to repost campaign music to SoundCloud. Please try again.');
+                $this->dispatch('alert', 'error', 'Failed to repost campaign music to SoundCloud. Please try again.');
             }
         } catch (Throwable $e) {
             Log::error("Error in repost method: " . $e->getMessage(), [
@@ -945,7 +954,8 @@ class Campaign extends Component
                 'campaign_id_input' => $campaignId,
                 'user_urn' => user()->urn ?? 'N/A',
             ]);
-            session()->flash('error', 'An unexpected error occurred. Please try again later.');
+            $this->dispatch('alert', 'error', 'An unexpected error occurred. Please try again later.');
+
             return;
         }
     }
@@ -1089,7 +1099,7 @@ class Campaign extends Component
                     $this->playlists = collect();
                 }
             }
-            session()->flash('error', 'Could not resolve the SoundCloud link. Please check the URL.');
+            $this->dispatch('alert', 'error', 'Could not resolve the SoundCloud link. Please check the URL.');
         }
     }
 
@@ -1118,7 +1128,7 @@ class Campaign extends Component
             default:
                 $this->allTracks = collect();
                 $this->tracks = collect();
-                session()->flash('error', 'The provided URL is not a track or playlist.');
+                $this->dispatch('alert', 'error', 'The provided URL is not a track or playlist.');
                 break;
         }
     }
