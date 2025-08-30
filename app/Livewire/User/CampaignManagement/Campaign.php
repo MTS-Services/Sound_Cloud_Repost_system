@@ -450,6 +450,7 @@ class Campaign extends Component
     public function fetchTracks()
     {
         try {
+            $this->soundCloudService->syncUserTracks(user(), []);
             $this->tracksPage = 1;
             $this->tracks = Track::where('user_urn', user()->urn)
                 ->latest()
@@ -963,7 +964,6 @@ class Campaign extends Component
                 'likeable' => $this->liked,
                 'commentable' => $this->commented
             ];
-            Log::info($response->body());
             if ($response->successful()) {
                 $soundcloudRepostId = $response->json('id');
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
