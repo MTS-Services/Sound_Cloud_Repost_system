@@ -337,9 +337,6 @@ class SoundCloudService
         }
     }
 
-
-
-
     public function getUserProfile(User $user): array
     {
         return $this->makeApiRequest(
@@ -414,74 +411,6 @@ class SoundCloudService
             'Failed to fetch playlists from SoundCloud API.'
         );
     }
-
-    // public function syncUserPlaylists(User $user, int $limit = 200): int
-    // {
-    //     try {
-    //         $playlistsData = $this->getUserPlaylists($user, $limit); // This call now handles the refresh
-    //         $syncedCount = 0;
-
-    //         foreach ($playlistsData as $playlistData) {
-    //             $playlist = Playlist::updateOrCreate(
-    //                 ['soundcloud_id' => $playlistData['id'] ?? null],
-    //                 [
-    //                     'user_urn' => $playlistData['user']['urn'] ?? $user->urn,
-    //                     'soundcloud_urn' => $playlistData['urn'] ?? null,
-    //                     'soundcloud_kind' => $playlistData['kind'] ?? null,
-    //                     'title' => $playlistData['title'] ?? null,
-    //                     'duration' => $playlistData['duration'] ?? 0,
-    //                     'description' => $playlistData['description'] ?? null,
-    //                     'permalink' => $playlistData['permalink'] ?? null,
-    //                     'permalink_url' => $playlistData['permalink_url'] ?? null,
-    //                     'sharing' => $playlistData['sharing'] ?? null,
-    //                     'tag_list' => $playlistData['tag_list'] ?? '',
-    //                     'tags' => $playlistData['tag_list'] ?? '',
-    //                     'genre' => $playlistData['genre'] ?? null,
-    //                     'release' => $playlistData['release'] ?? null,
-    //                     'release_day' => $playlistData['release_day'] ?? null,
-    //                     'release_month' => $playlistData['release_month'] ?? null,
-    //                     'release_year' => $playlistData['release_year'] ?? null,
-    //                     'label_name' => $playlistData['label_name'] ?? null,
-    //                     'label' => $playlistData['label'] ?? null,
-    //                     'label_id' => $playlistData['label_id'] ?? null,
-    //                     'track_count' => $playlistData['track_count'] ?? 0,
-    //                     'likes_count' => $playlistData['likes_count'] ?? 0,
-    //                     'streamable' => $playlistData['streamable'] ?? true,
-    //                     'downloadable' => $playlistData['downloadable'] ?? false,
-    //                     'purchase_title' => $playlistData['purchase_title'] ?? null,
-    //                     'purchase_url' => $playlistData['purchase_url'] ?? null,
-    //                     'artwork_url' => $playlistData['artwork_url'] ?? null,
-    //                     'embeddable_by' => $playlistData['embeddable_by'] ?? null,
-    //                     'uri' => $playlistData['uri'] ?? null,
-    //                     'secret_uri' => $playlistData['secret_uri'] ?? null,
-    //                     'secret_token' => $playlistData['secret_token'] ?? null,
-    //                     'tracks_uri' => $playlistData['tracks_uri'] ?? null,
-    //                     'playlist_type' => $playlistData['playlist_type'] ?? null,
-    //                     'type' => $playlistData['type'] ?? null,
-    //                     'soundcloud_created_at' => isset($playlistData['created_at']) ? Carbon::parse($playlistData['created_at'])->toDateTimeString() : null,
-    //                     'last_modified' => isset($playlistData['last_modified']) ? Carbon::parse($playlistData['last_modified'])->toDateTimeString() : null,
-    //                 ]
-    //             );
-
-    //             if (!empty($playlistData['tracks'])) {
-    //                 $this->syncUserTracks($user, $playlistData['tracks'], $playlist->soundcloud_urn);
-    //             }
-
-    //             if ($playlist->wasRecentlyCreated) {
-    //                 $syncedCount++;
-    //             }
-    //         }
-
-    //         Log::info("Successfully synced {$syncedCount} playlists for user {$user->urn}.");
-    //         return $syncedCount;
-    //     } catch (Exception $e) {
-    //         Log::error('Error syncing user playlists in syncUserPlaylists', [
-    //             'user_urn' => $user->urn,
-    //             'error' => $e->getMessage(),
-    //         ]);
-    //         throw $e;
-    //     }
-    // }
 
     public function syncUserPlaylists(User $user): int
     {
@@ -679,5 +608,25 @@ class SoundCloudService
     {
         $user = User::where('urn', user()->urn)->first();
         $this->syncUserPlaylists($user);
+    }
+
+    public function selfRepostTracks(): void
+    {
+        $user = User::where('urn', user()->urn)->first();
+
+        $httpClient = Http::withHeaders([
+            'Authorization' => 'OAuth ' . $user->token,
+        ]);
+
+        $response = $httpClient->get($this->baseUrl . '/me/activities/tracks');
+        Log::info('SoundCloud API request for user ' . $response);
+
+        if ($response->failed()) {
+            Log::error('SoundCloud API request failed for user ' . $user->run);
+            return;
+        }
+
+        $tracks = $response->json();
+        dd($tracks);
     }
 }

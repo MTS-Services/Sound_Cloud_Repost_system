@@ -86,6 +86,9 @@ class MyAccount extends Component
         if ($tab !== 'playlists') {
             $this->resetPlaylistView();
         }
+        if($tab == 'reposts') {
+            $this->soundCloudService->selfRepostTracks();
+        }
 
         // Reset the relevant pager when switching tabs
         if ($tab === 'tracks') {

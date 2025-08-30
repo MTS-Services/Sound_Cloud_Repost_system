@@ -406,7 +406,7 @@
                                             'text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400': activeTab === 'reposts',
                                             'text-gray-500 border-transparent dark:text-slate-400': activeTab !== 'reposts'
                                         }"
-                                        @click="activeTab = 'reposts'"
+                                        @click="activeTab = 'reposts'" wire:click="setActiveTab('reposts')"
                                         class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors">
                                         Recent reposts
                                     </button>
