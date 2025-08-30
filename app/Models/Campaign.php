@@ -36,8 +36,10 @@ class Campaign extends BaseModel
         'max_repost_last_24_h',
         'max_repost_per_day',
         'target_genre',
+        'like_count',
+        'comment_count',
+        'follow_count',
         'favorite_count',
-        'emoji_count',
 
         'creater_id',
         'updater_id',
