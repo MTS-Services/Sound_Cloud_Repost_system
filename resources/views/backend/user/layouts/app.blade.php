@@ -79,7 +79,7 @@
 
     @stack('cs')
     @livewireStyles()
-    <script async src="https://cse.google.com/cse.js?cx=23c01bcccd3964c56"></script>
+    {{-- <script async src="https://cse.google.com/cse.js?cx=23c01bcccd3964c56"></script> --}}
 
 
 
@@ -107,11 +107,12 @@
     @include('backend.user.layouts.partials.sidebar')
 
     <!-- Main Content -->
-    <div class="ml-auto lg:w-[calc(100%-15%)] w-full">
+    <div class="ml-auto lg:w-[calc(100%-15%)]">
         <div class="p-4 md:p-6 min-h-[calc(100vh-64px)]">
             {{ $slot }}
         </div>
     </div>
+
 
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
     {{-- <script src="{{ asset('assets/frontend/js/custome.js') }}"></script> --}}

@@ -1,22 +1,5 @@
 <div>
     <x-slot name="page_slug">dashboard</x-slot>
-    
-    {{-- @if (session()->has('success'))
-        <div class="fixed top-4 right-4 z-50">
-            <div class="bg-green-500/90 text-green-500 px-4 py-2 rounded-md shadow-lg backdrop-blur-sm">
-                {{ session('success') }}
-            </div>
-        </div>
-    @endif
-
-    @if (session()->has('error'))
-        <div class="fixed top-4 right-4 z-50">
-            <div class="bg-red-500/90 text-red-500 px-4 py-2 rounded-md shadow-lg backdrop-blur-sm">
-                {{ session('error') }}
-            </div>
-        </div>
-    @endif --}}
-    <!-- Dashboard Content (Default) -->
     <div id="content-dashboard" class="page-content py-2 px-2">
         <div
             class="tablet:px-2 px-0.5 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 w-full">
@@ -162,9 +145,9 @@
 
     <div class="p-2">
         <main class="#">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 dark:text-white">
                 <!-- Left Section -->
-                <div class="lg:col-span-2 rounded-lg p-4 border border-slate-700">
+                <div class="lg:col-span-2 rounded-lg p-4 shadow-sm dark:bg-slate-800">
                     <div class="flex flex-col sm:flex-row justify-between sm:items-center p-2">
                         <div>
                             <h2 class="dark:text-white text-lg font-semibold">Performance Overview</h2>
@@ -181,7 +164,7 @@
                 </div>
 
                 <!-- Right Section -->
-                <div class="rounded-lg p-4 sm:p-6 border border-slate-700">
+                <div class="rounded-lg p-4 sm:p-6 shadow-sm dark:bg-slate-800">
                     <h3 class="dark:text-white text-lg font-semibold">Genre Distribution</h3>
                     <p class="text-slate-400 text-sm mb-2">What your audience listens to</p>
                     <div class="h-60 sm:h-96 flex flex-col justify-between">
@@ -201,12 +184,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Second Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-2 mt-4 dark:text-white">
                 <!-- Left Section -->
-                <div class="lg:col-span-2 rounded-lg p-4 border border-slate-700">
+                <div class="lg:col-span-2 rounded-lg p-4 shadow-sm dark:bg-slate-800">
                     <div class="flex items-center justify-between p-4">
                         <div>
                             <h3 class="text-lg font-semibold">Recent Tracks</h3>
@@ -217,12 +197,7 @@
                     </div>
                     <div class="space-y-4">
                         @foreach ($repostRequests as $repostRequest)
-                            <div
-                                class="rounded-lg p-4 border border-slate-700 hover:border-slate-600 transition-colors">
-                                <div id="soundcloud-player-{{ $repostRequest->id }}" wire:ignore>
-                                    <x-sound-cloud.sound-cloud-player :track="$repostRequest->track" :visual="false" />
-                                </div>
-                            </div>
+                            <x-sound-cloud.sound-cloud-player :track="$repostRequest->track" :visual="false" />
                         @endforeach
                     </div>
                     <div class="text-center py-8 border-t border-slate-700">
@@ -242,7 +217,7 @@
                 </div>
 
                 <!-- Right Section -->
-                <div class="rounded-lg border border-slate-700 p-4">
+                <div class="rounded-lg shadow-sm p-4 dark:bg-slate-800">
                     <div class="flex items-center justify-between p-2">
                         <div>
                             <h3 class="text-lg font-semibold">Latest Repost Requests</h3>
@@ -254,7 +229,7 @@
                     </div>
                     @foreach ($repostRequests as $request)
                         <div class="space-y-4">
-                            <div class="border border-slate-700 rounded-lg p-4">
+                            <div class="shadow-sm rounded-lg p-4">
                                 <div class="flex items-start space-x-3 mb-3">
                                     <img src="https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg"
                                         class="w-8 h-8 rounded-full" alt="">
@@ -312,6 +287,8 @@
                     @endforeach
                 </div>
             </div>
+
+
         </main>
     </div>
 
@@ -418,8 +395,5 @@
         document.addEventListener('livewire:navigated', () => {
             createCampaignChart();
         });
-
-        // Also call the function on the initial page load
-        createCampaignChart();
     </script>
 </div>
