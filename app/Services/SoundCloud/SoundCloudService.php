@@ -628,10 +628,9 @@ class SoundCloudService
         }
 
         $reposts = $response->json();
-        $soundcloudRepostId = $response->json('id');
+        dd($reposts);
 
         foreach ($reposts as $repost) {
-            dd($repost, $soundcloudRepostId);
             Repost::UpdateOrCreate([
                 'soundcloud_repost_id' => $soundcloudRepostId,
                 'reposter_urn' => $user->urn,
