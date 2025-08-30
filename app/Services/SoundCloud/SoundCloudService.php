@@ -628,18 +628,5 @@ class SoundCloudService
         }
 
         $reposts = $response->json();
-        dd($reposts);
-
-        foreach ($reposts as $repost) {
-            Repost::UpdateOrCreate([
-                'soundcloud_repost_id' => $soundcloudRepostId,
-                'reposter_urn' => $user->urn,
-                'track_owner_urn' => $repost['track']['user']['id'],
-                'soundcloud_track_id' => $soundcloudRepostId,
-                'reposted_at' => now(),
-                'credits_earned' => 0
-
-            ]);
-        }
     }
 }

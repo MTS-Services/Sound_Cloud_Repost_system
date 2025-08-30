@@ -975,7 +975,6 @@ class Campaign extends Component
                 'commentable' => $this->commented
             ];
             if ($response->successful()) {
-                dd($response->json());
                 $soundcloudRepostId = $response->json('id');
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
                 $this->dispatch('alert', 'success', 'Campaign music reposted successfully.');
