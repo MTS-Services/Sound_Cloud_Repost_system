@@ -12,6 +12,7 @@ use App\Models\UserSocialInformation;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 class Settings extends Component
@@ -39,6 +40,10 @@ class Settings extends Component
     // Validation error state
     public $genreLimitError = false;
     public $genreCountError = false;
+
+    // Active Tab
+    #[Url]
+    public $activeTab = 'profile';
 
     public $availableGenres = [];
 
@@ -441,6 +446,11 @@ class Settings extends Component
         // Reset form or redirect
         $this->reset();
         $this->mount(); // Re-initialize with default values
+    }
+
+    public function setActiveTab($tab)
+    {
+        $this->activeTab = $tab;
     }
 
     public function render()

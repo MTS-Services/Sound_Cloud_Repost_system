@@ -220,6 +220,12 @@
                             Settings & Preferences
                         </a>
                     </li>
+                    <li>
+                        <a wire:navigate href="{{ route('user.settings', ['activeTab' => 'credit']) }}"
+                            class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm block">
+                            Credit History
+                        </a>
+                    </li>
                     <li class="border-t border-gray-200 dark:border-slate-700 pt-2">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf

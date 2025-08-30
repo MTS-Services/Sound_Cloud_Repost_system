@@ -21,7 +21,7 @@
         }
     </style>
 
-    <div x-data="{ open: true, activeTab: 'edit', isGenreDropdownOpen: false }" class="">
+    <div x-data="{ open: true, activeTab: @entangle('activeTab').live, isGenreDropdownOpen: false }" class="">
         @if (!user()->email_verified_at)
             <div x-show="open" x-transition.opacity.duration.300ms
                 class=" top-0  mb-8 max-w-8xl mx-auto  bg-gray-50 dark:bg-gray-800 border-l-4 border-orange-500 text-black dark:text-white  p-4 shadow-sm flex items-center justify-center z-1 rounded-md relative"
@@ -56,52 +56,39 @@
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg max-w-8xl mx-auto overflow-hidden">
             <div class="border-b border-gray-200 dark:border-gray-700">
                 <div class="flex text-gray-600 dark:text-gray-300 font-medium">
-                    <button @click="activeTab = 'edit'"
-                        :class="{ 'border-b-2 border-orange-500 text-orange-500': activeTab === 'edit', 'hover:bg-gray-50 dark:hover:bg-gray-600': activeTab !== 'edit' }"
-                        class="py-4 px-6 relative tab-link focus:outline-none transition-colors duration-200 ease-in-out">
+                    <button wire:click="setActiveTab('profile')"
+                        class="py-4 px-6 relative tab-link focus:outline-none transition-colors duration-200 ease-in-out {{ $activeTab === 'profile' ? 'border-b-2 border-orange-500 text-orange-500' : 'hover:bg-gray-50 dark:hover:bg-gray-600' }}">
                         Edit profile
-                        <span :class="{ 'hidden': activeTab !== 'edit' }" class="tab-indicator"></span>
+                        <span class="tab-indicator {{ $activeTab === 'profile' ? '' : 'hidden' }}"></span>
                     </button>
-                    <button @click="activeTab = 'notifications'"
-                        :class="{
-                            'border-b-2 border-orange-500 text-orange-500': activeTab === 'notifications',
-                            'hover:bg-gray-50 dark:hover:bg-gray-600': activeTab !== 'notifications'
-                        }"
-                        class="py-4 px-6 relative tab-link focus:outline-none transition-colors duration-200 ease-in-out">
+
+                    <button wire:click="setActiveTab('notifications')"
+                        class="py-4 px-6 relative tab-link focus:outline-none transition-colors duration-200 ease-in-out {{ $activeTab === 'notifications' ? 'border-b-2 border-orange-500 text-orange-500' : 'hover:bg-gray-50 dark:hover:bg-gray-600' }}">
                         Notifications & alerts
-                        <span :class="{ 'hidden': activeTab !== 'notifications' }" class="tab-indicator"></span>
+                        <span class="tab-indicator {{ $activeTab === 'notifications' ? '' : 'hidden' }}"></span>
                     </button>
-                    <button @click="activeTab = 'settings'"
-                        :class="{
-                            'border-b-2 border-orange-500 text-orange-500': activeTab === 'settings',
-                            'hover:bg-gray-50 dark:hover:bg-gray-600': activeTab !== 'settings'
-                        }"
-                        class="py-4 px-6 relative tab-link focus:outline-none transition-colors duration-200 ease-in-out">
+
+                    <button wire:click="setActiveTab('settings')"
+                        class="py-4 px-6 relative tab-link focus:outline-none transition-colors duration-200 ease-in-out {{ $activeTab === 'settings' ? 'border-b-2 border-orange-500 text-orange-500' : 'hover:bg-gray-50 dark:hover:bg-gray-600' }}">
                         Settings
-                        <span :class="{ 'hidden': activeTab !== 'settings' }" class="tab-indicator"></span>
+                        <span class="tab-indicator {{ $activeTab === 'settings' ? '' : 'hidden' }}"></span>
                     </button>
-                    <button @click="activeTab = (activeTab === 'credit' ? '' : 'credit')"
-                        :class="{
-                            'border-b-2 border-orange-500 text-orange-500': activeTab === 'credit',
-                            'hover:bg-gray-50 dark:hover:bg-gray-600': activeTab !== 'credit'
-                        }"
-                        class="py-4 px-6 relative tab-link focus:outline-none transition-colors duration-200 ease-in-out">
+
+                    <button wire:click="setActiveTab('credit')"
+                        class="py-4 px-6 relative tab-link focus:outline-none transition-colors duration-200 ease-in-out {{ $activeTab === 'credit' ? 'border-b-2 border-orange-500 text-orange-500' : 'hover:bg-gray-50 dark:hover:bg-gray-600' }}">
                         Credit history
-                        <span :class="{ 'hidden': activeTab !== 'credit' }" class="tab-indicator"></span>
+                        <span class="tab-indicator {{ $activeTab === 'credit' ? '' : 'hidden' }}"></span>
                     </button>
-                    <button @click="activeTab = (activeTab === 'invoices' ? '' : 'invoices')"
-                        :class="{
-                            'border-b-2 border-orange-500 text-orange-500': activeTab === 'invoices',
-                            'hover:bg-gray-50 dark:hover:bg-gray-600': activeTab !== 'invoices'
-                        }"
-                        class="py-4 px-6 relative tab-link focus:outline-none transition-colors duration-200 ease-in-out">
+
+                    <button wire:click="setActiveTab('invoices')"
+                        class="py-4 px-6 relative tab-link focus:outline-none transition-colors duration-200 ease-in-out {{ $activeTab === 'invoices' ? 'border-b-2 border-orange-500 text-orange-500' : 'hover:bg-gray-50 dark:hover:bg-gray-600' }}">
                         Invoices
-                        <span :class="{ 'hidden': activeTab !== 'invoices' }" class="tab-indicator"></span>
+                        <span class="tab-indicator {{ $activeTab === 'invoices' ? '' : 'hidden' }}"></span>
                     </button>
                 </div>
             </div>
 
-            <div x-show="activeTab === 'edit'" x-cloak>
+            <div x-show="activeTab === 'profile'" x-cloak>
                 <!-- Edit Profile -->
                 <div class="p-6">
                     <div x-data="{ open: true }" x-show="open"
