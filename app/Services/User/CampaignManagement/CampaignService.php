@@ -30,7 +30,7 @@ class CampaignService
                 $trackOwnerUrn = $campaign->music->user?->urn ?? $campaign->user_urn;
                 $trackOwnerName = $campaign->music->user?->name;
                 // $totalCredits = repostPrice($reposter, $likeCommentAbleData['commentable'], $likeCommentAbleData['likeable']);
-                $totalCredits = repostPrice() + ($likeCommentAbleData['commentable'] ? 2 : 0) + ($likeCommentAbleData['likeable'] ? 2 : 0);
+                $totalCredits = repostPrice() + ($likeCommentAbleData['comment'] ? 2 : 0) + ($likeCommentAbleData['likeable'] ? 2 : 0);
 
                 // Create the Repost record
                 $repost = Repost::create([
@@ -45,13 +45,13 @@ class CampaignService
                 // Update the Campaign record using atomic increments
                 $campaign->increment('completed_reposts');
                 $campaign->increment('credits_spent', (float) $totalCredits);
-                if ($likeCommentAbleData['commentable']) {
+                if ($likeCommentAbleData['comment']) {
                     $campaign->increment('comment_count');
                 }
                 if ($likeCommentAbleData['likeable']) {
                     $campaign->increment('like_count');
                 }
-                if ($likeCommentAbleData['followed']) {
+                if ($likeCommentAbleData['follow']) {
                     $campaign->increment('follow_count');
                 }
 

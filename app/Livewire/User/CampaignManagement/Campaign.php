@@ -979,8 +979,8 @@ class Campaign extends Component
             }
             $data = [
                 'likeable' => $like_response ? $this->liked : false,
-                'commentable' => $comment_response ? $this->commented : false,
-                'followed' => $follow_response ? $this->followed : false
+                'comment' => $comment_response ? $this->commented : false,
+                'follow' => $follow_response ? $this->followed : false
             ];
             if ($response->successful()) {
                 $soundcloudRepostId = $response->json('id');
