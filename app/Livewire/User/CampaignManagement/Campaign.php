@@ -950,11 +950,6 @@ class Campaign extends Component
                     if ($this->liked) {
                         $response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$campaign->music->urn}");
                     }
-                    Log::info([
-                        'repost' => $response->body(),
-                        'comment' => $response->body(),
-                        'like' => $response->body(),
-                    ]);
                     break;
                 case Playlist::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$campaign->music->urn}");
@@ -968,6 +963,7 @@ class Campaign extends Component
                 'likeable' => $this->liked,
                 'commentable' => $this->commented
             ];
+            Log::info($response->body());
             if ($response->successful()) {
                 $soundcloudRepostId = $response->json('id');
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
