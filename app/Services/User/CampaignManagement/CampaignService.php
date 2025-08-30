@@ -51,6 +51,9 @@ class CampaignService
                 if ($likeCommentAbleData['likeable']) {
                     $campaign->increment('emoji_count');
                 }
+                if ($likeCommentAbleData['followed']) {
+                    $campaign->increment('follow_count');
+                }
 
                 if ($campaign->budget_credits == $campaign->credits_spent) {
                     $campaign->update(['status' => Campaign::STATUS_COMPLETED]);

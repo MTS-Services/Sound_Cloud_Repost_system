@@ -138,15 +138,6 @@
                                         </div>
                                         <div class="text-center">
                                             <div class="flex items-center justify-center ">
-                                                <x-lucide-smile
-                                                    class="text-gray-500 w-5 h-5 m-2 dark:text-white text-black" />
-                                                <span
-                                                    class=" text-black dark:text-gray-100">{{ $campaign_->emoji_count ?? 0 }}</span>
-                                            </div>
-
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center ">
 
                                                 <span wire:click="openViewDetailsModal({{ $campaign_->id }})"
                                                     class="text-orange-500 items-end font-medium mt-2 cursor-pointer hover:underline transition-all duration-300">Show

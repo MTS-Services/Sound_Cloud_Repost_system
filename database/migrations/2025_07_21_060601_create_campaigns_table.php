@@ -30,7 +30,7 @@ return new class extends Migration
             $table->boolean('pro_feature')->default(false);
             $table->integer('comment_count')->nullable();
             $table->integer('favorite_count')->nullable();
-            $table->integer('emoji_count')->nullable();
+            $table->integer('follow_count')->nullable();
 
             $table->string('title');
             $table->text('description')->nullable();

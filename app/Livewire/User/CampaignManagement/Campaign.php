@@ -160,6 +160,7 @@ class Campaign extends Component
     public $campaign = null;
     public $liked = false;
     public $commented = null;
+    public $followed = true;
 
     public $showSubmitModal = false;
     public $showCampaignsModal = false;
@@ -946,22 +947,36 @@ class Campaign extends Component
             switch ($campaign->music_type) {
                 case Track::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
-                    $response = $httpClient->post("{$this->baseUrl}/tracks/{$campaign->music->urn}/comments", $commentSoundcloud);
+                    if($this->commented){
+                        $comment_response = $httpClient->post("{$this->baseUrl}/tracks/{$campaign->music->urn}/comments", $commentSoundcloud);
+                    }
                     if ($this->liked) {
-                        $response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$campaign->music->urn}");
+                        $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$campaign->music->urn}");
+                    }
+                    if($this->followed){
+                        $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->music->urn}");
                     }
                     break;
                 case Playlist::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$campaign->music->urn}");
-                    $response = $httpClient->post("{$this->baseUrl}/playlists/{$campaign->music->urn}/comments", $commentSoundcloud);
+                    if ($this->liked) {
+                        $like_response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$campaign->music->urn}");
+                    }
+                    if ($this->commented) {
+                        $comment_response = $httpClient->post("{$this->baseUrl}/playlists/{$campaign->music->urn}/comments", $commentSoundcloud);
+                    }
+                    if($this->followed){
+                        $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->music->urn}");
+                    }
                     break;
                 default:
                     $this->dispatch('alert', 'error', 'Invalid music type specified for the campaign.');
                     return;
             }
             $data = [
-                'likeable' => $this->liked,
-                'commentable' => $this->commented
+                'likeable' => $like_response ? $this->liked : false,
+                'commentable' => $comment_response ? $this->commented : false,
+                'followed' => $follow_response ? $this->followed : false
             ];
             Log::info($response->body());
             if ($response->successful()) {
