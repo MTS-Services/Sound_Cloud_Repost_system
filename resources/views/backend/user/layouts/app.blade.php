@@ -89,7 +89,7 @@
 
 
     <div id="notification-toast"
-        class="absolute top-5 right-5 w-72 z-50 rounded-2xl shadow-2xl bg-white text-black transition-all duration-500 ease-in-out transform translate-x-full opacity-0">
+        class="absolute hidden top-5 right-5 w-72 z-50 rounded-2xl shadow-2xl bg-white text-black transition-all duration-500 ease-in-out transform translate-x-full opacity-0">
         <div class="p-4 flex items-center justify-between gap-4">
             <div class="flex items-center gap-3 flex-grow">
                 <x-heroicon-o-information-circle class="w-6 h-6 text-blue-500 flex-shrink-0" />
@@ -177,6 +177,7 @@
                 messageElement.textContent = message;
 
                 // Show the notification with animation
+                toast.classList.remove('hidden');
                 toast.classList.remove('translate-x-full', 'opacity-0');
                 toast.classList.add('translate-x-0', 'opacity-100');
 
@@ -199,6 +200,7 @@
                 if (toast) {
                     toast.classList.remove('translate-x-0', 'opacity-100');
                     toast.classList.add('translate-x-full', 'opacity-0');
+                    toast.classList.add('hidden');
                 }
             }
 
