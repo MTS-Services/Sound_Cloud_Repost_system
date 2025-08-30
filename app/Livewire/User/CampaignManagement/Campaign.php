@@ -958,7 +958,7 @@ class Campaign extends Component
                         $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$campaign->music->urn}");
                     }
                     if($this->followed){
-                        $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->music->urn}");
+                        $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
                     }
                     break;
                 case Playlist::class:
