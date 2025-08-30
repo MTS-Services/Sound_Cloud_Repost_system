@@ -14,7 +14,7 @@ use Illuminate\Notifications\Notifiable;
 class User extends AuthBaseModel implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use  HasFactory, Notifiable;
+    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -36,9 +36,10 @@ class User extends AuthBaseModel implements MustVerifyEmail
         'status',
         'urn',
         'email',
+        'last_seen_at',
 
 
-       'creater_id',
+        'creater_id',
         'creater_type',
         'updater_id',
         'updater_type',
@@ -70,6 +71,7 @@ class User extends AuthBaseModel implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'last_synced_at' => 'datetime',
             'urn' => 'string',
+            'last_seen_at' => 'datetime',
         ];
     }
 
@@ -159,7 +161,7 @@ class User extends AuthBaseModel implements MustVerifyEmail
         return $this->creditTransactions()->succeeded();
     }
 
-    
+
 
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
@@ -223,7 +225,7 @@ class User extends AuthBaseModel implements MustVerifyEmail
     {
         return $this->status == self::STATUS_ACTIVE ? self::statusList()[self::STATUS_INACTIVE] : self::statusList()[self::STATUS_ACTIVE];
     }
-    
+
 
     public function getStatusBtnColorAttribute()
     {
@@ -251,5 +253,16 @@ class User extends AuthBaseModel implements MustVerifyEmail
     public function activePlan()
     {
         return $this->userPlans->where('status', UserPlan::STATUS_ACTIVE)->first();
+    }
+
+
+    public function isOnline(): bool
+    {
+        return $this->last_seen_at !== null && $this->last_seen_at->gt(now()->subMinutes(2));
+    }
+
+    public function offlineStatus(): string
+    {
+        return (!$this->isOnline() && $this->last_seen_at !== null && $this->last_seen_at->diffInMinutes(now()) < 60) ? round($this->last_seen_at->diffInMinutes(now())) . ' min' : 'Offline';
     }
 }

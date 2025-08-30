@@ -34,6 +34,8 @@ class Authenticate extends Middleware
         if (Auth::guard('web')->check() && $request->routeIs('user.*')) {
             $user = Auth::user();
 
+            Auth::user()->update(['last_seen_at' => now()]);
+
             $user->load('genres');
 
             // if ($user->email == null) {

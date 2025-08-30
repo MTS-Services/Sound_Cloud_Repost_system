@@ -69,9 +69,9 @@
             @if (session('warning'))
                 showAlert('warning', "{!! session('warning') !!}");
             @endif
-            document.addEventListener('livewire:load', function() {
-                Livewire.on('alert', (type, message) => {
-                    showAlert(type, message);
+            document.addEventListener('livewire:initialized', function() {
+                Livewire.on('alert', (event) => {
+                    showAlert(event.type, event.message);
                 });
             });
         });
@@ -87,7 +87,9 @@
 
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-black overflow-x-hidden! relative" x-data="{ sidebarOpen: false, mobileSearchOpen: false }">
 
-
+    @auth
+        <livewire:user-heartbeat />
+    @endauth
     <div id="notification-toast"
         class="absolute hidden top-5 right-5 w-72 z-50 rounded-2xl shadow-2xl bg-white text-black transition-all duration-500 ease-in-out transform translate-x-full opacity-0">
         <div class="p-4 flex items-center justify-between gap-4">

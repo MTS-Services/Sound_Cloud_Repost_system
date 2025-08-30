@@ -25,16 +25,6 @@
 
         <!-- Filter Buttons -->
         <div class="flex flex-col sm:flex-row gap-4">
-            {{-- <select wire:model.live="trackFilter"
-                class="bg-card-blue border border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-4 py-3 text-text-gray hover:border-orange-500 transition-colors min-w-[160px] focus:outline-none focus:border-orange-500">
-                <option class="hidden" value="">Filter by track</option>
-                @forelse ($trackTypes as $trackType)
-                    <option value="{{ $trackType }}">{{ $trackType }}</option>
-                @empty
-                    <option value="">No tracks found</option>
-                @endforelse
-            </select> --}}
-
             <select wire:model.live="genreFilter"
                 class="bg-card-blue border border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-7 py-3 text-text-gray hover:border-orange-500 transition-colors min-w-[160px] focus:outline-none focus:border-orange-500">
                 <option class="hidden" value="">Filter by genre</option>
@@ -66,9 +56,16 @@
                         <a class="cursor-pointer" wire:navigate href="{{ route('user.pm.my-account', $user_->urn) }}">
                             <img src="{{ auth_storage_url($user_->avatar) }}" alt="{{ $user_->name }}"
                                 class="w-12 h-12 rounded-full">
-                            <div
-                                class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-card-blue">
-                            </div>
+                            @if ($user_->isOnline())
+                                <div
+                                    class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-card-blue">
+                                </div>
+                            @elseif($user_->offlineStatus() != 'Offline')
+                                <div
+                                    class="absolute -bottom-1 -right-1  bg-green-500 rounded text-white px-2 py-1 text-[0.5rem] leading-tight">
+                                    <span class="text-[0.5rem]">{{ $user_->offlineStatus() }}</span>
+                                </div>
+                            @endif
                         </a>
                     </div>
                     <div>
@@ -122,7 +119,8 @@
                     <x-gbutton variant="primary" :full-width="true"
                         wire:click="openModal('{{ $user_->urn }}')">Request</x-gbutton>
                 @else
-                    <x-gbutton variant="primary" :full-width="true" disabled class="!cursor-not-allowed !py-3">Request Later</x-gbutton>
+                    <x-gbutton variant="primary" :full-width="true" disabled class="!cursor-not-allowed !py-3">Request
+                        Later</x-gbutton>
                 @endif
             </div>
         @empty

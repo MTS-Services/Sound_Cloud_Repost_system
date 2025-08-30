@@ -259,7 +259,7 @@ class Settings extends Component
             $this->dispatch('alert', 'success', 'Settings updated successfully!');
             $this->reset();
             $this->mount();
-           
+
         } catch (\Exception $e) {
             $this->dispatch('alert', 'error', $e->getMessage());
         }
@@ -413,6 +413,8 @@ class Settings extends Component
                     $socialInfo->delete();
                 }
             });
+
+            $this->dispatch('alert', type: 'success', message: 'Profile updated successfully!');
 
             $this->reset(['selectedGenres', 'instagram_username', 'twitter_username', 'facebook_username', 'youtube_channel_id', 'tiktok_username', 'spotify_artist_link']);
             $this->mount();
