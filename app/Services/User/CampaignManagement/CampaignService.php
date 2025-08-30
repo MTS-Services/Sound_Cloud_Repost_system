@@ -46,7 +46,7 @@ class CampaignService
                 $campaign->increment('completed_reposts');
                 $campaign->increment('credits_spent', (float) $totalCredits);
                 if ($likeCommentAbleData['commentable']) {
-                    $campaign->increment('favorite_count');
+                    $campaign->increment('comment_count');
                 }
                 if ($likeCommentAbleData['likeable']) {
                     $campaign->increment('like_count');
