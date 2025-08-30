@@ -947,9 +947,18 @@ class Campaign extends Component
                 case Track::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
                     $response = $httpClient->post("{$this->baseUrl}/tracks/{$campaign->music->urn}/comments", $commentSoundcloud);
+                    if ($this->liked) {
+                        $response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$campaign->music->urn}");
+                    }
+                    Log::info([
+                        'repost' => $response->body(),
+                        'comment' => $response->body(),
+                        'like' => $response->body(),
+                    ]);
                     break;
                 case Playlist::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$campaign->music->urn}");
+                    $response = $httpClient->post("{$this->baseUrl}/playlists/{$campaign->music->urn}/comments", $commentSoundcloud);
                     break;
                 default:
                     $this->dispatch('alert', 'error', 'Invalid music type specified for the campaign.');
@@ -1258,8 +1267,6 @@ class Campaign extends Component
                 // 'featuredCampaigns' => $featuredCampaigns,
                 'campaigns' => $campaigns
             ]);
-
-
         } catch (\Exception $e) {
             // Handle errors gracefully
             Log::error('Failed to load campaigns: ' . $e->getMessage(), [
