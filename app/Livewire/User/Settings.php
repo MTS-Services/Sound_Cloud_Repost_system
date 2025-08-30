@@ -203,7 +203,7 @@ class Settings extends Component
         }
     }
 
-    public function createOrUpdate()
+    public function notificationUpdate()
     {
         try {
             $userUrn = user()->urn;
@@ -253,7 +253,7 @@ class Settings extends Component
             );
             $this->dispatch('alert', 'success', 'Settings updated successfully!');
             $this->reset();
-            $this->loadSettings();
+            $this->mount();
            
         } catch (\Exception $e) {
             $this->dispatch('alert', 'error', $e->getMessage());
@@ -282,7 +282,7 @@ class Settings extends Component
         ];
     }
 
-    public function saveSettings()
+    public function settingsUpdate()
     {
         try {
             $userUrn = user()->urn;
@@ -301,7 +301,7 @@ class Settings extends Component
             );
             $this->dispatch('alert', 'success', 'Settings updated successfully!');
             $this->reset();
-            $this->loadSettings();
+            $this->mount();
         } catch (\Exception $e) {
             $this->dispatch('alert', 'error', $e->getMessage());
         }
