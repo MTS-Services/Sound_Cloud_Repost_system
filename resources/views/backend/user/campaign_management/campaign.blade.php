@@ -30,8 +30,7 @@
                 </div>
             </div>
 
-            <x-gbutton variant="primary" wire:click="toggleCampaignsModal"
-                class="mb-2">
+            <x-gbutton variant="primary" wire:click="toggleCampaignsModal" class="mb-2">
                 <span><x-lucide-plus class="w-5 h-5 mr-1" /></span>
                 {{ __('Start a new campaign') }}</x-gbutton>
         </div>
@@ -254,8 +253,8 @@
                                                 target="_blank"
                                                 class="block hover:bg-gray-800 px-3 py-1 rounded">Visit SoundCloud
                                                 Profile</a>
-                                            <a href="{{ route('user.pm.my-account', $campaign_->user_urn) }}" wire:navigate
-                                                class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
+                                            <a href="{{ route('user.pm.my-account', $campaign_->user_urn) }}"
+                                                wire:navigate class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                 RepostChain Profile</a>
                                             {{-- <button
                                                     class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
@@ -1128,46 +1127,41 @@
     </div>
 </div>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize SoundCloud Widget API integration with Livewire
-        function initializeSoundCloudWidgets() {
-            if (typeof SC === 'undefined') {
-                setTimeout(initializeSoundCloudWidgets, 500);
-                return;
-            }
-
-            const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
-
-            playerContainers.forEach(container => {
-                const campaignId = container.dataset.campaignId;
-                const iframe = container.querySelector('iframe');
-
-                if (iframe && campaignId) {
-                    const widget = SC.Widget(iframe);
-
-                    // Track play events and call Livewire methods
-                    widget.bind(SC.Widget.Events.PLAY, () => {
-                        @this.call('handleAudioPlay', campaignId);
-                    });
-
-                    widget.bind(SC.Widget.Events.PAUSE, () => {
-                        @this.call('handleAudioPause', campaignId);
-                    });
-
-                    widget.bind(SC.Widget.Events.FINISH, () => {
-                        @this.call('handleAudioEnded', campaignId);
-                    });
-
-                    // Track position updates
-                    widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-                        const currentTime = data.currentPosition / 1000;
-                        @this.call('handleAudioTimeUpdate', campaignId, currentTime);
-                    });
-                }
-            });
+    function initializeSoundCloudWidgets() {
+        if (typeof SC === 'undefined') {
+            setTimeout(initializeSoundCloudWidgets, 500);
+            return;
         }
 
-        // Initialize widgets
+        const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+
+        playerContainers.forEach(container => {
+            const campaignId = container.dataset.campaignId;
+            const iframe = container.querySelector('iframe');
+
+            if (iframe && campaignId) {
+                const widget = SC.Widget(iframe);
+
+                widget.bind(SC.Widget.Events.PLAY, () => {
+                    @this.call('handleAudioPlay', campaignId);
+                });
+
+                widget.bind(SC.Widget.Events.PAUSE, () => {
+                    @this.call('handleAudioPause', campaignId);
+                });
+
+                widget.bind(SC.Widget.Events.FINISH, () => {
+                    @this.call('handleAudioEnded', campaignId);
+                });
+
+                widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+                    const currentTime = data.currentPosition / 1000;
+                    @this.call('handleAudioTimeUpdate', campaignId, currentTime);
+                });
+            }
+        });
+    }
+    document.addEventListener('livewire:navigated', function() {
         initializeSoundCloudWidgets();
     });
 </script>

@@ -451,6 +451,8 @@ class Campaign extends Component
     public function fetchTracks()
     {
         try {
+            $this->soundCloudService->syncSelfTracks([]);
+      
             $this->tracksPage = 1;
             $this->tracks = Track::where('user_urn', user()->urn)
                 ->latest()
@@ -479,6 +481,8 @@ class Campaign extends Component
     public function fetchPlaylists()
     {
         try {
+            $this->soundCloudService->syncSelfPlaylists();
+
             $this->playlistsPage = 1;
             $this->playlists = Playlist::where('user_urn', user()->urn)
                 ->latest()
@@ -943,7 +947,7 @@ class Campaign extends Component
                 ]
             ];
 
-
+            $response = null;
             switch ($campaign->music_type) {
                 case Track::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
@@ -978,7 +982,6 @@ class Campaign extends Component
                 'commentable' => $comment_response ? $this->commented : false,
                 'followed' => $follow_response ? $this->followed : false
             ];
-            Log::info($response->body());
             if ($response->successful()) {
                 $soundcloudRepostId = $response->json('id');
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);

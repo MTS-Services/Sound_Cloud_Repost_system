@@ -200,7 +200,7 @@
                             <x-sound-cloud.sound-cloud-player :track="$repostRequest->track" :visual="false" />
                         @endforeach
                     </div>
-                    <div class="text-center py-8 border-t border-slate-700">
+                    <div class="text-center py-8 ">
                         <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -253,7 +253,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="mt-6 pt-6 border-t border-slate-700 p-2">
+                        <div class="mt-6 pt-6  p-2">
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center space-x-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-orange-500"
