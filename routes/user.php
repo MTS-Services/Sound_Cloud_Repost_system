@@ -1,8 +1,7 @@
 <?php
-
-use App\Http\Controllers\Backend\User\AddCaeditsController;
-use App\Http\Controllers\Backend\User\AnalyticsController;
+use App\Http\Controllers\Backend\User\PaymentController;
 use App\Livewire\User\AddCredit;
+use App\Livewire\User\Analytics;
 use App\Livewire\User\CampaignManagement\Campaign;
 use App\Livewire\User\CampaignManagement\MyCampaign;
 use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
@@ -39,7 +38,7 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/analytics', [AnalyticsController::class, 'analytics'])->name('analytics');
+
 
 
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
@@ -62,7 +61,21 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
     Route::view('charts', 'backend.user.chart')->name('charts');
 
     Route::get('/add-credits', AddCredit::class)->name('add-credits');
-    Route::post('/buy-credits', [AddCaeditsController::class, 'buyCredits'])->name('buy-credits');
+    Route::get('/analytics', Analytics::class)->name('analytics');
+
+
+
+    // Payment Routes
+    Route::controller(PaymentController::class)->name('payment.')->prefix('payment')->group(function () {
+        Route::get('/method/{order_id}', 'paymentMethod')->name('method');
+        Route::get('/{order_id}', 'showPaymentForm')->name('form');
+        Route::post('/create-intent', 'createPaymentIntent')->name('create-intent');
+        Route::get('/success/page', 'paymentSuccess')->name('success');
+        Route::get('/cancel', 'paymentCancel')->name('cancel');
+        Route::get('/paypal/paymentLink/{encryptedOrderId}', 'paypalPaymentLink')->name('paypal.paymentLink');
+        Route::get('/paypal/payment/success/', 'paypalPaymentSuccess')->name('paypal.paymentSuccess');
+        Route::get('/paypal/payment/cancel', 'paypalPaymentCancel')->name('paypal.paymentCancel');
+    });
 
 });
 

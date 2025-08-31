@@ -93,7 +93,7 @@ class Plans extends Component
 
             if ($order) {
                 return $this->redirect(
-                    route('f.payment.method', encrypt($order->id)),
+                    route('user.payment.method', encrypt($order->id)),
                     navigate: true
                 );
             }

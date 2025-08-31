@@ -1,4 +1,4 @@
-<x-user::layout>
+<div>
     <x-slot name="page_slug">analytics</x-slot>
 
     <div>
@@ -6,13 +6,14 @@
         <div class="mx-auto space-y-8">
             <div>
                 <h1 class="text-3xl font-bold dark:text-white text-gray-800">Analytics Dashboard</h1>
-                <p class="text-gray-600 dark:text-gray-300">Comprehensive insights into your campaign performance and audience engagement
+                <p class="text-gray-600 dark:text-gray-300">Comprehensive insights into your campaign performance and
+                    audience engagement
                 </p>
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <button @click="filter = 'last_7_days'"
-                class="px-4 py-2 bg-orange-500 text-white rounded-lg font-medium w-full sm:w-auto">
+                    class="px-4 py-2 bg-orange-500 text-white rounded-lg font-medium w-full sm:w-auto">
                     Last 7 days
                 </button>
                 <button @click="filter = 'last_30_days'"
@@ -32,7 +33,8 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                <div class="dark:bg-gray-800 bg-white p-6 rounded-lg custom-shadow border border-gray-200 dark:border-gray-700">
+                <div
+                    class="dark:bg-gray-800 bg-white p-6 rounded-lg custom-shadow border border-gray-200 dark:border-gray-700">
                     <div class="flex justify-between items-start mb-4">
                         <h2 class="dark:text-white text-gray-800 font-medium">Total Impressions</h2>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
@@ -53,7 +55,8 @@
                     </div>
                 </div>
 
-                <div class="dark:bg-gray-800 bg-white p-6 rounded-lg custom-shadow border border-gray-200 dark:border-gray-700">
+                <div
+                    class="dark:bg-gray-800 bg-white p-6 rounded-lg custom-shadow border border-gray-200 dark:border-gray-700">
                     <div class="flex justify-between items-start mb-4">
                         <h2 class="dark:text-white text-gray-800 font-medium">Click-through Rate</h2>
                         <span class="text-orange-500 font-bold">👆</span>
@@ -67,7 +70,8 @@
                     </div>
                 </div>
 
-                <div class="dark:bg-gray-800 bg-white p-6 rounded-lg custom-shadow border border-gray-200 dark:border-gray-700">
+                <div
+                    class="dark:bg-gray-800 bg-white p-6 rounded-lg custom-shadow border border-gray-200 dark:border-gray-700">
                     <div class="flex justify-between items-start mb-4">
                         <h2 class="text-gray-800 dark:text-gray-300 font-medium">Cost Per Click</h2>
                         <span class="text-green-500 font-bold">$</span>
@@ -83,7 +87,8 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="dark:bg-gray-800 bg-white p-6 rounded-lg custom-shadow border border-gray-200 dark:border-gray-700">
+                <div
+                    class="dark:bg-gray-800 bg-white p-6 rounded-lg custom-shadow border border-gray-200 dark:border-gray-700">
                     <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-300 mb-6">Top Performing Campaigns
                     </h2>
                     <div class="space-y-6">
@@ -120,7 +125,8 @@
                     </div>
                 </div>
 
-                <div class="dark:bg-gray-800 bg-white p-6 rounded-lg custom-shadow border border-gray-200 dark:border-gray-700">
+                <div
+                    class="dark:bg-gray-800 bg-white p-6 rounded-lg custom-shadow border border-gray-200 dark:border-gray-700">
                     <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-300 mb-6">Audience Demographics</h2>
                     <div class="space-y-6">
                         <div>
@@ -210,6 +216,6 @@
             </div>
         </div>
     </div>
-    </div>
+</div>
 
-</x-user::layout>
+</div>
