@@ -460,7 +460,7 @@ class MyCampaign extends Component
             DB::transaction(function () use ($oldBudget) {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
-                $proFeatureEnabled = $this->proFeatureEnabled && $this->user->status == User::STATUS_ACTIVE ? 1 : 0;
+                $proFeatureEnabled = $this->proFeatureEnabled && $this->user?->status == User::STATUS_ACTIVE ? 1 : 0;
                 $editingProFeature = $this->isEditing && $this->editingCampaign->pro_feature == 1 ? $this->editingCampaign->pro_feature : $proFeatureEnabled;
 
                 $campaignData = [
