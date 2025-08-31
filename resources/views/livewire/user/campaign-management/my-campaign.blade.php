@@ -52,8 +52,8 @@
                                                 <h3 class="text-black dark:text-gray-100 font-semibold text-lg">
                                                     {{ $campaign_->music?->title }}
                                                 </h3>
-                                                <a href="{{ $baseUrl/$campaign_->music?->permalink_url }}" target="_blank"
-                                                    class="cursor-pointer">
+                                                <a href="{{ $baseUrl . $campaign_->music?->permalink_url }}"
+                                                    target="_blank" class="cursor-pointer">
                                                     <!-- Pencil Icon -->
                                                     <svg class="w-5 h-5 inline-block text-gray-500 dark:text-gray-100"
                                                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
@@ -103,8 +103,7 @@
                                         <div class="text-center">
                                             <div class="flex items-center justify-center ">
 
-                                                <x-lucide-repeat
-                                                    class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
+                                                <x-lucide-repeat class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
                                                 <span
                                                     class=" text-black dark:text-white">{{ totalReposts($campaign_) }}</span>
                                             </div>
@@ -113,16 +112,15 @@
                                         <!-- Repeat block with different data -->
                                         <div class="text-center">
                                             <div class="flex items-center justify-center ">
-                                                <x-lucide-user-plus
-                                                    class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
-                                                <span class=" text-black dark:text-gray-100">{{ $campaign_->followowers_count ?? 0 }}</span>
+                                                <x-lucide-user-plus class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
+                                                <span
+                                                    class=" text-black dark:text-gray-100">{{ $campaign_->followowers_count ?? 0 }}</span>
                                             </div>
 
                                         </div>
                                         <div class="text-center">
                                             <div class="flex items-center justify-center ">
-                                                <x-lucide-heart
-                                                    class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
+                                                <x-lucide-heart class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
                                                 <span
                                                     class=" text-black dark:text-gray-100">{{ $campaign_->like_count ?? 0 }}</span>
                                             </div>
@@ -132,15 +130,16 @@
                                             <div class="flex items-center justify-center ">
                                                 <x-lucide-message-square
                                                     class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
-                                                <span class=" text-black dark:text-gray-100">{{ $campaign_->comment_count ?? 0 }}</span>
+                                                <span
+                                                    class=" text-black dark:text-gray-100">{{ $campaign_->comment_count ?? 0 }}</span>
                                             </div>
 
                                         </div>
                                         <div class="text-center">
                                             <div class="flex items-center justify-center ">
-                                                <x-lucide-play
-                                                    class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
-                                                <span class=" text-black dark:text-gray-100">{{ $campaign_->playback_count ?? 0 }}</span>
+                                                <x-lucide-play class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
+                                                <span
+                                                    class=" text-black dark:text-gray-100">{{ $campaign_->playback_count ?? 0 }}</span>
                                             </div>
 
                                         </div>

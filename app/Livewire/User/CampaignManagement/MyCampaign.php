@@ -29,7 +29,7 @@ class MyCampaign extends Component
     protected TrackService $trackService;
     protected UserService $userService;
 
-    public $baseUrl = 'https://soundcloud.com';
+    public $baseUrl = 'https://soundcloud.com/';
 
     // Pagination URL parameters
     #[Url(as: 'allPage')]
