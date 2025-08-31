@@ -19,7 +19,7 @@
                     <span>💰</span>{{ __('Earn Credits') }}
                 </x-gbutton>
                 <!-- Submit Track -->
-                <x-gbutton variant="primary">
+                <x-gbutton variant="primary" wire:click="toggleCampaignsModal">
                     <span>
                         <x-lucide-plus class="inline-block text-center h-4 w-4 text-white mr-1" />
                     </span>{{ __('Start a new campaign') }}

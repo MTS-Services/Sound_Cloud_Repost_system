@@ -766,7 +766,7 @@ class Campaign extends Component
                 'proFeatureEnabled',
             ]);
             $this->dispatch('alert', type:'success', message:'Campaign created successfully!');
-            $this->dispatch('campaignCreated');
+            // $this->dispatch('campaignCreated');
 
             $this->showCampaignsModal = false;
             $this->showSubmitModal = false;
@@ -804,7 +804,7 @@ class Campaign extends Component
     {
         if ($currentTime >= 5 && !in_array($campaignId, $this->playedCampaigns)) {
             $this->playedCampaigns[] = $campaignId;
-            $this->dispatch('campaignPlayedEnough', $campaignId);
+            // $this->dispatch('campaignPlayedEnough', $campaignId);
         }
     }
 
@@ -821,7 +821,7 @@ class Campaign extends Component
 
             if ($this->playTimes[$campaignId] >= 5 && !in_array($campaignId, $this->playedCampaigns)) {
                 $this->playedCampaigns[] = $campaignId;
-                $this->dispatch('campaignPlayedEnough', $campaignId);
+                // $this->dispatch('campaignPlayedEnough', $campaignId);
             }
         }
     }
@@ -835,7 +835,7 @@ class Campaign extends Component
 
                 if ($totalPlayTime >= 5 && !in_array($campaignId, $this->playedCampaigns)) {
                     $this->playedCampaigns[] = $campaignId;
-                    $this->dispatch('campaignPlayedEnough', $campaignId);
+                    // $this->dispatch('campaignPlayedEnough', $campaignId);
                 }
             }
         }
