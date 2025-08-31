@@ -8,7 +8,7 @@
         </div>
 
         <div class="grid grid-cols-2 gap-x-4 gap-y-6 justify-center md:grid-cols-3 lg:grid-cols-5 gap-6 items-stretch ">
-            @foreach ($credits as $credit)
+            @foreach ($activeCredits as $credit)
                 <div class="bg-white dark:bg-gray-600 rounded border overflow-hidden flex flex-col">
                     <div class="relative">
                         <div class="absolute   w-full text-white dark:text-white text-xs font-bold text-center   flex">
@@ -33,14 +33,8 @@
                         </div>
                         <div class="text-2xl font-bold text-gray-800 dark:text-white">
                             ${{ number_format($credit->price, 2) }}</div>
-                        <form action="{{ route('user.buy-credits') }}" method="POST" class="w-full">
-                            @csrf
-                            <input type="hidden" name="credits" value="{{ $credit->credits }}">
-                            <input type="hidden" name="amount" value="{{ $credit->price }}">
-                            <input type="hidden" name="credit_id" value="{{ encrypt($credit->id) }}">
-                            <x-gbutton :full-width="true" variant="primary" class="w-full" type="submit">Buy
-                                Now</x-gbutton>
-                        </form>
+                        <x-gbutton :full-width="true" variant="primary" class="w-full" type="submit"
+                            wire:click="buyCredits('{{ encrypt($credit->id) }}')">Buy Now</x-gbutton>
                     </div>
                 </div>
             @endforeach

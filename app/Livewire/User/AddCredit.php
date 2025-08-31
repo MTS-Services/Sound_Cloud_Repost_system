@@ -17,9 +17,25 @@ class AddCredit extends Component
         $this->creditService = $creditService;
         $this->orderService = $orderService;
     }
+
+    public function buyCredits($envryptedCreditId)
+    {
+        try {
+            $credit = $this->creditService->getCredit($envryptedCreditId);
+
+            $validated['source_id'] = $credit->id;
+            $validated['source_type'] = Credit::class;
+            $validated['amount'] = $credit->price;
+            $order = $this->orderService->createOrder($validated);
+            // return redirect()->route('user.payment.method', encrypt($order->id));
+            $this->redirectRoute('user.payment.method', encrypt($order->id), navigate: true);
+        } catch (\Exception $e) {
+            $this->dispatch('alert', type: 'error', message: $e->getMessage());
+        }
+    }
     public function render()
     {
-        $data['credits'] = $this->creditService->getCredits()->active()->get();
+        $data['activeCredits'] = $this->creditService->getCredits()->active()->get();
         return view('livewire.user.add-credit', $data);
     }
 }

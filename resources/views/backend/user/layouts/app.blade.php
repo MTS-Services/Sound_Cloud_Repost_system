@@ -80,8 +80,6 @@
     @stack('cs')
     @livewireStyles()
 
-
-
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-black overflow-x-hidden! relative" x-data="{ sidebarOpen: false, mobileSearchOpen: false }">
