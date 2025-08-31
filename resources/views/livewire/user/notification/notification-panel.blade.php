@@ -74,7 +74,7 @@
                         <div></div>
                     @endif
 
-                    <a href="{{ route('user.notifications.index') }}"
+                    <a href="{{ route('user.notifications.index') }}" wire:navigate
                         class="btn btn-sm bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-none flex-1 max-w-xs text-center">
                         <x-lucide-list class="w-5 h-5 mr-2" />
                         View All
