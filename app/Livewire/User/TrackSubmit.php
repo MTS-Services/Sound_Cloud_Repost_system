@@ -267,7 +267,7 @@ class TrackSubmit extends Component
                 broadcast(new UserNotificationSent($notification));
             });
 
-            $this->dispatch('alert', 'success', 'Track submitted successfully!');
+           $this->dispatch('alert', type:'success', message: 'Track submitted successfully!');
 
             $this->reset();
             return $this->redirect(route('user.my-account') . '?tab=tracks', navigate: true);
@@ -297,7 +297,7 @@ class TrackSubmit extends Component
             session()->flash('error', $errorMessage);
         } catch (\Exception $e) {
             logger()->error('General Submission Error: ' . $e->getMessage());
-            $this->dispatch('alert', 'error', 'An unexpected error occurred. Please try again.');
+            $this->dispatch('alert', type:'error', message:'An unexpected error occurred. Please try again.');
         }
     }
 

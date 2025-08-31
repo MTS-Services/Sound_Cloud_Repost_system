@@ -256,12 +256,12 @@ class Settings extends Component
                 ['user_urn' => $userUrn],
                 $data
             );
-            $this->dispatch('alert', 'success', 'Settings updated successfully!');
+           $this->dispatch('alert', type:'success', message: 'Settings updated successfully!');
             $this->reset();
             $this->mount();
 
         } catch (\Exception $e) {
-            $this->dispatch('alert', 'error', $e->getMessage());
+           $this->dispatch('alert', type:'error', message: $e->getMessage());
         }
     }
 
@@ -304,11 +304,11 @@ class Settings extends Component
                 ['user_urn' => $userUrn],
                 $data
             );
-            $this->dispatch('alert', 'success', 'Settings updated successfully!');
+           $this->dispatch('alert', type:'success', message: 'Settings updated successfully!');
             $this->reset();
             $this->mount();
         } catch (\Exception $e) {
-            $this->dispatch('alert', 'error', $e->getMessage());
+           $this->dispatch('alert', type:'error', message: $e->getMessage());
         }
     }
     ####################### Notification Settings End ############################
@@ -422,7 +422,7 @@ class Settings extends Component
 
         } catch (\Throwable $e) {
             Log::error($e->getMessage());
-            $this->dispatch('alert', 'error', 'Profile update failed!');
+           $this->dispatch('alert', type:'error', message: 'Profile update failed!');
         }
     }
 
@@ -438,7 +438,7 @@ class Settings extends Component
             return redirect()->route('f.landing')->with('success', 'Account deleted successfully!');
         } catch (\Throwable $e) {
             Log::error($e->getMessage());
-            $this->dispatch('alert', 'error', 'Account delete failed!');
+           $this->dispatch('alert', type:'error', message: 'Account delete failed!');
         }
     }
 
