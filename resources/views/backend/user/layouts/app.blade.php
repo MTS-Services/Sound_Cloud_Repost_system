@@ -47,7 +47,7 @@
     <!-- Scripts -->
     <script src="{{ asset('assets/js/toggle-theme-3.js') }}"></script>
 
-    @vite(['resources/css/user-dashboard.css', 'resources/js/user-dashboard.js'])
+    @vite(['resources/css/user-dashboard.css', 'resources/js/user-dashboard.js', 'resources/css/frontend.css'])
 
 
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
@@ -79,7 +79,6 @@
 
     @stack('cs')
     @livewireStyles()
-    {{-- <script async src="https://cse.google.com/cse.js?cx=23c01bcccd3964c56"></script> --}}
 
 
 
@@ -104,53 +103,34 @@
         </div>
     </div>
 
+    @if (auth()->guard('web')->check() && Route::is('user.*'))
+        @include('backend.user.layouts.partials.header')
+        @include('backend.user.layouts.partials.sidebar')
+    @else
+        @include('backend.user.layouts.partials.f_header')
+    @endif
 
-    @include('backend.user.layouts.partials.header')
-    @include('backend.user.layouts.partials.sidebar')
 
     <!-- Main Content -->
-    <div class="ml-auto lg:w-[calc(100%-15%)]">
-        <div class="p-4 md:p-6 min-h-[calc(100vh-64px)]">
-            {{ $slot }}
+    @if (auth()->guard('web')->check() && Route::is('user.*'))
+        <div class="ml-auto lg:w-[calc(100%-15%)]">
+            <div class="p-4 md:p-6 min-h-[calc(100vh-64px)]">
+    @endif
+    {{ $slot }}
+    @if (auth()->guard('web')->check() && Route::is('user.*'))
         </div>
-    </div>
+        </div>
+    @else
+        @include('backend.user.layouts.partials.f_footer')
+    @endif
 
 
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
-    {{-- <script src="{{ asset('assets/frontend/js/custome.js') }}"></script> --}}
-    <script>
-        lucide.createIcons();
-        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
-        document.addEventListener('alpine:init', () => {
-            lucide.createIcons();
-            if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
-        })
-    </script>
     @livewireScripts()
     <script>
-        document.addEventListener('livewire:navigated', () => {
-            // Re-initialize your Google Custom Search script here
-            // For example, you might re-run the script that creates the search element.
-            // It could look something like this, depending on your setup:
-            (function() {
-                var cx = '23c01bcccd3964c56';
-                var gcse = document.createElement('script');
-                gcse.type = 'text/javascript';
-                gcse.async = true;
-                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
-                var s = document.getElementsByTagName('script')[0];
-                s.parentNode.insertBefore(gcse, s);
-            })();
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('livewire:initialized', () => {
+            lucide.createIcons();
 
-            // Pusher.log = (message) => {
-            //     if (window.console && window.console.log) {
-            //         window.console.log(message);
-            //     }
-            // };
 
             window.Echo.channel('users')
                 .listen('.notification.sent', (e) => {
@@ -159,12 +139,15 @@
                     Livewire.dispatch('notification-updated');
                 });
 
-            window.Echo.private('user.{{ auth()->id() }}')
-                .listen('.notification.sent', (e) => {
-                    console.log(e);
-                    showNotification('New message received.');
-                    Livewire.dispatch('notification-updated');
-                });
+            if ('{{ auth()->check() }}') {
+                window.Echo.private('user.{{ auth()->id() }}')
+                    .listen('.notification.sent', (e) => {
+                        console.log(e);
+                        showNotification('New message received.');
+                        Livewire.dispatch('notification-updated');
+                    });
+            }
+
 
             function showNotification(message) {
                 const toast = document.getElementById('notification-toast');

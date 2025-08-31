@@ -10,7 +10,6 @@ class HomeController extends Controller
 {
     public function landing(): View
     {
-        TestJob::dispatch();
         return view('frontend.pages.landing-page.landing');
     }
 }
