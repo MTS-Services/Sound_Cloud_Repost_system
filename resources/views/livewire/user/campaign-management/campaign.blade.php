@@ -177,23 +177,6 @@
     </div>
 
     <div class="container mx-auto px-4 py-6">
-        <!-- Flash Messages -->
-        @if (session()->has('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                {{ session('success') ?? '' }}
-            </div>
-        @endif
-
-        @if (session()->has('error'))
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                {{ session('error') ?? '' }}
-            </div>
-        @endif
-
-        <!-- Featured Campaign Section -->
-        {{-- @if (count($campaigns) > 0) --}}
-
-        {{-- <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Featured campaigns</h2> --}}
         @forelse ($campaigns as $campaign_)
             <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm">
                 <div class="flex flex-col lg:flex-row" wire:key="featured-{{ $campaign_->id }}">
