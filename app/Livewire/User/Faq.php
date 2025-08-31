@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\User\FaqManagement;
+namespace App\Livewire\User;
 
 use Livewire\Component;
 use App\Models\FaqCategory;
@@ -43,6 +43,6 @@ class Faq extends Component
 
     public function render()
     {
-        return view('livewire.user.faq-management.faq');
+        return view('livewire.user.faq');
     }
 }

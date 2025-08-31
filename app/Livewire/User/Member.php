@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\User\MemberManagement;
+namespace App\Livewire\User;
 
 use App\Events\UserNotificationSent;
 use App\Models\CreditTransaction;
@@ -15,7 +15,6 @@ use App\Models\UserSetting;
 use App\Services\PlaylistService;
 use App\Services\TrackService;
 use Exception;
-use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -450,7 +449,7 @@ class Member extends Component
             $users->setCollection($sortedCollection->values());
         }
 
-        return view('livewire.user.member-management.member', [
+        return view('livewire.user.member', [
             'users' => $users,
         ]);
     }

@@ -1,34 +1,24 @@
 <?php
 
-use App\Http\Controllers\Backend\User\Faq\FaqController;
-use App\Http\Controllers\Backend\User\DashboardController;
-use App\Http\Controllers\Backend\Admin\OrderManagement\OrderController as UserOrderController;
 use App\Http\Controllers\Backend\User\AddCaeditsController;
 use App\Http\Controllers\Backend\User\AnalyticsController;
-use App\Http\Controllers\Backend\User\FaqManagement\FaqController as FaqManagementFaqController;
+use App\Livewire\User\AddCredit;
 use App\Livewire\User\CampaignManagement\Campaign;
 use App\Livewire\User\CampaignManagement\MyCampaign;
-use App\Http\Controllers\Backend\User\Members\MemberController;
-use App\Http\Controllers\Backend\User\PromoteController;
 use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
-
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Livewire\User\Dashboard;
-use App\Livewire\User\FaqManagement\Faq;
+use App\Livewire\User\Faq;
 use App\Livewire\User\HelpAndSupport;
-use App\Livewire\User\MemberManagement\Member;
-use App\Livewire\User\MemberManagement\RepostRequest;
+use App\Livewire\User\Member;
+use App\Livewire\User\RepostRequest;
 use App\Livewire\User\Notification\NotificationList;
 use App\Livewire\User\Notification\NotificationShow;
-use App\Livewire\User\PackageManagement\Pricing;
-use App\Livewire\User\ProfileManagement\MyAccount;
+use App\Livewire\User\Plans;
+use App\Livewire\User\MyAccount;
 use App\Livewire\User\Settings;
 use App\Livewire\User\TrackSubmit;
-use App\Models\Faq as ModelsFaq;
-use Illuminate\Validation\Rules\Unique;
-use PHPUnit\TextUI\Help;
 
 
 // SoundCloud Routes
@@ -41,10 +31,6 @@ Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
 
 // User routes (The 'verified' middleware has been removed)
 Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user'], function () {
-    Route::get('/dashboard', Dashboard::class)->name('dashboard');
-    // Route::get('/direct-repost/{requestId}', [DashboardController::class, 'directRepost'])->name('direct-repost');
-    // Route::get('/decline-repost/{requestId}', [DashboardController::class, 'declineRepost'])->name('decline-repost');
-
     Route::get('/profile-info', [ProfileController::class, 'emailAdd'])->name('email.add');
     Route::post('/profile-info/update', [ProfileController::class, 'emailStore'])->name('email.store');
     Route::get('/user-profile/{user_urn}', [ProfileController::class, 'profile'])->name('profile');
@@ -54,50 +40,34 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/analytics', [AnalyticsController::class, 'analytics'])->name('analytics');
-    Route::get('/add-credits', [AddCaeditsController::class, 'addCredits'])->name('add-credits');
-    Route::post('/buy-credits', [AddCaeditsController::class, 'buyCredits'])->name('buy-credits');
-    Route::get('/promote', [PromoteController::class, 'tracks'])->name('promote');
 
-    // Campaign Management
+
+    Route::get('/dashboard', Dashboard::class)->name('dashboard');
     Route::group(['as' => 'cm.', 'prefix' => 'campaign-management'], function () {
         Route::get('/my-campaigns', MyCampaign::class)->name('my-campaigns');
         Route::get('/campaigns', Campaign::class)->name('campaigns');
     });
-    Route::group(['as' => 'pkm.', 'prefix' => 'package-management'], function () {
-        Route::get('/pricing', Pricing::class)->name('pricing');
-    });
-
-    // Member Management
-    Route::group(['as' => 'mm.', 'prefix' => 'member-management'], function () {
-        Route::get('/members', [MemberController::class, 'index'])->name('members.index');
-        Route::get('/members/request', [MemberController::class, 'request'])->name('members.request');
-        Route::post('/confirm/repost/{id}', [MemberController::class, 'confirmRepost'])->name('repost.confirm');
-    });
-    Route::get('members', Member::class)->name('members');
-    Route::get('reposts-request', RepostRequest::class)->name('reposts-request');
-
-    Route::group(['as' => 'pm.', 'prefix' => 'profile-management'], function () {
-        Route::get('/my-account/{user_urn?}', MyAccount::class)->name('my-account');
-    });
-
-    // Help Support
-    Route::get('/help-support', HelpAndSupport::class)->name('help-support');
-
-    // Notification Routes
     Route::name('notifications.')->prefix('notifications')->group(function () {
         Route::get('/', NotificationList::class)->name('index');
         Route::get('/{encryptedId}', NotificationShow::class)->name('show');
     });
+    Route::get('members', Member::class)->name('members');
+    Route::get('reposts-request', RepostRequest::class)->name('reposts-request');
+    Route::get('frequently-asked-questions', Faq::class)->name('faq');
+    Route::get('plans', Plans::class)->name('plans');
+    Route::get('my-account/{user_urn?}', MyAccount::class)->name('my-account');
+    Route::get('help-support', HelpAndSupport::class)->name('help-support');
+    Route::get('track/submit', TrackSubmit::class)->name('track.submit');
+    Route::get('settings', Settings::class)->name('settings');
+    Route::view('charts', 'backend.user.chart')->name('charts');
 
-    // Track Submit Routes
-    Route::get('/track/submit', TrackSubmit::class)->name('track.submit');
+    Route::get('/add-credits', AddCredit::class)->name('add-credits');
+    Route::post('/buy-credits', [AddCaeditsController::class, 'buyCredits'])->name('buy-credits');
 
-    // Settings Routes
-    Route::get('/settings', Settings::class)->name('settings');
 });
 
-// Faq Management
-Route::get('user/frequently-asked-questions', Faq::class)->name('user.faq')->middleware('auth:web');
+
+
 
 // Static page routes
-Route::view('user/charts', 'backend.user.chart')->name('charts')->middleware('auth:web');
+

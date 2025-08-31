@@ -834,6 +834,6 @@ class MyCampaign extends Component
             $this->handleError('Failed to load campaigns', $e);
         }
 
-        return view('backend.user.campaign_management.my_campaigns', $data);
+        return view('livewire.user.campaign-management.my-campaign', $data);
     }
 }

@@ -167,7 +167,7 @@ class ProfileController extends Controller
         session()->flash('success', 'Registration completed successfully! Please check your email to verify your account.');
 
         // Redirect to dashboard
-        return redirect()->route('user.pm.my-account');
+        return redirect()->route('user.my-account');
     }
 
 

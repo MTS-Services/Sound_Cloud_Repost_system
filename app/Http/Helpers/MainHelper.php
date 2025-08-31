@@ -648,17 +648,17 @@ function searchableRoutes()
         [
             'title' => 'Members',
             'keywords' => ['members', 'create request', 'create requests'],
-            'route' => route('user.mm.members.index'),
+            'route' => route('user.members'),
         ],
         [
             'title' => 'Plans',
             'keywords' => ['plans', 'pricing', 'premium plans', 'pro plans', 'features', 'feature comparison', 'Core Features', 'Free Boosts', 'Simultaneous Campaigns', 'Priority Direct Requests', 'Free Forever', 'subscribe', 'upgrade', 'upgrade now'],
-            'route' => route('user.pkm.pricing'),
+            'route' => route('user.plans'),
         ],
         [
             'title' => 'My Account',
             'keywords' => ['my account', 'my profile', 'profile', 'email', 'password', 'update', 'update password', 'update email', 'update profile', 'change password', 'change email', 'change profile', 'account'],
-            'route' => route('user.pm.my-account'),
+            'route' => route('user.my-account'),
         ],
         [
             'title' => 'Analytics',

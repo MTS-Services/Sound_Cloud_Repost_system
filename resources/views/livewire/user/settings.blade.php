@@ -631,7 +631,7 @@
                             <h1 class="text-xl font-semibold text-gray-800">Subscription</h1>
                             <div class="mt-2 text-sm text-gray-600 dark:text-white">
                                 <p class="text-gray-700 dark:text-white">{{ $activePlan }} Plan <a wire:navigate
-                                        href="{{ route('user.pkm.pricing') }}"
+                                        href="{{ route('user.plans') }}"
                                         class="text-orange-500 cursor-pointer hover:underline">Change</a></p>
                             </div>
                         </div>

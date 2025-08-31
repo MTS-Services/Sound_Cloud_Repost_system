@@ -1,9 +1,7 @@
 <?php
 
-namespace App\Livewire\User\ProfileManagement;
+namespace App\Livewire\User;
 
-use App\Jobs\SyncedPlaylists;
-use App\Jobs\SyncedTracks;
 use App\Models\CreditTransaction;
 use App\Models\Playlist;
 use App\Models\Repost;
@@ -14,7 +12,6 @@ use App\Services\Admin\UserManagement\UserService;
 use App\Services\PlaylistService;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\TrackService;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -218,7 +215,7 @@ class MyAccount extends Component
             ->sortByDesc('created_at')
             ->take(10);
 
-        return view('backend.user.profile-management.my-account', [
+        return view('livewire.user.my-account', [
             'user' => $user,
             'tracks' => $tracks,
             'playlists' => $playlists,

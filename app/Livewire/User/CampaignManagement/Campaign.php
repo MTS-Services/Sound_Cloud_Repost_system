@@ -452,7 +452,7 @@ class Campaign extends Component
     {
         try {
             $this->soundCloudService->syncSelfTracks([]);
-      
+
             $this->tracksPage = 1;
             $this->tracks = Track::where('user_urn', user()->urn)
                 ->latest()
@@ -951,17 +951,17 @@ class Campaign extends Component
             $like_response = null;
             $comment_response = null;
             $follow_response = null;
-            
+
             switch ($campaign->music_type) {
                 case Track::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
-                    if($this->commented){
+                    if ($this->commented) {
                         $comment_response = $httpClient->post("{$this->baseUrl}/tracks/{$campaign->music->urn}/comments", $commentSoundcloud);
                     }
                     if ($this->liked) {
                         $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$campaign->music->urn}");
                     }
-                    if($this->followed){
+                    if ($this->followed) {
                         $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
                     }
                     break;
@@ -973,7 +973,7 @@ class Campaign extends Component
                     if ($this->commented) {
                         $comment_response = $httpClient->post("{$this->baseUrl}/playlists/{$campaign->music->urn}/comments", $commentSoundcloud);
                     }
-                    if($this->followed){
+                    if ($this->followed) {
                         $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
                     }
                     break;
@@ -1257,7 +1257,7 @@ class Campaign extends Component
             ]);
             $campaigns = collect();
 
-            return view('backend.user.campaign_management.campaign', [
+            return view('livewire.user.campaign-management.campaign', [
                 'campaigns' => $campaigns
             ]);
         }

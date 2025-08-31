@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Livewire\User\MemberManagement;
+namespace App\Livewire\User;
 
 use App\Models\CreditTransaction;
 use App\Models\RepostRequest as ModelsRepostRequest;
 use App\Models\Repost;
 use App\Models\Track;
-use App\Models\Playlist;
-use App\Models\User;
 use App\Models\UserSetting;
 use App\Services\SoundCloud\SoundCloudService;
 use Illuminate\Support\Facades\DB;
@@ -247,8 +245,8 @@ class RepostRequest extends Component
             // Check if the user has already reposted this specific request
             if (
                 Repost::where('reposter_urn', $currentUserUrn)
-                ->where('repost_request_id', $requestId)
-                ->exists()
+                    ->where('repost_request_id', $requestId)
+                    ->exists()
             ) {
 
                 $this->dispatch('alert', 'error', 'You have already reposted this request.');
@@ -439,6 +437,6 @@ class RepostRequest extends Component
 
     public function render()
     {
-        return view('livewire.user.member-management.repost-request');
+        return view('livewire.user.repost-request');
     }
 }

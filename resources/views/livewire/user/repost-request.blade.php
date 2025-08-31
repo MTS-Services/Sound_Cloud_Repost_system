@@ -4,13 +4,7 @@
         <div>
             <h1 class="text-xl text-black dark:text-gray-100 font-bold">{{ __('Repost Requests') }}</h1>
         </div>
-        {{-- Set Route --}}
-        {{-- <a href="{{ route('user.mm.members.index') }}" wire:navigate
-            class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 rounded-xl flex items-center gap-3 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-            
-            {{ __('Send a New Request') }}
-        </a> --}}
-        <x-gbutton variant="primary" wire:navigate href="{{ route('user.mm.members.index') }}"><span><x-lucide-plus
+        <x-gbutton variant="primary" wire:navigate href="{{ route('user.members') }}"><span><x-lucide-plus
                     class="w-5 h-5 mr-1" /></span> Send a New Request</x-gbutton>
     </div>
 
@@ -73,7 +67,8 @@
                             class="text-gray-900 dark:text-white">Response rate.</span></span>
                     <a href="#" class="text-xs text-red-500 underline">Reset</a>
                 </div>
-                <div x-data="{ on: {{ $requestReceiveable ? 'true' : 'false' }} }" class="inline-flex items-center {{ user()->email_verified_at ? 'cursor-pointer' : 'cursor-not-allowed' }}"
+                <div x-data="{ on: {{ $requestReceiveable ? 'true' : 'false' }} }"
+                    class="inline-flex items-center {{ user()->email_verified_at ? 'cursor-pointer' : 'cursor-not-allowed' }}"
                     @if (user()->email_verified_at) wire:click="requestReceiveableToggle" @endif>
                     <input type="checkbox" class="sr-only peer" wire:model.live="requestReceiveable"
                         {{ $requestReceiveable ? 'checked' : '' }} {{ user()->email_verified_at ? '' : 'disabled' }}>
@@ -171,7 +166,7 @@
                                             <a href="{{ $repostRequest->requester->soundcloud_url ?? '#' }}"
                                                 target="_blank" class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                 SoundCloud Profile</a>
-                                            <a href="{{ route('user.pm.my-account', $repostRequest->requester->urn) }}"
+                                            <a href="{{ route('user.my-account', $repostRequest->requester->urn) }}"
                                                 wire:navigate class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                 RepostChain Profile</a>
                                         </div>
@@ -275,7 +270,7 @@
                                     @if ($activeMainTab == 'outgoing_request')
                                         <div class="flex justify-end gap-3">
                                             <a class="cursor-pointer" wire:navigate
-                                                href="{{ route('user.pm.my-account', $repostRequest->targetUser->urn) }}">
+                                                href="{{ route('user.my-account', $repostRequest->targetUser->urn) }}">
                                                 <img class="w-10 h-10 rounded-full object-cover"
                                                     src="{{ auth_storage_url($repostRequest->targetUser->avatar) }}"
                                                     alt="{{ $repostRequest->targetUser->name }} avatar">
@@ -284,7 +279,7 @@
                                                 <div class="flex items-center gap-1 cursor-pointer">
                                                     <a class="text-slate-700 dark:text-gray-300 font-medium cursor-pointer hover:underline"
                                                         wire:navigate
-                                                        href="{{ route('user.pm.my-account', $repostRequest->targetUser->urn) }}">
+                                                        href="{{ route('user.my-account', $repostRequest->targetUser->urn) }}">
                                                         {{ $repostRequest->targetUser->name }}
                                                     </a>
                                                 </div>
@@ -354,7 +349,7 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('livewire:initialized', function() {
         // Audio event handling for SoundCloud players
         document.querySelectorAll('[id^="soundcloud-player-"]').forEach(player => {
             const requestId = player.dataset.requestId;

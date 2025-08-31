@@ -46,7 +46,7 @@ class CampaignService
                 $campaign->increment('completed_reposts');
                 $campaign->increment('credits_spent', (float) $totalCredits);
 
-                
+
                 if ($likeCommentAbleData['comment']) {
                     $campaign->increment('comment_count');
                 }
@@ -85,7 +85,7 @@ class CampaignService
                     'receiver_id' => $reposter->id,
                     'receiver_type' => get_class($reposter),
                     'type' => CustomNotification::TYPE_USER,
-                    'url' => route('user.pm.my-account') . '?tab=reposts',
+                    'url' => route('user.my-account') . '?tab=reposts',
                     'message_data' => [
                         'title' => "Repost successful",
                         'message' => "You've been reposted on a campaign",

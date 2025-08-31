@@ -1,0 +1,472 @@
+<div>
+    <x-slot name="page_slug">members</x-slot>
+    <div class="container mx-auto px-4 py-8 max-w-8xl">
+
+        <div x-data="{
+            showModal: @entangle('showModal').live,
+            showRepostsModal: @entangle('showRepostsModal').live
+        }">
+
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-2xl md:text-3xl font-bold mb-2 dark:text-white">Browse Members</h1>
+                <p class="text-text-gray text-sm md:text-base dark:text-white">Search, filter or browse the list of
+                    recommended members that can repost your music.</p>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="mb-8 flex flex-col lg:flex-row gap-4">
+                <!-- Search Input -->
+                <div class="flex-1 relative">
+                    <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text-gray dark:text-gray-400 "
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input type="text" placeholder="Search by soundcloud profile url or Name"
+                        wire:model.live="search"
+                        class="w-full bg-card-blue border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-gray-900 dark:text-white dark:bg-gray-900 placeholder-text-gray focus:outline-none focus:border-orange-500">
+                </div>
+
+                <!-- Filter Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <select wire:model.live="genreFilter"
+                        class="bg-card-blue border border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-7 py-3 text-text-gray hover:border-orange-500 transition-colors min-w-[160px] focus:outline-none focus:border-orange-500">
+                        <option class="hidden" value="">Filter by genre</option>
+                        @forelse ($genres as $genre)
+                            <option value="{{ $genre }}">{{ $genre }}</option>
+                        @empty
+                            <option value="">No genres found</option>
+                        @endforelse
+                    </select>
+
+                    <select wire:model.live="costFilter"
+                        class="bg-card-blue border border-gray-600 dark:text-white dark:bg-gray-900 rounded-lg px-4 py-3 text-text-gray hover:border-orange-500 transition-colors min-w-[160px] focus:outline-none focus:border-orange-500">
+                        <option class="hidden" value="">Filter by cost</option>
+                        <option value="low_to_high">Low to High</option>
+                        <option value="high_to_low">High to Low</option>
+                    </select>
+                </div>
+            </div>
+
+
+
+            <!-- Member Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-3 gap-6">
+                @forelse ($users as $user_)
+                    <div class="bg-card-blue rounded-lg p-6 border border-gray-600">
+                        <!-- Profile Header -->
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="relative">
+                                <a class="cursor-pointer" wire:navigate
+                                    href="{{ route('user.my-account', $user_->urn) }}">
+                                    <img src="{{ auth_storage_url($user_->avatar) }}" alt="{{ $user_->name }}"
+                                        class="w-12 h-12 rounded-full">
+                                    @if ($user_->isOnline())
+                                        <div
+                                            class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-card-blue">
+                                        </div>
+                                    @elseif($user_->offlineStatus() != 'Offline')
+                                        <div
+                                            class="absolute -bottom-1 -right-1  bg-green-500 rounded text-white px-2 py-1 text-[0.5rem] leading-tight">
+                                            <span class="text-[0.5rem]">{{ $user_->offlineStatus() }}</span>
+                                        </div>
+                                    @endif
+                                </a>
+                            </div>
+                            <div>
+                                <a class="cursor-pointer" wire:navigate
+                                    href="{{ route('user.my-account', $user_->urn) }}">
+                                    <h3 class="font-semibold text-lg dark:text-white hover:underline">
+                                        {{ $user_->name }}</h3>
+                                </a>
+                                <p class="text-text-gray text-sm dark:text-white">
+                                    {{ $user_->created_at->format('M d, Y') }}
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Genre Tags -->
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            @forelse ($user_->genres as $genre)
+                                <span
+                                    class="bg-gray-600 text-white text-xs px-2 py-1 rounded">{{ $genre->genre }}</span>
+                            @empty
+                                <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">No genres</span>
+                            @endforelse
+                        </div>
+
+                        <!-- Repost Price -->
+                        @php
+                            $followerCount = $userinfo ? $userinfo->count() : 0;
+                            $credit = max(1, floor($followerCount / 100));
+                        @endphp
+
+                        <div class="flex justify-between items-center w-full mb-4">
+                            <p class="text-text-gray text-sm dark:text-white">Repost price:</p>
+                            <p class="text-sm font-medium dark:text-white">
+                                {{ repostPrice($user_) }} Credit{{ repostPrice($user_) > 1 ? 's' : '' }}
+                            </p>
+                        </div>
+
+                        <!-- Stats -->
+                        <div class="grid grid-cols-3 gap-4 mb-6">
+                            <div class="text-center">
+                                <p class="text-text-gray text-xs mb-1 dark:text-white">Credibility</p>
+                                <p class="text-green-400 font-bold">83%</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-text-gray text-xs mb-1 dark:text-white">Efficiency</p>
+                                <p class="text-orange-500 font-bold">92%</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-text-gray text-xs mb-1 dark:text-white">Total Reposts</p>
+                                <p class="text-black font-bold dark:text-white">156</p>
+                            </div>
+                        </div>
+
+                        <!-- Request Button -->
+                        @if (requestReceiveable($user_->urn))
+                            <x-gbutton variant="primary" :full-width="true"
+                                wire:click="openModal('{{ $user_->urn }}')">Request</x-gbutton>
+                        @else
+                            <x-gbutton variant="primary" :full-width="true" disabled
+                                class="!cursor-not-allowed !py-3">Request
+                                Later</x-gbutton>
+                        @endif
+                    </div>
+                @empty
+                    <div class="col-span-full text-center py-8">
+                        <p class="text-text-gray dark:text-white">No members found.</p>
+                    </div>
+                @endforelse
+
+            </div>
+            @if ($users->hasPages())
+                <div class="mt-6">
+                    {{ $users->links('components.pagination.wire-navigate') }}
+                </div>
+            @endif
+
+            <div x-data="{ showModal: @entangle('showModal').live }" x-show="showModal" x-cloak
+                x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+
+                <div
+                    class="w-full max-w-3xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col max-h-[80vh] overflow-hidden">
+
+                    {{-- HEADER --}}
+                    <div
+                        class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                                <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
+                            </div>
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                                {{ __('Choose a track or playlist') }}
+                            </h2>
+                        </div>
+                        <button x-on:click="showModal = false"
+                            class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
+                            <x-heroicon-s-x-mark class="w-5 h-5" />
+                        </button>
+                    </div>
+
+                    @if ($showModal)
+                        {{-- TABS --}}
+                        <div class="flex border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                            <button wire:click="setActiveTab('tracks')"
+                                class="cursor-pointer flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeTab === 'tracks' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
+                                <div class="flex items-center justify-center gap-2">
+                                    <i data-lucide="music" class="w-4 h-4"></i>
+                                    {{ __('Tracks') }}
+                                </div>
+                            </button>
+                            <button wire:click="setActiveTab('playlists')"
+                                class="cursor-pointer flex-1 py-4 px-6 text-center font-semibold text-base transition-all duration-300 ease-in-out border-b-2 hover:bg-white dark:hover:bg-gray-700 {{ $activeTab === 'playlists' ? 'border-orange-500 text-orange-600 bg-white dark:bg-gray-700' : 'border-transparent text-gray-600 dark:text-gray-400' }}">
+                                <div class="flex items-center justify-center gap-2">
+                                    <i data-lucide="list-music" class="w-4 h-4"></i>
+                                    {{ __('Playlists') }}
+                                </div>
+                            </button>
+                        </div>
+
+                        {{-- SEARCH & CONTENT --}}
+                        <div class="w-full max-w-2xl mx-auto mt-6 flex flex-col overflow-hidden">
+                            {{-- @if ($activeTab === 'tracks') --}}
+                            {{-- SEARCH BAR --}}
+                            <div class="p-1">
+                                <label for="track-link-search"
+                                    class="text-xl font-semibold text-gray-700 dark:text-gray-200">
+                                    @if ($activeTab === 'tracks')
+                                        Paste a SoundCloud profile or track link
+                                    @else
+                                        Paste a SoundCloud playlist link
+                                    @endif
+                                </label>
+                                <div class="flex w-full mt-2">
+                                    <input wire:model="searchQuery" type="text" id="track-link-search"
+                                        placeholder="{{ $activeTab === 'tracks' ? 'Paste a SoundCloud profile or track link' : 'Paste a SoundCloud playlist link' }}"
+                                        class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 border border-gray-300 dark:border-gray-600 ">
+                                    <button wire:click="searchSoundcloud" type="button"
+                                        class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200 ">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            {{-- @endif --}}
+
+
+                            {{-- TRACKS OR PLAYLISTS --}}
+                            <div class="h-full overflow-y-auto px-4 pb-6 space-y-1">
+                                @if ($activeTab === 'tracks' || $playListTrackShow == true)
+                                    @forelse ($tracks as $track_)
+                                        <div wire:click="openRepostsModal({{ $track_->id }})"
+                                            class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">
+                                            <div class="flex-shrink-0">
+                                                <img class="h-12 w-12 rounded object-cover shadow"
+                                                    src="{{ soundcloud_image($track_->artwork_url) }}"
+                                                    alt="{{ $track_->title }}" />
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                                    {{ $track_->type }} • {{ $track_->author_username }}
+                                                </p>
+                                                <p class="font-semibold text-gray-800 dark:text-white truncate">
+                                                    {{ $track_->title }}
+                                                </p>
+                                            </div>
+                                            <div class="flex-shrink-0">
+                                                <i data-lucide="chevron-right"
+                                                    class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <div class="text-center py-16 text-gray-500 dark:text-gray-400">
+                                            <div
+                                                class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                <x-lucide-music class="w-8 h-8 text-orange-500" />
+                                            </div>
+                                            <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                                {{ __('No tracks found') }}
+                                            </h3>
+                                            <p class="text-gray-500 dark:text-gray-400">
+                                                {{ __('Add one to get started with campaigns.') }}
+                                            </p>
+                                        </div>
+                                    @endforelse
+
+                                    @if (count($tracks) < count($allTracks))
+                                        <div class="text-center mt-6">
+                                            <x-gbutton variant="primary" size="sm"
+                                                wire:click="loadMoreTracks">Load
+                                                more</x-gbutton>
+                                        </div>
+                                    @endif
+                                @elseif($activeTab === 'playlists')
+                                    @forelse ($playlists as $playlist_)
+                                        <div wire:click="showPlaylistTracks({{ $playlist_->id }})"
+                                            class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">
+                                            <div class="flex-shrink-0">
+                                                <img class="h-12 w-12 rounded object-cover shadow"
+                                                    src="{{ soundcloud_image($playlist_->artwork_url) }}"
+                                                    alt="{{ $playlist_->title }}" />
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="font-semibold text-gray-800 dark:text-white truncate">
+                                                    {{ $playlist_->title }}
+                                                </p>
+                                                <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                                    {{ $playlist_->track_count }} {{ __('tracks') }}
+                                                </p>
+                                            </div>
+                                            <div class="flex-shrink-0">
+                                                <i data-lucide="chevron-right"
+                                                    class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <div class="text-center py-16 text-gray-500 dark:text-gray-400">
+                                            <div
+                                                class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                <x-lucide-list-music class="w-8 h-8 text-orange-500" />
+                                            </div>
+                                            <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                                {{ __('No playlists found') }}
+                                            </h3>
+                                            <p class="text-gray-500 dark:text-gray-400">
+                                                {{ __('Add one to get started with campaigns.') }}
+                                            </p>
+                                        </div>
+                                    @endforelse
+
+                                    @if (count($playlists) < count($allPlaylists))
+                                        <div class="text-center mt-6">
+                                            <x-gbutton variant="primary" size="sm"
+                                                wire:click="loadMorePlaylists">Load
+                                                more</x-gbutton>
+                                        </div>
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            {{-- Reposts Modal --}}
+            <div x-data="{ showRepostsModal: @entangle('showRepostsModal').live }" x-show="showRepostsModal" x-cloak
+                x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+
+                <div
+                    class="w-full max-w-3xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col max-h-[80vh] overflow-hidden">
+
+                    <div
+                        class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                                <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
+                            </div>
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                                {{ __('Requesting Reposts') }}
+                            </h2>
+                        </div>
+                        <button x-on:click="showRepostsModal= false"
+                            class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
+                            <x-heroicon-s-x-mark class="w-5 h-5" />
+                        </button>
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto">
+                        <div class="p-6">
+                            @if ($track)
+                                <div
+                                    class="p-4 flex items-center space-x-4 cursor-pointer bg-gray-50 dark:bg-slate-700 rounded-xl border border-transparent ">
+                                    <div class="flex-shrink-0">
+                                        <img class="h-14 w-14 rounded-xl object-cover shadow-md"
+                                            src="{{ storage_url($track->artwork_url) }}"
+                                            alt="{{ $track->title }}" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p
+                                            class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                            {{ $track->title }}
+                                        </p>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                            by
+                                            <strong
+                                                class="text-orange-600 dark:text-orange-400">{{ $track->author_username }}</strong>
+                                            <span class="ml-2 text-xs text-gray-400">{{ $track->genre }}</span>
+                                        </p>
+                                        <span
+                                            class="inline-block bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono">{{ $track->isrc }}</span>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                        <i data-lucide="chevron-right"
+                                            class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
+                                    </div>
+                                </div>
+                                {{-- User Info --}}
+                                <div
+                                    class="p-4 flex justify-between space-x-4  rounded-xl border border-gray-200 dark:border-gray-700 mt-4">
+                                    <div class="flex gap-3">
+                                        <div class="flex-shrink-0">
+                                            <img class="h-14 w-14 rounded-full object-cover shadow-md"
+                                                src="{{ auth_storage_url($user->avatar) }}"
+                                                alt="{{ $user->name }}" />
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p
+                                                class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                                {{ $user->name }}
+                                            </p>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                                {{ $user->email }}
+                                            </p>
+
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 gap-3 text-right">
+                                        <div class="flex items-center gap-2 justify-end">
+                                            <i data-lucide="users" class="w-4 h-4 text-gray-500"></i>
+                                            <span class="text-sm text-gray-600 dark:text-gray-400">Followers:</span>
+                                            <span
+                                                class="text-orange-500 dark:text-orange-400 font-bold">{{ $user->userInfo?->followers_count ?? 0 }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 justify-end">
+                                            <i data-lucide="repeat" class="w-4 h-4 text-gray-500"></i>
+                                            <span class="text-sm text-gray-600 dark:text-gray-400">Reposts:</span>
+                                            <span
+                                                class="text-orange-500 dark:text-orange-400 font-bold">{{ $user->userInfo?->reposts_count ?? 0 }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 justify-end">
+                                            <i data-lucide="heart" class="w-4 h-4 text-gray-500"></i>
+                                            <span class="text-sm text-gray-600 dark:text-gray-400">Likes:</span>
+                                            <span
+                                                class="text-green-500 dark:text-green-400 font-bold">{{ $user->userInfo?->like_count ?? 0 }}</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="flex items-center justify-between mt-4">
+                                    <span class="dark:text-white font-medium">Repost price:</span>
+                                    <div class="flex items-center gap-2">
+                                        <div class="text-gray-500 dark:text-gray-400">
+                                            <!-- Repost Icon -->
+                                            <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <rect x="1" y="1" width="24" height="16" rx="3"
+                                                    fill="none" stroke="currentColor" stroke-width="2" />
+                                                <circle cx="8" cy="9" r="3" fill="none"
+                                                    stroke="currentColor" stroke-width="2" />
+                                            </svg>
+                                        </div>
+                                        <span class="text-orange-500 dark:text-orange-400 font-bold">1 Credit</span>
+                                    </div>
+                                </div>
+                                @if ($blockMismatchGenre && !$userMismatchGenre)
+                                    <div
+                                        class="p-4 bg-gray-50 dark:bg-slate-700 rounded-xl border-l-4 border-orange-500 mt-4">
+                                        <p class="text-red-500 text-sm leading-relaxed">
+                                            “This user has blocked repost requests for tracks that don’t match their
+                                            profile
+                                            genre. You cannot send them a repost request.”
+                                        </p>
+                                    </div>
+                                @else
+                                    <div
+                                        class="p-4 bg-gray-50 dark:bg-slate-700 rounded-xl border-l-4 border-orange-500 mt-4">
+                                        <p class="text-gray-500 dark:text-gray-300 text-sm leading-relaxed">
+                                            Your track will be shared across our network of 50K+ followers on
+                                            SoundCloud,.
+                                            Expected
+                                            reach: 10-15K impressions within 48 hours.
+                                        </p>
+                                    </div>
+                                @endif
+                                <!-- Confirm Button -->
+                                <div class="mt-6 flex justify-center gap-3">
+                                    <x-gbutton variant="secondary" wire:click="closeRepostModal">Cancel</x-gbutton>
+                                    @if (($blockMismatchGenre && $userMismatchGenre) || !$blockMismatchGenre)
+                                        <x-gbutton variant="primary" wire:click="createRepostsRequest">Send
+                                            Request</x-gbutton>
+                                    @endif
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

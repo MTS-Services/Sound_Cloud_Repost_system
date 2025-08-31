@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Livewire\User\PackageManagement;
+namespace App\Livewire\User;
 
 use App\Models\Order;
 use App\Models\Plan;
 use App\Models\User;
-use App\Models\UserPlan;
 use App\Services\Admin\OrderManagement\OrderService;
 use App\Services\Admin\PackageManagement\FeatureCategorySevice;
 use App\Services\Admin\PackageManagement\PlanService;
@@ -14,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
-class Pricing extends Component
+class Plans extends Component
 {
     public $pricing;
     public $plans;
@@ -114,6 +113,6 @@ class Pricing extends Component
     public function render()
     {
 
-        return view('livewire.user.package-management.pricing');
+        return view('livewire.user.plans');
     }
 }

@@ -66,7 +66,7 @@ class SoundCloudController extends Controller
 
             Auth::guard('web')->login($user, true);
 
-            return redirect()->intended(route('user.pm.my-account', absolute: false))
+            return redirect()->intended(route('user.my-account', absolute: false))
                 ->with('success', 'Successfully connected to SoundCloud!');
         } catch (\Exception $e) {
             Log::error('SoundCloud callback error', [

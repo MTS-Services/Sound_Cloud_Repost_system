@@ -17,7 +17,7 @@
                             </p>
                         </div>
                         <x-gbutton variant="primary" wire:navigate
-                            href="{{ route('user.pm.my-account') }}"><span><x-heroicon-o-arrow-left
+                            href="{{ route('user.my-account') }}"><span><x-heroicon-o-arrow-left
                                     class="w-4 h-4 mr-1" /></span>Back</x-gbutton>
 
 
@@ -904,10 +904,6 @@
                                         <h2
                                             class="text-gray-900 dark:text-white text-lg sm:text-xl font-semibold mb-4">
                                             Your Recent Reposts
-                                            {{-- <span
-                                                class="text-orange-500 dark:text-orange-400 hover:text-orange-400/90 dark:hover:text-orange-300">
-                                                {{ user()->name }}
-                                            </span> --}}
                                         </h2>
 
                                         @foreach ($reposts as $repost)
@@ -978,13 +974,6 @@
                                                                                 class="block hover:bg-gray-800 px-3 py-1 rounded">
                                                                                 Visit SoundCloud Profile
                                                                             </a>
-                                                                            {{-- <a
-                                                                                href="{{ route('user.profile', $repost->source->user->username ?? $repost->source->user->id) }}"
-                                                                                wire:navigate
-                                                                                class="block hover:bg-gray-800 px-3 py-1 rounded"
-                                                                            >
-                                                                                Visit RepostChain Profile
-                                                                            </a> --}}
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1081,49 +1070,10 @@
                                     @endif
                                 </div>
                             </div>
-                        </div> {{-- /Main Content --}}
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
     @endif
-
-    {{-- TAB FUNCTIONALITY --}}
-    {{-- @push('js')
-        <script>
-            function initializeSoundCloudWidgets() {
-                if (typeof SC === 'undefined') {
-                    // setTimeout(initializeSoundCloudWidgets, 500);
-                    return;
-                }
-                // Handle both regular track players and playlist track players
-                const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
-                playerContainers.forEach(container => {
-                    const campaignId = container.dataset.campaignId;
-                    const iframe = container.querySelector('iframe');
-                    if (iframe && campaignId) {
-                        const widget = SC.Widget(iframe);
-                    }
-                });
-            }
-            // Updated JavaScript section for SoundCloud Widget integration
-            document.addEventListener('livewire:navigated', function() {
-                // Initialize SoundCloud Widget API integration with Livewire
-
-
-                // Initialize widgets on page load
-                initializeSoundCloudWidgets();
-
-                // Re-initialize widgets when Livewire updates the DOM
-                document.addEventListener('livewire:update', function() {
-                    setTimeout(initializeSoundCloudWidgets, 100);
-                });
-
-                // Re-initialize after wire:navigate navigations
-                document.addEventListener('livewire:navigated', function() {
-                    setTimeout(initializeSoundCloudWidgets, 100);
-                });
-            });
-        </script>
-    @endpush --}}
 </section>

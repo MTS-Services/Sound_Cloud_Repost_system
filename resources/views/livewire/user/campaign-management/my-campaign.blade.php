@@ -145,7 +145,6 @@
                                             </div>
 
                                         </div>
-                                        <!-- Add more blocks if needed -->
                                     </div>
 
                                     <div>
@@ -159,10 +158,13 @@
                                     @if (!$is_featured)
                                         <div class="flex flex-wrap justify-center sm:justify-end gap-4">
                                             @if ($is_pro)
-                                                <x-gbutton variant="secondary" wire:click="setFeatured({{ $campaign_->id }})">{{ __('Set Featured') }}</x-gbutton>
+                                                <x-gbutton variant="secondary"
+                                                    wire:click="setFeatured({{ $campaign_->id }})">{{ __('Set Featured') }}</x-gbutton>
                                             @else
-                                                <x-gabutton variant="primary" wire:navigate href="{{ route('user.pkm.pricing') }}"
-                                                    x-on:click="showUpgradeModal = true">Upgrade Plan</x-gabutton>
+                                                <x-gabutton variant="primary" wire:navigate
+                                                    href="{{ route('user.plans') }}">Need to get featured?
+                                                    (Pro)
+                                                </x-gabutton>
                                             @endif
                                         </div>
                                     @endif
@@ -273,7 +275,7 @@
                             @if ($is_pro)
                                 <x-gbutton variant="primary">Get featured</x-gbutton>
                             @else
-                                <x-gabutton variant="primary" wire:navigate href="{{ route('user.pkm.pricing') }}"
+                                <x-gabutton variant="primary" wire:navigate href="{{ route('user.plans') }}"
                                     x-on:click="showUpgradeModal = true">Upgrade Plan</x-gabutton>
                             @endif
                         </div>
@@ -671,7 +673,8 @@
                     <!-- Campaign Settings -->
                     <div>
                         <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mt-4">Campaign Settings</h2>
-                        <p class="text-sm text-gray-700 dark:text-gray-400 mb-4 mt-2">Select amount of credits to be spent</p>
+                        <p class="text-sm text-gray-700 dark:text-gray-400 mb-4 mt-2">Select amount of credits to be
+                            spent</p>
 
                         <!-- Enable CommentPlus -->
                         <div class="flex items-start space-x-3 mb-4">
