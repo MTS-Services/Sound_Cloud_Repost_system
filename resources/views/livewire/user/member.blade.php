@@ -115,7 +115,7 @@
                                 <p class="text-green-400 font-bold">83%</p>
                             </div>
                             <div class="text-center">
-                                <p class="text-text-gray text-xs mb-1 dark:text-white">Efficiency</p>
+                                <p class="text-text-gray text-xs mb-1 dark:text-white">Response Rate</p>
                                 <p class="text-orange-500 font-bold">92%</p>
                             </div>
                             <div class="text-center">
