@@ -54,7 +54,7 @@ class CampaignService
                     $campaign->increment('like_count');
                 }
                 if ($likeCommentAbleData['follow']) {
-                    $campaign->increment('follow_count');
+                    $campaign->increment('followowers_count');
                 }
 
                 if ($campaign->budget_credits == $campaign->credits_spent) {

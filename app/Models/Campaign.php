@@ -38,7 +38,7 @@ class Campaign extends BaseModel
         'target_genre',
         'like_count',
         'comment_count',
-        'follow_count',
+        'followowers_count',
         'favorite_count',
 
         'creater_id',
@@ -61,7 +61,7 @@ class Campaign extends BaseModel
         'is_featured' => 'boolean',
         'status' => 'integer',
         'playback_count' => 'integer',
-        'follow_count' => 'integer',
+        'followowers_count' => 'integer',
         'like_count' => 'integer',
         'comment_count' => 'integer',
         'favorite_count' => 'integer',
