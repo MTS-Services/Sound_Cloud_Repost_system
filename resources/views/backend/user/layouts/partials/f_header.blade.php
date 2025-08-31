@@ -1,22 +1,26 @@
  <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent backdrop-blur-sm">
      <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-         <div class="flex gap-2 items-center">
-             <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                 <span class="text-slate-100 dark:text-black font-bold text-md md:text-lg">R</span>
+         <a href="{{ route('f.landing') }}" wire:navigate>
+             <div class="flex gap-2 items-center">
+                 <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                     <span class="text-slate-100 dark:text-black font-bold text-md md:text-lg">R</span>
+                 </div>
+                 <span class="text-slate-100 dark:text-black font-bold text-lg md:text-xl hidden sm:block">
+                     REPOST<span class="text-orange-500">CHAIN</span>
+                 </span>
              </div>
-             <span class="text-slate-100 dark:text-black font-bold text-lg md:text-xl hidden sm:block">
-                 REPOST<span class="text-orange-500">CHAIN</span>
-             </span>
-         </div>
+         </a>
 
          <nav class="hidden md:flex items-center space-x-8">
+             <a href="#home" class="text-gray-300 hover:text-white transition-colors">Home</a>
              <a href="#about" class="text-gray-300 hover:text-white transition-colors">About</a>
              <a href="#how-it-works" class="text-gray-300 hover:text-white transition-colors">How it Works</a>
              <a href="#features" class="text-gray-300 hover:text-white transition-colors">Features</a>
              <a href="#testimonials" class="text-gray-300 hover:text-white transition-colors">Testimonials</a>
 
              @if (Auth::check())
-                     <x-gabutton variant="primary" wire:navigate href="{{ route('user.dashboard') }}">{{ __('Dashboard') }}</x-gabutton>
+                 <x-gabutton variant="primary" wire:navigate
+                     href="{{ route('user.dashboard') }}">{{ __('Dashboard') }}</x-gabutton>
              @else
                  <x-gabutton variant="primary" href="{{ route('soundcloud.redirect') }}">
                      <svg width="24" height="24" viewBox="0 0 512 512" fill="currentColor"

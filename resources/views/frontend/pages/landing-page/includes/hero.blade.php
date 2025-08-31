@@ -1,4 +1,4 @@
- <section class="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
+ <section class="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden" id="home">
      <div class="absolute inset-0 wave-pattern opacity-10 z-0"></div>
      <div class="absolute top-0 left-0 right-0 h-full bg-gradient-to-b from-dark-darker to-dark-bg z-0"></div>
 
