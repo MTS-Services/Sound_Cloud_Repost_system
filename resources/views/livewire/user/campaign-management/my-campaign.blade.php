@@ -161,6 +161,8 @@
                                 </div>
 
                                 <div class="flex flex-col sm:flex-row sm:justify-end items-center gap-4">
+                                    @dd(now()->diffInHours($campaign_->is_featured_at), $campaign_->featured_again); 
+                                    {{-- --- IGNORE --- --}}
                                     @if ($campaign_->featured_again)
                                         <div class="flex flex-wrap justify-center sm:justify-end gap-4">
                                             @if ($is_pro)
