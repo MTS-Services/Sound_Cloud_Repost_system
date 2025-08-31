@@ -607,46 +607,4 @@ class SoundCloudService
         $user = User::where('urn', user()->urn)->first();
         $this->syncUserPlaylists($user);
     }
-
-    public function selfRepostTracks(): void
-    {
-        $user = User::where('urn', user()->urn)->first();
-
-        $this->ensureSoundCloudConnection($user);
-        $this->refreshUserTokenIfNeeded($user);
-
-        $httpClient = Http::withHeaders([
-            'Authorization' => 'OAuth ' . $user->token,
-        ]);
-
-        $response = $httpClient->get($this->baseUrl . '/me/activities/tracks');
-        if ($response->failed()) {
-            Log::error('SoundCloud API request failed for user ' . $user->urn);
-            return;
-        }
-
-        $apiReposts = $response->json();
-
-        $apiRepostIds = collect($apiReposts['collection'])
-            ->map(fn($item) => $item['origin']['id'] ?? null)
-            ->filter()
-            ->toArray();
-
-        $dbRepostIds = Repost::where('reposter_urn', $user->urn)
-            ->pluck('soundcloud_repost_id')
-            ->toArray();
-
-        $toDelete = array_diff($dbRepostIds, $apiRepostIds);
-
-        dd( $toDelete, $dbRepostIds, $apiRepostIds, $apiReposts['collection']);
-
-        if (!empty($toDelete)) {
-            foreach ($toDelete as $id) {
-                $repost = Repost::where('reposter_urn', $user->urn)->where('soundcloud_repost_id', $id)->first();
-                if ($repost) {
-                    $repost->delete();
-                }
-            }
-        }
-    }
 }
