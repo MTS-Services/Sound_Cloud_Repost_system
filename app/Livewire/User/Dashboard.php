@@ -22,6 +22,49 @@ class Dashboard extends Component
     public $campaignPercentage;
     public $repostRequestPercentage;
 
+    // Campaign create modal
+    public $showCampaignsModal = false;
+    public $showSubmitModal = false;
+    public $showLowCreditWarningModal = false;
+    public $momentumEnabled = false;
+
+    public $tracks = [];
+    public $playlists = [];
+    public $playlistTracks = [];
+    public $activeTab = 'tracks';
+
+    public $track = null;
+    public $credit = 50;
+    public $commentable = true;
+    public $likeable = true;
+    public $proFeatureEnabled = false;
+    public $proFeatureValue = 0;
+    public $maxFollower = 0;
+    public $maxRepostLast24h = 0;
+    public $maxRepostsPerDay = 0;
+    public $anyGenre = 'anyGenre';
+    public $trackGenre = '';
+    public $targetGenre = '';
+    public $user = null;
+
+    public $musicId = null;
+    public $musicType = null;
+    public $title = null;
+    public $description = null;
+    public $playlistId = null;
+
+    // Properties for track type filtering
+    public $selectedTrackTypes = [];
+    public $selectedTrackType = 'all';
+    public $genres = [];
+    public $showTrackTypes = false;
+
+    // Properties to track budget warnings and validation
+    public $showBudgetWarning = false;
+    public $budgetWarningMessage = '';
+    public $canSubmit = false;
+
+
     public function boot(CreditTransactionService $creditTransactionService)
     {
         $this->creditTransactionService = $creditTransactionService;
