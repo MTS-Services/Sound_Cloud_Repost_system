@@ -61,6 +61,11 @@ class Campaign extends BaseModel
         'is_featured' => 'boolean',
         'status' => 'integer',
         'playback_count' => 'integer',
+        'follow_count' => 'integer',
+        'like_count' => 'integer',
+        'comment_count' => 'integer',
+        'favorite_count' => 'integer',
+        
     ];
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
