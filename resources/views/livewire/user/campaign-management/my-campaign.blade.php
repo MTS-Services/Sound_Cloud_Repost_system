@@ -52,7 +52,7 @@
                                                 <h3 class="text-black dark:text-gray-100 font-semibold text-lg">
                                                     {{ $campaign_->music?->title }}
                                                 </h3>
-                                                <span wire:click="editCampaign({{ $campaign_->id }})"
+                                                <a href="{{ $baseUrl/$campaign_->music?->permalink_url }}" target="_blank"
                                                     class="cursor-pointer">
                                                     <!-- Pencil Icon -->
                                                     <svg class="w-5 h-5 inline-block text-gray-500 dark:text-gray-100"
@@ -64,7 +64,7 @@
                                                         <path
                                                             d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                                                     </svg>
-                                                </span>
+                                                </a>
                                             </div>
 
                                             <div class="mb-4 text-sm text-center sm:text-left text-slate-400">
@@ -161,8 +161,6 @@
                                 </div>
 
                                 <div class="flex flex-col sm:flex-row sm:justify-end items-center gap-4">
-                                    @dd(now()->diffInHours($campaign_->is_featured_at), $campaign_->featured_again); 
-                                    {{-- --- IGNORE --- --}}
                                     @if ($campaign_->featured_again)
                                         <div class="flex flex-wrap justify-center sm:justify-end gap-4">
                                             @if ($is_pro)

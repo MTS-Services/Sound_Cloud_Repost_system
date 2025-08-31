@@ -15,7 +15,6 @@ use App\Services\Admin\UserManagement\UserService;
 use App\Services\TrackService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Locked;
@@ -29,6 +28,8 @@ class MyCampaign extends Component
 
     protected TrackService $trackService;
     protected UserService $userService;
+
+    public $baseUrl = 'https://soundcloud.com';
 
     // Pagination URL parameters
     #[Url(as: 'allPage')]
