@@ -948,6 +948,10 @@ class Campaign extends Component
             ];
 
             $response = null;
+            $like_response = null;
+            $comment_response = null;
+            $follow_response = null;
+            
             switch ($campaign->music_type) {
                 case Track::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
