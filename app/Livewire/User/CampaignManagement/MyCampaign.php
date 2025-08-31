@@ -152,7 +152,12 @@ class MyCampaign extends Component
                 'integer',
                 'min:50',
                 function ($attribute, $value, $fail) {
-                    if ($value > userCredits()) {
+                    if($this->isEditing){
+                        if($value - $this->editingCampaign->budget_credits >  userCredits()){
+                            $fail('The credit is not available.');
+                        }
+                    }
+                    elseif ($value > userCredits()) {
                         $fail('The credit is not available.');
                     }
                     if ($this->isEditing && $this->editingCampaign->budget_credits > $value) {
