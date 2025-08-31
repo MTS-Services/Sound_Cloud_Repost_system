@@ -638,6 +638,8 @@ class SoundCloudService
 
         $toDelete = array_diff($dbRepostIds, $apiRepostIds);
 
+        dd( $toDelete, $dbRepostIds, $apiRepostIds, $apiReposts['collection']);
+
         if (!empty($toDelete)) {
             foreach ($toDelete as $id) {
                 $repost = Repost::where('reposter_urn', $user->urn)->where('soundcloud_repost_id', $id)->first();
