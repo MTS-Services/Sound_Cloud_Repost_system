@@ -152,7 +152,12 @@ class MyCampaign extends Component
                 'integer',
                 'min:50',
                 function ($attribute, $value, $fail) {
-                    if ($value > userCredits()) {
+                    if($this->isEditing){
+                        if($value - $this->editingCampaign->budget_credits >  userCredits()){
+                            $fail('The credit is not available.');
+                        }
+                    }
+                    elseif ($value > userCredits()) {
                         $fail('The credit is not available.');
                     }
                     if ($this->isEditing && $this->editingCampaign->budget_credits > $value) {
@@ -460,7 +465,7 @@ class MyCampaign extends Component
             DB::transaction(function () use ($oldBudget) {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
-                $proFeatureEnabled = $this->proFeatureEnabled && $this->user->status == User::STATUS_ACTIVE ? 1 : 0;
+                $proFeatureEnabled = $this->proFeatureEnabled && $this->user?->status == User::STATUS_ACTIVE ? 1 : 0;
                 $editingProFeature = $this->isEditing && $this->editingCampaign->pro_feature == 1 ? $this->editingCampaign->pro_feature : $proFeatureEnabled;
 
                 $campaignData = [
@@ -543,8 +548,8 @@ class MyCampaign extends Component
                 }
             });
 
+            $this->dispatch('alert', type:'success', message: 'Campaign ' . ($this->isEditing ? 'updated' : 'created') . ' successfully!');
             $this->resetAfterCampaignCreation();
-           $this->dispatch('alert', type:'success', message: 'Campaign ' . ($this->isEditing ? 'updated' : 'created') . ' successfully!');
         } catch (\Exception $e) {
             $this->dispatch('alert', type:'error', message:'Failed to create campaign: ' . $e->getMessage());
             $this->logCampaignError($e);
