@@ -186,7 +186,7 @@ class Member extends Component
             $this->processResolvedData($response->json());
         } else {
             $this->resetCollections();
-            $this->dispatch('alert', 'error', 'Could not resolve the SoundCloud link. Please check the URL.');
+           $this->dispatch('alert', type:'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
         }
     }
 
@@ -201,7 +201,7 @@ class Member extends Component
                 $this->fetchUserTracks($data['id']);
             } else {
                 $this->resetCollections();
-                $this->dispatch('alert', 'error', 'The provided URL is not a track or user profile.');
+               $this->dispatch('alert', type:'error', message: 'The provided URL is not a track or user profile.');
             }
         } elseif ($this->activeTab === 'playlists') {
             if ($data['kind'] === 'playlist') {
@@ -210,7 +210,7 @@ class Member extends Component
                 $this->playlists = $this->allPlaylists->take($this->playlistLimit);
             } else {
                 $this->resetCollections();
-                $this->dispatch('alert', 'error', 'The provided URL is not a playlist.');
+               $this->dispatch('alert', type:'error', message: 'The provided URL is not a playlist.');
             }
         }
     }
@@ -313,7 +313,7 @@ class Member extends Component
         $requester = user();
 
         if (!$this->user || !$this->track) {
-            $this->dispatch('alert', 'error', 'Target user or content not found.');
+           $this->dispatch('alert', type:'error', message: 'Target user or content not found.');
             return;
         }
 
@@ -387,16 +387,16 @@ class Member extends Component
                 broadcast(new UserNotificationSent($requesterNotification));
                 broadcast(new UserNotificationSent($targetUserNotification));
             });
-            $this->dispatch('alert', 'success', 'Repost request sent successfully!');
+           $this->dispatch('alert', type:'success', message: 'Repost request sent successfully!');
             sleep(1);
             $this->closeRepostModal();
             $this->closeModal();
         } catch (InvalidArgumentException $e) {
             Log::info('Repost request failed', ['error' => $e->getMessage()]);
-            $this->dispatch('alert', 'error', $e->getMessage());
+           $this->dispatch('alert', type:'error', message: $e->getMessage());
         } catch (Exception $e) {
             Log::info('Repost request failed', ['error' => $e->getMessage()]);
-            $this->dispatch('alert', 'error', 'Failed to send repost request. Please try again.');
+           $this->dispatch('alert', type:'error', message: 'Failed to send repost request. Please try again.');
             logger()->error('Repost request failed', ['error' => $e->getMessage()]);
         }
     }

@@ -64,7 +64,7 @@ class Plans extends Component
 
                 if ($activeUserPlan && $activeUserPlan->plan?->price > $plan->price) {
 
-                    $this->dispatch('alert', 'error', 'You have already subscribed to a plan with higher price. Cannot upgrade a lower price plan.');
+                   $this->dispatch('alert', type:'error', message: 'You have already subscribed to a plan with higher price. Cannot upgrade a lower price plan.');
 
                     return null; // Return null here
                 } elseif ($activeUserPlan && $activeUserPlan->plan?->price < $plan->price) {

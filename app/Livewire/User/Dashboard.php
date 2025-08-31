@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Throwable;
 
+use function PHPSTORM_META\type;
+
 class Dashboard extends Component
 {
     protected CreditTransactionService $creditTransactionService;
@@ -116,7 +118,7 @@ class Dashboard extends Component
 
             // Refresh data after successful repost
             $this->loadDashboardData();
-            $this->dispatch('alert', 'success', 'Repost request sent successfully.');
+           $this->dispatch('alert', type:'success', message: 'Repost request sent successfully.');
         } catch (Throwable $e) {
             Log::error("Error sending repost request: " . $e->getMessage(), [
                 'exception' => $e,
@@ -124,7 +126,7 @@ class Dashboard extends Component
                 'user_urn' => user()->urn ?? 'N/A',
             ]);
 
-            $this->dispatch('alert', 'error', 'Failed to send repost request. Please try again.');
+            $this->dispatch('alert', type:'error', message:'Failed to send repost request. Please try again.');
         }
     }
 
@@ -139,14 +141,14 @@ class Dashboard extends Component
             // Refresh data after successful decline
             $this->loadDashboardData();
 
-            $this->dispatch('alert', 'success', 'Repost request declined successfully.');
+           $this->dispatch('alert', type:'success', message: 'Repost request declined successfully.');
         } catch (Throwable $e) {
             Log::error("Error declining repost request: " . $e->getMessage(), [
                 'exception' => $e,
                 'encrypted_request_id' => $encryptedRequestId,
                 'user_urn' => user()->urn ?? 'N/A',
             ]);
-            $this->dispatch('alert', 'error', 'Failed to decline repost request. Please try again.');
+           $this->dispatch('alert', type:'error', message: 'Failed to decline repost request. Please try again.');
         }
     }
 
