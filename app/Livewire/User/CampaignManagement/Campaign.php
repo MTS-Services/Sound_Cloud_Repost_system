@@ -983,7 +983,7 @@ class Campaign extends Component
                 'follow' => $follow_response ? $this->followed : false
             ];
             if ($response->successful()) {
-                $soundcloudRepostId = $response->json('id');
+                $soundcloudRepostId = $campaign->music->soundcloud_track_id;
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
                 $this->dispatch('alert', 'success', 'Campaign music reposted successfully.');
             } else {
