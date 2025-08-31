@@ -160,10 +160,9 @@
                                     </div>
                                 </div>
 
-                                <div class="flex flex-col sm:flex-row sm:justify-between items-center gap-4">
-                                    <span></span>
-
-                                    @if (!$is_featured)
+                                <div class="flex flex-col sm:flex-row sm:justify-end items-center gap-4">
+                                    @dd($campaign_->featured_again);
+                                    @if ($campaign_->featured_again)
                                         <div class="flex flex-wrap justify-center sm:justify-end gap-4">
                                             @if ($is_pro)
                                                 <x-gbutton variant="secondary"
@@ -176,6 +175,10 @@
                                             @endif
                                         </div>
                                     @endif
+                                    <div>
+                                        <x-gbutton variant="secondary"
+                                            wire:click="openViewDetailsModal({{ $campaign_->id }})">{{ __('Free Boost') }}</x-gbutton>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -281,7 +284,9 @@
                         </div>
                         <div class="flex justify-center">
                             @if ($is_pro)
-                                <x-gbutton variant="primary">Get featured</x-gbutton>
+                                @if ($is_featured)
+                                    <x-gbutton variant="primary">Get featured</x-gbutton>
+                                @endif
                             @else
                                 <x-gabutton variant="primary" wire:navigate href="{{ route('user.plans') }}"
                                     x-on:click="showUpgradeModal = true">Upgrade Plan</x-gabutton>

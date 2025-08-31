@@ -26,6 +26,9 @@ class Campaign extends BaseModel
         'min_followers',
         'max_followers',
         'is_featured',
+        'featured_at',
+        'is_boost',
+        'boost_at',
         'start_date',
         'end_date',
         'refund_credits',
@@ -65,7 +68,7 @@ class Campaign extends BaseModel
         'like_count' => 'integer',
         'comment_count' => 'integer',
         'favorite_count' => 'integer',
-        
+
     ];
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
@@ -115,8 +118,26 @@ class Campaign extends BaseModel
             'end_date_formatted',
 
             'feature_label',
+            'featured_again',
+            'boost_again',
         ]);
     }
+
+    public function getFeaturedAgainAttribute(): bool
+    {
+        if (!$this->is_featured_at) {
+            return true;
+        }
+        return now()->diffInHours($this->is_featured_at) >= 24;
+    }
+    public function getBoostAgainAttribute(): bool
+    {
+        if (!$this->boost_at) {
+            return true;
+        }
+        return now()->diffInHours($this->boost_at) >= 24;
+    }
+
 
     public const STATUS_OPEN = 1;
     public const STATUS_PAUSED = 2;

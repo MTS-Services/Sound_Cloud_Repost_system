@@ -801,7 +801,7 @@ class MyCampaign extends Component
     {
         $campaign = Campaign::find($id);
         $campaign->is_featured = !$campaign->is_featured;
-        // $campaign->is_featured_at = now();
+        $campaign->featured_at = now();
         $campaign->save();
         $this->mount();
     }
