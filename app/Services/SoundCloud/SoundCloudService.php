@@ -650,12 +650,13 @@ class SoundCloudService
         $apiReposts = $response->json();
         
         $apiRepostIds = collect($apiReposts['collection'])
-            ->map(fn($item) => $item['origin']['id'] ?? null)
-            ->filter()
-            ->toArray();
+        ->map(fn($item) => $item['origin']['id'] ?? null)
+        ->filter()
+        ->toArray();
         $dbRepostIds = Repost::where('reposter_urn', $user->urn)
-            ->pluck('soundcloud_repost_id')
-            ->toArray();
+        ->pluck('soundcloud_repost_id')
+        ->toArray();
+        dd($apiReposts, $apiRepostIds, $dbRepostIds,);
 
         $toDelete = array_diff($dbRepostIds, $apiRepostIds);
 
