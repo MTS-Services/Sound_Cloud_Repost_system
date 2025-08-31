@@ -548,8 +548,8 @@ class MyCampaign extends Component
                 }
             });
 
+            $this->dispatch('alert', type:'success', message: 'Campaign ' . ($this->isEditing ? 'updated' : 'created') . ' successfully!');
             $this->resetAfterCampaignCreation();
-           $this->dispatch('alert', type:'success', message: 'Campaign ' . ($this->isEditing ? 'updated' : 'created') . ' successfully!');
         } catch (\Exception $e) {
             $this->dispatch('alert', type:'error', message:'Failed to create campaign: ' . $e->getMessage());
             $this->logCampaignError($e);
