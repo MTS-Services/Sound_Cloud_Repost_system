@@ -95,6 +95,31 @@ class Dashboard extends Component
     public int $editCostPerRepost;
     public $editOriginalBudget = null;
 
+    protected function rules()
+    {
+        $rules = [
+            'credit' => [
+                'required',
+                'integer',
+                'min:50',
+                function ($attribute, $value, $fail) {
+                    if ($value > userCredits()) {
+                        $fail('The credit is not available.');
+                    }
+                },
+            ],
+        ];
+
+        return $rules;
+    }
+
+    protected function messages()
+    {
+        return [
+            'credit.required' => 'Minimum credit is 100.',
+            'maxFollower.required' => 'Max follower is required.',
+        ];
+    }
 
     public function boot(CreditTransactionService $creditTransactionService, SoundCloudService $soundCloudService)
     {
@@ -168,7 +193,7 @@ class Dashboard extends Component
     public function fetchTracks()
     {
         try {
-            $this->soundCloudService->syncSelfTracks([]);
+            // $this->soundCloudService->syncSelfTracks([]);
 
             $this->tracksPage = 1;
             $this->tracks = Track::where('user_urn', user()->urn)
@@ -198,7 +223,7 @@ class Dashboard extends Component
     public function fetchPlaylists()
     {
         try {
-            $this->soundCloudService->syncSelfPlaylists();
+            // $this->soundCloudService->syncSelfPlaylists();
 
             $this->playlistsPage = 1;
             $this->playlists = Playlist::where('user_urn', user()->urn)
