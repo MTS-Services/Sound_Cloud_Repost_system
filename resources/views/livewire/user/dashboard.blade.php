@@ -19,10 +19,10 @@
                     <span>💰</span>{{ __('Earn Credits') }}
                 </x-gbutton>
                 <!-- Submit Track -->
-                <x-gbutton variant="primary" wire:navigate href="{{ route('user.track.submit') }}">
+                <x-gbutton variant="primary">
                     <span>
-                        <x-lucide-music class="inline-block text-center h-4 w-4 text-white mr-1" />
-                    </span>{{ __('Submit Track') }}
+                        <x-lucide-plus class="inline-block text-center h-4 w-4 text-white mr-1" />
+                    </span>{{ __('Start a new campaign') }}
                 </x-gbutton>
             </div>
         </div>

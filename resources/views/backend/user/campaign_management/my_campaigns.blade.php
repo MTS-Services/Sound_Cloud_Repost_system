@@ -671,7 +671,7 @@
                     <!-- Campaign Settings -->
                     <div>
                         <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mt-4">Campaign Settings</h2>
-                        <p class="text-sm text-gray-700 mb-4 mt-2">Select amount of credits to be spent</p>
+                        <p class="text-sm text-gray-700 dark:text-gray-400 mb-4 mt-2">Select amount of credits to be spent</p>
 
                         <!-- Enable CommentPlus -->
                         <div class="flex items-start space-x-3 mb-4">

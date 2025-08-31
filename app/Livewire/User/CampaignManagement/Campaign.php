@@ -1202,19 +1202,6 @@ class Campaign extends Component
     {
         $this->toggleSubmitModal('track', $trackId);
     }
-
-    /**
-     * Initialize play times for campaigns
-     */
-    // private function initializePlayTimes($campaigns)
-    // {
-    //     foreach ($campaigns as $campaign) {
-    //         if (!isset($this->playTimes[$campaign->id])) {
-    //             $this->playTimes[$campaign->id] = 0;
-    //         }
-    //     }
-    // }
-
     public function totalCampaigns()
     {
         $this->totalCampaign = $this->getCampaignsQuery()->count();
@@ -1228,39 +1215,17 @@ class Campaign extends Component
     public function render()
     {
         try {
-            // Get base query
             $baseQuery = $this->getCampaignsQuery();
-
-            // Apply filters to the query
             $baseQuery = $this->applyFilters($baseQuery);
             $campaigns = collect();
-            // dd($baseQuery->get());
-            // $filteredQuery = $this->applyFilters(clone $baseQuery);
-
-            // Initialize campaigns variables
-            // $featuredCampaigns = collect();
-            // $campaigns = null;
-            // Get campaigns based on active tab with pagination
             switch ($this->activeMainTab) {
                 case 'recommended_pro':
-
-                    // Get featured campaigns (no pagination for featured)
-
-
-                    // Get regular campaigns with pagination
-                    // $campaigns = $filteredQuery
-                    //     ->NotFeatured()
-                    //     ->latest()
-                    //     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
-
-
                     $campaigns = $baseQuery->proFeatured()
                         ->latest()
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
                     break;
 
                 case 'recommended':
-
                     $campaigns = $baseQuery->featured()
                         ->latest()
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
@@ -1278,18 +1243,15 @@ class Campaign extends Component
             }
 
             return view('backend.user.campaign_management.campaign', [
-                // 'featuredCampaigns' => $featuredCampaigns,
                 'campaigns' => $campaigns
             ]);
         } catch (\Exception $e) {
-            // Handle errors gracefully
             Log::error('Failed to load campaigns: ' . $e->getMessage(), [
                 'user_urn' => user()->urn ?? 'unknown',
                 'active_tab' => $this->activeMainTab,
                 'exception' => $e
             ]);
             $campaigns = collect();
-
 
             return view('backend.user.campaign_management.campaign', [
                 'campaigns' => $campaigns
