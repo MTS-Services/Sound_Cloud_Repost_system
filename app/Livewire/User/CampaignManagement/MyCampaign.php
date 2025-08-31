@@ -419,7 +419,7 @@ class MyCampaign extends Component
 
     private function handleSubmissionError(\Exception $e, string $type, int $id): void
     {
-        $this->dispatch('alert', 'error', 'Failed to load content: ' . $e->getMessage());
+        $this->dispatch('alert', type:'error', message:'Failed to load content: ' . $e->getMessage());
         $this->showSubmitModal = false;
         $this->showCampaignsModal = true;
 
@@ -544,9 +544,9 @@ class MyCampaign extends Component
             });
 
             $this->resetAfterCampaignCreation();
-            $this->dispatch('alert', 'success', 'Campaign ' . ($this->isEditing ? 'updated' : 'created') . ' successfully!');
+           $this->dispatch('alert', type:'success', message: 'Campaign ' . ($this->isEditing ? 'updated' : 'created') . ' successfully!');
         } catch (\Exception $e) {
-            $this->dispatch('alert', 'error', 'Failed to create campaign: ' . $e->getMessage());
+            $this->dispatch('alert', type:'error', message:'Failed to create campaign: ' . $e->getMessage());
             $this->logCampaignError($e);
         }
     }
@@ -559,7 +559,7 @@ class MyCampaign extends Component
             ->first();
 
         if (!$this->editingCampaign) {
-            $this->dispatch('alert', 'error', 'Campaign not found or cannot be edited.');
+            $this->dispatch('alert', type:'error', message:'Campaign not found or cannot be edited.');
             return;
         }
 
@@ -776,7 +776,7 @@ class MyCampaign extends Component
 
     private function handleError(string $message, \Exception $e, array $context = []): void
     {
-        $this->dispatch('alert', 'error', $message . ': ' . $e->getMessage());
+        $this->dispatch('alert', type:'error', message:$message . ': ' . $e->getMessage());
 
         Log::error($message . ': ' . $e->getMessage(), array_merge([
             'user_urn' => user()->urn ?? 'unknown'
