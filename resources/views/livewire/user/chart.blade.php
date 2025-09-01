@@ -3,10 +3,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <div class="py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class=" mx-auto px-4 sm:px-6 lg:px-8">
             <div
                 class="bg-gradient-to-r dark:bg-gray-900 dark:to-gray-800/20  text-white p-6 sm:p-8 rounded-2xl mb-8 border border-gray-800">
-                <div class="max-w-4xl mx-auto">
+                <div class=" mx-auto">
                     <!-- Header -->
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div class="flex items-start sm:items-center gap-3">
