@@ -54,10 +54,11 @@ class Dashboard extends Component
     public $likeable = true;
     public $proFeatureEnabled = false;
     public $proFeatureValue = 0;
-    public $maxFollower = 0;
+    public $maxFollower = 100;
+    public $followersLimit = 0;
     public $maxRepostLast24h = 0;
     public $maxRepostsPerDay = 0;
-    public $anyGenre = 'anyGenre';
+    public $anyGenre = '';
     public $trackGenre = '';
     public $targetGenre = '';
     public $user = null;
@@ -130,6 +131,21 @@ class Dashboard extends Component
     public function mount()
     {
         $this->loadDashboardData();
+        $this->calculateFollowersLimit();
+        $this->user = User::where('urn', user()->urn)->first()->activePlan();
+        if ($this->user) {
+            $this->anyGenre = $this->user->status != User::STATUS_ACTIVE ? 'anyGenre' : '';
+        }
+    }
+    public function updated($propertyName)
+    {
+        if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
+            $this->calculateFollowersLimit();
+        }
+    }
+    public function calculateFollowersLimit()
+    {
+        $this->followersLimit = ($this->credit - ($this->likeable ? 2 : 0) - ($this->commentable ? 2 : 0)) * 100;
     }
 
     public function loadDashboardData()
@@ -364,8 +380,6 @@ class Dashboard extends Component
             // 'budgetWarningMessage',
             // 'canSubmit',
         ]);
-
-        $this->user = User::where('urn', user()->urn)->first()->activePlan();
 
         if (userCredits() < 50) {
             $this->showLowCreditWarningModal = true;

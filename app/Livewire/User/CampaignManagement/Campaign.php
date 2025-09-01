@@ -115,7 +115,8 @@ class Campaign extends Component
     public $likeable = true;
     public $proFeatureEnabled = false;
     public $proFeatureValue = 0;
-    public $maxFollower = 0;
+    public $maxFollower = 100;
+    public $followersLimit = 0;
     public $maxRepostLast24h = 0;
     public $maxRepostsPerDay = 0;
     public $anyGenre = 'anyGenre';
@@ -197,7 +198,17 @@ class Campaign extends Component
         $this->getAllGenres();
         $this->getAllTrackTypes();
         $this->totalCampaigns();
-        // Initialize play tracking for campaigns (will be done in render method)
+        $this->calculateFollowersLimit();
+    }
+    public function updated($propertyName)
+    {
+        if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
+            $this->calculateFollowersLimit();
+        }
+    }
+    public function calculateFollowersLimit()
+    {
+        $this->followersLimit = ($this->credit - ($this->likeable ? 2 : 0) - ($this->commentable ? 2 : 0)) * 100;
     }
 
     protected function rules()
@@ -695,6 +706,7 @@ class Campaign extends Component
     {
         $this->proFeatureEnabled = $isChecked ? false : true;
         $this->proFeatureValue = $isChecked ? 0 : 1;
+        $this->anyGenre = 'anyGenre';
     }
 
     public function createCampaign()

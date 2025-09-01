@@ -499,7 +499,7 @@
                 </button>
             </div>
 
-            <div x-data="{ momentumEnabled: false }" class="flex-grow overflow-y-auto p-6">
+            <div x-data="{ momentumEnabled: {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'false' : 'true' }}, showGenreRadios: false, showRepostPerDay: false, showOptions: false }" class="flex-grow overflow-y-auto p-6">
                 <!-- Selected Track -->
                 @if ($track)
                     <div>
@@ -556,8 +556,8 @@
                         <!-- Slider -->
                         <div class="relative">
                             <input type="range" x-data x-on:input="$wire.set('credit', $event.target.value)"
-                                min="0" max="500" step="10" value="{{ $credit }}"
-                                class="w-full h-2 border-0 cursor-pointer">
+                                min="50" step="10" max="{{ userCredits() }}"
+                                value="{{ $credit }}" class="w-full h-2 border-0 cursor-pointer">
                         </div>
                     </div>
 
@@ -590,40 +590,36 @@
                                 like).</p>
                         </div>
                     </div>
-
-                    <div x-data="{ showOptions: false }" class="flex flex-col space-y-2">
-                        <!-- Checkbox + Label -->
+                    <!-- Max Follower Limit -->
+                    <div x-data="{ showOptions: {{ $maxFollower >= 100 ? 'true' : 'false' }} }" class="flex flex-col space-y-2">
                         <div class="flex items-start space-x-3">
                             <input type="checkbox" @change="showOptions = !showOptions"
+                                {{ $maxFollower > 0 ? 'checked' : '' }}
                                 class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-
                             <div class="flex items-center space-x-2">
-                                <span class="text-sm font-medium text-gray-900 dark:text-white">Limit to users with max
-                                    follower
+                                <span class="text-sm font-medium text-gray-900 dark:text-white">Limit to users with
+                                    max follower
                                     count</span>
-                                <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
-                                    <span class="text-white text-xs">i</span>
-                                </div>
                             </div>
                         </div>
-
-                        <!-- Toggle Options (Hidden by default) -->
                         <div x-show="showOptions" x-transition class="p-3">
                             <div class="flex justify-between items-center gap-4">
                                 <div class="w-full relative">
                                     <input type="range" x-data
-                                        x-on:input="$wire.set('maxFollower', $event.target.value)" min="0"
-                                        max="500" value="{{ $maxFollower }}"
-                                        class="w-full h-2  cursor-pointer">
+                                        x-on:input="$wire.set('maxFollower', $event.target.value)" min="100"
+                                        max="{{ $followersLimit }}"
+                                        value="{{ $followersLimit < $maxFollower ? $followersLimit : $maxFollower }}"
+                                        class="w-full h-2 cursor-pointer">
                                 </div>
                                 <div
-                                    class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
-                                    <span>{{ $maxFollower }}</span>
+                                    class="full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
+                                    <span
+                                        class="text-sm font-medium text-gray-900 dark:text-white">{{ $maxFollower > $followersLimit ? $followersLimit : $maxFollower }}</span>
                                 </div>
-                                @error('maxFollower')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
                             </div>
+                            @error('maxFollower')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
@@ -631,7 +627,6 @@
                     <div
                         class="flex items-start space-x-3 {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'opacity-30' : '' }}">
                         <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
-                            x-model="momentumEnabled"
                             {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'disabled' : '' }}
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'cursor-not-allowed' : 'cursor-pointer' }}">
                         <div>
@@ -662,10 +657,9 @@
                         </div>
 
                         <div class="space-y-3 ml-4">
-                            <div x-data="{ showOptions: false }" class="flex flex-col space-y-2">
+                            <div class="flex flex-col space-y-2">
                                 <div class="flex items-start space-x-3">
-                                    <input type="checkbox" @change="showOptions = !showOptions"
-                                        :disabled="!momentumEnabled"
+                                    <input type="checkbox" :disabled="!momentumEnabled"
                                         class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
                                         :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                     <div class="flex items-center space-x-2">
@@ -674,27 +668,9 @@
                                             24h)</span>
                                     </div>
                                 </div>
-                                <div x-show="showOptions" x-transition class="p-3">
-                                    <div class="flex justify-between items-center gap-4">
-                                        <div class="w-full relative">
-                                            <input type="range" x-data :disabled="!momentumEnabled"
-                                                x-on:input="$wire.set('maxRepostLast24h', $event.target.value)"
-                                                min="0" max="50" value="{{ $maxRepostLast24h }}"
-                                                class="w-full h-2  cursor-pointer"
-                                                :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
-                                        </div>
-                                        <div
-                                            class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
-                                            <span>{{ $maxRepostLast24h }}</span>
-                                        </div>
-                                        @error('maxRepostLast24h')
-                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                </div>
                             </div>
 
-                            <div x-data="{ showRepostPerDay: false }" class="flex flex-col space-y-2">
+                            <div class="flex flex-col space-y-2">
                                 <div class="flex items-start space-x-3">
                                     <input type="checkbox" @click="showRepostPerDay = !showRepostPerDay"
                                         :disabled="!momentumEnabled"
@@ -709,7 +685,7 @@
                                 <div x-show="showRepostPerDay" x-transition class="p-3">
                                     <div class="flex justify-between items-center gap-4">
                                         <div class="w-full relative">
-                                            <input type="range" x-data :disabled="!momentumEnabled"
+                                            <input type="range" x-data :disabled="momentumEnabled"
                                                 x-on:input="$wire.set('maxRepostsPerDay', $event.target.value)"
                                                 min="0" max="100" value="{{ $maxRepostsPerDay }}"
                                                 class="w-full h-2  cursor-pointer"
@@ -726,43 +702,46 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div
-                        class="border border-gray-200 dark:border-gray-700 bg-gray-200 dark:bg-gray-900 rounded-lg p-4">
                         <!-- Genre Selection -->
-                        <div class="">
-                            <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Genre Preferences for
+                        <div class="mt-4">
+                            <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Genre
+                                Preferences for
                                 Sharers</h2>
-                            <p class="text-sm text-gray-700 dark:text-gray-400 mb-3 mt-2">Reposters must have the
+                            <p class="text-sm text-gray-700 dark:text-gray-400 mb-3 mt-2">Reposters must have
+                                the
                                 following genres:</p>
                             <div class="space-y-2 ml-4">
                                 <div class="flex items-center space-x-2">
                                     <input type="radio" name="genre" value="anyGenre" checked
                                         @click="showGenreRadios = false" wire:model="anyGenre"
-                                        class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
+                                        :disabled="!momentumEnabled"
+                                        class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                                        :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                     <span class="text-sm text-gray-700 dark:text-gray-400">Open to all music
                                         types</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <input type="radio" name="genre" value="trackGenre"
                                         @click="showGenreRadios = false" wire:model="trackGenre"
-                                        class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
-                                    <span class="text-sm text-gray-700 dark:text-gray-400">Match track genre – Hip-hop
+                                        :disabled="!momentumEnabled"
+                                        class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                                        :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
+                                    <span class="text-sm text-gray-700 dark:text-gray-400">Match track genre –
+                                        Hip-hop
                                         & Rap</span>
                                 </div>
-                                <div x-data="{ showGenreRadios: false }" class="space-y-3">
-
-                                    <!-- Toggle Checkbox -->
+                                <div class="space-y-3">
                                     <div class="flex items-center space-x-2">
                                         <input type="radio" name="genre"
                                             @click="showGenreRadios = !showGenreRadios" wire:click="getAllGenres"
-                                            class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
-                                        <span class="text-sm text-gray-700 dark:text-gray-400">Match one of your
-                                            profile’s chosen
+                                            :disabled="!momentumEnabled"
+                                            class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                                            :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
+                                        <span class="text-sm text-gray-700 dark:text-gray-400">Match one of
+                                            your
+                                            profile's chosen
                                             genres</span>
                                     </div>
-
-                                    <!-- Radio Options (Toggle area) -->
                                     <div x-show="showGenreRadios" x-transition class="ml-6 space-y-2">
                                         @forelse ($genres as $genre)
                                             <div class="flex items-center space-x-2">
@@ -774,7 +753,8 @@
                                             </div>
                                         @empty
                                             <div class="">
-                                                <span class="text-sm text-gray-700 dark:text-gray-400">No genres
+                                                <span class="text-sm text-gray-700 dark:text-gray-400">No
+                                                    genres
                                                     found</span>
                                             </div>
                                         @endforelse
