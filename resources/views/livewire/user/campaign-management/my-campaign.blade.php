@@ -40,7 +40,7 @@
                 <!-- Main Content -->
                 <div class="w-full flex flex-col gap-6">
                     @forelse ($campaigns as $campaign_)
-                        <div class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                        <div class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden relative">
                             <div class="p-2 sm:p-4">
                                 <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
                                     <div class="flex flex-col sm:flex-row gap-4">
@@ -58,6 +58,18 @@
                                                     <x-lucide-external-link
                                                         class="w-6 h-6 text-gray-500 hover:text-orange-500 transition-colors" />
                                                 </a>
+                                                <div class="flex items-center gap-2">
+                                                    @if(!featuredAgain() && $campaign_->is_featured)
+                                                        <span class="text-xs font-semibold mr-2 px-2.5 py-0.5 rounded bg-orange-500 text-white">
+                                                            {{ !featuredAgain() ? 'Featured' : '' }}
+                                                        </span>
+                                                    @endif
+                                                    @if(!boostAgain() && $campaign_->is_boost)
+                                                        <span class="text-xs font-semibold mr-2 px-2.5 py-0.5 rounded bg-orange-500 text-white">
+                                                            {{ !boostAgain() ? 'Boosted' : '' }}
+                                                        </span>
+                                                    @endif
+                                                </div>
                                             </div>
 
                                             <div class="mb-4 text-sm text-center sm:text-left text-slate-400">
