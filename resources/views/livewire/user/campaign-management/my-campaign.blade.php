@@ -272,7 +272,7 @@
                         <h2 class="text-lg font-bold text-gray-800 mb-4 dark:text-gray-100">Reach more
                             people</h2>
                         <hr class="text-red-500 mb-4">
-                        @if(featuredAgain())
+                        @if(featuredAgain() && $latestCampaign)
                             <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
                                 <img src="{{ soundcloud_image($latestCampaign?->music?->artwork_url) }}"
                                     alt="Reach people icon" class="w-16 h-16 rounded-lg object-cover">
@@ -281,7 +281,7 @@
                                     <p class="text-gray-500 text-sm">{{ $latestCampaign?->music?->genre }}</p>
                                 </div>
                             </div>
-                        @else
+                        @elseif($featuredCampaign)
                             <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
                                 <img src="{{ soundcloud_image($featuredCampaign?->music?->artwork_url) }}"
                                     alt="Reach people icon" class="w-16 h-16 rounded-lg object-cover">
@@ -293,7 +293,7 @@
                         @endif
                         <div class="flex justify-center">
                             @if (proUser())
-                                @if (featuredAgain())
+                                @if (featuredAgain() && $latestCampaign)
                                     <x-gbutton  wire:click="setFeatured({{ $latestCampaign->id }})" variant="primary">Get featured</x-gbutton>
                                 @endif
                             @else
