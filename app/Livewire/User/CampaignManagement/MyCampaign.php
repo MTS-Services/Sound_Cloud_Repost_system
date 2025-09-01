@@ -891,8 +891,8 @@ class MyCampaign extends Component
                     ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage)
             };
-            $data['latestCampaign'] = Campaign::self()->where('featured_at', null)->latest()->first();
-            $data['featuredCampaign'] = Campaign::self()->featured()->whereTime('featured_at', "<=", now()->subHours(24))->first();
+            $data['latestCampaign'] = Campaign::with('music')->self()->where('featured_at', null)->latest()->first();
+            $data['featuredCampaign'] = Campaign::with('music')->self()->featured()->whereTime('featured_at', "<=", now()->subHours(24))->first();
             $data['is_pro'] = UserPlan::where('user_urn', user()->urn)->active()->exists();
         } catch (\Exception $e) {
             $data['campaigns'] = collect();
