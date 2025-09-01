@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Campaign;
 use App\Models\Order;
 use App\Models\Permission;
 use App\Models\UserSetting;
@@ -691,5 +692,38 @@ function invoiceId()
     return 'INV-' . date('Y') . '-0' . date('his');
 }
 
+if (!function_exists('featuredAgain')) {
+    function featuredAgain()
+    {
+        $latestFeaturedAt = Campaign::where('user_urn', user()->urn)
+            ->where('is_featured', 1)
+            ->latest('featured_at')
+            ->value('featured_at');
+
+        if (!$latestFeaturedAt) {
+            return true;
+        }
+
+        $hoursSinceLastFeature = Carbon::parse($latestFeaturedAt)->diffInHours(now());
+        return $hoursSinceLastFeature >= 24;
+    }
+}
+
+if (!function_exists('boostAgain')) {
+    function boostAgain()
+    {
+        $latestBoostedAt = Campaign::where('user_urn', user()->urn)
+            ->where('is_boost', 1)
+            ->latest('boosted_at')
+            ->value('boosted_at');
+
+        if (!$latestBoostedAt) {
+            return true;
+        }
+
+        $hoursSinceLastBoost = Carbon::parse($latestBoostedAt)->diffInHours(now());
+        return $hoursSinceLastBoost >= 24;
+    }
+}
 
 

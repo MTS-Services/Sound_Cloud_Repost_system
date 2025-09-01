@@ -158,9 +158,8 @@
                                         <p class="text-slate-400 text-sm">-.- avg. rating</p>
                                     </div>
                                 </div>
-
                                 <div class="flex flex-col sm:flex-row sm:justify-end items-center gap-4">
-                                    @if ($campaign_->featured_again)
+                                    @if (featuredAgain() && !$campaign_->is_featured)
                                         <div class="flex flex-wrap justify-center sm:justify-end gap-4">
                                             @if ($is_pro)
                                                 <x-gbutton variant="secondary"
@@ -173,10 +172,12 @@
                                             @endif
                                         </div>
                                     @endif
-                                    <div>
-                                        <x-gbutton variant="secondary"
-                                            wire:click="openViewDetailsModal({{ $campaign_->id }})">{{ __('Free Boost') }}</x-gbutton>
-                                    </div>
+                                    @if (boostAgain() && !$campaign_->is_boost)
+                                        <div>
+                                            <x-gbutton variant="secondary"
+                                                wire:click="freeBoost({{ $campaign_->id }})">{{ __('Free Boost') }}</x-gbutton>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -282,7 +283,7 @@
                         </div>
                         <div class="flex justify-center">
                             @if ($is_pro)
-                                @if ($is_featured)
+                                @if (featuredAgain())
                                     <x-gbutton variant="primary">Get featured</x-gbutton>
                                 @endif
                             @else

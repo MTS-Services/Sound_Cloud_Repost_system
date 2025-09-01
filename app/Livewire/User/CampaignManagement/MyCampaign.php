@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\UserPlan;
 use App\Services\Admin\UserManagement\UserService;
 use App\Services\TrackService;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -153,12 +154,11 @@ class MyCampaign extends Component
                 'integer',
                 'min:50',
                 function ($attribute, $value, $fail) {
-                    if($this->isEditing){
-                        if($value - $this->editingCampaign->budget_credits >  userCredits()){
+                    if ($this->isEditing) {
+                        if ($value - $this->editingCampaign->budget_credits >  userCredits()) {
                             $fail('The credit is not available.');
                         }
-                    }
-                    elseif ($value > userCredits()) {
+                    } elseif ($value > userCredits()) {
                         $fail('The credit is not available.');
                     }
                     if ($this->isEditing && $this->editingCampaign->budget_credits > $value) {
@@ -425,7 +425,7 @@ class MyCampaign extends Component
 
     private function handleSubmissionError(\Exception $e, string $type, int $id): void
     {
-        $this->dispatch('alert', type:'error', message:'Failed to load content: ' . $e->getMessage());
+        $this->dispatch('alert', type: 'error', message: 'Failed to load content: ' . $e->getMessage());
         $this->showSubmitModal = false;
         $this->showCampaignsModal = true;
 
@@ -549,10 +549,10 @@ class MyCampaign extends Component
                 }
             });
 
-            $this->dispatch('alert', type:'success', message: 'Campaign ' . ($this->isEditing ? 'updated' : 'created') . ' successfully!');
+            $this->dispatch('alert', type: 'success', message: 'Campaign ' . ($this->isEditing ? 'updated' : 'created') . ' successfully!');
             $this->resetAfterCampaignCreation();
         } catch (\Exception $e) {
-            $this->dispatch('alert', type:'error', message:'Failed to create campaign: ' . $e->getMessage());
+            $this->dispatch('alert', type: 'error', message: 'Failed to create campaign: ' . $e->getMessage());
             $this->logCampaignError($e);
         }
     }
@@ -565,7 +565,7 @@ class MyCampaign extends Component
             ->first();
 
         if (!$this->editingCampaign) {
-            $this->dispatch('alert', type:'error', message:'Campaign not found or cannot be edited.');
+            $this->dispatch('alert', type: 'error', message: 'Campaign not found or cannot be edited.');
             return;
         }
 
@@ -782,7 +782,7 @@ class MyCampaign extends Component
 
     private function handleError(string $message, \Exception $e, array $context = []): void
     {
-        $this->dispatch('alert', type:'error', message:$message . ': ' . $e->getMessage());
+        $this->dispatch('alert', type: 'error', message: $message . ': ' . $e->getMessage());
 
         Log::error($message . ': ' . $e->getMessage(), array_merge([
             'user_urn' => user()->urn ?? 'unknown'
@@ -800,11 +800,43 @@ class MyCampaign extends Component
 
     public function setFeatured($id)
     {
-        $campaign = Campaign::find($id);
-        $campaign->is_featured = !$campaign->is_featured;
-        $campaign->featured_at = now();
-        $campaign->save();
-        $this->mount();
+        try {
+            $campaign = Campaign::find($id);
+            if (!$campaign) {
+                $this->dispatch('alert', type: 'error', message: 'Campaign not found.');
+                return;
+            }
+            if ($campaign->is_featured) {
+                $this->dispatch('alert', type: 'error', message: 'Campaign is already featured.');
+                return;
+            }
+            $campaign->is_featured = !$campaign->is_featured;
+            $campaign->featured_at = now();
+            $campaign->update();
+            $this->mount();
+        } catch (\Exception $e) {
+            $this->handleError('Failed to feature campaign', $e, ['campaign_id' => $id]);
+        }
+    }
+    public function freeBoost($id)
+    {
+        try {
+            $campaign = Campaign::find($id);
+            if (!$campaign) {
+                $this->dispatch('alert', type: 'error', message: 'Campaign not found.');
+                return;
+            }
+            if ($campaign->is_boost) {
+                $this->dispatch('alert', type: 'error', message: 'Campaign is already featured.');
+                return;
+            }
+            $campaign->is_boost = !$campaign->is_boost;
+            $campaign->boosted_at = now();
+            $campaign->update();
+            $this->mount();
+        } catch (\Exception $e) {
+            $this->handleError('Failed to feature campaign', $e, ['campaign_id' => $id]);
+        }
     }
 
     public function mount($categoryId = null)
@@ -834,7 +866,10 @@ class MyCampaign extends Component
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage)
             };
             $data['is_pro'] = UserPlan::where('user_urn', user()->urn)->active()->exists();
-            $data['is_featured'] = Campaign::where('user_urn', user()->urn)->featured()->exists();
+            // $latestFeaturedAt = Campaign::orderBy('featured_at', 'desc')->where('user_urn', user()->urn)->where('is_featured', 1)->latest('featured_at')->first()->value('featured_at') ?? null;
+            // $boostAagain = Campaign::where('user_urn', user()->urn)->where('is_boost', 1)->latest('boosted_at')->first()->value('boosted_at') ?? null;
+            // $data['boostAgain'] = Carbon::parse($boostAagain)->diffInHours(now()) >= 24;
+            // $data['featuredAgain'] = Carbon::parse($latestFeaturedAt)->diffInHours(now()) >= 24;
         } catch (\Exception $e) {
             $data['campaigns'] = collect();
             $this->handleError('Failed to load campaigns', $e);

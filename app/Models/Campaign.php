@@ -28,7 +28,7 @@ class Campaign extends BaseModel
         'is_featured',
         'featured_at',
         'is_boost',
-        'boost_at',
+        'boosted_at',
         'start_date',
         'end_date',
         'refund_credits',
@@ -121,21 +121,6 @@ class Campaign extends BaseModel
             'featured_again',
             'boost_again',
         ]);
-    }
-
-    public function getFeaturedAgainAttribute(): bool
-    {
-        if (!$this->is_featured_at) {
-            return true;
-        }
-        return now()->diffInHours($this->is_featured_at) >= 24;
-    }
-    public function getBoostAgainAttribute(): bool
-    {
-        if (!$this->boost_at) {
-            return true;
-        }
-        return now()->diffInHours($this->boost_at) >= 24;
     }
 
 
