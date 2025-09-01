@@ -1,4 +1,4 @@
-<x-user::layout>
+<div>
     <x-slot name="page_slug">chart</x-slot>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -7,7 +7,8 @@
         <div class="w-full">
             <!-- Header -->
             <h2 class="text-2xl font-bold  dark:text-white text-gray-800 mb-6">Performance Charts</h2>
-            <p class="dark:text-gray-400 text-gray-800 mb-8">Track your campaign performance with detailed analytics and
+            <p class="dark:text-gray-400 text-gray-800 mb-8">Track your campaign performance with detailed analytics
+                and
                 insights</p>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -99,13 +100,15 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Campaign Performance -->
                 <div class="dark:bg-gray-800 px-6 py-3 rounded-sm shadow">
-                    <h3 class="text-lg font-semibold dark:bg-gray-800 dark:text-gray-300 mb-2">Campaign Performance</h3>
+                    <h3 class="text-lg font-semibold dark:bg-gray-800 dark:text-gray-300 mb-2">Campaign Performance
+                    </h3>
                     <canvas id="campaignChart"></canvas>
                 </div>
 
                 <!-- Engagement Trends -->
                 <div class="dark:bg-gray-800 px-6 py-3 rounded-sm shadow">
-                    <h3 class="text-lg font-semibold dark:bg-gray-800 dark:text-gray-300 mb-2">Engagement Trends</h3>
+                    <h3 class="text-lg font-semibold dark:bg-gray-800 dark:text-gray-300 mb-2">Engagement Trends
+                    </h3>
                     <canvas id="engagementChart"></canvas>
                 </div>
 
@@ -202,6 +205,4 @@
 
 
     </div>
-
-    </html>
-</x-user::layout>
+</div>

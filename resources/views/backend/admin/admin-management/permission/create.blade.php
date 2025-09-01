@@ -39,7 +39,5 @@
             {{-- documentation will be loded here and add md:col-span-2 class --}}
 
         </div>
-
-
     </section>
 </x-admin::layout>

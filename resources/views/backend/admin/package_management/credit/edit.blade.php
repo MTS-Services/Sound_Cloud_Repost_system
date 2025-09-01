@@ -53,9 +53,9 @@
             {{-- documentation will be loded here and add md:col-span-2 class --}}
 
         </div>
-@push('js')
-           <script src="{{ asset('assets/js/ckEditor.js') }}"></script>
-@endpush
+        @push('js')
+            <script src="{{ asset('assets/js/ckEditor.js') }}"></script>
+        @endpush
 
     </section>
 </x-admin::layout>

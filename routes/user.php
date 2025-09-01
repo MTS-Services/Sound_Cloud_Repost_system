@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\Backend\User\PaymentController;
 use App\Livewire\User\AddCredit;
 use App\Livewire\User\Analytics;
@@ -7,6 +8,7 @@ use App\Livewire\User\CampaignManagement\MyCampaign;
 use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Livewire\User\Chart;
 use App\Livewire\User\Dashboard;
 use App\Livewire\User\Faq;
 use App\Livewire\User\HelpAndSupport;
@@ -58,7 +60,7 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
     Route::get('help-support', HelpAndSupport::class)->name('help-support');
     Route::get('track/submit', TrackSubmit::class)->name('track.submit');
     Route::get('settings', Settings::class)->name('settings');
-    Route::view('charts', 'backend.user.chart')->name('charts');
+    Route::get('charts', Chart::class)->name('charts');
 
     Route::get('/add-credits', AddCredit::class)->name('add-credits');
     Route::get('/analytics', Analytics::class)->name('analytics');
@@ -76,11 +78,9 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
         Route::get('/paypal/payment/success/', 'paypalPaymentSuccess')->name('paypal.paymentSuccess');
         Route::get('/paypal/payment/cancel', 'paypalPaymentCancel')->name('paypal.paymentCancel');
     });
-
 });
 
 
 
 
 // Static page routes
-
