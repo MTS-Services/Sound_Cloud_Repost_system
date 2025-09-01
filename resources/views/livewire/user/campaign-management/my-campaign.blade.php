@@ -274,20 +274,20 @@
                         <hr class="text-red-500 mb-4">
                         @if(featuredAgain())
                             <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
-                                <img src="{{ soundcloud_image($latestCampaign->music?->artwork_url) }}"
+                                <img src="{{ soundcloud_image($latestCampaign?->music?->artwork_url) }}"
                                     alt="Reach people icon" class="w-16 h-16 rounded-lg object-cover">
                                 <div>
-                                    <p class="font-bold text-gray-800  dark:text-gray-100">{{ $latestCampaign->music?->title }}</p>
-                                    <p class="text-gray-500 text-sm">{{ $latestCampaign->music?->genre }}</p>
+                                    <p class="font-bold text-gray-800  dark:text-gray-100">{{ $latestCampaign?->music?->title }}</p>
+                                    <p class="text-gray-500 text-sm">{{ $latestCampaign?->music?->genre }}</p>
                                 </div>
                             </div>
                         @else
                             <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
-                                <img src="{{ soundcloud_image($featuredCampaign->music?->artwork_url) }}"
+                                <img src="{{ soundcloud_image($featuredCampaign?->music?->artwork_url) }}"
                                     alt="Reach people icon" class="w-16 h-16 rounded-lg object-cover">
                                 <div>
-                                    <p class="font-bold text-gray-800  dark:text-gray-100">{{ $featuredCampaign->music?->title }}</p>
-                                    <p class="text-gray-500 text-sm">{{ $featuredCampaign->music?->genre }}</p>
+                                    <p class="font-bold text-gray-800  dark:text-gray-100">{{ $featuredCampaign?->music?->title }}</p>
+                                    <p class="text-gray-500 text-sm">{{ $featuredCampaign?->music?->genre }}</p>
                                 </div>
                             </div>
                         @endif
