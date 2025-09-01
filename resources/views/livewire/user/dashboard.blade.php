@@ -556,7 +556,7 @@
                         <!-- Slider -->
                         <div class="relative">
                             <input type="range" x-data x-on:input="$wire.set('credit', $event.target.value)"
-                                min="0" max="500" value="{{ $credit }}"
+                                min="0" max="500" step="10" value="{{ $credit }}"
                                 class="w-full h-2 border-0 cursor-pointer">
                         </div>
                     </div>

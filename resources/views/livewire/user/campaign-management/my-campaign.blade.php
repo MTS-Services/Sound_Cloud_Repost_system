@@ -272,12 +272,13 @@
                         <h2 class="text-lg font-bold text-gray-800 mb-4 dark:text-gray-100">Reach more
                             people</h2>
                         <hr class="text-red-500 mb-4">
-                        @if(featuredAgain() && $latestCampaign)
+                        @if (featuredAgain() && $latestCampaign)
                             <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
                                 <img src="{{ soundcloud_image($latestCampaign?->music?->artwork_url) }}"
                                     alt="Reach people icon" class="w-16 h-16 rounded-lg object-cover">
                                 <div>
-                                    <p class="font-bold text-gray-800  dark:text-gray-100">{{ $latestCampaign?->music?->title }}</p>
+                                    <p class="font-bold text-gray-800  dark:text-gray-100">
+                                        {{ $latestCampaign?->music?->title }}</p>
                                     <p class="text-gray-500 text-sm">{{ $latestCampaign?->music?->genre }}</p>
                                 </div>
                             </div>
@@ -286,7 +287,8 @@
                                 <img src="{{ soundcloud_image($featuredCampaign?->music?->artwork_url) }}"
                                     alt="Reach people icon" class="w-16 h-16 rounded-lg object-cover">
                                 <div>
-                                    <p class="font-bold text-gray-800  dark:text-gray-100">{{ $featuredCampaign?->music?->title }}</p>
+                                    <p class="font-bold text-gray-800  dark:text-gray-100">
+                                        {{ $featuredCampaign?->music?->title }}</p>
                                     <p class="text-gray-500 text-sm">{{ $featuredCampaign?->music?->genre }}</p>
                                 </div>
                             </div>
@@ -294,7 +296,8 @@
                         <div class="flex justify-center">
                             @if (proUser())
                                 @if (featuredAgain() && $latestCampaign)
-                                    <x-gbutton  wire:click="setFeatured({{ $latestCampaign->id }})" variant="primary">Get featured</x-gbutton>
+                                    <x-gbutton wire:click="setFeatured({{ $latestCampaign->id }})"
+                                        variant="primary">Get featured</x-gbutton>
                                 @endif
                             @else
                                 <x-gabutton variant="primary" wire:navigate href="{{ route('user.plans') }}"
@@ -687,8 +690,8 @@
                         <!-- Slider -->
                         <div class="relative">
                             <input type="range" x-data x-on:input="$wire.set('credit', $event.target.value)"
-                                min="0" max="500" value="{{ $credit }}"
-                                class="w-full h-2 border-0 cursor-pointer">
+                                min="50" step="10" max="{{ userCredits() }}"
+                                value="{{ $credit }}" class="w-full h-2 border-0 cursor-pointer">
                         </div>
                     </div>
 
@@ -700,7 +703,7 @@
 
                         <!-- Enable CommentPlus -->
                         <div class="flex items-start space-x-3 mb-4">
-                            <input type="checkbox" wire:model="commentable" checked
+                            <input type="checkbox" wire:model="commentable"
                                 class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                             <div>
                                 <h4 class="text-sm font-medium text-gray-900 dark:text-white">Activate Feedback</h4>
@@ -723,7 +726,7 @@
                         </div>
 
                         <!-- Max Follower Limit -->
-                        <div x-data="{ showOptions: {{ $isEditing && $maxFollower > 0 ? 'true' : 'false' }} }" class="flex flex-col space-y-2">
+                        <div x-data="{ showOptions: {{ $maxFollower >= 100 ? 'true' : 'false' }} }" class="flex flex-col space-y-2">
                             <div class="flex items-start space-x-3">
                                 <input type="checkbox" @change="showOptions = !showOptions"
                                     {{ $maxFollower > 0 ? 'checked' : '' }}
@@ -738,13 +741,14 @@
                                 <div class="flex justify-between items-center gap-4">
                                     <div class="w-full relative">
                                         <input type="range" x-data
-                                            x-on:input="$wire.set('maxFollower', $event.target.value)" min="0"
-                                            max="500" value="{{ $maxFollower }}"
+                                            x-on:input="$wire.set('maxFollower', $event.target.value)" min="100"
+                                            max="{{ $followersLimit }}"
+                                            value="{{ $followersLimit < $maxFollower ? $followersLimit : $maxFollower }}"
                                             class="w-full h-2 cursor-pointer">
                                     </div>
                                     <div
-                                        class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
-                                        <span>{{ $maxFollower }}</span>
+                                        class="full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
+                                        <span>{{ $maxFollower > $followersLimit ? $followersLimit : $maxFollower }}</span>
                                     </div>
                                 </div>
                                 @error('maxFollower')
@@ -792,7 +796,7 @@
                                 <div x-data="{ showOptions: false }" class="flex flex-col space-y-2">
                                     <div class="flex items-start space-x-3">
                                         <input type="checkbox" @change="showOptions = !showOptions"
-                                            :disabled="!momentumEnabled" {{ $maxRepostLast24h > 0 ? 'checked' : '' }}
+                                            wire:model="maxRepostLast24h" :disabled="!momentumEnabled"
                                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
                                             :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                         <div class="flex items-center space-x-2">
@@ -800,24 +804,6 @@
                                                 (last
                                                 24h)</span>
                                         </div>
-                                    </div>
-                                    <div x-show="showOptions" x-transition class="p-3">
-                                        <div class="flex justify-between items-center gap-4">
-                                            <div class="w-full relative">
-                                                <input type="range" x-data :disabled="!momentumEnabled"
-                                                    x-on:input="$wire.set('maxRepostLast24h', $event.target.value)"
-                                                    min="0" max="50" value="{{ $maxRepostLast24h }}"
-                                                    class="w-full h-2 cursor-pointer"
-                                                    :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
-                                            </div>
-                                            <div
-                                                class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
-                                                <span>{{ $maxRepostLast24h }}</span>
-                                            </div>
-                                        </div>
-                                        @error('maxRepostLast24h')
-                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                        @enderror
                                     </div>
                                 </div>
 
@@ -854,60 +840,67 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    @endif
-
-                    <!-- Genre Selection -->
-                    <div class=border-gray-200 dark:border-gray-700 bg-gray-200 dark:bg-gray-900-lg p-4">
-                        <div class="">
-                            <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Genre Preferences for
-                                Sharers</h2>
-                            <p class="text-sm text-gray-700 dark:text-gray-400 mb-3 mt-2">Reposters must have the
-                                following genres:</p>
-                            <div class="space-y-2 ml-4">
-                                <div class="flex items-center space-x-2">
-                                    <input type="radio" name="genre" value="anyGenre" checked
-                                        @click="showGenreRadios = false" wire:model="anyGenre"
-                                        class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
-                                    <span class="text-sm text-gray-700 dark:text-gray-400">Open to all music
-                                        types</span>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <input type="radio" name="genre" value="trackGenre"
-                                        @click="showGenreRadios = false" wire:model="trackGenre"
-                                        class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
-                                    <span class="text-sm text-gray-700 dark:text-gray-400">Match track genre – Hip-hop
-                                        & Rap</span>
-                                </div>
-                                <div x-data="{ showGenreRadios: false }" class="space-y-3">
+                            <div class="mt-4">
+                                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Genre
+                                    Preferences for
+                                    Sharers</h2>
+                                <p class="text-sm text-gray-700 dark:text-gray-400 mb-3 mt-2">Reposters must have
+                                    the
+                                    following genres:</p>
+                                <div class="space-y-2 ml-4">
                                     <div class="flex items-center space-x-2">
-                                        <input type="radio" name="genre"
-                                            @click="showGenreRadios = !showGenreRadios" wire:click="getAllGenres"
-                                            class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
-                                        <span class="text-sm text-gray-700 dark:text-gray-400">Match one of your
-                                            profile's chosen
-                                            genres</span>
+                                        <input type="radio" name="genre" value="anyGenre" checked
+                                            @click="showGenreRadios = false" wire:model="anyGenre"
+                                            :disabled="!momentumEnabled"
+                                            class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                                            :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
+                                        <span class="text-sm text-gray-700 dark:text-gray-400">Open to all music
+                                            types</span>
                                     </div>
-                                    <div x-show="showGenreRadios" x-transition class="ml-6 space-y-2">
-                                        @forelse ($genres as $genre)
-                                            <div class="flex items-center space-x-2">
-                                                <input type="radio" name="genre" wire:model="targetGenre"
-                                                    value="{{ $genre }}"
-                                                    class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
-                                                <span
-                                                    class="text-sm text-gray-700 dark:text-gray-400">{{ $genre }}</span>
-                                            </div>
-                                        @empty
-                                            <div class="">
-                                                <span class="text-sm text-gray-700 dark:text-gray-400">No genres
-                                                    found</span>
-                                            </div>
-                                        @endforelse
+                                    <div class="flex items-center space-x-2">
+                                        <input type="radio" name="genre" value="trackGenre"
+                                            @click="showGenreRadios = false" wire:model="trackGenre"
+                                            :disabled="!momentumEnabled"
+                                            class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                                            :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
+                                        <span class="text-sm text-gray-700 dark:text-gray-400">Match track genre –
+                                            Hip-hop
+                                            & Rap</span>
+                                    </div>
+                                    <div x-data="{ showGenreRadios: false }" class="space-y-3">
+                                        <div class="flex items-center space-x-2">
+                                            <input type="radio" name="genre"
+                                                @click="showGenreRadios = !showGenreRadios" wire:click="getAllGenres"
+                                                :disabled="!momentumEnabled"
+                                                class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                                                :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
+                                            <span class="text-sm text-gray-700 dark:text-gray-400">Match one of
+                                                your
+                                                profile's chosen
+                                                genres</span>
+                                        </div>
+                                        <div x-show="showGenreRadios" x-transition class="ml-6 space-y-2">
+                                            @forelse ($genres as $genre)
+                                                <div class="flex items-center space-x-2">
+                                                    <input type="radio" name="genre" wire:model="targetGenre"
+                                                        value="{{ $genre }}"
+                                                        class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
+                                                    <span
+                                                        class="text-sm text-gray-700 dark:text-gray-400">{{ $genre }}</span>
+                                                </div>
+                                            @empty
+                                                <div class="">
+                                                    <span class="text-sm text-gray-700 dark:text-gray-400">No
+                                                        genres
+                                                        found</span>
+                                                </div>
+                                            @endforelse
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
 
                     <!-- Submit Button -->
                     <div class="pt-4">

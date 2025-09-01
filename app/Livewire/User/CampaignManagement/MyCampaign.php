@@ -80,10 +80,11 @@ class MyCampaign extends Component
     public bool $commentable = true;
     public bool $likeable = true;
     public bool $proFeatureEnabled = false;
-    public $maxFollower = 0;
+    public $maxFollower = 100;
+    public $followersLimit = 0;
     public $maxRepostLast24h = 0;
     public $maxRepostsPerDay = 0;
-    public $anyGenre = 'anyGenre';
+    public $anyGenre = '';
     public $trackGenre = '';
     public $targetGenre = '';
     public $user = null;
@@ -187,6 +188,10 @@ class MyCampaign extends Component
 
         if ($propertyName === 'addCreditCostPerRepost') {
             $this->validateAddCreditBudget();
+        }
+
+        if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
+            $this->calculateFollowersLimit();
         }
     }
 
@@ -349,6 +354,7 @@ class MyCampaign extends Component
     public function fetchTracks(): void
     {
         try {
+            $this->soundCloudService->syncSelfTracks([]);
             $this->allTracks = Track::self()->latest()->get();
             $this->tracksPage = 1;
             $this->tracks = $this->allTracks->take($this->perPage);
@@ -362,6 +368,7 @@ class MyCampaign extends Component
     public function fetchPlaylists(): void
     {
         try {
+            $this->soundCloudService->syncSelfPlaylists();
             $this->allPlaylists = Playlist::self()->latest()->get();
             $this->playlistsPage = 1;
             $this->playlists = $this->allPlaylists->take($this->perPage);
@@ -445,6 +452,7 @@ class MyCampaign extends Component
     {
         $this->proFeatureEnabled = $isChecked ? true : false;
         $this->proFeatureValue = $isChecked ? 0 : 1;
+        $this->anyGenre = 'anyGenre';
     }
 
     public function createCampaign()
@@ -863,6 +871,12 @@ class MyCampaign extends Component
         $this->faqs = Faq::when($categoryId, function ($query) use ($categoryId) {
             $query->where('faq_category_id', $categoryId);
         })->get();
+        $this->calculateFollowersLimit();
+    }
+
+    public function calculateFollowersLimit()
+    {
+        $this->followersLimit = ($this->credit - ($this->likeable ? 2 : 0) - ($this->commentable ? 2 : 0)) * 100;
     }
 
     public function render()
