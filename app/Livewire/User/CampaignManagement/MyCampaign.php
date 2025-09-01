@@ -802,48 +802,34 @@ class MyCampaign extends Component
     {
         try {
             $campaign = Campaign::find($id);
+
             if (!$campaign) {
                 $this->dispatch('alert', type: 'error', message: 'Campaign not found.');
                 return;
             }
+
             if ($campaign->featured_at) {
                 $this->dispatch('alert', type: 'error', message: 'Campaign is already featured previously.');
                 return;
             }
-            if(featuredAgain() == false){
+
+            if (featuredAgain() == false) {
                 $this->dispatch('alert', type: 'error', message: 'You can feature a campaign only once in 24 hours.');
                 return;
             }
-            Campaign::self()->featured()->update('is_featured', 0);
+            Campaign::self()->featured()->update(['is_featured' => 0]);
 
             $campaign->is_featured = Campaign::FEATURED;
             $campaign->featured_at = now();
             $campaign->update();
+
             $this->mount();
         } catch (\Exception $e) {
             $this->handleError('Failed to feature campaign', $e, ['campaign_id' => $id]);
         }
     }
-    // public function getFeatured($userUrn)
-    // {
-    //     try {
-    //         $campaign = Campaign::where('user_urn', $userUrn)->where('is_featured', 1)->first();
-    //         if (!$campaign) {
-    //             $this->dispatch('alert', type: 'error', message: 'Campaign not found.');
-    //             return;
-    //         }
-    //         if ($campaign->is_featured) {
-    //             $this->dispatch('alert', type: 'error', message: 'Campaign is already featured.');
-    //             return;
-    //         }
-    //         $campaign->is_featured = !$campaign->is_featured;
-    //         $campaign->featured_at = now();
-    //         $campaign->update();
-    //         $this->mount();
-    //     } catch (\Exception $e) {
-    //         $this->handleError('Failed to feature campaign', $e, ['campaign_id' => $id]);
-    //     }
-    // }
+
+
     public function freeBoost($id)
     {
         try {
@@ -852,11 +838,18 @@ class MyCampaign extends Component
                 $this->dispatch('alert', type: 'error', message: 'Campaign not found.');
                 return;
             }
-            if ($campaign->is_boost) {
-                $this->dispatch('alert', type: 'error', message: 'Campaign is already featured.');
+            if ($campaign->boosted_at) {
+                $this->dispatch('alert', type: 'error', message: 'Campaign is already boosted previously.');
                 return;
             }
-            $campaign->is_boost = !$campaign->is_boost;
+
+            if (boostAgain() == false) {
+                $this->dispatch('alert', type: 'error', message: 'You can boost a campaign only once in 24 hours.');
+                return;
+            }
+            Campaign::self()->where('is_boost', 1)->update(['is_boost' => Campaign::NOT_BOOSTED]);
+
+            $campaign->is_boost = Campaign::BOOSTED;
             $campaign->boosted_at = now();
             $campaign->update();
             $this->mount();
@@ -893,7 +886,6 @@ class MyCampaign extends Component
             };
             $data['latestCampaign'] = Campaign::with('music')->self()->where('featured_at', null)->latest()->first();
             $data['featuredCampaign'] = Campaign::with('music')->self()->featured()->whereTime('featured_at', "<=", now()->subHours(24))->first();
-            $data['is_pro'] = UserPlan::where('user_urn', user()->urn)->active()->exists();
         } catch (\Exception $e) {
             $data['campaigns'] = collect();
             $this->handleError('Failed to load campaigns', $e);

@@ -161,7 +161,7 @@
                                 <div class="flex flex-col sm:flex-row sm:justify-end items-center gap-4">
                                     @if (featuredAgain() && !$campaign_->is_featured)
                                         <div class="flex flex-wrap justify-center sm:justify-end gap-4">
-                                            @if ($is_pro)
+                                            @if (proUser())
                                                 <x-gbutton variant="secondary"
                                                     wire:click="setFeatured({{ $campaign_->id }})">{{ __('Set Featured') }}</x-gbutton>
                                             @else
@@ -292,14 +292,13 @@
                             </div>
                         @endif
                         <div class="flex justify-center">
-                            @if ($is_pro)
+                            @if (proUser())
                                 @if (featuredAgain())
-                                    <x-gbutton variant="primary">Get featured</x-gbutton>
+                                    <x-gbutton  wire:click="setFeatured({{ $latestCampaign->id }})" variant="primary">Get featured</x-gbutton>
                                 @endif
                             @else
                                 <x-gabutton variant="primary" wire:navigate href="{{ route('user.plans') }}"
-                                    x-on:click="showUpgradeModal = true">Need to get featured?
-                                                    (Pro)</x-gabutton>
+                                    x-on:click="showUpgradeModal = true">Need to get featured?(Pro)</x-gabutton>
                             @endif
                         </div>
                     </div>

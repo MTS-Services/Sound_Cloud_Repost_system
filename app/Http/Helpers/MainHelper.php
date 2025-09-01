@@ -3,6 +3,7 @@
 use App\Models\Campaign;
 use App\Models\Order;
 use App\Models\Permission;
+use App\Models\UserPlan;
 use App\Models\UserSetting;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -682,6 +683,13 @@ function searchableRoutes()
     return json_encode($searchableData);
 }
 
+
+function proUser()
+{
+    $isPro = UserPlan::where('user_urn', user()->urn)->active()->exists();
+    return $isPro;
+}
+
 function requestReceiveable($userUrn)
 {
     $requestReceiveable = UserSetting::where('user_urn', $userUrn)->value('accept_repost') ?? 0;
@@ -691,6 +699,7 @@ function invoiceId()
 {
     return 'INV-' . date('Y') . '-0' . date('his');
 }
+
 
 if (!function_exists('featuredAgain')) {
     function featuredAgain()

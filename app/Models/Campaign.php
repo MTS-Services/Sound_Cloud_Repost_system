@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use PhpParser\Node\Stmt\Static_;
 
 class Campaign extends BaseModel
 {
@@ -120,6 +121,7 @@ class Campaign extends BaseModel
             'feature_label',
             'featured_again',
             'boost_again',
+            'boosted_label',
         ]);
     }
 
@@ -189,6 +191,21 @@ class Campaign extends BaseModel
     public function scopeActive_completed()
     {
         return $this->where('status', '!=', self::STATUS_CANCELLED,)->where('status', '!=', self::STATUS_PAUSED);
+    }
+
+    public const BOOSTED = 1;
+    public const NOT_BOOSTED = 0;
+    
+    public static function getBOOSTEDList(): array
+    {
+        return [
+            self::BOOSTED => 'Yes',
+            self::NOT_BOOSTED => 'No',
+        ];
+    }
+    public function getBoostedLabelAttribute()
+    {
+        return self::getBoostedList()[$this->is_boost] ?? 'Unknown';
     }
 
     public const FEATURED = 1;
