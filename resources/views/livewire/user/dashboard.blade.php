@@ -685,7 +685,7 @@
                                 <div x-show="showRepostPerDay" x-transition class="p-3">
                                     <div class="flex justify-between items-center gap-4">
                                         <div class="w-full relative">
-                                            <input type="range" x-data :disabled="momentumEnabled"
+                                            <input type="range" x-data :disabled="!momentumEnabled"
                                                 x-on:input="$wire.set('maxRepostsPerDay', $event.target.value)"
                                                 min="0" max="100" value="{{ $maxRepostsPerDay }}"
                                                 class="w-full h-2  cursor-pointer"
