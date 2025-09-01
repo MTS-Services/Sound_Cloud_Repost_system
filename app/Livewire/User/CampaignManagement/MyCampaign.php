@@ -806,11 +806,17 @@ class MyCampaign extends Component
                 $this->dispatch('alert', type: 'error', message: 'Campaign not found.');
                 return;
             }
-            if ($campaign->is_featured) {
-                $this->dispatch('alert', type: 'error', message: 'Campaign is already featured.');
+            if ($campaign->featured_at) {
+                $this->dispatch('alert', type: 'error', message: 'Campaign is already featured previously.');
                 return;
             }
-            $campaign->is_featured = !$campaign->is_featured;
+            if(featuredAgain() == false){
+                $this->dispatch('alert', type: 'error', message: 'You can feature a campaign only once in 24 hours.');
+                return;
+            }
+            Campaign::self()->featured()->update('is_featured', 0);
+
+            $campaign->is_featured = Campaign::FEATURED;
             $campaign->featured_at = now();
             $campaign->update();
             $this->mount();
@@ -818,6 +824,26 @@ class MyCampaign extends Component
             $this->handleError('Failed to feature campaign', $e, ['campaign_id' => $id]);
         }
     }
+    // public function getFeatured($userUrn)
+    // {
+    //     try {
+    //         $campaign = Campaign::where('user_urn', $userUrn)->where('is_featured', 1)->first();
+    //         if (!$campaign) {
+    //             $this->dispatch('alert', type: 'error', message: 'Campaign not found.');
+    //             return;
+    //         }
+    //         if ($campaign->is_featured) {
+    //             $this->dispatch('alert', type: 'error', message: 'Campaign is already featured.');
+    //             return;
+    //         }
+    //         $campaign->is_featured = !$campaign->is_featured;
+    //         $campaign->featured_at = now();
+    //         $campaign->update();
+    //         $this->mount();
+    //     } catch (\Exception $e) {
+    //         $this->handleError('Failed to feature campaign', $e, ['campaign_id' => $id]);
+    //     }
+    // }
     public function freeBoost($id)
     {
         try {
@@ -865,11 +891,9 @@ class MyCampaign extends Component
                     ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage)
             };
+            $data['latestCampaign'] = Campaign::self()->where('featured_at', null)->latest()->first();
+            $data['featuredCampaign'] = Campaign::self()->featured()->whereTime('featured_at', "<=", now()->subHours(24))->first();
             $data['is_pro'] = UserPlan::where('user_urn', user()->urn)->active()->exists();
-            // $latestFeaturedAt = Campaign::orderBy('featured_at', 'desc')->where('user_urn', user()->urn)->where('is_featured', 1)->latest('featured_at')->first()->value('featured_at') ?? null;
-            // $boostAagain = Campaign::where('user_urn', user()->urn)->where('is_boost', 1)->latest('boosted_at')->first()->value('boosted_at') ?? null;
-            // $data['boostAgain'] = Carbon::parse($boostAagain)->diffInHours(now()) >= 24;
-            // $data['featuredAgain'] = Carbon::parse($latestFeaturedAt)->diffInHours(now()) >= 24;
         } catch (\Exception $e) {
             $data['campaigns'] = collect();
             $this->handleError('Failed to load campaigns', $e);

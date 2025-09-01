@@ -695,8 +695,8 @@ function invoiceId()
 if (!function_exists('featuredAgain')) {
     function featuredAgain()
     {
-        $latestFeaturedAt = Campaign::where('user_urn', user()->urn)
-            ->where('is_featured', 1)
+        $latestFeaturedAt = Campaign::self()
+            ->featured()
             ->latest('featured_at')
             ->value('featured_at');
 
@@ -712,7 +712,7 @@ if (!function_exists('featuredAgain')) {
 if (!function_exists('boostAgain')) {
     function boostAgain()
     {
-        $latestBoostedAt = Campaign::where('user_urn', user()->urn)
+        $latestBoostedAt = Campaign::self()
             ->where('is_boost', 1)
             ->latest('boosted_at')
             ->value('boosted_at');
@@ -721,8 +721,8 @@ if (!function_exists('boostAgain')) {
             return true;
         }
 
-        $hoursSinceLastBoost = Carbon::parse($latestBoostedAt)->diffInHours(now());
-        return $hoursSinceLastBoost >= 24;
+        $hoursSinceLastBoost = Carbon::parse($latestBoostedAt)->diffInMinutes(now());
+        return $hoursSinceLastBoost >= 15;
     }
 }
 

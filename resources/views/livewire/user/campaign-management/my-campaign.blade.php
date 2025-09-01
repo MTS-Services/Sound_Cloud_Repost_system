@@ -272,15 +272,25 @@
                         <h2 class="text-lg font-bold text-gray-800 mb-4 dark:text-gray-100">Reach more
                             people</h2>
                         <hr class="text-red-500 mb-4">
-                        <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
-                            <img src="https://i1.sndcdn.com/artworks-ZmemRDWSfmXwMCWO-xZp0wA-t500x500.jpg"
-                                alt="Reach people icon" class="w-16 h-16 rounded-lg object-cover">
-                            <div>
-                                <p class="font-bold text-gray-800  dark:text-gray-100">Feature your
-                                    campaign and reach more people</p>
-                                <p class="text-gray-500 text-sm">ALL_BLACK_.75</p>
+                        @if(featuredAgain())
+                            <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
+                                <img src="{{ soundcloud_image($latestCampaign->music?->artwork_url) }}"
+                                    alt="Reach people icon" class="w-16 h-16 rounded-lg object-cover">
+                                <div>
+                                    <p class="font-bold text-gray-800  dark:text-gray-100">{{ $latestCampaign->music?->title }}</p>
+                                    <p class="text-gray-500 text-sm">{{ $latestCampaign->music?->genre }}</p>
+                                </div>
                             </div>
-                        </div>
+                        @else
+                            <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
+                                <img src="{{ soundcloud_image($featuredCampaign->music?->artwork_url) }}"
+                                    alt="Reach people icon" class="w-16 h-16 rounded-lg object-cover">
+                                <div>
+                                    <p class="font-bold text-gray-800  dark:text-gray-100">{{ $featuredCampaign->music?->title }}</p>
+                                    <p class="text-gray-500 text-sm">{{ $featuredCampaign->music?->genre }}</p>
+                                </div>
+                            </div>
+                        @endif
                         <div class="flex justify-center">
                             @if ($is_pro)
                                 @if (featuredAgain())
@@ -288,7 +298,8 @@
                                 @endif
                             @else
                                 <x-gabutton variant="primary" wire:navigate href="{{ route('user.plans') }}"
-                                    x-on:click="showUpgradeModal = true">Upgrade Plan</x-gabutton>
+                                    x-on:click="showUpgradeModal = true">Need to get featured?
+                                                    (Pro)</x-gabutton>
                             @endif
                         </div>
                     </div>
