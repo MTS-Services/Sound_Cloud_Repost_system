@@ -12,6 +12,7 @@ use App\Models\Playlist;
 use App\Models\User;
 use App\Models\UserPlan;
 use App\Services\Admin\UserManagement\UserService;
+use App\Services\SoundCloud\SoundCloudService;
 use App\Services\TrackService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -29,6 +30,7 @@ class MyCampaign extends Component
 
     protected TrackService $trackService;
     protected UserService $userService;
+    protected SoundCloudService $soundCloudService;
 
     public $baseUrl = 'https://soundcloud.com/';
 
@@ -139,10 +141,11 @@ class MyCampaign extends Component
     private const ITEMS_PER_PAGE = 10;
     private const SOUNDCLOUD_API_URL = 'https://api-v2.soundcloud.com';
 
-    public function boot(TrackService $trackService, UserService $userService): void
+    public function boot(TrackService $trackService, UserService $userService, SoundCloudService $soundCloudService): void
     {
         $this->trackService = $trackService;
         $this->userService = $userService;
+        $this->soundCloudService = $soundCloudService;
         $this->tracks = collect();
         $this->playlists = collect();
     }
