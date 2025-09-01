@@ -748,7 +748,7 @@
                                     </div>
                                     <div
                                         class="full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
-                                        <span>{{ $maxFollower > $followersLimit ? $followersLimit : $maxFollower }}</span>
+                                        <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $maxFollower > $followersLimit ? $followersLimit : $maxFollower }}</span>
                                     </div>
                                 </div>
                                 @error('maxFollower')
