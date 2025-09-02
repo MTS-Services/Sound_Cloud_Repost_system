@@ -59,13 +59,15 @@
                                                         class="w-6 h-6 text-gray-500 hover:text-orange-500 transition-colors" />
                                                 </a>
                                                 <div class="flex items-center gap-2">
-                                                    @if(!featuredAgain() && $campaign_->is_featured)
-                                                        <span class="text-xs font-semibold mr-2 px-2.5 py-0.5 rounded bg-orange-500 text-white">
+                                                    @if (!featuredAgain() && $campaign_->is_featured)
+                                                        <span
+                                                            class="text-xs font-semibold mr-2 px-2.5 py-0.5 rounded bg-orange-500 text-white">
                                                             {{ !featuredAgain() ? 'Featured' : '' }}
                                                         </span>
                                                     @endif
-                                                    @if(!boostAgain() && $campaign_->is_boost)
-                                                        <span class="text-xs font-semibold mr-2 px-2.5 py-0.5 rounded bg-orange-500 text-white">
+                                                    @if (!boostAgain() && $campaign_->is_boost)
+                                                        <span
+                                                            class="text-xs font-semibold mr-2 px-2.5 py-0.5 rounded bg-orange-500 text-white">
                                                             {{ !boostAgain() ? 'Boosted' : '' }}
                                                         </span>
                                                     @endif
@@ -178,10 +180,12 @@
                                         </div>
                                     @endif
                                     @if (boostAgain() && !$campaign_->is_boost)
-                                        <div>
-                                            <x-gbutton variant="secondary"
-                                                wire:click="freeBoost({{ $campaign_->id }})">{{ __('Free Boost') }}</x-gbutton>
-                                        </div>
+                                        @if (proUser())
+                                            <div>
+                                                <x-gbutton variant="secondary"
+                                                    wire:click="freeBoost({{ $campaign_->id }})">{{ __('Free Boost') }}</x-gbutton>
+                                            </div>
+                                        @endif
                                     @endif
                                 </div>
                             </div>
@@ -753,7 +757,8 @@
                                     </div>
                                     <div
                                         class="full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
-                                        <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $maxFollower > $followersLimit ? $followersLimit : $maxFollower }}</span>
+                                        <span
+                                            class="text-sm font-medium text-gray-900 dark:text-white">{{ $maxFollower > $followersLimit ? $followersLimit : $maxFollower }}</span>
                                     </div>
                                 </div>
                                 @error('maxFollower')

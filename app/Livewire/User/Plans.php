@@ -5,6 +5,7 @@ namespace App\Livewire\User;
 use App\Models\Order;
 use App\Models\Plan;
 use App\Models\User;
+use App\Models\UserSetting;
 use App\Services\Admin\OrderManagement\OrderService;
 use App\Services\Admin\PackageManagement\FeatureCategorySevice;
 use App\Services\Admin\PackageManagement\PlanService;
@@ -51,6 +52,10 @@ class Plans extends Component
         try {
             $order = DB::transaction(function () use ($plan_id) {
                 $plan = $this->planService->getPlan($plan_id);
+                UserSetting::updateOrCreate(
+                    ['user_urn' => user()->urn],
+                    ['auto_boost' => 1]
+                );
 
                 $data['source_id'] = $plan->id;
                 $data['source_type'] = Plan::class;

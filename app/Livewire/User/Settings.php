@@ -274,14 +274,9 @@ class Settings extends Component
             ['id' => 4, 'name' => 'Repost Requests Expired', 'email_key' => 'em_repost_expired', 'push_key' => 'ps_repost_expired'],
             ['id' => 5, 'name' => 'Campaign Summary & finished alert', 'email_key' => 'em_campaign_summary', 'push_key' => 'ps_campaign_summary'],
             ['id' => 6, 'name' => 'Free Boost Award', 'email_key' => 'em_free_boost', 'push_key' => 'ps_free_boost'],
-            ['id' => 7, 'name' => 'Feedback Campaign Events', 'email_key' => 'em_feedback_campaign', 'push_key' => 'ps_feedback_campaign'],
-            ['id' => 8, 'name' => 'Feedback Rated', 'email_key' => 'em_feedback_rated', 'push_key' => 'ps_feedback_rated'],
-            ['id' => 9, 'name' => 'Referrals', 'email_key' => 'em_referrals', 'push_key' => 'ps_referrals'],
             ['id' => 10, 'name' => 'Reputation Changes', 'email_key' => 'em_reputation', 'push_key' => 'ps_reputation'],
             ['id' => 11, 'name' => 'Account inactivity Warning', 'email_key' => 'em_inactivity_warn', 'push_key' => 'ps_inactivity_warn'],
             ['id' => 12, 'name' => 'Marketing Communications', 'email_key' => 'em_marketing', 'push_key' => 'ps_marketing'],
-            ['id' => 13, 'name' => 'Chart Entry', 'email_key' => 'em_chart_entry', 'push_key' => 'ps_chart_entry'],
-            ['id' => 14, 'name' => 'Mystery Box Draw', 'email_key' => 'em_mystery_box', 'push_key' => 'ps_mystery_box'],
             ['id' => 15, 'name' => 'Discussions', 'email_key' => 'em_discussions', 'push_key' => 'ps_discussions'],
             ['id' => 16, 'name' => 'Competitions', 'email_key' => 'em_competitions', 'push_key' => 'ps_competitions']
         ];
@@ -297,7 +292,7 @@ class Settings extends Component
 
                 // Additional Features
                 'opt_mystery_box' => $this->opt_mystery_box,
-                'auto_boost' => $this->auto_boost,
+                'auto_boost' => proUser() ? $this->auto_boost : 0,
                 'enable_react' => $this->enable_react,
             ];
             UserSetting::updateOrCreate(
@@ -445,9 +440,8 @@ class Settings extends Component
 
     public function cancel()
     {
-        // Reset form or redirect
         $this->reset();
-        $this->mount(); // Re-initialize with default values
+        $this->mount();
     }
 
     public function setActiveTab($tab)

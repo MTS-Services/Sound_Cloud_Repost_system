@@ -26,7 +26,7 @@
             <div x-show="open" x-transition.opacity.duration.300ms
                 class=" top-0  mb-8 max-w-8xl mx-auto  bg-gray-50 dark:bg-gray-800 border-l-4 border-orange-500 text-black dark:text-white  p-4 shadow-sm flex items-center justify-center z-1 rounded-md relative"
                 role="alert">
-                <div class="flex flex justify-center items-center gap-1">
+                <div class="flex justify-center items-center gap-1">
                     <p class="text-sm text-gray-600 dark:text-gray-300">
                         Please confirm your email address to unlock core platform features.
                     <form x-data="{ loading: false }" x-ref="form" method="POST"
@@ -435,52 +435,26 @@
             <div x-show="activeTab === 'notifications'"
                 class="max-w-8xl w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
                 <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Notifications & Alerts</h2>
-                <p class="mt-4 text-gray-600 dark:text-gray-300">Manage your email and push notification preferences.
+                <p class="mt-4 text-gray-600 dark:text-gray-300">Manage your email and notification preferences.
                 </p>
                 <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-4 mt-6">
-                    <!-- Top "Alerts" Section -->
                     <div class="w-full">
                         <h1 class="text-xl font-semibold text-gray-800 dark:text-white">Alerts</h1>
                     </div>
-                    <!-- Alerts Table Headers -->
-                    <div class="min-w-28 flex justify-between items-center dark:text-white">
-                        <div class="">Email</div>
-                        <div class="">Push</div>
-                    </div>
+                    <div class="text-sm text-gray-600 dark:text-gray-300">Email</div>
                 </div>
-
-                <!-- Push Notification Disabled Warning -->
-                <div
-                    class="flex items-start bg-light-orange dark:bg-gray-700 border-l-4 border-l-orange-400 p-3 rounded-md shadow-md my-4">
-                    <svg class="h-6 w-6 text-white bg-orange-400 rounded-full mr-3 mt-1 flex-shrink-0" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0  0118 0z" />
-                    </svg>
-                    <span class="text-sm font-medium text-dark-gray dark:text-white">
-                        Your push notifications are disabled because you haven't installed the mobile app
-                    </span>
-                </div>
-
-                <!-- Alerts List -->
+                
                 <form wire:submit.prevent="notificationUpdate">
-                    @foreach ($this->alerts as $alert)
-                        <div class="flex items-center py-3">
+                    @foreach ($this->alerts as $key => $alert)
+                        <div class="flex items-center py-3 ps-2 {{ $key % 2 == 1 ? 'bg-gray-100 dark:bg-gray-700' : '' }}">
                             <div class="w-full text-sm text-gray-800 dark:text-white">{{ $alert['name'] }}</div>
-                            <div class="min-w-28 flex justify-between items-center">
-                                <div class="">
-                                    <input type="checkbox" wire:model="{{ $alert['email_key'] }}"
-                                        class="w-4 h-4 text-orange-600 border-gray-200 rounded focus:ring-orange-600">
-                                </div>
-                                <div class="">
-                                    {{-- @dd($em_feedback_rated) --}}
-                                    <input type="checkbox" wire:model="{{ $alert['push_key'] }}"
-                                        class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                                </div>
+                            <div class="mr-4">
+                                <input type="checkbox" wire:model="{{ $alert['email_key'] }}"
+                                    class="w-4 h-4 text-orange-600 border-gray-200 rounded focus:ring-orange-600">
                             </div>
                         </div>
                     @endforeach
-                    <!-- Action Buttons -->
+
                     <div class="mt-8 flex justify-end space-x-4 border-t border-gray-200 dark:border-gray-700 pt-4">
                         <x-gbutton type="button" variant="secondary" wire:click="loadSettings">Cancel</x-gbutton>
                         <x-gbutton type="submit" variant="primary">
@@ -570,23 +544,6 @@
                         </div>
 
                         <div class="space-y-6">
-                            <!-- Mystery Box -->
-                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                                <p class="text-gray-700 dark:text-white">Opt In to Mystery Box Draws</p>
-                                <div class="flex items-center gap-6">
-                                    <label class="flex items-center gap-1">
-                                        <input type="radio" name="mysteryBox" wire:model="opt_mystery_box"
-                                            value="1" class="text-orange-500 focus:ring-orange-500">
-                                        <span class="text-gray-600 dark:text-white">Yes</span>
-                                    </label>
-                                    <label class="flex items-center gap-1">
-                                        <input type="radio" name="mysteryBox" wire:model="opt_mystery_box"
-                                            value="0" class="text-orange-500 focus:ring-orange-500">
-                                        <span class="text-gray-600 dark:text-white">No</span>
-                                    </label>
-                                </div>
-                            </div>
-
                             <!-- Auto Boost -->
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
                                 <div>
@@ -596,12 +553,12 @@
                                 </div>
                                 <div class="flex items-center gap-6">
                                     <label class="flex items-center gap-1">
-                                        <input type="radio" name="autoBoost" wire:model="auto_boost"
-                                            value="1" class="text-orange-500 focus:ring-orange-500">
+                                        <input type="radio" name="autoBoost" wire:model="auto_boost" {{ proUser()?'':'disabled' }}
+                                            value="1" class="text-orange-500 focus:ring-orange-500 {{  proUser()?'':'cursor-not-allowed' }}">
                                         <span class="text-gray-600 dark:text-white">Yes</span>
                                     </label>
                                     <label class="flex items-center gap-1">
-                                        <input type="radio" name="autoBoost" wire:model="auto_boost"
+                                        <input type="radio" name="autoBoost" wire:model="auto_boost" {{ proUser()?'':'disabled' }}
                                             value="0" class="text-orange-500 focus:ring-orange-500">
                                         <span class="text-gray-600 dark:text-white">No</span>
                                     </label>
