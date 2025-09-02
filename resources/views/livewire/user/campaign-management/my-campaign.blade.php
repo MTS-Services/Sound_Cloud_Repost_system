@@ -591,7 +591,7 @@
                 showGenreRadios: false,
                 showRepostPerDay: false,
                 showOptions: false
-                }" class="flex-grow overflow-y-auto p-6">
+            }" class="flex-grow overflow-y-auto p-6">
                 <!-- Campaign Status (if editing) -->
                 @if ($isEditing && $editingCampaign)
                     <div
@@ -739,37 +739,37 @@
                         </div>
 
                         <!-- Max Follower Limit -->
-                        <div class="flex flex-col space-y-2">
-                            <div class="flex items-start space-x-3">
-                                <input type="checkbox" @change="showOptions = !showOptions"
-                                    {{ $maxFollower > 0 ? 'checked' : '' }}
-                                    class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-sm font-medium text-gray-900 dark:text-white">Limit to users with
-                                        max follower
-                                        count</span>
-                                </div>
-                            </div>
-                            <div x-show="showOptions" x-transition class="p-3">
-                                <div class="flex justify-between items-center gap-4">
-                                    <div class="w-full relative">
-                                        <input type="range" x-data
-                                            x-on:input="$wire.set('maxFollower', $event.target.value)" min="100"
-                                            max="{{ $followersLimit }}"
-                                            value="{{ $followersLimit < $maxFollower ? $followersLimit : $maxFollower }}"
-                                            class="w-full h-2 cursor-pointer">
-                                    </div>
-                                    <div
-                                        class="full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
-                                        <span
-                                            class="text-sm font-medium text-gray-900 dark:text-white">{{ $maxFollower > $followersLimit ? $followersLimit : $maxFollower }}</span>
-                                    </div>
-                                </div>
-                                @error('maxFollower')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
+                        <div x-data="{ showOptions: {{ $maxFollower >= 100 ? 'true' : 'false' }} }" class="flex flex-col space-y-2">
+                        <div class="flex items-start space-x-3">
+                            <input type="checkbox" @change="showOptions = !showOptions"
+                                {{ $maxFollower > 0 ? 'checked' : '' }}
+                                class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm font-medium text-gray-900 dark:text-white">Limit to users with
+                                    max follower
+                                    count</span>
                             </div>
                         </div>
+                        <div x-show="showOptions" x-transition class="p-3">
+                            <div class="flex justify-between items-center gap-4">
+                                <div class="w-full relative">
+                                    <input type="range" x-data
+                                        x-on:input="$wire.set('maxFollower', $event.target.value)" min="100"
+                                        max="{{ $followersLimit }}"
+                                        value="{{ $followersLimit < $maxFollower ? $followersLimit : $maxFollower }}"
+                                        class="w-full h-2 cursor-pointer">
+                                </div>
+                                <div
+                                    class="full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
+                                    <span
+                                        class="text-sm font-medium text-gray-900 dark:text-white">{{ $maxFollower > $followersLimit ? $followersLimit : $maxFollower }}</span>
+                                </div>
+                            </div>
+                            @error('maxFollower')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
 
                     </div>
                     <!-- Enable Campaign Accelerator -->
@@ -814,7 +814,8 @@
                                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
                                             :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                         <div class="flex items-center space-x-2">
-                                            <span class="text-sm text-gray-700 dark:text-gray-400">Exclude users who repost too often
+                                            <span class="text-sm text-gray-700 dark:text-gray-400">Exclude users who
+                                                repost too often
                                                 (last
                                                 24h)</span>
                                         </div>
@@ -825,7 +826,7 @@
                                 <div class="flex flex-col space-y-2">
                                     <div class="flex items-start space-x-3">
                                         <input type="checkbox" @click="showRepostPerDay = !showRepostPerDay"
-                                            {{ $maxRepostsPerDay > 0 ? 'checked' : '' }} :disabled="!momentumEnabled"
+                                            :disabled="!momentumEnabled"
                                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
                                             :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                         <div class="flex items-center space-x-2">
@@ -840,17 +841,17 @@
                                                 <input type="range" x-data :disabled="!momentumEnabled"
                                                     x-on:input="$wire.set('maxRepostsPerDay', $event.target.value)"
                                                     min="0" max="100" value="{{ $maxRepostsPerDay }}"
-                                                    class="w-full h-2 cursor-pointer"
+                                                    class="w-full h-2  cursor-pointer"
                                                     :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                             </div>
                                             <div
                                                 class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
                                                 <span>{{ $maxRepostsPerDay }}</span>
                                             </div>
+                                            @error('maxRepostsPerDay')
+                                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                            @enderror
                                         </div>
-                                        @error('maxRepostsPerDay')
-                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -883,8 +884,7 @@
                                     </div>
                                     <div class="space-y-3">
                                         <div class="flex items-center space-x-2">
-                                            <input type="radio" name="genre"
-                                                @click="showGenreRadios = true"
+                                            <input type="radio" name="genre" @click="showGenreRadios = true"
                                                 :disabled="!momentumEnabled"
                                                 class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
                                                 :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
