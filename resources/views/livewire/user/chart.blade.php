@@ -194,7 +194,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h3
-                                    class="font-semibold text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
+                                    class="font-semibold dark:text-white text-gray-500 truncate cursor-pointer hover:text-orange-400 transition-colors">
                                     Midnight Dreams</h3>
                                 <p class="text-sm text-gray-400 truncate">Luna Waves</p>
                             </div>
@@ -283,7 +283,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h3
-                                    class="font-semibold text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
+                                    class="font-semibold text-gray-500 truncate cursor-pointer hover:text-orange-400 transition-colors">
                                     Urban Pulse</h3>
                                 <p class="text-sm text-gray-400 truncate">Metro Vibes</p>
                             </div>
@@ -372,7 +372,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h3
-                                    class="font-semibold text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
+                                    class="font-semibold text-gray-500 truncate cursor-pointer hover:text-orange-400 transition-colors">
                                     Cosmic Flow</h3>
                                 <p class="text-sm text-gray-400 truncate">Stellar Sound</p>
                             </div>
@@ -455,7 +455,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h3
-                                    class="font-semibold text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
+                                    class="font-semibold text-gray-500 truncate cursor-pointer hover:text-orange-400 transition-colors">
                                     Neon Nights</h3>
                                 <p class="text-sm text-gray-400 truncate">Synth Paradise</p>
                             </div>
@@ -538,7 +538,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h3
-                                    class="font-semibold text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
+                                    class="font-semibold text-gray-500 truncate cursor-pointer hover:text-orange-400 transition-colors">
                                     Ocean Breeze</h3>
                                 <p class="text-sm text-gray-400 truncate">Coastal Harmony</p>
                             </div>
@@ -621,7 +621,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h3
-                                    class="font-semibold text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
+                                    class="font-semibold text-gray-500 truncate cursor-pointer hover:text-orange-400 transition-colors">
                                     Digital Horizon</h3>
                                 <p class="text-sm text-gray-400 truncate">TechnoMind</p>
                             </div>
@@ -704,7 +704,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h3
-                                    class="font-semibold text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
+                                    class="font-semibold text-gray-500 truncate cursor-pointer hover:text-orange-400 transition-colors">
                                     Sunset Boulevard</h3>
                                 <p class="text-sm text-gray-400 truncate">Golden Hour</p>
                             </div>
@@ -787,7 +787,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h3
-                                    class="font-semibold text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
+                                    class="font-semibold text-gray-500 truncate cursor-pointer hover:text-orange-400 transition-colors">
                                     Thunder Road</h3>
                                 <p class="text-sm text-gray-400 truncate">Electric Storm</p>
                             </div>
@@ -870,7 +870,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h3
-                                    class="font-semibold text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
+                                    class="font-semibold text-gray-500 truncate cursor-pointer hover:text-orange-400 transition-colors">
                                     Velvet Dreams</h3>
                                 <p class="text-sm text-gray-400 truncate">Smooth Operator</p>
                             </div>
@@ -953,7 +953,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h3
-                                    class="font-semibold text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
+                                    class="font-semibold text-gray-500 truncate cursor-pointer hover:text-orange-400 transition-colors">
                                     Phoenix Rising</h3>
                                 <p class="text-sm text-gray-400 truncate">Flame Collective</p>
                             </div>
@@ -1036,7 +1036,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h3
-                                    class="font-semibold text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
+                                    class="font-semibold text-gray-500 truncate cursor-pointer hover:text-orange-400 transition-colors">
                                     Starlight Serenade</h3>
                                 <p class="text-sm text-gray-400 truncate">Night Sky Orchestra</p>
                             </div>
@@ -1119,7 +1119,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h3
-                                    class="font-semibold text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
+                                    class="font-semibold text-gray-500 truncate cursor-pointer hover:text-orange-400 transition-colors">
                                     Bass Drop Revolution</h3>
                                 <p class="text-sm text-gray-400 truncate">Sub Frequency</p>
                             </div>
@@ -1202,7 +1202,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h3
-                                    class="font-semibold text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
+                                    class="font-semibold text-gray-500 truncate cursor-pointer hover:text-orange-400 transition-colors">
                                     Acoustic Memories</h3>
                                 <p class="text-sm text-gray-400 truncate">String Theory</p>
                             </div>
@@ -1285,7 +1285,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h3
-                                    class="font-semibold text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
+                                    class="font-semibold text-gray-500 truncate cursor-pointer hover:text-orange-400 transition-colors">
                                     Rhythm & Soul</h3>
                                 <p class="text-sm text-gray-400 truncate">Groove Machine</p>
                             </div>
@@ -1368,7 +1368,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h3
-                                    class="font-semibold text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
+                                    class="font-semibold text-gray-500 truncate cursor-pointer hover:text-orange-400 transition-colors">
                                     Ethereal Voices</h3>
                                 <p class="text-sm text-gray-400 truncate">Celestial Choir</p>
                             </div>
@@ -1451,7 +1451,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h3
-                                    class="font-semibold text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
+                                    class="font-semibold text-gray-500 truncate cursor-pointer hover:text-orange-400 transition-colors">
                                     Metro Beats</h3>
                                 <p class="text-sm text-gray-400 truncate">City Sounds</p>
                             </div>
@@ -1534,7 +1534,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h3
-                                    class="font-semibold text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
+                                    class="font-semibold text-gray-500 truncate cursor-pointer hover:text-orange-400 transition-colors">
                                     Crystal Waters</h3>
                                 <p class="text-sm text-gray-400 truncate">Pure Resonance</p>
                             </div>
@@ -1617,7 +1617,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h3
-                                    class="font-semibold text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
+                                    class="font-semibold text-gray-500 truncate cursor-pointer hover:text-orange-400 transition-colors">
                                     Neon Escape</h3>
                                 <p class="text-sm text-gray-400 truncate">Retro Future</p>
                             </div>
@@ -1700,7 +1700,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h3
-                                    class="font-semibold text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
+                                    class="font-semibold text-gray-500 truncate cursor-pointer hover:text-orange-400 transition-colors">
                                     Woodland Whispers</h3>
                                 <p class="text-sm text-gray-400 truncate">Nature's Symphony</p>
                             </div>
@@ -1782,7 +1782,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h3
-                                    class="font-semibold text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
+                                    class="font-semibold text-gray-500 truncate cursor-pointer hover:text-orange-400 transition-colors">
                                     Electric Pulse</h3>
                                 <p class="text-sm text-gray-400 truncate">Voltage Drop</p>
                             </div>

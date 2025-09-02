@@ -1,6 +1,5 @@
 <div>
     <x-slot name="page_slug">analytics</x-slot>
-
     <div id="root" class="#">
         <div>
             <div class="border-b sticky top-0 z-10  dark:bg-gray-900">
@@ -140,17 +139,19 @@
                     <div
                         class="dark:bg-[#2a3441] rounded-lg p-5 shadow-sm border border-[#3a4551] hover:shadow-md transition-shadow">
                         <div class="flex items-start">
-                            <div class="p-2 rounded-lg bg-[#ff6b35] text-white mr-4 flex-shrink-0"><svg
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            <div class="p-2 rounded-lg bg-[#ff6b35] text-white mr-4 flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                     stroke-linecap="round" stroke-linejoin="round"
                                     class="lucide lucide-music h-5 w-5">
                                     <path d="M9 18V5l12-2v13"></path>
                                     <circle cx="6" cy="18" r="3"></circle>
                                     <circle cx="18" cy="16" r="3"></circle>
-                                </svg></div>
+                                </svg>
+                            </div>
                             <div class="flex-1">
-                                <h4 class="font-semibold dark:text-white text-black mb-2">Leverage Your Top Performer
+                                <h4 class="font-semibold dark:text-white text-gray-900 mb-2">Leverage Your Top
+                                    Performer
                                 </h4>
                                 <p class="text-sm text-gray-400 mb-3">"Midnight Vibes" is your breakout hit
                                     with 45K+ streams. Use its success to promote other tracks.</p>
@@ -224,10 +225,14 @@
                                 </path>
                                 <circle cx="7.5" cy="7.5" r=".5" fill="currentColor"></circle>
                             </svg>Genre</label>
-                        <div class="space-y-2"><label class="flex items-center"><input type="radio" class=" "
-                                    value="all"><span
-                                    class="ml-2 text-sm text-gray-400 capitalize">all</span></label><label
-                                class="flex items-center"><input type="radio" name="genre"
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="radio" name="genre"
+                                    class="h-4 w-4 text-[#00599f] focus:ring-[#00599f] border-[#2a3441] "
+                                    value="All">
+                                <span class="ml-2 text-sm text-gray-400 capitalize">all</span>
+                            </label>
+                            <label class="flex items-center"><input type="radio" name="genre"
                                     class="h-4 w-4 text-[#00599f] focus:ring-[#00599f] border-[#2a3441] "
                                     value="Electronic"><span
                                     class="ml-2 text-sm text-gray-400 capitalize">Electronic</span></label><label
@@ -251,7 +256,8 @@
                                 <input type="radio" name="genre"
                                     class="h-4 w-4 text-[#00599f] focus:ring-[#00599f] border-[#2a3441] "
                                     value="Indie">
-                                <span class="ml-2 text-sm text-gray-400 ">Indie</span></label></div>
+                                <span class="ml-2 text-sm text-gray-400 ">Indie</span></label>
+                        </div>
                     </div>
                     <div><label class="flex items-center text-sm font-medium text-gray-400 mb-3"><svg
                                 xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -631,7 +637,7 @@
                                     <div class="flex items-center justify-between mb-2">
                                         <div class="flex-1 min-w-0">
                                             <p
-                                                class="text-sm font-medium text-black dark:text-white truncate group-hover:text-[#ff6b35] transition-colors">
+                                                class="text-sm font-medium text-black dark:text-white  truncate group-hover:text-[#ff6b35] transition-colors">
                                                 Midnight Vibes</p>
                                             <p class="text-xs text-gray-400 truncate">You</p>
                                         </div>
@@ -754,7 +760,7 @@
                                             <div class="w-3 h-3 rounded-full mr-3 border border-[#2a3441]"
                                                 style="background-color: rgb(255, 107, 53);"></div><span
                                                 class="text-sm font-medium text-gray-500 ">Electronic</span>
-                                        </div><span class="text-sm font-bold text-black dark:text-white">35.0%</span>
+                                        </div><span class="text-sm font-bold text-gray-600 dark:text-white">35.0%</span>
                                     </div>
                                     <div
                                         class="flex items-center justify-between p-2 rounded-lg hover:bg-[#2a3441] transition-colors cursor-pointer">
@@ -762,7 +768,7 @@
                                             <div class="w-3 h-3 rounded-full mr-3 border border-[#2a3441]"
                                                 style="background-color: rgb(16, 185, 129);"></div><span
                                                 class="text-sm font-medium text-gray-600">Hip Hop</span>
-                                        </div><span class="text-sm font-bold text-black dark:text-white">28.0%</span>
+                                        </div><span class="text-sm font-bold text-gray-600 dark:text-white">28.0%</span>
                                     </div>
                                     <div
                                         class="flex items-center justify-between p-2 rounded-lg hover:bg-[#2a3441] transition-colors cursor-pointer">
@@ -770,7 +776,7 @@
                                             <div class="w-3 h-3 rounded-full mr-3 border border-[#2a3441]"
                                                 style="background-color: rgb(139, 92, 246);"></div><span
                                                 class="text-sm font-medium text-gray-500">Pop</span>
-                                        </div><span class="text-sm font-bold text-black dark:text-white">20.0%</span>
+                                        </div><span class="text-sm font-bold text-gray-600 dark:text-white">20.0%</span>
                                     </div>
                                     <div
                                         class="flex items-center justify-between p-2 rounded-lg hover:bg-[#2a3441] transition-colors cursor-pointer">
@@ -778,7 +784,7 @@
                                             <div class="w-3 h-3 rounded-full mr-3 border border-[#2a3441]"
                                                 style="background-color: rgb(245, 158, 11);"></div><span
                                                 class="text-sm font-medium text-gray-500">Indie</span>
-                                        </div><span class="text-sm font-bold text-black dark:text-white">12.0%</span>
+                                        </div><span class="text-sm font-bold text-gray-600 dark:text-white">12.0%</span>
                                     </div>
                                     <div
                                         class="flex items-center justify-between p-2 rounded-lg hover:bg-[#2a3441] transition-colors cursor-pointer">
@@ -786,7 +792,7 @@
                                             <div class="w-3 h-3 rounded-full mr-3 border border-[#2a3441]"
                                                 style="background-color: rgb(239, 68, 68);"></div><span
                                                 class="text-sm font-medium text-gray-500">R&amp;B</span>
-                                        </div><span class="text-sm font-bold text-black dark:text-white">5.0%</span>
+                                        </div><span class="text-sm font-bold text-gray-600 dark:text-white">5.0%</span>
                                     </div>
                                 </div>
                             </div>
@@ -916,14 +922,14 @@
                                                 class="w-2 h-8 rounded-full mr-3 bg-gradient-to-b from-[#ff6b35] to-[#ff8c42]">
                                             </div>
                                             <div>
-                                                <div class="text-sm font-medium text-black dark:text-white">Midnight
+                                                <div class="text-sm font-medium text-gray-600 dark:text-white">Midnight
                                                     Vibes</div>
                                                 <div class="text-sm text-gray-400">Electronic • You</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-bold text-black dark:text-white">45,632</div>
+                                        <div class="text-sm font-bold text-gray-600 dark:text-white">45,632</div>
                                         <div class="text-xs text-gray-400">streams</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -938,19 +944,20 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
-                                            <div class="text-sm font-bold text-black dark:text-white">94</div>
+                                            <div class="text-sm font-bold text-gray-600 dark:text-white">94</div>
                                             <div class="ml-2 w-16 bg-[#2a3441] rounded-full h-2">
                                                 <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] h-2 rounded-full transition-all duration-300"
                                                     style="width: 94%;"></div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-white">15,632
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-white">
+                                        15,632
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-white">2,847
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-white">2,847
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-black dark:text-white">2024-01-15</div>
+                                        <div class="text-sm text-gray-600 dark:text-white">2024-01-15</div>
                                     </td>
                                 </tr>
                                 <tr class="hover:bg-[#1a2332] transition-colors cursor-pointer">
@@ -960,14 +967,14 @@
                                                 class="w-2 h-8 rounded-full mr-3 bg-gradient-to-b from-[#ff6b35] to-[#ff8c42]">
                                             </div>
                                             <div>
-                                                <div class="text-sm font-medium text-black dark:text-white">Urban
+                                                <div class="text-sm font-medium text-gray-600 dark:text-white">Urban
                                                     Dreams</div>
                                                 <div class="text-sm text-gray-600">Hip Hop • You</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-bold text-black dark:text-white">38,921</div>
+                                        <div class="text-sm font-bold text-gray-600 dark:text-white">38,921</div>
                                         <div class="text-xs text-gray-400">streams</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -982,19 +989,21 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
-                                            <div class="text-sm font-bold text-black dark:text-white">87</div>
+                                            <div class="text-sm font-bold text-gray-600 dark:text-white">87</div>
                                             <div class="ml-2 w-16 bg-[#2a3441] rounded-full h-2">
                                                 <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] h-2 rounded-full transition-all duration-300"
                                                     style="width: 87%;"></div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-white">12,458
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-white">
+                                        12,458
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-white">1,923
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-white">
+                                        1,923
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-black dark:text-white">2024-02-03</div>
+                                        <div class="text-sm text-gray-600 dark:text-white">2024-02-03</div>
                                     </td>
                                 </tr>
                                 <tr class="hover:bg-[#1a2332] transition-colors cursor-pointer">
@@ -1004,15 +1013,15 @@
                                                 class="w-2 h-8 rounded-full mr-3 bg-gradient-to-b from-[#ff6b35] to-[#ff8c42]">
                                             </div>
                                             <div>
-                                                <div class="text-sm font-medium text-black dark:text-white">Sunset
+                                                <div class="text-sm font-medium text-gray-600 dark:text-white">Sunset
                                                     Boulevard</div>
                                                 <div class="text-sm text-gray-400">Indie • You</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-bold text-black dark:text-white">32,154</div>
-                                        <div class="text-xs text-black dark:text-white">streams</div>
+                                        <div class="text-sm font-bold text-gray-600 dark:text-white">32,154</div>
+                                        <div class="text-xs text-gray-600 dark:text-white">streams</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="inline-flex items-center text-sm font-medium text-green-400"><svg
@@ -1026,19 +1035,21 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
-                                            <div class="text-sm font-bold text-black dark:text-white">82</div>
+                                            <div class="text-sm font-bold text-gray-600 dark:text-white">82</div>
                                             <div class="ml-2 w-16 bg-[#2a3441] rounded-full h-2">
                                                 <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] h-2 rounded-full transition-all duration-300"
                                                     style="width: 82%;"></div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-white">9,876
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-white">
+                                        9,876
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-white">1,654
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-white">
+                                        1,654
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-black dark:text-white">2024-01-28</div>
+                                        <div class="text-sm text-gray-600 dark:text-white">2024-01-28</div>
                                     </td>
                                 </tr>
                                 <tr class="hover:bg-[#1a2332] transition-colors cursor-pointer">
@@ -1046,15 +1057,16 @@
                                         <div class="flex items-center">
                                             <div class="w-2 h-8 rounded-full mr-3 bg-[#2a3441]"></div>
                                             <div>
-                                                <div class="text-sm font-medium text-black dark:text-white">Electric
+                                                <div class="text-sm font-medium text-gray-600 dark:text-white">
+                                                    Electric
                                                     Soul</div>
                                                 <div class="text-sm text-gray-400">Electronic • You</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-bold text-black dark:text-white">28,743</div>
-                                        <div class="text-xs text-black dark:text-white">streams</div>
+                                        <div class="text-sm font-bold text-gray-600 dark:text-white">28,743</div>
+                                        <div class="text-xs text-gray-600 dark:text-white">streams</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="inline-flex items-center text-sm font-medium text-green-400"><svg
@@ -1068,19 +1080,21 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
-                                            <div class="text-sm font-bold text-black dark:text-white">78</div>
+                                            <div class="text-sm font-bold text-gray-600 dark:text-white">78</div>
                                             <div class="ml-2 w-16 bg-[#2a3441] rounded-full h-2">
                                                 <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] h-2 rounded-full transition-all duration-300"
                                                     style="width: 78%;"></div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-white">8,765
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-white">
+                                        8,765
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-white">1,432
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-white">
+                                        1,432
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-black dark:text-white">2024-02-12</div>
+                                        <div class="text-sm text-gray-600 dark:text-white">2024-02-12</div>
                                     </td>
                                 </tr>
                                 <tr class="hover:bg-[#1a2332] transition-colors cursor-pointer">
@@ -1088,7 +1102,7 @@
                                         <div class="flex items-center">
                                             <div class="w-2 h-8 rounded-full mr-3 bg-[#2a3441]"></div>
                                             <div>
-                                                <div class="text-sm font-medium text-black dark:text-white">Golden
+                                                <div class="text-sm font-medium text-gray-600 dark:text-white">Golden
                                                     Hour
                                                 </div>
                                                 <div class="text-sm text-gray-400">Pop • You</div>
@@ -1096,8 +1110,8 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-bold text-black dark:text-white">24,891</div>
-                                        <div class="text-xs text-black dark:text-white">streams</div>
+                                        <div class="text-sm font-bold text-gray-600 dark:text-white">24,891</div>
+                                        <div class="text-xs text-gray-600 dark:text-white">streams</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="inline-flex items-center text-sm font-medium text-red-400"><svg
@@ -1111,19 +1125,21 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
-                                            <div class="text-sm font-bold text-black dark:text-white">74</div>
+                                            <div class="text-sm font-bold text-gray-600 dark:text-white">74</div>
                                             <div class="ml-2 w-16 bg-[#2a3441] rounded-full h-2">
                                                 <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] h-2 rounded-full transition-all duration-300"
                                                     style="width: 74%;"></div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-white">7,654
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-white">
+                                        7,654
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-white">1,287
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-white">
+                                        1,287
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-black dark:text-white">2024-01-08</div>
+                                        <div class="text-sm text-gray-600 dark:text-white">2024-01-08</div>
                                     </td>
                                 </tr>
                                 <tr class="hover:bg-[#1a2332] transition-colors cursor-pointer">
@@ -1131,15 +1147,16 @@
                                         <div class="flex items-center">
                                             <div class="w-2 h-8 rounded-full mr-3 bg-[#2a3441]"></div>
                                             <div>
-                                                <div class="text-sm font-medium text-black dark:text-white">Bass Drop
+                                                <div class="text-sm font-medium text-gray-600 dark:text-white">Bass
+                                                    Drop
                                                 </div>
                                                 <div class="text-sm text-gray-400">Hip Hop • You</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-bold text-black dark:text-white">21,567</div>
-                                        <div class="text-xs text-black dark:text-white">streams</div>
+                                        <div class="text-sm font-bold text-gray-600 dark:text-white">21,567</div>
+                                        <div class="text-xs text-gray-600 dark:text-white">streams</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="inline-flex items-center text-sm font-medium text-green-400"><svg
@@ -1153,19 +1170,21 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
-                                            <div class="text-sm font-bold text-black dark:text-white">71</div>
+                                            <div class="text-sm font-bold text-gray-600 dark:text-white">71</div>
                                             <div class="ml-2 w-16 bg-[#2a3441] rounded-full h-2">
                                                 <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] h-2 rounded-full transition-all duration-300"
                                                     style="width: 71%;"></div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-white">6,543
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-white">
+                                        6,543
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-white">1,156
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-white">
+                                        1,156
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-black dark:text-white">2024-02-20</div>
+                                        <div class="text-sm text-gray-600 dark:text-white">2024-02-20</div>
                                     </td>
                                 </tr>
                                 <tr class="hover:bg-[#1a2332] transition-colors cursor-pointer">
@@ -1173,15 +1192,16 @@
                                         <div class="flex items-center">
                                             <div class="w-2 h-8 rounded-full mr-3 bg-[#2a3441]"></div>
                                             <div>
-                                                <div class="text-sm font-medium text-black dark:text-white">Acoustic
+                                                <div class="text-sm font-medium text-gray-600 dark:text-white">
+                                                    Acoustic
                                                     Dreams</div>
                                                 <div class="text-sm text-gray-400">Indie • You</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-bold text-black dark:text-white">18,432</div>
-                                        <div class="text-xs text-black dark:text-white">streams</div>
+                                        <div class="text-sm font-bold text-gray-600 dark:text-white">18,432</div>
+                                        <div class="text-xs text-gray-600 dark:text-white">streams</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="inline-flex items-center text-sm font-medium text-green-400"><svg
@@ -1195,19 +1215,20 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
-                                            <div class="text-sm font-bold text-black dark:text-white">68</div>
+                                            <div class="text-sm font-bold text-gray-600 dark:text-white">68</div>
                                             <div class="ml-2 w-16 bg-[#2a3441] rounded-full h-2">
                                                 <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] h-2 rounded-full transition-all duration-300"
                                                     style="width: 68%;"></div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-white">5,432
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-white">
+                                        5,432
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-white">987
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-white">987
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-black dark:text-white">2024-01-22</div>
+                                        <div class="text-sm text-gray-600 dark:text-white">2024-01-22</div>
                                     </td>
                                 </tr>
                                 <tr class="hover:bg-[#1a2332] transition-colors cursor-pointer">
@@ -1215,7 +1236,7 @@
                                         <div class="flex items-center">
                                             <div class="w-2 h-8 rounded-full mr-3 bg-[#2a3441]"></div>
                                             <div>
-                                                <div class="text-sm font-medium text-black dark:text-white">Neon
+                                                <div class="text-sm font-medium text-gray-600 dark:text-white">Neon
                                                     Nights
                                                 </div>
                                                 <div class="text-sm text-gray-400">Electronic • You</div>
@@ -1223,8 +1244,8 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-bold text-black dark:text-white">15,298</div>
-                                        <div class="text-xs text-black dark:text-white">streams</div>
+                                        <div class="text-sm font-bold text-gray-600 dark:text-white">15,298</div>
+                                        <div class="text-xs text-gray-600 dark:text-white">streams</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="inline-flex items-center text-sm font-medium text-red-400"><svg
@@ -1238,19 +1259,20 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
-                                            <div class="text-sm font-bold text-black dark:text-white">65</div>
+                                            <div class="text-sm font-bold text-gray-600 dark:text-white">65</div>
                                             <div class="ml-2 w-16 bg-[#2a3441] rounded-full h-2">
                                                 <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] h-2 rounded-full transition-all duration-300"
                                                     style="width: 65%;"></div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-white">4,321
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-white">
+                                        4,321
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-white">876
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-white">876
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-black dark:text-white">2024-01-05</div>
+                                        <div class="text-sm text-gray-600 dark:text-white">2024-01-05</div>
                                     </td>
                                 </tr>
                             </tbody>
