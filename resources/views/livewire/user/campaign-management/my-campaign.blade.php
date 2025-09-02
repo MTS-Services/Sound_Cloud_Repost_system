@@ -52,7 +52,7 @@
                                                 <h3 class="text-black dark:text-gray-100 font-semibold text-lg">
                                                     {{ $campaign_->music?->title }}
                                                 </h3>
-                                                <a href="{{ $baseUrl . $campaign_->music?->permalink_url }}"
+                                                <a href="{{ $campaign_->music?->permalink_url }}"
                                                     target="_blank" class="cursor-pointer">
                                                     <!-- Pencil Icon -->
                                                     <x-lucide-external-link

@@ -367,59 +367,6 @@ class Settings extends Component
         });
     }
 
-    // public function saveProfile()
-    // {
-    //     $this->validate();
-
-    //     try {
-    //         DB::transaction(function () {
-    //             User::where('urn', user()->urn)->update(['email' => $this->email]);
-    //             UserGenre::where('user_urn', user()->urn)->delete();
-
-    //             $genres = collect($this->selectedGenres)->map(fn($genre) => [
-    //                 'user_urn' => user()->urn,
-    //                 'genre' => $genre,
-    //                 'creater_id' => user()->id,
-    //                 'creater_type' => get_class(user()),
-    //             ])->toArray();
-
-    //             UserGenre::insert($genres);
-    //             $socialData = [
-    //                 'user_urn' => user()->urn,
-    //                 'instagram' => $this->instagram_username,
-    //                 'twitter' => $this->twitter_username,
-    //                 'facebook' => $this->facebook_username,
-    //                 'youtube' => $this->youtube_channel_id,
-    //                 'tiktok' => $this->tiktok_username,
-    //                 'spotify' => $this->spotify_artist_link,
-    //             ];
-
-    //             $socialInfo = UserSocialInformation::self()->first();
-
-    //             $hasAnySocial = collect($socialData)
-    //                 ->except('user_urn')
-    //                 ->filter()
-    //                 ->isNotEmpty();
-
-    //             if (!$socialInfo && $hasAnySocial) {
-    //                 UserSocialInformation::create($socialData);
-    //             } elseif ($socialInfo && $hasAnySocial) {
-    //                 $socialInfo->update($socialData);
-    //             } elseif ($socialInfo && !$hasAnySocial) {
-    //                 $socialInfo->delete();
-    //             }
-    //         });
-
-    //         $this->dispatch('alert', type: 'success', message: 'Profile updated successfully!');
-
-    //         $this->reset(['selectedGenres', 'instagram_username', 'twitter_username', 'facebook_username', 'youtube_channel_id', 'tiktok_username', 'spotify_artist_link']);
-    //         $this->mount();
-    //     } catch (\Throwable $e) {
-    //         Log::error($e->getMessage());
-    //         $this->dispatch('alert', type: 'error', message: 'Profile update failed!');
-    //     }
-    // }
-
     public function saveProfile()
     {
         $this->validate();
