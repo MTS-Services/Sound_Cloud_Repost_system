@@ -795,7 +795,7 @@
                             </div>
                         </div>
                         <!-- Campaign Targeting -->
-                        <div class="border border-gray-200 dark:border-gray-700 bg-gray-200 dark:bg-gray-900 rounded-lg p-4 mb-6"
+                        <div class="border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 rounded-lg p-4 mb-6"
                             :class="momentumEnabled ? 'opacity-100' : 'opacity-30 border-opacity-10'">
                             <div class="mb-4">
                                 <h4 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -814,7 +814,7 @@
                                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
                                             :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                         <div class="flex items-center space-x-2">
-                                            <span class="text-sm text-gray-700">Exclude users who repost too often
+                                            <span class="text-sm text-gray-700 dark:text-gray-400">Exclude users who repost too often
                                                 (last
                                                 24h)</span>
                                         </div>
