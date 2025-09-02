@@ -51,7 +51,7 @@ return new class extends Migration
             $table->timestamp('featured_at')->nullable();
 
             $table->boolean('is_boost')->default(false);
-            $table->timestamp('boost_at')->nullable();
+            $table->timestamp('boosted_at')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

@@ -1,7 +1,9 @@
 <?php
 
+use App\Models\Campaign;
 use App\Models\Order;
 use App\Models\Permission;
+use App\Models\UserPlan;
 use App\Models\UserSetting;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -681,6 +683,13 @@ function searchableRoutes()
     return json_encode($searchableData);
 }
 
+
+function proUser()
+{
+    $isPro = UserPlan::where('user_urn', user()->urn)->active()->exists();
+    return $isPro;
+}
+
 function requestReceiveable($userUrn)
 {
     $requestReceiveable = UserSetting::where('user_urn', $userUrn)->value('accept_repost') ?? 0;
@@ -692,4 +701,50 @@ function invoiceId()
 }
 
 
+if (!function_exists('featuredAgain')) {
+    function featuredAgain($campaignId = null)
+    {
+        if ($campaignId) {
+            $latestFeaturedAt = Campaign::where('id', $campaignId)
+                ->featured()
+                ->latest('featured_at')
+                ->value('featured_at');
+        }else {
+            $latestFeaturedAt = Campaign::self()
+                ->featured()
+                ->latest('featured_at')
+                ->value('featured_at');
+        }
 
+        if (!$latestFeaturedAt) {
+            return true;
+        }
+
+        $hoursSinceLastFeature = Carbon::parse($latestFeaturedAt)->diffInHours(now());
+        return $hoursSinceLastFeature >= 24;
+    }
+}
+
+if (!function_exists('boostAgain')) {
+    function boostAgain($campaignId = null)
+    {
+        if ($campaignId) {
+            $latestBoostedAt = Campaign::where('id', $campaignId)
+                ->where('is_boost', 1)
+                ->latest('boosted_at')
+                ->value('boosted_at');
+        }else {
+            $latestBoostedAt = Campaign::self()
+                ->where('is_boost', 1)
+                ->latest('boosted_at')
+                ->value('boosted_at');
+        }
+
+        if (!$latestBoostedAt) {
+            return true;
+        }
+
+        $hoursSinceLastBoost = Carbon::parse($latestBoostedAt)->diffInMinutes(now());
+        return $hoursSinceLastBoost >= 15;
+    }
+}

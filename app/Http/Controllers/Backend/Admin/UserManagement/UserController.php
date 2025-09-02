@@ -22,6 +22,7 @@ use App\Services\Admin\PackageManagement\UserPlanService;
 use App\Services\Admin\UserManagement\UserService;
 use App\Services\PlaylistService;
 use App\Services\TrackService;
+use App\Services\User\UserSettingsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -44,6 +45,7 @@ class UserController extends Controller implements HasMiddleware
     protected PlanService $planService;
     protected UserPlanService $userPlanService;
     protected OrderService $orderService;
+    protected UserSettingsService $userSettingsService;
 
     protected function redirectIndex(): RedirectResponse
     {
@@ -57,7 +59,7 @@ class UserController extends Controller implements HasMiddleware
 
 
 
-    public function __construct(UserService $userService, PlaylistService $playlistService, TrackService $trackService, CreditService $creditService, PaymentService $paymentService, PlanService $planService, UserPlanService $userPlanService, OrderService $orderService)
+    public function __construct(UserService $userService, PlaylistService $playlistService, TrackService $trackService, CreditService $creditService, PaymentService $paymentService, PlanService $planService, UserPlanService $userPlanService, OrderService $orderService, UserSettingsService $userSettingsService)
     {
         $this->userService = $userService;
         $this->playlistService = $playlistService;
@@ -67,6 +69,7 @@ class UserController extends Controller implements HasMiddleware
         $this->planService = $planService;
         $this->userPlanService = $userPlanService;
         $this->orderService = $orderService;
+        $this->userSettingsService = $userSettingsService;
     }
 
     public static function middleware(): array
@@ -542,6 +545,7 @@ class UserController extends Controller implements HasMiddleware
 
         try {
             DB::transaction(function () use ($request) {
+                $this->userSettingsService->createOrUpdate(user()->urn, ['auto_boost' => 1]);
                 $user = $this->userService->getUser($request->user_urn, 'urn');
                 $plan = $this->planService->getPlan($request->plan_id);
                 $yearly_plan = $request->yearly_plan == 1 ? 1 : 0;

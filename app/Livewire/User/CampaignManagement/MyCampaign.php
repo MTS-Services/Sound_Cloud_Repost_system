@@ -12,10 +12,11 @@ use App\Models\Playlist;
 use App\Models\User;
 use App\Models\UserPlan;
 use App\Services\Admin\UserManagement\UserService;
+use App\Services\SoundCloud\SoundCloudService;
 use App\Services\TrackService;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Locked;
@@ -29,6 +30,9 @@ class MyCampaign extends Component
 
     protected TrackService $trackService;
     protected UserService $userService;
+    protected SoundCloudService $soundCloudService;
+
+    public $baseUrl = 'https://soundcloud.com/';
 
     // Pagination URL parameters
     #[Url(as: 'allPage')]
@@ -78,7 +82,8 @@ class MyCampaign extends Component
     public bool $commentable = true;
     public bool $likeable = true;
     public bool $proFeatureEnabled = false;
-    public $maxFollower = 0;
+    public $maxFollower = 100;
+    public $followersLimit = 0;
     public $maxRepostLast24h = 0;
     public $maxRepostsPerDay = 0;
     public $anyGenre = 'anyGenre';
@@ -136,10 +141,11 @@ class MyCampaign extends Component
     private const ITEMS_PER_PAGE = 10;
     private const SOUNDCLOUD_API_URL = 'https://api-v2.soundcloud.com';
 
-    public function boot(TrackService $trackService, UserService $userService): void
+    public function boot(TrackService $trackService, UserService $userService, SoundCloudService $soundCloudService): void
     {
         $this->trackService = $trackService;
         $this->userService = $userService;
+        $this->soundCloudService = $soundCloudService;
         $this->tracks = collect();
         $this->playlists = collect();
     }
@@ -152,12 +158,11 @@ class MyCampaign extends Component
                 'integer',
                 'min:50',
                 function ($attribute, $value, $fail) {
-                    if($this->isEditing){
-                        if($value - $this->editingCampaign->budget_credits >  userCredits()){
+                    if ($this->isEditing) {
+                        if ($value - $this->editingCampaign->budget_credits >  userCredits()) {
                             $fail('The credit is not available.');
                         }
-                    }
-                    elseif ($value > userCredits()) {
+                    } elseif ($value > userCredits()) {
                         $fail('The credit is not available.');
                     }
                     if ($this->isEditing && $this->editingCampaign->budget_credits > $value) {
@@ -186,6 +191,10 @@ class MyCampaign extends Component
 
         if ($propertyName === 'addCreditCostPerRepost') {
             $this->validateAddCreditBudget();
+        }
+
+        if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
+            $this->calculateFollowersLimit();
         }
     }
 
@@ -348,6 +357,7 @@ class MyCampaign extends Component
     public function fetchTracks(): void
     {
         try {
+            $this->soundCloudService->syncSelfTracks([]);
             $this->allTracks = Track::self()->latest()->get();
             $this->tracksPage = 1;
             $this->tracks = $this->allTracks->take($this->perPage);
@@ -361,6 +371,7 @@ class MyCampaign extends Component
     public function fetchPlaylists(): void
     {
         try {
+            $this->soundCloudService->syncSelfPlaylists();
             $this->allPlaylists = Playlist::self()->latest()->get();
             $this->playlistsPage = 1;
             $this->playlists = $this->allPlaylists->take($this->perPage);
@@ -373,9 +384,6 @@ class MyCampaign extends Component
 
     public function toggleSubmitModal(string $type, int $id): void
     {
-        // $this->resetFormValidation();
-        $this->user = User::where('urn', user()->urn)->first()->activePlan();
-
         if (userCredits() < self::MIN_BUDGET) {
             $this->showLowCreditWarningModal = true;
             return;
@@ -424,7 +432,7 @@ class MyCampaign extends Component
 
     private function handleSubmissionError(\Exception $e, string $type, int $id): void
     {
-        $this->dispatch('alert', type:'error', message:'Failed to load content: ' . $e->getMessage());
+        $this->dispatch('alert', type: 'error', message: 'Failed to load content: ' . $e->getMessage());
         $this->showSubmitModal = false;
         $this->showCampaignsModal = true;
 
@@ -444,6 +452,7 @@ class MyCampaign extends Component
     {
         $this->proFeatureEnabled = $isChecked ? true : false;
         $this->proFeatureValue = $isChecked ? 0 : 1;
+        $this->anyGenre = 'anyGenre';
     }
 
     public function createCampaign()
@@ -465,7 +474,7 @@ class MyCampaign extends Component
             DB::transaction(function () use ($oldBudget) {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
-                $proFeatureEnabled = $this->proFeatureEnabled && $this->user?->status == User::STATUS_ACTIVE ? 1 : 0;
+                $proFeatureEnabled = $this->proFeatureEnabled && proUser() ? 1 : 0;
                 $editingProFeature = $this->isEditing && $this->editingCampaign->pro_feature == 1 ? $this->editingCampaign->pro_feature : $proFeatureEnabled;
 
                 $campaignData = [
@@ -548,10 +557,10 @@ class MyCampaign extends Component
                 }
             });
 
-            $this->dispatch('alert', type:'success', message: 'Campaign ' . ($this->isEditing ? 'updated' : 'created') . ' successfully!');
+            $this->dispatch('alert', type: 'success', message: 'Campaign ' . ($this->isEditing ? 'updated' : 'created') . ' successfully!');
             $this->resetAfterCampaignCreation();
         } catch (\Exception $e) {
-            $this->dispatch('alert', type:'error', message:'Failed to create campaign: ' . $e->getMessage());
+            $this->dispatch('alert', type: 'error', message: 'Failed to create campaign: ' . $e->getMessage());
             $this->logCampaignError($e);
         }
     }
@@ -564,7 +573,7 @@ class MyCampaign extends Component
             ->first();
 
         if (!$this->editingCampaign) {
-            $this->dispatch('alert', type:'error', message:'Campaign not found or cannot be edited.');
+            $this->dispatch('alert', type: 'error', message: 'Campaign not found or cannot be edited.');
             return;
         }
 
@@ -781,7 +790,7 @@ class MyCampaign extends Component
 
     private function handleError(string $message, \Exception $e, array $context = []): void
     {
-        $this->dispatch('alert', type:'error', message:$message . ': ' . $e->getMessage());
+        $this->dispatch('alert', type: 'error', message: $message . ': ' . $e->getMessage());
 
         Log::error($message . ': ' . $e->getMessage(), array_merge([
             'user_urn' => user()->urn ?? 'unknown'
@@ -799,11 +808,63 @@ class MyCampaign extends Component
 
     public function setFeatured($id)
     {
-        $campaign = Campaign::find($id);
-        $campaign->is_featured = !$campaign->is_featured;
-        $campaign->featured_at = now();
-        $campaign->save();
-        $this->mount();
+        try {
+            $campaign = Campaign::find($id);
+
+            if (!$campaign) {
+                $this->dispatch('alert', type: 'error', message: 'Campaign not found.');
+                return;
+            }
+
+            if (featuredAgain() == false) {
+                $this->dispatch('alert', type: 'error', message: 'Campaign is already featured previously.');
+                return;
+            }
+
+            if (featuredAgain() == false) {
+                $this->dispatch('alert', type: 'error', message: 'You can feature a campaign only once in 24 hours.');
+                return;
+            }
+            Campaign::self()->featured()->update(['is_featured' => 0]);
+
+            $campaign->is_featured = Campaign::FEATURED;
+            $campaign->featured_at = now();
+            $campaign->update();
+            $this->dispatch('alert', type: 'success', message: 'Campaign featured successfully.');
+            $this->mount();
+        } catch (\Exception $e) {
+            $this->handleError('Failed to feature campaign', $e, ['campaign_id' => $id]);
+        }
+    }
+
+
+    public function freeBoost($id)
+    {
+        try {
+            $campaign = Campaign::find($id);
+            if (!$campaign) {
+                $this->dispatch('alert', type: 'error', message: 'Campaign not found.');
+                return;
+            }
+            if (boostAgain($id) == false) {
+                $this->dispatch('alert', type: 'error', message: 'Campaign is already boosted previously.');
+                return;
+            }
+
+            if (boostAgain($id) == false) {
+                $this->dispatch('alert', type: 'error', message: 'You can boost a campaign only once in 24 hours.');
+                return;
+            }
+            Campaign::self()->where('is_boost', 1)->update(['is_boost' => Campaign::NOT_BOOSTED]);
+
+            $campaign->is_boost = Campaign::BOOSTED;
+            $campaign->boosted_at = now();
+            $campaign->update();
+            $this->dispatch('alert', type: 'success', message: 'Campaign boosted successfully.');
+            $this->mount();
+        } catch (\Exception $e) {
+            $this->handleError('Failed to feature campaign', $e, ['campaign_id' => $id]);
+        }
     }
 
     public function mount($categoryId = null)
@@ -811,6 +872,12 @@ class MyCampaign extends Component
         $this->faqs = Faq::when($categoryId, function ($query) use ($categoryId) {
             $query->where('faq_category_id', $categoryId);
         })->get();
+        $this->calculateFollowersLimit();
+    }
+
+    public function calculateFollowersLimit()
+    {
+        $this->followersLimit = ($this->credit - ($this->likeable ? 2 : 0) - ($this->commentable ? 2 : 0)) * 100;
     }
 
     public function render()
@@ -832,8 +899,8 @@ class MyCampaign extends Component
                     ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage)
             };
-            $data['is_pro'] = UserPlan::where('user_urn', user()->urn)->active()->exists();
-            $data['is_featured'] = Campaign::where('user_urn', user()->urn)->featured()->exists();
+            $data['latestCampaign'] = Campaign::with('music')->self()->where('featured_at', null)->latest()->first();
+            $data['featuredCampaign'] = Campaign::with('music')->self()->featured()->whereTime('featured_at', "<=", now()->subHours(24))->first();
         } catch (\Exception $e) {
             $data['campaigns'] = collect();
             $this->handleError('Failed to load campaigns', $e);

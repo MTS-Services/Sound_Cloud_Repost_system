@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use PhpParser\Node\Stmt\Static_;
 
 class Campaign extends BaseModel
 {
@@ -28,7 +29,7 @@ class Campaign extends BaseModel
         'is_featured',
         'featured_at',
         'is_boost',
-        'boost_at',
+        'boosted_at',
         'start_date',
         'end_date',
         'refund_credits',
@@ -120,22 +121,8 @@ class Campaign extends BaseModel
             'feature_label',
             'featured_again',
             'boost_again',
+            'boosted_label',
         ]);
-    }
-
-    public function getFeaturedAgainAttribute(): bool
-    {
-        if (!$this->is_featured_at) {
-            return true;
-        }
-        return now()->diffInHours($this->is_featured_at) >= 24;
-    }
-    public function getBoostAgainAttribute(): bool
-    {
-        if (!$this->boost_at) {
-            return true;
-        }
-        return now()->diffInHours($this->boost_at) >= 24;
     }
 
 
@@ -204,6 +191,21 @@ class Campaign extends BaseModel
     public function scopeActive_completed()
     {
         return $this->where('status', '!=', self::STATUS_CANCELLED,)->where('status', '!=', self::STATUS_PAUSED);
+    }
+
+    public const BOOSTED = 1;
+    public const NOT_BOOSTED = 0;
+    
+    public static function getBOOSTEDList(): array
+    {
+        return [
+            self::BOOSTED => 'Yes',
+            self::NOT_BOOSTED => 'No',
+        ];
+    }
+    public function getBoostedLabelAttribute()
+    {
+        return self::getBoostedList()[$this->is_boost] ?? 'Unknown';
     }
 
     public const FEATURED = 1;

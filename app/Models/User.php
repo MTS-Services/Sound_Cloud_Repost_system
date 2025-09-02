@@ -198,6 +198,7 @@ class User extends AuthBaseModel implements MustVerifyEmail
             'status_btn_color',
 
             'modified_image',
+            'is_pro',
         ]);
     }
 
@@ -252,7 +253,18 @@ class User extends AuthBaseModel implements MustVerifyEmail
 
     public function activePlan()
     {
-        return $this->userPlans->where('status', UserPlan::STATUS_ACTIVE)->first();
+        return $this->userPlans()->where('status', UserPlan::STATUS_ACTIVE)->whereDate('end_date', '>=', now())->first();
+    }
+
+    public function getIsProAttribute(): bool
+    {
+        $activePlan = $this->activePlan();
+        return ($activePlan && $activePlan->price != 0) ? true : false;
+    }
+
+    public function scopeIsPro()
+    {
+        return $this->is_pro == true;
     }
 
 
@@ -265,4 +277,5 @@ class User extends AuthBaseModel implements MustVerifyEmail
     {
         return (!$this->isOnline() && $this->last_seen_at !== null && $this->last_seen_at->diffInMinutes(now()) < 60) ? round($this->last_seen_at->diffInMinutes(now())) . ' min' : 'Offline';
     }
+    
 }

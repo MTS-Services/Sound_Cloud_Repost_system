@@ -54,7 +54,8 @@ class Dashboard extends Component
     public $likeable = true;
     public $proFeatureEnabled = false;
     public $proFeatureValue = 0;
-    public $maxFollower = 0;
+    public $maxFollower = 100;
+    public $followersLimit = 0;
     public $maxRepostLast24h = 0;
     public $maxRepostsPerDay = 0;
     public $anyGenre = 'anyGenre';
@@ -130,6 +131,17 @@ class Dashboard extends Component
     public function mount()
     {
         $this->loadDashboardData();
+        $this->calculateFollowersLimit();
+    }
+    public function updated($propertyName)
+    {
+        if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
+            $this->calculateFollowersLimit();
+        }
+    }
+    public function calculateFollowersLimit()
+    {
+        $this->followersLimit = ($this->credit - ($this->likeable ? 2 : 0) - ($this->commentable ? 2 : 0)) * 100;
     }
 
     public function loadDashboardData()
@@ -365,8 +377,6 @@ class Dashboard extends Component
             // 'canSubmit',
         ]);
 
-        $this->user = User::where('urn', user()->urn)->first()->activePlan();
-
         if (userCredits() < 50) {
             $this->showLowCreditWarningModal = true;
             $this->showSubmitModal = false;
@@ -440,7 +450,7 @@ class Dashboard extends Component
             DB::transaction(function () {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
-                $proFeatureEnabled = $this->proFeatureEnabled && $this->user->status == User::STATUS_ACTIVE ? 1 : 0;
+                $proFeatureEnabled = $this->proFeatureEnabled && proUser() ? 1 : 0;
                 $campaign = ModelsCampaign::create([
                     'music_id' => $this->musicId,
                     'music_type' => $this->musicType,

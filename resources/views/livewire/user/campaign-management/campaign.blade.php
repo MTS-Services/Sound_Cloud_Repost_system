@@ -38,89 +38,91 @@
 
     <div x-data ="{ openFilterByTrack: false, openFilterByGenre: false }"
         class="flex items-center justify-start gap-4 mt-4 mb-2 relative">
-        <div class="relative">
-            <button @click="openFilterByTrack = !openFilterByTrack , openFilterByGenre = false"
-                wire:click="getAllTrackTypes" @click.outside="openFilterByTrack = false"
-                class="bg-orange-100 !hover:bg-orange-400 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer">
-                Filter by track type /all
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-chevron-down-icon lucide-chevron-down">
-                    <path d="m6 9 6 6 6-6" />
-                </svg>
-            </button>
+        @if ($activeMainTab !== 'all')
+            <div class="relative">
+                <button @click="openFilterByTrack = !openFilterByTrack , openFilterByGenre = false"
+                    wire:click="getAllTrackTypes" @click.outside="openFilterByTrack = false"
+                    class="bg-orange-100 !hover:bg-orange-400 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer">
+                    Filter by track type /all
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-chevron-down-icon lucide-chevron-down">
+                        <path d="m6 9 6 6 6-6" />
+                    </svg>
+                </button>
 
-            @if (!empty($selectedTrackTypes))
-                <div x-show="openFilterByTrack" x-transition:enter="transition ease-out duration-100"
-                    x-transition:enter-start="transform opacity-0 scale-95"
-                    x-transition:enter-end="transform opacity-100 scale-100"
-                    x-transition:leave="transition ease-in duration-75"
-                    x-transition:leave-start="transform opacity-100 scale-100"
-                    x-transition:leave-end="transform opacity-0 scale-95"
-                    class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
-                    <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
-                        <div class="py-1">
-                            <button wire:click="filterByTrackType('all')"
-                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
-                                All
-                            </button>
-                            @forelse ($selectedTrackTypes as $type)
-                                <button wire:click="filterByTrackType('{{ $type }}')"
+                @if (!empty($selectedTrackTypes) && $activeMainTab !== 'all')
+                    <div x-show="openFilterByTrack" x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="transform opacity-0 scale-95"
+                        x-transition:enter-end="transform opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-75"
+                        x-transition:leave-start="transform opacity-100 scale-100"
+                        x-transition:leave-end="transform opacity-0 scale-95"
+                        class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
+                        <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
+                            <div class="py-1">
+                                <button wire:click="filterByTrackType('all')"
                                     class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
-                                    {{-- Type Capitalize --}}
-                                    {{ ucfirst($type) }}
+                                    All
                                 </button>
-                            @empty
-                                <span class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
-                                    {{ __('No track types available') }}
-                                </span>
-                            @endforelse
+                                @forelse ($selectedTrackTypes as $type)
+                                    <button wire:click="filterByTrackType('{{ $type }}')"
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                        {{-- Type Capitalize --}}
+                                        {{ ucfirst($type) }}
+                                    </button>
+                                @empty
+                                    <span class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                        {{ __('No track types available') }}
+                                    </span>
+                                @endforelse
+                            </div>
                         </div>
                     </div>
-                </div>
-            @endif
-        </div>
+                @endif
+            </div>
 
-        <!-- Filter by genre dropdown -->
-        <div class="relative">
-            <button @click="openFilterByGenre = !openFilterByGenre, openFilterByTrack = false" wire:click="getAllGenres"
-                @click.outside="openFilterByGenre = false"
-                class="bg-orange-100 hover:bg-orange-300 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-music-icon lucide-music">
-                    <path d="M9 18V5l12-2v13" />
-                    <circle cx="6" cy="18" r="3" />
-                    <circle cx="18" cy="16" r="3" />
-                </svg>
-                Filter by genre / {{ count($genres) }}
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-chevron-down-icon lucide-chevron-down">
-                    <path d="m6 9 6 6 6-6" />
-                </svg>
-            </button>
-            @if (!empty($genres))
-                <div x-show="openFilterByGenre" x-transition:enter="transition ease-out duration-100"
-                    x-transition:enter-start="transform opacity-0 scale-95"
-                    x-transition:enter-end="transform opacity-100 scale-100"
-                    x-transition:leave="transition ease-in duration-75"
-                    x-transition:leave-start="transform opacity-100 scale-100"
-                    x-transition:leave-end="transform opacity-0 scale-95"
-                    class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
-                    <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
-                        <div class="py-1">
-                            @foreach ($genres as $genre)
-                                <button wire:click="filterByGenre('{{ $genre }}')"
-                                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
-                                    {{ $genre }}
-                                </button>
-                            @endforeach
+            <!-- Filter by genre dropdown -->
+            <div class="relative">
+                <button @click="openFilterByGenre = !openFilterByGenre, openFilterByTrack = false"
+                    wire:click="getAllGenres" @click.outside="openFilterByGenre = false"
+                    class="bg-orange-100 hover:bg-orange-300 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-music-icon lucide-music">
+                        <path d="M9 18V5l12-2v13" />
+                        <circle cx="6" cy="18" r="3" />
+                        <circle cx="18" cy="16" r="3" />
+                    </svg>
+                    Filter by genre / {{ count($genres) }}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-chevron-down-icon lucide-chevron-down">
+                        <path d="m6 9 6 6 6-6" />
+                    </svg>
+                </button>
+                @if (!empty($genres))
+                    <div x-show="openFilterByGenre" x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="transform opacity-0 scale-95"
+                        x-transition:enter-end="transform opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-75"
+                        x-transition:leave-start="transform opacity-100 scale-100"
+                        x-transition:leave-end="transform opacity-0 scale-95"
+                        class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
+                        <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
+                            <div class="py-1">
+                                @foreach ($genres as $genre)
+                                    <button wire:click="filterByGenre('{{ $genre }}')"
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                        {{ $genre }}
+                                    </button>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
-                </div>
-            @endif
-        </div>
+                @endif
+            </div>
+        @endif
         {{-- Search --}}
         <div x-data="{ showInput: false }"
             class="w-64 relative flex items-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded">
@@ -187,17 +189,25 @@
                         <!-- Track Details -->
                         <div class="flex-1 flex flex-col justify-between relative">
                             <!-- Your Original SoundCloud Player -->
-                            <div id="soundcloud-player-{{ $campaign_->id }}"
-                                data-campaign-id="{{ $campaign_->id }}" wire:ignore>
+                            <div id="soundcloud-player-{{ $campaign_->id }}" data-campaign-id="{{ $campaign_->id }}"
+                                wire:ignore>
                                 <x-sound-cloud.sound-cloud-player :track="$campaign_->music" :height="166"
                                     :visual="false" />
                             </div>
-                            @if ($campaign_->is_featured)
-                                <div
-                                    class="absolute top-2 left-2 bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
-                                    FEATURED
-                                </div>
-                            @endif
+                            <div class="absolute top-2 left-2 flex items-center space-x-2">
+                                @if (!featuredAgain($campaign_->id) && $campaign_->is_featured)
+                                    <div
+                                        class="bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
+                                        FEATURED
+                                    </div>
+                                @endif
+                                @if (!boostAgain($campaign_->id) && $campaign_->is_boost)
+                                    <div
+                                        class="bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
+                                        {{ __('Boosted') }}
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -233,11 +243,11 @@
                                         class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
                                         x-cloak>
                                         <a href="{{ $campaign_?->music?->user?->userInfo?->soundcloud_permalink_url }}"
-                                            target="_blank"
-                                            class="block hover:bg-gray-800 px-3 py-1 rounded">Visit SoundCloud
+                                            target="_blank" class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
+                                            SoundCloud
                                             Profile</a>
-                                        <a href="{{ route('user.my-account', $campaign_->user_urn) }}"
-                                            wire:navigate class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
+                                        <a href="{{ route('user.my-account', $campaign_->user_urn) }}" wire:navigate
+                                            class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                             RepostChain Profile</a>
                                         {{-- <button
                                                 class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
@@ -535,7 +545,7 @@
                 </button>
             </div>
 
-            <div x-data="{ momentumEnabled: false }" class="flex-grow overflow-y-auto p-6">
+            <div x-data="{ momentumEnabled: @js(proUser()), showGenreRadios: false, showRepostPerDay: false, showOptions: false }" class="flex-grow overflow-y-auto p-6">
                 <!-- Selected Track -->
                 @if ($track)
                     <div>
@@ -592,8 +602,8 @@
                         <!-- Slider -->
                         <div class="relative">
                             <input type="range" x-data x-on:input="$wire.set('credit', $event.target.value)"
-                                min="0" max="500" value="{{ $credit }}"
-                                class="w-full h-2 border-0 cursor-pointer">
+                                min="50" step="10" max="{{ userCredits() }}"
+                                value="{{ $credit }}" class="w-full h-2 border-0 cursor-pointer">
                         </div>
                     </div>
 
@@ -626,50 +636,44 @@
                                 like).</p>
                         </div>
                     </div>
-
-                    <div x-data="{ showOptions: false }" class="flex flex-col space-y-2">
-                        <!-- Checkbox + Label -->
+                    <!-- Max Follower Limit -->
+                    <div x-data="{ showOptions: {{ $maxFollower >= 100 ? 'true' : 'false' }} }" class="flex flex-col space-y-2">
                         <div class="flex items-start space-x-3">
-                            <input type="checkbox" @change="showOptions = !showOptions"
+                            <input type="checkbox" @change="showOptions = true"
+                                {{ $maxFollower > 0 ? 'checked' : '' }}
                                 class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-
                             <div class="flex items-center space-x-2">
-                                <span class="text-sm font-medium text-gray-900 dark:text-white">Limit to users with max
-                                    follower
+                                <span class="text-sm font-medium text-gray-900 dark:text-white">Limit to users with
+                                    max follower
                                     count</span>
-                                <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
-                                    <span class="text-white text-xs">i</span>
-                                </div>
                             </div>
                         </div>
-
-                        <!-- Toggle Options (Hidden by default) -->
                         <div x-show="showOptions" x-transition class="p-3">
                             <div class="flex justify-between items-center gap-4">
                                 <div class="w-full relative">
                                     <input type="range" x-data
-                                        x-on:input="$wire.set('maxFollower', $event.target.value)" min="0"
-                                        max="500" value="{{ $maxFollower }}"
-                                        class="w-full h-2  cursor-pointer">
+                                        x-on:input="$wire.set('maxFollower', $event.target.value)" min="100"
+                                        max="{{ $followersLimit }}"
+                                        value="{{ $followersLimit < $maxFollower ? $followersLimit : $maxFollower }}"
+                                        class="w-full h-2 cursor-pointer">
                                 </div>
                                 <div
-                                    class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
-                                    <span>{{ $maxFollower }}</span>
+                                    class="full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
+                                    <span
+                                        class="text-sm font-medium text-gray-900 dark:text-white">{{ $maxFollower > $followersLimit ? $followersLimit : $maxFollower }}</span>
                                 </div>
-                                @error('maxFollower')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
                             </div>
+                            @error('maxFollower')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
                     <!-- Enable Campaign Accelerator -->
-                    <div
-                        class="flex items-start space-x-3 {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'opacity-30' : '' }}">
+                    <div class="flex items-start space-x-3 {{ !proUser() ? 'opacity-30' : '' }}">
                         <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
-                            x-model="momentumEnabled"
-                            {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'disabled' : '' }}
-                            class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'cursor-not-allowed' : 'cursor-pointer' }}">
+                            {{ !proUser() ? 'disabled' : '' }}
+                            class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ !proUser() ? 'cursor-not-allowed' : 'cursor-pointer' }}">
                         <div>
                             <div class="flex items-center space-x-2">
                                 <h4 class="text-sm font-medium text-dark dark:text-white">
@@ -698,10 +702,9 @@
                         </div>
 
                         <div class="space-y-3 ml-4">
-                            <div x-data="{ showOptions: false }" class="flex flex-col space-y-2">
+                            <div class="flex flex-col space-y-2">
                                 <div class="flex items-start space-x-3">
-                                    <input type="checkbox" @change="showOptions = !showOptions"
-                                        :disabled="!momentumEnabled"
+                                    <input type="checkbox" :disabled="!momentumEnabled"
                                         class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
                                         :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                     <div class="flex items-center space-x-2">
@@ -710,27 +713,9 @@
                                             24h)</span>
                                     </div>
                                 </div>
-                                <div x-show="showOptions" x-transition class="p-3">
-                                    <div class="flex justify-between items-center gap-4">
-                                        <div class="w-full relative">
-                                            <input type="range" x-data :disabled="!momentumEnabled"
-                                                x-on:input="$wire.set('maxRepostLast24h', $event.target.value)"
-                                                min="0" max="50" value="{{ $maxRepostLast24h }}"
-                                                class="w-full h-2  cursor-pointer"
-                                                :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
-                                        </div>
-                                        <div
-                                            class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
-                                            <span>{{ $maxRepostLast24h }}</span>
-                                        </div>
-                                        @error('maxRepostLast24h')
-                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                </div>
                             </div>
 
-                            <div x-data="{ showRepostPerDay: false }" class="flex flex-col space-y-2">
+                            <div class="flex flex-col space-y-2">
                                 <div class="flex items-start space-x-3">
                                     <input type="checkbox" @click="showRepostPerDay = !showRepostPerDay"
                                         :disabled="!momentumEnabled"
@@ -762,43 +747,46 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div
-                        class="border border-gray-200 dark:border-gray-700 bg-gray-200 dark:bg-gray-900 rounded-lg p-4">
                         <!-- Genre Selection -->
-                        <div class="">
-                            <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Genre Preferences for
+                        <div class="mt-4">
+                            <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Genre
+                                Preferences for
                                 Sharers</h2>
-                            <p class="text-sm text-gray-700 dark:text-gray-400 mb-3 mt-2">Reposters must have the
+                            <p class="text-sm text-gray-700 dark:text-gray-400 mb-3 mt-2">Reposters must have
+                                the
                                 following genres:</p>
                             <div class="space-y-2 ml-4">
                                 <div class="flex items-center space-x-2">
                                     <input type="radio" name="genre" value="anyGenre" checked
                                         @click="showGenreRadios = false" wire:model="anyGenre"
-                                        class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
+                                        :disabled="!momentumEnabled"
+                                        class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                                        :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                     <span class="text-sm text-gray-700 dark:text-gray-400">Open to all music
                                         types</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <input type="radio" name="genre" value="trackGenre"
                                         @click="showGenreRadios = false" wire:model="trackGenre"
-                                        class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
-                                    <span class="text-sm text-gray-700 dark:text-gray-400">Match track genre – Hip-hop
+                                        :disabled="!momentumEnabled"
+                                        class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                                        :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
+                                    <span class="text-sm text-gray-700 dark:text-gray-400">Match track genre –
+                                        Hip-hop
                                         & Rap</span>
                                 </div>
-                                <div x-data="{ showGenreRadios: false }" class="space-y-3">
-
-                                    <!-- Toggle Checkbox -->
+                                <div class="space-y-3">
                                     <div class="flex items-center space-x-2">
                                         <input type="radio" name="genre"
                                             @click="showGenreRadios = !showGenreRadios" wire:click="getAllGenres"
-                                            class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
-                                        <span class="text-sm text-gray-700 dark:text-gray-400">Match one of your
-                                            profile’s chosen
+                                            :disabled="!momentumEnabled"
+                                            class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                                            :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
+                                        <span class="text-sm text-gray-700 dark:text-gray-400">Match one of
+                                            your
+                                            profile's chosen
                                             genres</span>
                                     </div>
-
-                                    <!-- Radio Options (Toggle area) -->
                                     <div x-show="showGenreRadios" x-transition class="ml-6 space-y-2">
                                         @forelse ($genres as $genre)
                                             <div class="flex items-center space-x-2">
@@ -847,6 +835,7 @@
             </div>
         </div>
     </div>
+    {{-- Low Credit Warning Modal --}}
     <div x-data="{ showLowCreditWarningModal: @entangle('showLowCreditWarningModal').live }" x-show="showLowCreditWarningModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
