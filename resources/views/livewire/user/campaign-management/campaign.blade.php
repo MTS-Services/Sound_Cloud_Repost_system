@@ -108,14 +108,14 @@
                         x-transition:leave="transition ease-in duration-75"
                         x-transition:leave-start="transform opacity-100 scale-100"
                         x-transition:leave-end="transform opacity-0 scale-95"
-                        class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
+                        class="absolute left-0 mt-2 w-96 rounded-md shadow-lg z-100">
                         <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
-                            <div class="py-1">
+                            <div class="flex flex-wrap gap-2 p-2">
                                 @foreach ($genres as $genre)
-                                    <button wire:click="filterByGenre('{{ $genre }}')"
-                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                    <span wire:click="filterByGenre('{{ $genre }}')"
+                                        class="px-3 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md cursor-pointer">
                                         {{ $genre }}
-                                    </button>
+                                    </span>
                                 @endforeach
                             </div>
                         </div>
