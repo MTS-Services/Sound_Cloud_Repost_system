@@ -52,8 +52,8 @@
                                                 <h3 class="text-black dark:text-gray-100 font-semibold text-lg">
                                                     {{ $campaign_->music?->title }}
                                                 </h3>
-                                                <a href="{{ $campaign_->music?->permalink_url }}"
-                                                    target="_blank" class="cursor-pointer">
+                                                <a href="{{ $campaign_->music?->permalink_url }}" target="_blank"
+                                                    class="cursor-pointer">
                                                     <!-- Pencil Icon -->
                                                     <x-lucide-external-link
                                                         class="w-6 h-6 text-gray-500 hover:text-orange-500 transition-colors" />
@@ -586,8 +586,12 @@
                     </button>
                 </div>
             </div>
-
-            <div x-data="{ momentumEnabled: false }" class="flex-grow overflow-y-auto p-6">
+            <div x-data="{
+                momentumEnabled: @js(proUser()),
+                showGenreRadios: false,
+                showRepostPerDay: false,
+                showOptions: false
+                }" class="flex-grow overflow-y-auto p-6">
                 <!-- Campaign Status (if editing) -->
                 @if ($isEditing && $editingCampaign)
                     <div
@@ -735,7 +739,7 @@
                         </div>
 
                         <!-- Max Follower Limit -->
-                        <div x-data="{ showOptions: {{ $maxFollower >= 100 ? 'true' : 'false' }} }" class="flex flex-col space-y-2">
+                        <div class="flex flex-col space-y-2">
                             <div class="flex items-start space-x-3">
                                 <input type="checkbox" @change="showOptions = !showOptions"
                                     {{ $maxFollower > 0 ? 'checked' : '' }}
@@ -770,24 +774,24 @@
                     </div>
                     <!-- Enable Campaign Accelerator -->
                     @if (!$isEditing || $editingCampaign->pro_feature != 1)
-                        <div
-                            class="flex items-start space-x-3 {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'opacity-30' : '' }}">
+                        <div class="flex items-start space-x-3 {{ !proUser() ? 'opacity-30' : '' }}">
                             <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
-                                x-model="momentumEnabled"
-                                {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'disabled' : '' }}
-                                class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'cursor-not-allowed' : 'cursor-pointer' }}">
+                                {{ !proUser() ? 'disabled' : '' }}
+                                class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ !proUser() ? 'cursor-not-allowed' : 'cursor-pointer' }}">
                             <div>
                                 <div class="flex items-center space-x-2">
-                                    <h4 class="text-sm font-medium text-gray-900 dark:text-white">
+                                    <h4 class="text-sm font-medium text-dark dark:text-white">
                                         {{ __('Turn on Momentum+ (') }}
                                         <span class="text-md font-semibold">PRO</span>{{ __(')') }}
                                     </h4>
-                                    <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
+                                    <div
+                                        class="w-4 h-4 text-gray-700 dark:text-gray-400 rounded-full flex items-center justify-center">
                                         <span class="text-white text-xs">i</span>
                                     </div>
                                 </div>
                                 <p class="text-xs text-gray-700 dark:text-gray-400">Use Campaign Accelerator (+50
-                                    credits)</p>
+                                    credits)
+                                </p>
                             </div>
                         </div>
                         <!-- Campaign Targeting -->
@@ -803,10 +807,10 @@
 
                             <div class="space-y-3 ml-4">
                                 <!-- Max Repost Last 24h -->
-                                <div x-data="{ showOptions: false }" class="flex flex-col space-y-2">
+                                <div class="flex flex-col space-y-2">
                                     <div class="flex items-start space-x-3">
-                                        <input type="checkbox" @change="showOptions = !showOptions"
-                                            wire:model="maxRepostLast24h" :disabled="!momentumEnabled"
+                                        <input type="checkbox" wire:model="maxRepostLast24h"
+                                            :disabled="!momentumEnabled"
                                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
                                             :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                         <div class="flex items-center space-x-2">
@@ -818,7 +822,7 @@
                                 </div>
 
                                 <!-- Max Repost Per Day -->
-                                <div x-data="{ showRepostPerDay: false }" class="flex flex-col space-y-2">
+                                <div class="flex flex-col space-y-2">
                                     <div class="flex items-start space-x-3">
                                         <input type="checkbox" @click="showRepostPerDay = !showRepostPerDay"
                                             {{ $maxRepostsPerDay > 0 ? 'checked' : '' }} :disabled="!momentumEnabled"
@@ -859,7 +863,7 @@
                                     following genres:</p>
                                 <div class="space-y-2 ml-4">
                                     <div class="flex items-center space-x-2">
-                                        <input type="radio" name="genre" value="anyGenre" checked
+                                        <input type="radio" name="genre" value="1"
                                             @click="showGenreRadios = false" wire:model="anyGenre"
                                             :disabled="!momentumEnabled"
                                             class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
@@ -877,10 +881,10 @@
                                             Hip-hop
                                             & Rap</span>
                                     </div>
-                                    <div x-data="{ showGenreRadios: false }" class="space-y-3">
+                                    <div class="space-y-3">
                                         <div class="flex items-center space-x-2">
                                             <input type="radio" name="genre"
-                                                @click="showGenreRadios = !showGenreRadios" wire:click="getAllGenres"
+                                                @click="showGenreRadios = true"
                                                 :disabled="!momentumEnabled"
                                                 class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
                                                 :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">

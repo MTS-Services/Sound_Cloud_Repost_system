@@ -58,7 +58,7 @@ class Dashboard extends Component
     public $followersLimit = 0;
     public $maxRepostLast24h = 0;
     public $maxRepostsPerDay = 0;
-    public $anyGenre = '';
+    public $anyGenre = 'anyGenre';
     public $trackGenre = '';
     public $targetGenre = '';
     public $user = null;
@@ -132,10 +132,6 @@ class Dashboard extends Component
     {
         $this->loadDashboardData();
         $this->calculateFollowersLimit();
-        $this->user = User::where('urn', user()->urn)->first()->activePlan();
-        if ($this->user) {
-            $this->anyGenre = $this->user->status != User::STATUS_ACTIVE ? 'anyGenre' : '';
-        }
     }
     public function updated($propertyName)
     {
@@ -209,7 +205,7 @@ class Dashboard extends Component
     public function fetchTracks()
     {
         try {
-            // $this->soundCloudService->syncSelfTracks([]);
+            $this->soundCloudService->syncSelfTracks([]);
 
             $this->tracksPage = 1;
             $this->tracks = Track::where('user_urn', user()->urn)
@@ -239,7 +235,7 @@ class Dashboard extends Component
     public function fetchPlaylists()
     {
         try {
-            // $this->soundCloudService->syncSelfPlaylists();
+            $this->soundCloudService->syncSelfPlaylists();
 
             $this->playlistsPage = 1;
             $this->playlists = Playlist::where('user_urn', user()->urn)
@@ -454,7 +450,7 @@ class Dashboard extends Component
             DB::transaction(function () {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
-                $proFeatureEnabled = $this->proFeatureEnabled && $this->user->status == User::STATUS_ACTIVE ? 1 : 0;
+                $proFeatureEnabled = $this->proFeatureEnabled && proUser() ? 1 : 0;
                 $campaign = ModelsCampaign::create([
                     'music_id' => $this->musicId,
                     'music_type' => $this->musicType,

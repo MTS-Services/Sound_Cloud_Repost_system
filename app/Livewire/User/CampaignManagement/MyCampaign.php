@@ -86,7 +86,7 @@ class MyCampaign extends Component
     public $followersLimit = 0;
     public $maxRepostLast24h = 0;
     public $maxRepostsPerDay = 0;
-    public $anyGenre = '';
+    public $anyGenre = 'anyGenre';
     public $trackGenre = '';
     public $targetGenre = '';
     public $user = null;
@@ -384,9 +384,6 @@ class MyCampaign extends Component
 
     public function toggleSubmitModal(string $type, int $id): void
     {
-        // $this->resetFormValidation();
-        $this->user = User::where('urn', user()->urn)->first()->activePlan();
-
         if (userCredits() < self::MIN_BUDGET) {
             $this->showLowCreditWarningModal = true;
             return;
@@ -477,7 +474,7 @@ class MyCampaign extends Component
             DB::transaction(function () use ($oldBudget) {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
-                $proFeatureEnabled = $this->proFeatureEnabled && $this->user?->status == User::STATUS_ACTIVE ? 1 : 0;
+                $proFeatureEnabled = $this->proFeatureEnabled && proUser() ? 1 : 0;
                 $editingProFeature = $this->isEditing && $this->editingCampaign->pro_feature == 1 ? $this->editingCampaign->pro_feature : $proFeatureEnabled;
 
                 $campaignData = [

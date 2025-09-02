@@ -499,7 +499,7 @@
                 </button>
             </div>
 
-            <div x-data="{ momentumEnabled: {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'false' : 'true' }}, showGenreRadios: false, showRepostPerDay: false, showOptions: false }" class="flex-grow overflow-y-auto p-6">
+            <div x-data="{ momentumEnabled: @js(proUser()), showGenreRadios: false, showRepostPerDay: false, showOptions: false }" class="flex-grow overflow-y-auto p-6">
                 <!-- Selected Track -->
                 @if ($track)
                     <div>
@@ -625,10 +625,10 @@
 
                     <!-- Enable Campaign Accelerator -->
                     <div
-                        class="flex items-start space-x-3 {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'opacity-30' : '' }}">
+                        class="flex items-start space-x-3 {{ !proUser() ? 'opacity-30' : '' }}">
                         <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
-                            {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'disabled' : '' }}
-                            class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'cursor-not-allowed' : 'cursor-pointer' }}">
+                            {{ !proUser() ? 'disabled' : '' }}
+                            class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ !proUser() ? 'cursor-not-allowed' : 'cursor-pointer' }}">
                         <div>
                             <div class="flex items-center space-x-2">
                                 <h4 class="text-sm font-medium text-dark dark:text-white">
@@ -753,9 +753,7 @@
                                             </div>
                                         @empty
                                             <div class="">
-                                                <span class="text-sm text-gray-700 dark:text-gray-400">No
-                                                    genres
-                                                    found</span>
+                                                <span class="text-sm text-gray-700 dark:text-gray-400">No genres found</span>
                                             </div>
                                         @endforelse
                                     </div>

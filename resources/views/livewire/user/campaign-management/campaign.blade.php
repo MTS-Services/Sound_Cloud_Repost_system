@@ -537,7 +537,7 @@
                 </button>
             </div>
 
-            <div x-data="{ momentumEnabled: {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'false' : 'true' }}, showGenreRadios: false, showRepostPerDay: false, showOptions: false }" class="flex-grow overflow-y-auto p-6">
+            <div x-data="{ momentumEnabled: @js(proUser()), showGenreRadios: false, showRepostPerDay: false, showOptions: false }" class="flex-grow overflow-y-auto p-6">
                 <!-- Selected Track -->
                 @if ($track)
                     <div>
@@ -662,11 +662,10 @@
                     </div>
 
                     <!-- Enable Campaign Accelerator -->
-                    <div
-                        class="flex items-start space-x-3 {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'opacity-30' : '' }}">
+                    <div class="flex items-start space-x-3 {{ !proUser() ? 'opacity-30' : '' }}">
                         <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
-                            {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'disabled' : '' }}
-                            class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ $user?->status != App\Models\User::STATUS_ACTIVE ? 'cursor-not-allowed' : 'cursor-pointer' }}">
+                            {{ !proUser() ? 'disabled' : '' }}
+                            class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ !proUser() ? 'cursor-not-allowed' : 'cursor-pointer' }}">
                         <div>
                             <div class="flex items-center space-x-2">
                                 <h4 class="text-sm font-medium text-dark dark:text-white">
@@ -723,7 +722,7 @@
                                 <div x-show="showRepostPerDay" x-transition class="p-3">
                                     <div class="flex justify-between items-center gap-4">
                                         <div class="w-full relative">
-                                            <input type="range" x-data :disabled="momentumEnabled"
+                                            <input type="range" x-data :disabled="!momentumEnabled"
                                                 x-on:input="$wire.set('maxRepostsPerDay', $event.target.value)"
                                                 min="0" max="100" value="{{ $maxRepostsPerDay }}"
                                                 class="w-full h-2  cursor-pointer"
@@ -791,8 +790,7 @@
                                             </div>
                                         @empty
                                             <div class="">
-                                                <span class="text-sm text-gray-700 dark:text-gray-400">No
-                                                    genres
+                                                <span class="text-sm text-gray-700 dark:text-gray-400">No genres
                                                     found</span>
                                             </div>
                                         @endforelse
@@ -829,6 +827,7 @@
             </div>
         </div>
     </div>
+    {{-- Low Credit Warning Modal --}}
     <div x-data="{ showLowCreditWarningModal: @entangle('showLowCreditWarningModal').live }" x-show="showLowCreditWarningModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
