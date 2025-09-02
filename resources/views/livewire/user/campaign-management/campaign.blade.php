@@ -194,12 +194,20 @@
                                 <x-sound-cloud.sound-cloud-player :track="$campaign_->music" :height="166"
                                     :visual="false" />
                             </div>
-                            @if ($campaign_->is_featured)
-                                <div
-                                    class="absolute top-2 left-2 bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
-                                    FEATURED
-                                </div>
-                            @endif
+                            <div class="absolute top-2 left-2 flex items-center space-x-2">
+                                @if (!featuredAgain($campaign_->id) && $campaign_->is_featured)
+                                    <div
+                                        class="bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
+                                        FEATURED
+                                    </div>
+                                @endif
+                                @if (!boostAgain($campaign_->id) && $campaign_->is_boost)
+                                    <div
+                                        class="bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
+                                        {{ __('Boosted') }}
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>

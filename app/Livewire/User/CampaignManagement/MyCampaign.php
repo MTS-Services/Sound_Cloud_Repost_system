@@ -816,7 +816,7 @@ class MyCampaign extends Component
                 return;
             }
 
-            if ($campaign->featured_at) {
+            if (featuredAgain() == false) {
                 $this->dispatch('alert', type: 'error', message: 'Campaign is already featured previously.');
                 return;
             }
@@ -830,7 +830,7 @@ class MyCampaign extends Component
             $campaign->is_featured = Campaign::FEATURED;
             $campaign->featured_at = now();
             $campaign->update();
-
+            $this->dispatch('alert', type: 'success', message: 'Campaign featured successfully.');
             $this->mount();
         } catch (\Exception $e) {
             $this->handleError('Failed to feature campaign', $e, ['campaign_id' => $id]);
@@ -846,12 +846,12 @@ class MyCampaign extends Component
                 $this->dispatch('alert', type: 'error', message: 'Campaign not found.');
                 return;
             }
-            if ($campaign->boosted_at) {
+            if (boostAgain($id) == false) {
                 $this->dispatch('alert', type: 'error', message: 'Campaign is already boosted previously.');
                 return;
             }
 
-            if (boostAgain() == false) {
+            if (boostAgain($id) == false) {
                 $this->dispatch('alert', type: 'error', message: 'You can boost a campaign only once in 24 hours.');
                 return;
             }
@@ -860,6 +860,7 @@ class MyCampaign extends Component
             $campaign->is_boost = Campaign::BOOSTED;
             $campaign->boosted_at = now();
             $campaign->update();
+            $this->dispatch('alert', type: 'success', message: 'Campaign boosted successfully.');
             $this->mount();
         } catch (\Exception $e) {
             $this->handleError('Failed to feature campaign', $e, ['campaign_id' => $id]);

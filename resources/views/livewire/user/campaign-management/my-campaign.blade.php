@@ -278,8 +278,7 @@
 
                     <!-- Reach More Section -->
                     <div class="dark:bg-slate-800 rounded-sm p-6 text-black dark:text-gray-100">
-                        <h2 class="text-lg font-bold text-gray-800 mb-4 dark:text-gray-100">Reach more
-                            people</h2>
+                        <h2 class="text-lg font-bold text-gray-800 mb-4 dark:text-gray-100">Reach more people</h2>
                         <hr class="text-red-500 mb-4">
                         @if (featuredAgain() && $latestCampaign)
                             <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
@@ -292,13 +291,28 @@
                                 </div>
                             </div>
                         @elseif($featuredCampaign)
-                            <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
+                            <div
+                                class="flex flex-col sm:flex-row items-center gap-4 mb-4 relative border border-gray-200 dark:border-gray-700 p-2 rounded-lg">
                                 <img src="{{ soundcloud_image($featuredCampaign?->music?->artwork_url) }}"
                                     alt="Reach people icon" class="w-16 h-16 rounded-lg object-cover">
                                 <div>
                                     <p class="font-bold text-gray-800  dark:text-gray-100">
                                         {{ $featuredCampaign?->music?->title }}</p>
                                     <p class="text-gray-500 text-sm">{{ $featuredCampaign?->music?->genre }}</p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        @if (!featuredAgain($campaign_->id) && $campaign_->is_featured)
+                                            <span
+                                                class="text-xs font-semibold mr-2 px-2.5 py-0.5 rounded bg-orange-500 text-white">
+                                                {{ !featuredAgain() ? 'Featured' : '' }}
+                                            </span>
+                                        @endif
+                                        @if (!boostAgain($campaign_->id) && $campaign_->is_boost)
+                                            <span
+                                                class="text-xs font-semibold mr-2 px-2.5 py-0.5 rounded bg-orange-500 text-white">
+                                                {{ !boostAgain() ? 'Boosted' : '' }}
+                                            </span>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         @endif
@@ -740,36 +754,36 @@
 
                         <!-- Max Follower Limit -->
                         <div x-data="{ showOptions: {{ $maxFollower >= 100 ? 'true' : 'false' }} }" class="flex flex-col space-y-2">
-                        <div class="flex items-start space-x-3">
-                            <input type="checkbox" @change="showOptions = true"
-                                {{ $maxFollower > 0 ? 'checked' : '' }}
-                                class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-sm font-medium text-gray-900 dark:text-white">Limit to users with
-                                    max follower
-                                    count</span>
-                            </div>
-                        </div>
-                        <div x-show="showOptions" x-transition class="p-3">
-                            <div class="flex justify-between items-center gap-4">
-                                <div class="w-full relative">
-                                    <input type="range" x-data
-                                        x-on:input="$wire.set('maxFollower', $event.target.value)" min="100"
-                                        max="{{ $followersLimit }}"
-                                        value="{{ $followersLimit < $maxFollower ? $followersLimit : $maxFollower }}"
-                                        class="w-full h-2 cursor-pointer">
-                                </div>
-                                <div
-                                    class="full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
-                                    <span
-                                        class="text-sm font-medium text-gray-900 dark:text-white">{{ $maxFollower > $followersLimit ? $followersLimit : $maxFollower }}</span>
+                            <div class="flex items-start space-x-3">
+                                <input type="checkbox" @change="showOptions = true"
+                                    {{ $maxFollower > 0 ? 'checked' : '' }}
+                                    class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm font-medium text-gray-900 dark:text-white">Limit to users with
+                                        max follower
+                                        count</span>
                                 </div>
                             </div>
-                            @error('maxFollower')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
+                            <div x-show="showOptions" x-transition class="p-3">
+                                <div class="flex justify-between items-center gap-4">
+                                    <div class="w-full relative">
+                                        <input type="range" x-data
+                                            x-on:input="$wire.set('maxFollower', $event.target.value)" min="100"
+                                            max="{{ $followersLimit }}"
+                                            value="{{ $followersLimit < $maxFollower ? $followersLimit : $maxFollower }}"
+                                            class="w-full h-2 cursor-pointer">
+                                    </div>
+                                    <div
+                                        class="full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
+                                        <span
+                                            class="text-sm font-medium text-gray-900 dark:text-white">{{ $maxFollower > $followersLimit ? $followersLimit : $maxFollower }}</span>
+                                    </div>
+                                </div>
+                                @error('maxFollower')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
-                    </div>
 
                     </div>
                     <!-- Enable Campaign Accelerator -->

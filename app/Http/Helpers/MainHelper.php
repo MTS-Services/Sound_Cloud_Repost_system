@@ -702,12 +702,19 @@ function invoiceId()
 
 
 if (!function_exists('featuredAgain')) {
-    function featuredAgain()
+    function featuredAgain($campaignId = null)
     {
-        $latestFeaturedAt = Campaign::self()
-            ->featured()
-            ->latest('featured_at')
-            ->value('featured_at');
+        if ($campaignId) {
+            $latestFeaturedAt = Campaign::where('id', $campaignId)
+                ->featured()
+                ->latest('featured_at')
+                ->value('featured_at');
+        }else {
+            $latestFeaturedAt = Campaign::self()
+                ->featured()
+                ->latest('featured_at')
+                ->value('featured_at');
+        }
 
         if (!$latestFeaturedAt) {
             return true;
@@ -719,12 +726,19 @@ if (!function_exists('featuredAgain')) {
 }
 
 if (!function_exists('boostAgain')) {
-    function boostAgain()
+    function boostAgain($campaignId = null)
     {
-        $latestBoostedAt = Campaign::self()
-            ->where('is_boost', 1)
-            ->latest('boosted_at')
-            ->value('boosted_at');
+        if ($campaignId) {
+            $latestBoostedAt = Campaign::where('id', $campaignId)
+                ->where('is_boost', 1)
+                ->latest('boosted_at')
+                ->value('boosted_at');
+        }else {
+            $latestBoostedAt = Campaign::self()
+                ->where('is_boost', 1)
+                ->latest('boosted_at')
+                ->value('boosted_at');
+        }
 
         if (!$latestBoostedAt) {
             return true;
@@ -734,5 +748,3 @@ if (!function_exists('boostAgain')) {
         return $hoursSinceLastBoost >= 15;
     }
 }
-
-
