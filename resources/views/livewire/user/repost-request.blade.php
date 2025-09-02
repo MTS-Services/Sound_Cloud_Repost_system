@@ -67,7 +67,7 @@
                             class="text-gray-900 dark:text-white">Response rate.</span></span>
                     <a href="#" class="text-xs text-red-500 underline">Reset</a>
                 </div>
-                <div x-data="{ on: {{ $requestReceiveable ? 'true' : 'false' }} }"
+                <div x-data="{ on: {{ $requestReceiveable ? 'false' : 'true' }} }"
                     class="inline-flex items-center {{ user()->email_verified_at ? 'cursor-pointer' : 'cursor-not-allowed' }}"
                     @if (user()->email_verified_at) wire:click="requestReceiveableToggle" @endif>
                     <input type="checkbox" class="sr-only peer" wire:model.live="requestReceiveable"

@@ -10,6 +10,7 @@ use App\Services\Admin\OrderManagement\OrderService;
 use App\Services\Admin\PackageManagement\FeatureCategorySevice;
 use App\Services\Admin\PackageManagement\PlanService;
 use App\Services\Admin\PackageManagement\UserPlanService;
+use App\Services\User\UserSettingsService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
@@ -25,14 +26,17 @@ class Plans extends Component
     protected FeatureCategorySevice $FeatureCategorySevice;
     protected OrderService $orderService;
     protected UserPlanService $userPlanService;
+    protected UserSettingsService $userSettingsService;
 
-    public function boot(PlanService $planService, FeatureCategorySevice $FeatureCategorySevice, OrderService $orderService, UserPlanService $userPlanService)
+    public function boot(
+        PlanService $planService, FeatureCategorySevice $FeatureCategorySevice, OrderService $orderService, UserPlanService $userPlanService, UserSettingsService $userSettingsService)
     {
         $this->planService = $planService;
         $this->FeatureCategorySevice = $FeatureCategorySevice;
         $this->orderService = $orderService;
         $this->orderService = $orderService;
         $this->userPlanService = $userPlanService;
+        $this->userSettingsService = $userSettingsService;
     }
 
     public function pricing()
@@ -52,10 +56,7 @@ class Plans extends Component
         try {
             $order = DB::transaction(function () use ($plan_id) {
                 $plan = $this->planService->getPlan($plan_id);
-                UserSetting::updateOrCreate(
-                    ['user_urn' => user()->urn],
-                    ['auto_boost' => 1]
-                );
+                $this->userSettingsService->createOrUpdate(user()->urn, ['auto_boost' => 1]);
 
                 $data['source_id'] = $plan->id;
                 $data['source_type'] = Plan::class;

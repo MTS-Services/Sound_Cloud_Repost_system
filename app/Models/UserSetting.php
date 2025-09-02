@@ -68,4 +68,9 @@ class UserSetting extends BaseModel
     {
         return $this->belongsTo(User::class);
     }
+
+    public function scopeSelf($query)
+    {
+        return $query->where('user_urn', user()->urn);
+    }
 }

@@ -8,6 +8,7 @@ use App\Models\Repost;
 use App\Models\Track;
 use App\Models\UserSetting;
 use App\Services\SoundCloud\SoundCloudService;
+use App\Services\User\UserSettingsService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
@@ -41,18 +42,19 @@ class RepostRequest extends Component
     ];
 
     protected SoundCloudService $soundCloudService;
+    protected UserSettingsService $userSettingsService;
 
-    public function boot(SoundCloudService $soundCloudService)
+    public function boot(SoundCloudService $soundCloudService, UserSettingsService $userSettingsService)
     {
         $this->soundCloudService = $soundCloudService;
+        $this->userSettingsService = $userSettingsService;
     }
 
     public function mount()
     {
-        $this->requestReceiveable = UserSetting::where('user_urn', user()->urn)->value('accept_repost') ?? 0 ? true : false;
+        $this->requestReceiveable = UserSetting::self()->value('accept_repost') ?? 0 ? false : true;
         $this->dataLoad();
-
-        // Initialize tracking arrays
+        
         foreach ($this->repostRequests as $request) {
             $this->playTimes[$request->id] = 0;
         }
@@ -402,8 +404,9 @@ class RepostRequest extends Component
     }
     public function requestReceiveableToggle()
     {
-        $requestable = UserSetting::where('user_urn', user()->urn)->value('accept_repost');
-        UserSetting::where('user_urn', user()->urn)->update(['accept_repost' => !$requestable]);
+        $userUrn = user()->urn;
+        $requestable = $this->requestReceiveable ? 1 : 0;
+        $this->userSettingsService->createOrUpdate($userUrn, ['accept_repost' => $requestable]);
         $this->dataLoad();
     }
     public function setActiveTab($tab)

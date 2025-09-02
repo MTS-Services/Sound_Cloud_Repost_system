@@ -9,6 +9,7 @@ use App\Models\UserGenre;
 use App\Models\UserPlan;
 use App\Models\UserSetting;
 use App\Models\UserSocialInformation;
+use App\Services\User\UserSettingsService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -83,6 +84,12 @@ class Settings extends Component
     ];
 
 
+    protected UserSettingsService $userSettingsService;
+
+    public function boot(UserSettingsService $userSettingsService)
+    {
+        $this->userSettingsService = $userSettingsService;
+    }
     public function mount()
     {
         $this->availableGenres = AllGenres();
@@ -252,16 +259,12 @@ class Settings extends Component
                 'ps_competitions' => $this->ps_competitions ? 1 : 0,
             ];
 
-            UserSetting::updateOrCreate(
-                ['user_urn' => $userUrn],
-                $data
-            );
-           $this->dispatch('alert', type:'success', message: 'Settings updated successfully!');
+            $this->userSettingsService->createOrUpdate($userUrn, $data);
+            $this->dispatch('alert', type: 'success', message: 'Settings updated successfully!');
             $this->reset();
             $this->mount();
-
         } catch (\Exception $e) {
-           $this->dispatch('alert', type:'error', message: $e->getMessage());
+            $this->dispatch('alert', type: 'error', message: $e->getMessage());
         }
     }
 
@@ -295,15 +298,13 @@ class Settings extends Component
                 'auto_boost' => proUser() ? $this->auto_boost : 0,
                 'enable_react' => $this->enable_react,
             ];
-            UserSetting::updateOrCreate(
-                ['user_urn' => $userUrn],
-                $data
-            );
-           $this->dispatch('alert', type:'success', message: 'Settings updated successfully!');
+
+            $this->userSettingsService->createOrUpdate($userUrn, $data);
+            $this->dispatch('alert', type: 'success', message: 'Settings updated successfully!');
             $this->reset();
             $this->mount();
         } catch (\Exception $e) {
-           $this->dispatch('alert', type:'error', message: $e->getMessage());
+            $this->dispatch('alert', type: 'error', message: $e->getMessage());
         }
     }
     ####################### Notification Settings End ############################
@@ -366,58 +367,90 @@ class Settings extends Component
         });
     }
 
+    // public function saveProfile()
+    // {
+    //     $this->validate();
+
+    //     try {
+    //         DB::transaction(function () {
+    //             User::where('urn', user()->urn)->update(['email' => $this->email]);
+    //             UserGenre::where('user_urn', user()->urn)->delete();
+
+    //             $genres = collect($this->selectedGenres)->map(fn($genre) => [
+    //                 'user_urn' => user()->urn,
+    //                 'genre' => $genre,
+    //                 'creater_id' => user()->id,
+    //                 'creater_type' => get_class(user()),
+    //             ])->toArray();
+
+    //             UserGenre::insert($genres);
+    //             $socialData = [
+    //                 'user_urn' => user()->urn,
+    //                 'instagram' => $this->instagram_username,
+    //                 'twitter' => $this->twitter_username,
+    //                 'facebook' => $this->facebook_username,
+    //                 'youtube' => $this->youtube_channel_id,
+    //                 'tiktok' => $this->tiktok_username,
+    //                 'spotify' => $this->spotify_artist_link,
+    //             ];
+
+    //             $socialInfo = UserSocialInformation::self()->first();
+
+    //             $hasAnySocial = collect($socialData)
+    //                 ->except('user_urn')
+    //                 ->filter()
+    //                 ->isNotEmpty();
+
+    //             if (!$socialInfo && $hasAnySocial) {
+    //                 UserSocialInformation::create($socialData);
+    //             } elseif ($socialInfo && $hasAnySocial) {
+    //                 $socialInfo->update($socialData);
+    //             } elseif ($socialInfo && !$hasAnySocial) {
+    //                 $socialInfo->delete();
+    //             }
+    //         });
+
+    //         $this->dispatch('alert', type: 'success', message: 'Profile updated successfully!');
+
+    //         $this->reset(['selectedGenres', 'instagram_username', 'twitter_username', 'facebook_username', 'youtube_channel_id', 'tiktok_username', 'spotify_artist_link']);
+    //         $this->mount();
+    //     } catch (\Throwable $e) {
+    //         Log::error($e->getMessage());
+    //         $this->dispatch('alert', type: 'error', message: 'Profile update failed!');
+    //     }
+    // }
+
     public function saveProfile()
     {
         $this->validate();
 
+        $userUrn = user()->urn;
+        $profileData = [
+            'email' => $this->email,
+            'genres' => collect($this->selectedGenres)->map(fn($genre) => [
+                'user_urn' => $userUrn,
+                'genre' => $genre,
+                'creater_id' => user()->id,
+                'creater_type' => get_class(user()),
+            ])->toArray(),
+            'socialData' => [
+                'user_urn' => $userUrn,
+                'instagram' => $this->instagram_username,
+                'twitter' => $this->twitter_username,
+                'facebook' => $this->facebook_username,
+                'youtube' => $this->youtube_channel_id,
+                'tiktok' => $this->tiktok_username,
+                'spotify' => $this->spotify_artist_link,
+            ]
+        ];
+
         try {
-            DB::transaction(function () {
-                User::where('urn', user()->urn)->update(['email' => $this->email]);
-                UserGenre::where('user_urn', user()->urn)->delete();
-
-                $genres = collect($this->selectedGenres)->map(fn($genre) => [
-                    'user_urn' => user()->urn,
-                    'genre' => $genre,
-                    'creater_id' => user()->id,
-                    'creater_type' => get_class(user()),
-                ])->toArray();
-
-                UserGenre::insert($genres);
-                $socialData = [
-                    'user_urn' => user()->urn,
-                    'instagram' => $this->instagram_username,
-                    'twitter' => $this->twitter_username,
-                    'facebook' => $this->facebook_username,
-                    'youtube' => $this->youtube_channel_id,
-                    'tiktok' => $this->tiktok_username,
-                    'spotify' => $this->spotify_artist_link,
-                ];
-
-                $socialInfo = UserSocialInformation::self()->first();
-
-                $hasAnySocial = collect($socialData)
-                    ->except('user_urn')
-                    ->filter()
-                    ->isNotEmpty();
-
-                if (!$socialInfo && $hasAnySocial) {
-                    UserSocialInformation::create($socialData);
-                } elseif ($socialInfo && $hasAnySocial) {
-                    $socialInfo->update($socialData);
-                } elseif ($socialInfo && !$hasAnySocial) {
-                    $socialInfo->delete();
-                }
-            });
-
+            $this->userSettingsService->saveProfile($userUrn, $profileData);
             $this->dispatch('alert', type: 'success', message: 'Profile updated successfully!');
-
-            $this->reset(['selectedGenres', 'instagram_username', 'twitter_username', 'facebook_username', 'youtube_channel_id', 'tiktok_username', 'spotify_artist_link']);
+            $this->reset();
             $this->mount();
-
-
         } catch (\Throwable $e) {
-            Log::error($e->getMessage());
-           $this->dispatch('alert', type:'error', message: 'Profile update failed!');
+            $this->dispatch('alert', type: 'error', message: 'Profile update failed!');
         }
     }
 
@@ -429,11 +462,12 @@ class Settings extends Component
     public function deleteAccount()
     {
         try {
-            User::where('urn', user()->urn)->delete();
+            $userUrn = user()->urn;
+            $this->userSettingsService->deleteAccount($userUrn);
             return redirect()->route('f.landing')->with('success', 'Account deleted successfully!');
         } catch (\Throwable $e) {
             Log::error($e->getMessage());
-           $this->dispatch('alert', type:'error', message: 'Account delete failed!');
+            $this->dispatch('alert', type: 'error', message: 'Account delete failed!');
         }
     }
 
