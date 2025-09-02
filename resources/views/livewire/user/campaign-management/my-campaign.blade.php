@@ -1446,9 +1446,19 @@
                                 {{ number_format($campaign->favorite_count) }}</p>
                         </div>
                         <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
-                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Emojis</h4>
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Followers</h4>
                             <p class="text-xl font-bold text-black dark:text-white">
-                                {{ number_format($campaign->emoji_count) }}</p>
+                                {{ number_format($campaign->followowers_count) }}</p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Likes</h4>
+                            <p class="text-xl font-bold text-black dark:text-white">
+                                {{ number_format($campaign->like_count) }}</p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
+                            <h4 class="text-gray-600 dark:text-gray-400 text-sm">Comments</h4>
+                            <p class="text-xl font-bold text-black dark:text-white">
+                                {{ number_format($campaign->comment_count) }}</p>
                         </div>
                     </div>
 
