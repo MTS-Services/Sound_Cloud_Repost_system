@@ -6,44 +6,44 @@
         selectedIndex: -1,
         suggestions: {{ searchableRoutes() }},
         filteredSuggestions: [],
-
+    
         init() {
             // No initial filtering. The list will be empty by default.
         },
-
+    
         filterSuggestions() {
             if (!Array.isArray(this.suggestions)) {
                 console.error('Suggestions data is not a valid array.');
                 return;
             }
-
+    
             const query = this.searchQuery.trim().toLowerCase();
-
+    
             // ✅ Only filter if the query is not empty.
             if (query === '') {
                 this.filteredSuggestions = [];
             } else {
                 this.filteredSuggestions = this.suggestions.filter(item => {
                     if (!item || !item.title || !item.keywords) return false;
-
+    
                     // Check if the query matches the title
                     const titleMatch = item.title.toLowerCase().includes(query);
-
+    
                     // Check if the query matches any of the keywords
                     const keywordMatch = item.keywords.some(keyword =>
                         keyword.toLowerCase().includes(query)
                     );
-
+    
                     return titleMatch || keywordMatch;
                 });
             }
             this.selectedIndex = -1;
         },
-
+    
         selectSuggestion(index) {
             this.selectedIndex = index;
         },
-
+    
         handleKeydown(event) {
             if (event.key === 'ArrowDown') {
                 event.preventDefault();
@@ -61,7 +61,7 @@
                 this.searchModalOpen = false;
             }
         },
-
+    
         // `performSearch` is no longer needed since we are using <a> tags
         performSearch(url) {
             this.searchModalOpen = false;
@@ -193,11 +193,7 @@
                         </div>
                         <div class="text-sm flex justify-between items-center">
                             <span class="font-semibold text-slate-800 dark:text-white">
-                                @if (empty(user()->activePlan()) || user()->activePlan()->price == 0)
-                                    {{ __('Free Plan') }}
-                                @else
-                                    {{ user()->activePlan()->plan?->name }}
-                                @endif
+                                {{ userPlanName() }}
                             </span>
                             <a href="{{ route('user.plans') }}" wire:navigate
                                 class="text-orange-500 text-xs hover:underline">{{ __('View All Plans') }}</a>
