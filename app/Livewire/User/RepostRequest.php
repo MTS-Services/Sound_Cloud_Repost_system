@@ -54,7 +54,7 @@ class RepostRequest extends Component
     {
         $this->requestReceiveable = UserSetting::self()->value('accept_repost') ?? 0 ? false : true;
         $this->dataLoad();
-        
+
         foreach ($this->repostRequests as $request) {
             $this->playTimes[$request->id] = 0;
         }
@@ -162,7 +162,7 @@ class RepostRequest extends Component
         if ($this->playTimes[$requestId] >= 5 && !in_array($requestId, $this->playedRequests)) {
             $this->playedRequests[] = $requestId;
 
-           $this->dispatch('alert', type:'success', message: 'Request marked as played for 5+ seconds!');
+            $this->dispatch('alert', type: 'success', message: 'Request marked as played for 5+ seconds!');
         }
     }
 
@@ -181,6 +181,12 @@ class RepostRequest extends Component
         if ($request->status != ModelsRepostRequest::STATUS_PENDING) {
             return false;
         }
+
+        if ($request->expired_at <= now()) {
+            return false;
+        }
+
+
 
         // Check if already reposted
         if (in_array($requestId, $this->repostedRequests)) {
@@ -239,7 +245,7 @@ class RepostRequest extends Component
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
         try {
             if (!$this->canRepost($requestId)) {
-               $this->dispatch('alert', type:'error', message: 'You cannot repost this request. Please play it for at least 5 seconds first.');
+                $this->dispatch('alert', type: 'error', message: 'You cannot repost this request. Please play it for at least 5 seconds first.');
                 return;
             }
 
@@ -251,7 +257,7 @@ class RepostRequest extends Component
                     ->exists()
             ) {
 
-               $this->dispatch('alert', type:'error', message: 'You have already reposted this request.');
+                $this->dispatch('alert', type: 'error', message: 'You have already reposted this request.');
                 return;
             }
 
@@ -260,7 +266,7 @@ class RepostRequest extends Component
 
             // Ensure track is associated with the request
             if (!$request->track) {
-               $this->dispatch('alert', type:'error', message: 'Track not found for this request.');
+                $this->dispatch('alert', type: 'error', message: 'Track not found for this request.');
                 return;
             }
 
@@ -325,7 +331,7 @@ class RepostRequest extends Component
                 // Mark as reposted in component
                 $this->repostedRequests[] = $requestId;
 
-               $this->dispatch('alert', type:'success', message: 'Request reposted successfully.');
+                $this->dispatch('alert', type: 'success', message: 'Request reposted successfully.');
             } else {
                 // Log the error response from SoundCloud for debugging
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [
@@ -333,7 +339,7 @@ class RepostRequest extends Component
                     'user_urn' => $currentUserUrn,
                     'status' => $response->status(),
                 ]);
-               $this->dispatch('alert', type:'error', message: 'Failed to repost to SoundCloud. Please try again.');
+                $this->dispatch('alert', type: 'error', message: 'Failed to repost to SoundCloud. Please try again.');
             }
         } catch (Throwable $e) {
             Log::error("Error in repost method: " . $e->getMessage(), [
@@ -341,7 +347,7 @@ class RepostRequest extends Component
                 'request_id' => $requestId,
                 'user_urn' => user()->urn ?? 'N/A',
             ]);
-           $this->dispatch('alert', type:'error', message: 'An unexpected error occurred. Please try again later.');
+            $this->dispatch('alert', type: 'error', message: 'An unexpected error occurred. Please try again later.');
             return;
         }
     }
@@ -356,14 +362,14 @@ class RepostRequest extends Component
                 'responded_at' => now(),
             ]);
             $this->dataLoad();
-           $this->dispatch('alert', type:'success', message: 'Repost request declined successfully.');
+            $this->dispatch('alert', type: 'success', message: 'Repost request declined successfully.');
         } catch (Throwable $e) {
             Log::error("Error declining repost request: " . $e->getMessage(), [
                 'exception' => $e,
                 'request_id' => $requestId,
                 'user_urn' => user()->urn ?? 'N/A',
             ]);
-           $this->dispatch('alert', type:'error', message: 'Failed to decline repost request. Please try again.');
+            $this->dispatch('alert', type: 'error', message: 'Failed to decline repost request. Please try again.');
         }
     }
     public function cancleRepostRequest($requestId)
@@ -392,14 +398,14 @@ class RepostRequest extends Component
             $creditTransaction->status = CreditTransaction::STATUS_SUCCEEDED;
             $creditTransaction->save();
             $this->dataLoad();
-           $this->dispatch('alert', type:'success', message: 'Repost request cancelled successfully.');
+            $this->dispatch('alert', type: 'success', message: 'Repost request cancelled successfully.');
         } catch (Throwable $e) {
             Log::error("Error cancelling repost request: " . $e->getMessage(), [
                 'exception' => $e,
                 'request_id' => $requestId,
                 'user_urn' => user()->urn ?? 'N/A',
             ]);
-           $this->dispatch('alert', type:'error', message: 'Failed to cancel repost request. Please try again.');
+            $this->dispatch('alert', type: 'error', message: 'Failed to cancel repost request. Please try again.');
         }
     }
     public function requestReceiveableToggle()

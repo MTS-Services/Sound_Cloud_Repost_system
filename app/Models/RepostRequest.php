@@ -19,7 +19,7 @@ class RepostRequest extends BaseModel
         'rejection_reason',
         'requested_at',
         'expired_at',
-        'reposted_at',
+        'responded_at',
         'completed_at',
         'request_receiveable',
 
@@ -74,7 +74,7 @@ class RepostRequest extends BaseModel
         return $this->where('campaign_id', null);
     }
 
-    
+
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */

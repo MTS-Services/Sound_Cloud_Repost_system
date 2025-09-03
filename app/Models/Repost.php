@@ -53,9 +53,9 @@ class Repost extends BaseModel
         return $this->belongsTo(Campaign::class, 'campaign_id', 'id');
     }
     public function track()
-{
-    return $this->belongsTo(Track::class, 'track_id');
-}
+    {
+        return $this->belongsTo(Track::class, 'track_id');
+    }
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
@@ -71,7 +71,7 @@ class Repost extends BaseModel
 
     public function getRepostTypeAttribute()
     {
-        return $this->repost_request_id ===  null ? 'Campaign Repost' : 'Direct Repost';
+        return $this->repost_request_id === null ? 'Campaign Repost' : 'Direct Repost';
     }
 
 }
