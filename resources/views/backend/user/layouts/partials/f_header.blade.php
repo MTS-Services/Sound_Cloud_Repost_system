@@ -22,8 +22,7 @@
              <a href="#testimonials" class="text-gray-300 hover:text-white transition-colors">Testimonials</a>
 
              @if (Auth::check())
-                 <x-gabutton variant="primary" wire:navigate
-                     href="{{ route('user.dashboard') }}">{{ __('Dashboard') }}</x-gabutton>
+                 <x-gabutton variant="primary" href="{{ route('user.dashboard') }}">{{ __('Dashboard') }}</x-gabutton>
              @else
                  <x-gabutton variant="primary" href="{{ route('soundcloud.redirect') }}">
                      <svg width="24" height="24" viewBox="0 0 512 512" fill="currentColor"
