@@ -116,7 +116,7 @@
                             </div>
                             <div class="text-center">
                                 <p class="text-text-gray text-xs mb-1 dark:text-white">Response Rate</p>
-                                <p class="text-orange-500 font-bold">92%</p>
+                                <p class="text-orange-500 font-bold">{{ $user_->responseRate() }}%</p>
                             </div>
                             <div class="text-center">
                                 <p class="text-text-gray text-xs mb-1 dark:text-white">Total Reposts</p>
