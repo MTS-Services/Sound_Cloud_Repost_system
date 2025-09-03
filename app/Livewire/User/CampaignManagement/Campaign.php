@@ -68,6 +68,7 @@ class Campaign extends Component
     public $selectedTrackTypes = [];
     public $selectedTrackType = 'all';
     public $genres = [];
+    public $selectedGenres = [];
     public $showTrackTypes = false;
 
     // Track which campaigns are currently playing
@@ -199,6 +200,7 @@ class Campaign extends Component
         $this->getAllTrackTypes();
         $this->totalCampaigns();
         $this->calculateFollowersLimit();
+        $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
     }
     public function updated($propertyName)
     {
@@ -306,14 +308,12 @@ class Campaign extends Component
             });
         }
 
-        // Apply genre filter
-        if (!empty($this->selectedGenre)) {
+        if (!empty($this->selectedGenres)) {
             $query->whereHas('music', function ($q) {
-                $q->where('genre', $this->selectedGenre);
+                $q->whereIn('genre', $this->selectedGenres);
             });
         }
-
-        // Apply track type filter
+        
         if (!empty($this->searchtTrackType) && $this->searchtTrackType !== 'all') {
             $query->whereHas('music', function ($q) {
                 $q->where('type', $this->searchtTrackType);
@@ -403,10 +403,13 @@ class Campaign extends Component
         }
     }
 
-    public function filterByGenre($genre)
+    public function toggleGenre($genre)
     {
-        $this->selectedGenre = $genre;
-        $this->resetPage($this->getActivePageName());
+        if (in_array($genre, $this->selectedGenres)) {
+            $this->selectedGenres = array_diff($this->selectedGenres, [$genre]);
+        } else {
+            $this->selectedGenres[] = $genre;
+        }
     }
 
     public function filterByTrackType($trackType)
@@ -474,7 +477,7 @@ class Campaign extends Component
     public function fetchTracks()
     {
         try {
-            $this->soundCloudService->syncSelfTracks([]);
+            // $this->soundCloudService->syncSelfTracks([]);
 
             $this->tracksPage = 1;
             $this->tracks = Track::where('user_urn', user()->urn)
@@ -504,7 +507,7 @@ class Campaign extends Component
     public function fetchPlaylists()
     {
         try {
-            $this->soundCloudService->syncSelfPlaylists();
+            // $this->soundCloudService->syncSelfPlaylists();
 
             $this->playlistsPage = 1;
             $this->playlists = Playlist::where('user_urn', user()->urn)
@@ -696,10 +699,11 @@ class Campaign extends Component
             ]);
         }
     }
-
+    
     public function getAllGenres()
     {
-        $this->genres = User::where('urn', user()->urn)->first()->genres()->pluck('genre')->toArray();
+        $userGenres = User::where('urn', user()->urn)->first()->genres() ->pluck('genre')->toArray();
+        $this->genres = array_values(array_unique(array_merge($userGenres, AllGenres())));
     }
 
     public function profeature($isChecked)
