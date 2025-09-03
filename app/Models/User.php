@@ -277,5 +277,28 @@ class User extends AuthBaseModel implements MustVerifyEmail
     {
         return (!$this->isOnline() && $this->last_seen_at !== null && $this->last_seen_at->diffInMinutes(now()) < 60) ? round($this->last_seen_at->diffInMinutes(now())) . ' min' : 'Offline';
     }
-    
+
+
+    public function responseRate(): float
+    {
+        // Total requests ever received by this user
+        $totalRequests = $this->responses()
+            ->whereNotNull('requested_at')
+            ->count();
+
+        if ($totalRequests === 0) {
+            return 100; // No requests, so response rate is 0%
+        }
+
+        // Count requests where the user responded within 24 hours
+        $respondedWithin24Hours = $this->responses()
+            ->whereNotNull('requested_at')
+            ->whereNotNull('responded_at')
+            ->whereRaw('TIMESTAMPDIFF(HOUR, requested_at, responded_at) <= 24')
+            ->count();
+
+        // Calculate response rate
+        return round(($respondedWithin24Hours / $totalRequests) * 100, 2);
+    }
+
 }
