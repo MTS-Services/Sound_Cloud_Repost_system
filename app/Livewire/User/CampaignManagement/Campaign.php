@@ -56,7 +56,7 @@ class Campaign extends Component
     public $selectedTags = [];
     public $selecteTags = [];
     public $selectedGenre = [];
-    public $searchtTrackType = [];
+    public $searchMusicType = [];
     public $suggestedTags = [];
     public $showSuggestions = false;
     public $showSelectedTags = false;
@@ -314,11 +314,10 @@ class Campaign extends Component
             });
         }
         
-        if (!empty($this->searchtTrackType) && $this->searchtTrackType !== 'all') {
-            $query->whereHas('music', function ($q) {
-                $q->where('type', $this->searchtTrackType);
-            });
+        if(!empty($this->searchMusicType) && $this->searchMusicType !== 'all') {
+            $query->where('music_type', 'like', "%{$this->searchMusicType}%");
         }
+
 
         return $query;
     }
@@ -412,9 +411,10 @@ class Campaign extends Component
         }
     }
 
-    public function filterByTrackType($trackType)
+    public function filterByTrackType($Type)
     {
-        $this->searchtTrackType = $trackType;
+        $this->searchMusicType = $Type;
+
         $this->resetPage($this->getActivePageName());
     }
 
@@ -699,10 +699,10 @@ class Campaign extends Component
             ]);
         }
     }
-    
+
     public function getAllGenres()
     {
-        $userGenres = User::where('urn', user()->urn)->first()->genres() ->pluck('genre')->toArray();
+        $userGenres = User::where('urn', user()->urn)->first()->genres()->pluck('genre')->toArray();
         $this->genres = array_values(array_unique(array_merge($userGenres, AllGenres())));
     }
 

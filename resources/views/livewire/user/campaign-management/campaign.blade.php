@@ -62,20 +62,17 @@
                         <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
                             <div class="py-1">
                                 <button wire:click="filterByTrackType('all')"
-                                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                                     All
                                 </button>
-                                @forelse ($selectedTrackTypes as $type)
-                                    <button wire:click="filterByTrackType('{{ $type }}')"
-                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
-                                        {{-- Type Capitalize --}}
-                                        {{ ucfirst($type) }}
-                                    </button>
-                                @empty
-                                    <span class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
-                                        {{ __('No track types available') }}
-                                    </span>
-                                @endforelse
+                                <button wire:click="filterByTrackType('{{ Track::class }}')"
+                                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                    Tacks
+                                </button>
+                                <button wire:click="filterByTrackType('{{ Playlist::class }}')"
+                                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                    Playlists
+                                </button>
                             </div>
                         </div>
                     </div>
