@@ -62,20 +62,17 @@
                         <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
                             <div class="py-1">
                                 <button wire:click="filterByTrackType('all')"
-                                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                                     All
                                 </button>
-                                @forelse ($selectedTrackTypes as $type)
-                                    <button wire:click="filterByTrackType('{{ $type }}')"
-                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
-                                        {{-- Type Capitalize --}}
-                                        {{ ucfirst($type) }}
-                                    </button>
-                                @empty
-                                    <span class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
-                                        {{ __('No track types available') }}
-                                    </span>
-                                @endforelse
+                                <button wire:click="filterByTrackType('{{ Track::class }}')"
+                                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                    Tacks
+                                </button>
+                                <button wire:click="filterByTrackType('{{ Playlist::class }}')"
+                                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                    Playlists
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -85,7 +82,7 @@
             <!-- Filter by genre dropdown -->
             <div class="relative">
                 <button @click="openFilterByGenre = !openFilterByGenre, openFilterByTrack = false"
-                    wire:click="getAllGenres" @click.outside="openFilterByGenre = false"
+                    wire:click="getAllGenres"
                     class="bg-orange-100 hover:bg-orange-300 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -94,7 +91,7 @@
                         <circle cx="6" cy="18" r="3" />
                         <circle cx="18" cy="16" r="3" />
                     </svg>
-                    Filter by genre / {{ count($genres) }}
+                    Filter by genre / {{ count($selectedGenres) }}
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                         class="lucide lucide-chevron-down-icon lucide-chevron-down">
@@ -108,15 +105,23 @@
                         x-transition:leave="transition ease-in duration-75"
                         x-transition:leave-start="transform opacity-100 scale-100"
                         x-transition:leave-end="transform opacity-0 scale-95"
-                        class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
-                        <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
-                            <div class="py-1">
-                                @foreach ($genres as $genre)
-                                    <button wire:click="filterByGenre('{{ $genre }}')"
-                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                        class="absolute left-0 mt-2 w-96 rounded-md shadow-lg z-100">
+                        <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 "@click.outside="openFilterByGenre = false">
+                            <div class="flex flex-wrap gap-2 p-2">
+                                {{-- @foreach ($genres as $genre)
+                                    <span wire:click="filterByGenre('{{ $genre }}')"
+                                        class="px-3 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md cursor-pointer">
                                         {{ $genre }}
-                                    </button>
+                                    </span>
+                                @endforeach --}}
+                                @foreach ($genres as $genre)
+                                    <span wire:click="toggleGenre('{{ $genre }}')"
+                                        class="px-3 py-2 text-sm rounded-md cursor-pointer
+                                            {{ in_array($genre, $selectedGenres) ? 'bg-orange-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300' }}">
+                                        {{ $genre }}
+                                    </span>
                                 @endforeach
+
                             </div>
                         </div>
                     </div>
