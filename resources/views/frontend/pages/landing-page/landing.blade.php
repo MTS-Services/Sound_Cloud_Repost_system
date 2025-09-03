@@ -2,7 +2,7 @@
     @push('cs')
         <link rel="stylesheet" href="{{ asset('assets/landing/css/landing.css') }}">
     @endpush
-    <slot name="title">Landing Page</slot>
+    {{-- <slot name="title">Landing Page</slot> --}}
 
     <!-- Hero Section -->
     @include('frontend.pages.landing-page.includes.hero')

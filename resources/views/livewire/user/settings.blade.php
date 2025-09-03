@@ -443,10 +443,11 @@
                     </div>
                     <div class="text-sm text-gray-600 dark:text-gray-300">Email</div>
                 </div>
-                
+
                 <form wire:submit.prevent="notificationUpdate">
                     @foreach ($this->alerts as $key => $alert)
-                        <div class="flex items-center py-3 ps-2 {{ $key % 2 == 1 ? 'bg-gray-100 dark:bg-gray-700' : '' }}">
+                        <div
+                            class="flex items-center py-3 ps-2 {{ $key % 2 == 1 ? 'bg-gray-100 dark:bg-gray-700' : '' }}">
                             <div class="w-full text-sm text-gray-800 dark:text-white">{{ $alert['name'] }}</div>
                             <div class="mr-4">
                                 <input type="checkbox" wire:model="{{ $alert['email_key'] }}"
@@ -553,13 +554,15 @@
                                 </div>
                                 <div class="flex items-center gap-6">
                                     <label class="flex items-center gap-1">
-                                        <input type="radio" name="autoBoost" wire:model="auto_boost" {{ proUser()?'':'disabled' }}
-                                            value="1" class="text-orange-500 focus:ring-orange-500 {{  proUser()?'':'cursor-not-allowed' }}">
+                                        <input type="radio" name="autoBoost" wire:model="auto_boost"
+                                            {{ proUser() ? '' : 'disabled' }} value="1"
+                                            class="text-orange-500 focus:ring-orange-500 {{ proUser() ? '' : 'cursor-not-allowed' }}">
                                         <span class="text-gray-600 dark:text-white">Yes</span>
                                     </label>
                                     <label class="flex items-center gap-1">
-                                        <input type="radio" name="autoBoost" wire:model="auto_boost" {{ proUser()?'':'disabled' }}
-                                            value="0" class="text-orange-500 focus:ring-orange-500">
+                                        <input type="radio" name="autoBoost" wire:model="auto_boost"
+                                            {{ proUser() ? '' : 'disabled' }} value="0"
+                                            class="text-orange-500 focus:ring-orange-500">
                                         <span class="text-gray-600 dark:text-white">No</span>
                                     </label>
                                 </div>
@@ -587,7 +590,7 @@
                         <div class="border-b border-gray-200 dark:border-gray-700 py-6 mb-6 mt-6">
                             <h1 class="text-xl font-semibold text-gray-800">Subscription</h1>
                             <div class="mt-2 text-sm text-gray-600 dark:text-white">
-                                <p class="text-gray-700 dark:text-white">{{ $activePlan }} Plan <a wire:navigate
+                                <p class="text-gray-700 dark:text-white">{{ userPlanName() }} Plan <a wire:navigate
                                         href="{{ route('user.plans') }}"
                                         class="text-orange-500 cursor-pointer hover:underline">Change</a></p>
                             </div>

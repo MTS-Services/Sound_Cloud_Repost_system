@@ -152,7 +152,7 @@
                                     </h1>
                                     <span
                                         class="px-3 py-1 bg-orange-500 dark:bg-orange-400 text-white dark:text-gray-900 text-sm font-medium rounded-full self-center">
-                                        NETWORK RANK
+                                        {{ userPlanName() }}
                                     </span>
                                 </div>
                                 <p class="text-lg sm:text-xl text-gray-600 dark:text-slate-200 mb-4">
