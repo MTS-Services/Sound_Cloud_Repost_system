@@ -818,9 +818,7 @@ class Campaign extends Component
      */
     public function handleAudioPlay($campaignId)
     {
-        $this->playingCampaigns[$campaignId] = true;
-        $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
-        dd('campaign', $campaign);
+        $this->playingCampaigns[$campaignId] = true; 
         $this->playStartTimes[$campaignId] = now()->timestamp;
     }
 
@@ -903,6 +901,7 @@ class Campaign extends Component
 
         if ($canRepost && !$this->playcount) {
             $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
+            dd($campaign);
             $campaign->increment('playback_count');
             $this->playcount = true;
         }
