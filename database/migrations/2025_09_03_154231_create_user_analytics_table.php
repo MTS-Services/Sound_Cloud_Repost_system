@@ -20,9 +20,6 @@ return new class extends Migration
             $table->string('user_urn');
             $table->foreign('user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->string('response_user_urn');
-            $table->foreign('response_user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
-
             $table->unsignedBigInteger('source_id');
             $table->string('source_type');
 

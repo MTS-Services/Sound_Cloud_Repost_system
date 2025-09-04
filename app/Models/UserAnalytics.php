@@ -61,10 +61,6 @@ class UserAnalytics extends BaseModel
         return $this->belongsTo(User::class, 'user_urn', 'urn');
     }
 
-    public function responseUser()
-    {
-        return $this->belongsTo(User::class, 'response_user_urn', 'urn');
-    }
     public function source()
     {
         return $this->morphTo();
