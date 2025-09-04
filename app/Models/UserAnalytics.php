@@ -8,7 +8,6 @@ class UserAnalytics extends BaseModel
 {
     protected $fillable = [
         'user_urn',
-        'response_user_urn',
         'source_id',
         'source_type',
         'date',

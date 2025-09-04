@@ -78,16 +78,17 @@ class AnalyticsService
         }
 
         // Find or create the UserAnalytics record based on the unique combination.
-        $analytics = UserAnalytics::firstOrNew([
-            'user_urn' => $userUrn,
-            'source_id' => $source->id,
-            'source_type' => get_class($source),
-            'date' => now()->toDateString(),
-            'genre' => $genre,
-        ]);
-
-        // Increment the specified analytics column.
-        $analytics->increment($column, $increment);
+        $analytics = UserAnalytics::firstOrNew(
+            [
+                'user_urn' => $userUrn,
+                'source_id' => $source->id,
+                'source_type' => get_class($source),
+                'date' => now()->toDateString(),
+            ]
+        );
+        $analytics->genre = $genre;
+        $analytics->save();
+        $analytics->increment($column, $increment);       
 
         return $analytics;
     }
