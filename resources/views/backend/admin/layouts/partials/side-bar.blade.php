@@ -104,13 +104,6 @@
             <x-admin.navlink type="dropdown" icon="credit-card" name="Package Management" :page_slug="$active"
                 :items="[
                     [
-                        'name' => 'Feature Categories',
-                        'route' => route('pm.feature-category.index'),
-                        'icon' => 'megaphone',
-                        'active' => 'feature_category',
-                        'permission' => 'feature_categories-list',
-                    ],
-                    [
                         'name' => 'Features',
                         'route' => route('pm.feature.index'),
                         'icon' => 'megaphone',

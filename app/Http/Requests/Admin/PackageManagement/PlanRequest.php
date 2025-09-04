@@ -26,16 +26,13 @@ class PlanRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'monthly_price' => ['required', 'numeric', 'min:0'],
-            'yearly_save_percentage' => ['nullable', 'integer', 'min:0', 'max:100'],
             'notes' => ['nullable', 'string', 'max:1000'],
             'tag' => ['nullable', Rule::in(array_keys(Plan::getTagList()))],
-            'features' => ['required', 'array'],
-            'features.*' => ['nullable', 'integer', 'exists:features,id'],
+            'features' => ['required', 'array', 'min:10'],
+            'features.*' => ['required', 'exists:features,id'],
 
             'feature_values' => ['required', 'array'],
-            'feature_values.*' => ['required', 'string', 'max:255'],
-            'feature_category_ids' => ['nullable', 'array'],
-            'feature_category_ids.*' => ['required', 'exists:feature_categories,id'],
+            'feature_values.*' => ['required', 'max:255'],
 
         ] + ($this->isMethod('POST') ? $this->store() : $this->update());
     }
@@ -43,13 +40,25 @@ class PlanRequest extends FormRequest
     protected function store(): array
     {
         return [
-            'slug' => ['required', 'string', Rule::unique('plans', 'slug')],
+
         ];
     }
     protected function update(): array
     {
         return [
-            'slug' => ['required', 'string', Rule::unique('plans', 'slug')->ignore(decrypt($this->route('plan')))],
+
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'features.*.required' => 'Please select at least one feature.',
+            'feature_values.*.required' => 'Please enter all feature values.',
+            'feature_values.*.max' => 'Feature value may not be greater than 255 characters.',
+            'features.*.exists' => 'Feature does not exist.',
+            'features.min' => 'Please select all features.',
+
         ];
     }
 }

@@ -13,7 +13,6 @@ class Feature extends BaseModel
 
     protected $fillable = [
         'sort_order',
-        'feature_category_id',
         'name',
         'type',
         'key',
@@ -24,10 +23,6 @@ class Feature extends BaseModel
         'deleted_by'
     ];
 
-    public function featureCategory()
-    {
-        return $this->belongsTo(FeatureCategory::class, 'feature_category_id', 'id');
-    }
 
     public function __construct(array $attributes = [])
     {
@@ -40,8 +35,8 @@ class Feature extends BaseModel
         ]);
     }
 
-   
-   public const STATUS_ACTIVE = 1;
+
+    public const STATUS_ACTIVE = 1;
     public const STATUS_INACTIVE = 0;
 
     public static function statusList(): array
@@ -57,28 +52,28 @@ class Feature extends BaseModel
         return self::statusList()[$this->status];
     }
 
-     public function getStatusColorAttribute()
-{
-    return $this->status == self::STATUS_ACTIVE 
-        ? 'badge-success' 
-        : 'badge-error';
-}
+    public function getStatusColorAttribute()
+    {
+        return $this->status == self::STATUS_ACTIVE
+            ? 'badge-success'
+            : 'badge-error';
+    }
     public function getStatusBtnLabelAttribute()
     {
         return $this->status == self::STATUS_ACTIVE ? self::statusList()[self::STATUS_INACTIVE] : self::statusList();
     }
-public function getStatusBtnColorAttribute()
-{
-    return $this->status == self::STATUS_ACTIVE 
-        ? 'btn-error' 
-        : 'btn-success';
-}
-public function getStatusBtnClassAttribute()
-{
-    return $this->status == self::STATUS_ACTIVE 
-        ? 'btn btn-error' 
-        : 'btn btn-success';
-}
+    public function getStatusBtnColorAttribute()
+    {
+        return $this->status == self::STATUS_ACTIVE
+            ? 'btn-error'
+            : 'btn-success';
+    }
+    public function getStatusBtnClassAttribute()
+    {
+        return $this->status == self::STATUS_ACTIVE
+            ? 'btn btn-error'
+            : 'btn btn-success';
+    }
 
     /////////////////////////////////////
     ////////// Feature Types /////////////
@@ -99,84 +94,63 @@ public function getStatusBtnClassAttribute()
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     /////////////////////////////////////
     ////////// Feature Keys /////////////
     ///////////////////////////////////
-    public const FEATURE_KEY_AUTOBOOST = 1;
-    public const FEATURE_KEY_CAMPAIGN_TARGETING = 2;
-    public const FEATURE_KEY_EXEMPT_FROM_INACTIVITY_DEDUCTION = 3;
-    public const FEATURE_KEY_FEATURED_CAMPAIGNS = 4;
-    public const FEATURE_KEY_FREE_BOOSTS_PER_CAMPAIGN = 5;
-    public const FEATURE_KEY_MANAGED_CAMPAIGNS = 6;
-    public const FEATURE_KEY_MAX_CAMPAIGN_BUDGET = 7;
-    public const FEATURE_KEY_MONITOR_AND_REMOVE_REPOSTS = 8;
-    public const FEATURE_KEY_OPEN_DIRECT_REQUESTS = 9;
-    public const FEATURE_KEY_POWER_HOUR_MULTIPLIER = 10;
-    public const FEATURE_KEY_PRIORITY_CAMPAIGN_VISIBILITY = 11;
-    public const FEATURE_KEY_PRIORITY_DIRECT_REPOST_REQUESTS = 12;
-    public const FEATURE_KEY_PROMOTE_MULTIPLE_SC_ACCOUNTS = 13;
-    public const FEATURE_KEY_PROMOTE_OTHER_SOCIALS = 14;
-    public const FEATURE_KEY_SIMULTANEOUS_CAMPAIGNS = 15;
-    public const FEATURE_KEY_SITEWIDE_DISCOUNT = 16;
-    public const FEATURE_KEY_SORT_CAMPAIGNS_BY_RATING = 17;
-    public const FEATURE_KEY_SOUNDCLOUD_CHART_NOTIFIER = 18;
-    public const FEATURE_KEY_SPONSORED_FOLLOW_CAMPAIGNS = 19;
-    public const FEATURE_KEY_WAVEPLAYER_ARTWORK = 20;
+    public const KEY_DIRECT_REQUESTS = 1;
+    public const KEY_SIMULTANEOUS_CAMPAIGNS = 2;
+    public const KEY_MULTI_ACCOUNT_PROMOTION = 3;
+    public const KEY_CAMPAIGN_TARGETING = 4;
+    public const KEY_FEATURED_CAMPAIGN_PRIORITY = 5;
+    public const KEY_CAMPAIGN_RATING_AND_ANALYTICS = 6;
+    public const KEY_GROWTH_ANALYTICS = 7;
+    public const KEY_COMMUNITY_SUPPORT_AND_NETWORKING = 8;
+    public const KEY_COLLABORATION_HUB = 9;
+    public const KEY_SUPPORT_LEVEL = 10;
+
+
 
     public static function getFeaturedNames(): array
     {
         return [
-            self::FEATURE_KEY_AUTOBOOST => 'Autoboost',
-            self::FEATURE_KEY_CAMPAIGN_TARGETING => 'Campaign Targeting',
-            self::FEATURE_KEY_EXEMPT_FROM_INACTIVITY_DEDUCTION => 'Exempt From Inactivity Deduction',
-            self::FEATURE_KEY_FEATURED_CAMPAIGNS => 'Featured Campaigns',
-            self::FEATURE_KEY_FREE_BOOSTS_PER_CAMPAIGN => 'Free Boosts Per Campaign',
-            self::FEATURE_KEY_MANAGED_CAMPAIGNS => 'Managed Campaigns',
-            self::FEATURE_KEY_MAX_CAMPAIGN_BUDGET => 'Max Campaign Budget',
-            self::FEATURE_KEY_MONITOR_AND_REMOVE_REPOSTS => 'Monitor & Remove Reposts',
-            self::FEATURE_KEY_OPEN_DIRECT_REQUESTS => 'Open Direct Requests',
-            self::FEATURE_KEY_POWER_HOUR_MULTIPLIER => 'Power Hour Multiplier',
-            self::FEATURE_KEY_PRIORITY_CAMPAIGN_VISIBILITY => 'Priority Campaign Visibility',
-            self::FEATURE_KEY_PRIORITY_DIRECT_REPOST_REQUESTS => 'Priority Direct Repost Requests',
-            self::FEATURE_KEY_PROMOTE_MULTIPLE_SC_ACCOUNTS => 'Promote Multiple SC Accounts',
-            self::FEATURE_KEY_PROMOTE_OTHER_SOCIALS => 'Promote Other Socials',
-            self::FEATURE_KEY_SIMULTANEOUS_CAMPAIGNS => 'Simultaneous Campaigns',
-            self::FEATURE_KEY_SITEWIDE_DISCOUNT => 'Sitewide Discount',
-            self::FEATURE_KEY_SORT_CAMPAIGNS_BY_RATING => 'Sort Campaigns By Rating',
-            self::FEATURE_KEY_SOUNDCLOUD_CHART_NOTIFIER => 'SoundCloud Chart Notifier',
-            self::FEATURE_KEY_SPONSORED_FOLLOW_CAMPAIGNS => 'Sponsored Follow Campaigns',
-            self::FEATURE_KEY_WAVEPLAYER_ARTWORK => 'Waveplayer Artwork',
+            self::KEY_DIRECT_REQUESTS => 'Direct Requests',
+            self::KEY_SIMULTANEOUS_CAMPAIGNS => 'Simultaneous Campaigns',
+            self::KEY_MULTI_ACCOUNT_PROMOTION => 'Multi Account Promotion',
+            self::KEY_CAMPAIGN_TARGETING => 'Campaign Targeting',
+            self::KEY_FEATURED_CAMPAIGN_PRIORITY => 'Featured Campaign Priority',
+            self::KEY_CAMPAIGN_RATING_AND_ANALYTICS => 'Campaign Rating & Analytics',
+            self::KEY_GROWTH_ANALYTICS => 'Growth Analytics',
+            self::KEY_COMMUNITY_SUPPORT_AND_NETWORKING => 'Community Support & Networking',
+            self::KEY_COLLABORATION_HUB => 'Collaboration Hub',
+            self::KEY_SUPPORT_LEVEL => 'Support Level',
         ];
     }
 
-    public function getFeatureValues(): array
+    public static function getFeatureValues(): array
     {
         return [
-                // Core Features
-            self::FEATURE_KEY_OPEN_DIRECT_REQUESTS => ['25', '50', '100', '500', '1000'],
-            self::FEATURE_KEY_SIMULTANEOUS_CAMPAIGNS => ['1', '2', '3', '10', '20'],
-            self::FEATURE_KEY_FREE_BOOSTS_PER_CAMPAIGN => ['false', '5', '10', '15', '20'],
-            self::FEATURE_KEY_PRIORITY_DIRECT_REPOST_REQUESTS => ['true', 'false'],
-            self::FEATURE_KEY_PRIORITY_CAMPAIGN_VISIBILITY => ['true', 'false'],
-            self::FEATURE_KEY_CAMPAIGN_TARGETING => ['true', 'false'],
-            self::FEATURE_KEY_AUTOBOOST => ['true', 'false'],
-            self::FEATURE_KEY_SOUNDCLOUD_CHART_NOTIFIER => ['true', 'false'],
-            self::FEATURE_KEY_POWER_HOUR_MULTIPLIER => ['1x', '1.5x', '2x',],
-            self::FEATURE_KEY_PROMOTE_MULTIPLE_SC_ACCOUNTS => ['false', '3/month', '15/month', 'Unlimited'],
-            self::FEATURE_KEY_SITEWIDE_DISCOUNT => ['10%', 'false', '20%'],
-
-                // Campaign Features
-            self::FEATURE_KEY_FEATURED_CAMPAIGNS => ['false', '1', '3', '5'],
-            self::FEATURE_KEY_MAX_CAMPAIGN_BUDGET => ['1000', '2500', '5000', '10000', '25000'],
-            self::FEATURE_KEY_SORT_CAMPAIGNS_BY_RATING => ['true', 'false'],
-            self::FEATURE_KEY_SPONSORED_FOLLOW_CAMPAIGNS => ['true', 'false'],
-            self::FEATURE_KEY_MANAGED_CAMPAIGNS => ['true', 'false'],
-
-                // Other Features
-            self::FEATURE_KEY_WAVEPLAYER_ARTWORK => ['true', 'false'],
-            self::FEATURE_KEY_MONITOR_AND_REMOVE_REPOSTS => ['true', 'false'],
-            self::FEATURE_KEY_PROMOTE_OTHER_SOCIALS => ['true', 'false'],
-            self::FEATURE_KEY_EXEMPT_FROM_INACTIVITY_DEDUCTION => ['true', 'false'],
+            self::KEY_DIRECT_REQUESTS => [20, 100],
+            self::KEY_SIMULTANEOUS_CAMPAIGNS => [2, 10],
+            self::KEY_MULTI_ACCOUNT_PROMOTION => ['1 account', 'Unlimited'],
+            self::KEY_CAMPAIGN_TARGETING => ['True', 'False'],
+            self::KEY_FEATURED_CAMPAIGN_PRIORITY => ['True', 'False'],
+            self::KEY_CAMPAIGN_RATING_AND_ANALYTICS => ['Basic', 'Advanced'],
+            self::KEY_GROWTH_ANALYTICS => ['True', 'False'],
+            self::KEY_COMMUNITY_SUPPORT_AND_NETWORKING => ['True', 'False'],
+            self::KEY_COLLABORATION_HUB => ['True', 'False'],
+            self::KEY_SUPPORT_LEVEL => ['Community Support', 'Priority Support'],
         ];
     }
 
@@ -189,29 +163,30 @@ public function getStatusBtnClassAttribute()
     {
         $values = self::getFeatureValues()[$this->key] ?? [];
         return $values;
-
-        // return array_map(function ($val) {
-        //     if ($val === true) {
-        //         return 'true';
-        //     } elseif ($val === false) {
-        //         return 'false';
-        //     }
-        //     return $val;
-        // }, $values);
     }
 
 
     // In Plan.php model
 
 
-    public function scopeActive(Builder $query) : Builder
+    public function scopeActive(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_ACTIVE);
     }
 
-    public function scopeInactive(Builder $query) : Builder
+    public function scopeInactive(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_INACTIVE);
+    }
+
+    public function featureRelations(): HasMany
+    {
+        return $this->hasMany(FeatureRelation::class, 'feature_id', 'id');
+    }
+
+    public function relationValue($plan_id)
+    {
+        return $this->featureRelations()->where('package_type', Plan::class)->where('package_id', $plan_id)->first();
     }
 
 }
