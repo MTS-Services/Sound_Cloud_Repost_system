@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Services\PlaylistService;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\TrackService;
+use App\Services\User\AnalyticsService;
 use App\Services\User\CampaignManagement\CampaignService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -185,13 +186,15 @@ class Campaign extends Component
     protected ?TrackService $trackService = null;
     protected ?PlaylistService $playlistService = null;
     protected ?SoundCloudService $soundCloudService = null;
+    protected ?AnalyticsService $analyticsService = null;
 
-    public function boot(CampaignService $campaignService, TrackService $trackService, PlaylistService $playlistService, SoundCloudService $soundCloudService)
+    public function boot(CampaignService $campaignService, TrackService $trackService, PlaylistService $playlistService, SoundCloudService $soundCloudService, AnalyticsService $analyticsService)
     {
         $this->campaignService = $campaignService;
         $this->trackService = $trackService;
         $this->playlistService = $playlistService;
         $this->soundCloudService = $soundCloudService;
+        $this->analyticsService = $analyticsService;
     }
 
     public function mount()

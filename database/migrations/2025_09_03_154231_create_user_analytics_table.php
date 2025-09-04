@@ -36,6 +36,8 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
             $this->addMorphedAuditColumns($table);
+
+            $table->unique(['source_id', 'source_type', 'user_urn', 'date'], 'user_analytics_unique_index');
         });
     }
 
