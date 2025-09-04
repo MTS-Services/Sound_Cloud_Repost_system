@@ -819,7 +819,8 @@ class Campaign extends Component
     public function handleAudioPlay($campaignId)
     {
         $this->playingCampaigns[$campaignId] = true;
-        dd('playingCampaigns', $this->playingCampaigns, 'campaignId', $campaignId, 'campaign', $this->campaign);
+        $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
+        dd('campaign', $campaign);
         $this->playStartTimes[$campaignId] = now()->timestamp;
     }
 
