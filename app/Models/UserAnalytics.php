@@ -6,8 +6,6 @@ use App\Models\BaseModel;
 
 class UserAnalytics extends BaseModel
 {
-    //
-
     protected $fillable = [
         'user_urn',
         'response_user_urn',
