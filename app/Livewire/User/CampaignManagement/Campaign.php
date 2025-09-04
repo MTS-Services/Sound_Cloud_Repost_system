@@ -308,13 +308,13 @@ class Campaign extends Component
             });
         }
 
-        if (!empty($this->selectedGenres)) {
+        if (!empty($this->selectedGenres) && $this->activeMainTab !== 'all') {
             $query->whereHas('music', function ($q) {
                 $q->whereIn('genre', $this->selectedGenres);
             });
         }
-        
-        if(!empty($this->searchMusicType) && $this->searchMusicType !== 'all') {
+
+        if (!empty($this->searchMusicType) && $this->searchMusicType !== 'all') {
             $query->where('music_type', 'like', "%{$this->searchMusicType}%");
         }
 
@@ -1291,6 +1291,13 @@ class Campaign extends Component
                     break;
                 default:
                     $campaigns = $baseQuery
+                        ->whereHas('user', function ($query) {
+                            $query->isPro();
+                        })
+                        ->whereHas('music', function ($query) {
+                            $userGenres = user()->genres->pluck('genre')->toArray() ?? [];
+                            $query->whereIn('genre', $userGenres);
+                        })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
                     break;
             }

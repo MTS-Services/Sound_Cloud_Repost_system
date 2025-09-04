@@ -709,7 +709,7 @@ if (!function_exists('featuredAgain')) {
                 ->featured()
                 ->latest('featured_at')
                 ->value('featured_at');
-        }else {
+        } else {
             $latestFeaturedAt = Campaign::self()
                 ->featured()
                 ->latest('featured_at')
@@ -733,7 +733,7 @@ if (!function_exists('boostAgain')) {
                 ->where('is_boost', 1)
                 ->latest('boosted_at')
                 ->value('boosted_at');
-        }else {
+        } else {
             $latestBoostedAt = Campaign::self()
                 ->where('is_boost', 1)
                 ->latest('boosted_at')
@@ -746,5 +746,16 @@ if (!function_exists('boostAgain')) {
 
         $hoursSinceLastBoost = Carbon::parse($latestBoostedAt)->diffInMinutes(now());
         return $hoursSinceLastBoost >= 15;
+    }
+
+    if (!function_exists('userPlanName')) {
+        function userPlanName()
+        {
+            if (empty(user()->activePlan()) || user()->activePlan()->price == 0) {
+                return 'Free Plan';
+            } else {
+                return user()->activePlan()->plan?->name;
+            }
+        }
     }
 }

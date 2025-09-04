@@ -80,7 +80,3 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
     });
 });
 
-
-
-
-// Static page routes
