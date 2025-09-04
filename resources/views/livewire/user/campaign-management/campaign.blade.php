@@ -974,7 +974,7 @@
 <script>
     function initializeSoundCloudWidgets() {
         if (typeof SC === 'undefined') {
-            setTimeout(initializeSoundCloudWidgets, 500);
+            setTimeout(initializeSoundCloudWidgets, 100000);
             return;
         }
 
