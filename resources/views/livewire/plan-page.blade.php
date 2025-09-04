@@ -1,5 +1,5 @@
 <section class="bg-gradient-to-b from-dark-darker to-dark-bg">
-    <div class="container mx-auto px-4 pt-16 pb-8">
+    <div class="container mx-auto px-4 pt-24 pb-8">
         <div class="text-center mb-12">
             <h1 class="text-5xl font-bold text-white mb-4">Choose Your Perfect Plan</h1>
             <p class="text-xl text-slate-300 max-w-2xl mx-auto">Pro Plans unlock the full potential of
@@ -8,10 +8,12 @@
         </div>
         <div class="flex items-center justify-center mb-12">
             <div class="bg-slate-700 p-1 rounded-xl shadow-lg border border-slate-600">
-                <div class="flex items-center"><button
-                        class="px-8 py-3 rounded-lg text-sm font-semibold transition-all duration-300 bg-slate-600 text-white shadow-md">Billed
-                        Monthly</button><button
-                        class="px-8 py-3 rounded-lg text-sm font-semibold transition-all duration-300 relative text-slate-300 hover:text-white">Billed
+                <div class="flex items-center">
+                    <button wire:click="togglePlanType"
+                        class="px-8 py-3 rounded-lg text-sm font-semibold transition-all duration-300 {{ !$isYearly ? 'bg-slate-600 shadow-md text-white ' : 'text-slate-300 hover:text-white' }}">Billed
+                        Monthly</button>
+                    <button wire:click="togglePlanType"
+                        class="px-8 py-3 rounded-lg text-sm font-semibold transition-all duration-300 relative {{ $isYearly ? 'bg-slate-600 shadow-md text-white ' : 'text-slate-300 hover:text-white' }}">Billed
                         Annually<span
                             class="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full">Save
                             17%</span>
@@ -227,8 +229,11 @@
                         </p>
                         <div class="mb-6">
                             <div class="flex items-baseline justify-center"><span
-                                    class="text-6xl font-bold text-white">$25</span><span
-                                    class="text-slate-400 ml-2">/month</span></div>
+                                    class="text-6xl font-bold text-white">{{ $isYearly ? "250$" : "$25" }}</span><span
+                                    class="text-slate-400 ml-2">/{{ $isYearly ? 'year' : 'month' }}</span></div>
+                            @if ($isYearly)
+                                <div class="text-orange-400 text-sm font-medium mt-2">Save $50 per year</div>
+                            @endif
                         </div>
                     </div>
                     <div class="space-y-4 mb-8">

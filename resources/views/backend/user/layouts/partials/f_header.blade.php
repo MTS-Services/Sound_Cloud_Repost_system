@@ -12,14 +12,16 @@
          </a>
 
          <nav class="hidden md:flex items-center space-x-8">
-             <a href="#home" class="text-gray-300 hover:text-white transition-colors">Home</a>
+             <a href="{{ route('f.landing') }}#home" class="text-gray-300 hover:text-white transition-colors">Home</a>
              <a href="{{ route('f.plan') }}" wire:navigate
                  class="text-gray-300 hover:text-white transition-colors">Plan</a>
-             <a href="chart" class="text-gray-300 hover:text-white transition-colors">Chart</a>
-             <a href="#about" class="text-gray-300 hover:text-white transition-colors">About</a>
-             <a href="#how-it-works" class="text-gray-300 hover:text-white transition-colors">How it Works</a>
-             <a href="#features" class="text-gray-300 hover:text-white transition-colors">Features</a>
-             <a href="#testimonials" class="text-gray-300 hover:text-white transition-colors">Testimonials</a>
+             <a href="{{ route('f.landing') }}#about" class="text-gray-300 hover:text-white transition-colors">About</a>
+             <a href="{{ route('f.landing') }}#how-it-works"
+                 class="text-gray-300 hover:text-white transition-colors">How it Works</a>
+             <a href="{{ route('f.landing') }}#features"
+                 class="text-gray-300 hover:text-white transition-colors">Features</a>
+             <a href="{{ route('f.landing') }}#testimonials"
+                 class="text-gray-300 hover:text-white transition-colors">Testimonials</a>
 
              @if (Auth::check())
                  <x-gabutton variant="primary" href="{{ route('user.dashboard') }}">{{ __('Dashboard') }}</x-gabutton>
