@@ -1,7 +1,10 @@
 <?php
 
+use App\Models\Campaign;
 use App\Models\Order;
 use App\Models\Permission;
+use App\Models\UserPlan;
+use App\Models\UserSetting;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use League\Csv\Writer;
@@ -233,14 +236,23 @@ function SouceClassName($className)
 function generateOrderID()
 {
 
-    $prefix = 'ORDER-';
+    // $prefix = 'ORDER-';
+    $prefix = 'OIDRC-';
 
-    $microseconds = explode(' ', microtime(true))[0];
+    // $microseconds = explode(' ', microtime(true))[0];
 
-    $date = date('ymd');
-    $time = date('is');
+    // $date = date('ymd');
+    $time = date('his');
+    $order_id = $prefix . $time . mt_rand(10, 99);
+    $order = Order::where('order_id', $order_id)->first();
+    if ($order) {
+        return generateOrderID();
+    }
+    return $order_id;
 
-    return $prefix . $date . $time . mt_rand(10000, 99999);
+
+
+    // return $prefix . $date . $time . mt_rand(10000, 99999);
 }
 function totalReposts($campaign = null)
 {
@@ -638,17 +650,17 @@ function searchableRoutes()
         [
             'title' => 'Members',
             'keywords' => ['members', 'create request', 'create requests'],
-            'route' => route('user.mm.members.index'),
+            'route' => route('user.members'),
         ],
         [
             'title' => 'Plans',
             'keywords' => ['plans', 'pricing', 'premium plans', 'pro plans', 'features', 'feature comparison', 'Core Features', 'Free Boosts', 'Simultaneous Campaigns', 'Priority Direct Requests', 'Free Forever', 'subscribe', 'upgrade', 'upgrade now'],
-            'route' => route('user.pkm.pricing'),
+            'route' => route('user.plans'),
         ],
         [
             'title' => 'My Account',
             'keywords' => ['my account', 'my profile', 'profile', 'email', 'password', 'update', 'update password', 'update email', 'update profile', 'change password', 'change email', 'change profile', 'account'],
-            'route' => route('user.pm.my-account'),
+            'route' => route('user.my-account'),
         ],
         [
             'title' => 'Analytics',
@@ -669,4 +681,81 @@ function searchableRoutes()
     ];
 
     return json_encode($searchableData);
+}
+
+
+function proUser()
+{
+    $isPro = UserPlan::where('user_urn', user()->urn)->active()->exists();
+    return $isPro;
+}
+
+function requestReceiveable($userUrn)
+{
+    $requestReceiveable = UserSetting::where('user_urn', $userUrn)->value('accept_repost') ?? 0;
+    return $requestReceiveable;
+}
+function invoiceId()
+{
+    return 'INV-' . date('Y') . '-0' . date('his');
+}
+
+
+if (!function_exists('featuredAgain')) {
+    function featuredAgain($campaignId = null)
+    {
+        if ($campaignId) {
+            $latestFeaturedAt = Campaign::where('id', $campaignId)
+                ->featured()
+                ->latest('featured_at')
+                ->value('featured_at');
+        } else {
+            $latestFeaturedAt = Campaign::self()
+                ->featured()
+                ->latest('featured_at')
+                ->value('featured_at');
+        }
+
+        if (!$latestFeaturedAt) {
+            return true;
+        }
+
+        $hoursSinceLastFeature = Carbon::parse($latestFeaturedAt)->diffInHours(now());
+        return $hoursSinceLastFeature >= 24;
+    }
+}
+
+if (!function_exists('boostAgain')) {
+    function boostAgain($campaignId = null)
+    {
+        if ($campaignId) {
+            $latestBoostedAt = Campaign::where('id', $campaignId)
+                ->where('is_boost', 1)
+                ->latest('boosted_at')
+                ->value('boosted_at');
+        } else {
+            $latestBoostedAt = Campaign::self()
+                ->where('is_boost', 1)
+                ->latest('boosted_at')
+                ->value('boosted_at');
+        }
+
+        if (!$latestBoostedAt) {
+            return true;
+        }
+
+        $hoursSinceLastBoost = Carbon::parse($latestBoostedAt)->diffInMinutes(now());
+        return $hoursSinceLastBoost >= 15;
+    }
+
+    if (!function_exists('userPlanName')) {
+        function userPlanName()
+        {
+            if (empty(user()->activePlan()) || user()->activePlan()->price == 0) {
+                return 'Free Plan';
+            } else {
+                return user()->activePlan()->plan?->name;
+            }
+        }
+    }
 }

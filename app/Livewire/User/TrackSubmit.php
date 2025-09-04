@@ -169,8 +169,6 @@ class TrackSubmit extends Component
      */
     public function updated($field)
     {
-        // Don't validate file inputs while they are being uploaded.
-        // This prevents "required" or other errors during the upload process.
         if (! in_array($field, ['track.asset_data', 'track.artwork_data'])) {
             $this->validateOnly($field);
         }
@@ -178,55 +176,19 @@ class TrackSubmit extends Component
 
     public function submit()
     {
-        // dd($this->track);
-        // All validation for all fields, including files, happens here.
+
         $this->validate();
 
         try {
 
-            // $this->soundCloudService->ensureSoundCloudConnection(user());
-            // $this->soundCloudService->refreshUserTokenIfNeeded(user());
-            // // user()->refresh();
-
-            // $httpClient = Http::withHeaders([
-            //     'Authorization' => 'OAuth ' . user()->token,
-            // ])->attach(
-            //     'track[asset_data]',
-            //     file_get_contents($this->track['asset_data']->getRealPath()),
-            //     $this->track['asset_data']->getClientOriginalName()
-            // );
-
-            // if ($this->track['artwork_data']) {
-            //     $httpClient->attach(
-            //         'track[artwork_data]',
-            //         file_get_contents($this->track['artwork_data']->getRealPath()),
-            //         $this->track['artwork_data']->getClientOriginalName()
-            //     );
-            // }
-
-            // // Highlighted change: Replaced the old requestBody creation
-            // $requestBody = [];
-            // foreach ($this->track as $key => $value) {
-            //     // Only include non-file fields and those with a value
-            //     if (! in_array($key, ['asset_data', 'artwork_data']) && ! empty($value)) {
-            //         $requestBody["track[{$key}]"] = $value;
-            //     }
-            // }
-
-            // $response = $httpClient->post($this->baseUrl . '/tracks', $requestBody);
-
-            // $response->throw();
-
             $responseTrack = $this->soundCloudService->uploadTrack(user(), $this->track);
-
-            // After a successful API call, delete the temporary files to free up disk space.
             if ($this->track['asset_data']) {
                 $this->track['asset_data']->delete();
             }
             if ($this->track['artwork_data']) {
                 $this->track['artwork_data']->delete();
             }
-            
+
             DB::transaction(function () use ($responseTrack) {
                 $track =  Track::create([
                     'user_urn' => user()->urn,
@@ -289,7 +251,7 @@ class TrackSubmit extends Component
                     'receiver_id' => user()->id,
                     'receiver_type' => User::class,
                     'type' => CustomNotification::TYPE_USER,
-                    'url' => route('user.pm.my-account') . '?tab=tracks',
+                    'url' => route('user.my-account') . '?tab=tracks',
                     'message_data' => [
                         'title' => 'Track Submitted',
                         'message' => 'A new track has been submitted.',
@@ -305,9 +267,10 @@ class TrackSubmit extends Component
                 broadcast(new UserNotificationSent($notification));
             });
 
-            session()->flash('message', 'Track submitted successfully!');
+           $this->dispatch('alert', type:'success', message: 'Track submitted successfully!');
+
             $this->reset();
-            return $this->redirect(route('user.pm.my-account') . '?tab=tracks', navigate: true);
+            return $this->redirect(route('user.my-account') . '?tab=tracks', navigate: true);
         } catch (RequestException $e) {
             logger()->error('SoundCloud API Error: ' . $e->getMessage(), ['response_body' => $e->response->body()]);
 
@@ -334,7 +297,7 @@ class TrackSubmit extends Component
             session()->flash('error', $errorMessage);
         } catch (\Exception $e) {
             logger()->error('General Submission Error: ' . $e->getMessage());
-            session()->flash('error', 'An unexpected error occurred. Please try again.');
+            $this->dispatch('alert', type:'error', message:'An unexpected error occurred. Please try again.');
         }
     }
 

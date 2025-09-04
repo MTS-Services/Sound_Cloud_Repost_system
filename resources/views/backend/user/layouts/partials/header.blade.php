@@ -96,16 +96,17 @@
         </div>
         <div class="flex items-center space-x-1 md:space-x-2">
             <nav class="hidden lg:flex items-center space-x-2 md:space-x-4 text-sm" x-data="{ activeButton: '' }">
-                <a class="text-orange-500 hover:text-orange-400 font-medium" href="{{ route('user.pkm.pricing') }}"
+                <a class="text-orange-500 hover:text-orange-400 font-medium" href="{{ route('user.plans') }}"
                     wire:navigate data-discover="true">{{ __('Upgrade My Plan') }}</a>
                 <a x-bind:class="{ 'text-orange-500': activeButton === 'charts', 'hover:text-orange-400': activeButton !== 'charts' }"
                     class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
-                    wire:navigate href="{{ route('charts') }}" data-discover="true" @click="activeButton = 'charts'">
+                    wire:navigate href="{{ route('user.charts') }}" data-discover="true"
+                    @click="activeButton = 'charts'">
                     Charts
                 </a>
                 <a x-bind:class="{ 'text-orange-500': activeButton === 'blog', 'hover:text-orange-400': activeButton !== 'blog' }"
                     class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
-                    wire:navigate href="{{ route('page') }}" data-discover="true" @click="activeButton = 'blog'">
+                    wire:navigate href="{{ route('blog') }}" data-discover="true" @click="activeButton = 'blog'">
                     Blog
                 </a>
                 <div x-data="{ open: false }" class="relative text-left rounded-lg flex justify-center">
@@ -136,11 +137,11 @@
                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Help Center') }}</a>
                             </li>
                             <li>
-                                <a href="{{ route('user.pkm.pricing') }}" wire:navigate
+                                <a href="{{ route('user.plans') }}" wire:navigate
                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Pricing') }}</a>
                             </li>
                             <li>
-                                <a href="{{ route('user.faq') }}"
+                                <a href="{{ route('user.faq') }}" wire:navigate
                                     class="block px-4 py-2  hover:bg-red-100 dark:hover:bg-gray-700">{{ __('FAQs') }}</a>
                             </li>
                         </ul>
@@ -161,18 +162,6 @@
                 <x-heroicon-o-moon x-show="!$store.theme.darkMode"
                     class="w-5 h-5 text-text-light-primary dark:text-text-white" />
             </button>
-            {{-- <button @click="$store.theme.toggleTheme()"
-                class="p-2 rounded-xl hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
-                data-tooltip="Toggle theme"
-                :title="$store.theme.current.charAt(0).toUpperCase() + $store.theme.current.slice(1) + ' mode'">
-                <!-- Sun icon for light mode -->
-                <i data-lucide="sun" x-show="!$store.theme.darkMode" x-cloak
-                    class="w-5 h-5 text-text-light-primary dark:text-text-white"></i>
-
-                <!-- Moon icon for dark mode -->
-                <i data-lucide="moon" x-show="$store.theme.darkMode" x-cloak
-                    class="w-5 h-5 text-text-light-primary dark:text-text-white"></i>
-            </button> --}}
             <div class="dropdown dropdown-end">
                 <div tabindex="0" role="button" class="flex items-center space-x-1 md:space-x-2">
                     <img src="{{ auth_storage_url(user()->avatar) }}" alt="{{ user()->name ?? 'name' }}"
@@ -188,10 +177,10 @@
                 <ul tabindex="0"
                     class="menu menu-sm dropdown-content bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-lg shadow-lg z-10 mt-3 w-64 py-2 space-y-1">
                     <li>
-                        <a href="{{ route('user.pm.my-account') }}" wire:navigate
+                        <a href="{{ route('user.my-account') }}" wire:navigate
                             class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M5.121 17.804A4 4 0 017 16h10a4 4 0 011.879.496M15 11a3 3 0 10-6 0 3 3 0 006 0z" />
                             </svg>
@@ -204,13 +193,9 @@
                         </div>
                         <div class="text-sm flex justify-between items-center">
                             <span class="font-semibold text-slate-800 dark:text-white">
-                                @if (empty(user()->activePlan()) || user()->activePlan()->price == 0)
-                                    {{ __('Free Plan') }}
-                                @else
-                                    {{ user()->activePlan()->plan?->name }}
-                                @endif
+                                {{ userPlanName() }}
                             </span>
-                            <a href="{{ route('user.pkm.pricing') }}" wire:navigate
+                            <a href="{{ route('user.plans') }}" wire:navigate
                                 class="text-orange-500 text-xs hover:underline">{{ __('View All Plans') }}</a>
                         </div>
                     </li>
@@ -218,6 +203,12 @@
                         <a href="#"
                             class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm block">
                             Settings & Preferences
+                        </a>
+                    </li>
+                    <li>
+                        <a wire:navigate href="{{ route('user.settings', ['activeTab' => 'credit']) }}"
+                            class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm block">
+                            Credit History
                         </a>
                     </li>
                     <li class="border-t border-gray-200 dark:border-slate-700 pt-2">

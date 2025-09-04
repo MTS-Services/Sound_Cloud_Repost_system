@@ -188,6 +188,7 @@ class SoundCloudService
      * @return int The number of tracks synced.
      * @throws Exception If there's an error syncing tracks.
      */
+
     public function syncUserTracks(User $user, $tracksData, $playlist_urn = null): int
     {
         try {
@@ -197,8 +198,11 @@ class SoundCloudService
             }
 
             $syncedCount = 0;
+            $trackIdsInResponse = [];
 
             foreach ($tracksData as $trackData) {
+                $trackIdsInResponse[] = $trackData['id'];
+
                 $userUrn = $trackData['user']['urn'];
 
                 $track_author = User::updateOrCreate([
@@ -299,6 +303,27 @@ class SoundCloudService
                 }
             }
 
+            if (is_null($playlist_urn)) {
+                $tracksToDelete = Track::where('user_urn', $user->urn)
+                    ->whereNotIn('soundcloud_track_id', $trackIdsInResponse)
+                    ->pluck('id');
+
+                if ($tracksToDelete->isNotEmpty()) {
+                    Track::destroy($tracksToDelete);
+                    Log::info("Successfully deleted " . count($tracksToDelete) . " tracks for user {$user->urn} that are no longer present on SoundCloud.");
+                }
+            } else {
+                $tracksToDelete = PlaylistTrack::where('playlist_urn', $playlist_urn)
+                    ->whereNotIn('track_urn', array_map(function ($t) {
+                        return $t['urn'];
+                    }, $tracksData))
+                    ->pluck('id');
+                if ($tracksToDelete->isNotEmpty()) {
+                    PlaylistTrack::destroy($tracksToDelete);
+                    Log::info("Successfully deleted " . count($tracksToDelete) . " tracks from playlist {$playlist_urn} that are no longer present on SoundCloud.");
+                }
+            }
+
             Log::info("Successfully synced {$syncedCount} tracks for user {$user->urn}.");
             return $syncedCount;
         } catch (Exception $e) {
@@ -385,13 +410,16 @@ class SoundCloudService
         );
     }
 
-    public function syncUserPlaylists(User $user, int $limit = 200): int
+    public function syncUserPlaylists(User $user): int
     {
         try {
-            $playlistsData = $this->getUserPlaylists($user, $limit); // This call now handles the refresh
+            $playlistsData = $this->getUserPlaylists($user); // The limit is removed here, assuming getUserPlaylists handles pagination to get all playlists.
             $syncedCount = 0;
+            $playlistIdsInResponse = [];
 
             foreach ($playlistsData as $playlistData) {
+                $playlistIdsInResponse[] = $playlistData['id'];
+
                 $playlist = Playlist::updateOrCreate(
                     ['soundcloud_id' => $playlistData['id'] ?? null],
                     [
@@ -440,6 +468,16 @@ class SoundCloudService
                 if ($playlist->wasRecentlyCreated) {
                     $syncedCount++;
                 }
+            }
+
+            // Deletion logic
+            $playlistsToDelete = Playlist::where('user_urn', $user->urn)
+                ->whereNotIn('soundcloud_id', $playlistIdsInResponse)
+                ->pluck('id');
+
+            if ($playlistsToDelete->isNotEmpty()) {
+                Playlist::destroy($playlistsToDelete);
+                Log::info("Successfully deleted " . count($playlistsToDelete) . " playlists for user {$user->urn} that are no longer present on SoundCloud.");
             }
 
             Log::info("Successfully synced {$syncedCount} playlists for user {$user->urn}.");
@@ -554,5 +592,19 @@ class SoundCloudService
 
         $response->throw();
         return $responseData;
+    }
+
+
+    public function syncSelfTracks($tracksData, $playlist_urn = null): void
+    {
+        $user = User::where('urn', user()->urn)->first();
+        $this->syncUserTracks($user, $tracksData, $playlist_urn);
+    }
+
+
+    public function syncSelfPlaylists()
+    {
+        $user = User::where('urn', user()->urn)->first();
+        $this->syncUserPlaylists($user);
     }
 }

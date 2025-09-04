@@ -6,10 +6,14 @@ use App\Models\CreditTransaction;
 use App\Models\Payment;
 use App\Models\User;
 use App\Models\UserGenre;
+use App\Models\UserPlan;
 use App\Models\UserSetting;
 use App\Models\UserSocialInformation;
+use App\Services\User\UserSettingsService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 class Settings extends Component
@@ -18,6 +22,7 @@ class Settings extends Component
     public $payments = [];
     public $user_infos = [];
     public $email = '';
+    public $activePlan = 'Free Forever';
     // Genre Filter Properties
     public $selectedGenres = [];
     public $searchTerm = '';
@@ -36,6 +41,10 @@ class Settings extends Component
     // Validation error state
     public $genreLimitError = false;
     public $genreCountError = false;
+
+    // Active Tab
+    #[Url]
+    public $activeTab = 'profile';
 
     public $availableGenres = [];
 
@@ -75,13 +84,19 @@ class Settings extends Component
     ];
 
 
+    protected UserSettingsService $userSettingsService;
+
+    public function boot(UserSettingsService $userSettingsService)
+    {
+        $this->userSettingsService = $userSettingsService;
+    }
     public function mount()
     {
         $this->availableGenres = AllGenres();
         $this->selectedGenres = UserGenre::where('user_urn', user()->urn)->pluck('genre')->toArray();
         $this->credits = CreditTransaction::where('receiver_urn', user()->urn)->latest()->get();
         $this->payments = Payment::where('user_urn', user()->urn)->with('order.source')->latest()->get();
-        // dd($this->payments);
+        $this->activePlan = UserPlan::where('user_urn', user()->urn)->first()->plan->name ?? 'Free Forever';
         $this->loadSettings();
         $this->loadUserInfo();
     }
@@ -123,13 +138,26 @@ class Settings extends Component
     public $ps_competitions = false;
 
     // My Requests
-    public $accept_repost = false;
-    public $block_mismatch_genre = false;
+    public $accept_repost = 0;
+    public $block_mismatch_genre = 1;
 
     // Additional Features
-    public $opt_mystery_box = false;
-    public $auto_boost = false;
-    public $enable_react = true;
+    public $opt_mystery_box = 0;
+    public $auto_boost = 0;
+    public $enable_react = 1;
+
+    public function downloadInvoice(Payment $payment)
+    {
+        // dd($payment);
+
+        // Load the Blade view with the sanitized data
+        $pdf = Pdf::loadView('components.user.settings.invoice-pdf', [
+            'payment' => $payment
+        ]);
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, 'invoice-' . $payment->id . '.pdf');
+    }
 
     // Subscription
     public $sub_plan = 'Free Forever Plan';
@@ -187,7 +215,7 @@ class Settings extends Component
         }
     }
 
-    public function createOrUpdate()
+    public function notificationUpdate()
     {
         try {
             $userUrn = user()->urn;
@@ -229,26 +257,14 @@ class Settings extends Component
                 'ps_mystery_box' => $this->ps_mystery_box ? 1 : 0,
                 'ps_discussions' => $this->ps_discussions ? 1 : 0,
                 'ps_competitions' => $this->ps_competitions ? 1 : 0,
-
-                // My Requests
-                'accept_repost' => $this->accept_repost ? 1 : 0,
-                'block_mismatch_genre' => $this->block_mismatch_genre ? 1 : 0,
-
-                // Additional Features
-                'opt_mystery_box' => $this->opt_mystery_box ? 1 : 0,
-                'auto_boost' => $this->auto_boost ? 1 : 0,
-                'enable_react' => $this->enable_react ? 1 : 0,
             ];
 
-            UserSetting::updateOrCreate(
-                ['user_urn' => $userUrn],
-                $data
-            );
+            $this->userSettingsService->createOrUpdate($userUrn, $data);
+            $this->dispatch('alert', type: 'success', message: 'Settings updated successfully!');
             $this->reset();
-            $this->loadSettings();
-            $this->dispatch('alert', 'success', 'Settings updated successfully!');
+            $this->mount();
         } catch (\Exception $e) {
-            $this->dispatch('alert', 'error', $e->getMessage());
+            $this->dispatch('alert', type: 'error', message: $e->getMessage());
         }
     }
 
@@ -261,17 +277,35 @@ class Settings extends Component
             ['id' => 4, 'name' => 'Repost Requests Expired', 'email_key' => 'em_repost_expired', 'push_key' => 'ps_repost_expired'],
             ['id' => 5, 'name' => 'Campaign Summary & finished alert', 'email_key' => 'em_campaign_summary', 'push_key' => 'ps_campaign_summary'],
             ['id' => 6, 'name' => 'Free Boost Award', 'email_key' => 'em_free_boost', 'push_key' => 'ps_free_boost'],
-            ['id' => 7, 'name' => 'Feedback Campaign Events', 'email_key' => 'em_feedback_campaign', 'push_key' => 'ps_feedback_campaign'],
-            ['id' => 8, 'name' => 'Feedback Rated', 'email_key' => 'em_feedback_rated', 'push_key' => 'ps_feedback_rated'],
-            ['id' => 9, 'name' => 'Referrals', 'email_key' => 'em_referrals', 'push_key' => 'ps_referrals'],
             ['id' => 10, 'name' => 'Reputation Changes', 'email_key' => 'em_reputation', 'push_key' => 'ps_reputation'],
             ['id' => 11, 'name' => 'Account inactivity Warning', 'email_key' => 'em_inactivity_warn', 'push_key' => 'ps_inactivity_warn'],
             ['id' => 12, 'name' => 'Marketing Communications', 'email_key' => 'em_marketing', 'push_key' => 'ps_marketing'],
-            ['id' => 13, 'name' => 'Chart Entry', 'email_key' => 'em_chart_entry', 'push_key' => 'ps_chart_entry'],
-            ['id' => 14, 'name' => 'Mystery Box Draw', 'email_key' => 'em_mystery_box', 'push_key' => 'ps_mystery_box'],
             ['id' => 15, 'name' => 'Discussions', 'email_key' => 'em_discussions', 'push_key' => 'ps_discussions'],
             ['id' => 16, 'name' => 'Competitions', 'email_key' => 'em_competitions', 'push_key' => 'ps_competitions']
         ];
+    }
+
+    public function settingsUpdate()
+    {
+        try {
+            $userUrn = user()->urn;
+            $data = [
+                'accept_repost' => $this->accept_repost,
+                'block_mismatch_genre' => $this->block_mismatch_genre,
+
+                // Additional Features
+                'opt_mystery_box' => $this->opt_mystery_box,
+                'auto_boost' => proUser() ? $this->auto_boost : 0,
+                'enable_react' => $this->enable_react,
+            ];
+
+            $this->userSettingsService->createOrUpdate($userUrn, $data);
+            $this->dispatch('alert', type: 'success', message: 'Settings updated successfully!');
+            $this->reset();
+            $this->mount();
+        } catch (\Exception $e) {
+            $this->dispatch('alert', type: 'error', message: $e->getMessage());
+        }
     }
     ####################### Notification Settings End ############################
 
@@ -337,54 +371,33 @@ class Settings extends Component
     {
         $this->validate();
 
+        $userUrn = user()->urn;
+        $profileData = [
+            'email' => $this->email,
+            'genres' => collect($this->selectedGenres)->map(fn($genre) => [
+                'user_urn' => $userUrn,
+                'genre' => $genre,
+                'creater_id' => user()->id,
+                'creater_type' => get_class(user()),
+            ])->toArray(),
+            'socialData' => [
+                'user_urn' => $userUrn,
+                'instagram' => $this->instagram_username,
+                'twitter' => $this->twitter_username,
+                'facebook' => $this->facebook_username,
+                'youtube' => $this->youtube_channel_id,
+                'tiktok' => $this->tiktok_username,
+                'spotify' => $this->spotify_artist_link,
+            ]
+        ];
+
         try {
-            DB::transaction(function () {
-                User::where('urn', user()->urn)->update(['email' => $this->email]);
-                UserGenre::where('user_urn', user()->urn)->delete();
-
-                $genres = collect($this->selectedGenres)->map(fn($genre) => [
-                    'user_urn' => user()->urn,
-                    'genre' => $genre,
-                    'creater_id' => user()->id,
-                    'creater_type' => get_class(user()),
-                ])->toArray();
-
-                UserGenre::insert($genres);
-               $socialData = [
-                    'user_urn'  => user()->urn,
-                    'instagram' => $this->instagram_username,
-                    'twitter'   => $this->twitter_username,
-                    'facebook'  => $this->facebook_username,
-                    'youtube'   => $this->youtube_channel_id,
-                    'tiktok'    => $this->tiktok_username,
-                    'spotify'   => $this->spotify_artist_link,
-                ];
-
-                $socialInfo = UserSocialInformation::self()->first();
-
-                $hasAnySocial = collect($socialData)
-                    ->except('user_urn')
-                    ->filter()
-                    ->isNotEmpty();
-
-                if (!$socialInfo && $hasAnySocial) {
-                    UserSocialInformation::create($socialData);
-                } elseif ($socialInfo && $hasAnySocial) {
-                    $socialInfo->update($socialData);
-                } elseif ($socialInfo && !$hasAnySocial) {
-                    $socialInfo->delete();
-                }
-
-
-            });
-
-            $this->reset(['selectedGenres', 'instagram_username', 'twitter_username', 'facebook_username', 'youtube_channel_id', 'tiktok_username', 'spotify_artist_link']);
+            $this->userSettingsService->saveProfile($userUrn, $profileData);
+            $this->dispatch('alert', type: 'success', message: 'Profile updated successfully!');
+            $this->reset();
             $this->mount();
-
-            $this->dispatch('alert', 'success', 'Profile updated successfully!');
         } catch (\Throwable $e) {
-            Log::error($e->getMessage());
-            $this->dispatch('alert', 'error', 'Profile update failed!');
+            $this->dispatch('alert', type: 'error', message: 'Profile update failed!');
         }
     }
 
@@ -396,20 +409,25 @@ class Settings extends Component
     public function deleteAccount()
     {
         try {
-            User::where('urn', user()->urn)->delete();
+            $userUrn = user()->urn;
+            $this->userSettingsService->deleteAccount($userUrn);
             return redirect()->route('f.landing')->with('success', 'Account deleted successfully!');
         } catch (\Throwable $e) {
             Log::error($e->getMessage());
-            $this->dispatch('alert', 'error', 'Account delete failed!');
+            $this->dispatch('alert', type: 'error', message: 'Account delete failed!');
         }
     }
 
 
     public function cancel()
     {
-        // Reset form or redirect
         $this->reset();
-        $this->mount(); // Re-initialize with default values
+        $this->mount();
+    }
+
+    public function setActiveTab($tab)
+    {
+        $this->activeTab = $tab;
     }
 
     public function render()

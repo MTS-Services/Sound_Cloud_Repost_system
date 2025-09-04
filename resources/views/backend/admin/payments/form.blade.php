@@ -198,7 +198,7 @@
                 }
 
                 // Create payment intent
-                const response = await fetch('{{ route('f.payment.create-intent') }}', {
+                const response = await fetch('{{ route('user.payment.create-intent') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -239,7 +239,7 @@
                     showError(error.message);
                 } else {
                     // Payment succeeded, redirect to success page
-                    window.location.href = '{{ route('f.payment.success') }}?pid=' + data.payment_intent_id;
+                    window.location.href = '{{ route('user.payment.success') }}?pid=' + data.payment_intent_id;
 
                 }
             } catch (error) {

@@ -17,6 +17,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Srmklive\PayPal\Services\PayPal as PayPalClient;
+use Illuminate\Support\Str;
 
 class PaymentController extends Controller
 {
@@ -204,7 +206,7 @@ class PaymentController extends Controller
             return view('backend.admin.payments.success', compact('payment', 'paymentIntent'));
         } catch (\Exception $e) {
             Log::error('Payment success handling failed: ' . $e->getMessage());
-            return redirect()->route('f.payment.form')->with('error', 'Payment verification failed');
+            return redirect()->route('user.payment.form')->with('error', 'Payment verification failed');
         }
     }
 
@@ -216,68 +218,163 @@ class PaymentController extends Controller
         return view('backend.admin.payments.cancel');
     }
 
-    /**
-     * Handle Stripe webhooks
-     */
-    // public function handleWebhook(Request $request)
-    // {
-    //     $payload = $request->getContent();
-    //     $sig_header = $request->header('Stripe-Signature');
-    //     $endpoint_secret = config('services.stripe.webhook.secret');
 
-    //     try {
-    //         $event = \Stripe\Webhook::constructEvent($payload, $sig_header, $endpoint_secret);
-    //     } catch (\UnexpectedValueException $e) {
-    //         Log::error('Invalid payload: ' . $e->getMessage());
-    //         return response('Invalid payload', 400);
-    //     } catch (\Stripe\Exception\SignatureVerificationException $e) {
-    //         Log::error('Invalid signature: ' . $e->getMessage());
-    //         return response('Invalid signature', 400);
-    //     }
 
-    //     // Handle the event
-    //     switch ($event['type']) {
-    //         case 'payment_intent.succeeded':
-    //             $paymentIntent = $event['data']['object'];
-    //             $this->handlePaymentIntentSucceeded($paymentIntent);
-    //             break;
 
-    //         case 'payment_intent.payment_failed':
-    //             $paymentIntent = $event['data']['object'];
-    //             $this->handlePaymentIntentFailed($paymentIntent);
-    //             break;
+    // Paypal Payment
 
-    //         default:
-    //             Log::info('Received unknown event type: ' . $event['type']);
-    //     }
+    public function paypalPaymentLink($encryptedOrderId)
+    {
 
-    //     return response('Webhook handled', 200);
-    // }
+        $orderId = decrypt($encryptedOrderId);
+        $order = Order::findOrFail($orderId);
 
-    // private function handlePaymentIntentSucceeded($paymentIntent)
-    // {
-    //     $payment = Payment::where('payment_intent_id', $paymentIntent['id'])->first();
+        $amount = $order->amount;
+        $credit = $order->credits;
+        $reference = Str::uuid();
+        $payment = null;
 
-    //     if ($payment) {
-    //         $payment->update([
-    //             'status' => 'succeeded',
-    //             'paid_at' => now(),
-    //         ]);
+        DB::transaction(function () use (&$payment, $order, $amount, $credit, $reference) {
+            // ✅ 1. Create CreditTransaction first
+            if ($order->source_type == Credit::class) {
+                CreditTransaction::create([
+                    'receiver_urn' => $order->user_urn,
+                    'transaction_type' => CreditTransaction::TYPE_PURCHASE,
+                    'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
+                    'source_id' => $order->id,
+                    'source_type' => Order::class,
+                    'amount' => $order->amount,
+                    'credits' => $order->credits,
+                    'metadata' => json_encode(['via' => 'PayPal']),
+                    'description' => 'Purchased ' . $order->credits . ' credits for ' . $order->amount . ' ' . 'usd',
+                    'creater_id' => $order->creater_id,
+                    'creater_type' => $order->creater_type,
+                ]);
+            }
+            $payment = Payment::create([
+                'user_urn' => $order->user_urn,
+                'order_id' => $order->id,
+                'payment_gateway' => Payment::PAYMENT_GATEWAY_PAYPAL,
+                'notes' => $order->notes,
+                'amount' => $order->amount,
+                'credits_purchased' => $order->credits,
+                'status' => Payment::STATUS_PROCESSING,
+                'payment_intent_id' => $paymentIntent->id ?? null,
+                'reference' => $reference,
+                'creater_id' => $order->creater_id,
+                'creater_type' => $order->creater_type,
 
-    //         Log::info('Payment succeeded: ' . $paymentIntent['id']);
-    //     }
-    // }
+            ]);
+        });
 
-    // private function handlePaymentIntentFailed($paymentIntent)
-    // {
-    //     $payment = Payment::where('payment_intent_id', $paymentIntent['id'])->first();
+        // Log::info('Payment Created', $payment->toArray());
 
-    //     if ($payment) {
-    //         $payment->update([
-    //             'status' => 'failed',
-    //         ]);
+        // ✅ Continue to PayPal flow
+        $provider = new PayPalClient;
+        $provider->setApiCredentials(config('paypal'));
+        $provider->getAccessToken();
 
-    //         Log::info('Payment failed: ' . $paymentIntent['id']);
-    //     }
-    // }
+        $data = [
+            "intent" => "CAPTURE",
+            "application_context" => [
+                'return_url' => route('user.payment.paypal.paymentSuccess') . '?reference=' . $reference,
+                'cancel_url' => route('user.payment.paypal.paymentCancel') . '?reference=' . $reference
+            ],
+            "purchase_units" => [
+                [
+                    "amount" => [
+                        "currency_code" => "USD",
+                        "value" => $amount
+                    ]
+                ]
+            ]
+        ];
+
+        $order = $provider->createOrder($data);
+        $url = collect($order['links'])->where('rel', 'approve')->first()['href'];
+
+        return redirect()->away($url);
+    }
+
+
+    public function paypalPaymentSuccess(Request $request)
+    {
+        $reference = $request->query('reference');
+        Log::info('Payment Success Callback', ['reference' => $reference]);
+
+        try {
+            $token = $request->token;
+            $provider = new PayPalClient;
+            $provider->setApiCredentials(config('paypal'));
+            $provider->getAccessToken();
+
+            $order = $provider->capturePaymentOrder($token);
+            $paymentProviderId = $order['id'] ?? null;
+
+            $payment = Payment::where('reference', $reference)->where('status', 'processing')->first();
+            if (!$payment) {
+                Log::warning('Payment not found for reference.', ['reference' => $reference]);
+                session()->flash('error', "Payment not found.");
+                return redirect(route('user.add-credits'));
+            }
+
+            if (
+                $order['status'] === 'COMPLETED' &&
+                isset($order['purchase_units'][0]['payments']['captures'][0])
+            ) {
+                $capture = $order['purchase_units'][0]['payments']['captures'][0];
+                $amount = $capture['amount']['value'] ?? null;
+                $currency = $capture['amount']['currency_code'] ?? 'USD';
+                $receiptUrl = $capture['links'][0]['href'] ?? null;
+                $payer = $order['payer'] ?? [];
+                $payerName = ($payer['name']['given_name'] ?? '') . ' ' . ($payer['name']['surname'] ?? '');
+                $payerEmail = $payer['email_address'] ?? null;
+                $shippingAddress = $order['purchase_units'][0]['shipping']['address'] ?? [];
+                $address = $shippingAddress['address_line_1'] ?? null;
+                $postalCode = $shippingAddress['postal_code'] ?? null;
+
+
+
+
+                $payment->update([
+                    'payment_provider_id' => $paymentProviderId,
+                    'status' => Payment::STATUS_SUCCEEDED,
+                    'currency' => $currency,
+                    'payment_intent_id' => $paymentProviderId,
+                    'receipt_url' => $receiptUrl,
+                    'name' => $payerName,
+                    'email_address' => $payerEmail,
+                    'address' => $address,
+                    'postal_code' => $postalCode,
+                    'metadata' => json_encode($order),
+                ]);
+
+                Log::info('Payment and credit transaction updated', ['reference' => $reference]);
+
+                session()->flash('success', "Payment was successful!");
+                return redirect(route('user.add-credits'));
+            }
+
+            Log::warning('Payment capture incomplete or failed.', ['reference' => $reference]);
+            session()->flash('error', "Payment failed or was not completed.");
+            return redirect(route('user.add-credits'));
+        } catch (\Exception $e) {
+            Log::error('PayPal Payment Error: ' . $e->getMessage(), ['exception' => $e]);
+            session()->flash('error', "An error occurred while processing the payment.");
+            return redirect(route('user.add-credits'));
+        }
+    }
+
+
+    public function paypalPaymentCancel(Request $request)
+    {
+        $reference = $request->query('reference');
+        $payment = Payment::where('reference', $reference)->where('status', 'processing')->first();
+        if ($payment) {
+            $payment->update(['status' => Payment::STATUS_CANCELED]);
+        }
+        Log::info('Payment Cancel Callback', ['reference' => $reference, 'payment' => $payment]);
+        session()->flash('error', "Payment was canceled.");
+        return redirect(route('user.add-credits'));
+    }
 }

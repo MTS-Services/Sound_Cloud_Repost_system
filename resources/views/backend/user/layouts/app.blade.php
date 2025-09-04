@@ -47,7 +47,7 @@
     <!-- Scripts -->
     <script src="{{ asset('assets/js/toggle-theme-3.js') }}"></script>
 
-    @vite(['resources/css/user-dashboard.css', 'resources/js/user-dashboard.js'])
+    @vite(['resources/css/user-dashboard.css', 'resources/js/user-dashboard.js', 'resources/css/frontend.css'])
 
 
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
@@ -69,9 +69,9 @@
             @if (session('warning'))
                 showAlert('warning', "{!! session('warning') !!}");
             @endif
-            document.addEventListener('livewire:load', function() {
-                Livewire.on('alert', (type, message) => {
-                    showAlert(type, message);
+            document.addEventListener('livewire:initialized', function() {
+                Livewire.on('alert', (event) => {
+                    showAlert(event.type, event.message);
                 });
             });
         });
@@ -79,17 +79,16 @@
 
     @stack('cs')
     @livewireStyles()
-    <script async src="https://cse.google.com/cse.js?cx=23c01bcccd3964c56"></script>
-
-
 
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-black overflow-x-hidden! relative" x-data="{ sidebarOpen: false, mobileSearchOpen: false }">
 
-
+    @auth
+        <livewire:user-heartbeat />
+    @endauth
     <div id="notification-toast"
-        class="absolute top-5 right-5 w-72 z-50 rounded-2xl shadow-2xl bg-white text-black transition-all duration-500 ease-in-out transform translate-x-full opacity-0">
+        class="absolute hidden top-5 right-5 w-72 z-50 rounded-2xl shadow-2xl bg-white text-black transition-all duration-500 ease-in-out transform translate-x-full opacity-0">
         <div class="p-4 flex items-center justify-between gap-4">
             <div class="flex items-center gap-3 flex-grow">
                 <x-heroicon-o-information-circle class="w-6 h-6 text-blue-500 flex-shrink-0" />
@@ -102,52 +101,34 @@
         </div>
     </div>
 
+    @if (auth()->guard('web')->check() && Route::is('user.*'))
+        @include('backend.user.layouts.partials.header')
+        @include('backend.user.layouts.partials.sidebar')
+    @else
+        @include('backend.user.layouts.partials.f_header')
+    @endif
 
-    @include('backend.user.layouts.partials.header')
-    @include('backend.user.layouts.partials.sidebar')
 
     <!-- Main Content -->
-    <div class="ml-auto lg:w-[calc(100%-15%)] w-full">
-        <div class="p-4 md:p-6 min-h-[calc(100vh-64px)]">
-            {{ $slot }}
+    @if (auth()->guard('web')->check() && Route::is('user.*'))
+        <div class="ml-auto lg:w-[calc(100%-15%)]">
+            <div class="p-4 md:p-6 min-h-[calc(100vh-64px)]">
+    @endif
+    {{ $slot }}
+    @if (auth()->guard('web')->check() && Route::is('user.*'))
         </div>
-    </div>
+        </div>
+    @else
+        @include('backend.user.layouts.partials.f_footer')
+    @endif
+
 
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
-    {{-- <script src="{{ asset('assets/frontend/js/custome.js') }}"></script> --}}
-    <script>
-        lucide.createIcons();
-        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
-        document.addEventListener('alpine:init', () => {
-            lucide.createIcons();
-            if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
-        })
-    </script>
     @livewireScripts()
     <script>
-        document.addEventListener('livewire:navigated', () => {
-            // Re-initialize your Google Custom Search script here
-            // For example, you might re-run the script that creates the search element.
-            // It could look something like this, depending on your setup:
-            (function() {
-                var cx = '23c01bcccd3964c56';
-                var gcse = document.createElement('script');
-                gcse.type = 'text/javascript';
-                gcse.async = true;
-                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
-                var s = document.getElementsByTagName('script')[0];
-                s.parentNode.insertBefore(gcse, s);
-            })();
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('livewire:initialized', () => {
+            lucide.createIcons();
 
-            // Pusher.log = (message) => {
-            //     if (window.console && window.console.log) {
-            //         window.console.log(message);
-            //     }
-            // };
 
             window.Echo.channel('users')
                 .listen('.notification.sent', (e) => {
@@ -156,12 +137,15 @@
                     Livewire.dispatch('notification-updated');
                 });
 
-            window.Echo.private('user.{{ auth()->id() }}')
-                .listen('.notification.sent', (e) => {
-                    console.log(e);
-                    showNotification('New message received.');
-                    Livewire.dispatch('notification-updated');
-                });
+            if ('{{ auth()->check() }}') {
+                window.Echo.private('user.{{ auth()->id() }}')
+                    .listen('.notification.sent', (e) => {
+                        console.log(e);
+                        showNotification('New message received.');
+                        Livewire.dispatch('notification-updated');
+                    });
+            }
+
 
             function showNotification(message) {
                 const toast = document.getElementById('notification-toast');
@@ -177,6 +161,7 @@
                 messageElement.textContent = message;
 
                 // Show the notification with animation
+                toast.classList.remove('hidden');
                 toast.classList.remove('translate-x-full', 'opacity-0');
                 toast.classList.add('translate-x-0', 'opacity-100');
 
@@ -199,6 +184,7 @@
                 if (toast) {
                     toast.classList.remove('translate-x-0', 'opacity-100');
                     toast.classList.add('translate-x-full', 'opacity-0');
+                    toast.classList.add('hidden');
                 }
             }
 

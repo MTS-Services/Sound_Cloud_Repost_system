@@ -12,7 +12,7 @@ use Throwable;
 
 class CampaignService
 {
-    public function getCampaigns($orderBy = 'is_featured', $order = 'desc')
+    public function getCampaigns($orderBy = 'created_at', $order = 'desc')
     {
         return Campaign::orderBy($orderBy, $order)->latest();
     }
@@ -30,7 +30,7 @@ class CampaignService
                 $trackOwnerUrn = $campaign->music->user?->urn ?? $campaign->user_urn;
                 $trackOwnerName = $campaign->music->user?->name;
                 // $totalCredits = repostPrice($reposter, $likeCommentAbleData['commentable'], $likeCommentAbleData['likeable']);
-                $totalCredits = repostPrice() + ($likeCommentAbleData['commentable'] ? 2 : 0) + ($likeCommentAbleData['likeable'] ? 2 : 0);
+                $totalCredits = repostPrice() + ($likeCommentAbleData['comment'] ? 2 : 0) + ($likeCommentAbleData['likeable'] ? 2 : 0);
 
                 // Create the Repost record
                 $repost = Repost::create([
@@ -45,11 +45,16 @@ class CampaignService
                 // Update the Campaign record using atomic increments
                 $campaign->increment('completed_reposts');
                 $campaign->increment('credits_spent', (float) $totalCredits);
-                if ($likeCommentAbleData['commentable']) {
-                    $campaign->increment('favorite_count');
+
+
+                if ($likeCommentAbleData['comment']) {
+                    $campaign->increment('comment_count');
                 }
                 if ($likeCommentAbleData['likeable']) {
-                    $campaign->increment('emoji_count');
+                    $campaign->increment('like_count');
+                }
+                if ($likeCommentAbleData['follow']) {
+                    $campaign->increment('followowers_count');
                 }
 
                 if ($campaign->budget_credits == $campaign->credits_spent) {
@@ -80,7 +85,7 @@ class CampaignService
                     'receiver_id' => $reposter->id,
                     'receiver_type' => get_class($reposter),
                     'type' => CustomNotification::TYPE_USER,
-                    'url' => route('user.pm.my-account') . '?tab=reposts',
+                    'url' => route('user.my-account') . '?tab=reposts',
                     'message_data' => [
                         'title' => "Repost successful",
                         'message' => "You've been reposted on a campaign",

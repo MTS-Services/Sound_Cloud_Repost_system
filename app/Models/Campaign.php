@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use PhpParser\Node\Stmt\Static_;
 
 class Campaign extends BaseModel
 {
@@ -26,6 +27,9 @@ class Campaign extends BaseModel
         'min_followers',
         'max_followers',
         'is_featured',
+        'featured_at',
+        'is_boost',
+        'boosted_at',
         'start_date',
         'end_date',
         'refund_credits',
@@ -36,8 +40,10 @@ class Campaign extends BaseModel
         'max_repost_last_24_h',
         'max_repost_per_day',
         'target_genre',
+        'like_count',
+        'comment_count',
+        'followowers_count',
         'favorite_count',
-        'emoji_count',
 
         'creater_id',
         'updater_id',
@@ -59,6 +65,11 @@ class Campaign extends BaseModel
         'is_featured' => 'boolean',
         'status' => 'integer',
         'playback_count' => 'integer',
+        'followowers_count' => 'integer',
+        'like_count' => 'integer',
+        'comment_count' => 'integer',
+        'favorite_count' => 'integer',
+
     ];
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
@@ -108,8 +119,12 @@ class Campaign extends BaseModel
             'end_date_formatted',
 
             'feature_label',
+            'featured_again',
+            'boost_again',
+            'boosted_label',
         ]);
     }
+
 
     public const STATUS_OPEN = 1;
     public const STATUS_PAUSED = 2;
@@ -176,6 +191,21 @@ class Campaign extends BaseModel
     public function scopeActive_completed()
     {
         return $this->where('status', '!=', self::STATUS_CANCELLED,)->where('status', '!=', self::STATUS_PAUSED);
+    }
+
+    public const BOOSTED = 1;
+    public const NOT_BOOSTED = 0;
+    
+    public static function getBOOSTEDList(): array
+    {
+        return [
+            self::BOOSTED => 'Yes',
+            self::NOT_BOOSTED => 'No',
+        ];
+    }
+    public function getBoostedLabelAttribute()
+    {
+        return self::getBoostedList()[$this->is_boost] ?? 'Unknown';
     }
 
     public const FEATURED = 1;

@@ -28,9 +28,10 @@ return new class extends Migration
             $table->integer('max_repost_per_day')->nullable();
             $table->string('target_genre')->nullable();
             $table->boolean('pro_feature')->default(false);
-            $table->integer('comment_count')->nullable();
-            $table->integer('favorite_count')->nullable();
-            $table->integer('emoji_count')->nullable();
+            $table->integer('like_count')->default(0);
+            $table->integer('comment_count')->default(0);
+            $table->integer('favorite_count')->default(0);
+            $table->integer('followowers_count')->default(0);
 
             $table->string('title');
             $table->text('description')->nullable();
@@ -47,7 +48,10 @@ return new class extends Migration
             $table->timestamp('end_date')->index()->nullable();
 
             $table->boolean('is_featured')->default(Campaign::NOT_FEATURED);
-            // $table->timestamp('is_featured_at')->nullable();
+            $table->timestamp('featured_at')->nullable();
+
+            $table->boolean('is_boost')->default(false);
+            $table->timestamp('boosted_at')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
