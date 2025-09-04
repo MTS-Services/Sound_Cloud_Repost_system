@@ -92,7 +92,7 @@
                         class="flex items-center gap-1 vg-gray-200 dark:bg-gray-800 rounded-xl p-1 border border-gray-200 dark:border-gray-700">
                         <button @click="activeTab = 'listView'" wire:click="activeTab = 'listView'"
                             class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200"
-                            :class="{ 'bg-orange-500 text-white shadow-lg': activeTab === 'listView', 'text-gray-700 hover:text-gray-100 dark:text-gray-400 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700': activeTab !== 'listView' }"
+                            :class="{ 'bg-orange-500 text-white shadow-lg': activeTab === 'listView', 'text-gray-700 dark:text-gray-400 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700': activeTab !== 'listView' }"
                             title="List View">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -108,7 +108,7 @@
                         </button>
                         <button @click="activeTab = 'gridView'" wire:click="activeTab = 'gridView'"
                             class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200"
-                            :class="{ 'bg-orange-500 text-white shadow-lg': activeTab === 'gridView', 'text-gray-700 hover:text-gray-100 dark:text-gray-400 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700': activeTab !== 'gridView' }"
+                            :class="{ 'bg-orange-500 text-white shadow-lg': activeTab === 'gridView', 'text-gray-700 dark:text-gray-400 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700': activeTab !== 'gridView' }"
                             title="Grid View">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -123,7 +123,7 @@
                         </button>
                         <button @click="activeTab = 'compactView'" wire:click="activeTab = 'compactView'"
                             class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200"
-                            :class="{ 'bg-orange-500 text-white shadow-lg': activeTab === 'compactView', 'text-gray-700 hover:text-gray-100 dark:text-gray-400 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700': activeTab !== 'compactView' }"
+                            :class="{ 'bg-orange-500 text-white shadow-lg': activeTab === 'compactView', 'text-gray-700 dark:text-gray-400 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700': activeTab !== 'compactView' }"
                             title="Compact View">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -631,8 +631,7 @@
                                 </div>
                             </div>
                             <div class="mb-4">
-                                <h3
-                                    class="grid grid-cols-3 gap-2 mb-4 text-xs text-gray-800 dark:text-gray-400">
+                                <h3 class="grid grid-cols-3 gap-2 mb-4 text-xs text-gray-800 dark:text-gray-400">
                                     Urban Pulse</h3>
                                 <p class="text-gray-600 dark:text-gray-300 text-sm mb-2 truncate">Metro Vibes</p><span
                                     class="inline-block bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600">Hip
@@ -801,11 +800,11 @@
                                 </div>
                             </div>
                             <div class="mb-4">
-                                <h3
-                                    class="grid grid-cols-3 gap-2 mb-4 text-xs text-gray-800 dark:text-gray-400">
+                                <h3 class="grid grid-cols-3 gap-2 mb-4 text-xs text-gray-800 dark:text-gray-400">
                                     Neon Nights</h3>
-                                <p class="text-gray-600 dark:text-gray-300 text-sm mb-2 truncate">Synth Paradise</p><span
-                                    class="inline-block bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-300 border border-gray-600">Synthwave</span>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm mb-2 truncate">Synth Paradise</p>
+                                <span
+                                    class="inline-block bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600">Synthwave</span>
                             </div>
                             <div class="mb-4">
                                 <div
@@ -860,7 +859,7 @@
                 <div x-show="activeTab === 'listView'" class="transition-all duration-500 opacity-100 scale-100">
                     <div class="space-y-3">
                         <div
-                            class="relative border rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-gray-900 to-gray-800 border-orange-500 shadow-xl shadow-orange-500/20">
+                            class="relative border rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-900 dark:to-gray-800 border-orange-500 shadow-xl shadow-orange-500/20">
                             <div class="absolute -top-2 -right-2 z-10">
                                 <div
                                     class="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-br from-orange-400 to-orange-600 text-white shadow-lg">
@@ -887,13 +886,14 @@
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-start justify-between gap-2">
                                         <div class="flex-1 min-w-0 cursor-pointer">
-                                            <h3 class="font-bold text-white truncate text-lg">Midnight Dreams</h3>
-                                            <p class="text-gray-300 truncate">Luna Waves</p><span
-                                                class="inline-block mt-1 bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-300 border border-gray-600">Electronic</span>
+                                            <h3 class="font-bold text-black dark:text-white truncate text-lg">Midnight
+                                                Dreams</h3>
+                                            <p class="text-gray-600 dark:text-gray-300 truncate">Luna Waves</p><span
+                                                class="inline-block mt-1 bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-600 dark:text-gray-700 border border-gray-300 dark:border-gray-600">Electronic</span>
                                         </div>
                                         <div class="text-right cursor-pointer">
-                                            <div class="text-lg font-bold text-white">10/10</div>
-                                            <div class="text-xs text-gray-400">score</div>
+                                            <div class="text-lg font-bold text-black dark:text-white">10/10</div>
+                                            <div class="text-xs text-gray-800 dark:text-gray-400">score</div>
                                         </div>
                                     </div>
                                     <div class="flex flex-wrap gap-1 mt-2"><span
@@ -915,7 +915,7 @@
                                                 </polygon>
                                             </svg>Pro Artist</span></div>
                                     <div class="mt-3 mb-3">
-                                        <div class="flex items-center justify-between text-xs text-gray-400 mb-1">
+                                        <div class="flex items-center justify-between text-xs text-gray-800 dark:text-gray-400 mb-1">
                                             <span>Engagement</span><span>100%</span>
                                         </div>
                                         <div class="w-full bg-gray-700 rounded-full h-2">
@@ -924,17 +924,17 @@
                                         </div>
                                     </div>
                                     <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-4 text-xs text-gray-400"><span>1.3K
+                                        <div class="flex items-center gap-4 text-xs text-gray-800 dark:text-gray-400"><span>1.3K
                                                 reposts</span><span>3.2K reach</span><span>15.4K plays</span></div>
                                         <div class="flex items-center gap-2"><button
-                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white hover:shadow-lg border border-gray-600"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
                                                 title="Play"><svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                     height="24" viewBox="0 0 24 24" fill="none"
                                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                                     stroke-linejoin="round" class="lucide lucide-play w-4 h-4 ml-0.5">
                                                     <polygon points="5 3 19 12 5 21 5 3"></polygon>
                                                 </svg></button><button
-                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-600"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
                                                 title="Reach"><svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                     height="24" viewBox="0 0 24 24" fill="none"
                                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -943,7 +943,7 @@
                                                         d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
                                                     </path>
                                                 </svg></button><button
-                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-600"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
                                                 title="Repost"><svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                     height="24" viewBox="0 0 24 24" fill="none"
                                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -956,7 +956,7 @@
                             </div>
                         </div>
                         <div
-                            class="relative border rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-gray-900 to-gray-800 border-gray-500 shadow-lg shadow-gray-500/20">
+                            class="relative border rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-900 dark:to-gray-800 border-gray-600 dark:border-gray-500 shadow-lg shadow-gray-500/20">
                             <div class="absolute -top-2 -right-2 z-10">
                                 <div
                                     class="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-br from-gray-400 to-gray-600 text-white shadow-lg">
@@ -983,14 +983,14 @@
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-start justify-between gap-2">
                                         <div class="flex-1 min-w-0 cursor-pointer">
-                                            <h3 class="font-bold text-white truncate text-lg">Urban Pulse</h3>
-                                            <p class="text-gray-300 truncate">Metro Vibes</p>
-                                            {{-- <span
-                                                class="inline-block mt-1 bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600">Hip Hop</span> --}}
+                                            <h3 class="font-bold text-black dark:text-white truncate text-lg">Urban Pulse</h3>
+                                            <p class="text-gray-600 dark:text-gray-300 truncate">Metro Vibes</p>
+                                            <span
+                                                class="inline-block mt-1 bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600">Hip Hop</span>
                                         </div>
                                         <div class="text-right cursor-pointer">
-                                            <div class="text-lg font-bold text-white">9.4/10</div>
-                                            <div class="text-xs text-gray-400">score</div>
+                                            <div class="text-lg font-bold text-black dark:text-white">9.4/10</div>
+                                            <div class="text-xs text-gray-800 dark:text-gray-400">score</div>
                                         </div>
                                     </div>
                                     <div class="flex flex-wrap gap-1 mt-2"><span
@@ -1004,7 +1004,7 @@
                                                 </polygon>
                                             </svg>Pro Artist</span></div>
                                     <div class="mt-3 mb-3">
-                                        <div class="flex items-center justify-between text-xs text-gray-400 mb-1">
+                                        <div class="flex items-center justify-between text-xs text-gray-800 dark:text-gray-400 mb-1">
                                             <span>Engagement</span><span>94%</span>
                                         </div>
                                         <div class="w-full bg-gray-700 rounded-full h-2">
@@ -1013,10 +1013,10 @@
                                         </div>
                                     </div>
                                     <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-4 text-xs text-gray-400"><span>1.2K
+                                        <div class="flex items-center gap-4 text-xs text-gray-800 dark:text-gray-400"><span>1.2K
                                                 reposts</span><span>2.9K reach</span><span>13.8K plays</span></div>
                                         <div class="flex items-center gap-2"><button
-                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white hover:shadow-lg border border-gray-600"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
                                                 title="Play"><svg xmlns="http://www.w3.org/2000/svg"
                                                     width="24" height="24" viewBox="0 0 24 24"
                                                     fill="none" stroke="currentColor" stroke-width="2"
@@ -1034,7 +1034,7 @@
                                                         d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
                                                     </path>
                                                 </svg></button><button
-                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-600"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
                                                 title="Repost"><svg xmlns="http://www.w3.org/2000/svg"
                                                     width="24" height="24" viewBox="0 0 24 24"
                                                     fill="none" stroke="currentColor" stroke-width="2"
@@ -1048,7 +1048,7 @@
                             </div>
                         </div>
                         <div
-                            class="relative border rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-gray-900 to-gray-800 border-orange-400 shadow-lg shadow-orange-400/20">
+                            class="relative border rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-gray-200 dark:from-gray-900 to-gray-200 dark:to-gray-800 border-orange-400 shadow-lg shadow-orange-400/20">
                             <div class="absolute -top-2 -right-2 z-10">
                                 <div
                                     class="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-br from-orange-300 to-orange-500 text-white shadow-lg">
@@ -1062,7 +1062,7 @@
                             </div>
                             <div class="flex items-center gap-4">
                                 <div
-                                    class="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold bg-gradient-to-br from-orange-300 to-orange-500 text-white shadow-lg text-2xl">
+                                    class="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold bg-gradient-to-br from-orange-300 to-orange-500 text-white shadow-lg">
                                     3</div>
                                 <div class="relative group cursor-pointer"><img
                                         src="https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=300"
@@ -1075,13 +1075,13 @@
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-start justify-between gap-2">
                                         <div class="flex-1 min-w-0 cursor-pointer">
-                                            <h3 class="font-bold text-white truncate text-lg">Cosmic Flow</h3>
-                                            <p class="text-gray-300 truncate">Stellar Sound</p><span
-                                                class="inline-block mt-1 bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-300 border border-gray-600">Ambient</span>
+                                            <h3 class="font-bold text-black dark:text-white truncate text-lg">Cosmic Flow</h3>
+                                            <p class="text-gray-600 dark:text-gray-300 truncate">Stellar Sound</p><span
+                                                class="inline-block mt-1 bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600">Ambient</span>
                                         </div>
                                         <div class="text-right cursor-pointer">
-                                            <div class="text-lg font-bold text-white">9.1/10</div>
-                                            <div class="text-xs text-gray-400">score</div>
+                                            <div class="text-lg font-bold text-black dark:text-white">9.1/10</div>
+                                            <div class="text-xs text-gray-800 dark:text-gray-400">score</div>
                                         </div>
                                     </div>
                                     <div class="flex flex-wrap gap-1 mt-2"><span
@@ -1094,7 +1094,7 @@
                                                 <polyline points="16 7 22 7 22 13"></polyline>
                                             </svg>Rising Star</span></div>
                                     <div class="mt-3 mb-3">
-                                        <div class="flex items-center justify-between text-xs text-gray-400 mb-1">
+                                        <div class="flex items-center justify-between text-xs text-gray-800 dark:text-gray-400 mb-1">
                                             <span>Engagement</span><span>91%</span>
                                         </div>
                                         <div class="w-full bg-gray-700 rounded-full h-2">
@@ -1103,10 +1103,10 @@
                                         </div>
                                     </div>
                                     <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-4 text-xs text-gray-400"><span>1.1K
+                                        <div class="flex items-center gap-4 text-xs text-gray-800 dark:text-gray-400"><span>1.1K
                                                 reposts</span><span>2.6K reach</span><span>12.3K plays</span></div>
                                         <div class="flex items-center gap-2"><button
-                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white hover:shadow-lg border border-gray-600"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
                                                 title="Play"><svg xmlns="http://www.w3.org/2000/svg"
                                                     width="24" height="24" viewBox="0 0 24 24"
                                                     fill="none" stroke="currentColor" stroke-width="2"
@@ -1114,7 +1114,7 @@
                                                     class="lucide lucide-play w-4 h-4 ml-0.5">
                                                     <polygon points="5 3 19 12 5 21 5 3"></polygon>
                                                 </svg></button><button
-                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-600"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
                                                 title="Reach"><svg xmlns="http://www.w3.org/2000/svg"
                                                     width="24" height="24" viewBox="0 0 24 24"
                                                     fill="none" stroke="currentColor" stroke-width="2"
@@ -1138,10 +1138,10 @@
                             </div>
                         </div>
                         <div
-                            class="relative border rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gray-800 border-gray-700">
+                            class="relative border rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gray-200 dark:bg-gray-800 border-gray-300 dark:border-gray-700">
                             <div class="flex items-center gap-4">
                                 <div
-                                    class="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold bg-gray-700 text-gray-300 border border-gray-600 ">
+                                    class="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold bg-gray-700 text-gray-300 border border-gray-300 dark:border-gray-600 ">
                                     4</div>
                                 <div class="relative group cursor-pointer"><img
                                         src="https://images.pexels.com/photos/1629236/pexels-photo-1629236.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=300"
@@ -1154,17 +1154,17 @@
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-start justify-between gap-2">
                                         <div class="flex-1 min-w-0 cursor-pointer">
-                                            <h3 class="font-bold text-white truncate text-base">Neon Nights</h3>
-                                            <p class="text-gray-300 truncate">Synth Paradise</p><span
-                                                class="inline-block mt-1 bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-300 border border-gray-600">Synthwave</span>
+                                            <h3 class="font-bold text-black dark:text-white truncate text-base">Neon Nights</h3>
+                                            <p class="text-gray-600 dark:text-gray-300 truncate">Synth Paradise</p><span
+                                                class="inline-block mt-1 bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600">Synthwave</span>
                                         </div>
                                         <div class="text-right cursor-pointer">
-                                            <div class="text-lg font-bold text-white">8.3/10</div>
-                                            <div class="text-xs text-gray-400">score</div>
+                                            <div class="text-lg font-bold text-black dark:text-white">8.3/10</div>
+                                            <div class="text-xs text-gray-800 dark:text-gray-400">score</div>
                                         </div>
                                     </div>
                                     <div class="mt-3 mb-3">
-                                        <div class="flex items-center justify-between text-xs text-gray-400 mb-1">
+                                        <div class="flex items-center justify-between text-xs text-gray-800 dark:text-gray-400 mb-1">
                                             <span>Engagement</span><span>83%</span>
                                         </div>
                                         <div class="w-full bg-gray-700 rounded-full h-2">
@@ -1173,10 +1173,10 @@
                                         </div>
                                     </div>
                                     <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-4 text-xs text-gray-400"><span>920
+                                        <div class="flex items-center gap-4 text-xs text-gray-800 dark:text-gray-400"><span>920
                                                 reposts</span><span>2.3K reach</span><span>10.9K plays</span></div>
                                         <div class="flex items-center gap-2"><button
-                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white hover:shadow-lg border border-gray-600"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
                                                 title="Play"><svg xmlns="http://www.w3.org/2000/svg"
                                                     width="24" height="24" viewBox="0 0 24 24"
                                                     fill="none" stroke="currentColor" stroke-width="2"
@@ -1184,7 +1184,7 @@
                                                     class="lucide lucide-play w-4 h-4 ml-0.5">
                                                     <polygon points="5 3 19 12 5 21 5 3"></polygon>
                                                 </svg></button><button
-                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-600"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
                                                 title="Reach"><svg xmlns="http://www.w3.org/2000/svg"
                                                     width="24" height="24" viewBox="0 0 24 24"
                                                     fill="none" stroke="currentColor" stroke-width="2"
@@ -1194,7 +1194,7 @@
                                                         d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
                                                     </path>
                                                 </svg></button><button
-                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-600"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
                                                 title="Repost"><svg xmlns="http://www.w3.org/2000/svg"
                                                     width="24" height="24" viewBox="0 0 24 24"
                                                     fill="none" stroke="currentColor" stroke-width="2"

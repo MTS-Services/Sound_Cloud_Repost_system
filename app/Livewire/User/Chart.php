@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class Chart extends Component
 {
-    public $activeTab = 'gridView';
+    public $activeTab = 'listView';
 
 
 
