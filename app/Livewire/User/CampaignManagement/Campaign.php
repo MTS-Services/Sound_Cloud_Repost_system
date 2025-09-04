@@ -28,8 +28,6 @@ class Campaign extends Component
 {
     use WithPagination;
 
-
-
     #[Locked]
     protected string $baseUrl = 'https://api.soundcloud.com';
 
@@ -821,6 +819,7 @@ class Campaign extends Component
     public function handleAudioPlay($campaignId)
     {
         $this->playingCampaigns[$campaignId] = true;
+        dd('playingCampaigns', $this->playingCampaigns, 'campaignId', $campaignId, 'campaign', $this->campaign);
         $this->playStartTimes[$campaignId] = now()->timestamp;
     }
 
