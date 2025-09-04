@@ -906,6 +906,16 @@ class Campaign extends Component
                 $campaign->increment('playback_count');
             }
             $this->playcount = true;
+            $this->reset([
+                'playcount',
+                'playedCampaigns',
+                'repostedCampaigns',
+                'campaign',
+                'showRepostConfirmationModal',
+                'commented',
+                'liked',
+                'followed',
+            ]);
         }
         return $canRepost;
     }
