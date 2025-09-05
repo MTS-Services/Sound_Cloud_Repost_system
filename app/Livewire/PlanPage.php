@@ -12,6 +12,7 @@ use App\Services\User\UserSettingsService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -104,6 +105,9 @@ class PlanPage extends Component
 
     public function render()
     {
+        if (Auth::guard('web')->check()) {
+            $this->redirect(route('user.dashboard'), true);
+        }
         return view('livewire.plan-page');
     }
 }
