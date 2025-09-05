@@ -2,7 +2,8 @@
 
 namespace App\Livewire;
 
-use Auth;
+
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Home extends Component
