@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Services\PlaylistService;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\TrackService;
+use App\Services\User\AnalyticsService;
 use App\Services\User\CampaignManagement\CampaignService;
 use App\Services\User\CampaignManagement\MyCampaignService;
 use Illuminate\Support\Facades\DB;
@@ -27,8 +28,6 @@ use App\Models\Feature;
 class Campaign extends Component
 {
     use WithPagination;
-
-
 
     #[Locked]
     protected string $baseUrl = 'https://api.soundcloud.com';
@@ -186,16 +185,18 @@ class Campaign extends Component
     protected ?TrackService $trackService = null;
     protected ?PlaylistService $playlistService = null;
     protected ?SoundCloudService $soundCloudService = null;
+    protected ?AnalyticsService $analyticsService = null;
 
     protected ?MyCampaignService $myCampaignService = null;
 
-    public function boot(CampaignService $campaignService, TrackService $trackService, PlaylistService $playlistService, SoundCloudService $soundCloudService, MyCampaignService $myCampaignService)
+    public function boot(CampaignService $campaignService, TrackService $trackService, PlaylistService $playlistService, SoundCloudService $soundCloudService, MyCampaignService $myCampaignService, AnalyticsService $analyticsService)
     {
         $this->campaignService = $campaignService;
         $this->trackService = $trackService;
         $this->playlistService = $playlistService;
         $this->soundCloudService = $soundCloudService;
         $this->myCampaignService = $myCampaignService;
+        $this->analyticsService = $analyticsService;
     }
 
     public function mount()
@@ -481,7 +482,7 @@ class Campaign extends Component
     public function fetchTracks()
     {
         try {
-            // $this->soundCloudService->syncSelfTracks([]);
+            $this->soundCloudService->syncSelfTracks([]);
 
             $this->tracksPage = 1;
             $this->tracks = Track::where('user_urn', user()->urn)
@@ -908,8 +909,21 @@ class Campaign extends Component
 
         if ($canRepost && !$this->playcount) {
             $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
-            $campaign->increment('playback_count');
+            $response = $this->analyticsService->updateAnalytics($campaign, 'total_plays', $campaign->target_genre);
+            if ($response != false || $response != null) {
+                $campaign->increment('playback_count');
+            }
             $this->playcount = true;
+            $this->reset([
+                'playcount',
+                'playedCampaigns',
+                'repostedCampaigns',
+                'campaign',
+                'showRepostConfirmationModal',
+                'commented',
+                'liked',
+                'followed',
+            ]);
         }
         return $canRepost;
     }

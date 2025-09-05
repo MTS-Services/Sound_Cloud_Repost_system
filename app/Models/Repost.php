@@ -47,6 +47,11 @@ class Repost extends BaseModel
     {
         return $this->belongsTo(User::class, 'track_owner_urn', 'urn');
     }
+    
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'track_owner_urn', 'urn');
+    }
 
     public function campaign(): BelongsTo
     {

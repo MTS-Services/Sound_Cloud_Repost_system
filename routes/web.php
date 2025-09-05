@@ -7,8 +7,6 @@ use App\Http\Controllers\BlogController;
 Route::post('update/sort/order', [DatatableController::class, 'updateSortOrder'])->name('update.sort.order');
 Route::post('/content-image/upload', [FileManagementController::class, 'contentImageUpload'])->name('file.ci_upload');
 
-
-
 require __DIR__ . '/auth.php';
 require __DIR__ . '/admin.php';
 require __DIR__ . '/user.php';
