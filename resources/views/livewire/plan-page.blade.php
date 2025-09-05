@@ -1,5 +1,5 @@
-<section class="bg-gradient-to-b from-dark-darker to-dark-bg">
-    <div class="container mx-auto px-4 pt-24 pb-8">
+<section class="bg-gradient-to-b from-dark-darker to-dark-bg" x-data="{ isYearly: @entangle('isYearly') }">
+    <div class="container mx-auto px-4 pt-24 pb-8" id="plans">
         <div class="text-center mb-12">
             <h1 class="text-5xl font-bold text-white mb-4">Choose Your Perfect Plan</h1>
             <p class="text-xl text-slate-300 max-w-2xl mx-auto">Pro Plans unlock the full potential of
@@ -9,415 +9,93 @@
         <div class="flex items-center justify-center mb-12">
             <div class="bg-slate-700 p-1 rounded-xl shadow-lg border border-slate-600">
                 <div class="flex items-center">
-                    <button wire:click="togglePlanType"
-                        class="px-8 py-3 rounded-lg text-sm font-semibold transition-all duration-300 {{ !$isYearly ? 'bg-slate-600 shadow-md text-white ' : 'text-slate-300 hover:text-white' }}">Billed
+                    <button @click="isYearly = false"
+                        :class="!isYearly ? 'bg-slate-600 shadow-md text-white ' : 'text-slate-300 hover:text-white'"
+                        class="px-8 py-3 rounded-lg text-sm font-semibold transition-all duration-300">Billed
                         Monthly</button>
-                    <button wire:click="togglePlanType"
-                        class="px-8 py-3 rounded-lg text-sm font-semibold transition-all duration-300 relative {{ $isYearly ? 'bg-slate-600 shadow-md text-white ' : 'text-slate-300 hover:text-white' }}">Billed
+                    <button @click="isYearly = true"
+                        :class="isYearly ? 'bg-slate-600 shadow-md text-white ' : 'text-slate-300 hover:text-white'"
+                        class="px-8 py-3 rounded-lg text-sm font-semibold transition-all duration-300 relative">Billed
                         Annually<span
                             class="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full">Save
-                            17%</span>
+                            {{ App\Models\Plan::getYearlySavePercentage() }}%</span>
                     </button>
                 </div>
             </div>
         </div>
         <div class="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto mb-16">
-            <div
-                class="relative bg-slate-700 rounded-3xl shadow-2xl border transition-all duration-300 hover:shadow-3xl hover:scale-105 border-slate-600 hover:border-slate-500">
-                <div class="p-8">
-                    <div class="text-center mb-8">
-                        <h3 class="text-3xl font-bold text-white mb-3">Free Plan</h3>
-                        <p class="text-slate-300 mb-6">Perfect for getting started with music promotion
-                        </p>
-                        <div class="mb-6">
-                            <div class="flex items-baseline justify-center"><span
-                                    class="text-6xl font-bold text-white">$0</span><span
-                                    class="text-slate-400 ml-2">/forever</span></div>
-                        </div>
-                    </div>
-                    <div class="space-y-4 mb-8">
-                        <div class="flex items-start space-x-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-green-500/20 text-green-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check w-4 h-4">
-                                    <path d="M20 6 9 17l-5-5"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2"><span
-                                        class="text-sm font-medium text-white">Direct
-                                        Requests</span><span class="text-sm font-bold text-orange-400">20</span>
+            @forelse ($plans as $plan)
+                <div
+                    class="relative bg-slate-700 rounded-3xl shadow-2xl border transition-all duration-300 hover:shadow-3xl hover:scale-105 border-slate-600 hover:border-slate-500 {{ Auth::check() && user()->activePlan()?->plan?->id == $plan->id ? 'opacity-50 pointer-events-none' : '' }}">
+                    <div class="p-8">
+                        <div class="text-center mb-8">
+                            <h3 class="text-3xl font-bold text-white mb-3">{{ $plan->name }}</h3>
+                            <p class="text-slate-300 mb-6">
+                                {{ $plan->notes }}
+                            </p>
+                            <div class="mb-6">
+                                <div class="flex items-baseline justify-center">
+                                    <span class="text-6xl font-bold text-white">
+                                        $<span
+                                            x-text="isYearly ? {{ number_format($plan->yearly_price, 2) }} : {{ number_format($plan->monthly_price, 2) }}"></span>
+                                    </span>
+                                    <span class="text-slate-400 ml-2">
+                                        /<span
+                                            x-text="{{ $plan->monthly_price > 0 ? 'isYearly ? \'year\' : \'month\'' : '\'Forever\'' }}"></span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
-                        <div class="flex items-start space-x-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-green-500/20 text-green-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check w-4 h-4">
-                                    <path d="M20 6 9 17l-5-5"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2"><span
-                                        class="text-sm font-medium text-white">Simultaneous
-                                        Campaigns</span><span class="text-sm font-bold text-orange-400">2</span>
+                        @foreach ($plan->featureRelations as $featureRelation)
+                            <div class="space-y-4 mb-8">
+                                <div class="flex items-start space-x-3">
+
+                                    @if ($featureRelation?->feature?->type == App\Models\Feature::TYPE_BOOLEAN && $featureRelation->value == 'False')
+                                        <div
+                                            class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-red-500/20 text-red-400">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-x w-4 h-4">
+                                                <path d="M18 6 6 18"></path>
+                                                <path d="m6 6 12 12"></path>
+                                            </svg>
+                                        </div>
+                                    @else
+                                        <div
+                                            class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-green-500/20 text-green-400">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-check w-4 h-4">
+                                                <path d="M20 6 9 17l-5-5"></path>
+                                            </svg>
+                                        </div>
+                                    @endif
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2"><span
+                                                class="text-sm font-medium text-white">{{ $featureRelation?->feature?->name }}</span><span
+                                                class="text-sm font-bold text-orange-400">{{ $featureRelation?->feature?->type == App\Models\Feature::TYPE_STRING ? $featureRelation->value : '' }}</span>
+                                        </div>
+                                        <p class="text-xs text-slate-400 mt-1">{{ $featureRelation?->feature?->note }}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-green-500/20 text-green-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check w-4 h-4">
-                                    <path d="M20 6 9 17l-5-5"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2"><span
-                                        class="text-sm font-medium text-white">Multi-Account
-                                        Promotion</span><span class="text-sm font-bold text-orange-400">1
-                                        account</span></div>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-green-500/20 text-green-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check w-4 h-4">
-                                    <path d="M20 6 9 17l-5-5"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2"><span
-                                        class="text-sm font-medium text-white">Campaign
-                                        Targeting</span>
-                                </div>
-                                <p class="text-xs text-slate-400 mt-1">genre, country, mood</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-red-500/20 text-red-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x w-4 h-4">
-                                    <path d="M18 6 6 18"></path>
-                                    <path d="m6 6 12 12"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2"><span
-                                        class="text-sm font-medium text-slate-400">Featured Campaign
-                                        Priority</span></div>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-green-500/20 text-green-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-check w-4 h-4">
-                                    <path d="M20 6 9 17l-5-5"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2"><span
-                                        class="text-sm font-medium text-white">Campaign Rating &amp;
-                                        Analytics</span><span class="text-sm font-bold text-orange-400">Basic</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-red-500/20 text-red-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x w-4 h-4">
-                                    <path d="M18 6 6 18"></path>
-                                    <path d="m6 6 12 12"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2"><span
-                                        class="text-sm font-medium text-slate-400">Growth
-                                        Analytics</span>
-                                </div>
-                                <p class="text-xs text-slate-400 mt-1">reach, followers, reposts</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-green-500/20 text-green-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-check w-4 h-4">
-                                    <path d="M20 6 9 17l-5-5"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2"><span
-                                        class="text-sm font-medium text-white">Community Support &amp;
-                                        Networking</span></div>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-green-500/20 text-green-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-check w-4 h-4">
-                                    <path d="M20 6 9 17l-5-5"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2"><span
-                                        class="text-sm font-medium text-white">Collaboration Hub</span>
-                                </div>
-                                <p class="text-xs text-slate-400 mt-1">connect with other artists</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-green-500/20 text-green-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-check w-4 h-4">
-                                    <path d="M20 6 9 17l-5-5"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2"><span
-                                        class="text-sm font-medium text-white">Support
-                                        Level</span><span class="text-sm font-bold text-orange-400">Community
-                                        Support</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div><button
-                        class="w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 bg-slate-600 text-white hover:bg-slate-500 border-2 border-slate-500 hover:border-slate-400">Get
-                        Started</button>
-                </div>
-            </div>
-            <div
-                class="relative bg-slate-700 rounded-3xl shadow-2xl border transition-all duration-300 hover:shadow-3xl hover:scale-105 border-orange-400 ring-2 ring-orange-400/20">
-                <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <div
-                        class="bg-orange-500 text-white px-6 py-2 rounded-full text-sm font-bold flex items-center space-x-2 shadow-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" class="lucide lucide-star w-4 h-4">
-                            <polygon
-                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
-                            </polygon>
-                        </svg><span>Most Popular</span>
+                        @endforeach
+                        @if ($plan->monthly_price > 0)
+                            <x-gbutton variant="primary" wire:click="subscribe('{{ encrypt($plan->id) }}')"
+                                class="w-full py-4 px-6">Choose Plan</x-gbutton>
+                        @else
+                            <x-gabutton variant="secondary" href="{{ route('user.dashboard') }}"
+                                class="w-full py-4 px-6">Get
+                                Started</x-gabutton>
+                        @endif
+
                     </div>
                 </div>
-                <div class="p-8">
-                    <div class="text-center mb-8">
-                        <h3 class="text-3xl font-bold text-white mb-3">Growth Plan</h3>
-                        <p class="text-slate-300 mb-6">Advanced features for serious music promotion
-                        </p>
-                        <div class="mb-6">
-                            <div class="flex items-baseline justify-center"><span
-                                    class="text-6xl font-bold text-white">{{ $isYearly ? "250$" : "$25" }}</span><span
-                                    class="text-slate-400 ml-2">/{{ $isYearly ? 'year' : 'month' }}</span></div>
-                            @if ($isYearly)
-                                <div class="text-orange-400 text-sm font-medium mt-2">Save $50 per year</div>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="space-y-4 mb-8">
-                        <div class="flex items-start space-x-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-green-500/20 text-green-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-check w-4 h-4">
-                                    <path d="M20 6 9 17l-5-5"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2"><span
-                                        class="text-sm font-medium text-white">Direct
-                                        Requests</span><span class="text-sm font-bold text-orange-400">100</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-green-500/20 text-green-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-check w-4 h-4">
-                                    <path d="M20 6 9 17l-5-5"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2"><span
-                                        class="text-sm font-medium text-white">Simultaneous
-                                        Campaigns</span><span class="text-sm font-bold text-orange-400">10</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-green-500/20 text-green-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-check w-4 h-4">
-                                    <path d="M20 6 9 17l-5-5"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2"><span
-                                        class="text-sm font-medium text-white">Multi-Account
-                                        Promotion</span><span
-                                        class="text-sm font-bold text-orange-400">Unlimited</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-green-500/20 text-green-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-check w-4 h-4">
-                                    <path d="M20 6 9 17l-5-5"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2"><span
-                                        class="text-sm font-medium text-white">Campaign
-                                        Targeting</span>
-                                </div>
-                                <p class="text-xs text-slate-400 mt-1">genre, country, mood</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-green-500/20 text-green-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-check w-4 h-4">
-                                    <path d="M20 6 9 17l-5-5"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2"><span
-                                        class="text-sm font-medium text-white">Featured Campaign
-                                        Priority</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-green-500/20 text-green-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-check w-4 h-4">
-                                    <path d="M20 6 9 17l-5-5"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2"><span
-                                        class="text-sm font-medium text-white">Campaign Rating &amp;
-                                        Analytics</span><span class="text-sm font-bold text-orange-400">Advanced
-                                        Dashboard</span></div>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-green-500/20 text-green-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-check w-4 h-4">
-                                    <path d="M20 6 9 17l-5-5"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2"><span
-                                        class="text-sm font-medium text-white">Growth Analytics</span>
-                                </div>
-                                <p class="text-xs text-slate-400 mt-1">reach, followers, reposts</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-green-500/20 text-green-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-check w-4 h-4">
-                                    <path d="M20 6 9 17l-5-5"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2"><span
-                                        class="text-sm font-medium text-white">Community Support &amp;
-                                        Networking</span></div>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-green-500/20 text-green-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-check w-4 h-4">
-                                    <path d="M20 6 9 17l-5-5"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2"><span
-                                        class="text-sm font-medium text-white">Collaboration Hub</span>
-                                </div>
-                                <p class="text-xs text-slate-400 mt-1">connect with other artists</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 bg-green-500/20 text-green-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-check w-4 h-4">
-                                    <path d="M20 6 9 17l-5-5"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2"><span
-                                        class="text-sm font-medium text-white">Support
-                                        Level</span><span class="text-sm font-bold text-orange-400">Priority
-                                        Support</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {{-- <x-primary-button class="ms-4">
-                        {{ __('Get Started') }}
-                    </x-primary-button> --}}
-                    <button
-                        class="w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 bg-orange-500 text-white hover:bg-orange-600 shadow-lg hover:shadow-xl">Choose
-                        Plan</button>
-                </div>
-            </div>
+            @empty
+            @endforelse
         </div>
         <div class="max-w-6xl mx-auto mb-16">
             <div class="text-center mb-12">
@@ -455,17 +133,16 @@
             <div
                 class="bg-gradient-to-r from-orange-500/10 to-orange-600/10 rounded-3xl p-8 border border-orange-500/20">
                 <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-white mb-4">Why Artists Choose <span
-                            class="text-orange-400">Pro Plans</span></h2>
+                    <h2 class="text-3xl font-bold text-white mb-4">Why Artists Choose <span class="text-orange-400">Pro
+                            Plans</span></h2>
                 </div>
                 <div class="grid md:grid-cols-2 gap-8">
                     <div class="space-y-6">
                         <div class="flex items-start space-x-4">
                             <div class="bg-orange-500 rounded-lg p-2 flex-shrink-0"><svg
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-trending-up w-5 h-5 text-white">
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-trending-up w-5 h-5 text-white">
                                     <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
                                     <polyline points="16 7 22 7 22 13"></polyline>
                                 </svg></div>
@@ -593,9 +270,9 @@
                 <p class="text-slate-300 mb-6">Join thousands of artists who've already transformed
                     their
                     reach
-                    with RepostChain Pro.</p><button
-                    class="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">Start
-                    Your Pro Journey Today</button>
+                    with RepostChain Pro.</p>
+                <x-gabutton variant="primary" href="#plans" class="py-4 px-6">Start
+                    Your Pro Journey Today</x-gabutton>
                 <div class="mt-6">
                     <p class="text-slate-300 mb-4">Need help choosing the right plan?</p><button
                         class="text-orange-400 hover:text-orange-300 font-semibold underline transition-colors duration-200">Contact

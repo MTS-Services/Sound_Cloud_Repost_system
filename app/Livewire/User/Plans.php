@@ -5,50 +5,35 @@ namespace App\Livewire\User;
 use App\Models\Order;
 use App\Models\Plan;
 use App\Models\User;
-use App\Models\UserSetting;
 use App\Services\Admin\OrderManagement\OrderService;
-use App\Services\Admin\PackageManagement\FeatureCategorySevice;
 use App\Services\Admin\PackageManagement\PlanService;
 use App\Services\Admin\PackageManagement\UserPlanService;
 use App\Services\User\UserSettingsService;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class Plans extends Component
 {
-    public $pricing;
-    public $plans;
-    public $featureCategories;
-    public $yearly_plan = 0;
+    public $isYearly = false;
+    public Collection $plans;
 
     protected PlanService $planService;
-    protected FeatureCategorySevice $FeatureCategorySevice;
     protected OrderService $orderService;
     protected UserPlanService $userPlanService;
     protected UserSettingsService $userSettingsService;
-
     public function boot(
-        PlanService $planService, FeatureCategorySevice $FeatureCategorySevice, OrderService $orderService, UserPlanService $userPlanService, UserSettingsService $userSettingsService)
-    {
+        PlanService $planService,
+        OrderService $orderService,
+        UserPlanService $userPlanService,
+        UserSettingsService $userSettingsService
+    ) {
         $this->planService = $planService;
-        $this->FeatureCategorySevice = $FeatureCategorySevice;
         $this->orderService = $orderService;
         $this->orderService = $orderService;
         $this->userPlanService = $userPlanService;
         $this->userSettingsService = $userSettingsService;
-    }
-
-    public function pricing()
-    {
-        $data['plans'] = $this->planService->getPlans('monthly_price', 'asc')->with('featureRelations')->get();
-        $data['featureCategories'] = $this->FeatureCategorySevice->getFeatureCategories()->with('features')->get();
-        return $data;
-    }
-
-    public function switchPlan()
-    {
-        $this->yearly_plan = $this->yearly_plan == 0 ? 1 : 0;
     }
 
     public function subscribe(string $plan_id)
@@ -70,11 +55,11 @@ class Plans extends Component
 
                 if ($activeUserPlan && $activeUserPlan->plan?->price > $plan->price) {
 
-                   $this->dispatch('alert', type:'error', message: 'You have already subscribed to a plan with higher price. Cannot upgrade a lower price plan.');
+                    $this->dispatch('alert', type: 'error', message: 'You have already subscribed to a plan with higher price. Cannot upgrade a lower price plan.');
 
                     return null; // Return null here
                 } elseif ($activeUserPlan && $activeUserPlan->plan?->price < $plan->price) {
-                    $data['amount'] = $this->yearly_plan == 1
+                    $data['amount'] = $this->isYearly
                         ? $plan->yearly_price - $activeUserPlan->plan->yearly_price
                         : $plan->monthly_price - $activeUserPlan->plan->monthly_price;
                     $data['notes'] = "Plan upgrade from " . $activeUserPlan->plan->name . " to " . $plan->name;
@@ -82,10 +67,10 @@ class Plans extends Component
                     $data['end_date'] = $activeUserPlan->end_date;
                     $data['duration'] = $activeUserPlan->duration;
                 } else {
-                    $data['amount'] = $this->yearly_plan == 1 ? $plan->yearly_price : $plan->monthly_price;
+                    $data['amount'] = $this->isYearly ? $plan->yearly_price : $plan->monthly_price;
                     $data['notes'] = "Plan subscription for " . $plan->name;
                     $data['start_date'] = now();
-                    $data['end_date'] = $this->yearly_plan == 1 ? now()->addYear() : now()->addMonth();
+                    $data['end_date'] = $this->isYearly ? now()->addYear() : now()->addMonth();
                     $data['duration'] = now()->diffInDays($data['end_date']);
                 }
 
@@ -111,9 +96,7 @@ class Plans extends Component
 
     public function mount()
     {
-        $this->pricing = $this->pricing();
-        $this->plans = $this->pricing['plans'];
-        $this->featureCategories = $this->pricing['featureCategories'];
+        $this->plans = $this->planService->getPlans('monthly_price', 'asc')->with('featureRelations.feature')->active()->get();
     }
 
     public function render()

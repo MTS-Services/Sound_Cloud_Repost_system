@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -92,6 +94,18 @@ class Plan extends BaseModel
         return $this->morphMany(FeatureRelation::class, 'package');
     }
 
+    public function features(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Feature::class,
+            FeatureRelation::class,
+            'package_id',
+            'id',
+            'id',
+            'feature_id'
+        );
+    }
+
     // In Plan.php model
     public static function getYearlySavePercentage(): float|int
     {
@@ -111,5 +125,15 @@ class Plan extends BaseModel
     public function getYearlySavePriceAttribute(): float|int
     {
         return ($this->monthly_price * 12) - $this->yearly_price;
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_ACTIVE);
+    }
+
+    public function scopeInactive(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_INACTIVE);
     }
 }
