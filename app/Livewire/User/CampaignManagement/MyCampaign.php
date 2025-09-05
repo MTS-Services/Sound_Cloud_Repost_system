@@ -14,6 +14,7 @@ use App\Models\UserPlan;
 use App\Services\Admin\UserManagement\UserService;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\TrackService;
+use App\Services\User\CampaignManagement\MyCampaignService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +24,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\Feature;
 
 class MyCampaign extends Component
 {
@@ -31,6 +33,8 @@ class MyCampaign extends Component
     protected TrackService $trackService;
     protected UserService $userService;
     protected SoundCloudService $soundCloudService;
+
+    protected MyCampaignService $myCampaignService;
 
     public $baseUrl = 'https://soundcloud.com/';
 
@@ -141,11 +145,12 @@ class MyCampaign extends Component
     private const ITEMS_PER_PAGE = 10;
     private const SOUNDCLOUD_API_URL = 'https://api-v2.soundcloud.com';
 
-    public function boot(TrackService $trackService, UserService $userService, SoundCloudService $soundCloudService): void
+    public function boot(TrackService $trackService, UserService $userService, SoundCloudService $soundCloudService, MyCampaignService $myCampaignService): void
     {
         $this->trackService = $trackService;
         $this->userService = $userService;
         $this->soundCloudService = $soundCloudService;
+        $this->myCampaignService = $myCampaignService;
         $this->tracks = collect();
         $this->playlists = collect();
     }
@@ -159,7 +164,7 @@ class MyCampaign extends Component
                 'min:50',
                 function ($attribute, $value, $fail) {
                     if ($this->isEditing) {
-                        if ($value - $this->editingCampaign->budget_credits >  userCredits()) {
+                        if ($value - $this->editingCampaign->budget_credits > userCredits()) {
                             $fail('The credit is not available.');
                         }
                     } elseif ($value > userCredits()) {
@@ -329,9 +334,12 @@ class MyCampaign extends Component
         };
     }
 
-    public function toggleCampaignsModal(): void
+    public function toggleCampaignsModal()
     {
         $this->resetAllFormData();
+        if ($this->myCampaignService->thisMonthCampaignsCount() >= (int) userFeatures()[Feature::KEY_SIMULTANEOUS_CAMPAIGNS]) {
+            return $this->dispatch('alert', type: 'error', message: 'You have reached the maximum number of campaigns for this month.');
+        }
         $this->showCampaignsModal = !$this->showCampaignsModal;
 
         if ($this->showCampaignsModal) {

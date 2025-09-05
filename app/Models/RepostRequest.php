@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -52,7 +53,7 @@ class RepostRequest extends BaseModel
 
     public function track(): BelongsTo
     {
-        return $this->belongsTo(Track::class, 'track_urn', 'urn','soundcloud_urn');
+        return $this->belongsTo(Track::class, 'track_urn', 'urn', 'soundcloud_urn');
     }
 
     public function reposts(): HasMany
@@ -124,7 +125,7 @@ class RepostRequest extends BaseModel
             self::STATUS_APPROVED => 'badge-success',
             self::STATUS_DECLINE => 'badge-error',
             self::STATUS_EXPIRED => 'badge-error',
-        ] [$this->status] ?? 'badge-warning';
+        ][$this->status] ?? 'badge-warning';
     }
     // pending thakle decline button show korbe
     public function getPendingToDeclinedAttribute()
@@ -153,5 +154,10 @@ class RepostRequest extends BaseModel
     public function scopeExpired($query)
     {
         return $query->where('status', self::STATUS_EXPIRED);
+    }
+
+    public function scopeSelf(Builder $query)
+    {
+        return $query->where('requester_urn', user()->urn);
     }
 }

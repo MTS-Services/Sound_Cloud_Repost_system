@@ -28,5 +28,11 @@ class RepostRequestService
     //     $reportRequests = RepostRequest::create($data);
     //     return $reportRequests;
     // }
-   
+
+
+    public function thisMonthDirectRequestCount()
+    {
+        return RepostRequest::self()->whereMonth('created_at', now()->month)->whereNull('campaign_id')->count();
+    }
+
 }

@@ -12,6 +12,7 @@ use App\Services\PlaylistService;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\TrackService;
 use App\Services\User\CampaignManagement\CampaignService;
+use App\Services\User\CampaignManagement\MyCampaignService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Locked;
@@ -21,7 +22,7 @@ use Livewire\WithPagination;
 use Throwable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Builder;
-use function PHPSTORM_META\type;
+use App\Models\Feature;
 
 class Campaign extends Component
 {
@@ -186,12 +187,15 @@ class Campaign extends Component
     protected ?PlaylistService $playlistService = null;
     protected ?SoundCloudService $soundCloudService = null;
 
-    public function boot(CampaignService $campaignService, TrackService $trackService, PlaylistService $playlistService, SoundCloudService $soundCloudService)
+    protected ?MyCampaignService $myCampaignService = null;
+
+    public function boot(CampaignService $campaignService, TrackService $trackService, PlaylistService $playlistService, SoundCloudService $soundCloudService, MyCampaignService $myCampaignService)
     {
         $this->campaignService = $campaignService;
         $this->trackService = $trackService;
         $this->playlistService = $playlistService;
         $this->soundCloudService = $soundCloudService;
+        $this->myCampaignService = $myCampaignService;
     }
 
     public function mount()
@@ -507,7 +511,7 @@ class Campaign extends Component
     public function fetchPlaylists()
     {
         try {
-            // $this->soundCloudService->syncSelfPlaylists();
+            $this->soundCloudService->syncSelfPlaylists();
 
             $this->playlistsPage = 1;
             $this->playlists = Playlist::where('user_urn', user()->urn)
@@ -611,6 +615,10 @@ class Campaign extends Component
             'budgetWarningMessage',
             'canSubmit'
         ]);
+
+        if ($this->myCampaignService->thisMonthCampaignsCount() >= (int) userFeatures()[Feature::KEY_SIMULTANEOUS_CAMPAIGNS]) {
+            return $this->dispatch('alert', type: 'error', message: 'You have reached the maximum number of campaigns for this month.');
+        }
 
         $this->activeTab = 'tracks';
         $this->tracks = collect();

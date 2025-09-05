@@ -1,8 +1,11 @@
 <?php
 
 use App\Models\Campaign;
+use App\Models\Feature;
 use App\Models\Order;
 use App\Models\Permission;
+use App\Models\Plan;
+use App\Models\User;
 use App\Models\UserPlan;
 use App\Models\UserSetting;
 use Carbon\Carbon;
@@ -758,4 +761,37 @@ if (!function_exists('boostAgain')) {
             }
         }
     }
+}
+
+
+if (!function_exists('userFeatures')) {
+    function userFeatures($userUrn = null): array
+    {
+        $user = $userUrn ? User::where('urn', $userUrn)->first() : user();
+        $plan = $user->activePlan() ? $user->activePlan()->plan : null;
+
+        if (!$plan) {
+            $plan = Plan::where('monthly_price', 0)->first();
+        }
+        if ($plan) {
+            $plan->load('featureRelations.feature');
+
+            $features = $plan->featureRelations->pluck('value', 'feature.key')->toArray();
+            return $features;
+        }
+        return [
+            Feature::KEY_DIRECT_REQUESTS => "10",
+            Feature::KEY_SIMULTANEOUS_CAMPAIGNS => "2",
+            Feature::KEY_MULTI_ACCOUNT_PROMOTION => "1 account",
+            Feature::KEY_CAMPAIGN_TARGETING => "True",
+            Feature::KEY_FEATURED_CAMPAIGN_PRIORITY => "False",
+            Feature::KEY_CAMPAIGN_RATING_AND_ANALYTICS => "Basic",
+            Feature::KEY_GROWTH_ANALYTICS => "False",
+            Feature::KEY_COMMUNITY_SUPPORT_AND_NETWORKING => "True",
+            Feature::KEY_COLLABORATION_HUB => "True",
+            Feature::KEY_SUPPORT_LEVEL => "Community Support",
+        ];
+
+    }
+
 }

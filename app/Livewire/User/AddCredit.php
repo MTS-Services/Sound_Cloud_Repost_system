@@ -26,6 +26,7 @@ class AddCredit extends Component
             $validated['source_id'] = $credit->id;
             $validated['source_type'] = Credit::class;
             $validated['amount'] = $credit->price;
+            $validated['credits'] = $credit->credits;
             $order = $this->orderService->createOrder($validated);
             // return redirect()->route('user.payment.method', encrypt($order->id));
             $this->redirectRoute('user.payment.method', encrypt($order->id), navigate: true);

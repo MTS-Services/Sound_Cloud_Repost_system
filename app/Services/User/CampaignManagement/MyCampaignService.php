@@ -36,4 +36,9 @@ class MyCampaignService
         $campaign = Campaign::find(decrypt($encryptedId));
         $campaign->forceDelete();
     }
+
+    public function thisMonthCampaignsCount()
+    {
+        return Campaign::self()->whereMonth('created_at', now()->month)->count();
+    }
 }

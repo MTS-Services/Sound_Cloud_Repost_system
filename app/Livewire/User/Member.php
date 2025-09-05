@@ -14,6 +14,7 @@ use App\Models\UserInformation;
 use App\Models\UserSetting;
 use App\Services\PlaylistService;
 use App\Services\TrackService;
+use App\Services\User\Mamber\RepostRequestService;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +23,7 @@ use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\Feature;
 
 class Member extends Component
 {
@@ -69,10 +71,13 @@ class Member extends Component
     protected TrackService $trackService;
     protected PlaylistService $playlistService;
 
-    public function boot(TrackService $trackService, PlaylistService $playlistService)
+    protected RepostRequestService $repostRequestService;
+
+    public function boot(TrackService $trackService, PlaylistService $playlistService, RepostRequestService $repostRequestService)
     {
         $this->trackService = $trackService;
         $this->playlistService = $playlistService;
+        $this->repostRequestService = $repostRequestService;
         $this->soundcloudClientId = config('services.soundcloud.client_id');
     }
 
@@ -249,6 +254,10 @@ class Member extends Component
             'searchQuery',
             'playListTrackShow',
         ]);
+
+        if ($this->repostRequestService->thisMonthDirectRequestCount() >= (int) userFeatures()[Feature::KEY_DIRECT_REQUESTS]) {
+            return $this->dispatch('alert', type: 'error', message: 'You have reached your direct request limit for this month.');
+        }
         $this->selectedUserUrn = $userUrn;
         $this->user = User::with('userInfo')->where('urn', $this->selectedUserUrn)->first();
         if ($this->user->request_receiveable) {

@@ -259,7 +259,7 @@ class User extends AuthBaseModel implements MustVerifyEmail
     public function getIsProAttribute(): bool
     {
         $activePlan = $this->activePlan();
-        return ($activePlan && $activePlan->price != 0) ? true : false;
+        return ($activePlan && $activePlan->monthly_price != 0) ? true : false;
     }
 
     public function scopeIsPro()

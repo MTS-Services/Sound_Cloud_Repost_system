@@ -139,7 +139,7 @@ class Settings extends Component
 
     // My Requests
     public $accept_repost = 0;
-    public $block_mismatch_genre = 1;
+    public $block_mismatch_genre = 0;
 
     // Additional Features
     public $opt_mystery_box = 0;
