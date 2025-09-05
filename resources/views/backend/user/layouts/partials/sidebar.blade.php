@@ -147,7 +147,7 @@
     </nav>
 
     <!-- Bottom Card (pinned) -->
-    @if (userPlanName() == 'Free')
+    @if (!user()->activePlan() || !(user()->activePlan()->monthly_price > 0))
         <div class="p-3 md:p-4 border-t border-gray-100 dark:border-slate-700">
             <div
                 class="bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-600 dark:to-orange-800 rounded-lg p-3 md:p-4 text-white">
