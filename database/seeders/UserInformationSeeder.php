@@ -29,10 +29,14 @@ class UserInformationSeeder extends Seeder
             'sort_order' => 1,
             'user_urn' => $user->urn,
 
-            'first_name' => fake()->firstName(),
-            'last_name' => fake()->lastName(),
-            'full_name' => fake()->name(),
-            'username' => fake()->userName(),
+            'first_name' => "Developer",
+            'last_name' => "Account",
+            'full_name' => "Developer Account",
+            'username' => "developer",
+            // 'first_name' => fake()->firstName(),
+            // 'last_name' => fake()->lastName(),
+            // 'full_name' => fake()->name(),
+            // 'username' => fake()->userName(),
 
             'soundcloud_id' => $soundcloudId,
             'soundcloud_urn' => 'urn:soundcloud:users:' . $soundcloudId,
