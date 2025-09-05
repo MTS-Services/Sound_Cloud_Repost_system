@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -11,8 +13,6 @@ class Plan extends BaseModel
 {
     protected $fillable = [
         'name',
-        'slug',
-        'yearly_save_percentage',
         'tag',
         'status',
         'notes',
@@ -37,17 +37,20 @@ class Plan extends BaseModel
             'tag_label',
             'yearly_price',
             'yearly_save_price',
+            'yearly_save_percentage',
         ]);
     }
 
+    public const TAG_FREE = null;
     public const TAG_MOST_POPULAR = 1;
     public const TAG_PRO = 2;
 
     public static function getTagList(): array
     {
         return [
+            self::TAG_FREE => 'Free',
             self::TAG_MOST_POPULAR => 'Most popular',
-            self::TAG_PRO => 'Pro plans',
+            self::TAG_PRO => 'Pro plan',
         ];
     }
     public function getTagLabelAttribute()
@@ -91,14 +94,46 @@ class Plan extends BaseModel
         return $this->morphMany(FeatureRelation::class, 'package');
     }
 
+    public function features(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Feature::class,
+            FeatureRelation::class,
+            'package_id',
+            'id',
+            'id',
+            'feature_id'
+        );
+    }
+
     // In Plan.php model
+    public static function getYearlySavePercentage(): float|int
+    {
+        return ApplicationSetting::where('key', 'plan_yearly_save_persentage')->first()?->value ?? 0;
+    }
+
+    public function getYearlySavePercentageAttribute(): float|int
+    {
+        return self::getYearlySavePercentage();
+    }
 
     public function getYearlyPriceAttribute(): float|int
     {
-        return ($this->monthly_price * 12) * (100 - $this->yearly_save_percentage) / 100;
+
+        return ceil(($this->monthly_price * 12) * (100 - self::getYearlySavePercentage()) / 100);
     }
     public function getYearlySavePriceAttribute(): float|int
     {
         return ($this->monthly_price * 12) - $this->yearly_price;
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_ACTIVE);
+    }
+
+    public function scopeInactive(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_INACTIVE);
     }
 }

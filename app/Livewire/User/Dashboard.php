@@ -11,11 +11,13 @@ use App\Models\Track;
 use App\Models\User;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\SoundCloud\SoundCloudService;
+use App\Services\User\CampaignManagement\MyCampaignService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Throwable;
+use App\Models\Feature;
 
 use function PHPSTORM_META\type;
 
@@ -23,6 +25,8 @@ class Dashboard extends Component
 {
     protected CreditTransactionService $creditTransactionService;
     protected SoundCloudService $soundCloudService;
+
+    protected MyCampaignService $myCampaignService;
 
     public $total_credits;
     public $totalCount;
@@ -122,10 +126,11 @@ class Dashboard extends Component
         ];
     }
 
-    public function boot(CreditTransactionService $creditTransactionService, SoundCloudService $soundCloudService)
+    public function boot(CreditTransactionService $creditTransactionService, SoundCloudService $soundCloudService, MyCampaignService $myCampaignService)
     {
         $this->creditTransactionService = $creditTransactionService;
         $this->soundCloudService = $soundCloudService;
+        $this->myCampaignService = $myCampaignService;
     }
 
     public function mount()
@@ -337,6 +342,10 @@ class Dashboard extends Component
             // 'budgetWarningMessage',
             // 'canSubmit'
         ]);
+
+        if ($this->myCampaignService->thisMonthCampaignsCount() >= (int) userFeatures()[Feature::KEY_SIMULTANEOUS_CAMPAIGNS]) {
+            return $this->dispatch('alert', type: 'error', message: 'You have reached the maximum number of campaigns for this month.');
+        }
 
         $this->activeTab = 'tracks';
         $this->tracks = collect();

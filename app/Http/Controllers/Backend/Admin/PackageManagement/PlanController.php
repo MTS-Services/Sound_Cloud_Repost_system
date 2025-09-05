@@ -5,8 +5,7 @@ namespace App\Http\Controllers\Backend\Admin\PackageManagement;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PackageManagement\PlanRequest;
 use App\Http\Traits\AuditRelationTraits;
-use App\Models\FeatureCategory;
-use App\Models\Plan;
+use App\Models\ApplicationSetting;
 use App\Services\Admin\PackageManagement\FeatureCategorySevice;
 use App\Services\Admin\PackageManagement\PlanService;
 use Illuminate\Contracts\View\View;
@@ -14,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use App\Services\Admin\PackageManagement\FeatureSevice;
 use Yajra\DataTables\Facades\DataTables;
 
 class PlanController extends Controller implements HasMiddleware
@@ -31,12 +31,12 @@ class PlanController extends Controller implements HasMiddleware
     }
 
     protected PlanService $planService;
-    protected FeatureCategorySevice $FeatureCategorySevice;
+    protected FeatureSevice $featureService;
 
-    public function __construct(PlanService $planService, FeatureCategorySevice $FeatureCategorySevice)
+    public function __construct(PlanService $planService, FeatureSevice $featureService)
     {
         $this->planService = $planService;
-        $this->FeatureCategorySevice = $FeatureCategorySevice;
+        $this->featureService = $featureService;
     }
 
     public static function middleware(): array
@@ -66,29 +66,23 @@ class PlanController extends Controller implements HasMiddleware
             $query = $this->planService->getPlans();
             return DataTables::eloquent($query)
                 ->editColumn('status', fn($user) => "<span class='badge badge-soft {$user->status_color}'>{$user->status_label}</span>")
-                ->editColumn('tag', function ($feature) {
-                    return $feature->tag_label;
+                ->editColumn('created_by', function ($plan) {
+                    return $this->creater_name($plan);
                 })
-                ->editColumn('created_by', function ($feature) {
-                    return $this->creater_name($feature);
+                ->editColumn('monthly_price', function ($plan) {
+                    return '$' . $plan->monthly_price;
                 })
-                ->editColumn('yearly_save_percentage', function ($feature) {
-                    return $feature->yearly_save_percentage . '%';
+                ->editColumn('yearly_price', function ($plan) {
+                    return '$' . $plan->yearly_price;
                 })
-                ->editColumn('monthly_price', function ($feature) {
-                    return '$' . $feature->monthly_price;
+                ->editColumn('created_at', function ($plan) {
+                    return $plan->created_at_formatted;
                 })
-                ->editColumn('yearly_price', function ($feature) {
-                    return '$' . $feature->yearly_price;
-                })
-                ->editColumn('created_at', function ($feature) {
-                    return $feature->created_at_formatted;
-                })
-                ->editColumn('action', function ($feature) {
-                    $menuItems = $this->menuItems($feature);
+                ->editColumn('action', function ($plan) {
+                    $menuItems = $this->menuItems($plan);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['action', 'tag', 'yearly_save_percentage', 'monthly_price', 'yearly_price', 'created_by', 'created_at', 'status'])
+                ->rawColumns(['action', 'monthly_price', 'yearly_price', 'created_by', 'created_at', 'status'])
                 ->make(true);
         }
         return view('backend.admin.package_management.plans.index');
@@ -132,8 +126,7 @@ class PlanController extends Controller implements HasMiddleware
      */
     public function create(): View
     {
-        $data['feature_categories'] = $this->FeatureCategorySevice->getFeatureCategories()->with('features')->get();
-        // dd($data);
+        $data['features'] = $this->featureService->getFeatures()->active()->get();
         return view('backend.admin.package_management.plans.create', $data);
     }
 
@@ -142,8 +135,6 @@ class PlanController extends Controller implements HasMiddleware
      */
     public function store(PlanRequest $request)
     {
-
-
         try {
             $validated = $request->validated();
             $this->planService->createPlan($validated);
@@ -163,10 +154,10 @@ class PlanController extends Controller implements HasMiddleware
         $data = $this->planService->getPlan($id);
         $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
-        $data['yearly_save_percentage_string'] = $data->yearly_save_percentage . '%';
         $data['monthly_price_string'] = '$' . $data->monthly_price;
         $data['yearly_price_string'] = '$' . $data->yearly_price;
         $data['yearly_save_price_string'] = '$' . $data->yearly_save_price;
+        $data['yearly_save_percentage_string'] = $data::getYearlySavePercentage() . '%';
         return response()->json($data);
     }
 
@@ -177,8 +168,7 @@ class PlanController extends Controller implements HasMiddleware
     public function edit(string $encryptedId): View
     {
         $data['plan'] = $this->planService->getPlan($encryptedId)->load('featureRelations');
-        $data['featureCategories'] = $this->FeatureCategorySevice->getFeatureCategories()->get();
-
+        $data['features'] = $this->featureService->getFeatures()->active()->get();
         return view('backend.admin.package_management.plans.edit', $data);
     }
 
@@ -222,8 +212,14 @@ class PlanController extends Controller implements HasMiddleware
             $query = $this->planService->getPlans()->onlyTrashed();
             return DataTables::eloquent($query)
                 ->editColumn('status', fn($user) => "<span class='badge badge-soft {$user->status_color}'>{$user->status_label}</span>")
-                ->editColumn('tag', function ($feature) {
-                    return $feature->tag_label;
+                ->editColumn('tag', function ($plan) {
+                    return $plan->tag_label;
+                })
+                ->editColumn('monthly_price', function ($plan) {
+                    return '$' . $plan->monthly_price;
+                })
+                ->editColumn('yearly_price', function ($plan) {
+                    return '$' . $plan->yearly_price;
                 })
                 ->editColumn('deleted_by', function ($plan) {
                     return $this->deleter_name($plan);
@@ -235,7 +231,7 @@ class PlanController extends Controller implements HasMiddleware
                     $menuItems = $this->trashedMenuItems($permission);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['status', 'tag', 'deleted_by', 'deleted_at', 'action'])
+                ->rawColumns(['status', 'tag', 'monthly_price', 'yearly_price', 'deleted_by', 'deleted_at', 'action'])
                 ->make(true);
         }
         return view('backend.admin.package_management.plans.trash');

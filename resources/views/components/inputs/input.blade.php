@@ -6,13 +6,14 @@
     'value' => null,
     'icon' => null,
     'messages' => [],
+    'itemJoin' => false,
 ])
 
 @if (!empty($label))
     <p class="label">{{ $label }}</p>
 @endif
 <label
-    class="input flex items-center gap-1 px-0 focus:outline-0 focus-within:outline-0 focus:ring-0 focus:border-border-active focus-within:border-border-active w-full"
+    class="input flex items-center gap-1 px-0 focus:outline-0 focus-within:outline-0 focus:ring-0 focus:border-border-active focus-within:border-border-active w-full {{ $itemJoin ? 'item-join' : '' }} "
     @if ($type === 'password' || $type === 'password_confirmation') x-data="{ showPassword: false }" @endif>
     @if ($icon)
         <i data-lucide="{{ $icon }}" class="h-[1em] opacity-50 ml-2 mr-1"></i>

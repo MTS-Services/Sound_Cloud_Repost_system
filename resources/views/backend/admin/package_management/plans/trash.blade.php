@@ -20,7 +20,6 @@
                         <th width="5%">{{ __('SL') }}</th>
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Monthly Price') }}</th>
-                        <th>{{ __('Yearly Save Percentage') }}</th>
                         <th>{{ __('Tag') }}</th>
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('Deleted By') }}</th>
@@ -40,7 +39,6 @@
                 let table_columns = [
                     ['name', true, true],
                     ['monthly_price', true, true],
-                    ['yearly_save_percentage', true, true],
                     ['tag', true, true],
                     ['status', true, true],
                     ['deleted_by', true, true],

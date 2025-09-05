@@ -7,8 +7,19 @@
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Plans List') }}</h2>
+                <form action="{{ route('app-settings.update-settings') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="join">
+                        <x-inputs.input :itemJoin="true" name="plan_yearly_save_persentage"
+                            placeholder="Enter yearly save persentage"
+                            value="{{ App\Models\Plan::getYearlySavePercentage() ?? old('plan_yearly_save_persentage') }}"
+                            :messages="$errors->get('plan_yearly_save_persentage')" />
+                        <button class="btn join-item btn-soft btn-primary" type="submit">Update</button>
+                    </div>
+                </form>
                 <div class="flex items-center gap-2">
-                    <x-button href="{{ route('pm.plan.trash') }}" icon="trash-2" type='secondary' permission="admin-trash">
+                    <x-button href="{{ route('pm.plan.trash') }}" icon="trash-2" type='secondary'
+                        permission="admin-trash">
                         {{ __('Trash') }}
                     </x-button>
                     <x-button href="{{ route('pm.plan.create') }}" icon="plus" permission="admin-create">
@@ -25,8 +36,6 @@
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Monthly Price') }}</th>
                         <th>{{ __('Yearly Price') }}</th>
-                        <th>{{ __('Yearly Save Percentage') }}</th>
-                        <th>{{ __('Tag') }}</th>
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('Created By') }}</th>
                         <th>{{ __('Created Date') }}</th>
@@ -50,8 +59,6 @@
                     ['name', true, true],
                     ['monthly_price', true, true],
                     ['yearly_price', true, true],
-                    ['yearly_save_percentage', true, true],
-                    ['tag', true, true],
                     ['status', true, true],
                     ['created_by', true, true],
                     ['created_at', true, true],

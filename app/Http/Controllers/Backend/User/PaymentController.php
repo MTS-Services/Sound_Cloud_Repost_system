@@ -58,6 +58,7 @@ class PaymentController extends Controller
             'customer_email' => 'sometimes|email',
         ]);
         $order = $this->orderService->getOrder(encrypt($request->order_id));
+        Log::info("Order:" . $order);
         try {
             $paymentIntent = $this->stripeService->createPaymentIntent([
                 'amount' => $order->amount,

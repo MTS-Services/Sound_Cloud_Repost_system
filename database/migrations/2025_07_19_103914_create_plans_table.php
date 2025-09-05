@@ -18,13 +18,10 @@ return new class extends Migration {
             $table->id();
             $table->unsignedBigInteger('sort_order')->default(0);
             $table->string('name')->unique();
-            $table->string('slug')->unique();
             $table->decimal('monthly_price', 10, 2);
-            $table->integer('yearly_save_percentage')->nullable()->default(0);
-            $table->tinyInteger('tag')->nullable()->comment(Plan::TAG_MOST_POPULAR . ': Most popular' . Plan::TAG_PRO . ': Pro plans');
-            $table->tinyInteger('status')->default(Plan::STATUS_ACTIVE)->comment(Plan::STATUS_ACTIVE . ': active' . Plan::STATUS_INACTIVE . ': inactive');
+            $table->tinyInteger('tag')->nullable()->index();
+            $table->tinyInteger('status')->default(Plan::STATUS_ACTIVE);
             $table->text('notes')->nullable();
-
             $table->timestamps();
             $table->softDeletes();
             $this->addAdminAuditColumns($table);

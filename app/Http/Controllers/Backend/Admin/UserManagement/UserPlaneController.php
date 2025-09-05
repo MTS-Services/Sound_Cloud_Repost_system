@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Admin\UserManagement;
 
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
+use App\Models\User;
 use App\Models\UserPlan;
 use App\Services\Admin\UserManagement\UserPlanService;
 use Illuminate\Contracts\View\View;
@@ -93,12 +94,12 @@ class UserPlaneController extends Controller implements HasMiddleware
                 'label' => 'Details',
                 'permissions' => ['permission-list', 'permission-delete', 'permission-status']
             ],
-            //  [
-            //     'routeName' => 'um.user-plane.status',
-            //     'params' => [encrypt($model->id)],
-            //     'label' => $model->status ? 'Deactivate' : 'Activate',
-            //     'permissions' => ['userPlane-status']
-            // ],
+             [
+                'routeName' => 'um.user-plane.status',
+                'params' => [encrypt($model->id)],
+                'label' => $model->status ? 'Deactivate' : 'Activate',
+                'permissions' => ['userPlane-status']
+            ],
             [
                 'routeName' => '',
                 'params' => [encrypt($model->id)],
@@ -158,8 +159,10 @@ class UserPlaneController extends Controller implements HasMiddleware
 
     public function status(Request $request, string $id)
     {
-        $this->userPlanService->toggleStatus($this->userPlanService->getUserplan($id));
-        return $this->redirectIndex();
+         $user_plan = UserPlan::findOrFail(decrypt($id));
+        $user_plan->update(['status' => !$user_plan->status, 'updated_by' => admin()->id]);
+        session()->flash('success', 'User plan status updated successfully!');
+        return redirect()->route('um.user-plane.index');
     }
 
     /**

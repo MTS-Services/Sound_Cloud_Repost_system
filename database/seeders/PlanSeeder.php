@@ -15,57 +15,32 @@ class PlanSeeder extends Seeder
     {
         $plans = [
             [
-                'name' => 'Free Forever',
+                'name' => 'Free Plan',
                 'monthly_price' => 0,
-                'yearly_save_percentage' => 0,
                 'tag' => null,
-                'notes' => 'Free plan',
+                'notes' => 'Free forever',
             ],
             [
-                'name' => 'Artist',
-                'monthly_price' => 10,
-                'yearly_save_percentage' => 20,
-                'tag' => null,
-                'notes' => 'Perfect for individual creators',
-            ],
-            [
-                'name' => 'Network',
-                'monthly_price' => 20,
-                'yearly_save_percentage' => 25,
-                'tag' => 1,
-                'notes' => 'For small teams and collaborations',
-            ],
-            [
-                'name' => 'Promoter',
-                'monthly_price' => 30,
-                'yearly_save_percentage' => 30,
-                'tag' => 2,
-                'notes' => 'Promote content effectively',
-            ],
-            [
-                'name' => 'Ultimate',
-                'monthly_price' => 50,
-                'yearly_save_percentage' => 50,
-                'tag' => 3,
+                'name' => 'Premium Plan',
+                'monthly_price' => 25,
+                'tag' => Plan::TAG_MOST_POPULAR,
                 'notes' => 'All-inclusive premium features',
-            ],
+            ]
         ];
 
-        foreach ($plans as $planData) {
+        foreach ($plans as $key => $planData) {
             $plan = Plan::create([
-                ...$planData,
-                'slug' => Str::slug($planData['name']),
+                ...$planData
             ]);
 
-            // Attach some features
-            $features = Feature::inRandomOrder()->limit(3)->get();
+            $features = Feature::all();
 
             foreach ($features as $feature) {
                 FeatureRelation::create([
                     'package_id' => $plan->id,
                     'package_type' => Plan::class,
                     'feature_id' => $feature->id,
-                    'value' => $feature->type === 1 ? '1' : 'Unlimited',
+                    'value' => Feature::getFeatureValues()[$feature->key][$key],
                 ]);
             }
         }

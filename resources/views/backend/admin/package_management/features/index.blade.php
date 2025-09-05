@@ -20,7 +20,6 @@
                     <tr>
                         <th width="5%">{{ __('SL') }}</th>
                         <th>{{ __('Name') }}</th>
-                        <th>{{ __('Feature Category') }}</th>
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('Type') }}</th>
                         <th>{{ __('Created By') }}</th>
@@ -43,7 +42,6 @@
                 let table_columns = [
                     //name and data, orderable, searchable
                     ['key', true, true],
-                    ['feature_category_id', true, true],
                     ['status', true, true],
                     ['type', true, true],
                     ['created_by', true, true],

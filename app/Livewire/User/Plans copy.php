@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\User;
 
-use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
 use App\Models\Plan;
 use App\Models\User;
@@ -10,23 +9,22 @@ use App\Services\Admin\OrderManagement\OrderService;
 use App\Services\Admin\PackageManagement\PlanService;
 use App\Services\Admin\PackageManagement\UserPlanService;
 use App\Services\User\UserSettingsService;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-#[Layout('backend.user.layouts.app', ['title' => 'Plan Page', 'page_slug' => 'plan-page'])]
-class PlanPage extends Component
+class Plans extends Component
 {
-
-    public $isYearly = false;
-    public Collection $plans;
+    public $pricing;
+    public $plans;
+    public $featureCategories;
+    public $yearly_plan = 0;
 
     protected PlanService $planService;
     protected OrderService $orderService;
     protected UserPlanService $userPlanService;
     protected UserSettingsService $userSettingsService;
+
     public function boot(
         PlanService $planService,
         OrderService $orderService,
@@ -38,6 +36,18 @@ class PlanPage extends Component
         $this->orderService = $orderService;
         $this->userPlanService = $userPlanService;
         $this->userSettingsService = $userSettingsService;
+    }
+
+    public function pricing()
+    {
+        $data['plans'] = $this->planService->getPlans('monthly_price', 'asc')->with('featureRelations')->get();
+        $data['featureCategories'] = $this->FeatureCategorySevice->getFeatureCategories()->with('features')->get();
+        return $data;
+    }
+
+    public function switchPlan()
+    {
+        $this->yearly_plan = $this->yearly_plan == 0 ? 1 : 0;
     }
 
     public function subscribe(string $plan_id)
@@ -63,7 +73,7 @@ class PlanPage extends Component
 
                     return null; // Return null here
                 } elseif ($activeUserPlan && $activeUserPlan->plan?->price < $plan->price) {
-                    $data['amount'] = $this->isYearly
+                    $data['amount'] = $this->yearly_plan == 1
                         ? $plan->yearly_price - $activeUserPlan->plan->yearly_price
                         : $plan->monthly_price - $activeUserPlan->plan->monthly_price;
                     $data['notes'] = "Plan upgrade from " . $activeUserPlan->plan->name . " to " . $plan->name;
@@ -71,10 +81,10 @@ class PlanPage extends Component
                     $data['end_date'] = $activeUserPlan->end_date;
                     $data['duration'] = $activeUserPlan->duration;
                 } else {
-                    $data['amount'] = $this->isYearly ? $plan->yearly_price : $plan->monthly_price;
+                    $data['amount'] = $this->yearly_plan == 1 ? $plan->yearly_price : $plan->monthly_price;
                     $data['notes'] = "Plan subscription for " . $plan->name;
                     $data['start_date'] = now();
-                    $data['end_date'] = $this->isYearly ? now()->addYear() : now()->addMonth();
+                    $data['end_date'] = $this->yearly_plan == 1 ? now()->addYear() : now()->addMonth();
                     $data['duration'] = now()->diffInDays($data['end_date']);
                 }
 
@@ -100,14 +110,14 @@ class PlanPage extends Component
 
     public function mount()
     {
-        $this->plans = $this->planService->getPlans('monthly_price', 'asc')->with('featureRelations.feature')->active()->get();
+        $this->pricing = $this->pricing();
+        $this->plans = $this->pricing['plans'];
+        $this->featureCategories = $this->pricing['featureCategories'];
     }
 
     public function render()
     {
-        if (Auth::guard('web')->check()) {
-            $this->redirect(route('user.dashboard'), true);
-        }
-        return view('livewire.plan-page');
+
+        return view('livewire.user.plans');
     }
 }

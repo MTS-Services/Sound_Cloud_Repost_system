@@ -17,18 +17,18 @@ class FaqCategorySeeder extends Seeder
      */
     public function run(): void
     {
-        
-        
+
+
         FaqCategory::create([
-          'name' => 'Soundcloud',
-          'slug' => 1,
-         
+            'name' => 'Campaign',
+            'slug' => 1,
+
         ]);
 
         FaqCategory::create([
-          'name' => ' Soundcloud?',
-          'slug' => 2,
-        
+            'name' => 'Direct Repost Request',
+            'slug' => 2,
+
         ]);
     }
 }

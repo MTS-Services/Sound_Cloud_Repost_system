@@ -41,33 +41,21 @@ class PlanService
 
             $features = $data['features'] ?? [];
             $featureValues = $data['feature_values'] ?? [];
-            $categoryIds = $data['feature_category_ids'] ?? [];
 
             $data['created_by'] = admin()->id;
 
             $plan = Plan::create($data);
 
             foreach ($features as $featureId) {
-
-                // FeatureRelation::create([
-                //     'package_id'          => $plan->id,
-                //     'package_type'        => Plan::class,
-                //     'feature_category_id' => $categoryIds[$featureId] ?? null,
-                //     'feature_id'          => $featureId,
-                //     'value'               => $featureValues[$featureId] ?? null,
-                //     'created_by'          => admin()->id,
-                // ]);
-
                 FeatureRelation::updateOrCreate(
                     [
-                        'package_id'          => $plan->id,
-                        'package_type'        => Plan::class,
-                        'feature_id'          => $featureId,
+                        'package_id' => $plan->id,
+                        'package_type' => Plan::class,
+                        'feature_id' => $featureId,
                     ],
                     [
-                        'feature_category_id' => $categoryIds[$featureId] ?? null,
-                        'value'               => $featureValues[$featureId] ?? null,
-                        'created_by'          => admin()->id,
+                        'value' => $featureValues[$featureId] ?? null,
+                        'created_by' => admin()->id,
                     ]
                 );
             }
@@ -83,39 +71,28 @@ class PlanService
      */
     public function updatePlan(Plan $plan, array $data): Plan
     {
+
         return DB::transaction(function () use ($plan, $data) {
             $features = $data['features'] ?? [];
             $featureValues = $data['feature_values'] ?? [];
-            $categoryIds = $data['feature_category_ids'] ?? [];
 
             $data['updated_by'] = admin()->id;
 
-            // Update plan fields
+
             $plan->update($data);
-
-
 
             // Re-create feature relations
             foreach ($features as $featureId) {
-                // FeatureRelation::create([
-                //     'package_id'          => $plan->id,
-                //     'package_type'        => Plan::class,
-                //     'feature_id' => $featureId,
-                //     'feature_category_id' => $categoryIds[$featureId] ?? null,
-                //     'value' => $featureValues[$featureId] ?? '',
-                //     'updated_by' => admin()->id,
-                // ]);
 
-                FeatureRelation::updateOrCreate(
+                $feature_relation = FeatureRelation::updateOrCreate(
                     [
-                        'package_id'          => $plan->id,
-                        'package_type'        => Plan::class,
-                        'feature_id'          => $featureId,
+                        'package_id' => $plan->id,
+                        'package_type' => Plan::class,
+                        'feature_id' => $featureId,
                     ],
                     [
-                        'feature_category_id' => $categoryIds[$featureId] ?? null,
-                        'value'               => $featureValues[$featureId] ?? null,
-                        'updated_by'          => admin()->id,
+                        'value' => $featureValues[$featureId] ?? null,
+                        'updated_by' => admin()->id,
                     ]
                 );
             }
