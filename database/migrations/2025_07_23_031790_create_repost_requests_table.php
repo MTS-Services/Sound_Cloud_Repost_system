@@ -32,8 +32,9 @@ return new class extends Migration
             $table->timestamp('responded_at')->nullable()->index();
             $table->timestamp('completed_at')->nullable()->index();
 
+            $table->string('description')->nullable();
             $table->boolean('following')->default(false);
-            $table->string('comment_note')->nullable();
+            $table->boolean('commentable')->nullable();
             $table->boolean('likeable')->default(false);
             
             $table->foreign('target_user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
