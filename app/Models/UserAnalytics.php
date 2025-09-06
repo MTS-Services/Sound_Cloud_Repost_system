@@ -12,6 +12,7 @@ class UserAnalytics extends BaseModel
         'source_type',
         'date',
         'genre',
+        
         'total_plays',
         'total_followes',
         'total_likes',
