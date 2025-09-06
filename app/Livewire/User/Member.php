@@ -24,6 +24,7 @@ use InvalidArgumentException;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Feature;
+use App\Services\SoundCloud\SoundCloudService;
 
 class Member extends Component
 {
@@ -45,11 +46,12 @@ class Member extends Component
     public ?int $selectedPlaylistId = null;
     public ?int $selectedTrackId = null;
     public string $searchQuery = '';
+    public $creditSpent = 0;
 
     public string $description = '';
     public bool $commentable = false;
     public bool $likeable = false;
-    public bool $following = false;
+    public bool $following = true;
 
     // block_mismatch_genre
     public ?bool $blockMismatchGenre = null;
@@ -78,21 +80,44 @@ class Member extends Component
 
     protected TrackService $trackService;
     protected PlaylistService $playlistService;
-
     protected RepostRequestService $repostRequestService;
-
-    public function boot(TrackService $trackService, PlaylistService $playlistService, RepostRequestService $repostRequestService)
+    protected SoundCloudService $soundCloudService;
+    public function boot(TrackService $trackService, PlaylistService $playlistService, RepostRequestService $repostRequestService, SoundCloudService $soundCloudService)
     {
         $this->trackService = $trackService;
         $this->playlistService = $playlistService;
         $this->repostRequestService = $repostRequestService;
+        $this->soundCloudService = $soundCloudService;
         $this->soundcloudClientId = config('services.soundcloud.client_id');
+    }
+
+    public function rules()
+    {
+        return [
+            'description' => 'nullable|string|max:200',
+            'commentable' => 'nullable',
+            'likeable' => 'nullable',
+        ];
+    }
+    public function updated($propertyName)
+    {
+        $this->validateOnly($propertyName);
+        
+        $this->creditSpent = repostPrice($this->user)
+            + ($this->likeable ? 2 : 0)
+            + ($this->commentable ? 2 : 0);
+            
+        if (userCredits() < $this->creditSpent) {
+            $this->addError('credits', 'Your credits are not enough.');
+            return;
+        }
     }
 
     public function mount()
     {
         $this->genres = $this->getAvailableGenres();
         $this->userinfo = user()->userInfo;
+        // $this->creditSpent = repostPrice($this->user) + ($this->likeable ? 2 : 0) + ($this->commentable ? 2 : 0);
     }
 
     private function getAvailableGenres(): Collection
@@ -262,16 +287,16 @@ class Member extends Component
             'searchQuery',
             'playListTrackShow',
         ]);
-        if (userCredits() < 1) {
+        // if ($this->repostRequestService->thisMonthDirectRequestCount() >= (int) userFeatures()[Feature::KEY_DIRECT_REQUESTS]) {
+        //     return $this->dispatch('alert', type: 'error', message: 'You have reached your direct request limit for this month.');
+        // }
+        $this->selectedUserUrn = $userUrn;
+        $this->user = User::with('userInfo')->where('urn', $this->selectedUserUrn)->first();
+        if (userCredits() < repostPrice($this->user)) {
             $this->showLowCreditWarningModal = true;
             $this->showModal = false;
             return;
         }
-        if ($this->repostRequestService->thisMonthDirectRequestCount() >= (int) userFeatures()[Feature::KEY_DIRECT_REQUESTS]) {
-            return $this->dispatch('alert', type: 'error', message: 'You have reached your direct request limit for this month.');
-        }
-        $this->selectedUserUrn = $userUrn;
-        $this->user = User::with('userInfo')->where('urn', $this->selectedUserUrn)->first();
         if ($this->user->request_receiveable) {
             $this->showModal = true;
             $this->activeTab = 'tracks';
@@ -331,6 +356,8 @@ class Member extends Component
 
     public function createRepostsRequest()
     {
+        $this->soundCloudService->ensureSoundCloudConnection(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $requester = user();
 
         if (!$this->user || !$this->track) {
@@ -346,20 +373,20 @@ class Member extends Component
             if (!$follow_response->successful()) {
                 $this->dispatch('alert', type: 'error', message: 'Failed to follow user.');
                 return;
-            }elseif($follow_response->successful()){
+            } elseif ($follow_response->successful()) {
                 $this->following = 1;
             }
-            
-        } 
+        }
         try {
-            $amount = repostPrice($this->user);
+            $credit_spent = repostPrice($this->user);
+            $transaction_credits = repostPrice($this->user) + ($this->likeable ? 2 : 0) + ($this->commentable ? 2 : 0);
 
-            DB::transaction(function () use ($requester, $amount, $follow_response) {
+            DB::transaction(function () use ($requester, $credit_spent, $transaction_credits) {
                 $repostRequest = RepostRequest::create([
                     'requester_urn' => $requester->urn,
                     'target_user_urn' => $this->user->urn,
                     'track_urn' => $this->track->urn,
-                    'credits_spent' => $amount,
+                    'credits_spent' => $credit_spent,
                     'description' => $this->description,
                     'likeable' => $this->likeable,
                     'commentable' => $this->commentable,
@@ -375,7 +402,7 @@ class Member extends Component
                     'source_id' => $repostRequest->id,
                     'source_type' => RepostRequest::class,
                     'amount' => 0,
-                    'credits' => $amount,
+                    'credits' => $transaction_credits,
                     'description' => "Repost request for track by " . $requester->name,
                     'metadata' => [
                         'request_type' => 'track',
@@ -398,7 +425,7 @@ class Member extends Component
                             'Request Sent To' => $this->user->name,
                             'Track Title' => $this->track->title,
                             'Track Artist' => $this->track?->user?->name ?? $requester->name,
-                            'Credits Spent' => $amount,
+                            'Credits Spent' => $credit_spent,
                         ],
                     ],
                 ]);
@@ -418,7 +445,7 @@ class Member extends Component
                             'Request Received From' => $requester->name,
                             'Track Title' => $this->track->title,
                             'Track Artist' => $this->track?->user?->name ?? $requester->name,
-                            'Credits Offered' => $amount,
+                            'Credits Offered' => $credit_spent,
                         ]
                     ]
                 ]);

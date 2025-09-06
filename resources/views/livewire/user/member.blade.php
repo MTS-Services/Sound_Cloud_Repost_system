@@ -367,7 +367,6 @@
                     </div>
                 </div>
             </div>
-
             {{-- Reposts Modal --}}
             <div x-data="{ showRepostsModal: @entangle('showRepostsModal').live }" x-show="showRepostsModal" x-cloak
                 x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
@@ -482,7 +481,7 @@
                                         <div class="mt-2 flex items-center justify-between">
                                             <div class="flex items-center">
                                                 <input id="commentable" name="commentable" type="checkbox"
-                                                    wire:model="commentable"
+                                                    wire:model.live="commentable"
                                                     class="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-red-500" />
                                                 <label for="commentable"
                                                     class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -506,7 +505,7 @@
                                         <div class="mt-2 flex items-center justify-between">
                                             <div class="flex items-center">
                                                 <input id="likeable" name="likeable" type="checkbox"
-                                                    wire:model="likeable"
+                                                    wire:model.live="likeable"
                                                     class="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500" />
                                                 <label for="likeable"
                                                     class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -517,13 +516,31 @@
                                                 credits</span>
                                         </div>
                                     </div>
+                                    {{-- @error('credits') --}}
+                                    <div class="text-sm text-red-600 mt-2">
+                                        {{ $errors->first('credits') }}
+                                    </div>
+                                    {{-- @enderror --}}
                                 </div>
                                 <!-- Confirm Button -->
                                 <div class="mt-6 flex justify-center gap-3">
                                     <x-gbutton variant="secondary" wire:click="closeRepostModal">Cancel</x-gbutton>
                                     @if (($blockMismatchGenre && $userMismatchGenre) || !$blockMismatchGenre)
-                                        <x-gbutton variant="primary" wire:click="createRepostsRequest">Send
-                                            Request</x-gbutton>
+                                        <x-gbutton :disabled="$errors->first('credits')" variant="primary"
+                                            wire:click="createRepostsRequest">
+                                            <span>
+                                                <svg class="w-6 h-6 text-white" width="26" height="18"
+                                                    viewBox="0 0 26 18" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <rect x="1" y="1" width="24" height="16" rx="3"
+                                                        fill="none" stroke="currentColor" stroke-width="2" />
+                                                    <circle cx="8" cy="9" r="3" fill="none"
+                                                        stroke="currentColor" stroke-width="2" />
+                                                </svg>
+                                            </span>
+                                            <span
+                                                class="px-2">{{ repostPrice($user) + ($likeable ? 2 : 0) + ($commentable ? 2 : 0) }}</span>
+                                            Send Request</x-gbutton>
                                     @endif
                                 </div>
                             @endif
