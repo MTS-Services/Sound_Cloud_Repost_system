@@ -455,7 +455,7 @@
                                                 placeholder="Say hi and introduce your track"></textarea>
                                             <div
                                                 class="pointer-events-none absolute bottom-2 right-2 text-xs text-gray-400">
-                                                200
+                                                {{ strlen($description) }} / 200
                                             </div>
                                         </div>
                                         @error('description')
