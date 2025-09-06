@@ -352,14 +352,15 @@ class Member extends Component
             
         } 
         try {
-            $amount = repostPrice($this->user);
+            $credit_spent = repostPrice($this->user);
+            $transaction_credits = repostPrice($this->user) + ($this->likeable ? 2 : 0) + ($this->commentable ? 2 : 0);
 
-            DB::transaction(function () use ($requester, $amount, $follow_response) {
+            DB::transaction(function () use ($requester, $credit_spent, $transaction_credits) {
                 $repostRequest = RepostRequest::create([
                     'requester_urn' => $requester->urn,
                     'target_user_urn' => $this->user->urn,
                     'track_urn' => $this->track->urn,
-                    'credits_spent' => $amount,
+                    'credits_spent' => $credit_spent,
                     'description' => $this->description,
                     'likeable' => $this->likeable,
                     'commentable' => $this->commentable,
@@ -375,7 +376,7 @@ class Member extends Component
                     'source_id' => $repostRequest->id,
                     'source_type' => RepostRequest::class,
                     'amount' => 0,
-                    'credits' => $amount,
+                    'credits' => $transaction_credits,
                     'description' => "Repost request for track by " . $requester->name,
                     'metadata' => [
                         'request_type' => 'track',
