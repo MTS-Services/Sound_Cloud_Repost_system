@@ -84,8 +84,10 @@
                             </div>
                         @endforeach
                         @if ($plan->monthly_price > 0)
-                            <x-gbutton variant="primary" wire:click="subscribe('{{ encrypt($plan->id) }}')"
-                                class="w-full py-4 px-6">Choose Plan</x-gbutton>
+                            <x-gabutton variant="primary"
+                                href="{{ Auth::guard('web')->check() ? 'javascript:void(0)' : route('soundcloud.redirect') }}"
+                                wire:click="subscribe('{{ encrypt($plan->id) }}')" class="w-full py-4 px-6">Choose
+                                Plan</x-gabutton>
                         @else
                             <x-gabutton variant="secondary" href="{{ route('user.dashboard') }}"
                                 class="w-full py-4 px-6">Get
