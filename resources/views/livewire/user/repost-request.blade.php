@@ -375,17 +375,21 @@
                 </div>
                 <div class="px-6 py-4 space-y-5">
                     <div class="flex items-start justify-between">
-                        <h3>Repost</h3>
-                        <span class="text-sm text-gray-700 dark:text-gray-300">{{ repostPrice($request->requester) }} Credits</span>
+                        <h3 class="text-lg font-medium uppercase text-gray-900 dark:text-white">Repost</h3>
+                        <span class="text-sm text-gray-700 dark:text-gray-300">{{ repostPrice($request->requester) }}
+                            Credits</span>
                     </div>
-                    <div class="flex items-center space-x-3 p-2 border border-gray-200 dark:border-gray-600 rounded-md">
+                    <div
+                        class="flex items-center space-x-3 p-2 border border-gray-200 dark:border-gray-600 rounded-md">
                         <img src="{{ soundcloud_image($request->track->artwork_url) }}" alt="Track Cover"
                             class="w-12 h-12 rounded-md object-cover">
                         <div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $request->track->type }} - {{ $request->track->author_username }}</p>
+                            <p class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                {{ $request->track->type }} - {{ $request->track->author_username }}</p>
                             <p class="text-xs text-gray-500">{{ $request->track->title }}</p>
                         </div>
                     </div>
+                    <p class="text-sm text-gray-700 dark:text-gray-300">{{ $request->description }}</p>
 
                     <!-- Follow Options -->
                     <div class="space-y-2">
@@ -393,7 +397,8 @@
                             <div class="flex items-center space-x-2">
                                 <input type="checkbox" checked
                                     class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                                <span class="text-sm text-gray-800 dark:text-gray-200">Follow <span class="font-semibold text-orange-500">{{ $request->requester?->name }}</span></span>
+                                <span class="text-sm text-gray-800 dark:text-gray-200">Follow <span
+                                        class="font-semibold text-orange-500">{{ $request->requester?->name }}</span></span>
                             </div>
                         </label>
                     </div>
@@ -403,7 +408,8 @@
                         <label class="flex items-center space-x-2">
                             <input type="checkbox" wire:model.live="liked"
                                 class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                            <span class="text-sm text-gray-800 dark:text-gray-200">{{ __('Activate HeartPush') }}</span>
+                            <span
+                                class="text-sm text-gray-800 dark:text-gray-200">{{ __('Activate HeartPush') }}</span>
                         </label>
                         <span class="text-sm text-gray-700 dark:text-gray-300">+2 credits</span>
                     </div>
@@ -418,7 +424,7 @@
                         <textarea rows="3" placeholder="What did you like about the track?" wire:model.live="commented"
                             class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"></textarea>
                     </div>
-                    
+
                     <div class="flex justify-center gap-4">
                         <button @click="showRepostConfirmationModal = false"
                             wire:click="repost('{{ $request->id }}')"
@@ -437,103 +443,6 @@
 
                 </div>
             </div>
-            {{-- <div class="bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-xl overflow-hidden">
-
-                <!-- Header -->
-                <div class="px-6 py-4 border-b dark:border-gray-700">
-                    <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                        Complete your Repost
-                    </h2>
-                </div>
-
-                <!-- Content -->
-                <div class="px-6 py-4 space-y-5">
-
-                    <!-- Repost Section -->
-                    <div class="flex items-start justify-between">
-                        <div class="flex items-center space-x-3">
-                            <img src="https://via.placeholder.com/50" alt="Track Cover"
-                                class="w-12 h-12 rounded-md object-cover">
-                            <div>
-                                <p class="text-sm font-medium text-gray-900 dark:text-gray-100">Techno • ANML×PRTY
-                                </p>
-                                <p class="text-xs text-gray-500">Turn Off The Lights</p>
-                            </div>
-                        </div>
-                        <span class="text-sm text-gray-700 dark:text-gray-300">+1 credits</span>
-                    </div>
-
-                    <!-- Follow Options -->
-                    <div class="space-y-2">
-                        <label class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <input type="checkbox" checked
-                                    class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                                <span class="text-sm text-gray-800 dark:text-gray-200">Follow ANML×PRTY</span>
-                            </div>
-                        </label>
-                        <label class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <input type="checkbox"
-                                    class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                                <span class="text-sm text-gray-800 dark:text-gray-200">Add ANML×PRTY to your
-                                    starred members</span>
-                            </div>
-                        </label>
-                    </div>
-
-                    <!-- Like Plus -->
-                    <div class="flex items-center justify-between border-t pt-3 dark:border-gray-700">
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" checked
-                                class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                            <span class="text-sm text-gray-800 dark:text-gray-200">Like the track <span
-                                    class="text-xs text-gray-400">BETA</span></span>
-                        </label>
-                        <span class="text-sm text-gray-700 dark:text-gray-300">+1 credits</span>
-                    </div>
-
-                    <!-- Comment Plus -->
-                    <div class="border-t pt-3 space-y-2 dark:border-gray-700">
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm font-medium text-gray-800 dark:text-gray-200">Comment on this
-                                track (optional)</span>
-                            <span class="text-sm text-gray-700 dark:text-gray-300">+2 credits</span>
-                        </div>
-                        <textarea rows="3" placeholder="What did you like about the track?"
-                            class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"></textarea>
-                    </div>
-
-                    <!-- Sponsored -->
-                    <div class="flex items-center justify-between border-t pt-3 dark:border-gray-700">
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" checked
-                                class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                            <span class="text-sm text-gray-800 dark:text-gray-200">Follow Azeteck (Outkast
-                                Revolt)</span>
-                        </label>
-                        <span class="text-sm text-gray-700 dark:text-gray-300">+2 credits</span>
-                    </div>
-
-                </div>
-
-                <!-- Footer -->
-                <div class="flex justify-center gap-4">
-                    <button @click="showRepostConfirmationModal = false" wire:click="repost('{{ $request->id }}')"
-                        class="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-xl transition-all duration-200">
-                        <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <rect x="1" y="1" width="24" height="16" rx="3" fill="none"
-                                stroke="currentColor" stroke-width="2" />
-                            <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
-                                stroke-width="2" />
-                        </svg>
-                        <span>{{ repostPrice() + ($liked ? 2 : 0) + ($commented ? 2 : 0) }}</span>
-                        {{ __('Repost') }}
-                    </button>
-                </div>
-
-            </div> --}}
         @endif
     </div>
 </div>
