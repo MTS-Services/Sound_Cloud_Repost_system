@@ -63,9 +63,10 @@
                 <div class="flex items-center space-x-1">
                     <div class="w-4 h-4 rounded-full bg-orange-500"></div>
 
-                    <span class="text-xs text-orange-600 font-semibold">{{ user()->responseRate() }} <span
+                    <span class="text-xs text-orange-600 font-semibold">{{ user()->responseRate() }}% <span
                             class="text-gray-900 dark:text-white">Response rate.</span></span>
-                    <a href="#" class="text-xs text-red-500 underline">Reset</a>
+                    <a href="{{ route('user.reposts-request') }}" wire:navigate
+                        class="text-xs text-red-500 underline">Reset</a>
                 </div>
                 <div x-data="{ on: {{ $requestReceiveable ? 'false' : 'true' }} }"
                     class="inline-flex items-center {{ user()->email_verified_at ? 'cursor-pointer' : 'cursor-not-allowed' }}"
