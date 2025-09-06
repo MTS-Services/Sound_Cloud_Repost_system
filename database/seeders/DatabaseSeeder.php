@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
 
             // CustomNotificationSeeder::class,
             // CustomNotificationStatusSeeder::class,
+            // AnalyticsSeeder::class,
         ]);
     }
 }

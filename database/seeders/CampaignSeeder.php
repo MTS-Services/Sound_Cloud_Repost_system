@@ -16,9 +16,6 @@ class CampaignSeeder extends Seeder
     public function run(): void
     {
         // $user = User::first();
-        // if (!$user) {
-        //     $user = User::factory()->create();
-        // }
 
         // $track = Track::first();
         // if (!$track) {
@@ -27,7 +24,7 @@ class CampaignSeeder extends Seeder
         // }
 
         // Campaign::create([
-        //     'user_urn' => $user->urn,
+        //     'user_urn' => 'urn:sc:users:1001',
         //     'music_id' => $track->id,
         //     'music_type' => 'App\Models\Track',
         //     'title' => 'Boost Track Campaign',

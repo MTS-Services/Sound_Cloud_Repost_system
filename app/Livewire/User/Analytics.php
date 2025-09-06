@@ -7,7 +7,7 @@ use Livewire\Component;
 class Analytics extends Component
 {
     public bool $showGrowthTips = false;
-    public bool $showFilters = true;
+    public bool $showFilters = false;
 
     public function render()
     {
