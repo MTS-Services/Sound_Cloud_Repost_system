@@ -45,11 +45,12 @@ class Member extends Component
     public ?int $selectedPlaylistId = null;
     public ?int $selectedTrackId = null;
     public string $searchQuery = '';
+    public $creditSpent = 0;
 
     public string $description = '';
     public bool $commentable = false;
     public bool $likeable = false;
-    public bool $following = false;
+    public bool $following = true;
 
     // block_mismatch_genre
     public ?bool $blockMismatchGenre = null;
@@ -89,10 +90,33 @@ class Member extends Component
         $this->soundcloudClientId = config('services.soundcloud.client_id');
     }
 
+    public function rules()
+    {
+        return [
+            'description' => 'nullable|string|max:200',
+            'commentable' => 'nullable',
+            'likeable' => 'nullable',
+        ];
+    }
+    public function updated($propertyName)
+    {
+        $this->validateOnly($propertyName);
+        
+        $this->creditSpent = repostPrice($this->user)
+            + ($this->likeable ? 2 : 0)
+            + ($this->commentable ? 2 : 0);
+            
+        if (userCredits() < $this->creditSpent) {
+            $this->addError('credits', 'Your credits are not enough.');
+            return;
+        }
+    }
+
     public function mount()
     {
         $this->genres = $this->getAvailableGenres();
         $this->userinfo = user()->userInfo;
+        // $this->creditSpent = repostPrice($this->user) + ($this->likeable ? 2 : 0) + ($this->commentable ? 2 : 0);
     }
 
     private function getAvailableGenres(): Collection
@@ -262,16 +286,16 @@ class Member extends Component
             'searchQuery',
             'playListTrackShow',
         ]);
-        if (userCredits() < 1) {
+        // if ($this->repostRequestService->thisMonthDirectRequestCount() >= (int) userFeatures()[Feature::KEY_DIRECT_REQUESTS]) {
+        //     return $this->dispatch('alert', type: 'error', message: 'You have reached your direct request limit for this month.');
+        // }
+        $this->selectedUserUrn = $userUrn;
+        $this->user = User::with('userInfo')->where('urn', $this->selectedUserUrn)->first();
+        if (userCredits() < repostPrice($this->user)) {
             $this->showLowCreditWarningModal = true;
             $this->showModal = false;
             return;
         }
-        if ($this->repostRequestService->thisMonthDirectRequestCount() >= (int) userFeatures()[Feature::KEY_DIRECT_REQUESTS]) {
-            return $this->dispatch('alert', type: 'error', message: 'You have reached your direct request limit for this month.');
-        }
-        $this->selectedUserUrn = $userUrn;
-        $this->user = User::with('userInfo')->where('urn', $this->selectedUserUrn)->first();
         if ($this->user->request_receiveable) {
             $this->showModal = true;
             $this->activeTab = 'tracks';
@@ -346,11 +370,10 @@ class Member extends Component
             if (!$follow_response->successful()) {
                 $this->dispatch('alert', type: 'error', message: 'Failed to follow user.');
                 return;
-            }elseif($follow_response->successful()){
+            } elseif ($follow_response->successful()) {
                 $this->following = 1;
             }
-            
-        } 
+        }
         try {
             $credit_spent = repostPrice($this->user);
             $transaction_credits = repostPrice($this->user) + ($this->likeable ? 2 : 0) + ($this->commentable ? 2 : 0);
@@ -399,7 +422,7 @@ class Member extends Component
                             'Request Sent To' => $this->user->name,
                             'Track Title' => $this->track->title,
                             'Track Artist' => $this->track?->user?->name ?? $requester->name,
-                            'Credits Spent' => $amount,
+                            'Credits Spent' => $credit_spent,
                         ],
                     ],
                 ]);
@@ -419,7 +442,7 @@ class Member extends Component
                             'Request Received From' => $requester->name,
                             'Track Title' => $this->track->title,
                             'Track Artist' => $this->track?->user?->name ?? $requester->name,
-                            'Credits Offered' => $amount,
+                            'Credits Offered' => $credit_spent,
                         ]
                     ]
                 ]);
