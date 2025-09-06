@@ -334,20 +334,14 @@ class Member extends Component
         $httpClient = Http::withHeaders([
             'Authorization' => 'OAuth ' . user()->token,
         ]);
-        $commentSoundcloud = [
-            'comment' => [
-                'body' => $this->commented,
-                'timestamp' => time()
-            ]
-        ];
-        if ($this->commented) {
-            $comment_response = $httpClient->post("{$this->baseUrl}/tracks/{$this->track->run}/comments", $commentSoundcloud);
+        if ($this->following) {
+            $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$this->user->urn}");
         }
-dd($comment_response);
+        dd($follow_response);
         try {
             $amount = repostPrice($this->user);
 
-            DB::transaction(function () use ($requester, $amount, $comment_response) {
+            DB::transaction(function () use ($requester, $amount, $follow_response) {
                 $repostRequest = RepostRequest::create([
                     'requester_urn' => $requester->urn,
                     'target_user_urn' => $this->user->urn,
@@ -355,7 +349,7 @@ dd($comment_response);
                     'credits_spent' => $amount,
                     'likeable' => $this->likeable,
                     'comment_note' => $this->comment_note,
-                    'following' => $comment_response->ok() ? 1 : 0,
+                    'following' => $follow_response->ok() ? 1 : 0,
                     'expired_at' => now()->addHours(24),
                 ]);
 
