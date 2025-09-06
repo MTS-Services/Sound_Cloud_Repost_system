@@ -398,12 +398,12 @@
                                 {{-- add personal message optional --}}
                                 <div class="space-y-6 mt-4">
                                     <div>
-                                        <label for="personal-message"
+                                        <label for="description"
                                             class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                             Add personal message (optional)
                                         </label>
                                         <div class="relative mt-1">
-                                            <textarea id="personal-message" name="personal-message" rows="6"
+                                            <textarea id="description" name="description" rows="4" wire:model="description"
                                                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                                 placeholder="Say hi and introduce your track"></textarea>
                                             <div
