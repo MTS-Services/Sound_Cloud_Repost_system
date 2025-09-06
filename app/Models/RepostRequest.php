@@ -22,6 +22,10 @@ class RepostRequest extends BaseModel
         'expired_at',
         'responded_at',
         'completed_at',
+        'description',
+        'following',
+        'commentable',
+        'likeable',
         'request_receiveable',
 
         'creater_id',

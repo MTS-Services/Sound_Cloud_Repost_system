@@ -1,35 +1,33 @@
 <?php
 
-namespace App\Livewire\User;
+// namespace App\Livewire\User;
 
-use App\Events\UserNotificationSent;
-use App\Models\CreditTransaction;
-use App\Models\CustomNotification;
-use App\Models\Playlist;
-use App\Models\RepostRequest;
-use App\Models\Track;
-use App\Models\User;
-use App\Models\UserGenre;
-use App\Models\UserInformation;
-use App\Models\UserSetting;
-use App\Services\PlaylistService;
-use App\Services\TrackService;
-use App\Services\User\Mamber\RepostRequestService;
-use Exception;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use InvalidArgumentException;
-use Livewire\Component;
-use Livewire\WithPagination;
-use App\Models\Feature;
+// use App\Events\UserNotificationSent;
+// use App\Models\CreditTransaction;
+// use App\Models\CustomNotification;
+// use App\Models\Playlist;
+// use App\Models\RepostRequest;
+// use App\Models\Track;
+// use App\Models\User;
+// use App\Models\UserGenre;
+// use App\Models\UserInformation;
+// use App\Models\UserSetting;
+// use App\Services\PlaylistService;
+// use App\Services\TrackService;
+// use App\Services\User\Mamber\RepostRequestService;
+// use Exception;
+// use Illuminate\Support\Collection;
+// use Illuminate\Support\Facades\DB;
+// use Illuminate\Support\Facades\Http;
+// use Illuminate\Support\Facades\Log;
+// use InvalidArgumentException;
+// use Livewire\Component;
+// use Livewire\WithPagination;
+// use App\Models\Feature;
 
-class Member extends Component
-{
+// class Member extends Component
+// {
     use WithPagination;
-
-    protected string $baseUrl = 'https://api.soundcloud.com';
 
     public ?int $perPage = 9;
     public string $page_slug = 'members';
@@ -37,7 +35,6 @@ class Member extends Component
     public string $genreFilter = '';
     public string $costFilter = '';
     public bool $showModal = false;
-    public bool $showLowCreditWarningModal = false;
     public bool $playListTrackShow = false;
     public bool $showRepostsModal = false;
     public string $activeTab = 'tracks';
@@ -45,11 +42,6 @@ class Member extends Component
     public ?int $selectedPlaylistId = null;
     public ?int $selectedTrackId = null;
     public string $searchQuery = '';
-
-    public string $description = '';
-    public bool $commentable = false;
-    public bool $likeable = false;
-    public bool $following = false;
 
     // block_mismatch_genre
     public ?bool $blockMismatchGenre = null;
@@ -262,11 +254,7 @@ class Member extends Component
             'searchQuery',
             'playListTrackShow',
         ]);
-        if (userCredits() < 1) {
-            $this->showLowCreditWarningModal = true;
-            $this->showModal = false;
-            return;
-        }
+
         if ($this->repostRequestService->thisMonthDirectRequestCount() >= (int) userFeatures()[Feature::KEY_DIRECT_REQUESTS]) {
             return $this->dispatch('alert', type: 'error', message: 'You have reached your direct request limit for this month.');
         }
@@ -337,33 +325,16 @@ class Member extends Component
             $this->dispatch('alert', type: 'error', message: 'Target user or content not found.');
             return;
         }
-        $httpClient = Http::withHeaders([
-            'Authorization' => 'OAuth ' . user()->token,
-        ]);
-        $follow_response = null;
-        if ($this->following) {
-            $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$this->user->urn}");
-            if (!$follow_response->successful()) {
-                $this->dispatch('alert', type: 'error', message: 'Failed to follow user.');
-                return;
-            }elseif($follow_response->successful()){
-                $this->following = 1;
-            }
-            
-        } 
+
         try {
             $amount = repostPrice($this->user);
 
-            DB::transaction(function () use ($requester, $amount, $follow_response) {
+            DB::transaction(function () use ($requester, $amount) {
                 $repostRequest = RepostRequest::create([
                     'requester_urn' => $requester->urn,
                     'target_user_urn' => $this->user->urn,
                     'track_urn' => $this->track->urn,
                     'credits_spent' => $amount,
-                    'description' => $this->description,
-                    'likeable' => $this->likeable,
-                    'commentable' => $this->commentable,
-                    'following' => $this->following,
                     'expired_at' => now()->addHours(24),
                 ]);
 
@@ -426,11 +397,10 @@ class Member extends Component
                 broadcast(new UserNotificationSent($requesterNotification));
                 broadcast(new UserNotificationSent($targetUserNotification));
             });
+            $this->dispatch('alert', type: 'success', message: 'Repost request sent successfully!');
             sleep(1);
             $this->closeRepostModal();
             $this->closeModal();
-            $this->mount();
-            $this->dispatch('alert', type: 'success', message: 'Repost request sent successfully!');
         } catch (InvalidArgumentException $e) {
             Log::info('Repost request failed', ['error' => $e->getMessage()]);
             $this->dispatch('alert', type: 'error', message: $e->getMessage());

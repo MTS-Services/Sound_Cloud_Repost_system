@@ -125,15 +125,15 @@
                         </div>
 
                         <!-- Request Button -->
-                        {{-- @if (requestReceiveable($user_->urn)) --}}
-                        <x-gbutton variant="primary" :full-width="true"
-                            wire:click="openModal('{{ $user_->urn }}')">Request</x-gbutton>
-                        {{-- @else
+                        @if (requestReceiveable($user_->urn))
+                            <x-gbutton variant="primary" :full-width="true"
+                                wire:click="openModal('{{ $user_->urn }}')">Request</x-gbutton>
+                        @else
                             <x-gbutton variant="primary" :full-width="true" disabled
                                 class="!cursor-not-allowed !py-3">Request
                                 Later</x-gbutton>
-                        @endif --}}
-
+                        @endif
+                        
                     </div>
                 @empty
                     <div class="col-span-full text-center py-8">
@@ -320,53 +320,6 @@
                     @endif
                 </div>
             </div>
-            {{-- Low Credit Warning Modal --}}
-            <div x-data="{ showLowCreditWarningModal: @entangle('showLowCreditWarningModal').live }" x-show="showLowCreditWarningModal" x-cloak
-                x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
-                x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
-                x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-
-                <div
-                    class="w-full max-w-md mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
-                    <div
-                        class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center">
-                                <x-lucide-triangle-alert class="w-5 h-5 text-white" />
-                            </div>
-                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                                {{ __('Low Credit Warning') }}
-                            </h2>
-                        </div>
-                        <button x-on:click="showLowCreditWarningModal = false"
-                            class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                            <x-lucide-x class="w-5 h-5" />
-                        </button>
-                    </div>
-
-                    <div class="p-6 text-center">
-                        <div
-                            class="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <x-lucide-wallet class="w-10 h-10 text-red-600 dark:text-red-400" />
-                        </div>
-                        <p class="text-lg text-gray-700 dark:text-gray-300 mb-4">
-                            {{ __('You need a minimum of 50 credits to create a campaign.') }}
-                        </p>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
-                            {{ __('Please add more credits to your account to proceed with campaign creation.') }}
-                        </p>
-                        {{-- <a href="{{ route('user.add-credits') }}" wire:navigate
-                    class="inline-flex items-center justify-center w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                    <x-lucide-plus class="w-5 h-5 inline mr-2" />
-                    {{ __('Buy Credits Now') }}
-                </a> --}}
-                        <x-gbutton :full-width="true" variant="primary" wire:navigate
-                            href="{{ route('user.add-credits') }}"
-                            class="mb-2">{{ __('Buy Credits Now') }}</x-gbutton>
-                    </div>
-                </div>
-            </div>
 
             {{-- Reposts Modal --}}
             <div x-data="{ showRepostsModal: @entangle('showRepostsModal').live }" x-show="showRepostsModal" x-cloak
@@ -398,42 +351,23 @@
                     <div class="flex-1 overflow-y-auto">
                         <div class="p-6">
                             @if ($track)
-                                {{-- User Info --}}
                                 <div
-                                    class="flex justify-between space-x-4 items-center  border border-transparent mb-4">
-                                    <div class="flex gap-3 items-center">
-                                        <div class="flex-shrink-0">
-                                            <img class="h-14 w-14 rounded-full object-cover shadow-md"
-                                                src="{{ auth_storage_url($user->avatar) }}"
-                                                alt="{{ $user->name }}" />
-                                        </div>
-
-                                        <p
-                                            class="text-base font-normal text-orange-500 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                                            {{ $user->name }}
-                                        </p>
-                                    </div>
-                                    <div class="flex items-center justify-between mt-4">
-                                        <span class="dark:text-white font-medium">Cost</span>
-                                        <div class="flex items-center gap-2 ml-1">
-                                            <span
-                                                class="text-gray-800 dark:text-orange-400 font-bold">{{ repostPrice($user) > 1 ? repostPrice($user) . ' Credits' : repostPrice($user) . ' Credit' }}</span>
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div
-                                    class=" flex items-center space-x-4 cursor-pointer  border border-gray-200 dark:border-gray-700  bg-gray-50 dark:bg-slate-700 rounded-md  ">
+                                    class="p-4 flex items-center space-x-4 cursor-pointer bg-gray-50 dark:bg-slate-700 rounded-xl border border-transparent ">
                                     <div class="flex-shrink-0">
-                                        <img class="h-18 w-18 rounded-xl object-cover shadow-md"
+                                        <img class="h-14 w-14 rounded-xl object-cover shadow-md"
                                             src="{{ storage_url($track->artwork_url) }}"
                                             alt="{{ $track->title }}" />
                                     </div>
                                     <div class="flex-1 min-w-0">
+                                        <p
+                                            class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                            {{ $track->title }}
+                                        </p>
                                         <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                            <span class="ml-2 text-xs text-gray-400">{{ $track->genre }}.</span>
+                                            by
                                             <strong
                                                 class="text-orange-600 dark:text-orange-400">{{ $track->author_username }}</strong>
+                                            <span class="ml-2 text-xs text-gray-400">{{ $track->genre }}</span>
                                         </p>
                                         <span
                                             class="inline-block bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono">{{ $track->isrc }}</span>
@@ -443,81 +377,84 @@
                                             class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors"></i>
                                     </div>
                                 </div>
-                                {{-- add personal message optional --}}
-                                <div class="space-y-6 mt-4">
-                                    <div>
-                                        <label for="description"
-                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                            Add personal message (optional)
-                                        </label>
-                                        <div class="relative mt-1">
-                                            <textarea id="description" name="description" rows="4" wire:model="description"
-                                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                                placeholder="Say hi and introduce your track"></textarea>
-                                            <div
-                                                class="pointer-events-none absolute bottom-2 right-2 text-xs text-gray-400">
-                                                200
-                                            </div>
+                                {{-- User Info --}}
+                                <div
+                                    class="p-4 flex justify-between space-x-4  rounded-xl border border-gray-200 dark:border-gray-700 mt-4">
+                                    <div class="flex gap-3">
+                                        <div class="flex-shrink-0">
+                                            <img class="h-14 w-14 rounded-full object-cover shadow-md"
+                                                src="{{ auth_storage_url($user->avatar) }}"
+                                                alt="{{ $user->name }}" />
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p
+                                                class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                                {{ $user->name }}
+                                            </p>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                                {{ $user->email }}
+                                            </p>
+
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 gap-3 text-right">
+                                        <div class="flex items-center gap-2 justify-end">
+                                            <i data-lucide="users" class="w-4 h-4 text-gray-500"></i>
+                                            <span class="text-sm text-gray-600 dark:text-gray-400">Followers:</span>
+                                            <span
+                                                class="text-orange-500 dark:text-orange-400 font-bold">{{ $user->userInfo?->followers_count ?? 0 }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 justify-end">
+                                            <i data-lucide="repeat" class="w-4 h-4 text-gray-500"></i>
+                                            <span class="text-sm text-gray-600 dark:text-gray-400">Reposts:</span>
+                                            <span
+                                                class="text-orange-500 dark:text-orange-400 font-bold">{{ $user->userInfo?->reposts_count ?? 0 }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 justify-end">
+                                            <i data-lucide="heart" class="w-4 h-4 text-gray-500"></i>
+                                            <span class="text-sm text-gray-600 dark:text-gray-400">Likes:</span>
+                                            <span
+                                                class="text-green-500 dark:text-green-400 font-bold">{{ $user->userInfo?->like_count ?? 0 }}</span>
                                         </div>
                                     </div>
 
-                                    <div class="relative flex items-start">
-                                        <div class="flex h-5 items-center">
-                                            <input id="following" name="following" type="checkbox"
-                                                wire:model="following"
-                                                class="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-red-500" />
+                                </div>
+                                <div class="flex items-center justify-between mt-4">
+                                    <span class="dark:text-white font-medium">Repost price:</span>
+                                    <div class="flex items-center gap-2">
+                                        <div class="text-gray-500 dark:text-gray-400">
+                                            <!-- Repost Icon -->
+                                            <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <rect x="1" y="1" width="24" height="16" rx="3"
+                                                    fill="none" stroke="currentColor" stroke-width="2" />
+                                                <circle cx="8" cy="9" r="3" fill="none"
+                                                    stroke="currentColor" stroke-width="2" />
+                                            </svg>
                                         </div>
-                                        <div class="ml-3 text-sm">
-                                            <label for="following" class="font-medium text-orange-600">Follow
-                                                {{ $user->name }}</label>
-                                        </div>
-                                    </div>
-
-                                    <div
-                                        class="rounded-md border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-800">
-                                        <div
-                                            class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                                            COMMENT PLUS
-                                        </div>
-                                        <div class="mt-2 flex items-center justify-between">
-                                            <div class="flex items-center">
-                                                <input id="commentable" name="commentable" type="checkbox"
-                                                    wire:model="commentable"
-                                                    class="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-red-500" />
-                                                <label for="commentable"
-                                                    class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                                    Offer credits to incentivise comment
-                                                </label>
-                                            </div>
-                                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Cost 2
-                                                credits</span>
-                                        </div>
-                                    </div>
-
-                                    <div
-                                        class="rounded-md border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-800">
-                                        <div class="flex items-center justify-between">
-                                            <div
-                                                class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                                                LIKE PLUS <span
-                                                    class="text-xs font-normal text-gray-400 dark:text-gray-500">BETA</span>
-                                            </div>
-                                        </div>
-                                        <div class="mt-2 flex items-center justify-between">
-                                            <div class="flex items-center">
-                                                <input id="likeable" name="likeable" type="checkbox"
-                                                    wire:model="likeable"
-                                                    class="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500" />
-                                                <label for="likeable"
-                                                    class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                                    Offer credits to incentivise likes
-                                                </label>
-                                            </div>
-                                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Cost 2
-                                                credits</span>
-                                        </div>
+                                        <span class="text-orange-500 dark:text-orange-400 font-bold">1 Credit</span>
                                     </div>
                                 </div>
+                                @if ($blockMismatchGenre && !$userMismatchGenre)
+                                    <div
+                                        class="p-4 bg-gray-50 dark:bg-slate-700 rounded-xl border-l-4 border-orange-500 mt-4">
+                                        <p class="text-red-500 text-sm leading-relaxed">
+                                            “This user has blocked repost requests for tracks that don’t match their
+                                            profile
+                                            genre. You cannot send them a repost request.”
+                                        </p>
+                                    </div>
+                                @else
+                                    <div
+                                        class="p-4 bg-gray-50 dark:bg-slate-700 rounded-xl border-l-4 border-orange-500 mt-4">
+                                        <p class="text-gray-500 dark:text-gray-300 text-sm leading-relaxed">
+                                            Your track will be shared across our network of 50K+ followers on
+                                            SoundCloud,.
+                                            Expected
+                                            reach: 10-15K impressions within 48 hours.
+                                        </p>
+                                    </div>
+                                @endif
                                 <!-- Confirm Button -->
                                 <div class="mt-6 flex justify-center gap-3">
                                     <x-gbutton variant="secondary" wire:click="closeRepostModal">Cancel</x-gbutton>

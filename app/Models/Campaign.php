@@ -119,8 +119,6 @@ class Campaign extends BaseModel
             'end_date_formatted',
 
             'feature_label',
-            'featured_again',
-            'boost_again',
             'boosted_label',
         ]);
     }
@@ -190,12 +188,12 @@ class Campaign extends BaseModel
     // active_completed scope
     public function scopeActive_completed()
     {
-        return $this->where('status', '!=', self::STATUS_CANCELLED,)->where('status', '!=', self::STATUS_PAUSED);
+        return $this->where('status', '!=', self::STATUS_CANCELLED, )->where('status', '!=', self::STATUS_PAUSED);
     }
 
     public const BOOSTED = 1;
     public const NOT_BOOSTED = 0;
-    
+
     public static function getBOOSTEDList(): array
     {
         return [

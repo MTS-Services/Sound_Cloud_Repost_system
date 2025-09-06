@@ -871,7 +871,7 @@
                     <x-lucide-wallet class="w-10 h-10 text-red-600 dark:text-red-400" />
                 </div>
                 <p class="text-lg text-gray-700 dark:text-gray-300 mb-4">
-                    {{ __('You need a minimum of 100 credits to create a campaign.') }}
+                    {{ __('You need a minimum of 50 credits to create a campaign.') }}
                 </p>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
                     {{ __('Please add more credits to your account to proceed with campaign creation.') }}
