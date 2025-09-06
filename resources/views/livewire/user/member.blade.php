@@ -320,6 +320,53 @@
                     @endif
                 </div>
             </div>
+            {{-- Low Credit Warning Modal --}}
+            <div x-data="{ showLowCreditWarningModal: @entangle('showLowCreditWarningModal').live }" x-show="showLowCreditWarningModal" x-cloak
+                x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+
+                <div
+                    class="w-full max-w-md mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
+                    <div
+                        class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center">
+                                <x-lucide-triangle-alert class="w-5 h-5 text-white" />
+                            </div>
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                                {{ __('Low Credit Warning') }}
+                            </h2>
+                        </div>
+                        <button x-on:click="showLowCreditWarningModal = false"
+                            class="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
+                            <x-lucide-x class="w-5 h-5" />
+                        </button>
+                    </div>
+
+                    <div class="p-6 text-center">
+                        <div
+                            class="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <x-lucide-wallet class="w-10 h-10 text-red-600 dark:text-red-400" />
+                        </div>
+                        <p class="text-lg text-gray-700 dark:text-gray-300 mb-4">
+                            {{ __('You need a minimum of 100 credits to create a campaign.') }}
+                        </p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                            {{ __('Please add more credits to your account to proceed with campaign creation.') }}
+                        </p>
+                        {{-- <a href="{{ route('user.add-credits') }}" wire:navigate
+                    class="inline-flex items-center justify-center w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                    <x-lucide-plus class="w-5 h-5 inline mr-2" />
+                    {{ __('Buy Credits Now') }}
+                </a> --}}
+                        <x-gbutton :full-width="true" variant="primary" wire:navigate
+                            href="{{ route('user.add-credits') }}"
+                            class="mb-2">{{ __('Buy Credits Now') }}</x-gbutton>
+                    </div>
+                </div>
+            </div>
 
             {{-- Reposts Modal --}}
             <div x-data="{ showRepostsModal: @entangle('showRepostsModal').live }" x-show="showRepostsModal" x-cloak
@@ -369,7 +416,8 @@
                                     <div class="flex items-center justify-between mt-4">
                                         <span class="dark:text-white font-medium">Cost</span>
                                         <div class="flex items-center gap-2 ml-1">
-                                            <span class="text-gray-800 dark:text-orange-400 font-bold">{{ repostPrice($user) > 1 ? repostPrice($user) . ' Credits' : repostPrice($user) . ' Credit' }}</span>
+                                            <span
+                                                class="text-gray-800 dark:text-orange-400 font-bold">{{ repostPrice($user) > 1 ? repostPrice($user) . ' Credits' : repostPrice($user) . ' Credit' }}</span>
                                         </div>
                                     </div>
 
@@ -415,11 +463,13 @@
 
                                     <div class="relative flex items-start">
                                         <div class="flex h-5 items-center">
-                                            <input id="following" name="following" type="checkbox" wire:model="following"
+                                            <input id="following" name="following" type="checkbox"
+                                                wire:model="following"
                                                 class="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-red-500" />
                                         </div>
                                         <div class="ml-3 text-sm">
-                                            <label for="following" class="font-medium text-orange-600">Follow {{ $user->name }}</label>
+                                            <label for="following" class="font-medium text-orange-600">Follow
+                                                {{ $user->name }}</label>
                                         </div>
                                     </div>
 
@@ -431,8 +481,8 @@
                                         </div>
                                         <div class="mt-2 flex items-center justify-between">
                                             <div class="flex items-center">
-                                                <input id="commentable" name="commentable"
-                                                    type="checkbox" wire:model="commentable"
+                                                <input id="commentable" name="commentable" type="checkbox"
+                                                    wire:model="commentable"
                                                     class="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-red-500" />
                                                 <label for="commentable"
                                                     class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -455,8 +505,8 @@
                                         </div>
                                         <div class="mt-2 flex items-center justify-between">
                                             <div class="flex items-center">
-                                                <input id="likeable" name="likeable"
-                                                    type="checkbox" wire:model="likeable"
+                                                <input id="likeable" name="likeable" type="checkbox"
+                                                    wire:model="likeable"
                                                     class="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500" />
                                                 <label for="likeable"
                                                     class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300">

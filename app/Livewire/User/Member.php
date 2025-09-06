@@ -37,6 +37,7 @@ class Member extends Component
     public string $genreFilter = '';
     public string $costFilter = '';
     public bool $showModal = false;
+    public bool $showLowCreditWarningModal = false;
     public bool $playListTrackShow = false;
     public bool $showRepostsModal = false;
     public string $activeTab = 'tracks';
@@ -261,7 +262,11 @@ class Member extends Component
             'searchQuery',
             'playListTrackShow',
         ]);
-
+        if (userCredits() < 0) {
+            $this->showLowCreditWarningModal = true;
+            $this->showModal = false;
+            return;
+        }
         if ($this->repostRequestService->thisMonthDirectRequestCount() >= (int) userFeatures()[Feature::KEY_DIRECT_REQUESTS]) {
             return $this->dispatch('alert', type: 'error', message: 'You have reached your direct request limit for this month.');
         }
@@ -421,11 +426,11 @@ class Member extends Component
                 broadcast(new UserNotificationSent($requesterNotification));
                 broadcast(new UserNotificationSent($targetUserNotification));
             });
-            $this->dispatch('alert', type: 'success', message: 'Repost request sent successfully!');
             sleep(1);
             $this->closeRepostModal();
             $this->closeModal();
             $this->mount();
+            $this->dispatch('alert', type: 'success', message: 'Repost request sent successfully!');
         } catch (InvalidArgumentException $e) {
             Log::info('Repost request failed', ['error' => $e->getMessage()]);
             $this->dispatch('alert', type: 'error', message: $e->getMessage());
