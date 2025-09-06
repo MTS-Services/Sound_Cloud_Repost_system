@@ -334,6 +334,7 @@ class Member extends Component
         $httpClient = Http::withHeaders([
             'Authorization' => 'OAuth ' . user()->token,
         ]);
+        $follow_response = null;
         if ($this->following) {
             $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$this->user->urn}");
         }
