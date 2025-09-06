@@ -45,7 +45,8 @@ class Member extends Component
     public ?int $selectedTrackId = null;
     public string $searchQuery = '';
 
-    public $comment_note = null;
+    public string $description = '';
+    public bool $commentable = false;
     public bool $likeable = false;
     public bool $following = false;
 
@@ -354,8 +355,9 @@ class Member extends Component
                     'target_user_urn' => $this->user->urn,
                     'track_urn' => $this->track->urn,
                     'credits_spent' => $amount,
+                    'description' => $this->description,
                     'likeable' => $this->likeable,
-                    'comment_note' => $this->comment_note,
+                    'commentable' => $this->commentable,
                     'following' => $this->following,
                     'expired_at' => now()->addHours(24),
                 ]);
@@ -423,6 +425,7 @@ class Member extends Component
             sleep(1);
             $this->closeRepostModal();
             $this->closeModal();
+            $this->mount();
         } catch (InvalidArgumentException $e) {
             Log::info('Repost request failed', ['error' => $e->getMessage()]);
             $this->dispatch('alert', type: 'error', message: $e->getMessage());

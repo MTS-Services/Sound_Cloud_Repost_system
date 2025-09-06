@@ -431,10 +431,10 @@
                                         </div>
                                         <div class="mt-2 flex items-center justify-between">
                                             <div class="flex items-center">
-                                                <input id="comment-note" name="comment-note"
-                                                    type="checkbox" wire:model="comment_note"
+                                                <input id="commentable" name="commentable"
+                                                    type="checkbox" wire:model="commentable"
                                                     class="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-red-500" />
-                                                <label for="comment-note"
+                                                <label for="commentable"
                                                     class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
                                                     Offer credits to incentivise comment
                                                 </label>
