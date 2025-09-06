@@ -337,7 +337,7 @@ class Member extends Component
         if ($this->following) {
             $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$this->user->urn}");
         }
-        dd($follow_response);
+        dd($follow_response->ok(), $follow_response->successful(), $follow_response->status());
         try {
             $amount = repostPrice($this->user);
 
