@@ -879,6 +879,16 @@ class Campaign extends Component
 
     public function startPlaying($campaignId)
     {
+        $this->reset([
+            'playcount',
+            'playedCampaigns',
+            'repostedCampaigns',
+            'campaign',
+            'showRepostConfirmationModal',
+            'commented',
+            'liked',
+            'followed',
+        ]);
         $this->handleAudioPlay($campaignId);
     }
 
