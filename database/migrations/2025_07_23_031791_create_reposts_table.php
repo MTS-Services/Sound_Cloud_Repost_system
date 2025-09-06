@@ -26,6 +26,9 @@ return new class extends Migration
             $table->string('soundcloud_repost_id')->index()->nullable();
             $table->decimal('credits_earned', 10, 2)->default(0.00);
             $table->timestamp('reposted_at')->index();
+            $table->integer('like_count')->default(0);
+            $table->integer('comment_count')->default(0);
+            $table->integer('followowers_count')->default(0);
 
             $table->foreign('repost_request_id')->references('id')->on('repost_requests')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('reposter_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
