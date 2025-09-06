@@ -262,7 +262,7 @@ class Member extends Component
             'searchQuery',
             'playListTrackShow',
         ]);
-        if (userCredits() < 0) {
+        if (userCredits() < 1) {
             $this->showLowCreditWarningModal = true;
             $this->showModal = false;
             return;
