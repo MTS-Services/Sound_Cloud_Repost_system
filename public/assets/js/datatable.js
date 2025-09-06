@@ -6,7 +6,7 @@ function initializeDataTable({
     order_route = "",
     model = "",
     table_columns = [], // Array for defining table columns
-    row_reorder = true,
+    row_reorder = false,
 } = {}) {
     let row_reorder_settings = false;
     if (row_reorder) {
