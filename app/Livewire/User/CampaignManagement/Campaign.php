@@ -186,17 +186,16 @@ class Campaign extends Component
     protected ?PlaylistService $playlistService = null;
     protected ?SoundCloudService $soundCloudService = null;
     protected ?AnalyticsService $analyticsService = null;
-
     protected ?MyCampaignService $myCampaignService = null;
 
-    public function boot(CampaignService $campaignService, TrackService $trackService, PlaylistService $playlistService, SoundCloudService $soundCloudService, MyCampaignService $myCampaignService, AnalyticsService $analyticsService)
+    public function boot(CampaignService $campaignService, TrackService $trackService, PlaylistService $playlistService, SoundCloudService $soundCloudService, AnalyticsService $analyticsService,MyCampaignService $myCampaignService)
     {
         $this->campaignService = $campaignService;
         $this->trackService = $trackService;
         $this->playlistService = $playlistService;
         $this->soundCloudService = $soundCloudService;
-        $this->myCampaignService = $myCampaignService;
         $this->analyticsService = $analyticsService;
+        $this->myCampaignService = $myCampaignService;
     }
 
     public function mount()

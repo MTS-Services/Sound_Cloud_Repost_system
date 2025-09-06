@@ -13,11 +13,11 @@ class TrackSeeder extends Seeder
 {
     public function run(): void
     {
-        $count = 10; // how many tracks you want to create
+        // $count = 10; // how many tracks you want to create
 
-        for ($i = 0; $i < $count; $i++) {
-            $this->createTrack();
-        }
+        // for ($i = 0; $i < $count; $i++) {
+        //     $this->createTrack();
+        // }
     }
 
     private function createTrack(): void
