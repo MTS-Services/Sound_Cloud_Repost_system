@@ -56,7 +56,7 @@ class AnalyticsSeeder extends Seeder
                 'user_urn' => $userUrn,
                 'source_id' => $sourceId,
                 'source_type' => $sourceType,
-                'date' => now()->subDays(rand(1, 30))->format('Y-m-d'),
+                'date' => now()->subDays(rand(1, 30)),
                 'genre' => 'Pop',
 
                 'total_views' => rand(1, 100),

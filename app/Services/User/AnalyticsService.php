@@ -4,6 +4,8 @@ namespace App\Services\User;
 
 use App\Models\UserAnalytics;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AnalyticsService
 {
@@ -88,8 +90,85 @@ class AnalyticsService
         );
         $analytics->genre = $genre;
         $analytics->save();
-        $analytics->increment($column, $increment);       
+        $analytics->increment($column, $increment);
 
         return $analytics;
+    }
+
+
+    /**
+     * Get the analytics data for a specific user within a date range.
+     *
+     * @param string $userUrn The user's URN to filter by.
+     * @param string $filter The time filter (daily, last_week, last_month, last_90_days, last_year).
+     * @return array The aggregated analytics data.
+     */
+    public function getAnalyticsData(string $userUrn, string $filter = 'last_week'): array
+    {
+        $startDate = $this->getStartDateForFilter($filter);
+        $endDate = Carbon::now();
+
+        $data = DB::table('user_analytics')
+            ->select(
+                DB::raw('SUM(total_plays) as streams'),
+                DB::raw('SUM(total_likes) as likes'),
+                DB::raw('SUM(total_comments) as comments'),
+                DB::raw('SUM(total_views) as views'),
+                DB::raw('SUM(total_reposts) as reposts'),
+                DB::raw('SUM(total_followes) as followers')
+            )
+            ->where('user_urn', $userUrn)
+            ->whereDate('date', '>=', $startDate)
+            ->whereDate('date', '<=', $endDate)
+            ->first();
+
+        // Check if data is null, and return default values if so
+        if (!$data) {
+            return [
+                'streams' => 0,
+                'likes' => 0,
+                'comments' => 0,
+                'views' => 0,
+                'reposts' => 0,
+                'followers' => 0,
+                'engagementRate' => 0,
+            ];
+        }
+
+        // Calculate engagement rate
+        $engagementRate = 0;
+        if ($data->streams > 0) {
+            $engagementRate = (($data->likes + $data->comments + $data->reposts) / $data->streams) * 100;
+        }
+
+        return [
+            'streams' => $data->streams ?? 0,
+            'likes' => $data->likes ?? 0,
+            'comments' => $data->comments ?? 0,
+            'views' => $data->views ?? 0,
+            'reposts' => $data->reposts ?? 0,
+            'followers' => $data->followers ?? 0,
+            'engagementRate' => number_format($engagementRate, 1),
+        ];
+    }
+
+    /**
+     * Determine the start date based on the filter.
+     *
+     * @param string $filter
+     * @return Carbon
+     */
+    protected function getStartDateForFilter(string $filter): Carbon
+    {
+        $now = Carbon::now();
+
+        return match ($filter) {
+            'daily' => $now->subDay()->startOfDay(), // Last 24 hours
+            'last_week' => $now->subWeek()->startOfDay(), // Last 7 days
+            'last_month' => $now->subMonth()->startOfDay(),
+            'last_90_days' => $now->subDays(90)->startOfDay(),
+            'last_year' => $now->subYear()->startOfDay(),
+            default => $now->subWeek()->startOfDay(),
+        };
     }
 }
