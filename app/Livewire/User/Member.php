@@ -338,7 +338,6 @@ class Member extends Component
         if ($this->following) {
             $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$this->user->urn}");
         }
-        dd($follow_response->ok(), $follow_response->successful(), $follow_response->status());
         try {
             $amount = repostPrice($this->user);
 
@@ -350,7 +349,7 @@ class Member extends Component
                     'credits_spent' => $amount,
                     'likeable' => $this->likeable,
                     'comment_note' => $this->comment_note,
-                    'following' => $follow_response->ok() ? 1 : 0,
+                    'following' => $follow_response->successful() ? 1 : 0,
                     'expired_at' => now()->addHours(24),
                 ]);
 
