@@ -188,7 +188,7 @@ class Campaign extends Component
     protected ?AnalyticsService $analyticsService = null;
     protected ?MyCampaignService $myCampaignService = null;
 
-    public function boot(CampaignService $campaignService, TrackService $trackService, PlaylistService $playlistService, SoundCloudService $soundCloudService, AnalyticsService $analyticsService,MyCampaignService $myCampaignService)
+    public function boot(CampaignService $campaignService, TrackService $trackService, PlaylistService $playlistService, SoundCloudService $soundCloudService, AnalyticsService $analyticsService, MyCampaignService $myCampaignService)
     {
         $this->campaignService = $campaignService;
         $this->trackService = $trackService;
@@ -913,16 +913,16 @@ class Campaign extends Component
                 $campaign->increment('playback_count');
             }
             $this->playcount = true;
-            $this->reset([
-                'playcount',
-                'playedCampaigns',
-                'repostedCampaigns',
-                'campaign',
-                'showRepostConfirmationModal',
-                'commented',
-                'liked',
-                'followed',
-            ]);
+            // $this->reset([
+            //     'playcount',
+            //     'playedCampaigns',
+            //     'repostedCampaigns',
+            //     'campaign',
+            //     'showRepostConfirmationModal',
+            //     'commented',
+            //     'liked',
+            //     'followed',
+            // ]);
         }
         return $canRepost;
     }
@@ -951,8 +951,10 @@ class Campaign extends Component
     }
     public function confirmRepost($campaignId)
     {
+        Log::info('confirmRepost');
         $this->showRepostConfirmationModal = true;
         $this->campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
+        Log::info($this->campaign);
     }
 
     public function repost($campaignId)
