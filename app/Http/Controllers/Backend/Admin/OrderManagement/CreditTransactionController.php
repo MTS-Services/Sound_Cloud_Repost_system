@@ -34,7 +34,7 @@ class CreditTransactionController extends Controller
             $query = $this->creditTransactionService->getTransactions()->with(['receiver', 'source', 'sender']);
             return DataTables::eloquent($query)
                 ->editColumn('name', function ($credit) {
-                    return $credit->receiver->name;
+                    return $credit->receiver?->name;
                 })
                 ->editColumn('credit', function ($credit) {
                     return $credit->credit;
@@ -166,7 +166,7 @@ class CreditTransactionController extends Controller
         if ($request->ajax()) {
             $query = $this->paymentService->getPayments()->with(['user', 'order']);
             return DataTables::eloquent($query)
-             ->editColumn('status', fn($payment) => "<span class='badge badge-soft {$payment->status_color}'>{$payment->status_label}</span>")
+                ->editColumn('status', fn($payment) => "<span class='badge badge-soft {$payment->status_color}'>{$payment->status_label}</span>")
                 ->editColumn('action', function ($payment) {
                     $menuItems = $this->paymentMenuItems($payment);
                     return view('components.action-buttons', compact('menuItems'))->render();
