@@ -30,8 +30,17 @@ class RepostRequest extends Component
     public $playedRequests = [];
     public $repostedRequests = [];
     public $playCount = false;
-
     public $requestReceiveable = false;
+    public bool $showRepostRequestModal = false;
+    public bool $showRepostConfirmationModal = false;
+
+    // Confirmation Repost
+    public $totalRepostPrice = 0;
+    public $request = null;
+    public $liked = false;
+    public $commented = null;
+    public $followed = true;
+
 
     // Listeners for browser events
     protected $listeners = [
@@ -239,6 +248,12 @@ class RepostRequest extends Component
     /**
      * Handle repost action
      */
+
+    public function confirmRepost($requestId)
+    {
+        $this->showRepostConfirmationModal = true;
+        $this->request = ModelsRepostRequest::findOrFail($requestId)->load('track', 'requester');
+    }
     public function repost($requestId)
     {
         $this->soundCloudService->ensureSoundCloudConnection(user());
@@ -253,8 +268,8 @@ class RepostRequest extends Component
             // Check if the user has already reposted this specific request
             if (
                 Repost::where('reposter_urn', $currentUserUrn)
-                    ->where('repost_request_id', $requestId)
-                    ->exists()
+                ->where('repost_request_id', $requestId)
+                ->exists()
             ) {
 
                 $this->dispatch('alert', type: 'error', message: 'You have already reposted this request.');
@@ -277,8 +292,38 @@ class RepostRequest extends Component
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
 
+            $commentSoundcloud = [
+                'comment' => [
+                    'body' => $this->commented,
+                    'timestamp' => time()
+                ]
+            ];
+
+            $response = null;
+            $like_response = null;
+            $comment_response = null;
+            $follow_response = null;
+
             // Repost the track to SoundCloud
             $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$request->track_urn}");
+            if ($this->commented) {
+                $comment_response = $httpClient->post("{$this->baseUrl}/tracks/{$request->track_urn}/comments", $commentSoundcloud);
+                if (!$comment_response->successful()) {
+                    $this->dispatch('alert', type: 'error', message: 'Failed to comment on track.');
+                }
+            }
+            if ($this->liked) {
+                $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$request->track_urn}");
+                if (!$like_response->successful()) {
+                    $this->dispatch('alert', type: 'error', message: 'Failed to like track.');
+                }
+            }
+            if ($this->followed) {
+                $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$request->requester_urn}");
+                if (!$follow_response->successful()) {
+                    $this->dispatch('alert', type: 'error', message: 'Failed to follow user.');
+                }
+            }
             if ($response->successful()) {
                 // If SoundCloud returns a repost ID, capture it
                 $soundcloudRepostId = $response->json('id');
