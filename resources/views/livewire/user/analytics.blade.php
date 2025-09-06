@@ -1,4 +1,52 @@
-<div x-data="{ showGrowthTips: @entangle('showGrowthTips').live, showFilters: @entangle('showFilters').live }">
+<div x-data="{
+    showGrowthTips: @entangle('showGrowthTips').live,
+    showFilters: @entangle('showFilters').live,
+    
+    // Optimistic UI properties
+    selectedFilter: '{{ $filter }}',
+    
+    // Initialize dataCache with the initial data from Livewire
+    dataCache: {{ Js::from($data) }}, // Initialize the cache with the current data
+
+    displayedData: null,
+
+    // Alpine method to handle the filter change instantly
+    changeFilter(newFilter) {
+        // Optimistic UI Update: Check if we have a cached version
+        if (this.dataCache[newFilter]) {
+            this.displayedData = this.dataCache[newFilter];
+            console.log('Using cached data for filter:', newFilter);
+        } else {
+            // Or use a default empty state while we wait
+            this.displayedData = {
+                streams: '-',
+                likes: '-',
+                reposts: '-',
+                engagementRate: '-'
+            };
+        }
+
+        // Update the Alpine property
+        this.selectedFilter = newFilter;
+
+        // Dispatch the filter change to Livewire
+        $wire.set('filter', newFilter);
+    },
+
+    // A Livewire hook to update our Alpine data when the server response arrives
+    init() {
+        // Corrected initialization: Set displayedData with the initial Livewire data
+        this.displayedData = this.$wire.data;
+        console.log('Initial data:', this.displayedData);
+
+        this.$watch('$wire.data', (newData) => {
+            // This runs after the server request is complete
+            this.displayedData = newData;
+            // Also store the new data in the cache for future instant access
+            this.dataCache[this.selectedFilter] = newData;
+        });
+    }
+}">
     <x-slot name="page_slug">analytics</x-slot>
 
     <div class="border-b border-gray-200 dark:border-gray-700 mb-6">
@@ -349,8 +397,8 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Total Streams</p>
-                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ number_format($data['streams']) }}
-                </p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white"
+                    x-text="displayedData?.streams">-</p>
             </div>
             <div class="mt-3 h-1 bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] rounded-full"></div>
         </div>
@@ -374,7 +422,8 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Total Likes</p>
-                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ number_format($data['likes']) }}</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white"
+                    x-text="displayedData?.likes">-</p>
             </div>
             <div class="mt-3 h-1 bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] rounded-full"></div>
         </div>
@@ -403,8 +452,8 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Total Reposts</p>
-                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ number_format($data['reposts']) }}
-                </p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white"
+                    x-text="displayedData?.reposts">-</p>
             </div>
             <div class="mt-3 h-1 bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] rounded-full"></div>
         </div>
@@ -431,7 +480,8 @@
             <div>
                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Avg. Engagement Rate
                 </p>
-                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $data['engagementRate'] }}%</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white"
+                    x-text="displayedData?.engagementRate + '%' ">-</p>
             </div>
             <div class="mt-3 h-1 bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] rounded-full">
             </div>

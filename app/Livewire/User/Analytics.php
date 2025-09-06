@@ -14,6 +14,7 @@ class Analytics extends Component
     public string $filter = 'last_week';
 
     public array $data = [];
+    public array $dataCache = [];
 
     protected AnalyticsService $analyticsService;
 
@@ -27,10 +28,20 @@ class Analytics extends Component
         $this->loadData();
     }
 
-    #[On('updated:filter')]
+    public function updatedFilter()
+    {
+        $this->loadData();
+    }
+
+    // #[On('updated:filter')]
     public function loadData()
     {
-        $this->data = $this->analyticsService->getAnalyticsData(user()->urn, $this->filter);
+        // This is the server-side bottleneck
+        $freshData = $this->analyticsService->getAnalyticsData(user()->urn, $this->filter);
+        $this->data = $freshData;
+
+        // Store the fresh data in the cache
+        $this->dataCache[$this->filter] = $freshData;
     }
 
     // public function applyFilter()
