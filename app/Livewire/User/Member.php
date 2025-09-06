@@ -25,6 +25,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Feature;
 use App\Services\SoundCloud\SoundCloudService;
+use Illuminate\Auth\Events\Validated;
 
 class Member extends Component
 {
@@ -356,6 +357,7 @@ class Member extends Component
 
     public function createRepostsRequest()
     {
+        $this->validate();
         $this->soundCloudService->ensureSoundCloudConnection(user());
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $requester = user();

@@ -389,23 +389,7 @@
                             <p class="text-xs text-gray-500">{{ $request->track->title }}</p>
                         </div>
                     </div>
-                    {{-- <p class="text-sm capitalize text-gray-700 dark:text-gray-300 {{ $request->description ? '' : 'hidden' }}">{{ $request->description }}</p> --}}
-                    <div x-data="{
-                        desc: @js($request->description ?? ''),
-                        expanded: false,
-                        limit: 50
-                    }" x-show="desc && desc.length"
-                        class="text-sm text-gray-700 dark:text-gray-300">
-                        <p x-text="expanded || desc.length <= limit ? desc : desc.slice(0, limit) + '…'"
-                            class="inline"></p>
-
-                        <!-- See more / See less -->
-                        <button x-show="desc.length > limit" @click="expanded = !expanded"
-                            class="ml-1 text-orange-600 hover:underline font-medium"
-                            x-text="expanded ? 'See less' : 'See more'">
-                        </button>
-                    </div>
-
+                    <p class="text-sm capitalize text-gray-700 dark:text-gray-300 {{ $request->description ? '' : 'hidden' }}">{{ $request->description }}</p>
                     <!-- Follow Options -->
                     <div class="space-y-2">
                         <label class="flex items-center justify-between">
