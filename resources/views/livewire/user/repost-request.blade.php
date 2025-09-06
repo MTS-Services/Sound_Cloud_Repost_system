@@ -389,7 +389,9 @@
                             <p class="text-xs text-gray-500">{{ $request->track->title }}</p>
                         </div>
                     </div>
-                    <p class="text-sm capitalize text-gray-700 dark:text-gray-300 {{ $request->description ? '' : 'hidden' }}">{{ $request->description }}</p>
+                    <p
+                        class="text-sm capitalize text-gray-700 dark:text-gray-300 {{ $request->description ? '' : 'hidden' }}">
+                        {{ $request->description }}</p>
                     <!-- Follow Options -->
                     <div class="space-y-2">
                         <label class="flex items-center justify-between">

@@ -422,7 +422,7 @@
 
                                 </div>
                                 <div
-                                    class=" flex items-center space-x-4 cursor-pointer  border border-gray-200 dark:border-gray-700  bg-gray-50 dark:bg-slate-700 rounded-md  ">
+                                    class=" flex items-center space-x-4 cursor-pointer  border border-gray-200 dark:border-gray-700  bg-gray-50 dark:bg-slate-700 rounded-md  p-2">
                                     <div class="flex-shrink-0">
                                         <img class="h-18 w-18 rounded-xl object-cover shadow-md"
                                             src="{{ storage_url($track->artwork_url) }}"
@@ -430,7 +430,7 @@
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                            <span class="ml-2 text-xs text-gray-400">{{ $track->genre }}.</span>
+                                            <span class="ml-2 text-xs text-gray-400">{{ $track->genre ?? 'No Genre' }}.</span>
                                             <strong
                                                 class="text-orange-600 dark:text-orange-400">{{ $track->author_username }}</strong>
                                         </p>
@@ -450,7 +450,7 @@
                                             Add personal message (optional)
                                         </label>
                                         <div class="relative mt-1">
-                                            <textarea id="description" name="description" rows="4" wire:model="description"
+                                            <textarea id="description" name="description" rows="4" wire:model.live="description"
                                                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                                 placeholder="Say hi and introduce your track"></textarea>
                                             <div
