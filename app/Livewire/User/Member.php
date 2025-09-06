@@ -336,7 +336,6 @@ class Member extends Component
         ]);
         $follow_response = null;
         if ($this->following) {
-            dd($this->user->urn);
             $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$this->user->urn}");
             if (!$follow_response->successful()) {
                 $this->dispatch('alert', type: 'error', message: 'Failed to follow user.');
