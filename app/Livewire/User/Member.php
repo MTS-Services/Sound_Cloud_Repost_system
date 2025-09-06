@@ -24,6 +24,7 @@ use InvalidArgumentException;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Feature;
+use App\Services\SoundCloud\SoundCloudService;
 
 class Member extends Component
 {
@@ -79,14 +80,14 @@ class Member extends Component
 
     protected TrackService $trackService;
     protected PlaylistService $playlistService;
-
     protected RepostRequestService $repostRequestService;
-
-    public function boot(TrackService $trackService, PlaylistService $playlistService, RepostRequestService $repostRequestService)
+    protected SoundCloudService $soundCloudService;
+    public function boot(TrackService $trackService, PlaylistService $playlistService, RepostRequestService $repostRequestService, SoundCloudService $soundCloudService)
     {
         $this->trackService = $trackService;
         $this->playlistService = $playlistService;
         $this->repostRequestService = $repostRequestService;
+        $this->soundCloudService = $soundCloudService;
         $this->soundcloudClientId = config('services.soundcloud.client_id');
     }
 
@@ -355,6 +356,8 @@ class Member extends Component
 
     public function createRepostsRequest()
     {
+        $this->soundCloudService->ensureSoundCloudConnection(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $requester = user();
 
         if (!$this->user || !$this->track) {
