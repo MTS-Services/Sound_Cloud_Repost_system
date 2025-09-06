@@ -26,7 +26,7 @@ class OrderController extends Controller
             $query = $this->orderService->getOrders();
             return DataTables::eloquent($query)
                 ->editColumn('user_urn', function ($order) {
-                    return $order->user->name;
+                    return $order->user?->name;
                 })
                 ->editColumn('credit', function ($order) {
                     return $order->credit;
@@ -83,27 +83,27 @@ class OrderController extends Controller
     public function detail($id)
     {
         $data['orders'] = Order::where('id', decrypt($id))->first();
-        return view('backend.admin.order-management.orders.detail',$data);
+        return view('backend.admin.order-management.orders.detail', $data);
     }
 
-   public function show(Request $request, string $id)
-{
-    $data = $this->orderService->getOrder($id);
-    $data['user_urn'] = $data->user?->name;
+    public function show(Request $request, string $id)
+    {
+        $data = $this->orderService->getOrder($id);
+        $data['user_urn'] = $data->user?->name;
 
-    // remove the following line
-    // $data['updater_name'] = $this->updater_name($data);
-    return response()->json($data);
-}
-    
+        // remove the following line
+        // $data['updater_name'] = $this->updater_name($data);
+        return response()->json($data);
+    }
 
-   // app/Http/Controllers/Backend/Admin/OrderManagement/OrderController.php
 
-public function status(string $id): RedirectResponse
-{
-    $data = $this->orderService->getOrder($id);
-    $this->orderService->toggleStatus($data);
-    session()->flash('success', 'Order status updated successfully!');
-    return redirect()->route('om.order.index');
-}
+    // app/Http/Controllers/Backend/Admin/OrderManagement/OrderController.php
+
+    public function status(string $id): RedirectResponse
+    {
+        $data = $this->orderService->getOrder($id);
+        $this->orderService->toggleStatus($data);
+        session()->flash('success', 'Order status updated successfully!');
+        return redirect()->route('om.order.index');
+    }
 }
