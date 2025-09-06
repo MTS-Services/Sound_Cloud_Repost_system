@@ -29,6 +29,8 @@ class Member extends Component
 {
     use WithPagination;
 
+    protected string $baseUrl = 'https://api.soundcloud.com';
+
     public ?int $perPage = 9;
     public string $page_slug = 'members';
     public string $search = '';
@@ -42,6 +44,10 @@ class Member extends Component
     public ?int $selectedPlaylistId = null;
     public ?int $selectedTrackId = null;
     public string $searchQuery = '';
+
+    public $comment_note = null;
+    public bool $likeable = false;
+    public bool $following = false;
 
     // block_mismatch_genre
     public ?bool $blockMismatchGenre = null;
@@ -325,16 +331,31 @@ class Member extends Component
             $this->dispatch('alert', type: 'error', message: 'Target user or content not found.');
             return;
         }
-
+        $httpClient = Http::withHeaders([
+            'Authorization' => 'OAuth ' . user()->token,
+        ]);
+        $commentSoundcloud = [
+            'comment' => [
+                'body' => $this->commented,
+                'timestamp' => time()
+            ]
+        ];
+        if ($this->commented) {
+            $comment_response = $httpClient->post("{$this->baseUrl}/tracks/{$this->track->run}/comments", $commentSoundcloud);
+        }
+dd($comment_response);
         try {
             $amount = repostPrice($this->user);
 
-            DB::transaction(function () use ($requester, $amount) {
+            DB::transaction(function () use ($requester, $amount, $comment_response) {
                 $repostRequest = RepostRequest::create([
                     'requester_urn' => $requester->urn,
                     'target_user_urn' => $this->user->urn,
                     'track_urn' => $this->track->urn,
                     'credits_spent' => $amount,
+                    'likeable' => $this->likeable,
+                    'comment_note' => $this->comment_note,
+                    'following' => $comment_response->ok() ? 1 : 0,
                     'expired_at' => now()->addHours(24),
                 ]);
 

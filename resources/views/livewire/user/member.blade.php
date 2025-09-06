@@ -369,8 +369,7 @@
                                     <div class="flex items-center justify-between mt-4">
                                         <span class="dark:text-white font-medium">Cost</span>
                                         <div class="flex items-center gap-2 ml-1">
-                                            <span class="text-gray-800 dark:text-orange-400 font-bold"> 1
-                                                Credit</span>
+                                            <span class="text-gray-800 dark:text-orange-400 font-bold">{{ repostPrice($user) > 1 ? repostPrice($user) . ' Credits' : repostPrice($user) . ' Credit' }}</span>
                                         </div>
                                     </div>
 
@@ -383,7 +382,6 @@
                                             alt="{{ $track->title }}" />
                                     </div>
                                     <div class="flex-1 min-w-0">
-
                                         <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
                                             <span class="ml-2 text-xs text-gray-400">{{ $track->genre }}.</span>
                                             <strong
@@ -417,12 +415,11 @@
 
                                     <div class="relative flex items-start">
                                         <div class="flex h-5 items-center">
-                                            <input id="follow" name="follow" type="checkbox" checked
+                                            <input id="following" name="following" type="checkbox" wire:model="following"
                                                 class="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-red-500" />
                                         </div>
                                         <div class="ml-3 text-sm">
-                                            <label for="follow" class="font-medium text-orange-600">Follow
-                                                Evil-Pollution</label>
+                                            <label for="following" class="font-medium text-orange-600">Follow {{ $user->name }}</label>
                                         </div>
                                     </div>
 
@@ -434,10 +431,10 @@
                                         </div>
                                         <div class="mt-2 flex items-center justify-between">
                                             <div class="flex items-center">
-                                                <input id="offer-credits-comment" name="offer-credits-comment"
-                                                    type="checkbox" checked
+                                                <input id="comment-note" name="comment-note"
+                                                    type="checkbox" wire:model="comment_note"
                                                     class="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-red-500" />
-                                                <label for="offer-credits-comment"
+                                                <label for="comment-note"
                                                     class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
                                                     Offer credits to incentivise comment
                                                 </label>
@@ -458,10 +455,10 @@
                                         </div>
                                         <div class="mt-2 flex items-center justify-between">
                                             <div class="flex items-center">
-                                                <input id="offer-credits-like" name="offer-credits-like"
-                                                    type="checkbox" checked
+                                                <input id="likeable" name="likeable"
+                                                    type="checkbox" wire:model="likeable"
                                                     class="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500" />
-                                                <label for="offer-credits-like"
+                                                <label for="likeable"
                                                     class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
                                                     Offer credits to incentivise likes
                                                 </label>

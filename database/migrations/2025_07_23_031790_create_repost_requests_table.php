@@ -32,7 +32,10 @@ return new class extends Migration
             $table->timestamp('responded_at')->nullable()->index();
             $table->timestamp('completed_at')->nullable()->index();
 
-
+            $table->boolean('following')->default(false);
+            $table->string('comment_note')->nullable();
+            $table->boolean('likeable')->default(false);
+            
             $table->foreign('target_user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('requester_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('campaign_id')->references('id')->on('campaigns')->onDelete('cascade')->onUpdate('cascade');
