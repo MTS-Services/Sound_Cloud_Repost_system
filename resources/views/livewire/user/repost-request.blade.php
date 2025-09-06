@@ -373,61 +373,7 @@
                         <x-lucide-x class="w-5 h-5" />
                     </button>
                 </div>
-                {{-- <div class="p-6">
-                    <div class="space-y-2 mb-4">
-                        <label for="followed"
-                            class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                            <input type="checkbox" id="followed" checked
-                                class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
-                                wire:model.live="followed">
-                            Follow <span class="font-semibold text-orange-500">{{ $request->requester?->name }}</span>
-                        </label>
-                    </div>
-                    <div class="space-y-2 mb-4">
-                        <label for="followed"
-                            class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                            <input type="checkbox" id="followed" checked
-                                class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
-                                wire:model.live="followed">
-                            Add <span class="font-semibold text-orange-500">{{ $request->requester?->name }} to your
-                                sheared members</span>
-                        </label>
-                    </div>
-                    <div class="space-y-2 mb-4">
-                        <label for="liked"
-                            class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                            <input type="checkbox" id="liked"
-                                class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
-                                wire:model.live="liked">
-                            {{ __('Activate HeartPush') }}
-                        </label>
-                    </div>
-                    <div class="space-y-2 mb-4">
-                        <label for="commented" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            {{ __('Comment:') }}
-                            <input name="commented" id="repostDescription" wire:model.live="commented"
-                                class="w-full h-16 px-3 py-2 mt-2 border border-gray-200 dark:border-gray-600 rounded-md focus:border-orange-500 focus:ring-0 transition-colors duration-200 bg-gray-50 dark:bg-slate-800 dark:focus:bg-slate-800 resize-none outline-none" />
-                        </label>
-                    </div>
-                    <div class="flex justify-center gap-4">
-                        <button @click="showRepostConfirmationModal = false"
-                            wire:click="repost('{{ $request->id }}')"
-                            class="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-xl transition-all duration-200">
-                            <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <rect x="1" y="1" width="24" height="16" rx="3" fill="none"
-                                    stroke="currentColor" stroke-width="2" />
-                                <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
-                                    stroke-width="2" />
-                            </svg>
-                            <span>{{ repostPrice() + ($liked ? 2 : 0) + ($commented ? 2 : 0) }}</span>
-                            {{ __('Repost') }}
-                        </button>
-                    </div>
-                </div> --}}
                 <div class="px-6 py-4 space-y-5">
-
-                    <!-- Repost Section -->
                     <div class="flex items-start justify-between">
                         <h3>Repost</h3>
                         <span class="text-sm text-gray-700 dark:text-gray-300">{{ repostPrice($request->requester) }} Credits</span>
@@ -450,14 +396,6 @@
                                 <span class="text-sm text-gray-800 dark:text-gray-200">Follow <span class="font-semibold text-orange-500">{{ $request->requester?->name }}</span></span>
                             </div>
                         </label>
-                        <label class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <input type="checkbox"
-                                    class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                                <span class="text-sm text-gray-800 dark:text-gray-200">Add <span class="font-semibold text-orange-500">{{ $request->requester?->name }}</span> to your
-                                    starred members</span>
-                            </div>
-                        </label>
                     </div>
 
                     <!-- Like Plus -->
@@ -465,10 +403,9 @@
                         <label class="flex items-center space-x-2">
                             <input type="checkbox" wire:model.live="liked"
                                 class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                            <span class="text-sm text-gray-800 dark:text-gray-200">Like the track <span
-                                    class="text-xs text-gray-400">BETA</span></span>
+                            <span class="text-sm text-gray-800 dark:text-gray-200">{{ __('Activate HeartPush') }}</span>
                         </label>
-                        <span class="text-sm text-gray-700 dark:text-gray-300">+1 credits</span>
+                        <span class="text-sm text-gray-700 dark:text-gray-300">+2 credits</span>
                     </div>
 
                     <!-- Comment Plus -->
@@ -481,16 +418,7 @@
                         <textarea rows="3" placeholder="What did you like about the track?" wire:model.live="commented"
                             class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"></textarea>
                     </div>
-
-                    <!-- Sponsored -->
-                    <div class="flex items-center justify-between border-t pt-3 dark:border-gray-700">
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" checked
-                                class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                            <span class="text-sm text-gray-800 dark:text-gray-200">Follow</span><span class="font-semibold text-orange-500">{{ $request->track?->genre }} (Outkast Revolt)</span>
-                        </label>
-                        <span class="text-sm text-gray-700 dark:text-gray-300">+2 credits</span>
-                    </div>
+                    
                     <div class="flex justify-center gap-4">
                         <button @click="showRepostConfirmationModal = false"
                             wire:click="repost('{{ $request->id }}')"
