@@ -643,10 +643,10 @@
                         </div>
                     </div>
                     <!-- Max Follower Limit -->
-                    <div x-data="{ showOptions: {{ $maxFollower >= 100 ? 'true' : 'false' }} }" class="flex flex-col space-y-2">
+                    <div x-data="{ showOptions: false }" class="flex flex-col space-y-2">
                         <div class="flex items-start space-x-3">
-                            <input type="checkbox" @change="showOptions = true"
-                                {{ $maxFollower > 0 ? 'checked' : '' }}
+                            <input type="checkbox" @change="showOptions = !showOptions"
+                                {{ $maxFollower > 100 ? 'checked' : '' }}
                                 class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                             <div class="flex items-center space-x-2">
                                 <span class="text-sm font-medium text-gray-900 dark:text-white">Limit to users with
