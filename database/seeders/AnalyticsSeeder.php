@@ -17,48 +17,16 @@ class AnalyticsSeeder extends Seeder
      */
     public function run(): void
     {
-        $userUrn = 'urn:sc:users:1001';
-        $campaignIds = Campaign::all()->pluck('id')->toArray();
-        // $playlistIds = Playlist::all()->pluck('id')->toArray();
-        // $trackIds = Track::all()->pluck('id')->toArray();
-        // $requests = RepostRequest::all()->pluck('id')->toArray();
+        $userUrn = 'urn:sc:users:1001';       
 
-        // Group the sources together with their corresponding class names.
-        $sources = [
-            'campaigns' => [
-                'type' => Campaign::class,
-                'ids' => $campaignIds,
-            ],
-            // 'playlists' => [
-            //     'type' => Playlist::class,
-            //     'ids' => $playlistIds,
-            // ],
-            // 'tracks' => [
-            //     'type' => Track::class,
-            //     'ids' => $trackIds,
-            // ],
-            // 'requests' => [
-            //     'type' => RepostRequest::class,
-            //     'ids' => $requests,
-            // ],
-        ];
-
-        for ($i = 0; $i < 3; $i++) {
-            $randomSourceKey = array_rand($sources);
-
-            $randomSource = $sources[$randomSourceKey];
-
-            $sourceId = $randomSource['ids'][array_rand($randomSource['ids'])];
-
-            $sourceType = $randomSource['type'];
-
+        for ($i = 0; $i < 5; $i++) {
+            
             UserAnalytics::create([
                 'user_urn' => $userUrn,
-                'source_id' => $sourceId,
-                'source_type' => $sourceType,
+                'track_urn' => Track::first()->urn,
+                'campaign_id' => null,
                 'date' => now()->subDays(rand(1, 30)),
                 'genre' => 'Pop',
-
                 'total_views' => rand(1, 100),
                 'total_comments' => rand(1, 100),
                 'total_reposts' => rand(1, 100),

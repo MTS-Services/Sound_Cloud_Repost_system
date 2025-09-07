@@ -24,6 +24,7 @@ use Throwable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Feature;
+use App\Models\PlaylistTrack;
 
 class Campaign extends Component
 {
@@ -918,6 +919,18 @@ class Campaign extends Component
 
         if ($canRepost && !$this->playcount) {
             $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
+
+            if ($campaign->music_type == Track::class) {
+                $this->reset('track');
+                $this->track = $this->trackService->getTrack(encrypt($campaign->music_id));
+                dd('track', $this->track);
+            } elseif ($campaign->music_type == Playlist::class) {
+                $this->reset('track');
+                $playlist = $this->playlistService->getPlaylist(encrypt($campaign->music_id));
+                $playlist->load(['tracks', 'user']);
+                dd('playlist', $playlist);
+            }
+
             $response = $this->analyticsService->updateAnalytics($campaign, 'total_plays', $campaign->target_genre);
             if ($response != false || $response != null) {
                 $campaign->increment('playback_count');

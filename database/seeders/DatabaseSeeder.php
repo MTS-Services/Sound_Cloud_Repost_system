@@ -30,10 +30,10 @@ class DatabaseSeeder extends Seeder
             // FaqCategorySeeder::class,
             // FaqSeeder::class,
             // PlaylistTrackSeeder::class,
+            // AnalyticsSeeder::class,
 
             // CustomNotificationSeeder::class,
             // CustomNotificationStatusSeeder::class,
-            // AnalyticsSeeder::class,
         ]);
     }
 }

@@ -67,7 +67,7 @@ class Track extends BaseModel
         'author_soundcloud_permalink_url',
         'author_soundcloud_permalink',
         'author_soundcloud_uri',
-        
+
         'last_sync_at',
 
         'creater_id',
@@ -117,6 +117,11 @@ class Track extends BaseModel
     public function requests(): MorphMany
     {
         return $this->morphMany(RepostRequest::class, 'track_urn', 'urn');
+    }
+
+    public function analytics(): MorphMany
+    {
+        return $this->morphMany(UserAnalytics::class, 'track_urn', 'urn');
     }
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
