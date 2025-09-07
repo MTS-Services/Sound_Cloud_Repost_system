@@ -383,7 +383,7 @@ class AnalyticsService
                 'percent_change' => number_format($percentChange, 2),
             ];
         }
-        dd($finalAnalytics);
+        // dd($finalAnalytics);
 
         return $finalAnalytics;
     }
