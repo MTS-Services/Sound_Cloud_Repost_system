@@ -39,6 +39,7 @@ class UserAnalytics extends BaseModel
     ];
 
     protected $casts = [
+        'total_requests' => 'integer',
         'total_plays' => 'integer',
         'total_followes' => 'integer',
         'total_likes' => 'integer',
