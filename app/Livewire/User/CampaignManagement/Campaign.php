@@ -923,22 +923,17 @@ class Campaign extends Component
             if ($campaign->music_type == Track::class) {
                 $this->reset('track');
                 $this->track = $this->trackService->getTrack(encrypt($campaign->music_id));
-                Log::info($this->track);
-                dd('track', $this->track);
             } elseif ($campaign->music_type == Playlist::class) {
                 $this->reset('track');
-                $playlist = $this->playlistService->getPlaylist(encrypt($campaign->music_id));
-                $playlist->load(['tracks', 'user']);
-                Log::info($playlist);
-                dd('playlist', $playlist);
+                $playlist = PlaylistTrack::where('playlist_urn', $campaign->music_id)->with('track')->get();
+                $this->track = $playlist->track;
             }
-            Log::info($campaign);
-            dd('campaign', $campaign);
 
-            $response = $this->analyticsService->updateAnalytics($campaign, 'total_plays', $campaign->target_genre);
+            $response = $this->analyticsService->updateAnalytics($this->track, 'total_plays', $campaign->target_genre, $campaign->id);
             if ($response != false || $response != null) {
                 $campaign->increment('playback_count');
             }
+            
             $this->playcount = true;
             // $this->reset([
             //     'playcount',
