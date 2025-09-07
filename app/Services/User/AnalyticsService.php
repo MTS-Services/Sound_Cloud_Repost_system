@@ -46,11 +46,13 @@ class AnalyticsService
             $source->urn ? $source->urn : ''
         );
 
+        Log::info('session key ' . $todayKey . ' value ' . $updatedToday, 'actionIdentifier ' . $actionIdentifier, 'updatedToday ' . $updatedToday);
         // Check if this action has already been logged for today.
         if (in_array($actionIdentifier, $updatedToday)) {
             Log::info("User action update skipped for {$userUrn} on {$column} for source {$source->urn}. Already updated today.");
             return false;
         }
+
 
         // If not in the session, add the action and save.
         $updatedToday[] = $actionIdentifier;
