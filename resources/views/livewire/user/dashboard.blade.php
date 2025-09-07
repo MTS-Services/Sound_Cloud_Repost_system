@@ -191,12 +191,14 @@
                         <h3 class="text-lg font-semibold">Recent Tracks</h3>
                         <p class="text-slate-400 text-sm">Your latest submissions</p>
                     </div>
-                    <a class="text-orange-500 hover:text-orange-400 text-sm font-medium"
-                        href="{{ route('user.reposts-request') }}">View all →</a>
+                    @if ($recentTracks->count() > 0)
+                        <a class="text-orange-500 hover:text-orange-400 text-sm font-medium" wire:navigate
+                            href="{{ route('user.my-account', ['tab' => 'tracks']) }}">View all →</a>
+                    @endif
                 </div>
                 <div class="space-y-4">
-                    @foreach ($repostRequests as $repostRequest)
-                        <x-sound-cloud.sound-cloud-player :track="$repostRequest->track" :visual="false" />
+                    @foreach ($recentTracks as $recentTrack)
+                        <x-sound-cloud.sound-cloud-player :track="$recentTrack" :visual="false" />
                     @endforeach
                 </div>
                 <div class="text-center py-8 ">
@@ -624,8 +626,7 @@
                     </div>
 
                     <!-- Enable Campaign Accelerator -->
-                    <div
-                        class="flex items-start space-x-3 {{ !proUser() ? 'opacity-30' : '' }}">
+                    <div class="flex items-start space-x-3 {{ !proUser() ? 'opacity-30' : '' }}">
                         <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
                             {{ !proUser() ? 'disabled' : '' }}
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ !proUser() ? 'cursor-not-allowed' : 'cursor-pointer' }}">
@@ -753,7 +754,8 @@
                                             </div>
                                         @empty
                                             <div class="">
-                                                <span class="text-sm text-gray-700 dark:text-gray-400">No genres found</span>
+                                                <span class="text-sm text-gray-700 dark:text-gray-400">No genres
+                                                    found</span>
                                             </div>
                                         @endforelse
                                     </div>

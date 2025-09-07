@@ -31,6 +31,7 @@ class Dashboard extends Component
     public $total_credits;
     public $totalCount;
     public $repostRequests;
+    public $recentTracks;
     public $totalCams;
     public $creditPercentage;
     public $campaignPercentage;
@@ -162,8 +163,10 @@ class Dashboard extends Component
         $this->repostRequests = RepostRequest::where('target_user_urn', user()->urn)
             ->with(['track', 'requester'])
             ->latest()
-            ->take(2)
+            ->take(5)
             ->get();
+
+        $this->recentTracks = Track::where('user_urn', user()->urn)->orderBy('created_at_soundcloud', 'desc')->latest()->take(5)->get();
 
         $this->totalCams = ModelsCampaign::where('user_urn', user()->urn)
             ->orWhere('status', [ModelsCampaign::STATUS_COMPLETED, ModelsCampaign::STATUS_OPEN])
