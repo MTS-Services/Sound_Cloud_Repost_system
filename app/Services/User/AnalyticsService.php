@@ -9,6 +9,7 @@ use App\Models\UserAnalytics;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 
 class AnalyticsService
 {
@@ -91,71 +92,166 @@ class AnalyticsService
 
         return $analytics;
     }
-
-
     /**
-     * Get the analytics data for a specific user within a date range.
-     *
-     * @param string $userUrn The user's URN to filter by.
-     * @param string $filter The time filter (daily, last_week, last_month, last_90_days, last_year).
-     * @return array The aggregated analytics data.
+     * Available filter options
      */
-    // public function getAnalyticsData(string $userUrn, string $filter = 'last_week'): array
-    // {
-    //     $startDate = $this->getStartDateForFilter($filter);
-    //     $endDate = Carbon::now();
-
-    //     $data = DB::table('user_analytics')
-    //         ->select(
-    //             DB::raw('SUM(total_plays) as streams'),
-    //             DB::raw('SUM(total_likes) as likes'),
-    //             DB::raw('SUM(total_comments) as comments'),
-    //             DB::raw('SUM(total_views) as views'),
-    //             DB::raw('SUM(total_requests) as requests'),
-    //             DB::raw('SUM(total_reposts) as reposts'),
-    //             DB::raw('SUM(total_followers) as followers')
-    //         )
-    //         ->where('user_urn', $userUrn)
-    //         ->whereDate('date', '>=', $startDate)
-    //         ->whereDate('date', '<=', $endDate)
-    //         ->first();
-
-    //     // Check if data is null, and return default values if so
-    //     if (!$data) {
-    //         return [
-    //             'streams' => 0,
-    //             'likes' => 0,
-    //             'comments' => 0,
-    //             'views' => 0,
-    //             'requests' => 0,
-    //             'reposts' => 0,
-    //             'followers' => 0,
-    //         ];
-    //     }
-
-    //     return [
-    //         'streams' => $data->streams ?? 0,
-    //         'likes' => $data->likes ?? 0,
-    //         'comments' => $data->comments ?? 0,
-    //         'views' => $data->views ?? 0,
-    //         'requests' => $data->requests ?? 0,
-    //         'reposts' => $data->reposts ?? 0,
-    //         'followers' => $data->followers ?? 0,
-    //     ];
-    // }
+    const FILTER_OPTIONS = [
+        'daily' => 'Last 24 hours',
+        'last_week' => 'Last 7 days',
+        'last_month' => 'Last 30 days',
+        'last_90_days' => 'Last 90 days',
+        'last_year' => 'Last 365 days',
+        'date_range' => 'Custom Date Range'
+    ];
 
     /**
-     * Determine the start date based on the filter.
+     * Metrics to calculate
+     */
+    const METRICS = [
+        'total_plays',
+        'total_likes',
+        'total_comments',
+        'total_views',
+        'total_requests',
+        'total_reposts',
+        'total_followers'
+    ];
+
+    /**
+     * Get analytics data with comparison
      *
      * @param string $filter
-     * @return Carbon
+     * @param array|null $dateRange ['start' => 'Y-m-d', 'end' => 'Y-m-d']
+     * @param string|null $trackUrn
+     * @param string|null $actionType
+     * @return array
      */
-    protected function getStartDateForFilter(string $filter): Carbon
+    public function getAnalyticsData(
+        string $filter = 'last_week',
+        ?array $dateRange = null,
+        ?string $trackUrn = null,
+        ?string $actionType = null
+    ): array {
+        $userUrn = user()->urn;
+
+        // Get date ranges for current and previous periods
+        $periods = $this->calculatePeriods($filter, $dateRange);
+
+        // Fetch analytics data for both periods
+        $currentData = $this->fetchAnalyticsData(
+            $userUrn,
+            $periods['current']['start'],
+            $periods['current']['end'],
+            $trackUrn,
+            $actionType
+        );
+
+        $previousData = $this->fetchAnalyticsData(
+            $userUrn,
+            $periods['previous']['start'],
+            $periods['previous']['end'],
+            $trackUrn,
+            $actionType
+        );
+
+        // Process and calculate metrics
+        $currentMetrics = $this->calculateMetrics($currentData);
+        $previousMetrics = $this->calculateMetrics($previousData);
+
+        // Compare and build final result
+        $analytics = $this->buildComparisonResult($currentMetrics, $previousMetrics);
+
+        // Add period information
+        $analytics['period_info'] = [
+            'filter' => $filter,
+            'current_period' => [
+                'start' => $periods['current']['start']->format('Y-m-d'),
+                'end' => $periods['current']['end']->format('Y-m-d'),
+                'days' => $periods['current']['days']
+            ],
+            'previous_period' => [
+                'start' => $periods['previous']['start']->format('Y-m-d'),
+                'end' => $periods['previous']['end']->format('Y-m-d'),
+                'days' => $periods['previous']['days']
+            ]
+        ];
+
+        return $analytics;
+    }
+
+    /**
+     * Calculate current and previous periods based on filter
+     */
+    private function calculatePeriods(string $filter, ?array $dateRange = null): array
     {
         $now = Carbon::now();
+
+        if ($filter === 'date_range' && $dateRange) {
+            return $this->calculateCustomDateRangePeriods($dateRange);
+        }
+
+        // Get current period dates
+        $currentStart = $this->getStartDateForFilter($filter);
+        $currentEnd = $now->copy()->endOfDay();
+
+        // Calculate the duration in days
+        $durationInDays = $currentStart->diffInDays($currentEnd);
+
+        // Calculate previous period (same duration, shifted back)
+        $previousEnd = $currentStart->copy()->subDay()->endOfDay();
+        $previousStart = $previousEnd->copy()->subDays($durationInDays)->startOfDay();
+
+        return [
+            'current' => [
+                'start' => $currentStart,
+                'end' => $currentEnd,
+                'days' => $durationInDays + 1
+            ],
+            'previous' => [
+                'start' => $previousStart,
+                'end' => $previousEnd,
+                'days' => $durationInDays + 1
+            ]
+        ];
+    }
+
+    /**
+     * Calculate periods for custom date range
+     */
+    private function calculateCustomDateRangePeriods(array $dateRange): array
+    {
+        $currentStart = Carbon::parse($dateRange['start'])->startOfDay();
+        $currentEnd = Carbon::parse($dateRange['end'])->endOfDay();
+
+        $durationInDays = $currentStart->diffInDays($currentEnd);
+
+        $previousEnd = $currentStart->copy()->subDay()->endOfDay();
+        $previousStart = $previousEnd->copy()->subDays($durationInDays)->startOfDay();
+
+        return [
+            'current' => [
+                'start' => $currentStart,
+                'end' => $currentEnd,
+                'days' => $durationInDays + 1
+            ],
+            'previous' => [
+                'start' => $previousStart,
+                'end' => $previousEnd,
+                'days' => $durationInDays + 1
+            ]
+        ];
+    }
+
+    /**
+     * Get start date for predefined filters
+     */
+    private function getStartDateForFilter(string $filter): Carbon
+    {
+        $now = Carbon::now();
+
         return match ($filter) {
-            'daily' => $now->subDay()->startOfDay(), // Last 24 hours
-            'last_week' => $now->subWeek()->startOfDay(), // Last 7 days
+            'daily' => $now->subDay()->startOfDay(),
+            'last_week' => $now->subWeek()->startOfDay(),
             'last_month' => $now->subMonth()->startOfDay(),
             'last_90_days' => $now->subDays(90)->startOfDay(),
             'last_year' => $now->subYear()->startOfDay(),
@@ -163,228 +259,208 @@ class AnalyticsService
         };
     }
 
-    // public function getAnalyticsData(string $filter = 'last_week', $trackUrn = null, $actionType = null)
-    // {
-    //     $userUrn = user()->urn;
-    //     $filterStartDate = $this->getStartDateForFilter($filter);
-    //     $currentDate = Carbon::now()->startOfDay();
+    /**
+     * Fetch analytics data from database
+     */
+    private function fetchAnalyticsData(
+        string $userUrn,
+        Carbon $startDate,
+        Carbon $endDate,
+        ?string $trackUrn = null,
+        ?string $actionType = null
+    ): Collection {
+        $query = UserAnalytics::where('user_urn', $userUrn)
+            ->whereDate('date', '>=', $startDate->format('Y-m-d'))
+            ->whereDate('date', '<=', $endDate->format('Y-m-d'));
 
-    //     $query = UserAnalytics::where('user_urn', $userUrn);
-
-    //     if ($trackUrn) {
-    //         $query->where('track_urn', $trackUrn);
-    //     }
-
-    //     if ($actionType) {
-    //         $query->where('action_type', $actionType);
-    //     }
-
-    //     $analytics = $query->whereDate('date', '>=', $filterStartDate)
-    //         ->whereDate('date', '<=', $currentDate)
-    //         ->get();
-
-    //     $analytics = $analytics->groupBy('date')->map(function ($group) {
-    //         return [
-    //             'date' => $group->first()->date,
-    //             'total_plays' => $group->sum('total_plays'),
-    //             'total_likes' => $group->sum('total_likes'),
-    //             'total_comments' => $group->sum('total_comments'),
-    //             'total_views' => $group->sum('total_views'),
-    //             'total_requests' => $group->sum('total_requests'),
-    //             'total_reposts' => $group->sum('total_reposts'),
-    //             'total_followers' => $group->sum('total_followers'),
-    //         ];
-    //     });
-
-    //     // sum of every total values separated by filter date. for range of filter dates
-    //     $totalPlays = $analytics->sum('total_plays');
-    //     $totalLikes = $analytics->sum('total_likes');
-    //     $totalComments = $analytics->sum('total_comments');
-    //     $totalViews = $analytics->sum('total_views');
-    //     $totalRequests = $analytics->sum('total_requests');
-    //     $totalReposts = $analytics->sum('total_reposts');
-    //     $totalFollowers = $analytics->sum('total_followers');
-
-    //     $avgTotalPlays = $analytics->avg('total_plays');
-    //     $avgTotalLikes = $analytics->avg('total_likes');
-    //     $avgTotalComments = $analytics->avg('total_comments');
-    //     $avgTotalViews = $analytics->avg('total_views');
-    //     $avgTotalRequests = $analytics->avg('total_requests');
-    //     $avgTotalReposts = $analytics->avg('total_reposts');
-    //     $avgTotalFollowers = $analytics->avg('total_followers');
-
-    //     $totalPlaysRate = ($totalPlays / $totalViews) * 100;
-    //     $totalLikesRate = ($totalLikes / $totalViews) * 100;
-    //     $totalCommentsRate = ($totalComments / $totalViews) * 100;
-    //     $totalRequestsRate = ($totalRequests / $totalViews) * 100;
-    //     $totalRepostsRate = ($totalReposts / $totalViews) * 100;
-    //     $totalFollowersRate = ($totalFollowers / $totalViews) * 100;
-
-    //     $avgTotalPlaysRate = ($avgTotalPlays / $avgTotalViews) * 100;
-    //     $avgTotalLikesRate = ($avgTotalLikes / $avgTotalViews) * 100;
-    //     $avgTotalCommentsRate = ($avgTotalComments / $avgTotalViews) * 100;
-    //     $avgTotalRequestsRate = ($avgTotalRequests / $avgTotalViews) * 100;
-    //     $avgTotalRepostsRate = ($avgTotalReposts / $avgTotalViews) * 100;
-    //     $avgTotalFollowersRate = ($avgTotalFollowers / $avgTotalViews) * 100;
-
-    //     // compare all values to get profit or loss in % and total values of all based on filter date. if filter date is last week then compare to last week on todays . like if today is wednesday then compare between this week start date to wednesday and last week start date to wednesday. same condition for all last day, last month, last 90 days, last year
-
-
-    //     $analyticsTotalPlays =
-
-    //         $analytics = [
-    //             'total_plays' => $totalPlays,
-    //             'avg_total_plays' => $avgTotalPlays,
-    //             'total_likes' => $totalLikes,
-    //             'avg_total_likes' => $avgTotalLikes,
-    //             'total_comments' => $totalComments,
-    //             'avg_total_comments' => $avgTotalComments,
-    //             'total_views' => $totalViews,
-    //             'avg_total_views' => $avgTotalViews,
-    //             'total_requests' => $totalRequests,
-    //             'avg_total_requests' => $avgTotalRequests,
-    //             'total_reposts' => $totalReposts,
-    //             'avg_total_reposts' => $avgTotalReposts,
-    //             'total_followers' => $totalFollowers,
-    //             'avg_total_followers' => $avgTotalFollowers,
-    //             'total_plays_rate' => $totalPlaysRate,
-    //             'avg_total_plays_rate' => $avgTotalPlaysRate,
-    //             'total_likes_rate' => $totalLikesRate,
-    //             'avg_total_likes_rate' => $avgTotalLikesRate,
-    //             'total_comments_rate' => $totalCommentsRate,
-    //             'avg_total_comments_rate' => $avgTotalCommentsRate,
-    //             'total_requests_rate' => $totalRequestsRate,
-    //             'avg_total_requests_rate' => $avgTotalRequestsRate,
-    //             'total_reposts_rate' => $totalRepostsRate,
-    //             'avg_total_reposts_rate' => $avgTotalRepostsRate,
-    //             'total_followers_rate' => $totalFollowersRate,
-    //             'avg_total_followers_rate' => $avgTotalFollowersRate,
-    //         ];
-
-    //     dd($analytics);
-
-    //     return $analytics;
-    // }
-
-    public function getAnalyticsData(string $filter = 'last_week', $trackUrn = null, $actionType = null)
-    {
-        $userUrn = user()->urn;
-
-        // Determine the date range for the current period
-        $currentPeriodStartDate = $this->getStartDateForFilter($filter);
-        $currentPeriodEndDate = Carbon::now()->startOfDay();
-
-        // Determine the date range for the previous, comparable period
-        $interval = $currentPeriodEndDate->diff($currentPeriodStartDate);
-        $previousPeriodEndDate = $currentPeriodStartDate->copy()->subDay();
-        $previousPeriodStartDate = $previousPeriodEndDate->copy()->sub($interval);
-
-        // --- Fetch data for the CURRENT period ---
-        $query = UserAnalytics::where('user_urn', $userUrn);
         if ($trackUrn) {
             $query->where('track_urn', $trackUrn);
         }
+
         if ($actionType) {
             $query->where('action_type', $actionType);
         }
-        $currentAnalytics = $query->whereDate('date', '>=', $currentPeriodStartDate)
-            ->whereDate('date', '<=', $currentPeriodEndDate)
-            ->get();
 
-        // --- Fetch data for the PREVIOUS period ---
-        $previousQuery = UserAnalytics::where('user_urn', $userUrn);
-        if ($trackUrn) {
-            $previousQuery->where('track_urn', $trackUrn);
+        return $query->get();
+    }
+
+    /**
+     * Calculate metrics from raw analytics data
+     */
+    private function calculateMetrics(Collection $data): array
+    {
+        if ($data->isEmpty()) {
+            return $this->getEmptyMetrics();
         }
-        if ($actionType) {
-            $previousQuery->where('action_type', $actionType);
-        }
-        $previousAnalytics = $previousQuery->whereDate('date', '>=', $previousPeriodStartDate)
-            ->whereDate('date', '<=', $previousPeriodEndDate)
-            ->get();
 
-        // --- Process and calculate metrics for both periods ---
-        $processMetrics = function ($data) {
-            // This is the collection from your original code
-            $groupedData = $data->groupBy('date')->map(function ($group) {
-                return [
-                    'date' => $group->first()->date,
-                    'total_plays' => $group->sum('total_plays'),
-                    'total_likes' => $group->sum('total_likes'),
-                    'total_comments' => $group->sum('total_comments'),
-                    'total_views' => $group->sum('total_views'),
-                    'total_requests' => $group->sum('total_requests'),
-                    'total_reposts' => $group->sum('total_reposts'),
-                    'total_followers' => $group->sum('total_followers'),
-                ];
-            });
-
-            // The bug was here. We need to explicitly sum and average each metric.
-            $metrics = [];
-            $metricKeys = [
-                'total_plays',
-                'total_likes',
-                'total_comments',
-                'total_views',
-                'total_requests',
-                'total_reposts',
-                'total_followers'
-            ];
-
-            foreach ($metricKeys as $key) {
-                $metrics[$key] = $groupedData->sum($key) ?? 0;
-                $metrics['avg_' . $key] = $groupedData->avg($key) ?? 0;
+        // Group by date and sum daily totals
+        $dailyData = $data->groupBy('date')->map(function ($group) {
+            $dailyMetrics = [];
+            foreach (self::METRICS as $metric) {
+                $dailyMetrics[$metric] = $group->sum($metric);
             }
+            return $dailyMetrics;
+        });
 
-            // Now calculate rates using the corrected totals
-            $totalViews = $metrics['total_views'];
-            $avgTotalViews = $metrics['avg_total_views'];
+        // Calculate totals and averages
+        $metrics = [];
+        $totalDays = $dailyData->count();
 
-            $metrics['total_plays_rate'] = $totalViews > 0 ? ($metrics['total_plays'] / $totalViews) * 100 : 0;
-            $metrics['avg_total_plays_rate'] = $avgTotalViews > 0 ? ($metrics['avg_total_plays'] / $avgTotalViews) * 100 : 0;
+        foreach (self::METRICS as $metric) {
+            $total = $dailyData->sum($metric);
+            $average = $totalDays > 0 ? $total / $totalDays : 0;
 
-            $metrics['total_likes_rate'] = $totalViews > 0 ? ($metrics['total_likes'] / $totalViews) * 100 : 0;
-            $metrics['avg_total_likes_rate'] = $avgTotalViews > 0 ? ($metrics['avg_total_likes'] / $avgTotalViews) * 100 : 0;
-
-            $metrics['total_comments_rate'] = $totalViews > 0 ? ($metrics['total_comments'] / $totalViews) * 100 : 0;
-            $metrics['avg_total_comments_rate'] = $avgTotalViews > 0 ? ($metrics['avg_total_comments'] / $avgTotalViews) * 100 : 0;
-
-            $metrics['total_requests_rate'] = $totalViews > 0 ? ($metrics['total_requests'] / $totalViews) * 100 : 0;
-            $metrics['avg_total_requests_rate'] = $avgTotalViews > 0 ? ($metrics['avg_total_requests'] / $avgTotalViews) * 100 : 0;
-
-            $metrics['total_reposts_rate'] = $totalViews > 0 ? ($metrics['total_reposts'] / $totalViews) * 100 : 0;
-            $metrics['avg_total_reposts_rate'] = $avgTotalViews > 0 ? ($metrics['avg_total_reposts'] / $avgTotalViews) * 100 : 0;
-
-            $metrics['total_followers_rate'] = $totalViews > 0 ? ($metrics['total_followers'] / $totalViews) * 100 : 0;
-            $metrics['avg_total_followers_rate'] = $avgTotalViews > 0 ? ($metrics['avg_total_followers'] / $avgTotalViews) * 100 : 0;
-
-            return $metrics;
-        };
-
-        $currentMetrics = $processMetrics($currentAnalytics);
-        $previousMetrics = $processMetrics($previousAnalytics);
-
-        // --- Compare metrics and calculate profit/loss percentages ---
-        $finalAnalytics = [];
-
-        foreach ($currentMetrics as $key => $currentValue) {
-            $previousValue = $previousMetrics[$key] ?? 0;
-            $percentChange = 0;
-
-            if ($previousValue != 0) {
-                $percentChange = (($currentValue - $previousValue) / $previousValue) * 100;
-            } elseif ($currentValue > 0) {
-                $percentChange = 100.0; // Represents a huge increase from zero
-            }
-
-            $finalAnalytics[$key] = [
-                'current_value' => $currentValue,
-                'previous_value' => $previousValue,
-                'percent_change' => number_format($percentChange, 2),
+            $metrics[$metric] = [
+                'total' => $total,
+                'average' => $average
             ];
         }
-        // dd($finalAnalytics);
 
-        return $finalAnalytics;
+        // Calculate rates (percentages based on views)
+        $totalViews = $metrics['total_views']['total'];
+        $avgViews = $metrics['total_views']['average'];
+
+        foreach (self::METRICS as $metric) {
+            if ($metric === 'total_views') continue;
+
+            $metrics[$metric]['total_percent'] = $totalViews > 0
+                ? ($metrics[$metric]['total'] / $totalViews) * 100
+                : 0;
+
+            $metrics[$metric]['avg_percent'] = $avgViews > 0
+                ? ($metrics[$metric]['average'] / $avgViews) * 100
+                : 0;
+        }
+
+        // Views percent is always 100% of itself
+        $metrics['total_views']['total_percent'] = 100;
+        $metrics['total_views']['avg_percent'] = 100;
+
+        return $metrics;
+    }
+
+    /**
+     * Get empty metrics structure
+     */
+    private function getEmptyMetrics(): array
+    {
+        $metrics = [];
+        foreach (self::METRICS as $metric) {
+            $metrics[$metric] = [
+                'total' => 0,
+                'average' => 0,
+                'total_percent' => 0,
+                'avg_percent' => 0
+            ];
+        }
+        return $metrics;
+    }
+
+    /**
+     * Build comparison result between current and previous periods
+     */
+    private function buildComparisonResult(array $currentMetrics, array $previousMetrics): array
+    {
+        $result = [];
+
+        foreach (self::METRICS as $metric) {
+            $current = $currentMetrics[$metric];
+            $previous = $previousMetrics[$metric];
+
+            $result[$metric] = [
+                // Current period values
+                'current_total' => $current['total'],
+                'current_avg' => round($current['average'], 2),
+                'current_total_percent' => round($current['total_percent'], 2),
+                'current_avg_percent' => round($current['avg_percent'], 2),
+
+                // Previous period values
+                'previous_total' => $previous['total'],
+                'previous_avg' => round($previous['average'], 2),
+                'previous_total_percent' => round($previous['total_percent'], 2),
+                'previous_avg_percent' => round($previous['avg_percent'], 2),
+
+                // Change calculations
+                'change_value' => $current['total'] - $previous['total'],
+                'change_avg' => round($current['average'] - $previous['average'], 2),
+                'change_rate' => $this->calculatePercentageChange($current['total'], $previous['total']),
+                'change_avg_rate' => $this->calculatePercentageChange($current['average'], $previous['average']),
+                'change_total_percent' => round($current['total_percent'] - $previous['total_percent'], 2),
+                'change_avg_percent' => round($current['avg_percent'] - $previous['avg_percent'], 2),
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Calculate percentage change with safe division
+     */
+    private function calculatePercentageChange(float $current, float $previous): float
+    {
+        if ($previous == 0) {
+            return $current > 0 ? 100.00 : 0.00;
+        }
+
+        return round((($current - $previous) / $previous) * 100, 2);
+    }
+
+    /**
+     * Get available filter options
+     */
+    public function getFilterOptions(): array
+    {
+        return self::FILTER_OPTIONS;
+    }
+
+    /**
+     * Validate date range input
+     */
+    public function validateDateRange(?array $dateRange): bool
+    {
+        if (!$dateRange || !isset($dateRange['start']) || !isset($dateRange['end'])) {
+            return false;
+        }
+
+        try {
+            $start = Carbon::parse($dateRange['start']);
+            $end = Carbon::parse($dateRange['end']);
+
+            return $start->lte($end) && $end->lte(Carbon::now());
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Get chart data for visualization
+     */
+    public function getChartData(
+        string $filter = 'last_week',
+        ?array $dateRange = null,
+        ?string $trackUrn = null,
+        ?string $actionType = null
+    ): array {
+        $userUrn = user()->urn;
+        $periods = $this->calculatePeriods($filter, $dateRange);
+
+        $data = $this->fetchAnalyticsData(
+            $userUrn,
+            $periods['current']['start'],
+            $periods['current']['end'],
+            $trackUrn,
+            $actionType
+        );
+
+        // Group by date for chart
+        $chartData = $data->groupBy('date')->map(function ($group, $date) {
+            $dailyMetrics = ['date' => $date];
+            foreach (self::METRICS as $metric) {
+                $dailyMetrics[$metric] = $group->sum($metric);
+            }
+            return $dailyMetrics;
+        })->values()->toArray();
+
+        return $chartData;
     }
 }
