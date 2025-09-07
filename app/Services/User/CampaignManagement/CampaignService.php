@@ -48,27 +48,27 @@ class CampaignService
                     'reposted_at' => now(),
                     'credits_earned' => $totalCredits,
                 ]);
-                // dd($repost, $campaign, $reposter);
 
                 // Update the Campaign record using atomic increments
                 $campaign->increment('completed_reposts');
                 $campaign->increment('credits_spent', (float) $totalCredits);
 
 
-                $response = $this->analyticsService->updateAnalytics($campaign->music, $campaign, 'total_comments', $campaign->target_genre, $campaign->id);
+                $response = $this->analyticsService->updateAnalytics($campaign->music, $campaign, 'total_reposts', $campaign->target_genre);
+                $response = $this->analyticsService->updateAnalytics($campaign->music, $campaign, 'total_comments', $campaign->target_genre);
                 if ($response != false || $response != null) {
                     $campaign->increment('comment_count');
-                    // $reposter->increment('comment_count');
+                    $repost->increment('comment_count');
                 }
-                $response = $this->analyticsService->updateAnalytics($campaign->music, $campaign, 'total_likes', $campaign->target_genre, $campaign->id);
+                $response = $this->analyticsService->updateAnalytics($campaign->music, $campaign, 'total_likes', $campaign->target_genre);
                 if ($response != false || $response != null) {
                     $campaign->increment('like_count');
-                    // $reposter->increment('like_count');
+                    $repost->increment('like_count');
                 }
-                $response = $this->analyticsService->updateAnalytics($campaign->music, $campaign, 'total_followers', $campaign->target_genre, $campaign->id);
+                $response = $this->analyticsService->updateAnalytics($campaign->music, $campaign, 'total_followers', $campaign->target_genre);
                 if ($response != false || $response != null) {
                     $campaign->increment('followowers_count');
-                    // $reposter->increment('followowers_count');
+                    $repost->increment('followowers_count');
                 }
 
                 if ($campaign->budget_credits == $campaign->credits_spent) {
