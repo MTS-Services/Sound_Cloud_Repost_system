@@ -49,12 +49,15 @@ class CampaignService
 
                 if ($likeCommentAbleData['comment']) {
                     $campaign->increment('comment_count');
+                    $reposter->increment('comment_count');
                 }
                 if ($likeCommentAbleData['likeable']) {
                     $campaign->increment('like_count');
+                    $reposter->increment('like_count');
                 }
                 if ($likeCommentAbleData['follow']) {
                     $campaign->increment('followowers_count');
+                    $reposter->increment('followowers_count');
                 }
 
                 if ($campaign->budget_credits == $campaign->credits_spent) {

@@ -105,8 +105,8 @@ class Campaign extends Component
     public $totalRecommended;
     public $totalRecommendedPro;
 
-    public $tracks = [];
-    public $playlists = [];
+    public $tracks = null;
+    public $playlists = null;
     public $playlistTracks = [];
     public $activeTab = 'tracks';
 
