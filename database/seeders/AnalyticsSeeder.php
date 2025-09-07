@@ -24,9 +24,11 @@ class AnalyticsSeeder extends Seeder
             UserAnalytics::create([
                 'user_urn' => $userUrn,
                 'track_urn' => Track::first()->urn,
-                'campaign_id' => null,
+                'action_id' => Campaign::first()->id,
+                'action_type' => Campaign::class,
                 'date' => now()->subDays(rand(1, 30)),
-                'genre' => 'Pop',
+                'genre' => array_rand(['pop', 'hip-hop', 'rock', 'country']),
+                'total_requests' => rand(1, 100),
                 'total_views' => rand(1, 100),
                 'total_comments' => rand(1, 100),
                 'total_reposts' => rand(1, 100),
