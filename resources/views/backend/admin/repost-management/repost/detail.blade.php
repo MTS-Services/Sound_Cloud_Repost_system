@@ -11,7 +11,7 @@
             </div>
             <div class="flex items-center gap-2">
                 <x-button href="{{ session('back_route', url()->previous()) }}" 
-                    class="flex items-center gap-2 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 transition-colors duration-200 rounded-lg px-4 py-2.5">
+                    class="flex items-center gap-2 bg-blue-600 dark:bg-gray-700  dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 transition-colors duration-200 rounded-lg px-4 py-2.5">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
@@ -39,7 +39,7 @@
                                     </svg>
                                 </div>
                                 <div class="ml-4">
-                                    <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Reposter</h4>
+                                    <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Reposter Name</h4>
                                     <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $reposts->reposter?->name ?? 'N/A' }}</p>
                                 </div>
                             </div>
@@ -63,17 +63,13 @@
                                     </svg>
                                 </div>
                                 <div class="ml-4">
-                                    <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Reposter URN</h4>
-                                    <p class="text-md font-medium text-gray-900 dark:text-white break-all">{{ $reposts->reposter_urn }}</p>
+                                    <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Requrat Name</h4>
+                                    <p class="text-md font-medium text-gray-900 dark:text-white break-all">{{ $reposts->request->name ?? 'N/A' }}</p>
                                 </div>
                             </div>
                         </div>
                         
                         <div>
-                            <div class="mb-6">
-                                <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">SoundCloud ID</h4>
-                                <p class="text-lg font-bold text-gray-900 dark:text-white">{{ $reposts->soundcloud_repost_id ?? 'N/A' }}</p>
-                            </div>
                             
                             <div class="mb-6">
                                 <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Credits Earned</h4>

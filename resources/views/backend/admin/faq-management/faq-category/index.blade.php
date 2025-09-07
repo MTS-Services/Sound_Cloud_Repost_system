@@ -87,10 +87,8 @@
                         
                         {
                             label: '{{ __('Status') }}',
-                            key: 'status',
-
-                           
-                        },
+                            key: 'status', 
+                        }
                        
                     ];
 

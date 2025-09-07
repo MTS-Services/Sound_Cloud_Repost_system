@@ -111,6 +111,8 @@ class RepostRequestController extends Controller implements HasMiddleware
     public function detail($id)
     {
         $data['requests'] = RepostRequest::where('id', decrypt($id))->first();
+        $data['requests']->load(['requester', 'targetUser', 'campaign', 'track']);
+        // dd($data);
         return view('backend.admin.repost-management.repost-request.detail', $data);
     }
 

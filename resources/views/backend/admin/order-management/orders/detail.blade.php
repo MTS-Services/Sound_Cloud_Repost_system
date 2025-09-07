@@ -21,7 +21,7 @@
             <div class="flex flex-col md:flex-row gap-6">
                 <div class="flex-1 text-left">
                     <h2 class="text-3xl font-bold mb-2 text-gray-900 dark:text-white">User URN: 
-                        {{ $orders->user?->name ?? '' }}</h2>
+                        {{ $orders->user?->name ?? 'N/A ' }}</h2>
                     
                 </div>
             </div>

@@ -86,6 +86,12 @@ class FeatureController extends Controller implements HasMiddleware
                 'permissions' => ['feature-edit']
             ],
             [
+                // 'routeName' => 'pm.feature.status',
+                // 'params' => [encrypt($model->id)],
+                // 'label' => $model->status ? 'Deactivate' : 'Activate',
+                // 'status' => true,
+                // 'permissions' => ['permission-status']
+
                 'routeName' => 'pm.feature.status',
                 'params' => [encrypt($model->id)],
                 'label' => $model->status ? 'Deactivate' : 'Activate',
@@ -167,13 +173,19 @@ class FeatureController extends Controller implements HasMiddleware
         return $this->redirectIndex();
     }
 
-    public function status(Request $request, string $id)
+    public function status(Request $request, string $id, $data)
     {
         $featrue = Feature::findOrFail(decrypt($id));
         $featrue->update(['status' => !$featrue->status, 'updated_by' => admin()->id]);
         session()->flash('success', 'Feature  status updated successfully!');
         return redirect()->route('pm.feature.index');
+        //   $status = $status ?? $request->input('status');
+        //  $featrue = $this->featureService->getFeature($id);
+        // $this->featureService->toggleStatus($data);
+        // session()->flash('success', 'Feature status updated successfully!');
+        // return $this->redirectIndex();
     }
+    
     /**
      * Remove the specified resource from storage.
      */

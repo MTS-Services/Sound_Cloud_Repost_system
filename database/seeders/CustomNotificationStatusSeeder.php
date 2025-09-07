@@ -13,6 +13,6 @@ class CustomNotificationStatusSeeder extends Seeder
      */
     public function run(): void
     {
-        // CustomNotificationStatus::factory()->count(10)->create();
+        CustomNotificationStatus::factory()->count(10)->create();
     }
 }

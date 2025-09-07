@@ -84,7 +84,7 @@
                                 <div class="ml-4">
                                     <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Track URN</h4>
                                     <p class="text-lg font-semibold text-gray-900 dark:text-white break-all">
-                                        {{ $requests->track_urn }}</p>
+                                        {{ $requests->track?->title ?? 'N/A' }}</p>
                                 </div>
                             </div>
                         </div>
@@ -114,7 +114,7 @@
                                 <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Target User URN
                                 </h4>
                                 <p class="text-md font-medium text-gray-900 dark:text-white break-all">
-                                    {{ $requests->target_user_urn ?? 'N/A' }}</p>
+                                    {{ $requests->requester->name ?? 'N/A' }}</p>
                             </div>
                         </div>
                     </div>

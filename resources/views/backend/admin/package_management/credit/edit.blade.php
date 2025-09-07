@@ -38,13 +38,13 @@
                                 value="{{ $credit->credits }}" :messages="$errors->get('credits')" />
                         </div>
 
-                        <div class="space-y-2 sm:col-span-2">
+                        <div class="space-y-2 sm:col-span-2 h-20">
                             <x-inputs.textarea name="notes" label="{{ __('Notes') }}" placeholder="Enter notes"
-                                value="{{ $credit->notes }}" :messages="$errors->get('notes')" />
+                                value="{{ $credit->notes }}" :messages="$errors->get('notes')"  class=" h-20"/>
                         </div>
                     </div>
 
-                    <div class="flex justify-end mt-5">
+                    <div class="flex justify-end mt-14">
                         <x-button type="accent" :button="true" icon="save">{{ __('Update') }}</x-button>
                     </div>
                 </form>

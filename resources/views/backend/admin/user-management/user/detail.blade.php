@@ -119,7 +119,7 @@
                             <x-lucide-cloud class="w-5 h-5 text-orange-500" />
                             SoundCloud Details
                         </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {{-- <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             @foreach (['SoundCloud ID' => $userinfo->soundcloud_id ?? 'N/A', 'SoundCloud URN' => $userinfo->soundcloud_urn ?? 'N/A', 'Plan' => $userinfo->plan ?? 'N/A', 'Followers' => $userinfo->followers_count ?? 'N/A'] as $label => $value)
                                 <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                                     <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">
@@ -128,7 +128,7 @@
                                         {{ $value ?? 'N/A' }}</p>
                                 </div>
                             @endforeach
-                        </div>
+                        </div> --}}
 
                         <div class="mt-4 grid grid-cols-1 gap-4">
                             @foreach (['SoundCloud URI' => $userinfo->soundcloud_uri ?? 'N/A', 'Permalink URL' => $userinfo->soundcloud_permalink_url ?? 'N/A'] as $label => $value)

@@ -39,11 +39,14 @@ class AdminService
 
     public function updateAdmin(Admin $admin, array $data, $file = null): Admin
     {
+        
         return DB::transaction(function () use ($admin, $data, $file) {
+           
             if ($file) {
                 $data['image'] = $this->handleFileUpload($file,  'admins', $data['name']);
                 $this->fileDelete($admin->image);
             }
+            
             if ($data['email'] && $data['email'] != $admin->email) {
                 $data['email_verified_at'] = null;
             }

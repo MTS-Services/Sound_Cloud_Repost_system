@@ -156,12 +156,15 @@ class AdminController extends Controller implements HasMiddleware
      */
     public function update(AdminRequest $request, string $id)
     {
+       
         try {
             $admin = $this->adminService->getAdmin($id);
            
             $validated = $request->validated();
+           
             $validated['role_id'] = $request->role;
             $this->adminService->updateAdmin($admin, $validated, $request->file('image'));
+            
             session()->flash('success', 'Admin updated successfully!');
         } catch (\Throwable $e) {
             session()->flash('error', 'Admin update failed!');

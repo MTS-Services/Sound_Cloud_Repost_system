@@ -354,7 +354,7 @@ class UserController extends Controller implements HasMiddleware
             $playlist = $this->playlistService->getPlaylist($playlistUrn)->load(['tracks', 'user']);
             $query = $playlist->tracks();
             return DataTables::eloquent($query)
-                ->editColumn('user_name', function ($tracklist) {
+                ->editColumn('user_urn', function ($tracklist) {
                     return $tracklist->user?->name;
                 })
                 ->editColumn('creater_id', fn($tracklist) => $this->creater_name($tracklist))
@@ -363,7 +363,7 @@ class UserController extends Controller implements HasMiddleware
                     $menuItems = $this->playlistTrackMenuItems($playlist);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['user_name', 'action', 'created_at', 'creater_id'])->make(true);
+                ->rawColumns(['user_urn', 'action', 'created_at', 'creater_id'])->make(true);
         }
         return view('backend.admin.user-management.playlists.playlist_track', compact('palaylistUrn'));
     }

@@ -22,7 +22,7 @@
                         <th>{{ __('SL') }}</th>
                         <th>{{ __('Title') }}</th>
                         <th>{{ __('Tag List') }}</th>
-                        <th>{{ __('User Urn') }}</th>
+                        <th>{{ __('User Name') }}</th>
                         <th>{{ __('Release Year') }}</th>
                       
                         <th>{{ __('Action') }}</th>

@@ -226,12 +226,12 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     <!-- URI -->
-                    <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    {{-- <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                         <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                             {{ __('URI') }}</p>
                         <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
                             {{ $playlists->uri ?? 'N/A' }}</p>
-                    </div>
+                    </div> --}}
 
                     <!-- Tags -->
                     <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">

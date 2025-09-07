@@ -107,8 +107,11 @@ class RepostController extends Controller implements HasMiddleware
     }
   public function detail($id)
   {
+  
       $data['reposts'] = Repost::findOrFail(decrypt($id));
       $data['updater_name'] = $this->updater_name($data['reposts']);
+      $data['reposts']->load('reposter', 'trackOwner', 'campaign');
+    //   dd($data);
       return view('backend.admin.repost-management.repost.detail',$data);
   }
     public function show($id)

@@ -165,7 +165,7 @@
                             <div>
                                 <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">User URN</h4>
                                 <p class="text-sm font-medium text-gray-900 dark:text-white break-all">
-                                    {{ $payments->user_urn ?? 'N/A' }}</p>
+                                    {{ $payments->user->name ?? 'N/A' }}</p>
                             </div>
 
                             <div>

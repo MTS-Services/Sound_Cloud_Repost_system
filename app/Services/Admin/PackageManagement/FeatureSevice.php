@@ -45,4 +45,11 @@ class FeatureSevice
         $feature = Feature::where('id', decrypt($encryptedId))->forceDelete();
         return $feature;
     }
+    // public function toggleStatus(Feature $feature): void
+    // {
+    //     $feature->update( [
+    //         'status' => !$feature->status,
+    //         'updated_by' => admin()->id
+    //     ]);
+    // }
 }

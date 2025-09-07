@@ -19,7 +19,7 @@ use Yajra\DataTables\Facades\DataTables;
 class FaqCategotyController extends Controller implements HasMiddleware
 {
     use AuditRelationTraits;
-    
+
     protected FaqCategoryService $faqCategoryService;
 
     public function __construct(FaqCategoryService $faqCategoryService)
@@ -35,7 +35,7 @@ class FaqCategotyController extends Controller implements HasMiddleware
     {
         return redirect()->route('fm.faq-category.trash');
     }
-      public function getFaqCategories()
+    public function getFaqCategories()
     {
         return FaqCategory::query();
     }
@@ -68,14 +68,14 @@ class FaqCategotyController extends Controller implements HasMiddleware
             $query = $this->faqCategoryService->getFaqCategories();
             return DataTables::eloquent($query)
 
-            ->editColumn('name', function ($faqCategory) {
-                return $faqCategory->name;
-            })
+                ->editColumn('name', function ($faqCategory) {
+                    return $faqCategory->name;
+                })
 
-            ->editColumn('slug', function ($faqCategory) {
-                return $faqCategory->slug;
-            })
-            ->editColumn('status', fn($faqCategory) => "<span class='badge badge-soft {$faqCategory->status_color}'>{$faqCategory->status_label}</span>")
+                ->editColumn('slug', function ($faqCategory) {
+                    return $faqCategory->slug;
+                })
+                ->editColumn('status', fn($faqCategory) => "<span class='badge badge-soft {$faqCategory->status_color}'>{$faqCategory->status_label}</span>")
                 ->editColumn('created_by', function ($faqCategory) {
                     return $this->creater_name($faqCategory);
                 })
@@ -86,7 +86,7 @@ class FaqCategotyController extends Controller implements HasMiddleware
                     $menuItems = $this->menuItems($service);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns([ 'name', 'slug','status','created_by', 'created_at', 'action'])
+                ->rawColumns(['name', 'slug', 'status', 'created_by', 'created_at', 'action'])
                 ->make(true);
         }
         return view('backend.admin.faq-management.faq-category.index');
@@ -144,8 +144,7 @@ class FaqCategotyController extends Controller implements HasMiddleware
         try {
             $validated = $request->validated();
             $this->faqCategoryService->createFaqCategory($validated);
-             return redirect()->route('fm.faq-category.index')->with('success', 'Service created successfully');
-           
+            return redirect()->route('fm.faq-category.index')->with('success', 'Service created successfully');
         } catch (\Throwable $e) {
             session()->flash('error', 'Feature Category create failed!');
             throw $e;
@@ -161,6 +160,7 @@ class FaqCategotyController extends Controller implements HasMiddleware
         $data = $this->faqCategoryService->getFaqCategory($id);
         $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
+
         return response()->json($data);
     }
 
@@ -176,7 +176,7 @@ class FaqCategotyController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-     public function update(FaqCategoryRequest $request, string $id)
+    public function update(FaqCategoryRequest $request, string $id)
     {
         try {
             $validated = $request->validated();
@@ -192,7 +192,7 @@ class FaqCategotyController extends Controller implements HasMiddleware
 
 
 
-     public function status(Request $request, string $id)
+    public function status(Request $request, string $id)
     {
         $faqCategory = FaqCategory::findOrFail(decrypt($id));
         $faqCategory->update(['status' => !$faqCategory->status, 'updated_by' => admin()->id]);
@@ -203,7 +203,7 @@ class FaqCategotyController extends Controller implements HasMiddleware
      * Remove the specified resource from storage.
      */ public function destroy(string $id)
     {
-        $faq =FaqCategory::findOrFail(decrypt($id));
+        $faq = FaqCategory::findOrFail(decrypt($id));
         $faq->update(['deleted_by' => admin()->id]);
         $faq->delete();
         session()->flash('success', 'Faq category deleted successfully!');
@@ -216,15 +216,15 @@ class FaqCategotyController extends Controller implements HasMiddleware
             $query = $this->faqCategoryService->getFaqCategories()->onlyTrashed();
             return DataTables::eloquent($query)
 
-              ->editColumn('name', function ($faqCategory) {
-                return $faqCategory->name;
-            })
+                ->editColumn('name', function ($faqCategory) {
+                    return $faqCategory->name;
+                })
 
-            ->editColumn('slug', function ($faqCategory) {
-                return $faqCategory->slug;
-            })
-            ->editColumn('status', fn($faqCategory) => "<span class='badge badge-soft {$faqCategory->status_color}'>{$faqCategory->status_label}</span>")
-               
+                ->editColumn('slug', function ($faqCategory) {
+                    return $faqCategory->slug;
+                })
+                ->editColumn('status', fn($faqCategory) => "<span class='badge badge-soft {$faqCategory->status_color}'>{$faqCategory->status_label}</span>")
+
                 ->editColumn('deleted_by', function ($admin) {
                     return $this->deleter_name($admin);
                 })
@@ -235,7 +235,7 @@ class FaqCategotyController extends Controller implements HasMiddleware
                     $menuItems = $this->trashedMenuItems($permission);
                     return view('components.action-buttons', compact('menuItems'))->render();
                 })
-                ->rawColumns(['name', 'slug','status','deleted_by', 'deleted_at', 'action'])
+                ->rawColumns(['name', 'slug', 'status', 'deleted_by', 'deleted_at', 'action'])
                 ->make(true);
         }
         return view('backend.admin.faq-management.faq-category.trash');
@@ -261,7 +261,7 @@ class FaqCategotyController extends Controller implements HasMiddleware
         ];
     }
 
-     public function restore(string $id): RedirectResponse
+    public function restore(string $id): RedirectResponse
     {
         try {
             $faqCategory = FaqCategory::onlyTrashed()->findOrFail(decrypt($id));
