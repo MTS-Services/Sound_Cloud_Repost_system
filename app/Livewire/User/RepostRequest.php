@@ -372,7 +372,7 @@ class RepostRequest extends Component
                         'status' => CreditTransaction::STATUS_SUCCEEDED,
                         'transaction_type' => CreditTransaction::TYPE_EARN,
                         'amount' => 0,
-                        'credits' => (float) repostPrice(user()),
+                        'credits' => (float) repostPrice(user()) + ($this->commented ? 2 : 0) + ($this->liked ? 2 : 0),
                         'description' => "Repost From Direct Request",
                         'metadata' => [
                             'repost_id' => $repost->id,
