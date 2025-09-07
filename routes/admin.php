@@ -14,7 +14,6 @@ use App\Http\Controllers\Backend\Admin\CampaignManagement\CampaignController;
 use App\Http\Controllers\Backend\Admin\UserManagement\UserPlaylistController;
 use App\Http\Controllers\Backend\Admin\UserManagement\UserTracklistController;
 use App\Http\Controllers\Backend\Admin\OrderManagement\CreditTransactionController;
-use App\Http\Controllers\Backend\Admin\PackageManagement\FeatureCategoryController;
 use App\Http\Controllers\Backend\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Backend\Admin\Faq\FaqCategotyController;
 use App\Http\Controllers\Backend\Admin\Faq\FaqController;
@@ -22,7 +21,6 @@ use App\Http\Controllers\Backend\Admin\NotificationController;
 use App\Http\Controllers\Backend\Admin\RepostManagement\RepostController;
 use App\Http\Controllers\Backend\Admin\RepostManagement\RepostRequestController;
 use App\Http\Controllers\Backend\Admin\UserManagement\UserPlaneController;
-use App\Models\Faq;
 
 Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], function () {
 
@@ -70,10 +68,6 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
 
     // Package Management
     Route::group(['as' => 'pm.', 'prefix' => 'package-management'], function () {
-        // Feature Category Routes
-        Route::resource('feature-category', FeatureCategoryController::class);
-        Route::controller(FeatureCategoryController::class)->name('feature-category.')->prefix('feature-category')->group(function () {});
-        Route::get('status/{feature_category}', [FeatureCategoryController::class, 'status'])->name('feature-category.status');
         // Feature Routes
         Route::resource('feature', FeatureController::class);
         Route::controller(FeatureController::class)->name('feature.')->prefix('feature')->group(function () {});
