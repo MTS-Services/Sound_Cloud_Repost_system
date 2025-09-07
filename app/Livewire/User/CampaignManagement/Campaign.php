@@ -923,15 +923,11 @@ class Campaign extends Component
             if ($campaign->music_type == Track::class) {
                 $this->reset('track');
                 $this->track = $this->trackService->getTrack(encrypt($campaign->music_id));
-                Log::info('track.');
             } elseif ($campaign->music_type == Playlist::class) {
                 $this->reset('track');
                 $playlist = PlaylistTrack::where('playlist_urn', $campaign->music_id)->with('track')->get();
                 $this->track = $playlist->track;
-                Log::info('playlist track.');
             }
-
-            Log::info('start analytics.');
 
             $response = $this->analyticsService->updateAnalytics($this->track, $campaign, 'total_plays', $campaign->target_genre);
             if ($response != false || $response != null) {
