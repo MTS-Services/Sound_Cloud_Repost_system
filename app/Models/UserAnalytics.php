@@ -8,11 +8,11 @@ class UserAnalytics extends BaseModel
 {
     protected $fillable = [
         'user_urn',
-        'source_id',
-        'source_type',
+        'track_urn',
+        'campaign_id',
         'date',
         'genre',
-        
+
         'total_plays',
         'total_followes',
         'total_likes',
@@ -59,9 +59,14 @@ class UserAnalytics extends BaseModel
         return $this->belongsTo(User::class, 'user_urn', 'urn');
     }
 
-    public function source()
+    public function track()
     {
-        return $this->morphTo();
+        return $this->belongsTo(Track::class, 'track_urn', 'urn');
+    }
+
+    public function campaign()
+    {
+        return $this->belongsTo(Campaign::class, 'campaign_id', 'id');
     }
 
 

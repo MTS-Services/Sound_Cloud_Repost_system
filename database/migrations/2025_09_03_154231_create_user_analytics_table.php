@@ -20,8 +20,11 @@ return new class extends Migration
             $table->string('user_urn');
             $table->foreign('user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->unsignedBigInteger('source_id');
-            $table->string('source_type');
+            $table->string('track_urn');
+            $table->foreign('track_urn')->references('urn')->on('tracks')->onDelete('cascade')->onUpdate('cascade');
+
+            $table->unsignedBigInteger('campaign_id')->nullable();
+            $table->foreign('campaign_id')->references('id')->on('campaigns')->onDelete('cascade')->onUpdate('cascade');
 
             $table->date('date');
             $table->string('genre');
@@ -37,7 +40,7 @@ return new class extends Migration
             $table->softDeletes();
             $this->addMorphedAuditColumns($table);
 
-            $table->unique(['source_id', 'source_type', 'user_urn', 'date'], 'user_analytics_unique_index');
+            $table->unique(['campaign_id', 'track_urn', 'user_urn', 'date'], 'user_analytics_unique_index');
         });
     }
 
