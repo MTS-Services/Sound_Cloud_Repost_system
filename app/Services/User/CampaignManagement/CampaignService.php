@@ -48,7 +48,7 @@ class CampaignService
                     'reposted_at' => now(),
                     'credits_earned' => $totalCredits,
                 ]);
-                dd($repost, $campaign);
+                dd($repost, $campaign, $reposter);
 
                 // Update the Campaign record using atomic increments
                 $campaign->increment('completed_reposts');
