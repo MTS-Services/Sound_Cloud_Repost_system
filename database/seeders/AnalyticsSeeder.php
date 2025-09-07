@@ -31,7 +31,7 @@ class AnalyticsSeeder extends Seeder
                 'total_comments' => rand(1, 100),
                 'total_reposts' => rand(1, 100),
                 'total_likes' => rand(1, 100),
-                'total_followes' => rand(1, 100),
+                'total_followers' => rand(1, 100),
                 'total_plays' => rand(1, 100),
             ]);
         }

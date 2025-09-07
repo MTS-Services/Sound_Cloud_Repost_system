@@ -15,7 +15,7 @@ class UserAnalytics extends BaseModel
 
         'total_requests',
         'total_plays',
-        'total_followes',
+        'total_followers',
         'total_likes',
         'total_reposts',
         'total_comments',
@@ -41,7 +41,7 @@ class UserAnalytics extends BaseModel
     protected $casts = [
         'total_requests' => 'integer',
         'total_plays' => 'integer',
-        'total_followes' => 'integer',
+        'total_followers' => 'integer',
         'total_likes' => 'integer',
         'total_reposts' => 'integer',
         'total_comments' => 'integer',

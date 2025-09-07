@@ -31,7 +31,7 @@ return new class extends Migration
 
             $table->unsignedBigInteger('total_requests')->default(0);
             $table->unsignedBigInteger('total_plays')->default(0);
-            $table->unsignedBigInteger('total_followes')->default(0);
+            $table->unsignedBigInteger('total_followers')->default(0);
             $table->unsignedBigInteger('total_likes')->default(0);
             $table->unsignedBigInteger('total_reposts')->default(0);
             $table->unsignedBigInteger('total_comments')->default(0);

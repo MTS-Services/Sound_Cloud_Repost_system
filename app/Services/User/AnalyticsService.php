@@ -111,7 +111,7 @@ class AnalyticsService
                 DB::raw('SUM(total_comments) as comments'),
                 DB::raw('SUM(total_views) as views'),
                 DB::raw('SUM(total_reposts) as reposts'),
-                DB::raw('SUM(total_followes) as followers')
+                DB::raw('SUM(total_followers) as followers')
             )
             ->where('user_urn', $userUrn)
             ->whereDate('date', '>=', $startDate)
@@ -155,8 +155,8 @@ class AnalyticsService
     //         $commentEngRate = ($analytics->total_comments / $analytics->total_views) * 100;
     //         $repostEngRate = ($analytics->total_reposts / $analytics->total_views) * 100;
     //         $playEngRate = ($analytics->total_plays / $analytics->total_views) * 100;
-    //         $followEngRate = ($analytics->total_followes / $analytics->total_views) * 100;
-    //         $totalEngRate = ($analytics->total_likes + $analytics->total_comments + $analytics->total_reposts + $analytics->total_plays + $analytics->total_followes) / $analytics->total_views * 100;
+    //         $followEngRate = ($analytics->total_followers / $analytics->total_views) * 100;
+    //         $totalEngRate = ($analytics->total_likes + $analytics->total_comments + $analytics->total_reposts + $analytics->total_plays + $analytics->total_followers) / $analytics->total_views * 100;
     //         return [
     //             'engagementType' => Track::class,
     //             'likeEngRate' => $likeEngRate,
@@ -171,8 +171,8 @@ class AnalyticsService
     //         $commentEngRate = ($analytics->total_comments / $analytics->total_views) * 100;
     //         $repostEngRate = ($analytics->total_reposts / $analytics->total_views) * 100;
     //         $playEngRate = ($analytics->total_plays / $analytics->total_views) * 100;
-    //         $followEngRate = ($analytics->total_followes / $analytics->total_views) * 100;
-    //         $totalEngRate = ($analytics->total_likes + $analytics->total_comments + $analytics->total_reposts + $analytics->total_plays + $analytics->total_followes) / $analytics->total_views * 100;
+    //         $followEngRate = ($analytics->total_followers / $analytics->total_views) * 100;
+    //         $totalEngRate = ($analytics->total_likes + $analytics->total_comments + $analytics->total_reposts + $analytics->total_plays + $analytics->total_followers) / $analytics->total_views * 100;
     //         return [
     //             'engagementType' => Campaign::class,
     //             'likeEngRate' => $likeEngRate,
