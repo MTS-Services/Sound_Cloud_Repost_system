@@ -2,6 +2,8 @@
 
 namespace App\Services\User;
 
+use App\Models\Campaign;
+use App\Models\Track;
 use App\Models\UserAnalytics;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -13,7 +15,7 @@ class AnalyticsService
      * Checks if an action update is allowed for a given action, user, and source today.
      * If allowed, it sets a session flag to prevent subsequent updates for the day.
      */
-    public function syncUserAction(object $source, string $column, $userUrn = null): bool
+    public function syncUserAction(object $source, string $column, $campaignId = null, $userUrn = null): bool
     {
         if ($userUrn == null) {
             $userUrn = user()->urn;
@@ -40,12 +42,13 @@ class AnalyticsService
             $column,
             $userUrn,
             get_class($source),
-            $source->id
+            $campaignId ? $campaignId : '',
+            $source->urn ? $source->urn : ''
         );
 
         // Check if this action has already been logged for today.
         if (in_array($actionIdentifier, $updatedToday)) {
-            Log::info("User action update skipped for {$userUrn} on {$column} for source {$source->id}. Already updated today.");
+            Log::info("User action update skipped for {$userUrn} on {$column} for source {$source->urn}. Already updated today.");
             return false;
         }
 
@@ -56,26 +59,17 @@ class AnalyticsService
         return true;
     }
 
-    /**
-     * Updates an analytics column for a given polymorphic source.
-     *
-     * @param object $source The source model instance (e.g., Track, Repost, Campaign).
-     * @param string $column The analytics column to update (e.g., 'total_plays', 'total_likes').
-     * @param string $genre The genre of the source.
-     * @param int $increment The value to increment the column by.
-     * @return UserAnalytics|null
-     */
-    public function updateAnalytics(object $source, string $column, string $genre, int $increment = 1): UserAnalytics|bool|null
+    public function updateAnalytics(object $track, string $column, string $genre, $campaignId = null, int $increment = 1): UserAnalytics|bool|null
     {
-        // Get the owner's URN from the source model.
-        $userUrn = $source->user?->urn;
+        // Get the owner's URN from the track model.
+        $userUrn = $track->user?->urn;
         if (!$userUrn) {
-            Log::info("User action update skipped for {$userUrn} on {$column} for source {$source->id} and source type {$source->getMorphClass()}. No user URN found.");
+            Log::info("User action update skipped for {$userUrn} on {$column} for track {$track->id} and track type {$track->getMorphClass()}. No user URN found.");
             return null;
         }
 
         // Use the new reusable method to check if the update is allowed.
-        if (!$this->syncUserAction($source, $column)) {
+        if (!$this->syncUserAction($track, $column)) {
             return false;
         }
 
@@ -83,8 +77,8 @@ class AnalyticsService
         $analytics = UserAnalytics::firstOrNew(
             [
                 'user_urn' => $userUrn,
-                'source_id' => $source->id,
-                'source_type' => get_class($source),
+                'track_urn' => $track->urn,
+                'campaign_id' => $campaignId,
                 'date' => now()->toDateString(),
             ]
         );
@@ -151,6 +145,57 @@ class AnalyticsService
             'engagementRate' => number_format($engagementRate, 1),
         ];
     }
+
+    // public function getEngeagementRate(UserAnalytics $analytics)
+    // {
+    //     if ($analytics->source_type === Track::class) {
+    //         $likeEngRate = ($analytics->total_likes / $analytics->total_views) * 100;
+    //         $commentEngRate = ($analytics->total_comments / $analytics->total_views) * 100;
+    //         $repostEngRate = ($analytics->total_reposts / $analytics->total_views) * 100;
+    //         $playEngRate = ($analytics->total_plays / $analytics->total_views) * 100;
+    //         $followEngRate = ($analytics->total_followes / $analytics->total_views) * 100;
+    //         $totalEngRate = ($analytics->total_likes + $analytics->total_comments + $analytics->total_reposts + $analytics->total_plays + $analytics->total_followes) / $analytics->total_views * 100;
+    //         return [
+    //             'engagementType' => Track::class,
+    //             'likeEngRate' => $likeEngRate,
+    //             'commentEngRate' => $commentEngRate,
+    //             'repostEngRate' => $repostEngRate,
+    //             'playEngRate' => $playEngRate,
+    //             'followEngRate' => $followEngRate,
+    //             'totalEngRate' => $totalEngRate,
+    //         ];
+    //     } else if ($analytics->source_type === Campaign::class) {
+    //         $likeEngRate = ($analytics->total_likes / $analytics->total_views) * 100;
+    //         $commentEngRate = ($analytics->total_comments / $analytics->total_views) * 100;
+    //         $repostEngRate = ($analytics->total_reposts / $analytics->total_views) * 100;
+    //         $playEngRate = ($analytics->total_plays / $analytics->total_views) * 100;
+    //         $followEngRate = ($analytics->total_followes / $analytics->total_views) * 100;
+    //         $totalEngRate = ($analytics->total_likes + $analytics->total_comments + $analytics->total_reposts + $analytics->total_plays + $analytics->total_followes) / $analytics->total_views * 100;
+    //         return [
+    //             'engagementType' => Campaign::class,
+    //             'likeEngRate' => $likeEngRate,
+    //             'commentEngRate' => $commentEngRate,
+    //             'repostEngRate' => $repostEngRate,
+    //             'playEngRate' => $playEngRate,
+    //             'followEngRate' => $followEngRate,
+    //             'totalEngRate' => $totalEngRate,
+    //         ];
+    //     } else {
+    //         return [
+    //             'engagementType' => null,
+    //             'likeEngRate' => null,
+    //             'commentEngRate' => null,
+    //             'repostEngRate' => null,
+    //             'playEngRate' => null,
+    //             'followEngRate' => null,
+    //             'totalEngRate' => null,
+    //         ];
+    //     }
+    // }
+
+
+
+
 
     /**
      * Determine the start date based on the filter.

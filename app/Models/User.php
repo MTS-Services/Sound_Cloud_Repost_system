@@ -162,7 +162,10 @@ class User extends AuthBaseModel implements MustVerifyEmail
     }
 
 
-
+    public function analytics(): HasMany
+    {
+        return $this->hasMany(UserAnalytics::class, 'user_urn', 'urn');
+    }
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
@@ -300,5 +303,4 @@ class User extends AuthBaseModel implements MustVerifyEmail
         // Calculate response rate
         return round(($respondedWithin24Hours / $totalRequests) * 100, 2);
     }
-
 }

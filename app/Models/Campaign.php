@@ -101,6 +101,11 @@ class Campaign extends BaseModel
         return $this->hasMany(CreditTransaction::class, 'campaign_id', 'id');
     }
 
+    public function analytics(): HasMany
+    {
+        return $this->hasMany(UserAnalytics::class, 'campaign_id', 'id');
+    }
+
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
@@ -188,7 +193,7 @@ class Campaign extends BaseModel
     // active_completed scope
     public function scopeActive_completed()
     {
-        return $this->where('status', '!=', self::STATUS_CANCELLED, )->where('status', '!=', self::STATUS_PAUSED);
+        return $this->where('status', '!=', self::STATUS_CANCELLED,)->where('status', '!=', self::STATUS_PAUSED);
     }
 
     public const BOOSTED = 1;
