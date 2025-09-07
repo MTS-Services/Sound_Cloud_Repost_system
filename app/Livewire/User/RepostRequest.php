@@ -347,7 +347,10 @@ class RepostRequest extends Component
                         // Add other necessary fields based on your Repost model
                     ]);
 
-                    // Mark request as completed
+                    $request->increment('like_count', 1);
+                    $request->increment('comment_count', 1);
+                    $request->increment('followowers_count', 1);
+                    
                     $request->update([
                         'status' => ModelsRepostRequest::STATUS_APPROVED,
                         'completed_at' => now(),
