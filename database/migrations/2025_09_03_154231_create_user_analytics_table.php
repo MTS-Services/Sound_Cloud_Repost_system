@@ -29,12 +29,13 @@ return new class extends Migration
             $table->date('date');
             $table->string('genre');
 
+            $table->unsignedBigInteger('total_requests')->default(0);
             $table->unsignedBigInteger('total_plays')->default(0);
             $table->unsignedBigInteger('total_followes')->default(0);
             $table->unsignedBigInteger('total_likes')->default(0);
             $table->unsignedBigInteger('total_reposts')->default(0);
             $table->unsignedBigInteger('total_comments')->default(0);
-            $table->unsignedBigInteger('total_views')->default(0);
+            $table->unsignedBigInteger('total_views')->default(0);            
 
             $table->timestamps();
             $table->softDeletes();

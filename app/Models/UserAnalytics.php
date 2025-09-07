@@ -13,6 +13,7 @@ class UserAnalytics extends BaseModel
         'date',
         'genre',
 
+        'total_requests',
         'total_plays',
         'total_followes',
         'total_likes',
