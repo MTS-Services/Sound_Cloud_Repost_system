@@ -15,7 +15,7 @@ class AnalyticsService
      * Checks if an action update is allowed for a given action, user, and source today.
      * If allowed, it sets a session flag to prevent subsequent updates for the day.
      */
-    public function syncUserAction(object $source, string $column, $campaignId = null, $userUrn = null): bool
+    public function syncUserAction(object $track, object $action, string $column, $userUrn = null): bool
     {
         if ($userUrn == null) {
             $userUrn = user()->urn;
@@ -38,21 +38,20 @@ class AnalyticsService
 
         // Define the unique identifier for the current action.
         $actionIdentifier = sprintf(
-            '%s.%s.%s.%s',
+            '%s.%s.%s.%s.%s',
             $column,
+            $track->urn,
+            $action->id,
+            $action->getMorphClass(),
             $userUrn,
-            get_class($source),
-            $campaignId ? $campaignId : '',
-            $source->urn ? $source->urn : ''
+            $today
         );
 
-        Log::info('session key ' . [$todayKey] . ' value ' . [$updatedToday], 'actionIdentifier ' . $actionIdentifier, 'updatedToday ' . $updatedToday);
         // Check if this action has already been logged for today.
         if (in_array($actionIdentifier, $updatedToday)) {
-            Log::info("User action update skipped for {$userUrn} on {$column} for source {$source->urn}. Already updated today.");
+            Log::info("User action update skipped for {$userUrn} on {$actionIdentifier} for source {$track->urn}. Already updated today.");
             return false;
         }
-
 
         // If not in the session, add the action and save.
         $updatedToday[] = $actionIdentifier;
@@ -61,7 +60,7 @@ class AnalyticsService
         return true;
     }
 
-    public function updateAnalytics(object $track, string $column, string $genre, $campaignId = null, int $increment = 1): UserAnalytics|bool|null
+    public function updateAnalytics(object $track, object $action, string $column, string $genre, int $increment = 1): UserAnalytics|bool|null
     {
         // Get the owner's URN from the track model.
         $userUrn = $track->user?->urn;
@@ -71,7 +70,7 @@ class AnalyticsService
         }
 
         // Use the new reusable method to check if the update is allowed.
-        if (!$this->syncUserAction($track, $column)) {
+        if (!$this->syncUserAction($track, $action, $column)) {
             return false;
         }
 
@@ -80,7 +79,8 @@ class AnalyticsService
             [
                 'user_urn' => $userUrn,
                 'track_urn' => $track->urn,
-                'campaign_id' => $campaignId,
+                'action_id' => $action->id,
+                'action_type' => $action->getMorphClass(),
                 'date' => now()->toDateString(),
             ]
         );
@@ -111,7 +111,7 @@ class AnalyticsService
                 DB::raw('SUM(total_comments) as comments'),
                 DB::raw('SUM(total_views) as views'),
                 DB::raw('SUM(total_reposts) as reposts'),
-                DB::raw('SUM(total_followers) as followers')
+                DB::raw('SUM(total_followes) as followers')
             )
             ->where('user_urn', $userUrn)
             ->whereDate('date', '>=', $startDate)
@@ -155,8 +155,8 @@ class AnalyticsService
     //         $commentEngRate = ($analytics->total_comments / $analytics->total_views) * 100;
     //         $repostEngRate = ($analytics->total_reposts / $analytics->total_views) * 100;
     //         $playEngRate = ($analytics->total_plays / $analytics->total_views) * 100;
-    //         $followEngRate = ($analytics->total_followers / $analytics->total_views) * 100;
-    //         $totalEngRate = ($analytics->total_likes + $analytics->total_comments + $analytics->total_reposts + $analytics->total_plays + $analytics->total_followers) / $analytics->total_views * 100;
+    //         $followEngRate = ($analytics->total_followes / $analytics->total_views) * 100;
+    //         $totalEngRate = ($analytics->total_likes + $analytics->total_comments + $analytics->total_reposts + $analytics->total_plays + $analytics->total_followes) / $analytics->total_views * 100;
     //         return [
     //             'engagementType' => Track::class,
     //             'likeEngRate' => $likeEngRate,
@@ -171,8 +171,8 @@ class AnalyticsService
     //         $commentEngRate = ($analytics->total_comments / $analytics->total_views) * 100;
     //         $repostEngRate = ($analytics->total_reposts / $analytics->total_views) * 100;
     //         $playEngRate = ($analytics->total_plays / $analytics->total_views) * 100;
-    //         $followEngRate = ($analytics->total_followers / $analytics->total_views) * 100;
-    //         $totalEngRate = ($analytics->total_likes + $analytics->total_comments + $analytics->total_reposts + $analytics->total_plays + $analytics->total_followers) / $analytics->total_views * 100;
+    //         $followEngRate = ($analytics->total_followes / $analytics->total_views) * 100;
+    //         $totalEngRate = ($analytics->total_likes + $analytics->total_comments + $analytics->total_reposts + $analytics->total_plays + $analytics->total_followes) / $analytics->total_views * 100;
     //         return [
     //             'engagementType' => Campaign::class,
     //             'likeEngRate' => $likeEngRate,

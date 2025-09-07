@@ -23,8 +23,8 @@ return new class extends Migration
             $table->string('track_urn');
             $table->foreign('track_urn')->references('urn')->on('tracks')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->unsignedBigInteger('campaign_id')->nullable();
-            $table->foreign('campaign_id')->references('id')->on('campaigns')->onDelete('cascade')->onUpdate('cascade');
+            $table->unsignedBigInteger('action_id');
+            $table->string('action_type');
 
             $table->date('date');
             $table->string('genre');
@@ -35,13 +35,13 @@ return new class extends Migration
             $table->unsignedBigInteger('total_likes')->default(0);
             $table->unsignedBigInteger('total_reposts')->default(0);
             $table->unsignedBigInteger('total_comments')->default(0);
-            $table->unsignedBigInteger('total_views')->default(0);            
+            $table->unsignedBigInteger('total_views')->default(0);
 
             $table->timestamps();
             $table->softDeletes();
             $this->addMorphedAuditColumns($table);
 
-            $table->unique(['campaign_id', 'track_urn', 'user_urn', 'date'], 'user_analytics_unique_index');
+            $table->unique(['action_id', 'action_type', 'track_urn', 'user_urn', 'date'], 'user_analytics_unique_index');
         });
     }
 

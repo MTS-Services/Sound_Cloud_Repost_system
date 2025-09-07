@@ -101,11 +101,6 @@ class Campaign extends BaseModel
         return $this->hasMany(CreditTransaction::class, 'campaign_id', 'id');
     }
 
-    public function analytics(): HasMany
-    {
-        return $this->hasMany(UserAnalytics::class, 'campaign_id', 'id');
-    }
-
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */

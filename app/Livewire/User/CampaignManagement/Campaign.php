@@ -933,7 +933,7 @@ class Campaign extends Component
 
             Log::info('start analytics.');
 
-            $response = $this->analyticsService->updateAnalytics($this->track, 'total_plays', $campaign->target_genre, $campaign->id);
+            $response = $this->analyticsService->updateAnalytics($this->track, $campaign, 'total_plays', $campaign->target_genre);
             if ($response != false || $response != null) {
                 $campaign->increment('playback_count');
             }
