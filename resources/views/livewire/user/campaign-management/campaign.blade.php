@@ -609,7 +609,7 @@
                         <div class="relative">
                             <input type="range" x-data x-on:input="$wire.set('credit', $event.target.value)"
                                 min="50" step="10" max="{{ userCredits() }}"
-                                value="{{ $credit }}" class="w-full h-2 border-0 cursor-pointer">
+                                value="{{ $credit }}" class="w-full h-2 border-0 cursor-pointer outline-none transition-all duration-200">
                         </div>
                     </div>
 
