@@ -724,7 +724,7 @@ if (!function_exists('featuredAgain')) {
         }
 
         $hoursSinceLastFeature = Carbon::parse($latestFeaturedAt)->diffInHours(now());
-        return $hoursSinceLastFeature >= 24;
+        return $hoursSinceLastFeature <= 24;
     }
 }
 
