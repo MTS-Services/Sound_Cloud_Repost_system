@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User;
 
+use App\Models\Track;
 use Livewire\Component;
 use App\Services\User\AnalyticsService;
 use Livewire\Attributes\On;
@@ -37,7 +38,7 @@ class Analytics extends Component
     public function loadData()
     {
         // This is the server-side bottleneck
-        $freshData = $this->analyticsService->getAnalyticsData(user()->urn, $this->filter);
+        $freshData = $this->analyticsService->getAnalyticsData($this->filter);
         $this->data = $freshData;
 
         // Store the fresh data in the cache
