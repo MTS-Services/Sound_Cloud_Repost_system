@@ -785,9 +785,17 @@
                 class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <div class="flex items-center gap-3">
                     <div>
-                        <img src="{{ storage_url(app_setting('favicon')) }}" alt="{{ config('app.name') }}" class="w-12 dark:hidden" />
-                        <img src="{{ storage_url(app_setting('favicon_dark')) }}" alt="{{ config('app.name') }}"
-                            class="w-12 hidden dark:block" />
+                        @if (app_setting('favicon') && app_setting('favicon_dark'))
+                            <img src="{{ storage_url(app_setting('favicon')) }}" alt="{{ config('app.name') }}"
+                                class="w-12 dark:hidden" />
+                            <img src="{{ storage_url(app_setting('favicon_dark')) }}" alt="{{ config('app.name') }}"
+                                class="w-12 hidden dark:block" />
+                        @else
+                            <img src="{{ asset('assets/favicons/fav-icon-B.jpg') }}" alt="{{ config('app.name') }}"
+                                class="w-12 dark:hidden" />
+                            <img src="{{ asset('assets/favicons/fav-icon-W.jpg') }}" alt="{{ config('app.name') }}"
+                                class="w-12 hidden dark:block" />
+                        @endif
                     </div>
                     <h2 class="text-xl font-bold text-gray-900 dark:text-white">
                         {{ __('Delete Your Account') }}
