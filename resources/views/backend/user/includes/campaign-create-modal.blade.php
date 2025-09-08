@@ -237,8 +237,7 @@
                         <div class="space-y-2 ml-4">
                             <div class="flex items-center space-x-2">
                                 <input type="radio" name="targetGenre" wire:model='targetGenre' value="anyGenre"
-                                    checked @click="showGenreRadios = false" wire:model="anyGenre"
-                                    :disabled="!momentumEnabled"
+                                    checked @click="showGenreRadios = false" :disabled="!momentumEnabled"
                                     class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
                                     :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                 <span class="text-sm text-gray-700 dark:text-gray-400">Open to all music
