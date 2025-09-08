@@ -22,7 +22,7 @@
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
                         <div class="space-y-2">
                             <x-inputs.select name="name" label="{{ __('Feature Name') }}" icon="shield"
-                                placeholder="{{ __('Select a Feature Name') }}" :options="App\Models\Feature::getFeaturedNames()" :selected="old('name')"
+                                placeholder="{{ __('Select a Feature Name') }}" :options="App\Models\Feature::getAvailableFeaturedNames()" :selected="old('name')"
                                 :messages="$errors->get('name')" />
                         </div>
                         <div class="space-y-2">

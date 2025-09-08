@@ -65,7 +65,7 @@ class AdminController extends Controller implements HasMiddleware
             $query = $this->adminService->getAdmins();
             return DataTables::eloquent($query)
                 ->editColumn('role_id', fn($admin) => optional($admin->role)->name)
-                ->editColumn('status', fn($admin) => "<span class='badge badge-soft {$admin->status_color}'>{$admin->status_label}</span>")
+                // ->editColumn('status', fn($admin) => "<span class='badge badge-soft {$admin->status_color}'>{$admin->status_label}</span>")
                 ->editColumn('email_verified_at', fn($admin) => "<span class='badge badge-soft " . $admin->verify_color . "'>" . $admin->verify_label . "</span>")
                 ->editColumn('created_by', fn($admin) => $this->creater_name($admin))
                 ->editColumn('created_at', fn($admin) => $admin->created_at_formatted)
@@ -137,7 +137,8 @@ class AdminController extends Controller implements HasMiddleware
         $data = $this->adminService->getAdmin($id);
         $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
-        $data['role_id'] = optional($data->role)->name;
+        // $data['role_id'] = optional($data->role)->name;
+        // dd($data);
         return response()->json($data);
     }
 

@@ -93,11 +93,17 @@
                             label_color: 'verify_color',
                             type: 'badge',
                         },
+                         {
+                            label: '{{ __('Status') }}',
+                            key: 'status_label',
+                            label_color: 'verify_color',
+                            type: 'badge',
+                        },
                         {
                             label: '{{ __('Role') }}',
                             key: 'role_id',
                         },
-                        {
+                         {
                             label: '{{ __('Image') }}',
                             key: 'modified_image',
                             type: 'image',

@@ -86,16 +86,11 @@ class FeatureController extends Controller implements HasMiddleware
                 'permissions' => ['feature-edit']
             ],
             [
-                // 'routeName' => 'pm.feature.status',
-                // 'params' => [encrypt($model->id)],
-                // 'label' => $model->status ? 'Deactivate' : 'Activate',
-                // 'status' => true,
-                // 'permissions' => ['permission-status']
+               
 
                 'routeName' => 'pm.feature.status',
                 'params' => [encrypt($model->id)],
-                'label' => $model->status ? 'Deactivate' : 'Activate',
-                'status' => true,
+                'label' => $model->status_btn_label,
                 'permissions' => ['permission-status']
             ],
 
@@ -105,7 +100,7 @@ class FeatureController extends Controller implements HasMiddleware
                 'label' => 'Delete',
                 'delete' => true,
                 'permissions' => ['feature-delete']
-            ]
+            ],
 
         ];
     }
@@ -173,16 +168,24 @@ class FeatureController extends Controller implements HasMiddleware
         return $this->redirectIndex();
     }
 
-    public function status(Request $request, string $id, $data)
+    public function status( string $id, $data) : RedirectResponse
     {
-        $featrue = Feature::findOrFail(decrypt($id));
-        $featrue->update(['status' => !$featrue->status, 'updated_by' => admin()->id]);
-        session()->flash('success', 'Feature  status updated successfully!');
-        return redirect()->route('pm.feature.index');
-        //   $status = $status ?? $request->input('status');
-        //  $featrue = $this->featureService->getFeature($id);
+        $feature = Feature::findOrFail(decrypt($id));
+
+    // Toggle status (0 <-> 1) and set updated_by
+    $feature->update([
+        'status' => $feature->status ? 0 : 1,
+        'updated_by' => admin()->id
+    ]);
+
+    // Flash success message
+    session()->flash('success', 'Feature status updated successfully!');
+
+    // Redirect back to feature index
+    return redirect()->route('pm.feature.index');
+        //    $data = $this->featureService->getFeature($id);
         // $this->featureService->toggleStatus($data);
-        // session()->flash('success', 'Feature status updated successfully!');
+        // session()->flash('success', 'Plan status updated successfully!');
         // return $this->redirectIndex();
     }
     

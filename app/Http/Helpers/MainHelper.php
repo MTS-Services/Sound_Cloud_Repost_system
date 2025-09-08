@@ -157,8 +157,8 @@ function soundcloud_image($url)
 
 function auth_storage_url($url)
 {
-    $image = asset('default_img/other.png');
-    return $url ? $url : $image;
+    $default = asset('default_img/other.png');
+    return $url ? (Str::startsWith($url, 'https://') ? $url : asset('storage/' . $url)) : $default;
 }
 
 function getSubmitterType($className)
@@ -791,7 +791,5 @@ if (!function_exists('userFeatures')) {
             Feature::KEY_COLLABORATION_HUB => "True",
             Feature::KEY_SUPPORT_LEVEL => "Community Support",
         ];
-
     }
-
 }

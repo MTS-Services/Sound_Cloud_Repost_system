@@ -60,6 +60,7 @@
                     </div>
                 </form>
             </div>
+            {{-- @dd($admin->modified_image) --}}
 
             {{-- documentation will be loded here and add md:col-span-2 class --}}
 
@@ -67,12 +68,16 @@
 
         @push('js')
             <script src="{{ asset('assets/js/filepond.js') }}"></script>
+
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
 
-                    file_upload(["#image"], ["image/jpeg", "image/png", "image/jpg, image/webp, image/svg"], {
-                        "#image": "{{ $admin->modified_image }}"
-                    });
+                    file_upload(
+                        ["#image"],
+                        ["image/jpeg", "image/png", "image/jpg", "image/webp", "image/svg"], {
+                            "#image": "{{ $admin->modified_image }}"
+                        }
+                    );
 
                 });
             </script>

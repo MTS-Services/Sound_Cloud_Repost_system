@@ -58,7 +58,7 @@ class Admin extends AuthBaseModel implements MustVerifyEmail
     {
         return $this->belongsTo(Role::class, 'role_id')->select(['name', 'id']);
     }
-    
+
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
@@ -79,7 +79,7 @@ class Admin extends AuthBaseModel implements MustVerifyEmail
     public const STATUS_ACTIVE = 1;
     public const STATUS_INACTIVE = 0;
 
-    public static function statusList(): array
+    public static function statusList()
     {
         return [
             self::STATUS_ACTIVE => 'Active',
@@ -88,7 +88,7 @@ class Admin extends AuthBaseModel implements MustVerifyEmail
     }
     public function getStatusLabelAttribute()
     {
-        return self::statusList()[$this->status];
+        return self::statusList()[$this->status] ?? 'Unknown';
     }
 
     public function getStatusColorAttribute()
@@ -98,13 +98,16 @@ class Admin extends AuthBaseModel implements MustVerifyEmail
 
     public function getStatusBtnLabelAttribute()
     {
-        return $this->status == self::STATUS_ACTIVE ? self::statusList()[self::STATUS_INACTIVE] : self::statusList()[self::STATUS_ACTIVE];
+        return $this->status == self::STATUS_ACTIVE
+            ? self::statusList()[self::STATUS_INACTIVE]
+            : self::statusList()[self::STATUS_ACTIVE];
     }
 
     public function getStatusBtnColorAttribute()
     {
         return $this->status == self::STATUS_ACTIVE ? 'btn-error' : 'btn-success';
     }
+
     public function getModifiedImageAttribute()
     {
         return auth_storage_url($this->image);

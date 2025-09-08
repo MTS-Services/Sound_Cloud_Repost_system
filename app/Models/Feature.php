@@ -96,16 +96,6 @@ class Feature extends BaseModel
 
 
 
-
-
-
-
-
-
-
-
-
-
     /////////////////////////////////////
     ////////// Feature Keys /////////////
     ///////////////////////////////////
@@ -164,6 +154,15 @@ class Feature extends BaseModel
         $values = self::getFeatureValues()[$this->key] ?? [];
         return $values;
     }
+    public static function getAvailableFeaturedNames(): array
+    {
+
+        $allFeatures = self::getFeaturedNames();
+
+        $usedKeys = self::pluck('key')->toArray();
+        return array_diff_key($allFeatures, array_flip($usedKeys));
+    }
+
 
 
     // In Plan.php model
@@ -188,5 +187,4 @@ class Feature extends BaseModel
     {
         return $this->featureRelations()->where('package_type', Plan::class)->where('package_id', $plan_id)->first();
     }
-
 }
