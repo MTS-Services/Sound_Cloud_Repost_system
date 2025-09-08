@@ -2,8 +2,8 @@
      <div class="container mx-auto px-4 py-4 flex justify-between items-center">
          <a href="{{ route('f.landing') }}" wire:navigate>
              <div class="w-72">
-                 <img src="{{ storage_url(env('APP_LOGO_DARK')) }}" alt="{{ config('app.name') }}"
-                     class="w-full h-full">
+                 <img src="{{ asset('assets/logo/rc-logo-white.png') }}" alt="{{ config('app.name') }}"
+                     class="w-72 xs:48">
              </div>
          </a>
 
