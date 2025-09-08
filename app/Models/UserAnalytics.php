@@ -9,12 +9,14 @@ class UserAnalytics extends BaseModel
     protected $fillable = [
         'user_urn',
         'track_urn',
-        'campaign_id',
+        'action_id',
+        'action_type',
         'date',
         'genre',
 
+        'total_requests',
         'total_plays',
-        'total_followes',
+        'total_followers',
         'total_likes',
         'total_reposts',
         'total_comments',
@@ -38,8 +40,9 @@ class UserAnalytics extends BaseModel
     ];
 
     protected $casts = [
+        'total_requests' => 'integer',
         'total_plays' => 'integer',
-        'total_followes' => 'integer',
+        'total_followers' => 'integer',
         'total_likes' => 'integer',
         'total_reposts' => 'integer',
         'total_comments' => 'integer',
@@ -64,11 +67,10 @@ class UserAnalytics extends BaseModel
         return $this->belongsTo(Track::class, 'track_urn', 'urn');
     }
 
-    public function campaign()
+    public function action()
     {
-        return $this->belongsTo(Campaign::class, 'campaign_id', 'id');
+        return $this->morphTo();
     }
-
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS

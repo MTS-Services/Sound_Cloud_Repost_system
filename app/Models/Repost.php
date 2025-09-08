@@ -17,6 +17,11 @@ class Repost extends BaseModel
         'credits_earned',
         'reposted_at',
 
+        'like_count',
+        'comment_count',
+        'followers_count',
+
+
         'creater_id',
         'updater_id',
         'deleter_id',
