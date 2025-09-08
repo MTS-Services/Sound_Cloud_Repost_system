@@ -162,9 +162,9 @@
                         class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                         <div class="flex items-center gap-3">
                             <div>
-                                <img src="{{ asset('assets/favicons/fav-icon-black.svg') }}" alt="logo"
+                                <img src="{{ storage_url(app_setting('favicon')) }}" alt="{{ config('app.name') }}"
                                     class="w-12 dark:hidden" />
-                                <img src="{{ asset('assets/favicons/fav-icon-white.svg') }}" alt="logo"
+                                <img src="{{ storage_url(app_setting('favicon_dark')) }}" alt="{{ config('app.name') }}"
                                     class="w-12 hidden dark:block" />
                             </div>
                             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
@@ -383,9 +383,9 @@
                         class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                         <div class="flex items-center gap-3">
                             <div>
-                                <img src="{{ asset('assets/favicons/fav-icon-black.svg') }}" alt="logo"
+                                <img src="{{ storage_url(app_setting('favicon')) }}" alt="{{ config('app.name') }}"
                                     class="w-12 dark:hidden" />
-                                <img src="{{ asset('assets/favicons/fav-icon-white.svg') }}" alt="logo"
+                                <img src="{{ storage_url(app_setting('favicon_dark')) }}" alt="{{ config('app.name') }}"
                                     class="w-12 hidden dark:block" />
                             </div>
                             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">

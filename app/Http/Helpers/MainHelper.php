@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ApplicationSetting;
 use App\Models\Campaign;
 use App\Models\Feature;
 use App\Models\Order;
@@ -803,5 +804,11 @@ function hasEmailSentPermission($value, $userUrn = null) : bool
     }
     return UserSetting::where('user_urn', user()->urn)->value($value) ?? false;
 }
-
+function app_setting($key){
+    $setting = ApplicationSetting::where('key', $key)->first();
+    if($setting){
+        return $setting->value;
+    }
+    return null;
+}
 // function logos()

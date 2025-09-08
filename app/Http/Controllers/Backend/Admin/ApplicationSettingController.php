@@ -39,7 +39,7 @@ class ApplicationSettingController extends Controller implements HasMiddleware
      */
     public function general(): View
     {
-        $data['general_settings'] = ApplicationSetting::whereIn('key', ['application_name', 'application_short_name', 'timezone', 'date_format', 'time_format', 'theme_mode', 'app_logo', 'favicon', 'public_registration', 'registration_approval', 'environment', 'app_debug', 'debugbar'])->pluck('value', 'key')->all();
+        $data['general_settings'] = ApplicationSetting::whereIn('key', ['application_name', 'application_short_name', 'timezone', 'date_format', 'time_format', 'theme_mode', 'app_logo', 'favicon', 'favicon_dark', 'app_logo_dark', 'public_registration', 'registration_approval', 'environment', 'app_debug', 'debugbar'])->pluck('value', 'key')->all();
         $data['timezones'] = availableTimezones();
         return view('backend.admin.application-settings.general', $data);
     }
@@ -66,7 +66,7 @@ class ApplicationSettingController extends Controller implements HasMiddleware
             $env = file($envPath);
 
             foreach ($validated as $key => $value) {
-                if ($key == 'app_logo' || $key == 'favicon') {
+                if ($key == 'app_logo' || $key == 'favicon' ||$key == 'app_logo_dark' || $key == 'favicon_dark') {
                     $value = $this->handleFileUpload($value, 'application_settings', $key);
                 }
 

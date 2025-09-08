@@ -26,12 +26,14 @@ class ApplicationSettingRequest extends FormRequest
         return [
             // General Settings
             'application_name' => 'sometimes|nullable|string|min:3|max:255',
-            'application_short_name' => 'sometimes|required|string|min:3|max:255',
+            'application_short_name' => 'sometimes|required|string|min:2|max:255',
             'timezone' => 'sometimes|required|string',
             'date_format' => 'sometimes|required|string',
             'time_format' => 'sometimes|required|string',
-            'favicon' => 'sometimes|required|image|mimes:jpeg,png,jpg,webp,svg|max:2048|dimensions:max_width=16,max_height=16',
-            'app_logo' => 'sometimes|required|image|mimes:jpeg,png,jpg,webp,svg|max:2048|dimensions:max_width=400,max_height=400',
+            'favicon' => 'sometimes|required|mimes:jpeg,png,jpg,webp,svg|max:2048',
+            'app_logo' => 'sometimes|required|mimes:jpeg,png,jpg,webp,svg|max:2048',
+            'favicon_dark' => 'sometimes|required|mimes:jpeg,png,jpg,webp,svg|max:2048',
+            'app_logo_dark' => 'sometimes|required|mimes:jpeg,png,jpg,webp,svg|max:2048',
             'theme_mode' => 'sometimes|required|string',
             Rule::in([App::THEME_MODE_LIGHT, App::THEME_MODE_DARK, App::THEME_MODE_SYSTEM]),
             'public_registration' => 'sometimes|required|integer',

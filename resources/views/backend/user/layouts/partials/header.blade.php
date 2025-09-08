@@ -74,8 +74,8 @@
                 <x-lucide-menu class="w-5 h-5 md:w-6 md:h-6" />
             </button>
             <a class="flex items-center space-x-2" href="{{ route('user.dashboard') }}" data-discover="true" wire:navigate>
-                <img src="{{ asset('assets/logo/REPOSTCHAIN-LOGO-BLACK.png') }}" alt="logo" class="w-24 dark:hidden" />
-                <img src="{{ asset('assets/logo/REPOSTCHAIN-LOGO-WHITE.png') }}" alt="logo" class="w-24 hidden dark:block" />
+                <img src="{{ storage_url(app_setting('app_logo')) }}" alt="{{ config('app.name') }}" class="w-72 xs:w-48 dark:hidden" />
+                <img src="{{ storage_url(app_setting('app_logo_dark')) }}" alt="{{ config('app.name') }}" class="w-72 xs:w-48 hidden dark:block" />
             </a>
         </div>
         <div class="flex-1 flex justify-center px-2 md:px-4 lg:px-0 lg:ml-8 md:mr-3">

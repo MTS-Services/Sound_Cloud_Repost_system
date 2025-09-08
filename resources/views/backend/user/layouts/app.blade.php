@@ -5,13 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link id="favicon" rel="icon" href="{{ asset('assets/favicons/fav-icon-black.svg') }}" type="image/x-icon">
+    <link id="favicon" rel="icon" href="{{ storage_url(app_setting('favicon')) }}" type="image/x-icon">
     <script>
         function setFavicon(dark = false) {
             let favicon = document.getElementById('favicon');
             favicon.href = dark ?
-                "{{ asset('assets/favicons/fav-icon-white.svg') }}" :
-                "{{ asset('assets/favicons/fav-icon-black.svg') }}";
+                "{{ storage_url(app_setting('favicon_dark')) }}" :
+                "{{ storage_url(app_setting('favicon')) }}";
         }
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             setFavicon(true);
