@@ -125,7 +125,7 @@ class Campaign extends Component
     public $maxRepostsPerDay = 0;
     // public $anyGenre = 'anyGenre';
     // public $trackGenre = '';
-    public $targetGenre = '';
+    public $targetGenre;
     public $user = null;
 
     public $musicId = null;
@@ -757,35 +757,14 @@ class Campaign extends Component
                 ]);
             });
 
-            $this->reset([
-                'musicId',
-                'title',
-                'description',
-                'playlistId',
-                'playlistTracks',
-                'activeTab',
-                'tracks',
-                'track',
-                'playlists',
-                'maxFollower',
-                'showBudgetWarning',
-                'budgetWarningMessage',
-                'canSubmit',
-                'commentable',
-                'likeable',
-                'proFeatureEnabled',
-                'maxRepostLast24h',
-                'maxRepostsPerDay',
-                'targetGenre',
-                // 'anyGenre',
-                // 'trackGenre',
-                'proFeatureEnabled',
-            ]);
+
             $this->dispatch('alert', type: 'success', message: 'Campaign created successfully!');
+
             // $this->dispatch('campaignCreated');
 
             $this->showCampaignsModal = false;
             $this->showSubmitModal = false;
+            $this->reset();
             $this->resetValidation();
             $this->resetErrorBag();
         } catch (\Exception $e) {
