@@ -9,8 +9,11 @@
             <div
                 class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
                 <div class="flex items-center gap-3">
-                    <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                        <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
+                    <div>
+                        <img src="{{ asset('assets/logo/REPOSTCHAIN-LOGO-BLACK.png') }}" alt="logo"
+                            class="w-24 dark:hidden" />
+                        <img src="{{ asset('assets/logo/REPOSTCHAIN-LOGO-WHITE.png') }}" alt="logo"
+                            class="w-24 hidden dark:block" />
                     </div>
                     <h2 class="text-xl font-bold text-gray-900 dark:text-white">
                         {{ __('Repost Confirmation') }}

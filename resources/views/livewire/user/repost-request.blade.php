@@ -361,8 +361,11 @@
                 <div
                     class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
                     <div class="flex items-center gap-3">
-                        <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                            <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
+                        <div>
+                            <img src="{{ asset('assets/favicons/fav-icon-black.svg') }}" alt="logo"
+                                class="w-12 dark:hidden" />
+                            <img src="{{ asset('assets/favicons/fav-icon-white.svg') }}" alt="logo"
+                                class="w-12 hidden dark:block" />
                         </div>
                         <h2 class="text-xl font-bold text-gray-900 dark:text-white">
                             {{ __('Repost Confirmation') }}
@@ -418,15 +421,15 @@
                     @endif
                     <!-- Comment Plus -->
                     @if ($request->commentable)
-                     <div class="border-t pt-3 space-y-2 dark:border-gray-700">
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm font-medium text-gray-800 dark:text-gray-200">Comment on this
-                                track (optional)</span>
-                            <span class="text-sm text-gray-700 dark:text-gray-300">+2 credits</span>
+                        <div class="border-t pt-3 space-y-2 dark:border-gray-700">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-gray-800 dark:text-gray-200">Comment on this
+                                    track (optional)</span>
+                                <span class="text-sm text-gray-700 dark:text-gray-300">+2 credits</span>
+                            </div>
+                            <textarea rows="3" placeholder="What did you like about the track?" wire:model.live="commented"
+                                class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"></textarea>
                         </div>
-                        <textarea rows="3" placeholder="What did you like about the track?" wire:model.live="commented"
-                            class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"></textarea>
-                    </div>   
                     @endif
                     <div class="flex justify-center gap-4">
                         <button @click="showRepostConfirmationModal = false"

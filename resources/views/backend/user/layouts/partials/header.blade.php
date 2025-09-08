@@ -74,12 +74,8 @@
                 <x-lucide-menu class="w-5 h-5 md:w-6 md:h-6" />
             </button>
             <a class="flex items-center space-x-2" href="{{ route('user.dashboard') }}" data-discover="true" wire:navigate>
-                <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                    <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
-                </div>
-                <span class="text-slate-800 dark:text-white font-bold text-lg md:text-xl hidden sm:block">
-                    REPOST<span class="text-orange-500">CHAIN</span>
-                </span>
+                <img src="{{ asset('assets/logo/REPOSTCHAIN-LOGO-BLACK.png') }}" alt="logo" class="w-24 dark:hidden" />
+                <img src="{{ asset('assets/logo/REPOSTCHAIN-LOGO-WHITE.png') }}" alt="logo" class="w-24 hidden dark:block" />
             </a>
         </div>
         <div class="flex-1 flex justify-center px-2 md:px-4 lg:px-0 lg:ml-8 md:mr-3">

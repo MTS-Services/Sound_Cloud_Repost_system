@@ -9,8 +9,11 @@
         <div
             class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
             <div class="flex items-center gap-3">
-                <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                    <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
+                <div>
+                    <img src="{{ asset('assets/favicons/fav icon.svg') }}" alt="logo"
+                        class="w-24 dark:hidden" />
+                    <img src="{{ asset('assets/favicons/fav-icon-B.jpg') }}" alt="logo"
+                        class="w-24 hidden dark:block" />
                 </div>
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                     {{ __('Create a campaign') }}

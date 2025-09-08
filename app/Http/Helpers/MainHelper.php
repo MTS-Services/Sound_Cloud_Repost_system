@@ -804,3 +804,4 @@ function hasEmailSentPermission($value, $userUrn = null) : bool
     return UserSetting::where('user_urn', user()->urn)->value($value) ?? false;
 }
 
+// function logos()

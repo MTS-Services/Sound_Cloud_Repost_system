@@ -161,9 +161,11 @@
                     <div
                         class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                         <div class="flex items-center gap-3">
-                            <div
-                                class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                                <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
+                            <div>
+                                <img src="{{ asset('assets/favicons/fav-icon-black.svg') }}" alt="logo"
+                                    class="w-12 dark:hidden" />
+                                <img src="{{ asset('assets/favicons/fav-icon-white.svg') }}" alt="logo"
+                                    class="w-12 hidden dark:block" />
                             </div>
                             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                                 {{ __('Choose a track or playlist') }}
@@ -380,9 +382,11 @@
                     <div
                         class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                         <div class="flex items-center gap-3">
-                            <div
-                                class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                                <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
+                            <div>
+                                <img src="{{ asset('assets/favicons/fav-icon-black.svg') }}" alt="logo"
+                                    class="w-12 dark:hidden" />
+                                <img src="{{ asset('assets/favicons/fav-icon-white.svg') }}" alt="logo"
+                                    class="w-12 hidden dark:block" />
                             </div>
                             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                                 {{ __('Requesting Reposts') }}
@@ -430,7 +434,8 @@
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                            <span class="ml-2 text-xs text-gray-400">{{ $track->genre ?? 'No Genre' }}.</span>
+                                            <span
+                                                class="ml-2 text-xs text-gray-400">{{ $track->genre ?? 'No Genre' }}.</span>
                                             <strong
                                                 class="text-orange-600 dark:text-orange-400">{{ $track->author_username }}</strong>
                                         </p>
@@ -451,7 +456,7 @@
                                         </label>
                                         <div class="relative mt-1">
                                             <textarea id="description" name="description" rows="4" wire:model.live="description"
-                                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                                class="block w-full rounded-md dark:bg-gray-800 border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:text-gray-200"
                                                 placeholder="Say hi and introduce your track"></textarea>
                                             <div
                                                 class="pointer-events-none absolute bottom-2 right-2 text-xs text-gray-400">
