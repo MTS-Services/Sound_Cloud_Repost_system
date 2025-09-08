@@ -11,9 +11,9 @@
             <div class="flex items-center gap-3">
                 <div>
                     <img src="{{ asset('assets/favicons/fav-icon-black.svg') }}" alt="logo"
-                        class="w-24 dark:hidden" />
+                        class="w-12 dark:hidden" />
                     <img src="{{ asset('assets/favicons/fav-icon-white.svg') }}" alt="logo"
-                        class="w-24 hidden dark:block" />
+                        class="w-12 hidden dark:block" />
                 </div>
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                     {{ __('Create a campaign') }}
