@@ -469,7 +469,7 @@ class AnalyticsService
             return $dailyMetrics;
         })->values()->toArray();
 
-        dd($chartData);
+        // dd($chartData);
         return $chartData;
     }
 
