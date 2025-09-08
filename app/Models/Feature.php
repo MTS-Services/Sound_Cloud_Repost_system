@@ -17,6 +17,7 @@ class Feature extends BaseModel
         'type',
         'key',
         'note',
+        'status',
 
         'created_by',
         'updated_by',
@@ -54,27 +55,19 @@ class Feature extends BaseModel
 
     public function getStatusColorAttribute()
     {
-        return $this->status == self::STATUS_ACTIVE
-            ? 'badge-success'
-            : 'badge-error';
-    }
-    public function getStatusBtnLabelAttribute()
-    {
-        return $this->status == self::STATUS_ACTIVE ? self::statusList()[self::STATUS_INACTIVE] : self::statusList();
-    }
-    public function getStatusBtnColorAttribute()
-    {
-        return $this->status == self::STATUS_ACTIVE
-            ? 'btn-error'
-            : 'btn-success';
-    }
-    public function getStatusBtnClassAttribute()
-    {
-        return $this->status == self::STATUS_ACTIVE
-            ? 'btn btn-error'
-            : 'btn btn-success';
+        return $this->status == self::STATUS_ACTIVE ? 'badge-success' : 'badge-error';
     }
 
+    public function getStatusBtnLabelAttribute()
+    {
+        return $this->status == self::STATUS_ACTIVE ? self::statusList()[self::STATUS_INACTIVE] : self::statusList()[self::STATUS_ACTIVE];
+    }
+
+    public function getStatusBtnColorAttribute()
+    {
+        return $this->status == self::STATUS_ACTIVE ? 'btn-error' : 'btn-success';
+    }
+ 
     /////////////////////////////////////
     ////////// Feature Types /////////////
     ///////////////////////////////////

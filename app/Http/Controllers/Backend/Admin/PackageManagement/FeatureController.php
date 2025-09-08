@@ -52,7 +52,7 @@ class FeatureController extends Controller implements HasMiddleware
             $query = $this->featureService->getFeatures();
             return DataTables::eloquent($query)
 
-             ->editColumn('status', fn($feature) => "<span class='badge badge-soft {$feature->status_color}'>{$feature->status_label}</span>")
+           ->editColumn('status', fn($feature) => "<span class='badge badge-soft {$feature->status_color}'>{$feature->status_label}</span>")
 
                 ->editColumn('key', function ($feature) {
                     return $feature->features_name;
@@ -89,7 +89,7 @@ class FeatureController extends Controller implements HasMiddleware
                
 
                 'routeName' => 'pm.feature.status',
-                'params' => [encrypt($model->id)],
+               'params' => [encrypt($model->id)],
                 'label' => $model->status_btn_label,
                 'permissions' => ['permission-status']
             ],
@@ -167,28 +167,14 @@ class FeatureController extends Controller implements HasMiddleware
         }
         return $this->redirectIndex();
     }
-
-    public function status( string $id, $data) : RedirectResponse
+public function status(Request $request, string $id)
     {
-        $feature = Feature::findOrFail(decrypt($id));
-
-    // Toggle status (0 <-> 1) and set updated_by
-    $feature->update([
-        'status' => $feature->status ? 0 : 1,
-        'updated_by' => admin()->id
-    ]);
-
-    // Flash success message
-    session()->flash('success', 'Feature status updated successfully!');
-
-    // Redirect back to feature index
-    return redirect()->route('pm.feature.index');
-        //    $data = $this->featureService->getFeature($id);
-        // $this->featureService->toggleStatus($data);
-        // session()->flash('success', 'Plan status updated successfully!');
-        // return $this->redirectIndex();
+        $user = $this->featureService->getFeature($id);
+        $this->featureService->toggleStatus($user);
+        session()->flash('success', 'User status updated successfully.');
+        return $this->redirectIndex();
     }
-    
+   
     /**
      * Remove the specified resource from storage.
      */

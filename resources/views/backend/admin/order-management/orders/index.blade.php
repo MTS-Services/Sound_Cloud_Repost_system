@@ -7,13 +7,13 @@
         <div class="glass-card rounded-2xl p-6 mb-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Order List') }}</h2>
-                <div class="flex items-center gap-2">
+                {{-- <div class="flex items-center gap-2">
                     <x-button href="{{ route('om.order.trash') }}" icon="trash-2" type='secondary'
                         permission="order-trash">
                         {{ __('Trash') }}
                     </x-button>
                     
-                </div>
+                </div> --}}
             </div>
         </div>
         <div class="glass-card rounded-2xl p-6">

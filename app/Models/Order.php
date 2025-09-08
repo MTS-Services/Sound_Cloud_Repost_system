@@ -54,86 +54,87 @@ class Order extends BaseModel
                 End of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-        $this->appends = array_merge(parent::getAppends(), [
-            'status_label',
-            'status_color',
-            'type_label',
-            'type_color',
-        ]);
-    }
+     protected $casts = [
+        'status' => 'integer',
+        'type'   => 'integer',
+    ];
 
-    // Constants for order status
-    public const STATUS_PENDING = 0;
+    protected $appends = [
+        'status_label',
+        'status_color',
+        'type_label',
+        'type_color',
+    ];
+
+    // Constants
+    public const STATUS_PENDING   = 0;
     public const STATUS_COMPLETED = 1;
-    public const STATUS_FAILED = 2;
-    public const STATUS_REFUNDED = 3;
-    public const STATUS_CANCELED = 4;
+    public const STATUS_FAILED    = 2;
+    public const STATUS_REFUNDED  = 3;
+    public const STATUS_CANCELED  = 4;
 
     public const TYPE_CREDIT = 1;
-    public const TYPE_PLAN = 2;
+    public const TYPE_PLAN   = 2;
 
+    // Lists
     public static function getTypeList(): array
     {
         return [
             self::TYPE_CREDIT => 'Credit',
-            self::TYPE_PLAN => 'Plan',
+            self::TYPE_PLAN   => 'Plan',
         ];
     }
+
     public static function getTypeColorList(): array
     {
         return [
             self::TYPE_CREDIT => 'primary',
-            self::TYPE_PLAN => 'info',
+            self::TYPE_PLAN   => 'info',
         ];
     }
-
-    /**
-     * List of status codes with their labels.
-     */
 
     public static function getStatusList(): array
     {
         return [
-            self::STATUS_PENDING => 'Pending',
+            self::STATUS_PENDING   => 'Pending',
             self::STATUS_COMPLETED => 'Completed',
-            self::STATUS_FAILED => 'Failed',
-            self::STATUS_REFUNDED => 'Refunded',
-            self::STATUS_CANCELED => 'Canceled',
+            self::STATUS_FAILED    => 'Failed',
+            self::STATUS_REFUNDED  => 'Refunded',
+            self::STATUS_CANCELED  => 'Canceled',
         ];
     }
 
-    public function getTypeLabelAttribute()
-    {
-        return isset($this->type) ? self::getTypeList()[$this->type] : 'Unknown';
-    }
-
-    public function getTypeColorAttribute()
-    {
-        return isset($this->type) ? self::getTypeColorList()[$this->type] : 'primary';
-    }
     public static function getStatusColorList(): array
     {
         return [
-            self::STATUS_PENDING => 'warning',
+            self::STATUS_PENDING   => 'warning',
             self::STATUS_COMPLETED => 'success',
-            self::STATUS_FAILED => 'secondary',
-            self::STATUS_REFUNDED => 'info',
-            self::STATUS_CANCELED => 'error',
+            self::STATUS_FAILED    => 'secondary',
+            self::STATUS_REFUNDED  => 'info',
+            self::STATUS_CANCELED  => 'error',
         ];
     }
-    public function getStatusLabelAttribute()
+
+    // Accessors
+    public function getTypeLabelAttribute(): string
     {
-        return isset($this->status) ? self::getStatusList()[$this->status] : 'Unknown';
+        return self::getTypeList()[$this->type ?? 0] ?? 'Unknown';
     }
 
-    public function getStatusColorAttribute()
+    public function getTypeColorAttribute(): string
     {
-        return isset($this->status) ? self::getStatusColorList()[$this->status] : 'primary';
+        return self::getTypeColorList()[$this->type ?? 0] ?? 'primary';
     }
 
+    public function getStatusLabelAttribute(): string
+    {
+        return self::getStatusList()[$this->status ?? 0] ?? 'Unknown';
+    }
+
+    public function getStatusColorAttribute(): string
+    {
+        return self::getStatusColorList()[$this->status ?? 0] ?? 'primary';
+    }
     public function scopePending(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_PENDING);

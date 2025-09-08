@@ -21,7 +21,7 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
-
+// dd($request->status_color, $request->status_label);
         if ($request->ajax()) {
             $query = $this->orderService->getOrders();
             return DataTables::eloquent($query)
@@ -34,8 +34,11 @@ class OrderController extends Controller
                 ->editColumn('amount', function ($order) {
                     return $order->amount;
                 })
-
-                ->editColumn('status', fn($order) => "<span class='badge badge-soft {$order->status_color}'>{$order->status_label}</span>")
+  
+                ->editColumn('status', function ($order) {
+                    return "<span class='badge badge-soft {$order->status_color}'>{$order->status_label}</span>";
+                })
+                
 
                 ->editColumn('created_at', function ($order) {
                     return $order->created_at_formatted;
@@ -66,13 +69,13 @@ class OrderController extends Controller
             //     'label' => 'Details',
             //     'permissions' => ['order-list', 'order-delete', 'order-status']
             // ],
-            [
-                'routeName' => 'om.order.status',
-                'params' => [encrypt($model->id)],
-                'label' => $model->status_btn_label,
-                'className' => $model->status_btn_color,
-                'permissions' => ['order-status']
-            ],
+            // [
+            //     'routeName' => 'om.order.status',
+            //     'params' => [encrypt($model->id)],
+            //     'label' => $model->status_btn_label,
+            //     'className' => $model->status_btn_color,
+            //     'permissions' => ['order-status']
+            // ],
 
 
 
