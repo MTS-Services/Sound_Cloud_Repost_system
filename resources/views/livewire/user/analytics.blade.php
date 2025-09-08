@@ -72,7 +72,7 @@
 
                 <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
                     <x-gbutton variant="outline"
-                        class="hover:!bg-[#ff6b35] hover:text-white bg-white border-gray-300 dark:border-gray-600 w-full"
+                        class="hover:!bg-[#ff6b35] hover:!text-white bg-white border-gray-300 dark:border-gray-600 w-full"
                         x-bind:class="showGrowthTips
                             ?
                             '!bg-[#ff6b35] !text-white' :
