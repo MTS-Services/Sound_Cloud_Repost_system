@@ -83,6 +83,7 @@ class Analytics extends Component
 
             // Prepare date range for custom filter
             if ($this->filter === 'date_range' && $this->startDate && $this->endDate) {
+                // dd($this->startDate, $this->endDate);
                 $dateRange = [
                     'start' => $this->startDate,
                     'end' => $this->endDate
@@ -256,7 +257,9 @@ class Analytics extends Component
     public function applyFilters()
     {
         // This method can be expanded to handle genre and campaign type filtering
+        $this->filter = 'date_range';
         $this->loadData();
+        // dd($this->data);
         $this->showFilters = false;
     }
 
