@@ -123,8 +123,8 @@ class Campaign extends Component
     public $followersLimit = 0;
     public $maxRepostLast24h = 0;
     public $maxRepostsPerDay = 0;
-    public $anyGenre = 'anyGenre';
-    public $trackGenre = '';
+    // public $anyGenre = 'anyGenre';
+    // public $trackGenre = '';
     public $targetGenre = '';
     public $user = null;
 
@@ -203,7 +203,7 @@ class Campaign extends Component
 
     public function mount()
     {
-        $this->getAllGenres();
+        // $this->getAllGenres();
         $this->getAllTrackTypes();
         $this->totalCampaigns();
         $this->calculateFollowersLimit();
@@ -673,7 +673,7 @@ class Campaign extends Component
         }
 
         $this->showSubmitModal = true;
-        $this->getAllGenres();
+        // $this->getAllGenres();
 
         try {
             if ($type === 'track') {
@@ -711,11 +711,11 @@ class Campaign extends Component
         }
     }
 
-    public function getAllGenres()
-    {
-        $userGenres = User::where('urn', user()->urn)->first()->genres()->pluck('genre')->toArray();
-        $this->genres = array_values(array_unique(array_merge($userGenres, AllGenres())));
-    }
+    // public function getAllGenres()
+    // {
+    //     $userGenres = User::where('urn', user()->urn)->first()->genres()->pluck('genre')->toArray();
+    //     $this->genres = array_values(array_unique(array_merge($userGenres, AllGenres())));
+    // }
 
     public function profeature($isChecked)
     {
@@ -729,12 +729,12 @@ class Campaign extends Component
         $this->validate();
 
         try {
-            if ($this->anyGenre == 'anyGenre') {
-                $this->targetGenre = $this->anyGenre;
-            }
-            if ($this->trackGenre == 'trackGenre') {
-                $this->targetGenre = $this->trackGenre;
-            }
+            // if ($this->anyGenre == 'anyGenre') {
+            //     $this->targetGenre = $this->anyGenre;
+            // }
+            // if ($this->trackGenre == 'trackGenre') {
+            //     $this->targetGenre = $this->trackGenre;
+            // }
 
             DB::transaction(function () {
                 $commentable = $this->commentable ? 1 : 0;
