@@ -706,7 +706,7 @@ class Campaign extends Component
         $this->validate();
 
         try {
-            dd($this->anyGenre);
+            dd($this->trackGenre);
             // if ($this->anyGenre == 'anyGenre') {
             //     $this->targetGenre = $this->anyGenre;
             // }
