@@ -9,13 +9,10 @@ use App\Models\CustomNotification;
 use App\Models\Faq;
 use App\Models\Track;
 use App\Models\Playlist;
-use App\Models\User;
-use App\Models\UserPlan;
 use App\Services\Admin\UserManagement\UserService;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\TrackService;
 use App\Services\User\CampaignManagement\MyCampaignService;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -90,9 +87,7 @@ class MyCampaign extends Component
     public $followersLimit = 0;
     public $maxRepostLast24h = 0;
     public $maxRepostsPerDay = 0;
-    public $anyGenre = 'anyGenre';
-    public $trackGenre = '';
-    public $targetGenre = '';
+    public $targetGenre = 'anyGenre';
     public $user = null;
 
     // Form fields - Add Credit
@@ -398,7 +393,6 @@ class MyCampaign extends Component
         }
 
         $this->showSubmitModal = true;
-        $this->getAllGenres();
 
         try {
             match ($type) {
@@ -451,16 +445,11 @@ class MyCampaign extends Component
         ]);
     }
 
-    public function getAllGenres()
-    {
-        $this->genres = $this->trackService->getTracks()->where('user_urn', '!=', user()->urn)->pluck('genre')->unique()->values()->toArray();
-    }
 
     public function profeature($isChecked)
     {
         $this->proFeatureEnabled = $isChecked ? true : false;
         $this->proFeatureValue = $isChecked ? 0 : 1;
-        $this->anyGenre = 'anyGenre';
     }
 
     public function createCampaign()
@@ -471,13 +460,6 @@ class MyCampaign extends Component
             $oldBudget = 0;
             if ($this->isEditing) {
                 $oldBudget = $this->editingCampaign->budget_credits + $this->editingCampaign->momentum_price;
-            }
-
-            if ($this->anyGenre == 'anyGenre') {
-                $this->targetGenre = $this->anyGenre;
-            }
-            if ($this->trackGenre == 'trackGenre') {
-                $this->targetGenre = $this->trackGenre;
             }
             DB::transaction(function () use ($oldBudget) {
                 $commentable = $this->commentable ? 1 : 0;
@@ -586,7 +568,6 @@ class MyCampaign extends Component
         }
 
         $this->loadCampaignData();
-        $this->getAllGenres();
         $this->isEditing = true;
         $this->showSubmitModal = true;
     }
@@ -608,13 +589,6 @@ class MyCampaign extends Component
         $this->maxRepostLast24h = $this->editingCampaign->max_repost_last_24_h;
         $this->maxRepostsPerDay = $this->editingCampaign->max_repost_per_day;
         $this->targetGenre = $this->editingCampaign->target_genre;
-
-        if ($this->targetGenre === 'anyGenre') {
-            $this->anyGenre = 'anyGenre';
-        } elseif ($this->targetGenre === 'trackGenre') {
-            $this->trackGenre = 'trackGenre';
-        }
-
         $this->loadTrackData();
     }
 
@@ -758,8 +732,6 @@ class MyCampaign extends Component
             'maxRepostLast24h',
             'maxRepostsPerDay',
             'targetGenre',
-            'anyGenre',
-            'trackGenre',
             'editingCampaign',
             'isEditing',
             'user',

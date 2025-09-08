@@ -592,9 +592,9 @@ class Campaign extends Component
     {
         $this->reset();
 
-        // if ($this->myCampaignService->thisMonthCampaignsCount() >= (int) userFeatures()[Feature::KEY_SIMULTANEOUS_CAMPAIGNS]) {
-        //     return $this->dispatch('alert', type: 'error', message: 'You have reached the maximum number of campaigns for this month.');
-        // }
+        if ($this->myCampaignService->thisMonthCampaignsCount() >= (int) userFeatures()[Feature::KEY_SIMULTANEOUS_CAMPAIGNS]) {
+            return $this->dispatch('alert', type: 'error', message: 'You have reached the maximum number of campaigns for this month.');
+        }
 
         $this->activeTab = 'tracks';
         $this->tracks = collect();

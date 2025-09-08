@@ -63,9 +63,7 @@ class Dashboard extends Component
     public $followersLimit = 0;
     public $maxRepostLast24h = 0;
     public $maxRepostsPerDay = 0;
-    public $anyGenre = 'anyGenre';
-    public $trackGenre = '';
-    public $targetGenre = '';
+    public $targetGenre = 'anyGenre';
     public $user = null;
 
     public $musicId = null;
@@ -398,7 +396,6 @@ class Dashboard extends Component
         }
 
         $this->showSubmitModal = true;
-        $this->getAllGenres();
 
         try {
             if ($type === 'track') {
@@ -436,11 +433,6 @@ class Dashboard extends Component
         }
     }
 
-    public function getAllGenres()
-    {
-        $this->genres = User::where('urn', user()->urn)->first()->genres()->pluck('genre')->toArray();
-    }
-
     public function profeature($isChecked)
     {
         $this->proFeatureEnabled = $isChecked ? false : true;
@@ -452,13 +444,6 @@ class Dashboard extends Component
         $this->validate();
 
         try {
-            if ($this->anyGenre == 'anyGenre') {
-                $this->targetGenre = $this->anyGenre;
-            }
-            if ($this->trackGenre == 'trackGenre') {
-                $this->targetGenre = $this->trackGenre;
-            }
-
             DB::transaction(function () {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
@@ -523,8 +508,6 @@ class Dashboard extends Component
                 'maxRepostLast24h',
                 'maxRepostsPerDay',
                 'targetGenre',
-                'anyGenre',
-                'trackGenre',
                 'proFeatureEnabled',
             ]);
             $this->dispatch('alert', type: 'success', message: 'Campaign created successfully!');
