@@ -42,7 +42,7 @@ class Analytics extends Component
         $this->initializeDateRange();
         $this->loadData();
         $this->loadAdditionalData();
-        dd($this->data);
+        // dd($this->data);
     }
 
     public function updatedFilter()
@@ -149,7 +149,7 @@ class Analytics extends Component
             'detailed' => $analyticsData,
 
             // Change rates for trend indicators (already capped at ±100%)
-            'streams_change' => $analyticsData['total_views']['change_rate'] ?? 0,
+            'streams_change' => $analyticsData['total_plays']['change_rate'] ?? 0,
             'likes_change' => $analyticsData['total_likes']['change_rate'] ?? 0,
             'reposts_change' => $analyticsData['total_reposts']['change_rate'] ?? 0,
             'engagement_change' => $this->calculateEngagementRateChange($analyticsData),
@@ -161,8 +161,8 @@ class Analytics extends Component
      */
     private function calculateEngagementRateChange(array $analyticsData): float
     {
-        $currentStreams = $analyticsData['total_views']['current_total'] ?? 0;
-        $previousStreams = $analyticsData['total_views']['previous_total'] ?? 0;
+        $currentStreams = $analyticsData['total_plays']['current_total'] ?? 0;
+        $previousStreams = $analyticsData['total_plays']['previous_total'] ?? 0;
 
         $currentEngagements = ($analyticsData['total_likes']['current_total'] ?? 0) +
             ($analyticsData['total_reposts']['current_total'] ?? 0) +
