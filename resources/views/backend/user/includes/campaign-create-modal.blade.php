@@ -255,8 +255,8 @@
                             </div>
                             <div class="space-y-3">
                                 <div class="flex items-center space-x-2">
-                                    <input type="radio" name="targetGenre"
-                                        @click="showGenreRadios = !showGenreRadios" :disabled="!momentumEnabled"
+                                    <input type="radio" name="myGenres" @click="showGenreRadios = !showGenreRadios"
+                                        :disabled="!momentumEnabled"
                                         class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
                                         :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                     <span class="text-sm text-gray-700 dark:text-gray-400">Match one of
