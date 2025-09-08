@@ -3,6 +3,7 @@
 namespace App\Livewire\User;
 
 use App\Models\Track;
+use App\Models\UserGenre;
 use Livewire\Component;
 use App\Services\User\AnalyticsService;
 use Livewire\Attributes\On;
@@ -11,7 +12,7 @@ use Carbon\Carbon;
 class Analytics extends Component
 {
     public bool $showGrowthTips = false;
-    public bool $showFilters = false;
+    public bool $showFilters = true;
 
     public string $filter = 'last_week';
 
@@ -21,7 +22,7 @@ class Analytics extends Component
 
     // Filter properties
     public array $selectedGenres = [];
-    public array $selectedCampaignTypes = [];
+    public array $userGenres = [];
 
     public array $data = [];
     public array $dataCache = [];
@@ -39,20 +40,47 @@ class Analytics extends Component
     public function mount()
     {
         $this->filterOptions = $this->analyticsService->getFilterOptions();
-        $this->initializeDateRange();
+        $this->userGenres = $this->fetchUserGenres();
+        $this->selectedGenres = ['Any Genre'];
+        // $this->initializeDateRange();
         $this->loadData();
         $this->loadAdditionalData();
-        // dd($this->data);
+
+        // dd($this->userGenres);
+    }
+
+    public function fetchUserGenres(): array
+    {
+        return UserGenre::where('user_urn', user()->urn)
+            ->pluck('genre')
+            ->toArray();
     }
 
     public function updatedFilter()
     {
         $this->resetErrorBag();
         if ($this->filter === 'date_range') {
-            $this->initializeDateRange();
+            // $this->initializeDateRange();
+            $this->showFilters = true;
         }
         $this->loadData();
     }
+    // public function updatedSelectedGenres()
+    // {
+    //     // The value of 'Any Genre'
+    //     $anyGenre = 'Any Genre';
+    //     // If 'Any Genre' is selected AND there are other genres also selected...
+    //     if (in_array($anyGenre, $this->selectedGenres) && count($this->selectedGenres) > 1) {
+    //         // Remove 'Any Genre' from the array.
+    //         $this->selectedGenres = array_values(array_diff($this->selectedGenres, [$anyGenre]));
+    //     }
+
+    //     // If all genres have been deselected and the array is empty...
+    //     if (empty($this->selectedGenres)) {
+    //         // Add 'Any Genre' back.
+    //         $this->selectedGenres = [$anyGenre];
+    //     }
+    // }
 
     public function updatedStartDate()
     {
@@ -68,13 +96,13 @@ class Analytics extends Component
         }
     }
 
-    private function initializeDateRange()
-    {
-        if (empty($this->startDate) || empty($this->endDate)) {
-            $this->endDate = Carbon::now()->format('Y-m-d');
-            $this->startDate = Carbon::now()->subDays(30)->format('Y-m-d');
-        }
-    }
+    // private function initializeDateRange()
+    // {
+    //     if (empty($this->startDate) || empty($this->endDate)) {
+    //         $this->endDate = Carbon::now()->format('Y-m-d');
+    //         $this->startDate = Carbon::now()->subDays(30)->format('Y-m-d');
+    //     }
+    // }
 
     public function loadData()
     {
@@ -100,6 +128,7 @@ class Analytics extends Component
             $freshData = $this->analyticsService->getAnalyticsData(
                 $this->filter,
                 $dateRange,
+                $this->selectedGenres,
                 null, // trackUrn - can be added later for specific track filtering
                 null  // actionType - can be added later for specific action filtering
             );
@@ -256,8 +285,11 @@ class Analytics extends Component
      */
     public function applyFilters()
     {
-        // This method can be expanded to handle genre and campaign type filtering
-        $this->filter = 'date_range';
+
+        if (!empty($this->startDate) || !empty($this->endDate)) {
+            $this->filter = 'date_range';
+        }
+
         $this->loadData();
         // dd($this->data);
         $this->showFilters = false;
@@ -268,10 +300,9 @@ class Analytics extends Component
      */
     public function resetFilters()
     {
-        $this->selectedGenres = [];
-        $this->selectedCampaignTypes = [];
+        $this->selectedGenres = ['Any Genre'];
         $this->filter = 'last_week';
-        $this->initializeDateRange();
+        // $this->initializeDateRange();
         $this->loadData();
     }
 

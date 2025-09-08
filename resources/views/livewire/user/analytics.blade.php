@@ -107,7 +107,7 @@
     </div>
 
     {{-- Custom Date Range --}}
-    @if ($filter === 'date_range')
+    {{-- @if ($filter === 'date_range')
         <div
             class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Custom Date Range</h3>
@@ -127,7 +127,7 @@
                 <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
             @enderror
         </div>
-    @endif
+    @endif --}}
 
     {{-- Growth Tips --}}
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6 mt-6"
@@ -280,20 +280,18 @@
             </button>
         </div>
         <div class="flex flex-wrap space-y-4">
-            <div class="flex-1 md:flex-1/5">
+            <div class="flex-1">
                 <label class="flex items-center text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="lucide lucide-tag h-4 w-4 mr-2">
-                        <path
-                            d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z">
-                        </path>
-                        <circle cx="7.5" cy="7.5" r=".5" fill="currentColor"></circle>
-                    </svg>
+                    <x-lucide-tags class="w-4 h-4 mr-2" />
                     Genre
                 </label>
-                <div class="space-y-2">
-                    @foreach (['Electronic', 'Hip Hop', 'Pop', 'Rock', 'R&B', 'Indie'] as $genre)
+                <div class="space-y-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-1 lg:grid-cols-2">
+                    <label class="flex items-center">
+                        <input type="checkbox" name="genre" wire:model="selectedGenres" value="Any Genre"
+                            class="checkbox border-orange-600 bg-transparent checked:border-orange-500 checked:bg-transparent checked:text-orange-600 rounded-full w-5 h-5">
+                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300 capitalize">Any Genre</span>
+                    </label>
+                    @foreach ($userGenres as $genre)
                         <label class="flex items-center">
                             <input type="checkbox" name="genre" wire:model="selectedGenres"
                                 value="{{ $genre }}"
@@ -304,46 +302,26 @@
                     @endforeach
                 </div>
             </div>
-            <div class="flex-1 md:flex-3/5 flex items-center justify-start flex-col">
+            <div class="flex-1 flex items-start justify-start flex-col">
                 <label class="flex items-center text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="lucide lucide-calendar h-4 w-4 mr-2">
-                        <path d="M8 2v4"></path>
-                        <path d="M16 2v4"></path>
-                        <rect width="18" height="18" x="3" y="4" rx="2"></rect>
-                        <path d="M3 10h18"></path>
-                    </svg>
+                    <x-lucide-calendar-clock class="w-4 h-4 mr-2" />
                     Date Range
                 </label>
-                <div class="space-y-2">
-                    <input type="date" wire:model="startDate"
-                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35]">
-                    <input type="date" wire:model="endDate"
-                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35]">
+                <div class="flex gap-4 flex-wrap sm:flex-nowrap w-full">
+                    <label for="start-date" class="flex-1">
+                        <span class="label text-sm">Start Date</span>
+                        <input type="date" wire:model="startDate"
+                            class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35]">
+                    </label>
+                    <label for="end-date" class="flex-1">
+                        <span class="label text-sm">End Date</span>
+                        <input type="date" wire:model="endDate"
+                            class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35]">
+                    </label>
                 </div>
-            </div>
-            <div class="flex-1 md:flex-1/5">
-                <label class="flex items-center text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="lucide lucide-tag h-4 w-4 mr-2">
-                        <path
-                            d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z">
-                        </path>
-                        <circle cx="7.5" cy="7.5" r=".5" fill="currentColor"></circle>
-                    </svg>
-                    Campaign Type
-                </label>
-                <div class="space-y-2">
-                    @foreach (['Premium Promotion', 'Social Boost', 'Radio Push', 'Playlist Placement'] as $campaign)
-                        <label class="flex items-center">
-                            <input type="checkbox" wire:model="selectedCampaignTypes" value="{{ $campaign }}"
-                                class="checkbox border-orange-600 bg-transparent checked:border-orange-500 checked:bg-transparent checked:text-orange-600 rounded-full w-5 h-5">
-                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">{{ $campaign }}</span>
-                        </label>
-                    @endforeach
-                </div>
+                @error('dateRange')
+                    <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                @enderror
             </div>
         </div>
         <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-600">
@@ -772,34 +750,43 @@
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
                             <div class="flex items-center">Track Name
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-chevron-up h-4 w-4 opacity-30">
-                                    <path d="m18 15-6-6-6 6"></path>
-                                </svg>
+                                <x-lucide-chevron-down class="w-5 h-5 opacity-30" />
+                            </div>
+                        </th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                            <div class="flex items-center">Streams
+                                <x-lucide-chevron-down class="w-5 h-5 opacity-30" />
+                            </div>
+                        </th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                            <div class="flex items-center">Stream Growth
+                                <x-lucide-chevron-down class="w-5 h-5 opacity-30" />
+                            </div>
+                        </th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                            <div class="flex items-center">Engagement
+                                <x-lucide-chevron-down class="w-5 h-5 opacity-30" />
+                            </div>
+                        </th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                            <div class="flex items-center">Likes
+                                <x-lucide-chevron-down class="w-5 h-5 opacity-30" />
                             </div>
                         </th>
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
                             <div class="flex items-center">Reposts
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-chevron-up h-4 w-4 opacity-30">
-                                    <path d="m18 15-6-6-6 6"></path>
-                                </svg>
+                                <x-lucide-chevron-down class="w-5 h-5 opacity-30" />
                             </div>
                         </th>
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
                             <div class="flex items-center">Released
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-chevron-up h-4 w-4 opacity-30">
-                                    <path d="m18 15-6-6-6 6"></path>
-                                </svg>
+                                <x-lucide-chevron-down class="w-5 h-5 opacity-30" />
                             </div>
                         </th>
                     </tr>
