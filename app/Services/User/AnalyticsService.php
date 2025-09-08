@@ -65,7 +65,9 @@ class AnalyticsService
     public function updateAnalytics(object $track, object $action, string $column, string $genre, int $increment = 1): UserAnalytics|bool|null
     {
         // Get the owner's URN from the track model.
-        $userUrn = $track->user?->urn;
+        $userUrn = $action->user?->urn ?? $track->user?->urn ?? null;
+
+        // If no user URN is found, log and exit early.
         if (!$userUrn) {
             Log::info("User action update skipped for {$userUrn} on {$column} for track {$track->id} and track type {$track->getMorphClass()}. No user URN found.");
             return null;
@@ -92,6 +94,7 @@ class AnalyticsService
 
         return $analytics;
     }
+
     /**
      * Available filter options
      */
@@ -136,6 +139,8 @@ class AnalyticsService
 
         // Get date ranges for current and previous periods
         $periods = $this->calculatePeriods($filter, $dateRange);
+
+        Log::info("Calculating analytics for user {$userUrn} from {$periods['current']['start']->format('Y-m-d H:i:s')} to {$periods['current']['end']->format('Y-m-d H:i:s')} total days: {$periods['current']['days']} and previous period from {$periods['previous']['start']->format('Y-m-d H:i:s')} to {$periods['previous']['end']->format('Y-m-d H:i:s')} total days: {$periods['previous']['days']}.");
 
         // Fetch analytics data for both periods
         $currentData = $this->fetchAnalyticsData(
@@ -191,26 +196,26 @@ class AnalyticsService
         }
 
         // Get current period dates
-        $currentStart = $this->getStartDateForFilter($filter);
         $currentEnd = $now->copy()->endOfDay();
+        $currentStart = $this->getStartDateForFilter($filter, $now);
 
-        // Calculate the duration in days
-        $durationInDays = $currentStart->diffInDays($currentEnd);
+        // Calculate the duration in days (inclusive)
+        $durationInDays = $currentStart->diffInDays($currentEnd) + 1;
 
         // Calculate previous period (same duration, shifted back)
         $previousEnd = $currentStart->copy()->subDay()->endOfDay();
-        $previousStart = $previousEnd->copy()->subDays($durationInDays)->startOfDay();
+        $previousStart = $previousEnd->copy()->subDays($durationInDays - 1)->startOfDay();
 
         return [
             'current' => [
                 'start' => $currentStart,
                 'end' => $currentEnd,
-                'days' => $durationInDays + 1
+                'days' => $durationInDays
             ],
             'previous' => [
                 'start' => $previousStart,
                 'end' => $previousEnd,
-                'days' => $durationInDays + 1
+                'days' => $durationInDays
             ]
         ];
     }
@@ -223,39 +228,39 @@ class AnalyticsService
         $currentStart = Carbon::parse($dateRange['start'])->startOfDay();
         $currentEnd = Carbon::parse($dateRange['end'])->endOfDay();
 
-        $durationInDays = $currentStart->diffInDays($currentEnd);
+        // Calculate duration in days (inclusive)
+        $durationInDays = $currentStart->diffInDays($currentEnd) + 1;
 
+        // Calculate previous period
         $previousEnd = $currentStart->copy()->subDay()->endOfDay();
-        $previousStart = $previousEnd->copy()->subDays($durationInDays)->startOfDay();
+        $previousStart = $previousEnd->copy()->subDays($durationInDays - 1)->startOfDay();
 
         return [
             'current' => [
                 'start' => $currentStart,
                 'end' => $currentEnd,
-                'days' => $durationInDays + 1
+                'days' => $durationInDays
             ],
             'previous' => [
                 'start' => $previousStart,
                 'end' => $previousEnd,
-                'days' => $durationInDays + 1
+                'days' => $durationInDays
             ]
         ];
     }
 
     /**
-     * Get start date for predefined filters
+     * Get start date for predefined filters (FIXED)
      */
-    private function getStartDateForFilter(string $filter): Carbon
+    private function getStartDateForFilter(string $filter, Carbon $now): Carbon
     {
-        $now = Carbon::now();
-
         return match ($filter) {
-            'daily' => $now->subDay()->startOfDay(),
-            'last_week' => $now->subWeek()->startOfDay(),
-            'last_month' => $now->subMonth()->startOfDay(),
-            'last_90_days' => $now->subDays(90)->startOfDay(),
-            'last_year' => $now->subYear()->startOfDay(),
-            default => $now->subWeek()->startOfDay(),
+            'daily' => $now->copy()->startOfDay(), // Today only
+            'last_week' => $now->copy()->subDays(6)->startOfDay(), // Last 7 days including today
+            'last_month' => $now->copy()->subDays(29)->startOfDay(), // Last 30 days including today
+            'last_90_days' => $now->copy()->subDays(89)->startOfDay(), // Last 90 days including today
+            'last_year' => $now->copy()->subDays(364)->startOfDay(), // Last 365 days including today
+            default => $now->copy()->subDays(6)->startOfDay(), // Default to last week
         };
     }
 
@@ -394,7 +399,7 @@ class AnalyticsService
     }
 
     /**
-     * Calculate percentage change with safe division
+     * Calculate percentage change with safe division and capped at ±100%
      */
     private function calculatePercentageChange(float $current, float $previous): float
     {
@@ -402,7 +407,10 @@ class AnalyticsService
             return $current > 0 ? 100.00 : 0.00;
         }
 
-        return round((($current - $previous) / $previous) * 100, 2);
+        $changeRate = (($current - $previous) / $previous) * 100;
+
+        // Cap the change rate at ±100%
+        return round(max(-100, min(100, $changeRate)), 2);
     }
 
     /**
@@ -461,6 +469,58 @@ class AnalyticsService
             return $dailyMetrics;
         })->values()->toArray();
 
+        // dd($chartData);
         return $chartData;
+    }
+
+    /**
+     * Get top performing tracks
+     */
+    public function getTopTracks(int $limit = 10): array
+    {
+        $userUrn = user()->urn;
+
+        return UserAnalytics::where('user_urn', $userUrn)
+            ->selectRaw('track_urn, SUM(total_views) as total_streams, SUM(total_likes) as total_likes, SUM(total_reposts) as total_reposts')
+            ->groupBy('track_urn')
+            ->orderByDesc('total_streams')
+            ->limit($limit)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'track_urn' => $item->track_urn,
+                    'streams' => $item->total_streams,
+                    'likes' => $item->total_likes,
+                    'reposts' => $item->total_reposts,
+                    'engagement_rate' => $item->total_streams > 0 ?
+                        round((($item->total_likes + $item->total_reposts) / $item->total_streams) * 100, 1) : 0
+                ];
+            })
+            ->toArray();
+    }
+
+    /**
+     * Get genre performance breakdown
+     */
+    public function getGenreBreakdown(): array
+    {
+        $userUrn = user()->urn;
+
+        $genreData = UserAnalytics::where('user_urn', $userUrn)
+            ->selectRaw('genre, SUM(total_views) as total_streams')
+            ->whereNotNull('genre')
+            ->groupBy('genre')
+            ->orderByDesc('total_streams')
+            ->get();
+
+        $totalStreams = $genreData->sum('total_streams');
+
+        return $genreData->map(function ($item) use ($totalStreams) {
+            return [
+                'genre' => $item->genre,
+                'streams' => $item->total_streams,
+                'percentage' => $totalStreams > 0 ? round(($item->total_streams / $totalStreams) * 100, 1) : 0
+            ];
+        })->toArray();
     }
 }

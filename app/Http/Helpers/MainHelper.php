@@ -793,3 +793,12 @@ if (!function_exists('userFeatures')) {
         ];
     }
 }
+
+function hasEmailSentPermission($value, $userUrn = null) : bool
+{
+    if ($userUrn) {
+        return UserSetting::where('user_urn', $userUrn)->value($value) ?? false;
+    }
+    return UserSetting::where('user_urn', user()->urn)->value($value) ?? false;
+}
+
