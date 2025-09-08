@@ -26,6 +26,8 @@ class Analytics extends Component
     public array $data = [];
     public array $dataCache = [];
     public array $filterOptions = [];
+    public array $topTracks = [];
+    public array $genreBreakdown = [];
 
     protected AnalyticsService $analyticsService;
 
@@ -39,7 +41,7 @@ class Analytics extends Component
         $this->filterOptions = $this->analyticsService->getFilterOptions();
         $this->initializeDateRange();
         $this->loadData();
-        dd($this->data);
+        $this->loadAdditionalData();
     }
 
     public function updatedFilter()
@@ -112,6 +114,16 @@ class Analytics extends Component
         }
     }
 
+    private function loadAdditionalData()
+    {
+        try {
+            $this->topTracks = $this->analyticsService->getTopTracks(5);
+            $this->genreBreakdown = $this->analyticsService->getGenreBreakdown();
+        } catch (\Exception $e) {
+            logger()->error('Additional data loading failed', ['error' => $e->getMessage()]);
+        }
+    }
+
     /**
      * Transform the comprehensive analytics data to match your existing UI expectations
      */
@@ -135,7 +147,7 @@ class Analytics extends Component
             // Include detailed analytics for potential future use
             'detailed' => $analyticsData,
 
-            // Change rates for trend indicators
+            // Change rates for trend indicators (already capped at ±100%)
             'streams_change' => $analyticsData['total_views']['change_rate'] ?? 0,
             'likes_change' => $analyticsData['total_likes']['change_rate'] ?? 0,
             'reposts_change' => $analyticsData['total_reposts']['change_rate'] ?? 0,
@@ -166,7 +178,10 @@ class Analytics extends Component
             return $currentRate > 0 ? 100.0 : 0.0;
         }
 
-        return round((($currentRate - $previousRate) / $previousRate) * 100, 1);
+        $changeRate = (($currentRate - $previousRate) / $previousRate) * 100;
+
+        // Cap at ±100%
+        return round(max(-100, min(100, $changeRate)), 1);
     }
 
     /**
@@ -259,13 +274,13 @@ class Analytics extends Component
     public function getFilterText(): string
     {
         return match ($this->filter) {
-            'daily' => 'Daily',
-            'last_week' => 'Last Week',
-            'last_month' => 'Last Month',
+            'daily' => 'Today',
+            'last_week' => 'Last 7 Days',
+            'last_month' => 'Last 30 Days',
             'last_90_days' => 'Last 90 Days',
             'last_year' => 'Last Year',
             'date_range' => 'Custom Range',
-            default => 'Last Week',
+            default => 'Last 7 Days',
         };
     }
 
@@ -283,6 +298,106 @@ class Analytics extends Component
     public function hasDetailedData(): bool
     {
         return !empty($this->data['detailed']);
+    }
+
+    /**
+     * Get mock track data for display (replace with actual data from your models)
+     */
+    public function getTrackPerformanceData(): array
+    {
+        // This should be replaced with actual track data from your database
+        return [
+            [
+                'name' => 'Midnight Vibes',
+                'genre' => 'Electronic',
+                'streams' => 45632,
+                'stream_growth' => 28.4,
+                'engagement' => 94,
+                'likes' => 15632,
+                'reposts' => 2847,
+                'released' => '2024-01-15'
+            ],
+            [
+                'name' => 'Urban Dreams',
+                'genre' => 'Hip Hop',
+                'streams' => 38921,
+                'stream_growth' => 22.1,
+                'engagement' => 87,
+                'likes' => 12458,
+                'reposts' => 1923,
+                'released' => '2024-02-03'
+            ],
+            [
+                'name' => 'Sunset Boulevard',
+                'genre' => 'Indie',
+                'streams' => 32154,
+                'stream_growth' => 15.8,
+                'engagement' => 82,
+                'likes' => 9876,
+                'reposts' => 1654,
+                'released' => '2024-01-28'
+            ],
+            [
+                'name' => 'Electric Soul',
+                'genre' => 'Electronic',
+                'streams' => 28743,
+                'stream_growth' => 19.3,
+                'engagement' => 78,
+                'likes' => 8765,
+                'reposts' => 1432,
+                'released' => '2024-02-12'
+            ],
+            [
+                'name' => 'Golden Hour',
+                'genre' => 'Pop',
+                'streams' => 24891,
+                'stream_growth' => -3.2,
+                'engagement' => 74,
+                'likes' => 7654,
+                'reposts' => 1287,
+                'released' => '2024-01-08'
+            ],
+            [
+                'name' => 'Bass Drop',
+                'genre' => 'Hip Hop',
+                'streams' => 21567,
+                'stream_growth' => 11.7,
+                'engagement' => 71,
+                'likes' => 6543,
+                'reposts' => 1156,
+                'released' => '2024-02-20'
+            ],
+            [
+                'name' => 'Acoustic Dreams',
+                'genre' => 'Indie',
+                'streams' => 18432,
+                'stream_growth' => 7.4,
+                'engagement' => 68,
+                'likes' => 5432,
+                'reposts' => 987,
+                'released' => '2024-01-22'
+            ],
+            [
+                'name' => 'Neon Nights',
+                'genre' => 'Electronic',
+                'streams' => 15298,
+                'stream_growth' => -8.1,
+                'engagement' => 65,
+                'likes' => 4321,
+                'reposts' => 876,
+                'released' => '2024-01-05'
+            ],
+            [
+                'name' => 'Neon Nights',
+                'genre' => 'Electronic',
+                'streams' => 15298,
+                'stream_growth' => -8.1,
+                'engagement' => 65,
+                'likes' => 4321,
+                'reposts' => 876,
+                'released' => '2024-01-05'
+            ]
+        ];
     }
 
     public function render()
