@@ -16,9 +16,9 @@
                         <img src="{{ storage_url(app_setting('favicon_dark')) }}" alt="{{ config('app.name') }}"
                             class="w-12 hidden dark:block" />
                     @else
-                        <img src="{{ asset('assets/favicons/fav-icon-B.jpg') }}" alt="{{ config('app.name') }}"
+                        <img src="{{ asset('assets/logo/fav icon 1.svg')) }}" alt="{{ config('app.name') }}"
                             class="w-12 dark:hidden" />
-                        <img src="{{ asset('assets/favicons/fav-icon-W.jpg') }}" alt="{{ config('app.name') }}"
+                        <img src="{{ {{ asset('assets/logo/fav icon 2 (1).svg') }}" }}" alt="{{ config('app.name') }}"
                             class="w-12 hidden dark:block" />
                     @endif
                 </div>
