@@ -8,7 +8,7 @@
     @if (app_setting('favicon') && app_setting('favicon_dark'))
         <link id="favicon" rel="icon" href="{{ storage_url(app_setting('favicon')) }}" type="image/x-icon">
     @else
-        <link id="favicon" rel="icon" href="{{ asset('assets/logo/fav icon 1.svg')) }}" type="image/x-icon">
+        <link id="favicon" rel="icon" href="{{ asset('assets/favicons/fav-icon-B.jpg') }}" type="image/x-icon">
     @endif
 
     <script>
