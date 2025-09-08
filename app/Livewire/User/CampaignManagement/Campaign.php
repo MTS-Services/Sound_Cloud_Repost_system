@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User\CampaignManagement;
 
+use App\Jobs\NotificationMailSent;
 use App\Models\Campaign as ModelsCampaign;
 use App\Models\CreditTransaction;
 use App\Models\Playlist;
@@ -25,6 +26,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Feature;
 use App\Models\PlaylistTrack;
+use App\Models\UserSetting;
 
 class Campaign extends Component
 {
@@ -1060,6 +1062,10 @@ class Campaign extends Component
                 'follow' => $follow_response ? $this->followed : false
             ];
             if ($response->successful()) {
+                $repostEmailPermission =hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
+                if ($repostEmailPermission) {
+                    NotificationMailSent::dispatch();
+                }
                 $soundcloudRepostId = $campaign->music->soundcloud_track_id;
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
                 $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.');
