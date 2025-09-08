@@ -9,9 +9,12 @@
             <div
                 class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
                 <div class="flex items-center gap-3">
-                    <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                        <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
-                    </div>
+                    <div>
+                    <img src="{{ asset('assets/favicons/fav-icon-black.svg') }}" alt="logo"
+                        class="w-12 dark:hidden" />
+                    <img src="{{ asset('assets/favicons/fav-icon-white.svg') }}" alt="logo"
+                        class="w-12 hidden dark:block" />
+                </div>
                     <h2 class="text-xl font-bold text-gray-900 dark:text-white">
                         {{ __('Repost Confirmation') }}
                     </h2>

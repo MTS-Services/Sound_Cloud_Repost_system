@@ -72,7 +72,7 @@
 
                 <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
                     <x-gbutton variant="outline"
-                        class="hover:!bg-[#ff6b35] hover:text-white bg-white border-gray-300 dark:border-gray-600 w-full"
+                        class="hover:!bg-[#ff6b35] hover:!text-white bg-white border-gray-300 dark:border-gray-600 w-full"
                         x-bind:class="showGrowthTips
                             ?
                             '!bg-[#ff6b35] !text-white' :
@@ -107,25 +107,26 @@
     </div>
 
     {{-- Custom Date Range --}}
-    @if($filter === 'date_range')
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Custom Date Range</h3>
-        <div class="flex flex-col sm:flex-row gap-4">
-            <div class="flex-1">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Start Date</label>
-                <input type="date" wire:model.live="startDate"
-                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35]">
+    @if ($filter === 'date_range')
+        <div
+            class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Custom Date Range</h3>
+            <div class="flex flex-col sm:flex-row gap-4">
+                <div class="flex-1">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Start Date</label>
+                    <input type="date" wire:model.live="startDate"
+                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35]">
+                </div>
+                <div class="flex-1">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">End Date</label>
+                    <input type="date" wire:model.live="endDate"
+                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35]">
+                </div>
             </div>
-            <div class="flex-1">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">End Date</label>
-                <input type="date" wire:model.live="endDate"
-                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35]">
-            </div>
+            @error('dateRange')
+                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+            @enderror
         </div>
-        @error('dateRange')
-            <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-        @enderror
-    </div>
     @endif
 
     {{-- Growth Tips --}}
@@ -292,12 +293,14 @@
                     Genre
                 </label>
                 <div class="space-y-2">
-                    @foreach(['Electronic', 'Hip Hop', 'Pop', 'Rock', 'R&B', 'Indie'] as $genre)
-                    <label class="flex items-center">
-                        <input type="checkbox" name="genre" wire:model="selectedGenres" value="{{ $genre }}"
-                            class="checkbox border-orange-600 bg-transparent checked:border-orange-500 checked:bg-transparent checked:text-orange-600 rounded-full w-5 h-5">
-                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300 capitalize">{{ $genre }}</span>
-                    </label>
+                    @foreach (['Electronic', 'Hip Hop', 'Pop', 'Rock', 'R&B', 'Indie'] as $genre)
+                        <label class="flex items-center">
+                            <input type="checkbox" name="genre" wire:model="selectedGenres"
+                                value="{{ $genre }}"
+                                class="checkbox border-orange-600 bg-transparent checked:border-orange-500 checked:bg-transparent checked:text-orange-600 rounded-full w-5 h-5">
+                            <span
+                                class="ml-2 text-sm text-gray-700 dark:text-gray-300 capitalize">{{ $genre }}</span>
+                        </label>
                     @endforeach
                 </div>
             </div>
@@ -333,12 +336,12 @@
                     Campaign Type
                 </label>
                 <div class="space-y-2">
-                    @foreach(['Premium Promotion', 'Social Boost', 'Radio Push', 'Playlist Placement'] as $campaign)
-                    <label class="flex items-center">
-                        <input type="checkbox" wire:model="selectedCampaignTypes" value="{{ $campaign }}"
-                            class="checkbox border-orange-600 bg-transparent checked:border-orange-500 checked:bg-transparent checked:text-orange-600 rounded-full w-5 h-5">
-                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">{{ $campaign }}</span>
-                    </label>
+                    @foreach (['Premium Promotion', 'Social Boost', 'Radio Push', 'Playlist Placement'] as $campaign)
+                        <label class="flex items-center">
+                            <input type="checkbox" wire:model="selectedCampaignTypes" value="{{ $campaign }}"
+                                class="checkbox border-orange-600 bg-transparent checked:border-orange-500 checked:bg-transparent checked:text-orange-600 rounded-full w-5 h-5">
+                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">{{ $campaign }}</span>
+                        </label>
                     @endforeach
                 </div>
             </div>
@@ -413,25 +416,26 @@
                 </div>
                 <div class="text-right">
                     @if (isset($data['likes_change']))
-                        <div class="inline-flex items-center text-sm font-medium {{ $this->getChangeClass($data['likes_change']) }}">
+                        <div
+                            class="inline-flex items-center text-sm font-medium {{ $this->getChangeClass($data['likes_change']) }}">
                             @if ($this->getChangeIcon($data['likes_change']) === 'trending-up')
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="mr-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" class="mr-1">
                                     <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
                                     <polyline points="16 7 22 7 22 13"></polyline>
                                 </svg>
                             @elseif($this->getChangeIcon($data['likes_change']) === 'trending-down')
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="mr-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" class="mr-1">
                                     <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline>
                                     <polyline points="16 17 22 17 22 11"></polyline>
                                 </svg>
                             @else
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="mr-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" class="mr-1">
                                     <line x1="5" y1="12" x2="19" y2="12"></line>
                                 </svg>
                             @endif
@@ -466,25 +470,26 @@
                 </div>
                 <div class="text-right">
                     @if (isset($data['reposts_change']))
-                        <div class="inline-flex items-center text-sm font-medium {{ $this->getChangeClass($data['reposts_change']) }}">
+                        <div
+                            class="inline-flex items-center text-sm font-medium {{ $this->getChangeClass($data['reposts_change']) }}">
                             @if ($this->getChangeIcon($data['reposts_change']) === 'trending-up')
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="mr-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" class="mr-1">
                                     <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
                                     <polyline points="16 7 22 7 22 13"></polyline>
                                 </svg>
                             @elseif($this->getChangeIcon($data['reposts_change']) === 'trending-down')
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="mr-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" class="mr-1">
                                     <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline>
                                     <polyline points="16 17 22 17 22 11"></polyline>
                                 </svg>
                             @else
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="mr-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" class="mr-1">
                                     <line x1="5" y1="12" x2="19" y2="12"></line>
                                 </svg>
                             @endif
@@ -516,25 +521,26 @@
                 </div>
                 <div class="text-right">
                     @if (isset($data['engagement_change']))
-                        <div class="inline-flex items-center text-sm font-medium {{ $this->getChangeClass($data['engagement_change']) }}">
+                        <div
+                            class="inline-flex items-center text-sm font-medium {{ $this->getChangeClass($data['engagement_change']) }}">
                             @if ($this->getChangeIcon($data['engagement_change']) === 'trending-up')
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="mr-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" class="mr-1">
                                     <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
                                     <polyline points="16 7 22 7 22 13"></polyline>
                                 </svg>
                             @elseif($this->getChangeIcon($data['engagement_change']) === 'trending-down')
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="mr-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" class="mr-1">
                                     <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline>
                                     <polyline points="16 17 22 17 22 11"></polyline>
                                 </svg>
                             @else
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="mr-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" class="mr-1">
                                     <line x1="5" y1="12" x2="19" y2="12"></line>
                                 </svg>
                             @endif
@@ -545,8 +551,8 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Avg. Engagement Rate</p>
-                <p class="text-2xl font-bold text-gray-900 dark:text-white" 
-                   x-text="(displayedData?.avgEngagementRate !== undefined ? displayedData.avgEngagementRate + '%' : '-')">
+                <p class="text-2xl font-bold text-gray-900 dark:text-white"
+                    x-text="(displayedData?.avgEngagementRate !== undefined ? displayedData.avgEngagementRate + '%' : '-')">
                     {{ $data['avgEngagementRate'] ?? '-' }}%
                 </p>
             </div>
@@ -577,6 +583,10 @@
 
         <!-- Legend -->
         <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm mb-4 items-center">
+            <div class="flex items-end">
+                <div class="w-3 h-3 bg-[#E9E294] rounded-full mr-2"></div>
+                <span class="text-gray-600 dark:text-gray-300">Views</span>
+            </div>
             <div class="flex items-end">
                 <div class="w-3 h-3 bg-[#ff6b35] rounded-full mr-2"></div>
                 <span class="text-gray-600 dark:text-gray-300">Streams</span>
@@ -612,13 +622,15 @@
                         <div class="group cursor-pointer">
                             <div class="flex items-center justify-between mb-2">
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-[#ff6b35] transition-colors">
+                                    <p
+                                        class="text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-[#ff6b35] transition-colors">
                                         Track {{ $index + 1 }}
                                     </p>
                                     <p class="text-xs text-gray-500 dark:text-gray-400 truncate">You</p>
                                 </div>
                                 <div class="flex items-center ml-4">
-                                    <span class="text-xs text-gray-900 dark:text-white font-medium">{{ number_format($track['streams']) }}</span>
+                                    <span
+                                        class="text-xs text-gray-900 dark:text-white font-medium">{{ number_format($track['streams']) }}</span>
                                     <span class="text-xs text-gray-500 dark:text-gray-400 ml-1">streams</span>
                                 </div>
                             </div>
@@ -630,7 +642,8 @@
                                     $color = $colors[$index % 5];
                                 @endphp
                                 <div class="h-2 rounded-full transition-all duration-300"
-                                    style="width: {{ $percentage }}%; background: linear-gradient(90deg, {{ $color }}, {{ $color }}cc);"></div>
+                                    style="width: {{ $percentage }}%; background: linear-gradient(90deg, {{ $color }}, {{ $color }}cc);">
+                                </div>
                             </div>
                         </div>
                     @empty
@@ -658,13 +671,16 @@
                                 $colors = ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'];
                                 $color = $colors[$index % 5];
                             @endphp
-                            <div class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer">
+                            <div
+                                class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer">
                                 <div class="flex items-center">
                                     <div class="w-3 h-3 rounded-full mr-3 border border-gray-200 dark:border-gray-600"
                                         style="background-color: {{ $color }};"></div>
-                                    <span class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ $genre['genre'] }}</span>
+                                    <span
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ $genre['genre'] }}</span>
                                 </div>
-                                <span class="text-sm font-bold text-gray-900 dark:text-white">{{ $genre['percentage'] }}%</span>
+                                <span
+                                    class="text-sm font-bold text-gray-900 dark:text-white">{{ $genre['percentage'] }}%</span>
                             </div>
                         @empty
                             <div class="text-center text-gray-500 dark:text-gray-400 py-8">
@@ -683,10 +699,14 @@
                     <div>
                         <p class="text-orange-100 text-sm">{{ $this->getFilterText() }}</p>
                         @php
-                            $totalGrowth = ($data['streams_change'] ?? 0) + ($data['likes_change'] ?? 0) + ($data['reposts_change'] ?? 0);
+                            $totalGrowth =
+                                ($data['streams_change'] ?? 0) +
+                                ($data['likes_change'] ?? 0) +
+                                ($data['reposts_change'] ?? 0);
                             $avgGrowth = $totalGrowth / 3;
                         @endphp
-                        <p class="text-2xl font-bold">{{ $avgGrowth > 0 ? '+' : '' }}{{ number_format($avgGrowth, 1) }}%</p>
+                        <p class="text-2xl font-bold">
+                            {{ $avgGrowth > 0 ? '+' : '' }}{{ number_format($avgGrowth, 1) }}%</p>
                         <p class="text-orange-100 text-sm">Average Growth</p>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -702,29 +722,35 @@
                 class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <h4 class="font-semibold text-gray-900 dark:text-white mb-4">Recent Achievements</h4>
                 <div class="space-y-3">
-                    @if(isset($data['detailed']) && !empty($data['detailed']))
-                        @if(($data['detailed']['total_views']['current_total'] ?? 0) > 10000)
+                    @if (isset($data['detailed']) && !empty($data['detailed']))
+                        @if (($data['detailed']['total_views']['current_total'] ?? 0) > 10000)
                             <div class="flex items-center">
                                 <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
-                                <span class="text-sm text-gray-600 dark:text-gray-400">Reached {{ number_format($data['detailed']['total_views']['current_total']) }} total streams!</span>
+                                <span class="text-sm text-gray-600 dark:text-gray-400">Reached
+                                    {{ number_format($data['detailed']['total_views']['current_total']) }} total
+                                    streams!</span>
                             </div>
                         @endif
-                        @if(($data['streams_change'] ?? 0) > 10)
+                        @if (($data['streams_change'] ?? 0) > 10)
                             <div class="flex items-center">
                                 <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
-                                <span class="text-sm text-gray-600 dark:text-gray-400">{{ number_format($data['streams_change'], 1) }}% growth in streams this period</span>
+                                <span
+                                    class="text-sm text-gray-600 dark:text-gray-400">{{ number_format($data['streams_change'], 1) }}%
+                                    growth in streams this period</span>
                             </div>
                         @endif
-                        @if(($data['likes_change'] ?? 0) > 15)
+                        @if (($data['likes_change'] ?? 0) > 15)
                             <div class="flex items-center">
                                 <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
-                                <span class="text-sm text-gray-600 dark:text-gray-400">Great engagement with {{ number_format($data['likes_change'], 1) }}% more likes</span>
+                                <span class="text-sm text-gray-600 dark:text-gray-400">Great engagement with
+                                    {{ number_format($data['likes_change'], 1) }}% more likes</span>
                             </div>
                         @endif
                     @else
                         <div class="flex items-center">
                             <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
-                            <span class="text-sm text-gray-600 dark:text-gray-400">Keep creating to unlock achievements!</span>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">Keep creating to unlock
+                                achievements!</span>
                         </div>
                     @endif
                 </div>
@@ -736,35 +762,42 @@
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Your Tracks Performance</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Detailed analytics for all your released tracks</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Detailed analytics for all your released tracks
+            </p>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full">
                 <thead class="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                        <th
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
                             <div class="flex items-center">Track Name
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-chevron-up h-4 w-4 opacity-30">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="lucide lucide-chevron-up h-4 w-4 opacity-30">
                                     <path d="m18 15-6-6-6 6"></path>
                                 </svg>
                             </div>
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                        <th
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
                             <div class="flex items-center">Reposts
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-chevron-up h-4 w-4 opacity-30">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="lucide lucide-chevron-up h-4 w-4 opacity-30">
                                     <path d="m18 15-6-6-6 6"></path>
                                 </svg>
                             </div>
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                        <th
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
                             <div class="flex items-center">Released
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-chevron-up h-4 w-4 opacity-30">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="lucide lucide-chevron-up h-4 w-4 opacity-30">
                                     <path d="m18 15-6-6-6 6"></path>
                                 </svg>
                             </div>
@@ -776,38 +809,48 @@
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
-                                    <div class="w-2 h-8 rounded-full mr-3 bg-gradient-to-b from-[#ff6b35] to-[#ff8c42]"></div>
+                                    <div
+                                        class="w-2 h-8 rounded-full mr-3 bg-gradient-to-b from-[#ff6b35] to-[#ff8c42]">
+                                    </div>
                                     <div>
-                                        <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $track['name'] }}</div>
-                                        <div class="text-sm text-gray-500 dark:text-gray-400">{{ $track['genre'] }} • You</div>
+                                        <div class="text-sm font-medium text-gray-900 dark:text-white">
+                                            {{ $track['name'] }}</div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">{{ $track['genre'] }} •
+                                            You</div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-bold text-gray-900 dark:text-white">{{ number_format($track['streams']) }}</div>
+                                <div class="text-sm font-bold text-gray-900 dark:text-white">
+                                    {{ number_format($track['streams']) }}</div>
                                 <div class="text-xs text-gray-500 dark:text-gray-400">streams</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="inline-flex items-center text-sm font-medium {{ $track['stream_growth'] > 0 ? 'text-green-400' : ($track['stream_growth'] < 0 ? 'text-red-400' : 'text-gray-500') }}">
-                                    @if($track['stream_growth'] > 0)
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                            stroke-linejoin="round" class="lucide lucide-trending-up h-4 w-4 mr-1">
+                                <div
+                                    class="inline-flex items-center text-sm font-medium {{ $track['stream_growth'] > 0 ? 'text-green-400' : ($track['stream_growth'] < 0 ? 'text-red-400' : 'text-gray-500') }}">
+                                    @if ($track['stream_growth'] > 0)
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-trending-up h-4 w-4 mr-1">
                                             <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
                                             <polyline points="16 7 22 7 22 13"></polyline>
                                         </svg>
                                     @elseif($track['stream_growth'] < 0)
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                            stroke-linejoin="round" class="lucide lucide-trending-down h-4 w-4 mr-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-trending-down h-4 w-4 mr-1">
                                             <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline>
                                             <polyline points="16 17 22 17 22 11"></polyline>
                                         </svg>
                                     @else
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                            stroke-linejoin="round" class="lucide lucide-minus h-4 w-4 mr-1">
-                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-minus h-4 w-4 mr-1">
+                                            <line x1="5" y1="12" x2="19" y2="12">
+                                            </line>
                                         </svg>
                                     @endif
                                     {{ number_format(abs($track['stream_growth']), 1) }}%
@@ -815,7 +858,8 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
-                                    <div class="text-sm font-bold text-gray-900 dark:text-white">{{ $track['engagement'] }}</div>
+                                    <div class="text-sm font-bold text-gray-900 dark:text-white">
+                                        {{ $track['engagement'] }}</div>
                                     <div class="ml-2 w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                                         <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] h-2 rounded-full transition-all duration-300"
                                             style="width: {{ $track['engagement'] }}%;"></div>
@@ -836,8 +880,10 @@
                         <tr>
                             <td colspan="7" class="px-6 py-12 text-center">
                                 <div class="text-gray-500 dark:text-gray-400">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-2v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-2c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-2" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 mb-4"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 19V6l12-2v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-2c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-2" />
                                     </svg>
                                     <p class="text-lg font-medium">No tracks found</p>
                                     <p class="text-sm mt-2">Upload your first track to start tracking performance!</p>
@@ -853,11 +899,28 @@
     @push('js')
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
-            document.addEventListener('livewire:initialized', function() {
+            /* livewire initialized not working  use livewire init() hook as like in alpine x-data init() method. 
+             * not working list after chnage filter or other livewire action.
+             * Livewire.on('init', () => { ... });
+             * document.addEventListener('livewire:load', () => { ... });
+             * document.addEventListener('livewire:init', () => { ... });
+             * window.addEventListener('livewire:initialized', () => { ... });
+             * Livewire.hook('init', () => { ... });
+             *  document.addEventListener("livewire:navigated", () => { ... });
+             *  Livewire.hook('message.processed', (message, component) => { ... });
+             * 
+             * 
+             * 
+             * Fixed issue. chart not updating or not initialized properly after filter change.
+             */
+
+            document.addEventListener('livewire:initialized', () => {
+
+                console.log('Livewire initialized');
                 // Get chart data from Livewire
                 const chartData = @js($this->getChartData());
                 const genreBreakdown = @js($genreBreakdown);
-                
+
                 // Performance Chart
                 const performanceCtx = document.getElementById('performanceChart').getContext('2d');
                 const performanceChart = new Chart(performanceCtx, {
@@ -865,11 +928,28 @@
                     data: {
                         labels: chartData.length > 0 ? chartData.map(item => {
                             const date = new Date(item.date);
-                            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                            return date.toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric'
+                            });
                         }) : ['No Data'],
                         datasets: [{
+                                label: 'Views',
+                                data: chartData.length > 0 ? chartData.map(item => item.total_views || 0) :
+                                    [0],
+                                borderColor: '#E9E294',
+                                backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                                tension: 0.4,
+                                fill: true,
+                                pointBackgroundColor: '#E9E294',
+                                pointBorderColor: '#fff',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: '#ff6b35',
+                            },
+                            {
                                 label: 'Streams',
-                                data: chartData.length > 0 ? chartData.map(item => item.total_plays || 0) : [0],
+                                data: chartData.length > 0 ? chartData.map(item => item.total_plays || 0) :
+                                    [0],
                                 borderColor: '#ff6b35',
                                 backgroundColor: 'rgba(255, 107, 53, 0.1)',
                                 tension: 0.4,
@@ -881,7 +961,8 @@
                             },
                             {
                                 label: 'Likes',
-                                data: chartData.length > 0 ? chartData.map(item => item.total_likes || 0) : [0],
+                                data: chartData.length > 0 ? chartData.map(item => item.total_likes || 0) :
+                                    [0],
                                 borderColor: '#10b981',
                                 backgroundColor: 'rgba(16, 185, 129, 0.1)',
                                 tension: 0.4,
@@ -893,7 +974,8 @@
                             },
                             {
                                 label: 'Reposts',
-                                data: chartData.length > 0 ? chartData.map(item => item.total_reposts || 0) : [0],
+                                data: chartData.length > 0 ? chartData.map(item => item.total_reposts ||
+                                    0) : [0],
                                 borderColor: '#8b5cf6',
                                 backgroundColor: 'rgba(139, 92, 246, 0.1)',
                                 tension: 0.4,
@@ -905,7 +987,8 @@
                             },
                             {
                                 label: 'Comments',
-                                data: chartData.length > 0 ? chartData.map(item => item.total_comments || 0) : [0],
+                                data: chartData.length > 0 ? chartData.map(item => item.total_comments ||
+                                    0) : [0],
                                 borderColor: '#f59e0b',
                                 backgroundColor: 'rgba(245, 158, 11, 0.1)',
                                 tension: 0.4,
@@ -951,9 +1034,12 @@
                 const genreChart = new Chart(genreCtx, {
                     type: 'pie',
                     data: {
-                        labels: genreBreakdown.length > 0 ? genreBreakdown.map(item => item.genre) : ['No Data'],
+                        labels: genreBreakdown.length > 0 ? genreBreakdown.map(item => item.genre) : [
+                            'No Data'
+                        ],
                         datasets: [{
-                            data: genreBreakdown.length > 0 ? genreBreakdown.map(item => item.percentage) : [100],
+                            data: genreBreakdown.length > 0 ? genreBreakdown.map(item => item
+                                .percentage) : [100],
                             backgroundColor: genreBreakdown.length > 0 ? [
                                 '#ff6b35',
                                 '#10b981',
@@ -1024,23 +1110,33 @@
                     // Update charts with new data
                     const newChartData = @js($this->getChartData());
                     const newGenreData = @js($genreBreakdown);
-                    
+
                     // Update performance chart
                     performanceChart.data.labels = newChartData.length > 0 ? newChartData.map(item => {
                         const date = new Date(item.date);
-                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                        return date.toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric'
+                        });
                     }) : ['No Data'];
-                    
+
                     performanceChart.data.datasets.forEach((dataset, index) => {
-                        const metrics = ['total_views', 'total_likes', 'total_reposts', 'total_comments'];
-                        dataset.data = newChartData.length > 0 ? newChartData.map(item => item[metrics[index]] || 0) : [0];
+                        const metrics = ['total_views', 'total_likes', 'total_reposts',
+                            'total_comments'
+                        ];
+                        dataset.data = newChartData.length > 0 ? newChartData.map(item => item[metrics[
+                                index]] ||
+                            0) : [0];
                     });
-                    
+
                     performanceChart.update();
-                    
+
                     // Update genre chart
-                    genreChart.data.labels = newGenreData.length > 0 ? newGenreData.map(item => item.genre) : ['No Data'];
-                    genreChart.data.datasets[0].data = newGenreData.length > 0 ? newGenreData.map(item => item.percentage) : [100];
+                    genreChart.data.labels = newGenreData.length > 0 ? newGenreData.map(item => item.genre) : [
+                        'No Data'
+                    ];
+                    genreChart.data.datasets[0].data = newGenreData.length > 0 ? newGenreData.map(item => item
+                        .percentage) : [100];
                     genreChart.update();
                 });
             });

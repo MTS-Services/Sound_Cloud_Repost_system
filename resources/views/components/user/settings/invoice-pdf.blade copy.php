@@ -11,15 +11,14 @@
                 </div>
                 <div class="text-right">
                     <div class="bg-white text-orange-500 p-4 rounded-lg">
-                        <a class="flex items-center space-x-2" href="{{ route('user.dashboard') }}" data-discover="true"
+                        <a class="flex items-center" href="{{ route('user.dashboard') }}" data-discover="true"
                             wire:navigate>
-                            <div
-                                class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                                <span class="text-slate-800 dark:text-white font-bold text-md md:text-lg">R</span>
+                            <div>
+                                <img src="{{ asset('assets/logo/REPOSTCHAIN-LOGO-BLACK.png') }}" alt="logo"
+                                    class="w-24 dark:hidden" />
+                                <img src="{{ asset('assets/logo/REPOSTCHAIN-LOGO-WHITE.png') }}" alt="logo"
+                                    class="w-24 hidden dark:block" />
                             </div>
-                            <span class="text-slate-800 dark:text-white font-bold text-lg md:text-xl hidden sm:block">
-                                REPOST<span class="text-orange-500">CHAIN</span>
-                            </span>
                         </a>
                     </div>
                 </div>
@@ -37,9 +36,11 @@
                     <div class="space-y-2">
                         <p class="font-medium" id="customer-name">{{ $payment->name ?? $payment->user?->name }}</p>
                         <p class="text-gray-600" id="customer-email">
-                            {{ $payment->email_address ?? $payment->user?->email }}</p>
+                            {{ $payment->email_address ?? $payment->user?->email }}
+                        </p>
                         <p class="text-gray-600" id="customer-address">
-                            {{ $payment->address ?? $payment->user?->address }}</p>
+                            {{ $payment->address ?? $payment->user?->address }}
+                        </p>
                     </div>
                 </div>
 
@@ -147,21 +148,21 @@
                     </div>
                     <div class="bg-white p-4 rounded-lg border-2 border-orange-500">
                         @if ($payment->order?->source_type == App\Models\Plan::class)
-                            <div class="text-center">
-                                <p class="text-sm text-gray-600 mb-1">Your Subscriped Plan</p>
-                                <p class="text-3xl font-bold text-orange-500">
-                                    {{ $payment->order?->source?->name ?? 'N/A' }}
-                                </p>
-                                {{-- <p class="text-xs text-gray-500 mt-1"></p> --}}
-                            </div>
+                        <div class="text-center">
+                            <p class="text-sm text-gray-600 mb-1">Your Subscriped Plan</p>
+                            <p class="text-3xl font-bold text-orange-500">
+                                {{ $payment->order?->source?->name ?? 'N/A' }}
+                            </p>
+                            {{-- <p class="text-xs text-gray-500 mt-1"></p> --}}
+                        </div>
                         @else
-                            <div class="text-center">
-                                <p class="text-sm text-gray-600 mb-1">Credits Purchased</p>
-                                <p class="text-3xl font-bold text-orange-500">
-                                    {{ $payment->credits_purchased ?? '0.00' }}
-                                </p>
-                                <p class="text-xs text-gray-500 mt-1">Added to your account</p>
-                            </div>
+                        <div class="text-center">
+                            <p class="text-sm text-gray-600 mb-1">Credits Purchased</p>
+                            <p class="text-3xl font-bold text-orange-500">
+                                {{ $payment->credits_purchased ?? '0.00' }}
+                            </p>
+                            <p class="text-xs text-gray-500 mt-1">Added to your account</p>
+                        </div>
                         @endif
                     </div>
                 </div>
