@@ -869,7 +869,7 @@
                         }) : ['No Data'],
                         datasets: [{
                                 label: 'Streams',
-                                data: chartData.length > 0 ? chartData.map(item => item.total_views || 0) : [0],
+                                data: chartData.length > 0 ? chartData.map(item => item.total_plays || 0) : [0],
                                 borderColor: '#ff6b35',
                                 backgroundColor: 'rgba(255, 107, 53, 0.1)',
                                 tension: 0.4,
