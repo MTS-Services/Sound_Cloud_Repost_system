@@ -131,7 +131,7 @@ class Analytics extends Component
     private function transformDataForUI(array $analyticsData): array
     {
         // Extract the metrics you're currently displaying
-        $streams = $analyticsData['total_views']['current_total'] ?? 0;
+        $streams = $analyticsData['total_plays']['current_total'] ?? 0;
         $likes = $analyticsData['total_likes']['current_total'] ?? 0;
         $reposts = $analyticsData['total_reposts']['current_total'] ?? 0;
 
