@@ -914,7 +914,7 @@
              * Fixed issue. chart not updating or not initialized properly after filter change.
              */
 
-            // document.addEventListener('livewire:init', () => {
+            document.addEventListener('livewire:initialized', () => {
 
                 console.log('Livewire initialized');
                 // Get chart data from Livewire
@@ -1139,7 +1139,7 @@
                         .percentage) : [100];
                     genreChart.update();
                 });
-            // });
+            });
         </script>
     @endpush
 
