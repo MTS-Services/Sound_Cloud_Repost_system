@@ -721,7 +721,7 @@ class Campaign extends Component
     {
         $this->proFeatureEnabled = $isChecked ? false : true;
         $this->proFeatureValue = $isChecked ? 0 : 1;
-        $this->anyGenre = 'anyGenre';
+        // $this->anyGenre = 'anyGenre';
     }
 
     public function createCampaign()
@@ -800,8 +800,8 @@ class Campaign extends Component
                 'maxRepostLast24h',
                 'maxRepostsPerDay',
                 'targetGenre',
-                'anyGenre',
-                'trackGenre',
+                // 'anyGenre',
+                // 'trackGenre',
                 'proFeatureEnabled',
             ]);
             $this->dispatch('alert', type: 'success', message: 'Campaign created successfully!');
