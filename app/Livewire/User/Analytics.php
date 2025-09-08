@@ -42,6 +42,7 @@ class Analytics extends Component
         $this->initializeDateRange();
         $this->loadData();
         $this->loadAdditionalData();
+        dd($this->data);
     }
 
     public function updatedFilter()
