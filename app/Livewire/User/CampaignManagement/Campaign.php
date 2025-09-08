@@ -594,30 +594,7 @@ class Campaign extends Component
 
     public function toggleCampaignsModal()
     {
-        $this->reset([
-            'title',
-            'description',
-            'showAddCreditModal',
-            'addCreditCampaignId',
-            'addCreditCostPerRepost',
-            'addCreditCurrentBudget',
-            'addCreditTargetReposts',
-            'addCreditCreditsNeeded',
-            'showEditCampaignModal',
-            'editingCampaignId',
-            'editTitle',
-            'editDescription',
-            'editEndDate',
-            'editTargetReposts',
-            'editCostPerRepost',
-            'editOriginalBudget',
-            'showCancelWarningModal',
-            'campaignToDeleteId',
-            'refundAmount',
-            'showBudgetWarning',
-            'budgetWarningMessage',
-            'canSubmit'
-        ]);
+        $this->reset();
 
         if ($this->myCampaignService->thisMonthCampaignsCount() >= (int) userFeatures()[Feature::KEY_SIMULTANEOUS_CAMPAIGNS]) {
             return $this->dispatch('alert', type: 'error', message: 'You have reached the maximum number of campaigns for this month.');
