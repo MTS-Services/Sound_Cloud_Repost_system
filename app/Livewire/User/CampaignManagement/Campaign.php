@@ -121,7 +121,7 @@ class Campaign extends Component
     public $followersLimit = 0;
     public $maxRepostLast24h = 0;
     public $maxRepostsPerDay = 0;
-    public $targetGenre;
+    public $targetGenre = 'anyGenre';
     public $user = null;
 
     public $musicId = null;
