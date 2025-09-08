@@ -65,7 +65,9 @@ class AnalyticsService
     public function updateAnalytics(object $track, object $action, string $column, string $genre, int $increment = 1): UserAnalytics|bool|null
     {
         // Get the owner's URN from the track model.
-        $userUrn = $track->user?->urn;
+        $userUrn = $action->user?->urn ?? $track->user?->urn ?? null;
+
+        // If no user URN is found, log and exit early.
         if (!$userUrn) {
             Log::info("User action update skipped for {$userUrn} on {$column} for track {$track->id} and track type {$track->getMorphClass()}. No user URN found.");
             return null;
@@ -92,7 +94,7 @@ class AnalyticsService
 
         return $analytics;
     }
-    
+
     /**
      * Available filter options
      */
@@ -406,7 +408,7 @@ class AnalyticsService
         }
 
         $changeRate = (($current - $previous) / $previous) * 100;
-        
+
         // Cap the change rate at ±100%
         return round(max(-100, min(100, $changeRate)), 2);
     }
@@ -476,7 +478,7 @@ class AnalyticsService
     public function getTopTracks(int $limit = 10): array
     {
         $userUrn = user()->urn;
-        
+
         return UserAnalytics::where('user_urn', $userUrn)
             ->selectRaw('track_urn, SUM(total_views) as total_streams, SUM(total_likes) as total_likes, SUM(total_reposts) as total_reposts')
             ->groupBy('track_urn')
@@ -489,7 +491,7 @@ class AnalyticsService
                     'streams' => $item->total_streams,
                     'likes' => $item->total_likes,
                     'reposts' => $item->total_reposts,
-                    'engagement_rate' => $item->total_streams > 0 ? 
+                    'engagement_rate' => $item->total_streams > 0 ?
                         round((($item->total_likes + $item->total_reposts) / $item->total_streams) * 100, 1) : 0
                 ];
             })
@@ -502,7 +504,7 @@ class AnalyticsService
     public function getGenreBreakdown(): array
     {
         $userUrn = user()->urn;
-        
+
         $genreData = UserAnalytics::where('user_urn', $userUrn)
             ->selectRaw('genre, SUM(total_views) as total_streams')
             ->whereNotNull('genre')
@@ -511,7 +513,7 @@ class AnalyticsService
             ->get();
 
         $totalStreams = $genreData->sum('total_streams');
-        
+
         return $genreData->map(function ($item) use ($totalStreams) {
             return [
                 'genre' => $item->genre,
