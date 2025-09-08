@@ -12,7 +12,7 @@ use Carbon\Carbon;
 class Analytics extends Component
 {
     public bool $showGrowthTips = false;
-    public bool $showFilters = true;
+    public bool $showFilters = false;
 
     public string $filter = 'last_week';
 
