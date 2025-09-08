@@ -244,6 +244,7 @@
                                 <span class="text-sm text-gray-700 dark:text-gray-400">Open to all music
                                     types</span>
                             </div>
+                            @dd($track)
                             <div class="flex items-center space-x-2">
                                 <input type="radio" name="targetGenre" value="{{ $track->genre }}"
                                     @click="showGenreRadios = false" wire:model='targetGenre'
