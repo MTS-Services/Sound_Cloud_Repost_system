@@ -24,9 +24,7 @@ use Livewire\WithPagination;
 use Throwable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Builder;
-use App\Models\Feature;
 use App\Models\PlaylistTrack;
-use App\Models\UserSetting;
 
 class Campaign extends Component
 {
@@ -123,8 +121,6 @@ class Campaign extends Component
     public $followersLimit = 0;
     public $maxRepostLast24h = 0;
     public $maxRepostsPerDay = 0;
-    // public $anyGenre = 'anyGenre';
-    // public $trackGenre = '';
     public $targetGenre;
     public $user = null;
 
@@ -688,17 +684,10 @@ class Campaign extends Component
         }
     }
 
-    // public function getAllGenres()
-    // {
-    //     $userGenres = User::where('urn', user()->urn)->first()->genres()->pluck('genre')->toArray();
-    //     $this->genres = array_values(array_unique(array_merge($userGenres, AllGenres())));
-    // }
-
     public function profeature($isChecked)
     {
         $this->proFeatureEnabled = $isChecked ? false : true;
         $this->proFeatureValue = $isChecked ? 0 : 1;
-        // $this->anyGenre = 'anyGenre';
     }
 
     public function createCampaign()
@@ -706,14 +695,6 @@ class Campaign extends Component
         $this->validate();
 
         try {
-            dd($this->targetGenre);
-            // if ($this->anyGenre == 'anyGenre') {
-            //     $this->targetGenre = $this->anyGenre;
-            // }
-            // if ($this->trackGenre == 'trackGenre') {
-            //     $this->targetGenre = $this->trackGenre;
-            // }
-
             DB::transaction(function () {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
