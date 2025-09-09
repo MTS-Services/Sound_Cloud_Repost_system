@@ -153,6 +153,7 @@
                     </div>
                 </div>
             </nav>
+
             <button @click="searchModalOpen = true"
                 class="lg:hidden p-1 md:p-2 rounded-md text-gray-900 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-orange-500 transition-colors">
                 <x-lucide-search class="w-5 h-5" />
