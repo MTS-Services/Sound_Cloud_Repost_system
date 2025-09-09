@@ -17,25 +17,39 @@ class AnalyticsSeeder extends Seeder
      */
     public function run(): void
     {
-        $userUrn = 'urn:sc:users:1001';       
+        $userUrn = 'urn:sc:users:1001';
 
-        for ($i = 0; $i < 5; $i++) {
-            
-            UserAnalytics::create([
-                'user_urn' => $userUrn,
-                'track_urn' => Track::first()->urn,
-                'action_id' => Campaign::first()->id,
-                'action_type' => Campaign::class,
-                'date' => now()->subDays(rand(1, 30)),
-                'genre' => array_rand(['pop', 'hip-hop', 'rock', 'country']),
-                'total_requests' => rand(1, 100),
-                'total_views' => rand(1, 100),
-                'total_comments' => rand(1, 100),
-                'total_reposts' => rand(1, 100),
-                'total_likes' => rand(1, 100),
-                'total_followers' => rand(1, 100),
-                'total_plays' => rand(1, 100),
-            ]);
+        $campaigns = Campaign::where('user_urn', $userUrn)->with('music')->get();
+
+
+        foreach ($campaigns as $campaign) {
+            $this->createAnalyticsForCampaign($userUrn, $campaign);
         }
+    }
+
+    private function createAnalyticsForCampaign(string $userUrn, Campaign $campaign): void
+    {
+        if (!$campaign) {
+            return;
+        }
+        if (!$campaign->music) {
+            return;
+        }
+
+        UserAnalytics::create([
+            'user_urn' => $userUrn,
+            'track_urn' => $campaign->music->urn,
+            'action_id' => $campaign->id,
+            'action_type' => Campaign::class,
+            'genre' => $campaign->target_genre,
+            'date' => now()->subDays(rand(1, 30)),
+            'total_requests' => rand(1, 1000),
+            'total_views' => rand(1, 1000),
+            'total_comments' => rand(1, 1000),
+            'total_reposts' => rand(1, 1000),
+            'total_likes' => rand(1, 1000),
+            'total_followers' => rand(1, 1000),
+            'total_plays' => rand(1, 1000),
+        ]);
     }
 }
