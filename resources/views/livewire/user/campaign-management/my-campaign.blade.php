@@ -3,14 +3,22 @@
     <x-slot name="page_slug">campaigns</x-slot>
 
     <div class="p-6">
-        <div class="flex justify-between items-start mb-5">
-            <div>
-                <h1 class="text-xl text-black dark:text-gray-100 font-bold">{{ __('My Campaigns') }}</h1>
-            </div>
-            <x-gbutton variant="primary" wire:click="toggleCampaignsModal"
-                x-on:click="showCampaignsModal = true"><span><x-lucide-plus
-                        class="w-5 h-5 mr-1" /></span>{{ __('Start a new campaign') }}</x-gbutton>
-        </div>
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 gap-3">
+    <!-- Title -->
+    <div>
+        <h1 class="text-xl text-black dark:text-gray-100 font-bold">
+            {{ __('My Campaigns') }}
+        </h1>
+    </div>
+
+    <!-- Button -->
+    <x-gbutton variant="primary" wire:click="toggleCampaignsModal"
+        x-on:click="showCampaignsModal = true">
+        <span><x-lucide-plus class="w-5 h-5 mr-1" /></span>
+        {{ __('Start a new campaign') }}
+    </x-gbutton>
+</div>
+
 
         <div class="mb-8">
             <div class="border-b border-gray-200 dark:border-gray-700">
