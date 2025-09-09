@@ -148,7 +148,24 @@ class Analytics extends Component
     private function loadAdditionalData()
     {
         try {
-            $this->topTracks = $this->analyticsService->getTopTracks(5);
+            $dateRange = null;
+
+            // Prepare date range for custom filter
+            if ($this->filter === 'date_range' && $this->startDate && $this->endDate) {
+                // dd($this->startDate, $this->endDate);
+                $dateRange = [
+                    'start' => $this->startDate,
+                    'end' => $this->endDate
+                ];
+
+                // Validate date range
+                if (!$this->analyticsService->validateDateRange($dateRange)) {
+                    $this->addError('dateRange', 'Invalid date range selected.');
+                    return;
+                }
+            }
+            $this->topTracks = $this->analyticsService->getTopTracks(userUrn: user()->urn, limit: 5, filter: $this->filter, dateRange: $dateRange);
+            // dd($this->topTracks);
             $this->genreBreakdown = $this->analyticsService->getGenreBreakdown();
         } catch (\Exception $e) {
             logger()->error('Additional data loading failed', ['error' => $e->getMessage()]);
@@ -160,14 +177,15 @@ class Analytics extends Component
      */
     private function transformDataForUI(array $analyticsData): array
     {
+        // dd($analyticsData);
         // Extract the metrics you're currently displaying
-        $streams = $analyticsData['total_plays']['current_total'] ?? 0;
-        $likes = $analyticsData['total_likes']['current_total'] ?? 0;
-        $reposts = $analyticsData['total_reposts']['current_total'] ?? 0;
+        $streams = $analyticsData['overall_metrics']['total_plays']['current_total'] ?? 0;
+        $likes = $analyticsData['overall_metrics']['total_likes']['current_total'] ?? 0;
+        $reposts = $analyticsData['overall_metrics']['total_reposts']['current_total'] ?? 0;
 
         // Calculate engagement rate (you can customize this formula)
-        $totalEngagements = $likes + $reposts + ($analyticsData['total_comments']['current_total'] ?? 0);
-        $avgEngagementRate = $streams > 0 ? round(($totalEngagements / $streams) * 100, 1) : 0;
+        $totalEngagements = $streams + $likes + $reposts + ($analyticsData['overall_metrics']['total_comments']['current_total'] ?? 0);
+        $avgEngagementRate = $streams > 0 ? round(($totalEngagements / $analyticsData['overall_metrics']['total_views']['current_total']) * 100, 1) : 0;
 
         return [
             'streams' => $this->formatNumber($streams),
@@ -179,9 +197,9 @@ class Analytics extends Component
             'detailed' => $analyticsData,
 
             // Change rates for trend indicators (already capped at ±100%)
-            'streams_change' => $analyticsData['total_plays']['change_rate'] ?? 0,
-            'likes_change' => $analyticsData['total_likes']['change_rate'] ?? 0,
-            'reposts_change' => $analyticsData['total_reposts']['change_rate'] ?? 0,
+            'streams_change' => $analyticsData['overall_metrics']['total_plays']['change_rate'] ?? 0,
+            'likes_change' => $analyticsData['overall_metrics']['total_likes']['change_rate'] ?? 0,
+            'reposts_change' => $analyticsData['overall_metrics']['total_reposts']['change_rate'] ?? 0,
             'engagement_change' => $this->calculateEngagementRateChange($analyticsData),
         ];
     }
@@ -192,18 +210,22 @@ class Analytics extends Component
     private function calculateEngagementRateChange(array $analyticsData): float
     {
         $currentStreams = $analyticsData['total_plays']['current_total'] ?? 0;
+        $currentViews = $analyticsData['total_views']['current_total'] ?? 0;
         $previousStreams = $analyticsData['total_plays']['previous_total'] ?? 0;
+        $previousViews = $analyticsData['total_views']['previous_total'] ?? 0;
 
         $currentEngagements = ($analyticsData['total_likes']['current_total'] ?? 0) +
             ($analyticsData['total_reposts']['current_total'] ?? 0) +
-            ($analyticsData['total_comments']['current_total'] ?? 0);
+            ($analyticsData['total_comments']['current_total'] ?? 0) +
+            ($analyticsData['total_plays']['current_total'] ?? 0);
 
         $previousEngagements = ($analyticsData['total_likes']['previous_total'] ?? 0) +
             ($analyticsData['total_reposts']['previous_total'] ?? 0) +
-            ($analyticsData['total_comments']['previous_total'] ?? 0);
+            ($analyticsData['total_comments']['previous_total'] ?? 0) +
+            ($analyticsData['total_plays']['previous_total'] ?? 0);
 
-        $currentRate = $currentStreams > 0 ? ($currentEngagements / $currentStreams) * 100 : 0;
-        $previousRate = $previousStreams > 0 ? ($previousEngagements / $previousStreams) * 100 : 0;
+        $currentRate = $currentViews > 0 ? ($currentEngagements / $currentViews) * 100 : 0;
+        $previousRate = $previousViews > 0 ? ($previousEngagements / $previousViews) * 100 : 0;
 
         if ($previousRate == 0) {
             return $currentRate > 0 ? 100.0 : 0.0;
@@ -338,102 +360,102 @@ class Analytics extends Component
     /**
      * Get mock track data for display (replace with actual data from your models)
      */
-    public function getTrackPerformanceData(): array
-    {
-        // This should be replaced with actual track data from your database
-        return [
-            [
-                'name' => 'Midnight Vibes',
-                'genre' => 'Electronic',
-                'streams' => 45632,
-                'stream_growth' => 28.4,
-                'engagement' => 94,
-                'likes' => 15632,
-                'reposts' => 2847,
-                'released' => '2024-01-15'
-            ],
-            [
-                'name' => 'Urban Dreams',
-                'genre' => 'Hip Hop',
-                'streams' => 38921,
-                'stream_growth' => 22.1,
-                'engagement' => 87,
-                'likes' => 12458,
-                'reposts' => 1923,
-                'released' => '2024-02-03'
-            ],
-            [
-                'name' => 'Sunset Boulevard',
-                'genre' => 'Indie',
-                'streams' => 32154,
-                'stream_growth' => 15.8,
-                'engagement' => 82,
-                'likes' => 9876,
-                'reposts' => 1654,
-                'released' => '2024-01-28'
-            ],
-            [
-                'name' => 'Electric Soul',
-                'genre' => 'Electronic',
-                'streams' => 28743,
-                'stream_growth' => 19.3,
-                'engagement' => 78,
-                'likes' => 8765,
-                'reposts' => 1432,
-                'released' => '2024-02-12'
-            ],
-            [
-                'name' => 'Golden Hour',
-                'genre' => 'Pop',
-                'streams' => 24891,
-                'stream_growth' => -3.2,
-                'engagement' => 74,
-                'likes' => 7654,
-                'reposts' => 1287,
-                'released' => '2024-01-08'
-            ],
-            [
-                'name' => 'Bass Drop',
-                'genre' => 'Hip Hop',
-                'streams' => 21567,
-                'stream_growth' => 11.7,
-                'engagement' => 71,
-                'likes' => 6543,
-                'reposts' => 1156,
-                'released' => '2024-02-20'
-            ],
-            [
-                'name' => 'Acoustic Dreams',
-                'genre' => 'Indie',
-                'streams' => 18432,
-                'stream_growth' => 7.4,
-                'engagement' => 68,
-                'likes' => 5432,
-                'reposts' => 987,
-                'released' => '2024-01-22'
-            ],
-            [
-                'name' => 'Neon Nights',
-                'genre' => 'Electronic',
-                'streams' => 15298,
-                'stream_growth' => -8.1,
-                'engagement' => 65,
-                'likes' => 4321,
-                'reposts' => 876,
-                'released' => '2024-01-05'
-            ],
-            [
-                'name' => 'Neon Nights',
-                'genre' => 'Electronic',
-                'streams' => 15298,
-                'stream_growth' => -8.1,
-                'engagement' => 65,
-                'likes' => 4321,
-                'reposts' => 876,
-                'released' => '2024-01-05'
-            ]
-        ];
-    }
+    // public function getTrackPerformanceData(): array
+    // {
+    //     // This should be replaced with actual track data from your database
+    //     return [
+    //         [
+    //             'name' => 'Midnight Vibes',
+    //             'genre' => 'Electronic',
+    //             'streams' => 45632,
+    //             'stream_growth' => 28.4,
+    //             'engagement' => 94,
+    //             'likes' => 15632,
+    //             'reposts' => 2847,
+    //             'released' => '2024-01-15'
+    //         ],
+    //         [
+    //             'name' => 'Urban Dreams',
+    //             'genre' => 'Hip Hop',
+    //             'streams' => 38921,
+    //             'stream_growth' => 22.1,
+    //             'engagement' => 87,
+    //             'likes' => 12458,
+    //             'reposts' => 1923,
+    //             'released' => '2024-02-03'
+    //         ],
+    //         [
+    //             'name' => 'Sunset Boulevard',
+    //             'genre' => 'Indie',
+    //             'streams' => 32154,
+    //             'stream_growth' => 15.8,
+    //             'engagement' => 82,
+    //             'likes' => 9876,
+    //             'reposts' => 1654,
+    //             'released' => '2024-01-28'
+    //         ],
+    //         [
+    //             'name' => 'Electric Soul',
+    //             'genre' => 'Electronic',
+    //             'streams' => 28743,
+    //             'stream_growth' => 19.3,
+    //             'engagement' => 78,
+    //             'likes' => 8765,
+    //             'reposts' => 1432,
+    //             'released' => '2024-02-12'
+    //         ],
+    //         [
+    //             'name' => 'Golden Hour',
+    //             'genre' => 'Pop',
+    //             'streams' => 24891,
+    //             'stream_growth' => -3.2,
+    //             'engagement' => 74,
+    //             'likes' => 7654,
+    //             'reposts' => 1287,
+    //             'released' => '2024-01-08'
+    //         ],
+    //         [
+    //             'name' => 'Bass Drop',
+    //             'genre' => 'Hip Hop',
+    //             'streams' => 21567,
+    //             'stream_growth' => 11.7,
+    //             'engagement' => 71,
+    //             'likes' => 6543,
+    //             'reposts' => 1156,
+    //             'released' => '2024-02-20'
+    //         ],
+    //         [
+    //             'name' => 'Acoustic Dreams',
+    //             'genre' => 'Indie',
+    //             'streams' => 18432,
+    //             'stream_growth' => 7.4,
+    //             'engagement' => 68,
+    //             'likes' => 5432,
+    //             'reposts' => 987,
+    //             'released' => '2024-01-22'
+    //         ],
+    //         [
+    //             'name' => 'Neon Nights',
+    //             'genre' => 'Electronic',
+    //             'streams' => 15298,
+    //             'stream_growth' => -8.1,
+    //             'engagement' => 65,
+    //             'likes' => 4321,
+    //             'reposts' => 876,
+    //             'released' => '2024-01-05'
+    //         ],
+    //         [
+    //             'name' => 'Neon Nights',
+    //             'genre' => 'Electronic',
+    //             'streams' => 15298,
+    //             'stream_growth' => -8.1,
+    //             'engagement' => 65,
+    //             'likes' => 4321,
+    //             'reposts' => 876,
+    //             'released' => '2024-01-05'
+    //         ]
+    //     ];
+    // }
 
     public function render()
     {
