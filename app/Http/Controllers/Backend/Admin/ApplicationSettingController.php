@@ -67,7 +67,7 @@ class ApplicationSettingController extends Controller implements HasMiddleware
 
             foreach ($validated as $key => $value) {
                 if ($key == 'app_logo' || $key == 'favicon' ||$key == 'app_logo_dark' || $key == 'favicon_dark') {
-                    $value = $this->handleFileUpload($value, 'application_settings', $key);
+                    $value = $this->handleFileUpload($value, 'app_settings', $key);
                 }
 
                 // $applicationSetting = ApplicationSetting::updateOrCreate(['key' => $key], ['value' => $value]);
