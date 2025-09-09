@@ -2,52 +2,62 @@
     showGrowthTips: @entangle('showGrowthTips').live,
     showFilters: @entangle('showFilters').live,
 
-    // Optimistic UI properties
     selectedFilter: '{{ $filter }}',
-
-    // Initialize dataCache with the initial data from Livewire
-    dataCache: {{ Js::from($dataCache) }}, // Initialize the cache with existing cache
+    dataCache: {{ Js::from($dataCache) }},
     displayedData: null,
 
-    // Alpine method to handle the filter change instantly
+
     changeFilter(newFilter) {
-        // Create cache key
         let cacheKey = newFilter;
         if (newFilter === 'date_range') {
             cacheKey = newFilter + '_' + $wire.startDate + '_' + $wire.endDate;
         }
 
-        // Optimistic UI Update: Check if we have a cached version
         if (this.dataCache[cacheKey]) {
             this.displayedData = this.dataCache[cacheKey];
-            console.log('Using cached data for filter:', newFilter);
         } else {
-            // Show loading state while we wait
+            // Show loading state for all data
             this.displayedData = {
-                streams: 'Loading...',
-                likes: 'Loading...',
-                reposts: 'Loading...',
-                avgEngagementRate: 'Loading...'
+                overall_metrics: {
+                    total_plays: {
+                        current_total: 'Loading...',
+                        change_rate: null
+                    },
+                    total_likes: {
+                        current_total: 'Loading...',
+                        change_rate: null
+                    },
+                    total_reposts: {
+                        current_total: 'Loading...',
+                        change_rate: null
+                    },
+                    total_comments: {
+                        current_total: 'Loading...',
+                        change_rate: null
+                    },
+                    total_views: {
+                        current_total: 'Loading...',
+                        change_rate: null
+                    },
+                    total_followers: {
+                        current_total: 'Loading...',
+                        change_rate: null
+                    },
+                },
+                track_metrics: []
             };
         }
 
-        // Update the Alpine property
         this.selectedFilter = newFilter;
-
-        // Dispatch the filter change to Livewire
         $wire.set('filter', newFilter);
     },
 
-    // A Livewire hook to update our Alpine data when the server response arrives
     init() {
-        // Set initial displayedData with the current Livewire data
         this.displayedData = $wire.data;
-        console.log('Initial data:', this.displayedData);
+        console.log(this.displayedData);
 
         this.$watch('$wire.data', (newData) => {
-            // This runs after the server request is complete
             this.displayedData = newData;
-            // Update the dataCache
             this.dataCache = $wire.dataCache;
         });
 
@@ -596,13 +606,13 @@
                 class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Top Performing Tracks</h3>
                 <div class="space-y-4">
-                    @forelse($topTracks as $index => $track)
-                        <div class="group cursor-pointer">
+                    @forelse($topTracks as $track)
+                        <div class="group">
                             <div class="flex items-center justify-between mb-2">
                                 <div class="flex-1 min-w-0">
                                     <p
                                         class="text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-[#ff6b35] transition-colors">
-                                        Track {{ $index + 1 }}
+                                        {{ $track['track']['title'] }}
                                     </p>
                                     <p class="text-xs text-gray-500 dark:text-gray-400 truncate">You</p>
                                 </div>
@@ -616,11 +626,9 @@
                                 @php
                                     $maxStreams = $topTracks[0]['streams'] ?? 1;
                                     $percentage = $maxStreams > 0 ? ($track['streams'] / $maxStreams) * 100 : 0;
-                                    $colors = ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'];
-                                    $color = $colors[$index % 5];
                                 @endphp
                                 <div class="h-2 rounded-full transition-all duration-300"
-                                    style="width: {{ $percentage }}%; background: linear-gradient(90deg, {{ $color }}, {{ $color }}cc);">
+                                    style="width: {{ $percentage }}%; background: linear-gradient(90deg, #ff6b35, #ff6b35cc);">
                                 </div>
                             </div>
                         </div>
@@ -792,7 +800,110 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    @forelse($this->getTrackPerformanceData() as $track)
+
+                    <template
+                        x-if="displayedData && displayedData.detailed && displayedData.detailed.track_metrics.length > 0">
+                        <template x-for="track in displayedData.detailed.track_metrics" :key="track.track_urn">
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div
+                                            class="w-2 h-8 rounded-full mr-3 bg-gradient-to-b from-[#ff6b35] to-[#ff8c42]">
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-900 dark:text-white"
+                                                x-text="track.track_details.title"></div>
+                                            <div class="text-sm text-gray-500 dark:text-gray-400"
+                                                x-text="`${track.track_details.genre} • You`"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-bold text-gray-900 dark:text-white"
+                                        x-text="Number(track.metrics.total_views.current_total).toLocaleString()">
+                                    </div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">streams</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="inline-flex items-center text-sm font-medium"
+                                        :class="{ 'text-green-400': track.metrics.total_views.change_rate >
+                                            0, 'text-red-400': track.metrics.total_views.change_rate <
+                                                0, 'text-gray-500': track.metrics.total_views.change_rate == 0 }">
+                                        <template x-if="track.metrics.total_views.change_rate > 0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-trending-up h-4 w-4 mr-1">
+                                                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                                                <polyline points="16 7 22 7 22 13"></polyline>
+                                            </svg>
+                                        </template>
+                                        <template x-if="track.metrics.total_views.change_rate < 0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-trending-down h-4 w-4 mr-1">
+                                                <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline>
+                                                <polyline points="16 17 22 17 22 11"></polyline>
+                                            </svg>
+                                        </template>
+                                        <template x-if="track.metrics.total_views.change_rate === 0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-minus h-4 w-4 mr-1">
+                                                <line x1="5" y1="12" x2="19" y2="12">
+                                                </line>
+                                            </svg>
+                                        </template>
+                                        <span
+                                            x-text="`${Math.abs(track.metrics.total_views.change_rate).toFixed(1)}%`"></span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="text-sm font-bold text-gray-900 dark:text-white"
+                                            x-text="((track.metrics.total_likes.current_total + track.metrics.total_likes.current_total + track.metrics.total_comments.current_total + track.metrics.total_reposts.current_total) / track.metrics.total_views.current_total * 100).toFixed(1)">
+                                        </div>
+                                        <div class="ml-2 w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                            <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] h-2 rounded-full transition-all duration-300 max-w-full"
+                                                :style="`width: ${((track.metrics.total_likes.current_total + track.metrics.total_comments.current_total + track.metrics.total_reposts.current_total) / track.metrics.total_views.current_total * 100).toFixed(1)}%;`">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white"
+                                    x-text="Number(track.metrics.total_likes.current_total).toLocaleString()">
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white"
+                                    x-text="Number(track.metrics.total_reposts.current_total).toLocaleString()">
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900 dark:text-white"
+                                        x-text="track.track_details.created_at_formatted"></div>
+                                </td>
+                            </tr>
+                        </template>
+                    </template>
+
+                    <template
+                        x-if="!displayedData || !displayedData.detailed || displayedData.detailed.track_metrics.length === 0">
+                        <tr>
+                            <td colspan="7" class="px-6 py-12 text-center">
+                                <div class="text-gray-500 dark:text-gray-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 mb-4"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 19V6l12-2v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-2c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-2" />
+                                    </svg>
+                                    <p class="text-lg font-medium">No tracks found</p>
+                                    <p class="text-sm mt-2">Upload your first track to start tracking performance!</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </template>
+
+                    {{-- @forelse($this->getTrackPerformanceData() as $track)
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
@@ -877,7 +988,7 @@
                                 </div>
                             </td>
                         </tr>
-                    @endforelse
+                    @endforelse --}}
                 </tbody>
             </table>
         </div>

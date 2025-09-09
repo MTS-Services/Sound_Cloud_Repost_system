@@ -76,14 +76,14 @@
             <a class="flex items-center space-x-2" href="{{ route('user.dashboard') }}" data-discover="true" wire:navigate>
                 @if (app_setting('app_logo') && app_setting('app_logo_dark'))
                     <img src="{{ storage_url(app_setting('app_logo')) }}"
-                        alt="{{ config('app.name') }}" class="w-72 xs:w-48 dark:hidden" />
+                        alt="{{ config('app.name') }}" class="w-36 lg:w-48 dark:hidden" />
                     <img src="{{ storage_url(app_setting('app_logo_dark')) }}"
-                        alt="{{ config('app.name') }}" class="w-72 xs:w-48 hidden dark:block" />
+                        alt="{{ config('app.name') }}" class="w-36 lg:w-48 hidden dark:block" />
                 @else
                     <img src="{{ asset('assets/logo/rc-logo-black.png') }}" alt="{{ config('app.name') }}"
-                        class="w-72 xs:w-48 dark:hidden" />
+                        class="w-36 lg:w-48 dark:hidden" />
                     <img src="{{ asset('assets/logo/rc-logo-white.png') }}" alt="{{ config('app.name') }}"
-                        class="w-72 xs:w-48 hidden dark:block" />
+                        class="w-36 lg:w-48 hidden dark:block" />
                 @endif
             </a>
         </div>

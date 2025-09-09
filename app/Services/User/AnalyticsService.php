@@ -162,29 +162,38 @@ class AnalyticsService
             $actionType
         );
 
-        // Process and calculate metrics
-        $currentMetrics = $this->calculateMetrics($currentData);
-        $previousMetrics = $this->calculateMetrics($previousData);
+        // Calculate and compare overall metrics
+        $overallCurrentMetrics = $this->calculateMetrics($currentData);
+        $overallPreviousMetrics = $this->calculateMetrics($previousData);
+        $overallAnalytics = $this->buildComparisonResult($overallCurrentMetrics, $overallPreviousMetrics);
 
-        // Compare and build final result
-        $analytics = $this->buildComparisonResult($currentMetrics, $previousMetrics);
+        // Calculate and compare metrics for each track
+        $currentMetricsByTrack = $this->calculateMetricsByTrack($currentData);
+        $previousMetricsByTrack = $this->calculateMetricsByTrack($previousData);
+        $trackAnalytics = $this->buildComparisonResultByTrack($currentMetricsByTrack, $previousMetricsByTrack);
 
-        // Add period information
-        $analytics['period_info'] = [
-            'filter' => $filter,
-            'current_period' => [
-                'start' => $periods['current']['start']->format('Y-m-d'),
-                'end' => $periods['current']['end']->format('Y-m-d'),
-                'days' => $periods['current']['days']
-            ],
-            'previous_period' => [
-                'start' => $periods['previous']['start']->format('Y-m-d'),
-                'end' => $periods['previous']['end']->format('Y-m-d'),
-                'days' => $periods['previous']['days']
+        // Build the final result array
+        $finalResult = [
+            'overall_metrics' => $overallAnalytics,
+            'track_metrics' => $trackAnalytics,
+            'period_info' => [
+                'filter' => $filter,
+                'current_period' => [
+                    'start' => $periods['current']['start']->format('Y-m-d'),
+                    'end' => $periods['current']['end']->format('Y-m-d'),
+                    'days' => $periods['current']['days']
+                ],
+                'previous_period' => [
+                    'start' => $periods['previous']['start']->format('Y-m-d'),
+                    'end' => $periods['previous']['end']->format('Y-m-d'),
+                    'days' => $periods['previous']['days']
+                ]
             ]
         ];
 
-        return $analytics;
+        // dd( $finalResult);
+
+        return $finalResult;
     }
 
     /**
@@ -276,18 +285,23 @@ class AnalyticsService
         Carbon $endDate,
         ?array $genres = null,
         ?string $trackUrn = null,
-        ?string $actionType = null
+        ?string $actionType = null,
+        ?int $actionId = null
     ): Collection {
         $query = UserAnalytics::where('user_urn', $userUrn)
             ->whereDate('date', '>=', $startDate->format('Y-m-d'))
-            ->whereDate('date', '<=', $endDate->format('Y-m-d'));
+            ->whereDate('date', '<=', $endDate->format('Y-m-d'))
+            ->with('track');
 
         if ($trackUrn) {
-            $query->where('track_urn', $trackUrn);
+            $query->whereHas('track', function ($q) use ($trackUrn) {
+                $q->where('urn', $trackUrn);
+            });
         }
 
-        if ($actionType) {
-            $query->where('action_type', $actionType);
+        if ($actionType && $actionId) {
+            $query->where('action_type', $actionType)
+                ->where('action_id', $actionId);
         }
         if ($genres) {
             $filteredGenres = array_filter($genres, function ($genre) {
@@ -301,6 +315,71 @@ class AnalyticsService
 
         return $query->get();
     }
+
+    /**
+     * Calculate metrics from raw analytics data, grouped by track.
+     */
+    private function calculateMetricsByTrack(Collection $data): array
+    {
+        $metricsByTrack = [];
+
+        $data->groupBy('track_urn')->each(function ($trackGroup, $trackUrn) use (&$metricsByTrack) {
+            $track = $trackGroup->first()->track;
+            // dd($track->toArray());
+            $trackName = $track ? $track->title : 'Unknown Track';
+
+            $totalMetrics = [];
+            foreach (self::METRICS as $metric) {
+                $totalMetrics[$metric] = $trackGroup->sum($metric);
+            }
+
+            $metricsByTrack[$trackUrn] = [
+                'track_urn' => $trackUrn,
+                'track_name' => $trackName,
+                'track_details' => $track->toArray(),
+                'metrics' => $totalMetrics
+            ];
+        });
+
+        return $metricsByTrack;
+    }
+
+    /**
+     * Compare and build final result, grouped by track.
+     */
+    private function buildComparisonResultByTrack(array $currentMetrics, array $previousMetrics): array
+    {
+        $result = [];
+        $allTrackUrns = array_unique(array_merge(array_keys($currentMetrics), array_keys($previousMetrics)));
+
+        foreach ($allTrackUrns as $trackUrn) {
+            $current = $currentMetrics[$trackUrn] ?? null;
+            $previous = $previousMetrics[$trackUrn] ?? null;
+
+            $trackName = $current['track_name'] ?? $previous['track_name'] ?? 'Unknown Track';
+            $trackDetails = $current['track_details'] ?? $previous['track_details'] ?? null;
+            $trackResult = [
+                'track_urn' => $trackUrn,
+                'track_name' => $trackName,
+                'track_details' => $trackDetails,
+            ];
+
+            foreach (self::METRICS as $metric) {
+                $currentTotal = $current['metrics'][$metric] ?? 0;
+                $previousTotal = $previous['metrics'][$metric] ?? 0;
+
+                $trackResult['metrics'][$metric] = [
+                    'current_total' => $currentTotal,
+                    'previous_total' => $previousTotal,
+                    'change_rate' => $this->calculatePercentageChange($currentTotal, $previousTotal)
+                ];
+            }
+            $result[] = $trackResult;
+        }
+
+        return $result;
+    }
+
 
     /**
      * Calculate metrics from raw analytics data
@@ -353,7 +432,6 @@ class AnalyticsService
         // Views percent is always 100% of itself
         $metrics['total_views']['total_percent'] = 100;
         $metrics['total_views']['avg_percent'] = 100;
-
         return $metrics;
     }
 
@@ -489,27 +567,48 @@ class AnalyticsService
     /**
      * Get top performing tracks
      */
-    public function getTopTracks(int $limit = 10): array
+    public function getTopTracks(int $limit = 20, ?string $userUrn = null, ?string $filter = 'last_week', ?array $dateRange = null): array
     {
-        $userUrn = user()->urn;
+        $query = UserAnalytics::query();
+        if ($userUrn) {
+            $query->where('user_urn', $userUrn);
+        }
+        if ($filter === 'date_range' && $dateRange) {
+            $query->whereBetween('date', [$dateRange['start'], $dateRange['end']]);
+        } else {
+            $periods = $this->calculatePeriods($filter);
+            $query->whereDate('date', '>=', $periods['current']['start']->format('Y-m-d'))
+                ->whereDate('date', '<=', $periods['current']['end']->format('Y-m-d'));
+        }
 
-        return UserAnalytics::where('user_urn', $userUrn)
-            ->selectRaw('track_urn, SUM(total_views) as total_streams, SUM(total_likes) as total_likes, SUM(total_reposts) as total_reposts')
-            ->groupBy('track_urn')
-            ->orderByDesc('total_streams')
-            ->limit($limit)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'track_urn' => $item->track_urn,
-                    'streams' => $item->total_streams,
-                    'likes' => $item->total_likes,
-                    'reposts' => $item->total_reposts,
-                    'engagement_rate' => $item->total_streams > 0 ?
-                        round((($item->total_likes + $item->total_reposts) / $item->total_streams) * 100, 1) : 0
-                ];
-            })
-            ->toArray();
+        // 3. Aggregate the data
+        $query->selectRaw('track_urn, SUM(total_views) as total_views, SUM(total_plays) as total_streams, SUM(total_likes) as total_likes, SUM(total_reposts) as total_reposts')
+            ->groupBy('track_urn');
+        $query->orderBy('total_views', 'desc')
+            ->orderBy('total_streams', 'desc')
+            ->orderBy('total_likes', 'desc')
+            ->orderBy('total_reposts', 'desc');
+
+        // 5. Eager load the track relationship and set the limit
+        $query->with(['track.user'])
+            ->limit($limit);
+
+        // 6. Execute the query and map the results
+        $topTracks = $query->get()->map(function ($item) {
+            // You can safely use the aggregated columns in your mapping logic
+            return [
+                'track' => $item->track->toArray(),
+                'streams' => (int) $item->total_streams,
+                'likes' => (int) $item->total_likes,
+                'reposts' => (int) $item->total_reposts,
+                'engagement_rate' => $item->total_streams > 0 ?
+                    round((($item->total_likes + $item->total_reposts) / $item->total_streams) * 100, 1) : 0
+            ];
+        })->toArray();
+        // dd($topTracks);
+
+
+        return $topTracks;
     }
 
     /**

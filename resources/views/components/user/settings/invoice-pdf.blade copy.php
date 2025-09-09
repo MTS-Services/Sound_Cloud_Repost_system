@@ -15,9 +15,9 @@
                             wire:navigate>
                             <div>
                                 <img src="{{ storage_url(app_setting('app_logo')) }}" alt="{{ config('app.name') }}"
-                                    class="w-72 xs:w-48 dark:hidden" />
+                                    class="w-36 lg:w-48 dark:hidden" />
                                 <img src="{{ storage_url(app_setting('app_logo_dark')) }}" alt="{{ config('app.name') }}"
-                                    class="w-72 xs:w-48 hidden dark:block" />
+                                    class="w-36 lg:w-48 hidden dark:block" />
                             </div>
                         </a>
                     </div>

@@ -3,7 +3,7 @@
          <a href="{{ route('f.landing') }}" wire:navigate>
              <div class="w-72">
                  <img src="{{ asset('assets/logo/rc-logo-white.png') }}" alt="{{ config('app.name') }}"
-                     class="w-72 xs:48">
+                     class="w-36 lg:w-48 object-contain">
              </div>
          </a>
 
