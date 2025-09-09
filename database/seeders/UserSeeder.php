@@ -25,6 +25,18 @@ class UserSeeder extends Seeder
                 'refresh_token' => 'test-refresh-token-1',
                 'expires_in' => 3600,
                 'urn' => 'urn:sc:users:1001',
+            ],
+            [
+                'name' => 'Developer2',
+                'soundcloud_id' => 1002,
+                'status' => User::STATUS_ACTIVE,
+                'email' => 'developer2@dev.com',
+                'password' => Hash::make('developer2@dev.com'),
+                'last_synced_at' => now(),
+                'token' => 'test-token-1',
+                'refresh_token' => 'test-refresh-token-1',
+                'expires_in' => 3700,
+                'urn' => 'urn:sc:users:1002',
             ]
         );
         // User::create(

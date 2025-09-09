@@ -5,7 +5,21 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="shortcut icon" href="{{ env("FAVICON") ? storage_url(env("FAVICON")) : asset('default_img/logo.svg') }}" type="image/x-icon">
+    <link id="favicon" rel="icon" href="{{ storage_url(app_setting('favicon')) }}" type="image/x-icon">
+    <script>
+        function setFavicon(dark = false) {
+            let favicon = document.getElementById('favicon');
+            favicon.href = dark ?
+                "{{ storage_url(app_setting('favicon_dark')) }}" :
+                "{{ storage_url(app_setting('favicon')) }}";
+        }
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            setFavicon(true);
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            setFavicon(e.matches);
+        });
+    </script>
     <title>
         {{ isset($title) ? $title . ' - ' : '' }}
         {{ config('app.name', 'RepostChain') }}

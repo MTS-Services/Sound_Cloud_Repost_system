@@ -132,6 +132,7 @@ class AnalyticsService
     public function getAnalyticsData(
         string $filter = 'last_week',
         ?array $dateRange = null,
+        ?array $genres = null,
         ?string $trackUrn = null,
         ?string $actionType = null
     ): array {
@@ -140,13 +141,14 @@ class AnalyticsService
         // Get date ranges for current and previous periods
         $periods = $this->calculatePeriods($filter, $dateRange);
 
-        Log::info("Calculating analytics for user {$userUrn} from {$periods['current']['start']->format('Y-m-d H:i:s')} to {$periods['current']['end']->format('Y-m-d H:i:s')} total days: {$periods['current']['days']} and previous period from {$periods['previous']['start']->format('Y-m-d H:i:s')} to {$periods['previous']['end']->format('Y-m-d H:i:s')} total days: {$periods['previous']['days']}.");
+        // Log::info("Calculating analytics for user {$userUrn} from {$periods['current']['start']->format('Y-m-d H:i:s')} to {$periods['current']['end']->format('Y-m-d H:i:s')} total days: {$periods['current']['days']} and previous period from {$periods['previous']['start']->format('Y-m-d H:i:s')} to {$periods['previous']['end']->format('Y-m-d H:i:s')} total days: {$periods['previous']['days']}.");
 
         // Fetch analytics data for both periods
         $currentData = $this->fetchAnalyticsData(
             $userUrn,
             $periods['current']['start'],
             $periods['current']['end'],
+            $genres,
             $trackUrn,
             $actionType
         );
@@ -155,6 +157,7 @@ class AnalyticsService
             $userUrn,
             $periods['previous']['start'],
             $periods['previous']['end'],
+            $genres,
             $trackUrn,
             $actionType
         );
@@ -271,6 +274,7 @@ class AnalyticsService
         string $userUrn,
         Carbon $startDate,
         Carbon $endDate,
+        ?array $genres = null,
         ?string $trackUrn = null,
         ?string $actionType = null
     ): Collection {
@@ -284,6 +288,15 @@ class AnalyticsService
 
         if ($actionType) {
             $query->where('action_type', $actionType);
+        }
+        if ($genres) {
+            $filteredGenres = array_filter($genres, function ($genre) {
+                return $genre !== 'Any Genre';
+            });
+
+            if (!empty($filteredGenres)) {
+                $query->whereIn('genre', $filteredGenres);
+            }
         }
 
         return $query->get();

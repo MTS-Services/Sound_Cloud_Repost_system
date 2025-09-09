@@ -14,8 +14,9 @@
             <div class="flex items-center gap-4">
                 <div
                     class="w-10 h-10 glass-card shadow inset-shadow-lg bg-bg-white dark:bg-bg-black p-0 rounded-xl flex items-center justify-center">
-                    @if (env('APP_LOGO'))
-                        <img src="{{ storage_url(env('APP_LOGO')) }}" alt="{{ env('APP_NAME') }}" class="w-full h-full">
+                    @if (app_setting('favicon') || app_setting('favicon_dark'))
+                        <img src="{{ storage_url(app_setting('favicon')) }}" alt="{{ config('app.name') }}" class="w-full h-full dark:hidden">
+                        <img src="{{ storage_url(app_setting('favicon_dark')) }}" alt="{{ config('app.name') }}" class="w-full h-full hidden dark:block">
                     @else
                         <i data-lucide="zap" class="!w-4 !h-4"></i>
                     @endif

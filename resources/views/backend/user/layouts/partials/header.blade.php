@@ -74,8 +74,17 @@
                 <x-lucide-menu class="w-5 h-5 md:w-6 md:h-6" />
             </button>
             <a class="flex items-center space-x-2" href="{{ route('user.dashboard') }}" data-discover="true" wire:navigate>
-                <img src="{{ asset('assets/logo/REPOSTCHAIN-LOGO-BLACK.png') }}" alt="logo" class="w-24 dark:hidden" />
-                <img src="{{ asset('assets/logo/REPOSTCHAIN-LOGO-WHITE.png') }}" alt="logo" class="w-24 hidden dark:block" />
+                @if (app_setting('app_logo') && app_setting('app_logo_dark'))
+                    <img src="{{ storage_url(app_setting('app_logo')) }}"
+                        alt="{{ config('app.name') }}" class="w-72 xs:w-48 dark:hidden" />
+                    <img src="{{ storage_url(app_setting('app_logo_dark')) }}"
+                        alt="{{ config('app.name') }}" class="w-72 xs:w-48 hidden dark:block" />
+                @else
+                    <img src="{{ asset('assets/logo/rc-logo-black.png') }}" alt="{{ config('app.name') }}"
+                        class="w-72 xs:w-48 dark:hidden" />
+                    <img src="{{ asset('assets/logo/rc-logo-white.png') }}" alt="{{ config('app.name') }}"
+                        class="w-72 xs:w-48 hidden dark:block" />
+                @endif
             </a>
         </div>
         <div class="flex-1 flex justify-center px-2 md:px-4 lg:px-0 lg:ml-8 md:mr-3">
@@ -175,8 +184,8 @@
                     <li>
                         <a href="{{ route('user.my-account') }}" wire:navigate
                             class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M5.121 17.804A4 4 0 017 16h10a4 4 0 011.879.496M15 11a3 3 0 10-6 0 3 3 0 006 0z" />
                             </svg>

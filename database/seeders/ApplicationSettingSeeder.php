@@ -20,6 +20,8 @@ class ApplicationSettingSeeder extends Seeder
             ['key' => 'timezone', 'value' => 'Asia/Dhaka', 'env_key' => 'TIMEZONE'],
             ['key' => 'date_format', 'value' => 'd/m/Y', 'env_key' => 'DATE_FORMAT'],
             ['key' => 'time_format', 'value' => 'H:i:s', 'env_key' => 'TIME_FORMAT'],
+            ['key' => 'favicon_dark', 'value' => 'laravel', 'env_key' => 'FAVICON_DARK'],
+            ['key' => 'app_logo_dark', 'value' => '', 'env_key' => 'APP_LOGO_DARK'],
             ['key' => 'favicon', 'value' => 'laravel', 'env_key' => 'FAVICON'],
             ['key' => 'app_logo', 'value' => '', 'env_key' => 'APP_LOGO'],
             ['key' => 'theme_mode', 'value' => 'light', 'env_key' => 'THEME_MODE'],

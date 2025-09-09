@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             FaqSeeder::class,
             PlaylistTrackSeeder::class,
             AnalyticsSeeder::class,
+            ApplicationSettingSeeder::class,
 
             CustomNotificationSeeder::class,
             CustomNotificationStatusSeeder::class,

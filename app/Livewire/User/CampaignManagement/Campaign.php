@@ -24,9 +24,7 @@ use Livewire\WithPagination;
 use Throwable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Builder;
-use App\Models\Feature;
 use App\Models\PlaylistTrack;
-use App\Models\UserSetting;
 
 class Campaign extends Component
 {
@@ -123,9 +121,7 @@ class Campaign extends Component
     public $followersLimit = 0;
     public $maxRepostLast24h = 0;
     public $maxRepostsPerDay = 0;
-    public $anyGenre = 'anyGenre';
-    public $trackGenre = '';
-    public $targetGenre = '';
+    public $targetGenre = 'anyGenre';
     public $user = null;
 
     public $musicId = null;
@@ -203,7 +199,7 @@ class Campaign extends Component
 
     public function mount()
     {
-        $this->getAllGenres();
+        // $this->getAllGenres();
         $this->getAllTrackTypes();
         $this->totalCampaigns();
         $this->calculateFollowersLimit();
@@ -594,30 +590,7 @@ class Campaign extends Component
 
     public function toggleCampaignsModal()
     {
-        $this->reset([
-            'title',
-            'description',
-            'showAddCreditModal',
-            'addCreditCampaignId',
-            'addCreditCostPerRepost',
-            'addCreditCurrentBudget',
-            'addCreditTargetReposts',
-            'addCreditCreditsNeeded',
-            'showEditCampaignModal',
-            'editingCampaignId',
-            'editTitle',
-            'editDescription',
-            'editEndDate',
-            'editTargetReposts',
-            'editCostPerRepost',
-            'editOriginalBudget',
-            'showCancelWarningModal',
-            'campaignToDeleteId',
-            'refundAmount',
-            'showBudgetWarning',
-            'budgetWarningMessage',
-            'canSubmit'
-        ]);
+        $this->reset();
 
         if ($this->myCampaignService->thisMonthCampaignsCount() >= (int) userFeatures()[Feature::KEY_SIMULTANEOUS_CAMPAIGNS]) {
             return $this->dispatch('alert', type: 'error', message: 'You have reached the maximum number of campaigns for this month.');
@@ -673,7 +646,7 @@ class Campaign extends Component
         }
 
         $this->showSubmitModal = true;
-        $this->getAllGenres();
+        // $this->getAllGenres();
 
         try {
             if ($type === 'track') {
@@ -711,17 +684,10 @@ class Campaign extends Component
         }
     }
 
-    public function getAllGenres()
-    {
-        $userGenres = User::where('urn', user()->urn)->first()->genres()->pluck('genre')->toArray();
-        $this->genres = array_values(array_unique(array_merge($userGenres, AllGenres())));
-    }
-
     public function profeature($isChecked)
     {
         $this->proFeatureEnabled = $isChecked ? false : true;
         $this->proFeatureValue = $isChecked ? 0 : 1;
-        $this->anyGenre = 'anyGenre';
     }
 
     public function createCampaign()
@@ -729,13 +695,6 @@ class Campaign extends Component
         $this->validate();
 
         try {
-            if ($this->anyGenre == 'anyGenre') {
-                $this->targetGenre = $this->anyGenre;
-            }
-            if ($this->trackGenre == 'trackGenre') {
-                $this->targetGenre = $this->trackGenre;
-            }
-
             DB::transaction(function () {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
@@ -780,35 +739,14 @@ class Campaign extends Component
                 ]);
             });
 
-            $this->reset([
-                'musicId',
-                'title',
-                'description',
-                'playlistId',
-                'playlistTracks',
-                'activeTab',
-                'tracks',
-                'track',
-                'playlists',
-                'maxFollower',
-                'showBudgetWarning',
-                'budgetWarningMessage',
-                'canSubmit',
-                'commentable',
-                'likeable',
-                'proFeatureEnabled',
-                'maxRepostLast24h',
-                'maxRepostsPerDay',
-                'targetGenre',
-                'anyGenre',
-                'trackGenre',
-                'proFeatureEnabled',
-            ]);
+
             $this->dispatch('alert', type: 'success', message: 'Campaign created successfully!');
+
             // $this->dispatch('campaignCreated');
 
             $this->showCampaignsModal = false;
             $this->showSubmitModal = false;
+            $this->reset();
             $this->resetValidation();
             $this->resetErrorBag();
         } catch (\Exception $e) {

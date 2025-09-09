@@ -10,10 +10,17 @@
             class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
             <div class="flex items-center gap-3">
                 <div>
-                    <img src="{{ asset('assets/favicons/fav-icon-black.svg') }}" alt="logo"
-                        class="w-12 dark:hidden" />
-                    <img src="{{ asset('assets/favicons/fav-icon-white.svg') }}" alt="logo"
-                        class="w-12 hidden dark:block" />
+                    @if (app_setting('favicon') && app_setting('favicon_dark'))
+                        <img src="{{ storage_url(app_setting('favicon')) }}" alt="{{ config('app.name') }}"
+                            class="w-12 dark:hidden" />
+                        <img src="{{ storage_url(app_setting('favicon_dark')) }}" alt="{{ config('app.name') }}"
+                            class="w-12 hidden dark:block" />
+                    @else
+                        <img src="{{ asset('assets/favicons/fav icon 1.svg') }}" alt="{{ config('app.name') }}"
+                            class="w-12 dark:hidden" />
+                        <img src="{{ asset('assets/favicons/fav icon 2 (1).svg') }}" alt="{{ config('app.name') }}"
+                            class="w-12 hidden dark:block" />
+                    @endif
                 </div>
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                     {{ __('Create a campaign') }}
@@ -236,28 +243,26 @@
                             following genres:</p>
                         <div class="space-y-2 ml-4">
                             <div class="flex items-center space-x-2">
-                                <input type="radio" name="genre" value="anyGenre" checked
-                                    @click="showGenreRadios = false" wire:model="anyGenre"
-                                    :disabled="!momentumEnabled"
+                                <input type="radio" name="targetGenre" wire:model='targetGenre' value="anyGenre"
+                                    checked @click="showGenreRadios = false" :disabled="!momentumEnabled"
                                     class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
                                     :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                 <span class="text-sm text-gray-700 dark:text-gray-400">Open to all music
                                     types</span>
                             </div>
                             <div class="flex items-center space-x-2">
-                                <input type="radio" name="genre" value="trackGenre"
-                                    @click="showGenreRadios = false" wire:model="trackGenre"
+                                <input type="radio" name="targetGenre" value="{{ $track?->genre }}"
+                                    @click="showGenreRadios = false" wire:model='targetGenre'
                                     :disabled="!momentumEnabled"
                                     class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
                                     :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                 <span class="text-sm text-gray-700 dark:text-gray-400">Match track genre –
-                                    Hip-hop
-                                    & Rap</span>
+                                    {{ $track?->genre }}</span>
                             </div>
                             <div class="space-y-3">
                                 <div class="flex items-center space-x-2">
-                                    <input type="radio" name="genre" @click="showGenreRadios = !showGenreRadios"
-                                        wire:click="getAllGenres" :disabled="!momentumEnabled"
+                                    <input type="radio" name="targetGenre"
+                                        @click="showGenreRadios = !showGenreRadios" :disabled="!momentumEnabled"
                                         class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
                                         :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                     <span class="text-sm text-gray-700 dark:text-gray-400">Match one of
@@ -266,13 +271,13 @@
                                         genres</span>
                                 </div>
                                 <div x-show="showGenreRadios" x-transition class="ml-6 space-y-2">
-                                    @forelse ($genres as $genre)
+                                    @forelse (user()->genres as $genre)
                                         <div class="flex items-center space-x-2">
-                                            <input type="radio" name="genre" wire:model="targetGenre"
-                                                value="{{ $genre }}"
+                                            <input type="radio" name="targetGenre" wire:model='targetGenre'
+                                                value="{{ $genre->genre }}"
                                                 class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
                                             <span
-                                                class="text-sm text-gray-700 dark:text-gray-400">{{ $genre }}</span>
+                                                class="text-sm text-gray-700 dark:text-gray-400">{{ $genre->genre }}</span>
                                         </div>
                                     @empty
                                         <div class="">

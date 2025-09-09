@@ -46,19 +46,33 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="2xl:col-span-3 grid grid-cols-1 gap-5 h-fit">
-                            <div class="space-y-2">
-                                <p class="label">{{ __('App Logo') }}<small>({{ __('Max: 400x400') }})</small></p>
-                                <input type="file" name="app_logo" class="filepond" id="app_logo"
-                                    accept="image/jpeg, image/png, image/jpg, image/webp, image/svg">
-                                <x-input-error class="mt-2" :messages="$errors->get('app_logo')" />
-                            </div>
-                            <div class="space-y-2">
-                                <p class="label">{{ __('Favicon') }} <small>({{ __('16x16') }})</small></p>
-                                <input type="file" name="favicon" class="filepond" id="favicon"
-                                    accept="image/jpeg, image/png, image/jpg, image/webp, image/svg">
-                                <x-input-error class="mt-2" :messages="$errors->get('favicon')" />
-                            </div>
+                    </div>
+                    <div class="flex items-center justify-center gap-5 h-fit mt-4">
+                        <div class="w-full space-y-2">
+                            <p class="label">{{ __('App Logo') }}<small>({{ __('Max: 400x400') }})</small></p>
+                            <input type="file" name="app_logo" class="filepond" id="app_logo"
+                                accept="image/jpeg, image/png, image/jpg, image/webp, image/svg+xml">
+                            <x-input-error class="mt-2" :messages="$errors->get('app_logo')" />
+                        </div>
+                        <div class="w-full space-y-2">
+                            <p class="label">{{ __('Favicon') }} <small>({{ __('16x16') }})</small></p>
+                            <input type="file" name="favicon" class="filepond" id="favicon"
+                                accept="image/jpeg, image/png, image/jpg, image/webp, image/svg+xml">
+                            <x-input-error class="mt-2" :messages="$errors->get('favicon')" />
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center gap-5 h-fit mt-4">
+                        <div class="w-full space-y-2">
+                            <p class="label">{{ __('App Dark Mode Logo') }}<small>({{ __('Max: 400x400') }})</small></p>
+                            <input type="file" name="app_logo_dark" class="filepond" id="app_logo_dark"
+                                accept="image/jpeg, image/png, image/jpg, image/webp, image/svg+xml">
+                            <x-input-error class="mt-2" :messages="$errors->get('app_logo_dark')" />
+                        </div>
+                        <div class="w-full space-y-2">
+                            <p class="label">{{ __('Dark Mode Favicon') }} <small>({{ __('16x16') }})</small></p>
+                            <input type="file" name="favicon_dark" class="filepond" id="favicon_dark"
+                                accept="image/jpeg, image/png, image/jpg, image/webp, image/svg+xml">
+                            <x-input-error class="mt-2" :messages="$errors->get('favicon_dark')" />
                         </div>
                     </div>
                     <div class="flex justify-end mt-5">
@@ -75,11 +89,17 @@
         <script>
             document.addEventListener('DOMContentLoaded', function() {
 
-                file_upload(["#favicon"], ["image/jpeg", "image/png", "image/jpg, image/webp, image/svg"], {
+                file_upload(["#favicon"], ["image/jpeg", "image/png", "image/jpg, image/webp, image/svg+xml"], {
                     "#favicon": "{{ isset($general_settings['favicon']) ? asset('storage/' . $general_settings['favicon']) : null }}"
                 });
-                file_upload(["#app_logo"], ["image/jpeg", "image/png", "image/jpg, image/webp, image/svg"], {
+                file_upload(["#app_logo"], ["image/jpeg", "image/png", "image/jpg, image/webp, image/svg+xml"], {
                     "#app_logo": "{{ isset($general_settings['app_logo']) ? asset('storage/' . $general_settings['app_logo']) : null }}"
+                });
+                file_upload(["#favicon_dark"], ["image/jpeg", "image/png", "image/jpg, image/webp, image/svg+xml"], {
+                    "#favicon_dark": "{{ isset($general_settings['favicon_dark']) ? asset('storage/' . $general_settings['favicon_dark']) : null }}"
+                });
+                file_upload(["#app_logo_dark"], ["image/jpeg", "image/png", "image/jpg, image/webp, image/svg+xml"], {
+                    "#app_logo_dark": "{{ isset($general_settings['app_logo_dark']) ? asset('storage/' . $general_settings['app_logo_dark']) : null }}"
                 });
             });
         </script>

@@ -1,13 +1,9 @@
  <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent backdrop-blur-sm">
      <div class="container mx-auto px-4 py-4 flex justify-between items-center">
          <a href="{{ route('f.landing') }}" wire:navigate>
-             <div class="flex gap-2 items-center">
-                 <div class="w-7 h-7 md:w-8 md:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                     <span class="text-slate-100 dark:text-black font-bold text-md md:text-lg">R</span>
-                 </div>
-                 <span class="text-slate-100 dark:text-black font-bold text-lg md:text-xl hidden sm:block">
-                     REPOST<span class="text-orange-500">CHAIN</span>
-                 </span>
+             <div class="w-72">
+                 <img src="{{ asset('assets/logo/rc-logo-white.png') }}" alt="{{ config('app.name') }}"
+                     class="w-72 xs:48">
              </div>
          </a>
 

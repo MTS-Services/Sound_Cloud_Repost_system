@@ -14,10 +14,10 @@
                         <a class="flex items-center" href="{{ route('user.dashboard') }}" data-discover="true"
                             wire:navigate>
                             <div>
-                                <img src="{{ asset('assets/logo/REPOSTCHAIN-LOGO-BLACK.png') }}" alt="logo"
-                                    class="w-24 dark:hidden" />
-                                <img src="{{ asset('assets/logo/REPOSTCHAIN-LOGO-WHITE.png') }}" alt="logo"
-                                    class="w-24 hidden dark:block" />
+                                <img src="{{ storage_url(app_setting('app_logo')) }}" alt="{{ config('app.name') }}"
+                                    class="w-72 xs:w-48 dark:hidden" />
+                                <img src="{{ storage_url(app_setting('app_logo_dark')) }}" alt="{{ config('app.name') }}"
+                                    class="w-72 xs:w-48 hidden dark:block" />
                             </div>
                         </a>
                     </div>
