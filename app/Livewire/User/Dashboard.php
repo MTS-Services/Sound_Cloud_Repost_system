@@ -10,6 +10,7 @@ use App\Models\RepostRequest;
 use App\Models\Track;
 use App\Models\User;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
+use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\User\CampaignManagement\MyCampaignService;
 use Illuminate\Support\Facades\DB;
@@ -29,6 +30,8 @@ class Dashboard extends Component
 
     protected MyCampaignService $myCampaignService;
     protected AnalyticsService $analyticsService;
+
+    protected FollowerAnalyzer $followerAnalyzer;
 
     public $total_credits;
     public $totalCount;
@@ -127,12 +130,13 @@ class Dashboard extends Component
         ];
     }
 
-    public function boot(CreditTransactionService $creditTransactionService, SoundCloudService $soundCloudService, MyCampaignService $myCampaignService, AnalyticsService $analyticsService)
+    public function boot(CreditTransactionService $creditTransactionService, SoundCloudService $soundCloudService, MyCampaignService $myCampaignService, AnalyticsService $analyticsService, FollowerAnalyzer $followerAnalyzer)
     {
         $this->creditTransactionService = $creditTransactionService;
         $this->soundCloudService = $soundCloudService;
         $this->myCampaignService = $myCampaignService;
         $this->analyticsService = $analyticsService;
+        $this->followerAnalyzer = $followerAnalyzer;
     }
 
     public function mount()
