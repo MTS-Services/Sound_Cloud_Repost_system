@@ -26,10 +26,10 @@ class FollowerAnalyzer
     /**
      * Analyzes a user and returns credibility data
      *
-     * @param array $user
+     * @param  $user
      * @return array
      */
-    public function analyzeUser(array $user): array
+    public function analyzeUser($user): array
     {
         $score = 0;
         $factors = [];
