@@ -1029,8 +1029,8 @@
 
                                     $engagementRate =
                                         $totalViews > 0
-                                            ? ((($totalViews - $totalEngagement) / $totalEngagement) * 100 > 0
-                                                ? (($totalViews - $totalEngagement) / $totalEngagement) * 100
+                                            ? (($totalViews - $totalEngagement) / $totalEngagement / 100 > 0
+                                                ? ($totalViews - $totalEngagement) / $totalEngagement / 100
                                                 : 0)
                                             : 0;
                                 @endphp
