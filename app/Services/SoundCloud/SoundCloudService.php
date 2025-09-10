@@ -620,6 +620,6 @@ class SoundCloudService
             'Failed to fetch followers from SoundCloud API.'
         );
 
-        return collect($response);
+        return collect($response['collection']);
     }
 }
