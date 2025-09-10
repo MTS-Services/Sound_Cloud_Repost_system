@@ -284,7 +284,7 @@
                 </div>
                 <div class="space-y-2">
                     <p class="text-2xl font-bold text-slate-700 dark:text-white">
-                        {{ $userFollowerAnalysis['averageCredibilityScore'] }}%</p>
+                        {{-- {{ $userFollowerAnalysis['averageCredibilityScore'] }}%</p> --}}
                     <p
                         class="text-sm flex items-center space-x-1 {{ $followerPercentage >= 0 ? 'text-green-400' : 'text-red-400' }}">
                         <span>{{ $followerPercentage }}% from
@@ -348,26 +348,30 @@
                             href="{{ route('user.my-account', ['tab' => 'tracks']) }}">View all →</a>
                     @endif
                 </div>
+
+                <!-- Show recent tracks if exist -->
                 <div class="space-y-4">
-                    @foreach ($recentTracks as $recentTrack)
+                    @forelse ($recentTracks as $recentTrack)
                         <x-sound-cloud.sound-cloud-player :track="$recentTrack" :visual="false" />
-                    @endforeach
-                </div>
-                <div class="text-center py-8 ">
-                    <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path d="M5 12h14M12 5v14" />
-                        </svg>
-                    </div>
-                    <h4 class="font-medium mb-2">No upcoming campaigns scheduled</h4>
-                    <p class="text-slate-400 text-sm mb-4">Submit a track to start a new campaign</p>
-                    <x-gbutton variant="primary" wire:click="toggleCampaignsModal">
-                        <span><x-lucide-plus class="inline-block text-center h-4 w-4 text-white mr-1" /></span>
-                        Create Campaign
-                    </x-gbutton>
+                    @empty
+                        <div class="text-center py-8">
+                            <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path d="M5 12h14M12 5v14" />
+                                </svg>
+                            </div>
+                            <h4 class="font-medium mb-2">No upcoming campaigns scheduled</h4>
+                            <p class="text-slate-400 text-sm mb-4">Submit a track to start a new campaign</p>
+                            <x-gbutton variant="primary" wire:click="toggleCampaignsModal">
+                                <span><x-lucide-plus class="inline-block text-center h-4 w-4 text-white mr-1" /></span>
+                                Create Campaign
+                            </x-gbutton>
+                        </div>
+                    @endforelse
                 </div>
             </div>
+
 
             <!-- Right Section -->
             <div class="rounded-lg shadow-sm p-4 dark:bg-slate-800">

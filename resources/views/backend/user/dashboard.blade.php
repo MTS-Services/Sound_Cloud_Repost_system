@@ -216,10 +216,8 @@
                         <div>
                             <h3 class="text-lg font-semibold">Recent Tracks</h3>
                             <p class="text-slate-400 text-sm">Your latest submissions</p>
-                        </div>
-                       
+                        </div>                      
                     </div>
-
                     <div class="space-y-4">
                         @forelse ($repostRequests as $repostRequest)
                             <div
