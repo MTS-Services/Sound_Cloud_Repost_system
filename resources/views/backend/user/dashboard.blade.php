@@ -290,7 +290,7 @@
                                     </svg>
                                     <span class="text-sm font-medium">Trending</span>
                                 </div>
-                                <a class="text-orange-500 hover:text-orange-400 text-sm" href="/charts">View
+                                <a class="text-orange-500 hover:text-orange-400 text-sm" href="{{ route('user.charts') }}">View
                                     charts</a>
                             </div>
                             <div class="space-y-2">
