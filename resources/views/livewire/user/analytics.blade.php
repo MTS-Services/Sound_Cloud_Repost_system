@@ -216,12 +216,18 @@
 
     init() {
         this.displayedData = $wire.data;
-        if (Chart) {
-            Chart.destroyAll();
+
+        if (this.performanceChart) {
+            this.performanceChart.destroy();
+            this.performanceChart = null;
         }
+        if (this.genreChart) {
+            this.genreChart.destroy();
+            this.genreChart = null;
+        }
+
         // Initialize charts after DOM is ready
         this.$nextTick(() => {
-            console.log(Chart);
             if (typeof Chart !== 'undefined') {
                 this.initializeCharts();
             } else {
