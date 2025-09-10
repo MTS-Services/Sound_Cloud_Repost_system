@@ -57,6 +57,8 @@ class MyAccount extends Component
 
     public $userFollowerAnalysis = [];
 
+    public $followerGrowthPercentage = 0;
+
     // Livewire v3: boot runs on every request (initial + subsequent)
     public function boot(UserService $userService, CreditTransactionService $creditTransactionService, TrackService $trackService, SoundCloudService $soundCloudService, PlaylistService $playlistService, FollowerAnalyzer $followerAnalyzer): void
     {
@@ -70,7 +72,22 @@ class MyAccount extends Component
 
     public function mount($user_urn = null): void
     {
-        $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers());
+        $followers = $this->soundCloudService->getAuthUserFollowers();
+        $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($followers);
+
+        $currentWeekStats = $this->getQuickStats($followers, 'current_week');
+        $lastWeekStats = $this->getQuickStats($followers, 'last_week');
+
+        $currentWeekFollowers = $currentWeekStats['totalFollowers'];
+        $lastWeekFollowers = $lastWeekStats['totalFollowers'];
+
+        if ($lastWeekFollowers > 0) {
+            $this->followerGrowth = (($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100;
+        } else {
+            $this->followerGrowth = 0; // Avoid division by zero
+        }
+
+
         $this->user_urn = $user_urn ?? user()->urn;
 
         Log::info('MyAccount mount', ['user_urn' => $this->user_urn]);

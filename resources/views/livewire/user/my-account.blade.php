@@ -452,7 +452,7 @@
                                                             class="text-gray-600 dark:text-slate-300 text-xs sm:text-sm">Follower
                                                             Growth</span>
                                                         <span
-                                                            class="text-gray-900 dark:text-white font-semibold text-xs sm:text-sm">78%</span>
+                                                            class="text-gray-900 dark:text-white font-semibold text-xs sm:text-sm">{{ $followerGrowth }}%</span>
                                                     </div>
                                                     <div
                                                         class="w-full bg-gray-300 dark:bg-slate-700 rounded-full h-1 sm:h-2">
