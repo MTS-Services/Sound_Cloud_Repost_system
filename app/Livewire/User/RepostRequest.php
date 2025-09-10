@@ -2,7 +2,7 @@
 
 namespace App\Livewire\User;
 
-use App\Mail\NotificationMails;
+use App\Jobs\NotificationMailSent;
 use App\Models\CreditTransaction;
 use App\Models\RepostRequest as ModelsRepostRequest;
 use App\Models\Repost;
@@ -13,7 +13,6 @@ use App\Services\User\UserSettingsService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Throwable;
@@ -338,10 +337,7 @@ class RepostRequest extends Component
                             'body' => 'Your request for repost has been accepted. Please login to your Repostchain account to listen to the music.',
                         ],
                     ];
-                    // NotificationMailSent::dispatch($mailData);
-                    foreach ($datas as $mailData) {
-                        Mail::to($mailData['email'])->send(new NotificationMails($mailData));
-                    }
+                    NotificationMailSent::dispatch($datas);
                 }
                 $soundcloudRepostId = $response->json('id');
 
@@ -431,7 +427,7 @@ class RepostRequest extends Component
                 'rejection_reason' => 'Declined by user',
                 'responded_at' => now(),
             ]);
-            $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $request?->requester_urn);
+            $repostEmailPermission = hasEmailSentPermission('em_repost_declined', $request?->requester_urn);
             if ($repostEmailPermission) {
                 $datas = [
                     [
@@ -441,10 +437,7 @@ class RepostRequest extends Component
                         'body' => 'Your repost request has been declined.',
                     ],
                 ];
-                // NotificationMailSent::dispatch($mailData);
-                foreach ($datas as $mailData) {
-                    Mail::to($mailData['email'])->send(new NotificationMails($mailData));
-                }
+                NotificationMailSent::dispatch($datas);
             }
             $this->dataLoad();
             $this->dispatch('alert', type: 'success', message: 'Repost request declined successfully.');

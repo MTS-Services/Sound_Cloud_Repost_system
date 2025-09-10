@@ -3,6 +3,7 @@
 namespace App\Services\User\CampaignManagement;
 
 use App\Events\UserNotificationSent;
+use App\Jobs\NotificationMailSent;
 use App\Models\Campaign;
 use App\Models\CreditTransaction;
 use App\Models\CustomNotification;
@@ -36,7 +37,6 @@ class CampaignService
 
                 $trackOwnerUrn = $campaign->music->user?->urn ?? $campaign->user_urn;
                 $trackOwnerName = $campaign->music->user?->name;
-                // $totalCredits = repostPrice($reposter, $likeCommentAbleData['commentable'], $likeCommentAbleData['likeable']);
                 $totalCredits = repostPrice() + ($likeCommentAbleData['comment'] ? 2 : 0) + ($likeCommentAbleData['likeable'] ? 2 : 0);
 
                 // Create the Repost record
@@ -52,6 +52,18 @@ class CampaignService
                 // Update the Campaign record using atomic increments
                 $campaign->increment('completed_reposts');
                 $campaign->increment('credits_spent', (float) $totalCredits);
+                $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
+                if ($repostEmailPermission && ($campaign->budget_credits <= $campaign->credits_spent)) {
+                    $datas = [
+                        [
+                            'email' => $campaign->user->email,
+                            'subject' => 'Repost Budget Reached',
+                            'title' => 'Dear ' . $campaign->user->name,
+                            'body' => 'Your repost budget has been reached.',
+                        ],
+                    ];
+                    NotificationMailSent::dispatch($datas);
+                }
 
 
                 $response = $this->analyticsService->updateAnalytics($campaign->music, $campaign, 'total_reposts', $campaign->target_genre);
