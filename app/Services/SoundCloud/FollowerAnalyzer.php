@@ -93,12 +93,13 @@ class FollowerAnalyzer
     /**
      * Separates followers into fake and real categories
      *
-     * @param array $followers
+     * @param Collection $followers
      * @return array
      */
-    public function separateFollowers(array $followers): array
+    public function separateFollowers(Collection $followers): array
     {
-        $analysis = collect($followers)->map(fn($follower) => $this->analyzeUser($follower));
+        // $analysis = collect($followers)->map(fn($follower) => $this->analyzeUser($follower));
+        $analysis = $followers->map(fn($follower) => $this->analyzeUser($follower));
 
         $realFollowers = $analysis->filter(fn($a) => $a['classification'] === 'real');
         $fakeFollowers = $analysis->filter(fn($a) => $a['classification'] === 'fake');
@@ -124,10 +125,10 @@ class FollowerAnalyzer
     /**
      * Get detailed analysis for a specific user
      *
-     * @param array $user
+     * @param  $user
      * @return array
      */
-    public function getDetailedAnalysis(array $user): array
+    public function getDetailedAnalysis($user): array
     {
         $analysis = $this->analyzeUser($user);
 
@@ -311,10 +312,10 @@ class FollowerAnalyzer
     /**
      * Get quick stats for dashboard
      *
-     * @param array $followers
+     * @param Collection $followers
      * @return array
      */
-    public function getQuickStats(array $followers): array
+    public function getQuickStats(Collection $followers): array
     {
         $result = $this->separateFollowers($followers);
 

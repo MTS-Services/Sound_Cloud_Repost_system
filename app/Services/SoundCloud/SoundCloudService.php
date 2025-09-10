@@ -610,14 +610,16 @@ class SoundCloudService
     }
 
 
-    public function getAuthUserFollowers()
+    public function getAuthUserFollowers(): Collection
     {
-        return $this->makeApiRequest(
+        $response = $this->makeApiRequest(
             user(),
             'get',
             "/me/followers",
             [],
             'Failed to fetch followers from SoundCloud API.'
         );
+
+        return collect($response);
     }
 }

@@ -143,7 +143,6 @@ class Dashboard extends Component
 
     public function mount()
     {
-        dd($this->soundCloudService->getAuthUserFollowers());
         $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers());
         $this->loadDashboardData();
         $this->calculateFollowersLimit();
