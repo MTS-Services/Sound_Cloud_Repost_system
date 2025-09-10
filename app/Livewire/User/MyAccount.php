@@ -75,8 +75,8 @@ class MyAccount extends Component
         $followers = $this->soundCloudService->getAuthUserFollowers();
         $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($followers);
 
-        $currentWeekStats = $this->getQuickStats($followers, 'this_month');
-        $lastWeekStats = $this->getQuickStats($followers, 'last_month');
+        $currentWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'this_month');
+        $lastWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'last_month');
 
         $currentWeekFollowers = $currentWeekStats['totalFollowers'];
         $lastWeekFollowers = $lastWeekStats['totalFollowers'];
