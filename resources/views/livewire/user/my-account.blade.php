@@ -31,7 +31,7 @@
                             <div class="flex flex-col sm:flex-row items-center gap-6">
                                 <div class="relative">
                                     {{-- Profile image --}}
-                                    <img src="{{ auth_storage_url(user()->avatar) }}" alt="Profile Picture"
+                                    <img src="{{ auth_storage_url($user->avatar) }}" alt="Profile Picture"
                                         class="w-24 h-24 lg:w-32 lg:h-32 rounded-full border-4 border-white shadow-lg object-cover"
                                         id="profilePreview" />
 
@@ -55,10 +55,10 @@
                                 </div>
 
                                 <div class="text-center sm:text-left dark:text-white">
-                                    <h2 class="text-2xl font-bold text-white  mb-1">{{ user()->name }}</h2>
-                                    <p class="text-primary-100">{{ user()->email }}</p>
+                                    <h2 class="text-2xl font-bold text-white  mb-1">{{ $user->name }}</h2>
+                                    <p class="text-primary-100">{{ $user->email }}</p>
                                     <p class="text-primary-200 text-sm mt-1">Joined
-                                        {{ user()->created_at->diffForHumans() }}</p>
+                                        {{ $user->created_at->diffForHumans() }}</p>
                                 </div>
                             </div>
                         </div>
@@ -103,7 +103,7 @@
                                     <label for="email"
                                         class="block text-sm font-medium text-gray-700 dark:text-white">Email
                                         Address</label>
-                                    <input type="email" id="email" name="email" value="{{ user()->email }}"
+                                    <input type="email" id="email" name="email" value="{{ $user->email }}"
                                         placeholder="Enter your email address"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-gray-400 dark:bg-gray-600 dark:text-white" />
                                 </div>
@@ -187,7 +187,7 @@
                             {{-- Buttons --}}
                             <div
                                 class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
-                                <a href="{{ user()->soundcloud_permalink_url ?? '#' }}"
+                                <a href="{{ $user->soundcloud_permalink_url ?? '#' }}"
                                     class="bg-gray-300 hover:bg-gray-400 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-900 dark:text-white px-3 py-1 sm:px-4 sm:py-2 rounded-lg transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
