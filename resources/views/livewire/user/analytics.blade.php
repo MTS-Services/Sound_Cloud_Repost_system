@@ -1024,11 +1024,11 @@
                                         $track['metrics']['total_comments']['current_total'] +
                                         $track['metrics']['total_reposts']['current_total'] +
                                         $track['metrics']['total_followers']['current_total'];
-                                    $totalEngagement = $totalEngagements / 5;
+
+                                    $totalEngagement = $totalEngagements / 4;
+
                                     $engagementRate =
-                                        $totalViews > 0
-                                            ? (($totalViews - $totalEngagement) / $totalEngagement) * 100
-                                            : 0;
+                                        $totalViews > 0 ? (($totalViews - $totalEngagement) / $totalViews) * 100 : 0;
                                 @endphp
                                 <div class="flex items-center">
                                     <div class="text-sm font-bold text-gray-900 dark:text-white">
