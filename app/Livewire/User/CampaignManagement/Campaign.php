@@ -919,7 +919,7 @@ class Campaign extends Component
         $this->campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
         Log::info($this->campaign);
     }
-    
+
     public function repost($campaignId)
     {
         $this->soundCloudService->ensureSoundCloudConnection(user());
@@ -1009,7 +1009,7 @@ class Campaign extends Component
                             'email' => $campaign->user->email,
                             'subject' => 'Repost Notification',
                             'title' => 'Dear ' . $campaign->user->name,
-                            'body' => 'Your'. $campaign->title . 'campaign has been reposted successfully.',
+                            'body' => 'Your' . $campaign->title . 'campaign has been reposted successfully.',
                         ],
                     ];
                     // NotificationMailSent::dispatch($mailData);
@@ -1276,6 +1276,7 @@ class Campaign extends Component
                             $query->whereIn('genre', $userGenres);
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
+                    $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
                     break;
 
                 case 'recommended':
