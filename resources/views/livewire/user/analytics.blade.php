@@ -777,10 +777,11 @@
                             <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
                                 @php
                                     $maxStreams = $topTracks[0]['streams'] ?? 1;
-                                    $percentage = $maxStreams > 0 ? ($track['streams'] / $maxStreams) * 100 : 0;
+                                    $percentage =
+                                        $maxStreams > 0 ? (($maxStreams - $track['streams']) / $maxStreams) * 100 : 0;
                                 @endphp
                                 <div class="h-2 rounded-full transition-all duration-300"
-                                    style="width: {{ $percentage }}%; background: linear-gradient(90deg, #ff6b35, #ff6b35cc);">
+                                    style="width: {{ $percentage > 100 ? 100 : $percentage }}%; background: linear-gradient(90deg, #ff6b35, #ff6b35cc);">
                                 </div>
                             </div>
                         </div>
@@ -1017,16 +1018,20 @@
                                     $totalEngagements =
                                         $track['metrics']['total_likes']['current_total'] +
                                         $track['metrics']['total_comments']['current_total'] +
-                                        $track['metrics']['total_reposts']['current_total'];
-                                    $engagementRate = $totalViews > 0 ? ($totalEngagements / $totalViews) * 100 : 0;
+                                        $track['metrics']['total_reposts']['current_total'] +
+                                        $track['metrics']['total_followers']['current_total'];
+                                    $engagementRate =
+                                        $totalViews > 0
+                                            ? (($totalViews - $totalEngagements / 5) / ($totalEngagements / 5)) * 100
+                                            : 0;
                                 @endphp
                                 <div class="flex items-center">
                                     <div class="text-sm font-bold text-gray-900 dark:text-white">
-                                        {{ number_format($engagementRate, 1) }}%
+                                        {{ number_format($engagementRate) }}%
                                     </div>
                                     <div class="ml-2 w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                                         <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] h-2 rounded-full transition-all duration-300 max-w-full"
-                                            style="width: {{ min($engagementRate, 100) }}%;"></div>
+                                            style="width: {{ $engagementRate }}%;"></div>
                                     </div>
                                 </div>
                             </td>
