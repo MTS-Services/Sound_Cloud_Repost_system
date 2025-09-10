@@ -1026,11 +1026,11 @@
                                         $track['metrics']['total_followers']['current_total'];
 
                                     $totalEngagement = $totalEngagements / 4;
-
+                                    $calculation = ($totalViews - $totalEngagement) / $totalEngagement;
                                     $engagementRate =
-                                        $totalViews > 0
-                                            ? (($totalViews - $totalEngagement) / $totalEngagement / 100 > 0
-                                                ? ($totalViews - $totalEngagement) / $totalEngagement / 100
+                                        $totalViews > 0 && $totalEngagement > 0
+                                            ? ($calculation / 100 > 0
+                                                ? $calculation / 100
                                                 : 0)
                                             : 0;
                                 @endphp
