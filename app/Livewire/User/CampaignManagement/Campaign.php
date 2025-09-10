@@ -69,7 +69,6 @@ class Campaign extends Component
     // Properties for track type filtering
     public $selectedTrackTypes = [];
     public $selectedTrackType = 'all';
-    public $genres = [];
     public $selectedGenres = [];
     public $showTrackTypes = false;
 
@@ -200,7 +199,6 @@ class Campaign extends Component
 
     public function mount()
     {
-        // $this->getAllGenres();
         $this->getAllTrackTypes();
         $this->totalCampaigns();
         $this->calculateFollowersLimit();
@@ -647,7 +645,6 @@ class Campaign extends Component
         }
 
         $this->showSubmitModal = true;
-        // $this->getAllGenres();
 
         try {
             if ($type === 'track') {

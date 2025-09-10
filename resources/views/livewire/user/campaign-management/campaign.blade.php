@@ -82,7 +82,6 @@
             <!-- Filter by genre dropdown -->
             <div class="relative">
                 <button @click="openFilterByGenre = !openFilterByGenre, openFilterByTrack = false"
-                    wire:click="getAllGenres"
                     class="bg-orange-100 hover:bg-orange-300 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -98,7 +97,7 @@
                         <path d="m6 9 6 6 6-6" />
                     </svg>
                 </button>
-                @if (!empty($genres))
+                @if (!empty(AllGenres()))
                     <div x-show="openFilterByGenre" x-transition:enter="transition ease-out duration-100"
                         x-transition:enter-start="transform opacity-0 scale-95"
                         x-transition:enter-end="transform opacity-100 scale-100"
@@ -115,7 +114,7 @@
                                         {{ $genre }}
                                     </span>
                                 @endforeach --}}
-                                @foreach ($genres as $genre)
+                                @foreach (AllGenres() as $genre)
                                     <span wire:click="toggleGenre('{{ $genre }}')"
                                         class="px-3 py-2 text-sm rounded-md cursor-pointer
                                             {{ in_array($genre, $selectedGenres) ? 'bg-orange-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300' }}">
@@ -361,8 +360,8 @@
                         @else
                             <img src="{{ asset('assets/favicons/fav icon 1.svg') }}" alt="{{ config('app.name') }}"
                                 class="w-12 dark:hidden" />
-                            <img src="{{ asset('assets/favicons/fav icon 2 (1).svg') }}" alt="{{ config('app.name') }}"
-                                class="w-12 hidden dark:block" />
+                            <img src="{{ asset('assets/favicons/fav icon 2 (1).svg') }}"
+                                alt="{{ config('app.name') }}" class="w-12 hidden dark:block" />
                         @endif
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
