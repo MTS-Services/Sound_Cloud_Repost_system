@@ -284,7 +284,7 @@
                 </div>
                 <div class="space-y-2">
                     <p class="text-2xl font-bold text-slate-700 dark:text-white">
-                        {{ $userFollowerAnalysis['averageCredibilityScore'] }}</p>
+                        {{ $userFollowerAnalysis['averageCredibilityScore'] }}%</p>
                     <p class="text-sm flex items-center space-x-1 text-green-400"><span>+3% from last week</span></p>
                 </div>
             </div>
