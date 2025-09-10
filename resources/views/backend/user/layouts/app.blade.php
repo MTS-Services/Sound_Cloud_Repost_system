@@ -5,22 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    @if (app_setting('favicon') && app_setting('favicon_dark'))
-        <link id="favicon" rel="icon" href="{{ storage_url(app_setting('favicon')) }}" type="image/x-icon">
-    @else
-        <link id="favicon" rel="icon" href="{{ asset('assets/favicons/fav icon 1.svg') }}" type="image/x-icon">
-    @endif
+    <link id="favicon" rel="icon" href="{{ storage_url(app_setting('favicon')) }}" type="image/x-icon">
 
     <script>
         function setFavicon(dark = false) {
             let favicon = document.getElementById('favicon');
             favicon.href = dark ?
-                "{{ storage_url(app_setting('favicon_dark')) }}" :
-                "{{ storage_url(app_setting('favicon')) }}";
+                "{{ app_setting('favicon_dark') ? storage_url(app_setting('favicon_dark')) : asset('assets/favicons/fav icon 2 (1).svg') }}" :
+                "{{ app_setting('favicon') ? storage_url(app_setting('favicon')) : asset('assets/favicons/fav icon 1.svg') }}";
         }
+        
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             setFavicon(true);
         }
+        
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
             setFavicon(e.matches);
         });
