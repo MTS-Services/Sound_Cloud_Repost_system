@@ -3,6 +3,8 @@
 namespace App\Livewire\User;
 
 use App\Events\UserNotificationSent;
+use App\Jobs\NotificationMailSent;
+use App\Mail\NotificationMails;
 use App\Models\CreditTransaction;
 use App\Models\CustomNotification;
 use App\Models\Playlist;
@@ -26,6 +28,7 @@ use Livewire\WithPagination;
 use App\Models\Feature;
 use App\Services\SoundCloud\SoundCloudService;
 use Illuminate\Auth\Events\Validated;
+use Illuminate\Support\Facades\Mail;
 
 class Member extends Component
 {
@@ -103,11 +106,11 @@ class Member extends Component
     public function updated($propertyName)
     {
         $this->validateOnly($propertyName);
-        
+
         $this->creditSpent = repostPrice($this->user)
             + ($this->likeable ? 2 : 0)
             + ($this->commentable ? 2 : 0);
-            
+
         if (userCredits() < $this->creditSpent) {
             $this->addError('credits', 'Your credits are not enough.');
             return;
@@ -358,8 +361,8 @@ class Member extends Component
     public function createRepostsRequest()
     {
         $this->validate();
-        $this->soundCloudService->ensureSoundCloudConnection(user());
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $this->soundCloudService->ensureSoundCloudConnection(user());
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $requester = user();
 
         if (!$this->user || !$this->track) {
@@ -454,6 +457,22 @@ class Member extends Component
 
                 broadcast(new UserNotificationSent($requesterNotification));
                 broadcast(new UserNotificationSent($targetUserNotification));
+                $repostEmailPermission =hasEmailSentPermission('em_new_repost', $this->user->urn);
+                if ($repostRequest && $creditTransaction && $repostEmailPermission) {
+                    $datas = [
+                        [
+                            'email' => $this->user->email,
+                            'subject' => 'Repost Request Received',
+                            'title' => 'Dear ' . $this->user->name,
+                            'body' => 'You have received a repost request from ' . $requester->name . ' for the track "' . $this->track->title . '".',
+                            'url' => route('user.reposts-request'),
+                        ],
+                    ];
+                    // NotificationMailSent::dispatch($datas);
+                    foreach ($datas as $mailData) {
+                        Mail::to($mailData['email'])->send(new NotificationMails($mailData));
+                    }
+                }
             });
             sleep(1);
             $this->closeRepostModal();

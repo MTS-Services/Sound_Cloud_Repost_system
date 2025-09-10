@@ -72,7 +72,7 @@
 
         .email-container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1020px;
             margin: 0 auto;
             background-color: #ffffff;
             border-radius: 10px;
@@ -83,7 +83,7 @@
         /* Header */
         .header {
             width: 100%;
-            background: linear-gradient(135deg, #ff6b35, #ff8c42);
+            border-bottom: #99999948 solid 1px;
             padding: 40px 20px;
             text-align: center;
         }
@@ -95,9 +95,9 @@
         }
 
         .logo {
-            width: 80px;
-            height: 80px;
-            background-color: #ffffff;
+            width: 300px;
+
+            /* background-color: #ffffff;
             border-radius: 50%;
             margin: 0 auto;
             display: inline-flex;
@@ -107,7 +107,7 @@
             font-weight: bold;
             color: #ff6b35;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            vertical-align: middle;
+            vertical-align: middle; */
         }
 
         /* Content */
@@ -117,10 +117,10 @@
         }
 
         .greeting {
-            font-size: 24px;
+            font-size: 20px;
             color: #333333;
             margin-bottom: 20px;
-            font-weight: 600;
+            font-weight: 500;
             line-height: 1.3;
         }
 
@@ -214,7 +214,7 @@
             display: inline-block;
             background: linear-gradient(135deg, #ff6b35, #ff8c42);
             color: white !important;
-            padding: 15px 30px;
+            padding: 12px 25px !important;
             text-decoration: none !important;
             border-radius: 25px;
             font-weight: 600;
@@ -259,8 +259,7 @@
 
         /* Footer */
         .footer {
-            background-color: #1a1a1a;
-            color: #999999;
+            border-top: 1px solid rgba(128, 128, 128, 0.397);
             padding: 20px;
             text-align: center;
             font-size: 12px;
@@ -296,9 +295,7 @@
             }
 
             .logo {
-                width: 60px !important;
-                height: 60px !important;
-                font-size: 16px !important;
+                width: 150px !important;
             }
 
             .content {
@@ -306,7 +303,7 @@
             }
 
             .greeting {
-                font-size: 20px !important;
+                font-size: 28px !important;
                 line-height: 1.4 !important;
             }
 
@@ -406,7 +403,7 @@
         @media only screen and (-webkit-min-device-pixel-ratio: 2),
         only screen and (min-resolution: 192dpi) {
             .logo {
-                font-size: 18px !important;
+                font-size: 100px !important;
             }
         }
 
@@ -442,7 +439,10 @@
             <!-- Header with Logo -->
             <div class="header">
                 <div class="logo-container">
-                    <div class="logo">LOGO</div>
+                    <a href="{{ url('/') }}">
+                        <img src="{{ storage_url(app_setting('app_logo')) }}" alt="{{ config('app.name') }}"
+                            class="logo">
+                    </a>
                 </div>
             </div>
 
@@ -450,87 +450,78 @@
             <div class="content">
                 <!-- Greeting -->
                 <div class="greeting">
-                    Dear John Smith,
+                    {{ $title ?? 'Hello there' }},
                 </div>
 
                 <!-- Message Body -->
-                <div class="message-body">
-                    We hope this email finds you well. We're excited to share some important updates with you regarding
-                    your account and recent activities. Your continued trust in our services means everything to us, and
-                    we're committed to providing you with the best possible experience.
-                    <br><br>
-                    Below you'll find detailed information about your recent transactions and account status. If you
-                    have any questions or concerns, please don't hesitate to reach out to our support team.
-                </div>
+                @isset($body)
+                    <div class="message-body">
+                        {{ $body ?? 'You have a new notification' }}
+                        <br><br>
+                        <p>Thank you for being an active part of our community!</p>
+                        <br>
+                        <p>Best regards,</p>
+                        <p>The {{ config('app.name') }} Team</p>
+                    </div>
+                @endisset
 
                 <!-- Data Table -->
-                <div class="table-container">
-                    <table class="data-table" role="table">
-                        <thead>
-                            <tr>
-                                <th>Transaction ID</th>
-                                <th>Date</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>#TXN001</td>
-                                <td>Sep 05, 2025</td>
-                                <td>$150.00</td>
-                                <td style="color: #27ae60; font-weight: 600;">Completed</td>
-                            </tr>
-                            <tr>
-                                <td>#TXN002</td>
-                                <td>Sep 03, 2025</td>
-                                <td>$75.50</td>
-                                <td style="color: #27ae60; font-weight: 600;">Completed</td>
-                            </tr>
-                            <tr>
-                                <td>#TXN003</td>
-                                <td>Sep 01, 2025</td>
-                                <td>$299.99</td>
-                                <td style="color: #f39c12; font-weight: 600;">Pending</td>
-                            </tr>
-                            <tr>
-                                <td>#TXN004</td>
-                                <td>Aug 30, 2025</td>
-                                <td>$45.25</td>
-                                <td style="color: #27ae60; font-weight: 600;">Completed</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                @isset($tableData)
+                    @foreach ($tableData as $data)
+                        <table class="data-table" role="table">
+                            <thead>
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#{{ $loop->iteration }}</td>
+                                    <td>{{ $data['created_at_formatted'] }}</td>
+                                    <td>${{ $data['amount'] }}</td>
+                                    <td>{{ $data['status_label'] }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    @endforeach
+                @endisset
+
 
                 <!-- Website Info -->
-                <div class="website-info">
-                    <h3>Website Information</h3>
-                    <div class="info-item">
-                        <span class="info-label">Website:</span>
-                        <span class="info-value">www.yourcompany.com</span>
+                @isset($websiteInfo)
+                    <div class="website-info">
+                        <h3>Website Information</h3>
+                        <div class="info-item">
+                            <span class="info-label">Website:</span>
+                            <span class="info-value">www.repostchain.com</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Support Email:</span>
+                            <span class="info-value">support@yourcompany.com</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Phone:</span>
+                            <span class="info-value">+1 (555) 123-4567</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Business Hours:</span>
+                            <span class="info-value">Monday - Friday, 9:00 AM - 6:00 PM EST</span>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label">Support Email:</span>
-                        <span class="info-value">support@yourcompany.com</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Phone:</span>
-                        <span class="info-value">+1 (555) 123-4567</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Business Hours:</span>
-                        <span class="info-value">Monday - Friday, 9:00 AM - 6:00 PM EST</span>
-                    </div>
-                </div>
+                @endisset
 
                 <!-- More Details Button -->
-                <div class="button-container">
-                    <a href="#" class="more-details-btn">View More Details</a>
-                </div>
+                @isset($url)
+                    <div class="button-container">
+                        <a href="{{ $url ?? '#' }}" class="more-details-btn">View More Details</a>
+                    </div>
+                @endisset
             </div>
 
-            <!-- Socket Section -->
+            {{-- <!-- Socket Section -->
             <div class="socket-section">
                 <h4>Connection Information</h4>
                 <div class="socket-grid">
@@ -539,7 +530,7 @@
                     <div class="socket-item">Protocol: HTTPS</div>
                     <div class="socket-item">Status: Connected</div>
                 </div>
-            </div>
+            </div> --}}
 
             <!-- Footer -->
             <div class="footer">
