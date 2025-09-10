@@ -457,7 +457,7 @@
                                                     <div
                                                         class="w-full bg-gray-300 dark:bg-slate-700 rounded-full h-1 sm:h-2">
                                                         <div class="bg-orange-500 h-1 sm:h-2 rounded-full transition-all duration-300"
-                                                            style="width: 78%;"></div>
+                                                            style="width: {{ $followerGrowth }}%;"></div>
                                                     </div>
                                                 </div>
 
