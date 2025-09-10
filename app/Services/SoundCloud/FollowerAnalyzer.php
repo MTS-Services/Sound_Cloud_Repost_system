@@ -312,10 +312,10 @@ class FollowerAnalyzer
     /**
      * Get quick stats for dashboard
      *
-     * @param Collection $followers
+     * @param $followers
      * @return array
      */
-    public function getQuickStats(Collection $followers): array
+    public function getQuickStats($followers): array
     {
         $result = $this->separateFollowers($followers);
 
