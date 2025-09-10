@@ -1271,11 +1271,13 @@ class Campaign extends Component
                             $query->whereIn('genre', $userGenres);
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
+                    $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
                     break;
 
                 case 'all':
                     $campaigns = $baseQuery
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage);
+                    $this->selectedGenres = [];
                     break;
                 default:
                     $campaigns = $baseQuery
@@ -1287,6 +1289,7 @@ class Campaign extends Component
                             $query->whereIn('genre', $userGenres);
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
+                    $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
                     break;
             }
 
