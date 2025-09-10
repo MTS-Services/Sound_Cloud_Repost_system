@@ -3,6 +3,7 @@
 namespace App\Livewire\User\CampaignManagement;
 
 use App\Jobs\NotificationMailSent;
+use App\Mail\NotificationMails;
 use App\Models\Campaign as ModelsCampaign;
 use App\Models\CreditTransaction;
 use App\Models\Feature;
@@ -26,6 +27,7 @@ use Throwable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\PlaylistTrack;
+use Illuminate\Support\Facades\Mail;
 
 class Campaign extends Component
 {
@@ -917,7 +919,7 @@ class Campaign extends Component
         $this->campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
         Log::info($this->campaign);
     }
-
+    
     public function repost($campaignId)
     {
         $this->soundCloudService->ensureSoundCloudConnection(user());
@@ -999,10 +1001,22 @@ class Campaign extends Component
                 'follow' => $follow_response ? $this->followed : false
             ];
             if ($response->successful()) {
-                // $repostEmailPermission =hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
-                // if ($repostEmailPermission) {
-                //     NotificationMailSent::dispatch();
-                // }
+                $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
+                if ($repostEmailPermission) {
+
+                    $datas = [
+                        [
+                            'email' => $campaign->user->email,
+                            'subject' => 'Repost Notification',
+                            'title' => 'Repost Notification',
+                            'body' => 'Your campaign has been reposted successfully.',
+                        ],
+                    ];
+                    // NotificationMailSent::dispatch($mailData);
+                    foreach ($datas as $mailData) {
+                        Mail::to($mailData['email'])->send(new NotificationMails($mailData));
+                    }
+                }
                 $soundcloudRepostId = $campaign->music->soundcloud_track_id;
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
                 $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.');

@@ -10,6 +10,7 @@ use App\Models\UserSocialInformation;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\Admin\UserManagement\UserService;
 use App\Services\PlaylistService;
+use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\TrackService;
 use Illuminate\Support\Facades\Log;
@@ -52,19 +53,41 @@ class MyAccount extends Component
     private TrackService $trackService;
     private PlaylistService $playlistService;
     private SoundCloudService $soundCloudService;
+    private FollowerAnalyzer $followerAnalyzer;
+
+    public $userFollowerAnalysis = [];
+
+    public $followerGrowth = 0;
 
     // Livewire v3: boot runs on every request (initial + subsequent)
-    public function boot(UserService $userService, CreditTransactionService $creditTransactionService, TrackService $trackService, SoundCloudService $soundCloudService, PlaylistService $playlistService): void
+    public function boot(UserService $userService, CreditTransactionService $creditTransactionService, TrackService $trackService, SoundCloudService $soundCloudService, PlaylistService $playlistService, FollowerAnalyzer $followerAnalyzer): void
     {
         $this->userService = $userService;
         $this->creditTransactionService = $creditTransactionService;
         $this->trackService = $trackService;
         $this->soundCloudService = $soundCloudService;
         $this->playlistService = $playlistService;
+        $this->followerAnalyzer = $followerAnalyzer;
     }
 
     public function mount($user_urn = null): void
     {
+        $followers = $this->soundCloudService->getAuthUserFollowers();
+        $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($followers);
+
+        $currentWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'this_month');
+        $lastWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'last_month');
+
+        $currentWeekFollowers = $currentWeekStats['totalFollowers'];
+        $lastWeekFollowers = $lastWeekStats['totalFollowers'];
+
+        if ($lastWeekFollowers > 0) {
+            $this->followerGrowth = ((($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100) > 0 ? ((($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100) : 0;
+        } else {
+            $this->followerGrowth = 0; // Avoid division by zero
+        }
+
+
         $this->user_urn = $user_urn ?? user()->urn;
 
         Log::info('MyAccount mount', ['user_urn' => $this->user_urn]);
