@@ -214,10 +214,10 @@ class FollowerAnalyzer
     /**
      * Calculate activity score
      *
-     * @param array $user
+     * @param  $user
      * @return array
      */
-    private function calculateActivityScore(array $user): array
+    private function calculateActivityScore($user): array
     {
         $totalActivity = ($user['public_favorites_count'] ?? 0) +
             ($user['reposts_count'] ?? 0) +
