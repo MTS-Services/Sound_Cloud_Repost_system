@@ -46,7 +46,7 @@
         const ctx = document.getElementById('performanceChart');
         if (!ctx) return;
 
-        if (this.performanceChart) {
+        if (this.performanceChart instanceof Chart) {
             this.performanceChart.destroy();
         }
 
@@ -157,8 +157,8 @@
         const ctx = document.getElementById('genreChart');
         if (!ctx) return;
 
-        if (this.genreChart) {
-            this.genreChart.destroy();
+        if (this.initGenreChart instanceof Chart) {
+            this.initGenreChart.destroy();
         }
 
         this.genreChart = new Chart(ctx.getContext('2d'), {
@@ -217,21 +217,18 @@
     init() {
         this.displayedData = $wire.data;
 
-        if (this.performanceChart) {
+        // Destroy existing charts before re-initializing
+        if (this.performanceChart instanceof Chart) {
             this.performanceChart.destroy();
-            this.performanceChart = null;
         }
-        if (this.genreChart) {
+        if (this.genreChart instanceof Chart) {
             this.genreChart.destroy();
-            this.genreChart = null;
         }
 
-        // Initialize charts after DOM is ready
         this.$nextTick(() => {
             if (typeof Chart !== 'undefined') {
                 this.initializeCharts();
             } else {
-                // Wait for Chart.js to load
                 const checkChart = () => {
                     if (typeof Chart !== 'undefined') {
                         this.initializeCharts();
@@ -243,21 +240,23 @@
             }
         });
 
-        this.$watch('$wire.data', (newData) => {
-            this.displayedData = newData;
-            this.dataCache = $wire.dataCache;
+        this.$watch('$wire.data', (newData, oldData) => {
+            if (JSON.stringify(newData) !== JSON.stringify(oldData)) {
+                this.displayedData = newData;
+                this.dataCache = $wire.dataCache;
+            }
         });
 
-        this.$watch('$wire.dataCache', (newCache) => {
-            this.dataCache = newCache;
-        });
-
-        // Listen for data updates
         Livewire.on('dataUpdated', () => {
             this.chartData = $wire.getChartData();
             this.genreBreakdown = $wire.genreBreakdown;
+
             this.$nextTick(() => {
-                this.updateCharts();
+                if (this.performanceChart) {
+                    this.updateCharts();
+                } else {
+                    this.initializeCharts();
+                }
             });
         });
     }
