@@ -610,7 +610,7 @@ class SoundCloudService
     }
 
 
-    public function getAuthUserFollowers(): Collection
+    public function getAuthUserFollowers()
     {
         $response = $this->makeApiRequest(
             user(),
