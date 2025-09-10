@@ -43,12 +43,13 @@
     },
 
     initPerformanceChart() {
-        const ctx = document.getElementById('performanceChart');
-        if (!ctx) return;
-
         if (this.performanceChart instanceof Chart) {
             this.performanceChart.destroy();
         }
+        const ctx = document.getElementById('performanceChart');
+        if (!ctx) return;
+
+
 
         this.performanceChart = new Chart(ctx.getContext('2d'), {
             type: 'line',
@@ -154,12 +155,13 @@
     },
 
     initGenreChart() {
-        const ctx = document.getElementById('genreChart');
-        if (!ctx) return;
-
         if (this.initGenreChart instanceof Chart) {
             this.initGenreChart.destroy();
         }
+        const ctx = document.getElementById('genreChart');
+        if (!ctx) return;
+
+
 
         this.genreChart = new Chart(ctx.getContext('2d'), {
             type: 'pie',
@@ -215,8 +217,6 @@
     },
 
     init() {
-        this.displayedData = $wire.data;
-
         // Destroy existing charts before re-initializing
         if (this.performanceChart instanceof Chart) {
             this.performanceChart.destroy();
@@ -224,6 +224,9 @@
         if (this.genreChart instanceof Chart) {
             this.genreChart.destroy();
         }
+        this.displayedData = $wire.data;
+
+
 
         this.$nextTick(() => {
             if (typeof Chart !== 'undefined') {
