@@ -46,6 +46,10 @@
         const ctx = document.getElementById('performanceChart');
         if (!ctx) return;
 
+        if (this.performanceChart) {
+            this.performanceChart.destroy();
+        }
+
         this.performanceChart = new Chart(ctx.getContext('2d'), {
             type: 'line',
             data: {
@@ -152,6 +156,10 @@
     initGenreChart() {
         const ctx = document.getElementById('genreChart');
         if (!ctx) return;
+
+        if (this.genreChart) {
+            this.genreChart.destroy();
+        }
 
         this.genreChart = new Chart(ctx.getContext('2d'), {
             type: 'pie',

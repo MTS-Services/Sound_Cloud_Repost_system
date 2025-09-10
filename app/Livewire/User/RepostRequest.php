@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User;
 
+use App\Mail\NotificationMails;
 use App\Models\CreditTransaction;
 use App\Models\RepostRequest as ModelsRepostRequest;
 use App\Models\Repost;
@@ -12,6 +13,7 @@ use App\Services\User\UserSettingsService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Throwable;
@@ -277,7 +279,7 @@ class RepostRequest extends Component
             }
 
             // Find the request and load its track
-            $request = ModelsRepostRequest::findOrFail($requestId)->load('track');
+            $request = ModelsRepostRequest::findOrFail($requestId)->load('track', 'requester');
 
             // Ensure track is associated with the request
             if (!$request->track) {
@@ -325,7 +327,22 @@ class RepostRequest extends Component
                 }
             }
             if ($response->successful()) {
-                // If SoundCloud returns a repost ID, capture it
+                $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $request->requester_urn);
+                if ($repostEmailPermission) {
+
+                    $datas = [
+                        [
+                            'email' => $request->requester->email,
+                            'subject' => 'Repost Request Accepted',
+                            'title' => 'Dear ' . $request->requester->name,
+                            'body' => 'Your request for repost has been accepted. Please login to your Repostchain account to listen to the music.',
+                        ],
+                    ];
+                    // NotificationMailSent::dispatch($mailData);
+                    foreach ($datas as $mailData) {
+                        Mail::to($mailData['email'])->send(new NotificationMails($mailData));
+                    }
+                }
                 $soundcloudRepostId = $response->json('id');
 
                 $trackOwnerUrn = $request->track->user?->urn ?? $request->user?->urn;
@@ -355,7 +372,7 @@ class RepostRequest extends Component
                     if ($this->followed) {
                         $repost->increment('followowers_count', 1);
                     }
-                    
+
                     $request->update([
                         'status' => ModelsRepostRequest::STATUS_APPROVED,
                         'completed_at' => now(),
@@ -414,6 +431,21 @@ class RepostRequest extends Component
                 'rejection_reason' => 'Declined by user',
                 'responded_at' => now(),
             ]);
+            $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $request?->requester_urn);
+            if ($repostEmailPermission) {
+                $datas = [
+                    [
+                        'email' => $request->requester->email,
+                        'subject' => 'Repost Declined',
+                        'title' => 'Dear ' . $request->requester->name,
+                        'body' => 'Your repost request has been declined.',
+                    ],
+                ];
+                // NotificationMailSent::dispatch($mailData);
+                foreach ($datas as $mailData) {
+                    Mail::to($mailData['email'])->send(new NotificationMails($mailData));
+                }
+            }
             $this->dataLoad();
             $this->dispatch('alert', type: 'success', message: 'Repost request declined successfully.');
         } catch (Throwable $e) {

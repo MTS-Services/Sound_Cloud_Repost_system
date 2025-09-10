@@ -919,7 +919,7 @@ class Campaign extends Component
         $this->campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
         Log::info($this->campaign);
     }
-    
+
     public function repost($campaignId)
     {
         $this->soundCloudService->ensureSoundCloudConnection(user());
@@ -1008,14 +1008,14 @@ class Campaign extends Component
                         [
                             'email' => $campaign->user->email,
                             'subject' => 'Repost Notification',
-                            'title' => 'Repost Notification',
-                            'body' => 'Your campaign has been reposted successfully.',
+                            'title' => 'Dear ' . $campaign->user->name,
+                            'body' => 'Your' . $campaign->title . 'campaign has been reposted successfully.',
                         ],
                     ];
-                    // NotificationMailSent::dispatch($mailData);
-                    foreach ($datas as $mailData) {
-                        Mail::to($mailData['email'])->send(new NotificationMails($mailData));
-                    }
+                    NotificationMailSent::dispatch($datas);
+                    // foreach ($datas as $mailData) {
+                    //     Mail::to($mailData['email'])->send(new NotificationMails($mailData));
+                    // }
                 }
                 $soundcloudRepostId = $campaign->music->soundcloud_track_id;
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
@@ -1276,6 +1276,7 @@ class Campaign extends Component
                             $query->whereIn('genre', $userGenres);
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
+                    $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
                     break;
 
                 case 'recommended':

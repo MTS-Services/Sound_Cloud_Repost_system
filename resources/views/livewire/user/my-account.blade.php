@@ -982,19 +982,17 @@
                                                                     {{-- Track Title --}}
                                                                     <h3
                                                                         class="text-base font-semibold text-gray-900 dark:text-white mt-1 truncate">
-                                                                        <a href="#"
-                                                                            class="hover:text-orange-500 dark:hover:text-orange-400">
-                                                                            {{ $repost->source->title ?? 'Untitled Track' }}
+                                                                        <a href="javascript:void(0)"
+                                                                            class="hover:text-orange-500 dark:hover:text-orange-400 line-clamp-1">
+                                                                            {{ Str::limit($repost->source?->title, 50) ?? 'Untitled Track' }}
                                                                         </a>
                                                                     </h3>
                                                                     {{-- Genre --}}
                                                                     <div class="flex flex-wrap gap-2 mt-1">
-                                                                        @foreach (array_slice(explode(',', $repost->source->genre ?? 'Unknown Genre'), 0, 3) as $genre)
-                                                                            <span
-                                                                                class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
-                                                                                {{ trim($genre) }}
-                                                                            </span>
-                                                                        @endforeach
+                                                                        <span
+                                                                            class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
+                                                                            {{ !empty($repost->source?->genre) ? $repost->source?->genre : 'Unknown Genre' }}
+                                                                        </span>
                                                                     </div>
                                                                 </div>
                                                             </div>
