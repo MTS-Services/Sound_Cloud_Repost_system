@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Throwable;
 use App\Models\Feature;
+use App\Services\User\AnalyticsService;
 
 use function PHPSTORM_META\type;
 
@@ -27,6 +28,7 @@ class Dashboard extends Component
     protected SoundCloudService $soundCloudService;
 
     protected MyCampaignService $myCampaignService;
+    protected AnalyticsService $analyticsService;
 
     public $total_credits;
     public $totalCount;
@@ -125,11 +127,12 @@ class Dashboard extends Component
         ];
     }
 
-    public function boot(CreditTransactionService $creditTransactionService, SoundCloudService $soundCloudService, MyCampaignService $myCampaignService)
+    public function boot(CreditTransactionService $creditTransactionService, SoundCloudService $soundCloudService, MyCampaignService $myCampaignService, AnalyticsService $analyticsService)
     {
         $this->creditTransactionService = $creditTransactionService;
         $this->soundCloudService = $soundCloudService;
         $this->myCampaignService = $myCampaignService;
+        $this->analyticsService = $analyticsService;
     }
 
     public function mount()
@@ -574,6 +577,23 @@ class Dashboard extends Component
                 'user_urn' => user()->urn ?? 'N/A',
             ]);
             $this->dispatch('alert', type: 'error', message: 'Failed to decline repost request. Please try again.');
+        }
+    }
+
+    // Analytics data
+    public function getChartData(): array
+    {
+        try {
+            return $this->analyticsService->getChartData(
+                'last_month',
+                null,
+                [],
+                null,
+                null
+            );
+        } catch (\Exception $e) {
+            logger()->error('Chart data loading failed', ['error' => $e->getMessage()]);
+            return [];
         }
     }
 
