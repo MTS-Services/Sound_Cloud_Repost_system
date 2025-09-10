@@ -1003,7 +1003,6 @@ class Campaign extends Component
             if ($response->successful()) {
                 $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
                 if ($repostEmailPermission) {
-
                     $datas = [
                         [
                             'email' => $campaign->user->email,

@@ -361,8 +361,8 @@ class Member extends Component
     public function createRepostsRequest()
     {
         $this->validate();
-        // $this->soundCloudService->ensureSoundCloudConnection(user());
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->ensureSoundCloudConnection(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $requester = user();
 
         if (!$this->user || !$this->track) {

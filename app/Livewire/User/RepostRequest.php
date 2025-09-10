@@ -431,7 +431,7 @@ class RepostRequest extends Component
                 'rejection_reason' => 'Declined by user',
                 'responded_at' => now(),
             ]);
-            $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $request?->requester_urn);
+            $repostEmailPermission = hasEmailSentPermission('em_repost_declined', $request?->requester_urn);
             if ($repostEmailPermission) {
                 $datas = [
                     [
