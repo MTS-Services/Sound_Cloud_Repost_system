@@ -82,7 +82,7 @@ class MyAccount extends Component
         $lastWeekFollowers = $lastWeekStats['totalFollowers'];
 
         if ($lastWeekFollowers > 0) {
-            $this->followerGrowth = (($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100;
+            $this->followerGrowth = ((($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100) > 0 ? ((($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100) : 0;
         } else {
             $this->followerGrowth = 0; // Avoid division by zero
         }
