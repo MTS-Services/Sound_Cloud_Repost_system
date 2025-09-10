@@ -4,14 +4,12 @@ namespace App\Services\User\CampaignManagement;
 
 use App\Events\UserNotificationSent;
 use App\Jobs\NotificationMailSent;
-use App\Mail\NotificationMails;
 use App\Models\Campaign;
 use App\Models\CreditTransaction;
 use App\Models\CustomNotification;
 use App\Models\Repost;
 use App\Services\User\AnalyticsService;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use Throwable;
 
 class CampaignService
@@ -65,9 +63,6 @@ class CampaignService
                         ],
                     ];
                     NotificationMailSent::dispatch($datas);
-                    // foreach ($datas as $mailData) {
-                    //     Mail::to($mailData['email'])->send(new NotificationMails($mailData));
-                    // }
                 }
 
 

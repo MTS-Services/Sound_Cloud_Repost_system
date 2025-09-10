@@ -4,7 +4,6 @@ namespace App\Livewire\User;
 
 use App\Events\UserNotificationSent;
 use App\Jobs\NotificationMailSent;
-use App\Mail\NotificationMails;
 use App\Models\CreditTransaction;
 use App\Models\CustomNotification;
 use App\Models\Playlist;
@@ -27,8 +26,6 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Feature;
 use App\Services\SoundCloud\SoundCloudService;
-use Illuminate\Auth\Events\Validated;
-use Illuminate\Support\Facades\Mail;
 
 class Member extends Component
 {
@@ -468,10 +465,7 @@ class Member extends Component
                             'url' => route('user.reposts-request'),
                         ],
                     ];
-                    // NotificationMailSent::dispatch($datas);
-                    foreach ($datas as $mailData) {
-                        Mail::to($mailData['email'])->send(new NotificationMails($mailData));
-                    }
+                    NotificationMailSent::dispatch($datas);
                 }
             });
             sleep(1);

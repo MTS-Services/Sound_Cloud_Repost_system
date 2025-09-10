@@ -3,7 +3,6 @@
 namespace App\Livewire\User;
 
 use App\Jobs\NotificationMailSent;
-use App\Mail\NotificationMails;
 use App\Models\CreditTransaction;
 use App\Models\Payment;
 use App\Models\User;
@@ -13,9 +12,7 @@ use App\Models\UserSetting;
 use App\Models\UserSocialInformation;
 use App\Services\User\UserSettingsService;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
@@ -425,9 +422,6 @@ class Settings extends Component
                     ],
                 ];
                 NotificationMailSent::dispatch($datas);
-                // foreach ($datas as $mailData) {
-                //     Mail::to($mailData['email'])->send(new NotificationMails($mailData));
-                // }
             }
             return redirect()->route('f.landing')->with('success', 'Account deleted successfully!');
         } catch (\Throwable $e) {
