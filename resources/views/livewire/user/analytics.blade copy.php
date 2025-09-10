@@ -37,195 +37,159 @@
         $wire.set('filter', newFilter);
     },
 
-    // Properly destroy existing charts before creating new ones
-    destroyCharts() {
-        if (this.performanceChart) {
-            this.performanceChart.destroy();
-            this.performanceChart = null;
-        }
-        if (this.genreChart) {
-            this.genreChart.destroy();
-            this.genreChart = null;
-        }
-    },
-
     initializeCharts() {
-        // Always destroy existing charts first
-        this.destroyCharts();
-
-        // Wait a tick to ensure DOM is ready
-        this.$nextTick(() => {
-            this.initPerformanceChart();
-            this.initGenreChart();
-        });
+        this.initPerformanceChart();
+        this.initGenreChart();
     },
 
     initPerformanceChart() {
         const ctx = document.getElementById('performanceChart');
-        if (!ctx) {
-            console.warn('Performance chart canvas not found');
-            return;
-        }
+        if (!ctx) return;
 
-        // Double-check that any existing chart is destroyed
         if (this.performanceChart) {
             this.performanceChart.destroy();
-            this.performanceChart = null;
         }
 
-        try {
-            this.performanceChart = new Chart(ctx.getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: this.chartData.length > 0 ? this.chartData.map(item => {
-                        const date = new Date(item.date);
-                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                    }) : ['No Data'],
-                    datasets: [{
-                        label: 'Views',
-                        data: this.chartData.length > 0 ? this.chartData.map(item => item.total_views || 0) : [0],
-                        borderColor: '#E9E294',
-                        backgroundColor: 'rgba(233, 226, 148, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#E9E294',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#E9E294',
-                    }, {
-                        label: 'Streams',
-                        data: this.chartData.length > 0 ? this.chartData.map(item => item.total_plays || 0) : [0],
-                        borderColor: '#ff6b35',
-                        backgroundColor: 'rgba(255, 107, 53, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#ff6b35',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#ff6b35',
-                    }, {
-                        label: 'Likes',
-                        data: this.chartData.length > 0 ? this.chartData.map(item => item.total_likes || 0) : [0],
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#10b981',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#10b981',
-                    }, {
-                        label: 'Reposts',
-                        data: this.chartData.length > 0 ? this.chartData.map(item => item.total_reposts || 0) : [0],
-                        borderColor: '#8b5cf6',
-                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#8b5cf6',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#8b5cf6',
-                    }, {
-                        label: 'Comments',
-                        data: this.chartData.length > 0 ? this.chartData.map(item => item.total_comments || 0) : [0],
-                        borderColor: '#f59e0b',
-                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#f59e0b',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#f59e0b',
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            align: 'center',
-                            labels: {
-                                boxWidth: 12,
-                                font: {
-                                    size: 12
-                                }
+        this.performanceChart = new Chart(ctx.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: this.chartData.length > 0 ? this.chartData.map(item => {
+                    const date = new Date(item.date);
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                }) : ['No Data'],
+                datasets: [{
+                    label: 'Views',
+                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_views || 0) : [0],
+                    borderColor: '#E9E294',
+                    backgroundColor: 'rgba(233, 226, 148, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#E9E294',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#E9E294',
+                }, {
+                    label: 'Streams',
+                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_plays || 0) : [0],
+                    borderColor: '#ff6b35',
+                    backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#ff6b35',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#ff6b35',
+                }, {
+                    label: 'Likes',
+                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_likes || 0) : [0],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#10b981',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#10b981',
+                }, {
+                    label: 'Reposts',
+                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_reposts || 0) : [0],
+                    borderColor: '#8b5cf6',
+                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#8b5cf6',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#8b5cf6',
+                }, {
+                    label: 'Comments',
+                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_comments || 0) : [0],
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#f59e0b',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#f59e0b',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'center',
+                        labels: {
+                            {{-- color: '#e2e8f0', --}}
+                            boxWidth: 12,
+                            font: {
+                                size: 12
                             }
-                        },
-                        tooltip: {
-                            backgroundColor: '#0f172a',
-                            titleColor: '#ffffff',
-                            bodyColor: '#cbd5e1',
-                            borderColor: '#334155',
-                            borderWidth: 1,
-                            padding: 12,
-                            cornerRadius: 8,
                         }
                     },
-                    scales: {
-                        x: {
-                            grid: { color: '#374151' },
-                            ticks: { color: '#9ca3af' }
-                        },
-                        y: {
-                            grid: { color: '#374151' },
-                            ticks: { color: '#9ca3af' }
-                        }
+                    tooltip: {
+                        backgroundColor: '#0f172a',
+                        titleColor: '#ffffff',
+                        bodyColor: '#cbd5e1',
+                        borderColor: '#334155',
+                        borderWidth: 1,
+                        padding: 12,
+                        cornerRadius: 8,
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: '#374151' },
+                        ticks: { color: '#9ca3af' }
+                    },
+                    y: {
+                        grid: { color: '#374151' },
+                        ticks: { color: '#9ca3af' }
                     }
                 }
-            });
-        } catch (error) {
-            console.error('Error creating performance chart:', error);
-        }
+            }
+        });
     },
 
     initGenreChart() {
         const ctx = document.getElementById('genreChart');
-        if (!ctx) {
-            console.warn('Genre chart canvas not found');
-            return;
-        }
+        if (!ctx) return;
 
-        // Double-check that any existing chart is destroyed
         if (this.genreChart) {
             this.genreChart.destroy();
-            this.genreChart = null;
         }
 
-        try {
-            this.genreChart = new Chart(ctx.getContext('2d'), {
-                type: 'pie',
-                data: {
-                    labels: this.genreBreakdown.length > 0 ? this.genreBreakdown.map(item => item.genre) : ['No Data'],
-                    datasets: [{
-                        data: this.genreBreakdown.length > 0 ? this.genreBreakdown.map(item => item.percentage) : [100],
-                        backgroundColor: this.genreBreakdown.length > 0 ? ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'].slice(0, this.genreBreakdown.length) : ['#9ca3af'],
-                        borderColor: '#1f2937',
-                        borderWidth: 2,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return (context.label || '') + ': ' + (context.parsed || 0) + '%';
-                                }
+        this.genreChart = new Chart(ctx.getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: this.genreBreakdown.length > 0 ? this.genreBreakdown.map(item => item.genre) : ['No Data'],
+                datasets: [{
+                    data: this.genreBreakdown.length > 0 ? this.genreBreakdown.map(item => item.percentage) : [100],
+                    backgroundColor: this.genreBreakdown.length > 0 ? ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'].slice(0, this.genreBreakdown.length) : ['#9ca3af'],
+                    borderColor: '#1f2937',
+                    borderWidth: 2,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return (context.label || '') + ': ' + (context.parsed || 0) + '%';
                             }
                         }
                     }
                 }
-            });
-        } catch (error) {
-            console.error('Error creating genre chart:', error);
-        }
+            }
+        });
     },
 
     updateCharts() {
-        // Update performance chart data if it exists
         if (this.performanceChart) {
             this.performanceChart.data.labels = this.chartData.length > 0 ? this.chartData.map(item => {
                 const date = new Date(item.date);
@@ -241,13 +205,11 @@
             this.performanceChart.update();
         }
 
-        // Update genre chart data if it exists
         if (this.genreChart) {
             this.genreChart.data.labels = this.genreBreakdown.length > 0 ?
                 this.genreBreakdown.map(item => item.genre) : ['No Data'];
             this.genreChart.data.datasets[0].data = this.genreBreakdown.length > 0 ?
                 this.genreBreakdown.map(item => item.percentage) : [100];
-            this.genreChart.data.datasets[0].backgroundColor = this.genreBreakdown.length > 0 ? ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'].slice(0, this.genreBreakdown.length) : ['#9ca3af'];
             this.genreChart.update();
         }
     },
@@ -255,35 +217,23 @@
     init() {
         this.displayedData = $wire.data;
 
-        // Initialize charts with proper error handling and timing
-        const initCharts = () => {
+        // Initialize charts after DOM is ready
+        this.$nextTick(() => {
             if (typeof Chart !== 'undefined') {
                 this.initializeCharts();
             } else {
-                // Wait for Chart.js to load with timeout
-                let attempts = 0;
-                const maxAttempts = 50; // 5 seconds maximum wait
-
+                // Wait for Chart.js to load
                 const checkChart = () => {
-                    attempts++;
                     if (typeof Chart !== 'undefined') {
                         this.initializeCharts();
-                    } else if (attempts < maxAttempts) {
-                        setTimeout(checkChart, 100);
                     } else {
-                        console.error('Chart.js failed to load after 5 seconds');
+                        setTimeout(checkChart, 100);
                     }
                 };
                 checkChart();
             }
-        };
-
-        // Use $nextTick to ensure DOM is fully rendered
-        this.$nextTick(() => {
-            initCharts();
         });
 
-        // Watch for data changes
         this.$watch('$wire.data', (newData) => {
             this.displayedData = newData;
             this.dataCache = $wire.dataCache;
@@ -293,7 +243,7 @@
             this.dataCache = newCache;
         });
 
-        // Listen for data updates from Livewire
+        // Listen for data updates
         Livewire.on('dataUpdated', () => {
             this.chartData = $wire.getChartData();
             this.genreBreakdown = $wire.genreBreakdown;
@@ -301,18 +251,6 @@
                 this.updateCharts();
             });
         });
-
-        // Clean up charts when component is destroyed
-        this.$watch('$el', (newEl) => {
-            if (!newEl) {
-                this.destroyCharts();
-            }
-        });
-    },
-
-    // Cleanup method (call this if you need to manually destroy charts)
-    cleanup() {
-        this.destroyCharts();
     }
 }">
     <x-slot name="page_slug">analytics</x-slot>
