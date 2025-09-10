@@ -1,15 +1,11 @@
 <div x-data="{
     showGrowthTips: @entangle('showGrowthTips').live,
     showFilters: @entangle('showFilters').live,
+
     selectedFilter: '{{ $filter }}',
     dataCache: {{ Js::from($dataCache) }},
     displayedData: null,
-    chartData: {{ Js::from($this->getChartData()) }},
-    genreBreakdown: {{ Js::from($genreBreakdown) }},
 
-    // Chart instances
-    performanceChart: null,
-    genreChart: null,
 
     changeFilter(newFilter) {
         let cacheKey = newFilter;
@@ -20,14 +16,33 @@
         if (this.dataCache[cacheKey]) {
             this.displayedData = this.dataCache[cacheKey];
         } else {
+            // Show loading state for all data
             this.displayedData = {
                 overall_metrics: {
-                    total_plays: { current_total: 'Loading...', change_rate: null },
-                    total_likes: { current_total: 'Loading...', change_rate: null },
-                    total_reposts: { current_total: 'Loading...', change_rate: null },
-                    total_comments: { current_total: 'Loading...', change_rate: null },
-                    total_views: { current_total: 'Loading...', change_rate: null },
-                    total_followers: { current_total: 'Loading...', change_rate: null },
+                    total_plays: {
+                        current_total: 'Loading...',
+                        change_rate: null
+                    },
+                    total_likes: {
+                        current_total: 'Loading...',
+                        change_rate: null
+                    },
+                    total_reposts: {
+                        current_total: 'Loading...',
+                        change_rate: null
+                    },
+                    total_comments: {
+                        current_total: 'Loading...',
+                        change_rate: null
+                    },
+                    total_views: {
+                        current_total: 'Loading...',
+                        change_rate: null
+                    },
+                    total_followers: {
+                        current_total: 'Loading...',
+                        change_rate: null
+                    },
                 },
                 track_metrics: []
             };
@@ -37,173 +52,9 @@
         $wire.set('filter', newFilter);
     },
 
-    initializeCharts() {
-        this.initPerformanceChart();
-        this.initGenreChart();
-    },
-
-    initPerformanceChart() {
-        const ctx = document.getElementById('performanceChart');
-        if (!ctx) return;
-
-        this.performanceChart = new Chart(ctx.getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: this.chartData.length > 0 ? this.chartData.map(item => {
-                    const date = new Date(item.date);
-                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                }) : ['No Data'],
-                datasets: [{
-                    label: 'Views',
-                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_views || 0) : [0],
-                    borderColor: '#E9E294',
-                    backgroundColor: 'rgba(233, 226, 148, 0.1)',
-                    tension: 0.4,
-                    fill: true,
-                    pointBackgroundColor: '#E9E294',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: '#E9E294',
-                }, {
-                    label: 'Streams',
-                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_plays || 0) : [0],
-                    borderColor: '#ff6b35',
-                    backgroundColor: 'rgba(255, 107, 53, 0.1)',
-                    tension: 0.4,
-                    fill: true,
-                    pointBackgroundColor: '#ff6b35',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: '#ff6b35',
-                }, {
-                    label: 'Likes',
-                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_likes || 0) : [0],
-                    borderColor: '#10b981',
-                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                    tension: 0.4,
-                    fill: true,
-                    pointBackgroundColor: '#10b981',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: '#10b981',
-                }, {
-                    label: 'Reposts',
-                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_reposts || 0) : [0],
-                    borderColor: '#8b5cf6',
-                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                    tension: 0.4,
-                    fill: true,
-                    pointBackgroundColor: '#8b5cf6',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: '#8b5cf6',
-                }, {
-                    label: 'Comments',
-                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_comments || 0) : [0],
-                    borderColor: '#f59e0b',
-                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                    tension: 0.4,
-                    fill: true,
-                    pointBackgroundColor: '#f59e0b',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: '#f59e0b',
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: {
-                        grid: { color: '#374151' },
-                        ticks: { color: '#9ca3af' }
-                    },
-                    y: {
-                        grid: { color: '#374151' },
-                        ticks: { color: '#9ca3af' }
-                    }
-                }
-            }
-        });
-    },
-
-    initGenreChart() {
-        const ctx = document.getElementById('genreChart');
-        if (!ctx) return;
-
-        this.genreChart = new Chart(ctx.getContext('2d'), {
-            type: 'pie',
-            data: {
-                labels: this.genreBreakdown.length > 0 ? this.genreBreakdown.map(item => item.genre) : ['No Data'],
-                datasets: [{
-                    data: this.genreBreakdown.length > 0 ? this.genreBreakdown.map(item => item.percentage) : [100],
-                    backgroundColor: this.genreBreakdown.length > 0 ? ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'].slice(0, this.genreBreakdown.length) : ['#9ca3af'],
-                    borderColor: '#1f2937',
-                    borderWidth: 2,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return (context.label || '') + ': ' + (context.parsed || 0) + '%';
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    },
-
-    updateCharts() {
-        if (this.performanceChart) {
-            this.performanceChart.data.labels = this.chartData.length > 0 ? this.chartData.map(item => {
-                const date = new Date(item.date);
-                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            }) : ['No Data'];
-
-            const metrics = ['total_views', 'total_plays', 'total_likes', 'total_reposts', 'total_comments'];
-            this.performanceChart.data.datasets.forEach((dataset, index) => {
-                dataset.data = this.chartData.length > 0 ?
-                    this.chartData.map(item => item[metrics[index]] || 0) : [0];
-            });
-
-            this.performanceChart.update();
-        }
-
-        if (this.genreChart) {
-            this.genreChart.data.labels = this.genreBreakdown.length > 0 ?
-                this.genreBreakdown.map(item => item.genre) : ['No Data'];
-            this.genreChart.data.datasets[0].data = this.genreBreakdown.length > 0 ?
-                this.genreBreakdown.map(item => item.percentage) : [100];
-            this.genreChart.update();
-        }
-    },
-
     init() {
         this.displayedData = $wire.data;
-
-        // Initialize charts after DOM is ready
-        this.$nextTick(() => {
-            if (typeof Chart !== 'undefined') {
-                this.initializeCharts();
-            } else {
-                // Wait for Chart.js to load
-                const checkChart = () => {
-                    if (typeof Chart !== 'undefined') {
-                        this.initializeCharts();
-                    } else {
-                        setTimeout(checkChart, 100);
-                    }
-                };
-                checkChart();
-            }
-        });
+        console.log(this.displayedData);
 
         this.$watch('$wire.data', (newData) => {
             this.displayedData = newData;
@@ -212,15 +63,6 @@
 
         this.$watch('$wire.dataCache', (newCache) => {
             this.dataCache = newCache;
-        });
-
-        // Listen for data updates
-        Livewire.on('dataUpdated', () => {
-            this.chartData = $wire.getChartData();
-            this.genreBreakdown = $wire.genreBreakdown;
-            this.$nextTick(() => {
-                this.updateCharts();
-            });
         });
     }
 }">
@@ -274,6 +116,29 @@
         </div>
     </div>
 
+    {{-- Custom Date Range --}}
+    {{-- @if ($filter === 'date_range')
+        <div
+            class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Custom Date Range</h3>
+            <div class="flex flex-col sm:flex-row gap-4">
+                <div class="flex-1">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Start Date</label>
+                    <input type="date" wire:model.live="startDate"
+                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35]">
+                </div>
+                <div class="flex-1">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">End Date</label>
+                    <input type="date" wire:model.live="endDate"
+                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35]">
+                </div>
+            </div>
+            @error('dateRange')
+                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+            @enderror
+        </div>
+    @endif --}}
+
     {{-- Growth Tips --}}
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6 mt-6"
         x-show="showGrowthTips" x-cloak x-transition:enter="transition ease-out duration-300"
@@ -294,8 +159,6 @@
                 <x-lucide-x class="w-6 h-6 text-gray-400" />
             </button>
         </div>
-
-        {{-- Growth Tips Content (keeping original design) --}}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
             <div
                 class="bg-gray-50 dark:bg-gray-700 rounded-lg p-5 shadow-sm border border-gray-100 dark:border-gray-600 hover:shadow-md transition-shadow">
@@ -310,7 +173,35 @@
                         </svg>
                     </div>
                     <div class="flex-1">
-                        <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Optimize Your Release Timing</h4>
+                        <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Optimize Your Release
+                            Timing
+                        </h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Your tracks perform 40% better
+                            when released on Fridays. Your audience is most active between 6-8 PM.</p>
+                        <div class="bg-gray-100 dark:bg-gray-600 rounded-lg p-3">
+                            <p class="text-sm font-medium text-[#ff6b35]">💡 Action Step:</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Schedule your next release
+                                for Friday at 6 PM and promote it 2 days in advance on social media.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="bg-gray-50 dark:bg-gray-700 rounded-lg p-5 shadow-sm border border-gray-100 dark:border-gray-600 hover:shadow-md transition-shadow">
+                <div class="flex items-start">
+                    <div class="p-2 rounded-lg bg-[#ff6b35] text-white mr-4 flex-shrink-0"><svg
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" class="lucide lucide-users h-5 w-5">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg></div>
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Boost Your Electronic
+                            Tracks
+                        </h4>
                         <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Your Electronic genre tracks
                             have the highest engagement rate. Focus more content in this style.</p>
                         <div class="bg-gray-100 dark:bg-gray-600 rounded-lg p-3">
@@ -321,7 +212,6 @@
                     </div>
                 </div>
             </div>
-
             <div
                 class="bg-gray-50 dark:bg-gray-700 rounded-lg p-5 shadow-sm border border-gray-100 dark:border-gray-600 hover:shadow-md transition-shadow">
                 <div class="flex items-start">
@@ -335,7 +225,9 @@
                         </svg>
                     </div>
                     <div class="flex-1">
-                        <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Leverage Your Top Performer</h4>
+                        <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Leverage Your Top
+                            Performer
+                        </h4>
                         <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Your top track is gaining
                             momentum. Use its success to promote other tracks.</p>
                         <div class="bg-gray-100 dark:bg-gray-600 rounded-lg p-3">
@@ -346,20 +238,19 @@
                     </div>
                 </div>
             </div>
-
             <div
                 class="bg-gray-50 dark:bg-gray-700 rounded-lg p-5 shadow-sm border border-gray-100 dark:border-gray-600 hover:shadow-md transition-shadow">
                 <div class="flex items-start">
-                    <div class="p-2 rounded-lg bg-[#ff6b35] text-white mr-4 flex-shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    <div class="p-2 rounded-lg bg-[#ff6b35] text-white mr-4 flex-shrink-0"><svg
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round" class="lucide lucide-trending-up h-5 w-5">
                             <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
                             <polyline points="16 7 22 7 22 13"></polyline>
-                        </svg>
-                    </div>
+                        </svg></div>
                     <div class="flex-1">
-                        <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Improve Underperforming Tracks
+                        <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Improve Underperforming
+                            Tracks
                         </h4>
                         <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Some tracks need fresh
                             promotion strategies to regain momentum.</p>
@@ -372,23 +263,20 @@
                 </div>
             </div>
         </div>
-
         <div class="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-100 dark:border-gray-600">
             <div class="flex items-center justify-between">
                 <div>
                     <h4 class="font-semibold text-gray-900 dark:text-white">Want More Personalized Tips?</h4>
                     <p class="text-sm text-gray-600 dark:text-gray-400">Get AI-powered recommendations based on
                         your specific performance data</p>
-                </div>
-                <button
-                    class="px-4 py-2 bg-[#ff6b35] text-white rounded-lg text-sm font-medium hover:bg-[#ff8c42] transition-colors">
-                    Get Premium Tips
-                </button>
+                </div><button
+                    class="px-4 py-2 bg-[#ff6b35] text-white rounded-lg text-sm font-medium hover:bg-[#ff8c42] transition-colors">Get
+                    Premium Tips</button>
             </div>
         </div>
     </div>
 
-    {{-- Filters --}}
+    {{-- Filters  --}}
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6"
         x-show="showFilters" x-cloak x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="transform opacity-0" x-transition:enter-end="transform opacity-100"
@@ -821,13 +709,12 @@
                 <h4 class="font-semibold text-gray-900 dark:text-white mb-4">Recent Achievements</h4>
                 <div class="space-y-3">
                     @if (isset($data['detailed']) && !empty($data['detailed']))
-                        @if (($data['detailed']['overall_metrics']['total_views']['current_total'] ?? 0) > 10000)
+                        @if (($data['detailed']['total_views']['current_total'] ?? 0) > 10000)
                             <div class="flex items-center">
                                 <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
                                 <span class="text-sm text-gray-600 dark:text-gray-400">Reached
-                                    {{ number_format($data['detailed']['overall_metrics']['total_views']['current_total']) }}
-                                    total
-                                    views!</span>
+                                    {{ number_format($data['detailed']['total_views']['current_total']) }} total
+                                    streams!</span>
                             </div>
                         @endif
                         @if (($data['streams_change'] ?? 0) > 10)
@@ -857,7 +744,7 @@
         </div>
     </div>
 
-    <!-- Track Performance Table with Pagination -->
+    <!-- Track Performance Table -->
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Your Tracks Performance</h3>
@@ -913,7 +800,114 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    @forelse($paginatedTracks as $track)
+
+                    <template
+                        x-if="displayedData && displayedData.detailed && displayedData.detailed.track_metrics.length > 0">
+                        <template x-for="track in displayedData.detailed.track_metrics" :key="track.track_urn">
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div
+                                            class="w-2 h-8 rounded-full mr-3 bg-gradient-to-b from-[#ff6b35] to-[#ff8c42]">
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-900 dark:text-white"
+                                                x-text="track.track_details.title"></div>
+                                            <div class="text-sm text-gray-500 dark:text-gray-400"
+                                                x-text="`${track.track_details.genre} • You`"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-bold text-gray-900 dark:text-white"
+                                        x-text="Number(track.metrics.total_views.current_total).toLocaleString()">
+                                    </div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">streams</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="inline-flex items-center text-sm font-medium"
+                                        :class="{
+                                            'text-green-400': track.metrics.total_views.change_rate >
+                                                0,
+                                            'text-red-400': track.metrics.total_views.change_rate <
+                                                0,
+                                            'text-gray-500': track.metrics.total_views.change_rate == 0
+                                        }">
+                                        <template x-if="track.metrics.total_views.change_rate > 0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-trending-up h-4 w-4 mr-1">
+                                                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                                                <polyline points="16 7 22 7 22 13"></polyline>
+                                            </svg>
+                                        </template>
+                                        <template x-if="track.metrics.total_views.change_rate < 0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-trending-down h-4 w-4 mr-1">
+                                                <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline>
+                                                <polyline points="16 17 22 17 22 11"></polyline>
+                                            </svg>
+                                        </template>
+                                        <template x-if="track.metrics.total_views.change_rate === 0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-minus h-4 w-4 mr-1">
+                                                <line x1="5" y1="12" x2="19" y2="12">
+                                                </line>
+                                            </svg>
+                                        </template>
+                                        <span
+                                            x-text="`${Math.abs(track.metrics.total_views.change_rate).toFixed(1)}%`"></span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="text-sm font-bold text-gray-900 dark:text-white"
+                                            x-text="((track.metrics.total_likes.current_total + track.metrics.total_likes.current_total + track.metrics.total_comments.current_total + track.metrics.total_reposts.current_total) / track.metrics.total_views.current_total * 100).toFixed(1)">
+                                        </div>
+                                        <div class="ml-2 w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                            <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] h-2 rounded-full transition-all duration-300 max-w-full"
+                                                :style="`width: ${((track.metrics.total_likes.current_total + track.metrics.total_comments.current_total + track.metrics.total_reposts.current_total) / track.metrics.total_views.current_total * 100).toFixed(1)}%;`">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white"
+                                    x-text="Number(track.metrics.total_likes.current_total).toLocaleString()">
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white"
+                                    x-text="Number(track.metrics.total_reposts.current_total).toLocaleString()">
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900 dark:text-white"
+                                        x-text="track.track_details.created_at_formatted"></div>
+                                </td>
+                            </tr>
+                        </template>
+                    </template>
+
+                    <template
+                        x-if="!displayedData || !displayedData.detailed || displayedData.detailed.track_metrics.length === 0">
+                        <tr>
+                            <td colspan="7" class="px-6 py-12 text-center">
+                                <div class="text-gray-500 dark:text-gray-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 mb-4"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 19V6l12-2v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-2c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-2" />
+                                    </svg>
+                                    <p class="text-lg font-medium">No tracks found</p>
+                                    <p class="text-sm mt-2">Upload your first track to start tracking performance!</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </template>
+
+                    {{-- @forelse($this->getTrackPerformanceData() as $track)
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
@@ -922,28 +916,21 @@
                                     </div>
                                     <div>
                                         <div class="text-sm font-medium text-gray-900 dark:text-white">
-                                            {{ $track['track_details']['title'] ?? 'Unknown Track' }}
-                                        </div>
-                                        <div class="text-sm text-gray-500 dark:text-gray-400">
-                                            {{ $track['track_details']['genre'] ?? 'Unknown' }} • You
-                                        </div>
+                                            {{ $track['name'] }}</div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">{{ $track['genre'] }} •
+                                            You</div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-bold text-gray-900 dark:text-white">
-                                    {{ number_format($track['metrics']['total_views']['current_total']) }}
-                                </div>
+                                    {{ number_format($track['streams']) }}</div>
                                 <div class="text-xs text-gray-500 dark:text-gray-400">streams</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @php
-                                    $changeRate = $track['metrics']['total_views']['change_rate'];
-                                    $changeClass = $this->getChangeClass($changeRate);
-                                    $changeIcon = $this->getChangeIcon($changeRate);
-                                @endphp
-                                <div class="inline-flex items-center text-sm font-medium {{ $changeClass }}">
-                                    @if ($changeIcon === 'trending-up')
+                                <div
+                                    class="inline-flex items-center text-sm font-medium {{ $track['stream_growth'] > 0 ? 'text-green-400' : ($track['stream_growth'] < 0 ? 'text-red-400' : 'text-gray-500') }}">
+                                    @if ($track['stream_growth'] > 0)
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -951,7 +938,7 @@
                                             <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
                                             <polyline points="16 7 22 7 22 13"></polyline>
                                         </svg>
-                                    @elseif($changeIcon === 'trending-down')
+                                    @elseif($track['stream_growth'] < 0)
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -968,38 +955,27 @@
                                             </line>
                                         </svg>
                                     @endif
-                                    {{ number_format(abs($changeRate), 1) }}%
+                                    {{ number_format(abs($track['stream_growth']), 1) }}%
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @php
-                                    $totalViews = $track['metrics']['total_views']['current_total'];
-                                    $totalEngagements =
-                                        $track['metrics']['total_likes']['current_total'] +
-                                        $track['metrics']['total_comments']['current_total'] +
-                                        $track['metrics']['total_reposts']['current_total'];
-                                    $engagementRate = $totalViews > 0 ? ($totalEngagements / $totalViews) * 100 : 0;
-                                @endphp
                                 <div class="flex items-center">
                                     <div class="text-sm font-bold text-gray-900 dark:text-white">
-                                        {{ number_format($engagementRate, 1) }}%
-                                    </div>
+                                        {{ $track['engagement'] }}</div>
                                     <div class="ml-2 w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                                        <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] h-2 rounded-full transition-all duration-300 max-w-full"
-                                            style="width: {{ min($engagementRate, 100) }}%;"></div>
+                                        <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] h-2 rounded-full transition-all duration-300"
+                                            style="width: {{ $track['engagement'] }}%;"></div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                {{ number_format($track['metrics']['total_likes']['current_total']) }}
+                                {{ number_format($track['likes']) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                {{ number_format($track['metrics']['total_reposts']['current_total']) }}
+                                {{ number_format($track['reposts']) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900 dark:text-white">
-                                    {{ $track['track_details']['created_at_formatted'] ?? 'Unknown' }}
-                                </div>
+                                <div class="text-sm text-gray-900 dark:text-white">{{ $track['released'] }}</div>
                             </td>
                         </tr>
                     @empty
@@ -1016,85 +992,257 @@
                                 </div>
                             </td>
                         </tr>
-                    @endforelse
+                    @endforelse --}}
                 </tbody>
             </table>
         </div>
-
-        @if ($paginatedTracks instanceof \Illuminate\Pagination\LengthAwarePaginator && $paginatedTracks->hasPages())
-            <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                        Showing {{ $paginatedTracks->firstItem() ?? 0 }} to {{ $paginatedTracks->lastItem() ?? 0 }}
-                        of {{ $paginatedTracks->total() }} tracks
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        @if ($paginatedTracks->onFirstPage())
-                            <span
-                                class="px-3 py-2 text-sm text-gray-400 dark:text-gray-500 cursor-not-allowed">Previous</span>
-                        @else
-                            <button wire:click="previousPage"
-                                class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                                Previous
-                            </button>
-                        @endif
-
-                        <div class="flex items-center space-x-1">
-                            @php
-                                $start = max(1, $paginatedTracks->currentPage() - 2);
-                                $end = min($paginatedTracks->lastPage(), $paginatedTracks->currentPage() + 2);
-                            @endphp
-
-                            @if ($start > 1)
-                                <button wire:click="gotoPage(1)"
-                                    class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                                    1
-                                </button>
-                                @if ($start > 2)
-                                    <span class="px-2 text-gray-400">...</span>
-                                @endif
-                            @endif
-
-                            @for ($page = $start; $page <= $end; $page++)
-                                @if ($page == $paginatedTracks->currentPage())
-                                    <span
-                                        class="px-3 py-2 text-sm bg-[#ff6b35] text-white rounded-lg">{{ $page }}</span>
-                                @else
-                                    <button wire:click="gotoPage({{ $page }})"
-                                        class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                                        {{ $page }}
-                                    </button>
-                                @endif
-                            @endfor
-
-                            @if ($end < $paginatedTracks->lastPage())
-                                @if ($end < $paginatedTracks->lastPage() - 1)
-                                    <span class="px-2 text-gray-400">...</span>
-                                @endif
-                                <button wire:click="gotoPage({{ $paginatedTracks->lastPage() }})"
-                                    class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                                    {{ $paginatedTracks->lastPage() }}
-                                </button>
-                            @endif
-                        </div>
-
-                        @if ($paginatedTracks->hasMorePages())
-                            <button wire:click="nextPage"
-                                class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                                Next
-                            </button>
-                        @else
-                            <span
-                                class="px-3 py-2 text-sm text-gray-400 dark:text-gray-500 cursor-not-allowed">Next</span>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        @endif
     </div>
 
     @push('js')
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            /* livewire initialized not working  use livewire init() hook as like in alpine x-data init() method. 
+             * not working list after chnage filter or other livewire action.
+             * Livewire.on('init', () => { ... });
+             * document.addEventListener('livewire:load', () => { ... });
+             * document.addEventListener('livewire:init', () => { ... });
+             * window.addEventListener('livewire:initialized', () => { ... });
+             * Livewire.hook('init', () => { ... });
+             *  document.addEventListener("livewire:navigated", () => { ... });
+             *  Livewire.hook('message.processed', (message, component) => { ... });
+             * 
+             * 
+             * 
+             * Fixed issue. chart not updating or not initialized properly after filter change.
+             */
+
+            document.addEventListener('livewire:initialized', () => {
+
+                console.log('Livewire initialized');
+                // Get chart data from Livewire
+                const chartData = @js($this->getChartData());
+                const genreBreakdown = @js($genreBreakdown);
+
+                // Performance Chart
+                const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+                const performanceChart = new Chart(performanceCtx, {
+                    type: 'line',
+                    data: {
+                        labels: chartData.length > 0 ? chartData.map(item => {
+                            const date = new Date(item.date);
+                            return date.toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric'
+                            });
+                        }) : ['No Data'],
+                        datasets: [{
+                                label: 'Views',
+                                data: chartData.length > 0 ? chartData.map(item => item.total_views || 0) :
+                                    [0],
+                                borderColor: '#E9E294',
+                                backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                                tension: 0.4,
+                                fill: true,
+                                pointBackgroundColor: '#E9E294',
+                                pointBorderColor: '#fff',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: '#ff6b35',
+                            },
+                            {
+                                label: 'Streams',
+                                data: chartData.length > 0 ? chartData.map(item => item.total_plays || 0) :
+                                    [0],
+                                borderColor: '#ff6b35',
+                                backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                                tension: 0.4,
+                                fill: true,
+                                pointBackgroundColor: '#ff6b35',
+                                pointBorderColor: '#fff',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: '#ff6b35',
+                            },
+                            {
+                                label: 'Likes',
+                                data: chartData.length > 0 ? chartData.map(item => item.total_likes || 0) :
+                                    [0],
+                                borderColor: '#10b981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                tension: 0.4,
+                                fill: true,
+                                pointBackgroundColor: '#10b981',
+                                pointBorderColor: '#fff',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: '#10b981',
+                            },
+                            {
+                                label: 'Reposts',
+                                data: chartData.length > 0 ? chartData.map(item => item.total_reposts ||
+                                    0) : [0],
+                                borderColor: '#8b5cf6',
+                                backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                                tension: 0.4,
+                                fill: true,
+                                pointBackgroundColor: '#8b5cf6',
+                                pointBorderColor: '#fff',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: '#8b5cf6',
+                            },
+                            {
+                                label: 'Comments',
+                                data: chartData.length > 0 ? chartData.map(item => item.total_comments ||
+                                    0) : [0],
+                                borderColor: '#f59e0b',
+                                backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                                tension: 0.4,
+                                fill: true,
+                                pointBackgroundColor: '#f59e0b',
+                                pointBorderColor: '#fff',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: '#f59e0b',
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    color: '#374151'
+                                },
+                                ticks: {
+                                    color: '#9ca3af'
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    color: '#374151'
+                                },
+                                ticks: {
+                                    color: '#9ca3af'
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Genre Chart
+                const genreCtx = document.getElementById('genreChart').getContext('2d');
+                const genreChart = new Chart(genreCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: genreBreakdown.length > 0 ? genreBreakdown.map(item => item.genre) : [
+                            'No Data'
+                        ],
+                        datasets: [{
+                            data: genreBreakdown.length > 0 ? genreBreakdown.map(item => item
+                                .percentage) : [100],
+                            backgroundColor: genreBreakdown.length > 0 ? [
+                                '#ff6b35',
+                                '#10b981',
+                                '#8b5cf6',
+                                '#f59e0b',
+                                '#ef4444'
+                            ].slice(0, genreBreakdown.length) : ['#9ca3af'],
+                            borderColor: '#1f2937',
+                            borderWidth: 2,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed !== null) {
+                                            label += context.parsed + '%';
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        interaction: {
+                            mode: 'nearest',
+                            intersect: false
+                        },
+                        animation: {
+                            animateScale: false,
+                            animateRotate: true
+                        },
+                        onHover: (event, chartElement) => {
+                            event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
+                        },
+                        elements: {
+                            arc: {
+                                hoverBackgroundColor: function(context) {
+                                    const index = context.dataIndex;
+                                    const colors = [
+                                        '#ff8c65',
+                                        '#34d399',
+                                        '#a78bfa',
+                                        '#fbbf24',
+                                        '#f87171'
+                                    ];
+                                    return colors[index] || '#9ca3af';
+                                },
+                                hoverBorderColor: '#1f2937',
+                                hoverBorderWidth: 2,
+                                hoverOffset: 0
+                            }
+                        }
+                    }
+                });
+
+                // Listen for Livewire updates to refresh charts
+                Livewire.on('dataUpdated', () => {
+                    // Update charts with new data
+                    const newChartData = @js($this->getChartData());
+                    const newGenreData = @js($genreBreakdown);
+
+                    // Update performance chart
+                    performanceChart.data.labels = newChartData.length > 0 ? newChartData.map(item => {
+                        const date = new Date(item.date);
+                        return date.toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric'
+                        });
+                    }) : ['No Data'];
+
+                    performanceChart.data.datasets.forEach((dataset, index) => {
+                        const metrics = ['total_views', 'total_likes', 'total_reposts',
+                            'total_comments'
+                        ];
+                        dataset.data = newChartData.length > 0 ? newChartData.map(item => item[metrics[
+                                index]] ||
+                            0) : [0];
+                    });
+
+                    performanceChart.update();
+
+                    // Update genre chart
+                    genreChart.data.labels = newGenreData.length > 0 ? newGenreData.map(item => item.genre) : [
+                        'No Data'
+                    ];
+                    genreChart.data.datasets[0].data = newGenreData.length > 0 ? newGenreData.map(item => item
+                        .percentage) : [100];
+                    genreChart.update();
+                });
+            });
+        </script>
     @endpush
 
 </div>
