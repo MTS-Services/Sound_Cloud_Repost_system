@@ -1028,7 +1028,11 @@
                                     $totalEngagement = $totalEngagements / 4;
 
                                     $engagementRate =
-                                        $totalViews > 0 ? (($totalViews - $totalEngagement) / $totalViews) * 100 : 0;
+                                        $totalViews > 0
+                                            ? ((($totalEngagement - $totalViews) / $totalViews) * 100 > 0
+                                                ? (($totalEngagement - $totalViews) / $totalViews) * 100
+                                                : 0)
+                                            : 0;
                                 @endphp
                                 <div class="flex items-center">
                                     <div class="text-sm font-bold text-gray-900 dark:text-white">
