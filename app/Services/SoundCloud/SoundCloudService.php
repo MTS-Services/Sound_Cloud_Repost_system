@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\UserInformation;
 use App\Models\Subscription;
 use App\Models\Track;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -556,10 +557,10 @@ class SoundCloudService
         $httpClient = Http::withHeaders([
             'Authorization' => 'OAuth ' . $user->token,
         ])->attach(
-            'track[asset_data]',
-            file_get_contents($trackData['asset_data']->getRealPath()),
-            $trackData['asset_data']->getClientOriginalName()
-        );
+                'track[asset_data]',
+                file_get_contents($trackData['asset_data']->getRealPath()),
+                $trackData['asset_data']->getClientOriginalName()
+            );
 
         if ($trackData['artwork_data']) {
             $httpClient->attach(
@@ -606,5 +607,17 @@ class SoundCloudService
     {
         $user = User::where('urn', user()->urn)->first();
         $this->syncUserPlaylists($user);
+    }
+
+
+    public function getAuthUserFollowers()
+    {
+        return $this->makeApiRequest(
+            user(),
+            'get',
+            "/me/followers",
+            [],
+            'Failed to fetch followers from SoundCloud API.'
+        );
     }
 }

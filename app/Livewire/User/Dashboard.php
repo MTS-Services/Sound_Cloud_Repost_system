@@ -104,6 +104,8 @@ class Dashboard extends Component
     public int $editCostPerRepost;
     public $editOriginalBudget = null;
 
+    public $userFollowerAnalysis = [];
+
     protected function rules()
     {
         $rules = [
@@ -141,6 +143,7 @@ class Dashboard extends Component
 
     public function mount()
     {
+        $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers());
         $this->loadDashboardData();
         $this->calculateFollowersLimit();
     }
