@@ -57,7 +57,7 @@ class MyAccount extends Component
 
     public $userFollowerAnalysis = [];
 
-    public $followerGrowthPercentage = 0;
+    public $followerGrowth = 0;
 
     // Livewire v3: boot runs on every request (initial + subsequent)
     public function boot(UserService $userService, CreditTransactionService $creditTransactionService, TrackService $trackService, SoundCloudService $soundCloudService, PlaylistService $playlistService, FollowerAnalyzer $followerAnalyzer): void
