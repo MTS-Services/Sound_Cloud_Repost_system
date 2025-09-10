@@ -65,6 +65,7 @@ class MyAccount extends Component
         $this->trackService = $trackService;
         $this->soundCloudService = $soundCloudService;
         $this->playlistService = $playlistService;
+        $this->followerAnalyzer = $followerAnalyzer;
     }
 
     public function mount($user_urn = null): void
