@@ -984,7 +984,7 @@
                                                                         class="text-base font-semibold text-gray-900 dark:text-white mt-1 truncate">
                                                                         <a href="javascript:void(0)"
                                                                             class="hover:text-orange-500 dark:hover:text-orange-400 line-clamp-1">
-                                                                            {{ $repost->source->title ?? 'Untitled Track' }}
+                                                                            {{ Str::limit($repost->source?->title, 50) ?? 'Untitled Track' }}
                                                                         </a>
                                                                     </h3>
                                                                     {{-- Genre --}}
