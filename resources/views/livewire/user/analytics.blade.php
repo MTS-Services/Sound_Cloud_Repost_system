@@ -778,7 +778,11 @@
                                 @php
                                     $maxStreams = $topTracks[0]['streams'] ?? 1;
                                     $percentage =
-                                        $maxStreams > 0 ? (($maxStreams - $track['streams']) / $maxStreams) * 100 : 0;
+                                        $maxStreams > 0
+                                            ? ((($maxStreams - $track['streams']) / $maxStreams) * 100 < 0
+                                                ? 0
+                                                : (($maxStreams - $track['streams']) / $maxStreams) * 100)
+                                            : 0;
                                 @endphp
                                 <div class="h-2 rounded-full transition-all duration-300"
                                     style="width: {{ $percentage > 100 ? 100 : $percentage }}%; background: linear-gradient(90deg, #ff6b35, #ff6b35cc);">
@@ -1020,9 +1024,10 @@
                                         $track['metrics']['total_comments']['current_total'] +
                                         $track['metrics']['total_reposts']['current_total'] +
                                         $track['metrics']['total_followers']['current_total'];
+                                    $totalEngagement = $totalEngagements / 5;
                                     $engagementRate =
                                         $totalViews > 0
-                                            ? (($totalViews - $totalEngagements / 5) / ($totalEngagements / 5)) * 100
+                                            ? (($totalViews - $totalEngagement) / $totalEngagement) * 100
                                             : 0;
                                 @endphp
                                 <div class="flex items-center">
