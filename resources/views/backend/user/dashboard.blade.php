@@ -241,7 +241,8 @@
                         <h4 class="font-medium mb-2">No upcoming campaigns scheduled</h4>
                         <p class="text-slate-400 text-sm mb-4">Submit a track to start a new campaign</p>
                         <x-gbutton variant="primary" wire:navigate href="{{ route('user.cm.my-campaigns') }}">
-                           <span><x-lucide-plus class="inline-block text-center h-4 w-4 text-white mr-1" /></span> Create Campaign</x-gbutton>
+                            <span><x-lucide-plus class="inline-block text-center h-4 w-4 text-white mr-1" /></span>
+                            Create Campaign</x-gbutton>
                     </div>
                 </div>
 
@@ -272,11 +273,17 @@
                                 </div>
                                 <div class="flex space-x-2">
                                     <div class="flex-1">
-                                    <x-gabutton variant="secondary" :full-width="true" wire:navigate href="{{ route('user.decline-repost', encrypt($request->id)) }}">Decline</x-gabutton>
+                                        <x-gabutton variant="secondary" :full-width="true"
+                                            wire:click="declineRepost('{{ encrypt($request->id) }}')">
+                                            Decline
+                                        </x-gabutton>
                                     </div>
+
                                     <div class="flex-1">
-                                    <x-gabutton variant="primary" :full-width="true" wire:navigate href="{{ route('user.direct-repost', encrypt($request->id)) }}">Reposts</x-gabutton>
+                                        <x-gabutton variant="primary" :full-width="true" wire:navigate
+                                            href="{{ route('user.direct-repost', encrypt($request->id)) }}">Reposts</x-gabutton>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -290,7 +297,8 @@
                                     </svg>
                                     <span class="text-sm font-medium">Trending</span>
                                 </div>
-                                <a class="text-orange-500 hover:text-orange-400 text-sm" href="{{ route('user.charts') }}">View
+                                <a class="text-orange-500 hover:text-orange-400 text-sm"
+                                    href="{{ route('user.charts') }}">View
                                     charts</a>
                             </div>
                             <div class="space-y-2">
@@ -421,7 +429,6 @@
             document.addEventListener('livewire:navigated', () => {
                 createCampaignChart();
             });
-
         </script>
     @endpush
 </x-user::layout>
