@@ -1008,8 +1008,8 @@ class Campaign extends Component
                         [
                             'email' => $campaign->user->email,
                             'subject' => 'Repost Notification',
-                            'title' => 'Repost Notification',
-                            'body' => 'Your campaign has been reposted successfully.',
+                            'title' => 'Dear ' . $campaign->user->name,
+                            'body' => 'Your'. $campaign->title . 'campaign has been reposted successfully.',
                         ],
                     ];
                     // NotificationMailSent::dispatch($mailData);
