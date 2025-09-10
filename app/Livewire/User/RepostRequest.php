@@ -472,6 +472,7 @@ class RepostRequest extends Component
     {
         if ($this->activeMainTab == 'accept_requests') {
             $this->activeMainTab = 'incoming_request';
+            
             $this->dataLoad();
         } else {
             $this->activeMainTab = $tab;

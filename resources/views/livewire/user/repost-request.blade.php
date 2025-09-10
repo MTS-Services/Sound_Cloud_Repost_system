@@ -458,6 +458,10 @@
             </div>
         @endif
     </div>
+
+    <!--Previously Reposted Requests-->
+
+    
 </div>
 
 <script>
@@ -469,9 +473,6 @@
 
             if (iframe) {
                 iframe.addEventListener('load', function() {
-                    // SoundCloud Widget API integration would go here
-                    // This is a simplified example - you'll need to implement
-                    // proper SoundCloud Widget API event handling
 
                     // Simulate audio events for now
                     const widget = SC.Widget(iframe);

@@ -211,38 +211,41 @@
 
             <!-- Second Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-2 mt-4 dark:text-white">
-                <!-- Left Section -->
                 <div class="lg:col-span-2 rounded-lg p-4 border border-slate-700">
                     <div class="flex items-center justify-between p-4">
                         <div>
                             <h3 class="text-lg font-semibold">Recent Tracks</h3>
                             <p class="text-slate-400 text-sm">Your latest submissions</p>
                         </div>
-                        <a class="text-orange-500 hover:text-orange-400 text-sm font-medium"
-                            href="{{ route('user.reposts-request') }}">View all →</a>
+                       
                     </div>
+
                     <div class="space-y-4">
-                        @foreach ($repostRequests as $repostRequest)
+                        @forelse ($repostRequests as $repostRequest)
                             <div
                                 class="rounded-lg p-4 border border-slate-700 hover:border-slate-600 transition-colors">
                                 <div id="soundcloud-player-{{ $repostRequest->id }}" wire:ignore>
                                     <x-sound-cloud.sound-cloud-player :track="$repostRequest->track" :visual="false" />
                                 </div>
                             </div>
-                        @endforeach
-                    </div>
-                    <div class="text-center py-8 border-t border-slate-700">
-                        <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path d="M5 12h14M12 5v14" />
-                            </svg>
-                        </div>
-                        <h4 class="font-medium mb-2">No upcoming campaigns scheduled</h4>
-                        <p class="text-slate-400 text-sm mb-4">Submit a track to start a new campaign</p>
-                        <x-gbutton variant="primary" wire:navigate href="{{ route('user.cm.my-campaigns') }}">
-                            <span><x-lucide-plus class="inline-block text-center h-4 w-4 text-white mr-1" /></span>
-                            Create Campaign</x-gbutton>
+                        @empty
+                            <div class="text-center py-8 border-t border-slate-700">
+                                <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path d="M5 12h14M12 5v14" />
+                                    </svg>
+                                </div>
+                                <h4 class="font-medium mb-2">No upcoming campaigns scheduled</h4>
+                                <p class="text-slate-400 text-sm mb-4">Submit a track to start a new campaign</p>
+                                <x-gbutton variant="primary" wire:navigate
+                                    href="{{ route('user.cm.my-campaigns') }}">
+                                    <span><x-lucide-plus
+                                            class="inline-block text-center h-4 w-4 text-white mr-1" /></span>
+                                    Create Campaign
+                                </x-gbutton>
+                            </div>
+                        @endforelse
                     </div>
                 </div>
 
@@ -287,38 +290,38 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="mt-6 pt-6 border-t border-slate-700 p-2">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center space-x-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-orange-500"
-                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
-                                        <polyline points="16 7 22 7 22 13" />
-                                    </svg>
-                                    <span class="text-sm font-medium">Trending</span>
-                                </div>
-                                <a class="text-orange-500 hover:text-orange-400 text-sm"
-                                    href="{{ route('user.charts') }}">View
-                                    charts</a>
+                    @endforeach
+                    <div class="mt-6 pt-6 border-t border-slate-700 p-2">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-orange-500"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                                    <polyline points="16 7 22 7 22 13" />
+                                </svg>
+                                <span class="text-sm font-medium">Trending</span>
                             </div>
-                            <div class="space-y-2">
-                                <div class="flex justify-between text-sm">
-                                    <div class="flex items-center space-x-2">
-                                        <span class="text-orange-500 font-bold">#1</span>
-                                        <span class="text-sm">Why Do I?</span>
-                                    </div>
-                                    <span class="text-slate-400">{{ $request?->track?->embeddable_by }}</span>
+                            <a class="text-orange-500 hover:text-orange-400 text-sm"
+                                href="{{ route('user.charts') }}">View
+                                charts</a>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-orange-500 font-bold">#1</span>
+                                    <span class="text-sm">Why Do I?</span>
                                 </div>
-                                <div class="flex justify-between text-sm">
-                                    <div class="flex items-center space-x-2">
-                                        <span class="text-slate-400 font-bold">#2</span>
-                                        <span class="text-slate-400 text-sm">The Strength Of Love</span>
-                                    </div>
-                                    <span class="text-slate-400">Constellation Lyra</span>
+                                <span class="text-slate-400">{{ $request?->track?->embeddable_by }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-slate-400 font-bold">#2</span>
+                                    <span class="text-slate-400 text-sm">The Strength Of Love</span>
                                 </div>
+                                <span class="text-slate-400">Constellation Lyra</span>
                             </div>
                         </div>
-                    @endforeach
+                    </div>
                 </div>
             </div>
 
