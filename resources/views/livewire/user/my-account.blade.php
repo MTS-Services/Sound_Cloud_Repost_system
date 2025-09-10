@@ -440,7 +440,7 @@
                                                     <div class="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
                                                     <span
                                                         class="text-green-600 dark:text-green-400 text-xs sm:text-sm font-medium">
-                                                        92% Real Followers
+                                                        {{ $userFollowerAnalysis['realPercentage'] }}% Real Followers
                                                     </span>
                                                 </div>
                                             </div>

@@ -10,6 +10,7 @@ use App\Models\UserSocialInformation;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\Admin\UserManagement\UserService;
 use App\Services\PlaylistService;
+use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\TrackService;
 use Illuminate\Support\Facades\Log;
@@ -52,9 +53,12 @@ class MyAccount extends Component
     private TrackService $trackService;
     private PlaylistService $playlistService;
     private SoundCloudService $soundCloudService;
+    private FollowerAnalyzer $followerAnalyzer;
+
+    public $userFollowerAnalysis = [];
 
     // Livewire v3: boot runs on every request (initial + subsequent)
-    public function boot(UserService $userService, CreditTransactionService $creditTransactionService, TrackService $trackService, SoundCloudService $soundCloudService, PlaylistService $playlistService): void
+    public function boot(UserService $userService, CreditTransactionService $creditTransactionService, TrackService $trackService, SoundCloudService $soundCloudService, PlaylistService $playlistService, FollowerAnalyzer $followerAnalyzer): void
     {
         $this->userService = $userService;
         $this->creditTransactionService = $creditTransactionService;
@@ -65,6 +69,7 @@ class MyAccount extends Component
 
     public function mount($user_urn = null): void
     {
+        $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers());
         $this->user_urn = $user_urn ?? user()->urn;
 
         Log::info('MyAccount mount', ['user_urn' => $this->user_urn]);

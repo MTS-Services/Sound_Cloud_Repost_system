@@ -152,10 +152,8 @@ class Dashboard extends Component
         $currentWeek = $currentWeekFollowerPercentage['averageCredibilityScore'];
 
         if ($lastWeek > 0) {
-            // Calculate percentage change
             $this->followerPercentage = (($currentWeek - $lastWeek) / $lastWeek) * 100;
         } else {
-            // Avoid division by zero
             $this->followerPercentage = 0;
         }
         $this->loadDashboardData();
