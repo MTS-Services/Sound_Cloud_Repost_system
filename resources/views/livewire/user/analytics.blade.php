@@ -693,7 +693,7 @@
                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Avg. Engagement Rate</p>
                 <p class="text-2xl font-bold text-gray-900 dark:text-white"
                     x-text="(displayedData?.avgEngagementRate !== undefined ? displayedData.avgEngagementRate + '%' : '-')">
-                    {{ $data['avgEngagementRate'] ?? '-' }}%
+                    {{ min($data['avgEngagementRate'], 100) ?? '-' }}%
                 </p>
             </div>
             <div class="mt-3 h-1 bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] rounded-full"></div>
