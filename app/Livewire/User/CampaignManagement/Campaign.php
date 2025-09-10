@@ -1012,10 +1012,10 @@ class Campaign extends Component
                             'body' => 'Your' . $campaign->title . 'campaign has been reposted successfully.',
                         ],
                     ];
-                    // NotificationMailSent::dispatch($mailData);
-                    foreach ($datas as $mailData) {
-                        Mail::to($mailData['email'])->send(new NotificationMails($mailData));
-                    }
+                    NotificationMailSent::dispatch($datas);
+                    // foreach ($datas as $mailData) {
+                    //     Mail::to($mailData['email'])->send(new NotificationMails($mailData));
+                    // }
                 }
                 $soundcloudRepostId = $campaign->music->soundcloud_track_id;
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);

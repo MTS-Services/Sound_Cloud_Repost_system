@@ -431,6 +431,21 @@ class RepostRequest extends Component
                 'rejection_reason' => 'Declined by user',
                 'responded_at' => now(),
             ]);
+            $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $request?->requester_urn);
+            if ($repostEmailPermission) {
+                $datas = [
+                    [
+                        'email' => $request->requester->email,
+                        'subject' => 'Repost Declined',
+                        'title' => 'Dear ' . $request->requester->name,
+                        'body' => 'Your repost request has been declined.',
+                    ],
+                ];
+                // NotificationMailSent::dispatch($mailData);
+                foreach ($datas as $mailData) {
+                    Mail::to($mailData['email'])->send(new NotificationMails($mailData));
+                }
+            }
             $this->dataLoad();
             $this->dispatch('alert', type: 'success', message: 'Repost request declined successfully.');
         } catch (Throwable $e) {
