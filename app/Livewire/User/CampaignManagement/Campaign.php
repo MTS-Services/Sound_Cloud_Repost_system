@@ -69,7 +69,6 @@ class Campaign extends Component
     // Properties for track type filtering
     public $selectedTrackTypes = [];
     public $selectedTrackType = 'all';
-    public $genres = [];
     public $selectedGenres = [];
     public $showTrackTypes = false;
 
@@ -200,7 +199,6 @@ class Campaign extends Component
 
     public function mount()
     {
-        // $this->getAllGenres();
         $this->getAllTrackTypes();
         $this->totalCampaigns();
         $this->calculateFollowersLimit();
@@ -647,7 +645,6 @@ class Campaign extends Component
         }
 
         $this->showSubmitModal = true;
-        // $this->getAllGenres();
 
         try {
             if ($type === 'track') {
@@ -1274,11 +1271,13 @@ class Campaign extends Component
                             $query->whereIn('genre', $userGenres);
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
+                    $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
                     break;
 
                 case 'all':
                     $campaigns = $baseQuery
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage);
+                    $this->selectedGenres = [];
                     break;
                 default:
                     $campaigns = $baseQuery
@@ -1290,6 +1289,7 @@ class Campaign extends Component
                             $query->whereIn('genre', $userGenres);
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
+                    $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
                     break;
             }
 
