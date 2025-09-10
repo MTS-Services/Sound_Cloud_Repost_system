@@ -3,7 +3,6 @@
 namespace App\Services\SoundCloud;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 
 
 class FollowerAnalyzer
@@ -93,10 +92,10 @@ class FollowerAnalyzer
     /**
      * Separates followers into fake and real categories
      *
-     * @param Collection $followers
+     * @param $followers
      * @return array
      */
-    public function separateFollowers(Collection $followers): array
+    public function separateFollowers($followers): array
     {
         // $analysis = collect($followers)->map(fn($follower) => $this->analyzeUser($follower));
         $analysis = $followers->map(fn($follower) => $this->analyzeUser($follower));
@@ -244,11 +243,11 @@ class FollowerAnalyzer
     /**
      * Generate summary of analysis
      *
-     * @param Collection $realFollowers
-     * @param Collection $fakeFollowers
+     * @param $realFollowers
+     * @param $fakeFollowers
      * @return array
      */
-    private function generateSummary(Collection $realFollowers, Collection $fakeFollowers): array
+    private function generateSummary($realFollowers, $fakeFollowers): array
     {
         $avgRealScore = $realFollowers->count() > 0
             ? round($realFollowers->avg('credibilityScore'))
