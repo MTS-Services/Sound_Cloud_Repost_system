@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class AnalyticsService
 {
@@ -123,6 +122,12 @@ class AnalyticsService
 
     /**
      * Get analytics data with comparison
+     *
+     * @param string $filter
+     * @param array|null $dateRange ['start' => 'Y-m-d', 'end' => 'Y-m-d']
+     * @param string|null $trackUrn
+     * @param string|null $actionType
+     * @return array
      */
     public function getAnalyticsData(
         string $filter = 'last_week',
@@ -136,26 +141,26 @@ class AnalyticsService
         // Get date ranges for current and previous periods
         $periods = $this->calculatePeriods($filter, $dateRange);
 
-        // Fetch analytics data for both periods in a single optimized query
-        $allData = $this->fetchOptimizedAnalyticsData(
+        // Log::info("Calculating analytics for user {$userUrn} from {$periods['current']['start']->format('Y-m-d H:i:s')} to {$periods['current']['end']->format('Y-m-d H:i:s')} total days: {$periods['current']['days']} and previous period from {$periods['previous']['start']->format('Y-m-d H:i:s')} to {$periods['previous']['end']->format('Y-m-d H:i:s')} total days: {$periods['previous']['days']}.");
+
+        // Fetch analytics data for both periods
+        $currentData = $this->fetchAnalyticsData(
             $userUrn,
-            $periods['previous']['start'],
+            $periods['current']['start'],
             $periods['current']['end'],
             $genres,
             $trackUrn,
             $actionType
         );
 
-        // Separate current and previous period data
-        $currentData = $allData->filter(function ($item) use ($periods) {
-            $itemDate = Carbon::parse($item->date);
-            return $itemDate->between($periods['current']['start'], $periods['current']['end']);
-        });
-
-        $previousData = $allData->filter(function ($item) use ($periods) {
-            $itemDate = Carbon::parse($item->date);
-            return $itemDate->between($periods['previous']['start'], $periods['previous']['end']);
-        });
+        $previousData = $this->fetchAnalyticsData(
+            $userUrn,
+            $periods['previous']['start'],
+            $periods['previous']['end'],
+            $genres,
+            $trackUrn,
+            $actionType
+        );
 
         // Calculate and compare overall metrics
         $overallCurrentMetrics = $this->calculateMetrics($currentData);
@@ -167,7 +172,8 @@ class AnalyticsService
         $previousMetricsByTrack = $this->calculateMetricsByTrack($previousData);
         $trackAnalytics = $this->buildComparisonResultByTrack($currentMetricsByTrack, $previousMetricsByTrack);
 
-        return [
+        // Build the final result array
+        $finalResult = [
             'overall_metrics' => $overallAnalytics,
             'track_metrics' => $trackAnalytics,
             'period_info' => [
@@ -184,132 +190,10 @@ class AnalyticsService
                 ]
             ]
         ];
-    }
 
-    /**
-     * Optimized data fetching with eager loading
-     */
-    private function fetchOptimizedAnalyticsData(
-        string $userUrn,
-        Carbon $startDate,
-        Carbon $endDate,
-        ?array $genres = null,
-        ?string $trackUrn = null,
-        ?string $actionType = null,
-        ?int $actionId = null
-    ): Collection {
-        $query = UserAnalytics::where('user_urn', $userUrn)
-            ->whereDate('date', '>=', $startDate->format('Y-m-d'))
-            ->whereDate('date', '<=', $endDate->format('Y-m-d'))
-            ->with(['track' => function ($query) {
-                $query->select('urn', 'title', 'genre', 'created_at');
-            }]);
+        // dd( $finalResult);
 
-        if ($trackUrn) {
-            $query->where('track_urn', $trackUrn);
-        }
-
-        if ($actionType && $actionId) {
-            $query->where('action_type', $actionType)
-                ->where('action_id', $actionId);
-        }
-
-        if ($genres) {
-            $filteredGenres = array_filter($genres, function ($genre) {
-                return $genre !== 'Any Genre';
-            });
-
-            if (!empty($filteredGenres)) {
-                $query->whereIn('genre', $filteredGenres);
-            }
-        }
-
-        return $query->get();
-    }
-
-    /**
-     * Get paginated track analytics data
-     */
-    public function getPaginatedTrackAnalytics(
-        string $filter = 'last_week',
-        ?array $dateRange = null,
-        ?array $genres = null,
-        int $perPage = 10,
-        int $page = 1
-    ): LengthAwarePaginator {
-        $userUrn = user()->urn;
-        $periods = $this->calculatePeriods($filter, $dateRange);
-
-        // Get track URNs with aggregated data
-        $trackUrnsQuery = UserAnalytics::where('user_urn', $userUrn)
-            ->whereDate('date', '>=', $periods['current']['start']->format('Y-m-d'))
-            ->whereDate('date', '<=', $periods['current']['end']->format('Y-m-d'));
-
-        if ($genres) {
-            $filteredGenres = array_filter($genres, function ($genre) {
-                return $genre !== 'Any Genre';
-            });
-
-            if (!empty($filteredGenres)) {
-                $trackUrnsQuery->whereIn('genre', $filteredGenres);
-            }
-        }
-
-        $trackUrns = $trackUrnsQuery
-            ->select([
-                'track_urn',
-                DB::raw('SUM(total_views) as total_views'),
-                DB::raw('SUM(total_plays) as total_streams'),
-                DB::raw('SUM(total_likes) as total_likes'),
-                DB::raw('SUM(total_reposts) as total_reposts'),
-                DB::raw('SUM(total_comments) as total_comments')
-            ])
-            ->groupBy('track_urn')
-            ->orderByDesc('total_views')
-            ->orderByDesc('total_streams')
-            ->get();
-
-        // Create paginator
-        $total = $trackUrns->count();
-        $offset = ($page - 1) * $perPage;
-        $paginatedTrackUrns = $trackUrns->slice($offset, $perPage);
-
-        // Get detailed analytics for paginated tracks
-        $trackAnalytics = [];
-        if ($paginatedTrackUrns->isNotEmpty()) {
-            $trackUrnsList = $paginatedTrackUrns->pluck('track_urn')->toArray();
-
-            // Fetch current period data
-            $currentData = $this->fetchOptimizedAnalyticsData(
-                $userUrn,
-                $periods['current']['start'],
-                $periods['current']['end'],
-                $genres
-            )->whereIn('track_urn', $trackUrnsList);
-
-            // Fetch previous period data
-            $previousData = $this->fetchOptimizedAnalyticsData(
-                $userUrn,
-                $periods['previous']['start'],
-                $periods['previous']['end'],
-                $genres
-            )->whereIn('track_urn', $trackUrnsList);
-
-            $currentMetricsByTrack = $this->calculateMetricsByTrack($currentData);
-            $previousMetricsByTrack = $this->calculateMetricsByTrack($previousData);
-            $trackAnalytics = $this->buildComparisonResultByTrack($currentMetricsByTrack, $previousMetricsByTrack);
-        }
-
-        return new LengthAwarePaginator(
-            $trackAnalytics,
-            $total,
-            $perPage,
-            $page,
-            [
-                'path' => request()->url(),
-                'pageName' => 'page',
-            ]
-        );
+        return $finalResult;
     }
 
     /**
@@ -378,18 +262,58 @@ class AnalyticsService
     }
 
     /**
-     * Get start date for predefined filters
+     * Get start date for predefined filters (FIXED)
      */
     private function getStartDateForFilter(string $filter, Carbon $now): Carbon
     {
         return match ($filter) {
-            'daily' => $now->copy()->startOfDay(),
-            'last_week' => $now->copy()->subDays(6)->startOfDay(),
-            'last_month' => $now->copy()->subDays(29)->startOfDay(),
-            'last_90_days' => $now->copy()->subDays(89)->startOfDay(),
-            'last_year' => $now->copy()->subDays(364)->startOfDay(),
-            default => $now->copy()->subDays(6)->startOfDay(),
+            'daily' => $now->copy()->startOfDay(), // Today only
+            'last_week' => $now->copy()->subDays(6)->startOfDay(), // Last 7 days including today
+            'last_month' => $now->copy()->subDays(29)->startOfDay(), // Last 30 days including today
+            'last_90_days' => $now->copy()->subDays(89)->startOfDay(), // Last 90 days including today
+            'last_year' => $now->copy()->subDays(364)->startOfDay(), // Last 365 days including today
+            default => $now->copy()->subDays(6)->startOfDay(), // Default to last week
         };
+    }
+
+    /**
+     * Fetch analytics data from database
+     */
+    private function fetchAnalyticsData(
+        string $userUrn,
+        Carbon $startDate,
+        Carbon $endDate,
+        ?array $genres = null,
+        ?string $trackUrn = null,
+        ?string $actionType = null,
+        ?int $actionId = null
+    ): Collection {
+        $query = UserAnalytics::where('user_urn', $userUrn)
+            ->whereDate('date', '>=', $startDate->format('Y-m-d'))
+            ->whereDate('date', '<=', $endDate->format('Y-m-d'))
+            ->with('track');
+
+        if ($trackUrn) {
+            $query->whereHas('track', function ($q) use ($trackUrn) {
+                $q->where('urn', $trackUrn);
+            });
+        }
+
+        if ($actionType && $actionId) {
+            $query->where('action_type', $actionType)
+                ->where('action_id', $actionId);
+        }
+        if ($genres) {
+            $filteredGenres = array_filter($genres, function ($genre) {
+                return $genre !== 'Any Genre';
+            });
+
+            if (!empty($filteredGenres)) {
+                $query->whereIn('genre', $filteredGenres);
+            }
+        }
+
+        return $query->get();
     }
 
     /**
@@ -401,12 +325,8 @@ class AnalyticsService
 
         $data->groupBy('track_urn')->each(function ($trackGroup, $trackUrn) use (&$metricsByTrack) {
             $track = $trackGroup->first()->track;
+            // dd($track->toArray());
             $trackName = $track ? $track->title : 'Unknown Track';
-            $trackDetails = $track ? $track->toArray() : null;
-
-            if ($trackDetails) {
-                $trackDetails['created_at_formatted'] = $track->created_at?->format('M d, Y') ?? 'Unknown';
-            }
 
             $totalMetrics = [];
             foreach (self::METRICS as $metric) {
@@ -416,7 +336,7 @@ class AnalyticsService
             $metricsByTrack[$trackUrn] = [
                 'track_urn' => $trackUrn,
                 'track_name' => $trackName,
-                'track_details' => $trackDetails,
+                'track_details' => $track->toArray(),
                 'metrics' => $totalMetrics
             ];
         });
@@ -459,6 +379,7 @@ class AnalyticsService
 
         return $result;
     }
+
 
     /**
      * Calculate metrics from raw analytics data
@@ -616,18 +537,16 @@ class AnalyticsService
     public function getChartData(
         string $filter = 'last_week',
         ?array $dateRange = null,
-        ?array $genres = null,
         ?string $trackUrn = null,
         ?string $actionType = null
     ): array {
         $userUrn = user()->urn;
         $periods = $this->calculatePeriods($filter, $dateRange);
 
-        $data = $this->fetchOptimizedAnalyticsData(
+        $data = $this->fetchAnalyticsData(
             $userUrn,
             $periods['current']['start'],
             $periods['current']['end'],
-            $genres,
             $trackUrn,
             $actionType
         );
@@ -641,53 +560,59 @@ class AnalyticsService
             return $dailyMetrics;
         })->values()->toArray();
 
+        // dd($chartData);
         return $chartData;
     }
 
     /**
-     * Get top performing tracks (optimized)
+     * Get top performing tracks
      */
     public function getTopTracks(int $limit = 20, ?string $userUrn = null, ?string $filter = 'last_week', ?array $dateRange = null): array
     {
-        $userUrn = $userUrn ?? user()->urn;
-        $periods = $this->calculatePeriods($filter, $dateRange);
+        $query = UserAnalytics::query();
+        if ($userUrn) {
+            $query->where('user_urn', $userUrn);
+        }
+        if ($filter === 'date_range' && $dateRange) {
+            $query->whereBetween('date', [$dateRange['start'], $dateRange['end']]);
+        } else {
+            $periods = $this->calculatePeriods($filter);
+            $query->whereDate('date', '>=', $periods['current']['start']->format('Y-m-d'))
+                ->whereDate('date', '<=', $periods['current']['end']->format('Y-m-d'));
+        }
 
-        $topTracks = UserAnalytics::where('user_urn', $userUrn)
-            ->whereDate('date', '>=', $periods['current']['start']->format('Y-m-d'))
-            ->whereDate('date', '<=', $periods['current']['end']->format('Y-m-d'))
-            ->selectRaw('track_urn, SUM(total_views) as total_views, SUM(total_plays) as total_streams, SUM(total_likes) as total_likes, SUM(total_reposts) as total_reposts')
-            ->groupBy('track_urn')
-            ->orderByDesc('total_views')
-            ->orderByDesc('total_streams')
-            ->orderByDesc('total_likes')
-            ->orderByDesc('total_reposts')
-            ->with(['track' => function ($query) {
-                $query->select('urn', 'title', 'genre', 'created_at')
-                    ->with(['user:urn,name']);
-            }])
-            ->limit($limit)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'track' => $item->track ? $item->track->toArray() : null,
-                    'streams' => (int) $item->total_streams,
-                    'likes' => (int) $item->total_likes,
-                    'reposts' => (int) $item->total_reposts,
-                    'engagement_rate' => $item->total_streams > 0 ?
-                        round((($item->total_likes + $item->total_reposts) / $item->total_streams) * 100, 1) : 0
-                ];
-            })
-            ->filter(function ($item) {
-                return $item['track'] !== null;
-            })
-            ->values()
-            ->toArray();
+        // 3. Aggregate the data
+        $query->selectRaw('track_urn, SUM(total_views) as total_views, SUM(total_plays) as total_streams, SUM(total_likes) as total_likes, SUM(total_reposts) as total_reposts')
+            ->groupBy('track_urn');
+        $query->orderBy('total_views', 'desc')
+            ->orderBy('total_streams', 'desc')
+            ->orderBy('total_likes', 'desc')
+            ->orderBy('total_reposts', 'desc');
+
+        // 5. Eager load the track relationship and set the limit
+        $query->with(['track.user'])
+            ->limit($limit);
+
+        // 6. Execute the query and map the results
+        $topTracks = $query->get()->map(function ($item) {
+            // You can safely use the aggregated columns in your mapping logic
+            return [
+                'track' => $item->track->toArray(),
+                'streams' => (int) $item->total_streams,
+                'likes' => (int) $item->total_likes,
+                'reposts' => (int) $item->total_reposts,
+                'engagement_rate' => $item->total_streams > 0 ?
+                    round((($item->total_likes + $item->total_reposts) / $item->total_streams) * 100, 1) : 0
+            ];
+        })->toArray();
+        // dd($topTracks);
+
 
         return $topTracks;
     }
 
     /**
-     * Get genre performance breakdown (optimized)
+     * Get genre performance breakdown
      */
     public function getGenreBreakdown(): array
     {
