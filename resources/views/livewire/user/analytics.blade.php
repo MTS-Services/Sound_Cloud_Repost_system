@@ -113,7 +113,28 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'center',
+                        labels: {
+                            {{-- color: '#e2e8f0', --}}
+                            boxWidth: 12,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#0f172a',
+                        titleColor: '#ffffff',
+                        bodyColor: '#cbd5e1',
+                        borderColor: '#334155',
+                        borderWidth: 1,
+                        padding: 12,
+                        cornerRadius: 8,
+                    }
+                },
                 scales: {
                     x: {
                         grid: { color: '#374151' },
@@ -682,7 +703,7 @@
         </div>
 
         <!-- Legend -->
-        <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm mb-4 items-center">
+        {{-- <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm mb-4 items-center">
             <div class="flex items-end">
                 <div class="w-3 h-3 bg-[#E9E294] rounded-full mr-2"></div>
                 <span class="text-gray-600 dark:text-gray-300">Views</span>
@@ -703,7 +724,7 @@
                 <div class="w-3 h-3 bg-[#f59e0b] rounded-full mr-2"></div>
                 <span class="text-gray-600 dark:text-gray-300">Comments</span>
             </div>
-        </div>
+        </div> --}}
 
         <!-- Chart -->
         <div class="relative overflow-x-auto" style="height: 250px;">

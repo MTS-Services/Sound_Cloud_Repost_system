@@ -299,7 +299,7 @@
                         <h2 class="dark:text-white text-lg font-semibold">Performance Overview</h2>
                         <p class="text-sm text-slate-400">Track the impact of your campaigns</p>
                     </div>
-                    <a href="#"
+                    <a href="{{ route('user.analytics') }}" wire:navigate
                         class="text-orange-400 text-sm font-medium mt-4 sm:mt-0 hover:text-orange-300 transition-colors">
                         View all →
                     </a>
