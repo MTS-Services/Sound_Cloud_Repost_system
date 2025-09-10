@@ -75,10 +75,10 @@
             </button>
             <a class="flex items-center space-x-2" href="{{ route('user.dashboard') }}" data-discover="true" wire:navigate>
                 @if (app_setting('app_logo') && app_setting('app_logo_dark'))
-                    <img src="{{ storage_url(app_setting('app_logo')) }}"
-                        alt="{{ config('app.name') }}" class="w-36 lg:w-48 dark:hidden" />
-                    <img src="{{ storage_url(app_setting('app_logo_dark')) }}"
-                        alt="{{ config('app.name') }}" class="w-36 lg:w-48 hidden dark:block" />
+                    <img src="{{ storage_url(app_setting('app_logo')) }}" alt="{{ config('app.name') }}"
+                        class="w-36 lg:w-48 dark:hidden" />
+                    <img src="{{ storage_url(app_setting('app_logo_dark')) }}" alt="{{ config('app.name') }}"
+                        class="w-36 lg:w-48 hidden dark:block" />
                 @else
                     <img src="{{ asset('assets/logo/rc-logo-black.png') }}" alt="{{ config('app.name') }}"
                         class="w-36 lg:w-48 dark:hidden" />
@@ -130,15 +130,7 @@
                         class="absolute right-2 mt-5 w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
                         <ul class="p-0 text-sm text-gray-700 dark:text-gray-200">
                             <li>
-                                <a href="{{ route('user.settings') }}" wire:navigate
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Getting Started') }}</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('user.settings') }}"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Contact Support') }}</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('user.settings') }}"
+                                <a href="{{ route('user.help-support') }}" wire:navigate
                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Help Center') }}</a>
                             </li>
                             <li>
@@ -205,7 +197,7 @@
                         </div>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="{{ route('user.settings') }}" wire:navigate
                             class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm block">
                             Settings & Preferences
                         </a>
