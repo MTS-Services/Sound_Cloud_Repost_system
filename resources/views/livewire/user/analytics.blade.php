@@ -216,7 +216,9 @@
 
     init() {
         this.displayedData = $wire.data;
-
+        if (Chart) {
+            Chart.destroyAll();
+        }
         // Initialize charts after DOM is ready
         this.$nextTick(() => {
             console.log(Chart);
