@@ -37,7 +37,7 @@
                             x-transition:leave="transition ease-in duration-75"
                             x-transition:leave-start="transform opacity-100 scale-100"
                             x-transition:leave-end="transform opacity-0 scale-95"
-                            class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
+                            class="absolute left-0 mt-2 w-56 rounded-md shadow-lg z-100">
                             <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
                                 <div class="py-1">
                                     @forelse ($genres as $genre)
