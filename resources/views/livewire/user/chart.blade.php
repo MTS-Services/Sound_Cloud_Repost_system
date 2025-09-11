@@ -1300,7 +1300,7 @@
                                         <div class="mt-3 mb-3">
                                             <div
                                                 class="flex items-center justify-between text-xs text-gray-800 dark:text-gray-400 mb-1">
-                                                <span>Engagement</span><span>{{ $engagementRate }}%</span>
+                                                <span>Engagement</span><span>{{ number_format($engagementRate, 2) }}%</span>
                                             </div>
                                             <div class="w-full bg-gray-700 rounded-full h-2">
                                                 <div class="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-orange-400 to-orange-600"
