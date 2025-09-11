@@ -112,7 +112,7 @@
                                         {{ $genre }}
                                     </span>
                                 @endforeach --}}
-                        @foreach (getAllGenres() as $genre)
+                        @foreach (AllGenres() as $genre)
                             <span wire:click="toggleGenre('{{ $genre }}')"
                                 class="px-3 py-2 text-sm rounded-md cursor-pointer
                                             {{ in_array($genre, $selectedGenres) ? 'bg-orange-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300' }}">
