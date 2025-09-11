@@ -381,14 +381,17 @@
                     @endif
                 </div>
                 @foreach ($repostRequests as $request)
-                    <div class="p-2 pb-4">
+                    <div class="p-2">
                         <div class="space-y-2">
                             <div class="flex justify-between text-sm">
-                                <div class="flex items-center space-x-2">
+                                <div class="w-[70%] flex items-center space-x-2">
                                     <span class="text-slate-400 font-bold">#{{ $loop->iteration }}</span>
-                                    <span class="text-slate-400 text-sm">{{ $request->track?->title }}</span>
+                                    <span class="text-slate-400 text-sm block max-w-[200px] truncate">
+                                        {{ $request->track?->title }}
+                                    </span>
+
                                 </div>
-                                <span class="text-slate-400">{{ $request->track?->genre ?? 'Unknown' }}</span>
+                                <span class="w-[30%] text-slate-400">{{ $request->track?->genre ?? 'Unknown' }}</span>
                             </div>
                         </div>
                     </div>
