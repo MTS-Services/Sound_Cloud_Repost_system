@@ -22,7 +22,7 @@
                             </div>
                             <div>
                                 <h1 class="text-3xl md:text-4xl font-bold mb-2 text-gray-900 dark:text-white">Weekly Top
-                                    {{ $topTracks->count() }}Chart</h1>
+                                    {{ $topTracks->count() }} / 20 Chart</h1>
                                 <div class="flex items-center gap-4 text-gray-500 dark:text-gray-300">
                                     <div class="flex items-center gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -35,7 +35,7 @@
                                             <path d="M3 10h18"></path>
                                         </svg>
                                         {{-- <span>Week of January 13, 2025</span> --}}
-                                        <span>Week of {{ date('F j, Y', strtotime(now())) }}</span>
+                                        <span>Week of {{ date('F j, Y', strtotime(now()->subDays(7))) }}</span>
                                     </div>
                                     <div class="flex items-center gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -51,26 +51,49 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2"><button
-                                class="flex items-center gap-2 bg-gray-200 hover:bg-white dark:bg-gray-800 dark:hover:bg-gray-700 px-4 py-2 rounded-xl transition-all duration-200 font-medium border dark:border-gray-700 text-gray-900 dark:text-white"><svg
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-refresh-cw w-4 h-4">
-                                    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
-                                    <path d="M21 3v5h-5"></path>
-                                    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
-                                    <path d="M8 16H3v5"></path>
-                                </svg><span class="hidden sm:inline">Refresh</span></button><button
-                                class="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-xl transition-all duration-200 font-medium"><svg
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-share2 w-4 h-4">
+                        <div class="flex items-center gap-2">
+                            <button wire:click="refresh"
+                                class="flex items-center gap-2 bg-gray-200 hover:bg-white dark:bg-gray-800 dark:hover:bg-gray-700 px-4 py-2 rounded-xl transition-all duration-200 font-medium border dark:border-gray-700 text-gray-900 dark:text-white">
+                                <span wire:loading.remove>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="lucide lucide-refresh-cw w-4 h-4">
+                                        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                                        <path d="M21 3v5h-5"></path>
+                                        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                                        <path d="M8 16H3v5"></path>
+                                    </svg>
+                                </span>
+                                <span wire:loading class="animate-spin">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="lucide lucide-refresh-cw w-4 h-4">
+                                        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                                        <path d="M21 3v5h-5"></path>
+                                        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                                        <path d="M8 16H3v5"></path>
+                                    </svg>
+                                </span>
+                                <span class="hidden sm:inline" wire:loading.remove>Refresh</span>
+                                <span class="hidden sm:inline" wire:loading>Refreshing...</span>
+
+                            </button>
+                            <button
+                                class="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-xl transition-all duration-200 font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share2 w-4 h-4">
                                     <circle cx="18" cy="5" r="3"></circle>
                                     <circle cx="6" cy="12" r="3"></circle>
                                     <circle cx="18" cy="19" r="3"></circle>
                                     <line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line>
                                     <line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line>
-                                </svg><span class="hidden sm:inline">Share</span></button></div>
+                                </svg>
+                                <span class="hidden sm:inline">Share</span>
+                            </button>
+                        </div>
                     </div>
                     <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div
@@ -226,11 +249,11 @@
                                 </div>
 
                                 <div class="col-span-2 flex items-center justify-center"><span
-                                        class="text-gray-500 dark:text-gray-300">{{ $track['metrics']['total_views']['current_total'] }}</span>
+                                        class="text-gray-500 dark:text-gray-300">{{ number_shorten($track['metrics']['total_views']['current_total']) }}</span>
                                 </div>
 
                                 <div class="col-span-2 flex items-center justify-center"><span
-                                        class="text-gray-500 dark:text-gray-300">{{ $track['metrics']['total_plays']['current_total'] }}</span>
+                                        class="text-gray-500 dark:text-gray-300">{{ number_shorten($track['metrics']['total_plays']['current_total']) }}</span>
                                 </div>
 
                                 <div class="col-span-1 flex items-center justify-center">
@@ -707,17 +730,20 @@
                                 <div class="grid grid-cols-3 gap-2 mb-4 text-xs text-gray-800 dark:text-gray-400">
                                     <div class="text-center">
                                         <div class="font-semibold text-black dark:text-white">
-                                            {{ $track['metrics']['total_views']['current_total'] }}</div>
+                                            {{ number_shorten($track['metrics']['total_views']['current_total']) }}
+                                        </div>
                                         <div>Reach</div>
                                     </div>
                                     <div class="text-center">
                                         <div class="font-semibold text-black dark:text-white">
-                                            {{ $track['metrics']['total_reposts']['current_total'] }}</div>
+                                            {{ number_shorten($track['metrics']['total_reposts']['current_total']) }}
+                                        </div>
                                         <div>Reposts</div>
                                     </div>
                                     <div class="text-center">
                                         <div class="font-semibold text-black dark:text-white">
-                                            {{ $track['metrics']['total_likes']['current_total'] }}</div>
+                                            {{ number_shorten($track['metrics']['total_likes']['current_total']) }}
+                                        </div>
                                         <div>Plays</div>
                                     </div>
                                 </div>
@@ -1211,11 +1237,11 @@
                                         <div class="flex items-center justify-between">
                                             <div
                                                 class="flex items-center gap-4 text-xs text-gray-800 dark:text-gray-400">
-                                                <span>{{ $track['metrics']['total_reposts']['current_total'] }}
+                                                <span>{{ number_shorten($track['metrics']['total_reposts']['current_total']) }}
                                                     reposts</span>
-                                                <span>{{ $track['metrics']['total_views']['current_total'] }}
+                                                <span>{{ number_shorten($track['metrics']['total_views']['current_total']) }}
                                                     reach</span>
-                                                <span>{{ $track['metrics']['total_plays']['current_total'] }}
+                                                <span>{{ number_shorten($track['metrics']['total_plays']['current_total']) }}
                                                     plays</span>
                                             </div>
                                             <div class="flex items-center gap-2">
@@ -1231,8 +1257,9 @@
                                                     </svg>
                                                 </button>
                                                 <button
+                                                    wire:click="likeTrack('{{ encrypt($track['action_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
                                                     class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
-                                                    title="Reach">
+                                                    title="Like">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                         height="24" viewBox="0 0 24 24" fill="none"
                                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -1357,7 +1384,7 @@
                                                     <polygon points="5 3 19 12 5 21 5 3"></polygon>
                                                 </svg></button><button
                                                 class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
-                                                title="Reach"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                title="Like"><svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                     height="24" viewBox="0 0 24 24" fill="none"
                                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                                     stroke-linejoin="round" class="lucide lucide-heart w-4 h-4 ">
@@ -1544,7 +1571,7 @@
                                                     <polygon points="5 3 19 12 5 21 5 3"></polygon>
                                                 </svg></button><button
                                                 class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
-                                                title="Reach"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                title="Like"><svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                     height="24" viewBox="0 0 24 24" fill="none"
                                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                                     stroke-linejoin="round" class="lucide lucide-heart w-4 h-4 ">
@@ -1616,7 +1643,7 @@
                                                     <polygon points="5 3 19 12 5 21 5 3"></polygon>
                                                 </svg></button><button
                                                 class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
-                                                title="Reach"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                title="Like"><svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                     height="24" viewBox="0 0 24 24" fill="none"
                                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                                     stroke-linejoin="round" class="lucide lucide-heart w-4 h-4 ">

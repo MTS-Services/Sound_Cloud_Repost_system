@@ -769,7 +769,7 @@
                                 </div>
                                 <div class="flex items-center ml-4">
                                     <span
-                                        class="text-xs text-gray-900 dark:text-white font-medium">{{ number_format($track['streams']) }}</span>
+                                        class="text-xs text-gray-900 dark:text-white font-medium">{{ number_shorten($track['streams']) }}</span>
                                     <span class="text-xs text-gray-500 dark:text-gray-400 ml-1">streams</span>
                                 </div>
                             </div>
@@ -869,7 +869,7 @@
                             <div class="flex items-center">
                                 <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
                                 <span class="text-sm text-gray-600 dark:text-gray-400">Reached
-                                    {{ number_format($data['detailed']['overall_metrics']['total_views']['current_total']) }}
+                                    {{ number_shorten($data['detailed']['overall_metrics']['total_views']['current_total']) }}
                                     total
                                     views!</span>
                             </div>
@@ -976,7 +976,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-bold text-gray-900 dark:text-white">
-                                    {{ number_format($track['metrics']['total_views']['current_total']) }}
+                                    {{ number_shorten($track['metrics']['total_views']['current_total']) }}
                                 </div>
                                 <div class="text-xs text-gray-500 dark:text-gray-400">streams</div>
                             </td>
@@ -1055,10 +1055,10 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                {{ number_format($track['metrics']['total_likes']['current_total']) }}
+                                {{ number_shorten($track['metrics']['total_likes']['current_total']) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                {{ number_format($track['metrics']['total_reposts']['current_total']) }}
+                                {{ number_shorten($track['metrics']['total_reposts']['current_total']) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm text-gray-900 dark:text-white">
