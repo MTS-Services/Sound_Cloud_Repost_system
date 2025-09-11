@@ -80,6 +80,7 @@ class Chart extends Component
             $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
             return null;
         }
+        dd($campaign);
         return $campaign;
     }
 
