@@ -1245,24 +1245,21 @@ class Campaign extends Component
     }
     public function totalCampaigns()
     {
-        $genres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
 
-        $this->totalCampaign = $this->getCampaignsQuery()
-            ->whereHas('music', function ($query){
-                $genres= $this->selectedGenres;
-                $query->whereIn('genre', $genres);
-            })->count();
+        $this->totalCampaign = $this->getCampaignsQuery()->count();
         $this->totalRecommended = $this->getCampaignsQuery()
-            ->whereHas('music', function ($query) use ($genres) {
-                $query->whereIn('genre', $genres);
+            ->whereHas('music', function ($query) {
+                $userGenres = user()->genres->pluck('genre')->toArray() ?? [];
+                $query->whereIn('genre', $userGenres);
             })->count();
 
         $this->totalRecommendedPro = $this->getCampaignsQuery()
             ->whereHas('user', function ($query) {
                 $query->isPro();
             })
-            ->whereHas('music', function ($query) use ($genres) {
-                $query->whereIn('genre', $genres);
+            ->whereHas('music', function ($query) {
+                $userGenres = user()->genres->pluck('genre')->toArray() ?? [];
+                $query->whereIn('genre', $userGenres);
             })->count();
     }
 
