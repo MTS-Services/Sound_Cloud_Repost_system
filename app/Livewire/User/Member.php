@@ -135,13 +135,19 @@ class Member extends Component
         $this->resetPage();
     }
 
-    public function updatedGenreFilter()
+    public function filterBygenre($genre)
     {
+        $this->genreFilter = $genre;
         $this->resetPage();
     }
 
-    public function updatedCostFilter()
+    // public function updatedCostFilter()
+    // {
+    //     $this->resetPage();
+    // }
+    public function filterByCost($filterBy)
     {
+        $this->costFilter = $filterBy;
         $this->resetPage();
     }
 

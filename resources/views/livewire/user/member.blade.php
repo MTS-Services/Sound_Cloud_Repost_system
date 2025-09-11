@@ -1,52 +1,107 @@
 <div>
     <x-slot name="page_slug">members</x-slot>
-    <div class="container mx-auto px-4 py-8 max-w-8xl">
+    <div class="px-4 py-8">
 
         <div x-data="{
             showModal: @entangle('showModal').live,
-            showRepostsModal: @entangle('showRepostsModal').live
+            showRepostsModal: @entangle('showRepostsModal').live,
+            openByCost: false,
+            openByGenre: false,
         }">
 
             <!-- Header -->
             <div class="mb-8">
-                <h1 class="text-2xl md:text-3xl font-bold mb-2 dark:text-white">Browse Members</h1>
+                <h1 class="text-2xl md:text-xl font-bold mb-2 dark:text-white">Browse Members</h1>
                 <p class="text-text-gray text-sm md:text-base dark:text-white">Search, filter or browse the list of
                     recommended members that can repost your music.</p>
             </div>
 
             <!-- Search and Filters -->
             <div class="mb-8 flex flex-col lg:flex-row gap-4">
+                <!-- Filter Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <div class="relative">
+                        <button @click="openByGenre = !openByGenre" @click.outside="openByGenre = false"
+                            class="bg-orange-100 !hover:bg-orange-400 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer">
+                            {{ __('Filter by genre') }}
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-chevron-down-icon lucide-chevron-down">
+                                <path d="m6 9 6 6 6-6" />
+                            </svg>
+                        </button>
+
+                        <div x-show="openByGenre" x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="transform opacity-0 scale-95"
+                            x-transition:enter-end="transform opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-75"
+                            x-transition:leave-start="transform opacity-100 scale-100"
+                            x-transition:leave-end="transform opacity-0 scale-95"
+                            class="absolute left-0 mt-2 w-56 rounded-md shadow-lg z-100">
+                            <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
+                                <div class="py-1">
+                                    @forelse ($genres as $genre)
+                                        <button wire:click="filterBygenre('{{ $genre }}')"
+                                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left {{ $genreFilter !== $genre ? 'bg-gray-100 dark:bg-gray-700' : '' }}">
+                                            {{ $genre }}
+                                        </button>
+                                    @empty
+                                        <button
+                                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                            {{ __('No genres found') }}
+                                        </button>
+                                    @endforelse
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <button @click="openByCost = !openByCost" @click.outside="openByCost = false"
+                            class="bg-orange-100 !hover:bg-orange-400 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer">
+                            {{ __('Filter by cost') }}
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-chevron-down-icon lucide-chevron-down">
+                                <path d="m6 9 6 6 6-6" />
+                            </svg>
+                        </button>
+
+                        <div x-show="openByCost" x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="transform opacity-0 scale-95"
+                            x-transition:enter-end="transform opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-75"
+                            x-transition:leave-start="transform opacity-100 scale-100"
+                            x-transition:leave-end="transform opacity-0 scale-95"
+                            class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
+                            <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
+                                <div class="py-1">
+                                    <button wire:click="filterByCost('low_to_high')"
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                        {{ __('High to Low') }}
+                                    </button>
+                                    <button wire:click="filterByCost('high_to_low')"
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                        {{ __('Low to High') }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- Search Input -->
                 <div class="flex-1 relative">
-                    <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text-gray dark:text-gray-400 "
+                    <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-gray dark:text-gray-400 "
                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                     <input type="text" placeholder="Search by soundcloud profile url or Name"
                         wire:model.live="search"
-                        class="w-full bg-card-blue border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-gray-900 dark:text-white dark:bg-gray-900 placeholder-text-gray focus:outline-none focus:border-orange-500">
+                        class="w-full bg-card-blue border border-gray-300 dark:border-gray-600 hover:border-orange-500 transition-colors rounded-md pl-10 pr-4 py-2 text-gray-900 dark:text-white dark:bg-gray-900 placeholder-text-gray focus:outline-none focus:border-orange-500">
                 </div>
 
-                <!-- Filter Buttons -->
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <select wire:model.live="genreFilter"
-                        class="bg-card-blue border border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-7 py-3 text-text-gray hover:border-orange-500 transition-colors min-w-[160px] focus:outline-none focus:border-orange-500">
-                        <option class="hidden" value="">Filter by genre</option>
-                        @forelse ($genres as $genre)
-                            <option value="{{ $genre }}">{{ $genre }}</option>
-                        @empty
-                            <option value="">No genres found</option>
-                        @endforelse
-                    </select>
 
-                    <select wire:model.live="costFilter"
-                        class="bg-card-blue border border-gray-600 dark:text-white dark:bg-gray-900 rounded-lg px-4 py-3 text-text-gray hover:border-orange-500 transition-colors min-w-[160px] focus:outline-none focus:border-orange-500">
-                        <option class="hidden" value="">Filter by cost</option>
-                        <option value="low_to_high">Low to High</option>
-                        <option value="high_to_low">High to Low</option>
-                    </select>
-                </div>
             </div>
 
 
@@ -54,7 +109,8 @@
             <!-- Member Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-3 gap-6">
                 @forelse ($users as $user_)
-                    <div class="bg-card-blue rounded-lg p-6 border border-gray-600">
+                    <div
+                        class="bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
                         <!-- Profile Header -->
                         <div class="flex items-center gap-3 mb-6">
                             <div class="relative">
@@ -75,11 +131,15 @@
                                 </a>
                             </div>
                             <div>
-                                <a class="cursor-pointer" wire:navigate
-                                    href="{{ route('user.my-account', $user_->urn) }}">
-                                    <h3 class="font-semibold text-lg dark:text-white hover:underline">
-                                        {{ $user_->name }}</h3>
-                                </a>
+                                <div class="flex items-center gap-2">
+                                    <a class="cursor-pointer" wire:navigate
+                                        href="{{ route('user.my-account', $user_->urn) }}">
+                                        <h3 class="font-semibold text-lg dark:text-white hover:underline">
+                                            {{ $user_->name }}</h3>
+                                    </a>
+                                    <span
+                                        class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName() }}</span>
+                                </div>
                                 <p class="text-text-gray text-sm dark:text-white">
                                     {{ $user_->created_at->format('M d, Y') }}
                                 </p>
