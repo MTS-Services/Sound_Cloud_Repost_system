@@ -80,7 +80,7 @@
 
         <!-- Filter by genre dropdown -->
         <div class="relative">
-            <button @click="openFilterByGenre = !openFilterByGenre, openFilterByTrack = false" wire:click="getAllGenres"
+            <button @click="openFilterByGenre = !openFilterByGenre, openFilterByTrack = false"
                 class="bg-orange-100 hover:bg-orange-300 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
