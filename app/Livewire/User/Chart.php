@@ -5,6 +5,7 @@ namespace App\Livewire\User;
 use App\Jobs\NotificationMailSent;
 use App\Models\Campaign;
 use App\Models\Playlist;
+use App\Models\Repost;
 use App\Models\Track;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\User\AnalyticsService;
@@ -136,7 +137,13 @@ class Chart extends Component
     {
         try {
             $campaign = $this->baseValidation($encryptedCampaignId, $encryptedTrackUrn);
+
             if (!$campaign) {
+                return;
+            }
+
+            if (Repost::where('reposter_urn', user()->urn)->where('campaign_id', $campaign->id)->exists()) {
+                $this->dispatch('alert', type: 'error', message: 'You have already reposted this campaign.');
                 return;
             }
 
