@@ -943,10 +943,10 @@
                                     </div>
                                     <div>
                                         <div class="text-sm font-medium text-gray-900 dark:text-white">
-                                            {{ $track['track_details']['title'] ?? 'Unknown Track' }}
+                                            {{ $track['track_details']->title ?? 'Unknown Track' }}
                                         </div>
                                         <div class="text-sm text-gray-500 dark:text-gray-400">
-                                            {{ $track['track_details']['genre'] ?? 'Unknown' }} • You
+                                            {{ $track['track_details']->genre ?? 'Unknown' }} • You
                                         </div>
                                     </div>
                                 </div>
@@ -1019,7 +1019,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm text-gray-900 dark:text-white">
-                                    {{ $track['track_details']['created_at_formatted'] ?? 'Unknown' }}
+                                    {{ $track['track_details']->created_at_formatted ?? 'Unknown' }}
                                 </div>
                             </td>
                         </tr>

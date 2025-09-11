@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Track extends BaseModel
 {
+    protected $with = ['user'];
+    
     protected $fillable = [
         'user_urn',
 

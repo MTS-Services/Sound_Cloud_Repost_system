@@ -201,11 +201,12 @@ class Analytics extends Component
             }
 
             return $this->analyticsService->getPaginatedTrackAnalytics(
-                $this->filter,
-                $dateRange,
-                $this->selectedGenres,
-                $this->tracksPerPage,
-                $this->getPage()
+                filter: $this->filter,
+                dateRange: $dateRange,
+                genres: $this->selectedGenres,
+                perPage: $this->tracksPerPage,
+                page: $this->getPage(),
+                userUrn: user()->urn
             );
         } catch (\Exception $e) {
             logger()->error('Paginated track data loading failed', ['error' => $e->getMessage()]);
