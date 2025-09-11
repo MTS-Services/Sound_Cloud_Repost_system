@@ -386,7 +386,7 @@
                             <div class="flex justify-between text-sm">
                                 <div class="w-[70%] flex items-center space-x-2">
                                     <span class="text-slate-400 font-bold">#{{ $loop->iteration }}</span>
-                                    <span class="text-slate-400 text-sm block max-w-[90%] truncate">
+                                    <span class="text-slate-400 text-sm block max-w-[200px] truncate">
                                         {{ $request->track?->title }}
                                     </span>
 
