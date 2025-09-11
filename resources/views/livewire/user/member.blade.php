@@ -42,7 +42,7 @@
                                 <div class="py-1">
                                     @forelse ($genres as $genre)
                                         <button wire:click="filterBygenre('{{ $genre }}')"
-                                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left {{ $genreFilter !== $genre ? 'bg-gray-100 dark:bg-gray-700' : '' }}">
+                                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left {{ $genreFilter !== $genre ? 'bg-orange-500 hover:bg-orange-500 !text-white' : '' }}">
                                             {{ $genre }}
                                         </button>
                                     @empty
