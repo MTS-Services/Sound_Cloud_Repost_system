@@ -3,7 +3,6 @@
 namespace App\Livewire\User\CampaignManagement;
 
 use App\Jobs\NotificationMailSent;
-use App\Mail\NotificationMails;
 use App\Models\Campaign as ModelsCampaign;
 use App\Models\CreditTransaction;
 use App\Models\Feature;
@@ -27,7 +26,6 @@ use Throwable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\PlaylistTrack;
-use Illuminate\Support\Facades\Mail;
 
 class Campaign extends Component
 {
@@ -1003,19 +1001,15 @@ class Campaign extends Component
             if ($response->successful()) {
                 $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
                 if ($repostEmailPermission) {
-
                     $datas = [
                         [
                             'email' => $campaign->user->email,
                             'subject' => 'Repost Notification',
                             'title' => 'Dear ' . $campaign->user->name,
-                            'body' => 'Your' . $campaign->title . 'campaign has been reposted successfully.',
+                            'body' => 'Your ' . $campaign->title . 'campaign has been reposted successfully.',
                         ],
                     ];
                     NotificationMailSent::dispatch($datas);
-                    // foreach ($datas as $mailData) {
-                    //     Mail::to($mailData['email'])->send(new NotificationMails($mailData));
-                    // }
                 }
                 $soundcloudRepostId = $campaign->music->soundcloud_track_id;
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);

@@ -43,13 +43,12 @@
     },
 
     initPerformanceChart() {
-        if (this.performanceChart instanceof Chart) {
-            this.performanceChart.destroy();
-        }
         const ctx = document.getElementById('performanceChart');
         if (!ctx) return;
 
-
+        if (this.performanceChart) {
+            this.performanceChart.destroy();
+        }
 
         this.performanceChart = new Chart(ctx.getContext('2d'), {
             type: 'line',
@@ -155,13 +154,12 @@
     },
 
     initGenreChart() {
-        if (this.initGenreChart instanceof Chart) {
-            this.initGenreChart.destroy();
-        }
         const ctx = document.getElementById('genreChart');
         if (!ctx) return;
 
-
+        if (this.genreChart) {
+            this.genreChart.destroy();
+        }
 
         this.genreChart = new Chart(ctx.getContext('2d'), {
             type: 'pie',
@@ -217,21 +215,14 @@
     },
 
     init() {
-        // Destroy existing charts before re-initializing
-        if (this.performanceChart instanceof Chart) {
-            this.performanceChart.destroy();
-        }
-        if (this.genreChart instanceof Chart) {
-            this.genreChart.destroy();
-        }
         this.displayedData = $wire.data;
 
-
-
+        // Initialize charts after DOM is ready
         this.$nextTick(() => {
             if (typeof Chart !== 'undefined') {
                 this.initializeCharts();
             } else {
+                // Wait for Chart.js to load
                 const checkChart = () => {
                     if (typeof Chart !== 'undefined') {
                         this.initializeCharts();
@@ -243,23 +234,21 @@
             }
         });
 
-        this.$watch('$wire.data', (newData, oldData) => {
-            if (JSON.stringify(newData) !== JSON.stringify(oldData)) {
-                this.displayedData = newData;
-                this.dataCache = $wire.dataCache;
-            }
+        this.$watch('$wire.data', (newData) => {
+            this.displayedData = newData;
+            this.dataCache = $wire.dataCache;
         });
 
+        this.$watch('$wire.dataCache', (newCache) => {
+            this.dataCache = newCache;
+        });
+
+        // Listen for data updates
         Livewire.on('dataUpdated', () => {
             this.chartData = $wire.getChartData();
             this.genreBreakdown = $wire.genreBreakdown;
-
             this.$nextTick(() => {
-                if (this.performanceChart) {
-                    this.updateCharts();
-                } else {
-                    this.initializeCharts();
-                }
+                this.updateCharts();
             });
         });
     }
@@ -691,8 +680,9 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Avg. Engagement Rate</p>
-                <p class="text-2xl font-bold text-gray-900 dark:text-white" {{-- x-text="(displayedData?.avgEngagementRate !== undefined ? displayedData.avgEngagementRate + '%' : '-')"> --}}>
-                    {{ min($data['avgEngagementRate'], 100) ?? '-' }}%
+                <p class="text-2xl font-bold text-gray-900 dark:text-white"
+                    x-text="(displayedData?.avgEngagementRate !== undefined ? displayedData.avgEngagementRate + '%' : '-')">
+                    {{ $data['avgEngagementRate'] ?? '-' }}%
                 </p>
             </div>
             <div class="mt-3 h-1 bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] rounded-full"></div>
@@ -776,15 +766,10 @@
                             <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
                                 @php
                                     $maxStreams = $topTracks[0]['streams'] ?? 1;
-                                    $percentage =
-                                        $maxStreams > 0
-                                            ? ((($maxStreams - $track['streams']) / $maxStreams) * 100 < 0
-                                                ? 0
-                                                : (($maxStreams - $track['streams']) / $maxStreams) * 100)
-                                            : 0;
+                                    $percentage = $maxStreams > 0 ? ($track['streams'] / $maxStreams) * 100 : 0;
                                 @endphp
                                 <div class="h-2 rounded-full transition-all duration-300"
-                                    style="width: {{ $percentage > 100 ? 100 : $percentage }}%; background: linear-gradient(90deg, #ff6b35, #ff6b35cc);">
+                                    style="width: {{ $percentage }}%; background: linear-gradient(90deg, #ff6b35, #ff6b35cc);">
                                 </div>
                             </div>
                         </div>
@@ -1018,39 +1003,19 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @php
                                     $totalViews = $track['metrics']['total_views']['current_total'];
-
                                     $totalEngagements =
                                         $track['metrics']['total_likes']['current_total'] +
                                         $track['metrics']['total_comments']['current_total'] +
-                                        $track['metrics']['total_reposts']['current_total'] +
-                                        $track['metrics']['total_followers']['current_total'];
-
-                                    // Average engagement if you really want to divide by 4
-                                    $totalEngagement = $totalEngagements / 4;
-
-                                    // Main calculation
-                                    $calculation = ($totalViews - $totalEngagement) / $totalEngagement;
-
-                                    // Calculate engagement rate
-                                    $engagementRate = 0;
-
-                                    if ($totalViews > 0 && $totalEngagement > 0) {
-                                        // If calculation is negative, use 0
-                                        $engagementRate = $calculation > 0 ? $calculation : 0;
-
-                                        // Convert to percentage
-                                        $engagementRate = $engagementRate * 100;
-
-                                        $engagementRate = min($engagementRate, 100);
-                                    }
+                                        $track['metrics']['total_reposts']['current_total'];
+                                    $engagementRate = $totalViews > 0 ? ($totalEngagements / $totalViews) * 100 : 0;
                                 @endphp
                                 <div class="flex items-center">
                                     <div class="text-sm font-bold text-gray-900 dark:text-white">
-                                        {{ number_format($engagementRate) }}%
+                                        {{ number_format($engagementRate, 1) }}%
                                     </div>
                                     <div class="ml-2 w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                                         <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] h-2 rounded-full transition-all duration-300 max-w-full"
-                                            style="width: {{ $engagementRate }}%;"></div>
+                                            style="width: {{ min($engagementRate, 100) }}%;"></div>
                                     </div>
                                 </div>
                             </td>

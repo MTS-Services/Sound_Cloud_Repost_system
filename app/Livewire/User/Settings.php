@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User;
 
+use App\Jobs\NotificationMailSent;
 use App\Models\CreditTransaction;
 use App\Models\Payment;
 use App\Models\User;
@@ -11,7 +12,6 @@ use App\Models\UserSetting;
 use App\Models\UserSocialInformation;
 use App\Services\User\UserSettingsService;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -411,6 +411,18 @@ class Settings extends Component
         try {
             $userUrn = user()->urn;
             $this->userSettingsService->deleteAccount($userUrn);
+            $repostEmailPermission = hasEmailSentPermission('em_inactivity_warn', user()->urn);
+            if ($repostEmailPermission) {
+                $datas = [
+                    [
+                        'email' => user()->email,
+                        'subject' => 'Account Deleted',
+                        'title' => 'Dear ' . user()->name,
+                        'body' => 'Your account has been deleted.',
+                    ],
+                ];
+                NotificationMailSent::dispatch($datas);
+            }
             return redirect()->route('f.landing')->with('success', 'Account deleted successfully!');
         } catch (\Throwable $e) {
             Log::error($e->getMessage());

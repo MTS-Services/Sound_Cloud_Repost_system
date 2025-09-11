@@ -127,7 +127,7 @@ function slugToTitle($slug)
 }
 function storage_url($urlOrArray)
 {
-    $image = asset('https://i.imgur.com/IpH9g5Q.png');
+    $image = asset('default_img/no_img.jpg');
     if (is_array($urlOrArray) || is_object($urlOrArray)) {
         $result = '';
         $count = 0;
