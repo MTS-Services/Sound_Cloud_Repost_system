@@ -69,7 +69,7 @@ class Chart extends Component
     public function baseValidation($encryptedCampaignId, $encryptedTrackUrn)
     {
         $currentUserUrn = user()->urn;
-
+        dd(decrypt($encryptedCampaignId), decrypt($encryptedTrackUrn));
         $campaign = $this->campaignService->getCampaigns()->where('id', decrypt($encryptedCampaignId))->where('user_urn', $currentUserUrn)->first();
         dd($campaign);
         // if ($campaign) {
