@@ -75,7 +75,8 @@ class Chart extends Component
         //     $this->dispatch('alert', type: 'error', message: 'You cannot act on your own campaign.');
         //     return null;
         // }
-        $campaign->load('music.user.userInfo');
+        dd($campaign);
+        $campaign->load('music.user');
         if (decrypt($encryptedTrackUrn) != $campaign->music->urn) {
             $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
             return null;
@@ -86,8 +87,8 @@ class Chart extends Component
 
     public function likeTrack($encryptedCampaignId, $encryptedTrackUrn)
     {
-        $this->soundCloudService->ensureSoundCloudConnection(user());
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $this->soundCloudService->ensureSoundCloudConnection(user());
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
         try {
             $campaign = $this->baseValidation($encryptedCampaignId, $encryptedTrackUrn);
             if (!$campaign) {
