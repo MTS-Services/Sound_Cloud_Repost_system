@@ -185,6 +185,27 @@
                         </div>
 
                         @forelse ($topTracks as $track)
+                            @php
+                                $totalViews = $track['metrics']['total_views']['current_total'];
+                                $totalPlays = $track['metrics']['total_plays']['current_total'];
+                                $totalReposts = $track['metrics']['total_reposts']['current_total'];
+                                $totalLikes = $track['metrics']['total_likes']['current_total'];
+                                $totalComments = $track['metrics']['total_comments']['current_total'];
+                                $totalFollowers = $track['metrics']['total_followers']['current_total'];
+
+                                $totalEngagements =
+                                    $track['metrics']['total_likes']['current_total'] +
+                                    $track['metrics']['total_comments']['current_total'] +
+                                    $track['metrics']['total_reposts']['current_total'] +
+                                    $track['metrics']['total_plays']['current_total'] +
+                                    $track['metrics']['total_followers']['current_total'];
+                                $averageEngagements = $totalEngagements / 5;
+                                // Engagement % (capped at 100)
+                                $engagementRate = min(100, ($totalEngagements / max(1, $totalViews)) * 100);
+
+                                // Engagement Score (0–10 scale)
+                                $engagementScore = round(($engagementRate / 100) * 10, 1);
+                            @endphp
                             <div
                                 class="grid grid-cols-12 gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 border-b border-gray-300 dark:border-gray-700">
                                 {{-- @dd($track); --}}
@@ -224,7 +245,7 @@
                                 <div class="col-span-4 flex items-center gap-3">
                                     <div class="relative group">
                                         <img src="{{ soundcloud_image($track['track_details']->artwork_url) }}"
-                                            alt="{{ Str::limit($track['track_details']->title, 20, '...') }}"
+                                            alt="{{ $track['track_details']->title }}"
                                             class="w-12 h-12 rounded-lg object-cover transition-transform duration-300 group-hover:scale-105">
                                         <a href="{{ $track['track_details']->permalink_url }}" target="_blank"
                                             class="absolute inset-0 shadow group-hover:bg-gray-950/20 rounded-lg transition-all duration-300 flex items-center justify-center">
@@ -234,8 +255,8 @@
                                     </div>
                                     <div class="min-w-0 flex-1">
                                         <a href="{{ $track['track_details']->permalink_url }}" target="_blank"
-                                            class="font-semibold text-gray-900 dark:text-white truncate cursor-pointer hover:text-orange-400 transition-colors block">
-                                            {{ $track['track_details']->title }}
+                                            class="font-semibold text-gray-900 dark:text-white truncate cursor-pointer hover:text-orange-400 transition-colors block w-full">
+                                            {{ Str::limit($track['track_details']->title, 30, '...') }}
                                         </a>
                                         <a href="{{ route('user.my-account', $track['track_details']->user->urn) }}"
                                             class="text-sm text-gray-600 dark:text-gray-400 truncate hover:text-orange-400 transition-colors block">
@@ -245,7 +266,7 @@
 
                                 <div
                                     class="col-span-2 flex items-center justify-center cursor-pointer hover:text-orange-400 transition-colors">
-                                    <span class="font-bold text-orange-400">10/10</span>
+                                    <span class="font-bold text-orange-400">{{ $engagementScore }}/10</span>
                                 </div>
 
                                 <div class="col-span-2 flex items-center justify-center"><span
@@ -665,6 +686,27 @@
                 <div x-show="activeTab === 'gridView'" class="transition-all duration-500 opacity-100 scale-100">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         @forelse ($topTracks as $track)
+                            @php
+                                $totalViews = $track['metrics']['total_views']['current_total'];
+                                $totalPlays = $track['metrics']['total_plays']['current_total'];
+                                $totalReposts = $track['metrics']['total_reposts']['current_total'];
+                                $totalLikes = $track['metrics']['total_likes']['current_total'];
+                                $totalComments = $track['metrics']['total_comments']['current_total'];
+                                $totalFollowers = $track['metrics']['total_followers']['current_total'];
+
+                                $totalEngagements =
+                                    $track['metrics']['total_likes']['current_total'] +
+                                    $track['metrics']['total_comments']['current_total'] +
+                                    $track['metrics']['total_reposts']['current_total'] +
+                                    $track['metrics']['total_plays']['current_total'] +
+                                    $track['metrics']['total_followers']['current_total'];
+                                $averageEngagements = $totalEngagements / 5;
+                                // Engagement % (capped at 100)
+                                $engagementRate = min(100, ($totalEngagements / max(1, $totalViews)) * 100);
+
+                                // Engagement Score (0–10 scale)
+                                $engagementScore = round(($engagementRate / 100) * 10, 1);
+                            @endphp
                             <div
                                 class="bg-gray-200 dark:bg-gray-800 rounded-2xl p-4 border transition-all duration-300 hover:scale-105 hover:shadow-xl shadow-lg {{ proUser($track['track_details']->user_urn) && $track['action_details']->is_featured
                                     ? 'shadow-orange-500/20 border-orange-300 dark:border-orange-500'
@@ -713,8 +755,8 @@
                                 </div>
                                 <div class="mb-4">
                                     <a href="{{ $track['track_details']->permalink_url }}" target="_blank"
-                                        class="font-bold text-black dark:text-white mb-1 cursor-pointer hover:text-orange-400 transition-colors truncate">
-                                        {{ Str::limit($track['track_details']->title, 10, '...') }}</a>
+                                        class="font-bold text-black dark:text-white mb-1 cursor-pointer hover:text-orange-400 transition-colors truncate block w-full">
+                                        {{ Str::limit($track['track_details']->title, 20, '...') }}</a>
                                     <a href="{{ route('user.my-account', $track['track_details']->user->urn) }}"
                                         class="text-gray-600 dark:text-gray-300 text-sm mb-2 truncate">
                                         {{ $track['track_details']->user?->name }}</a>
@@ -726,7 +768,7 @@
                                 <div class="mb-4">
                                     <div
                                         class="text-center cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg p-2 transition-colors">
-                                        <div class="text-xl font-bold text-orange-400">10/10</div>
+                                        <div class="text-xl font-bold text-orange-400">{{ $engagementScore }}/10</div>
                                         <div class="text-xs text-gray-800 dark:text-gray-400">Engagement Score</div>
                                     </div>
                                 </div>
@@ -1133,6 +1175,28 @@
                     <div class="space-y-3">
 
                         @forelse ($topTracks as $track)
+                            @php
+                                $totalViews = $track['metrics']['total_views']['current_total'];
+                                $totalPlays = $track['metrics']['total_plays']['current_total'];
+                                $totalReposts = $track['metrics']['total_reposts']['current_total'];
+                                $totalLikes = $track['metrics']['total_likes']['current_total'];
+                                $totalComments = $track['metrics']['total_comments']['current_total'];
+                                $totalFollowers = $track['metrics']['total_followers']['current_total'];
+
+                                $totalEngagements =
+                                    $track['metrics']['total_likes']['current_total'] +
+                                    $track['metrics']['total_comments']['current_total'] +
+                                    $track['metrics']['total_reposts']['current_total'] +
+                                    $track['metrics']['total_plays']['current_total'] +
+                                    $track['metrics']['total_followers']['current_total'];
+                                $averageEngagements = $totalEngagements / 5;
+                                // Engagement % (capped at 100)
+                                $engagementRate = min(100, ($totalEngagements / max(1, $totalViews)) * 100);
+
+                                // Engagement Score (0–10 scale)
+                                $engagementScore = round(($engagementRate / 100) * 10, 1);
+                            @endphp
+
                             <div
                                 class="relative border rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-900 dark:to-gray-800  shadow-lg {{ proUser($track['track_details']->user_urn) && $track['action_details']->is_featured
                                     ? 'shadow-orange-500/20 border-orange-300 dark:border-orange-500'
@@ -1189,8 +1253,8 @@
                                             <div class="flex-1 min-w-0">
                                                 <a href="{{ $track['track_details']->permalink_url }}"
                                                     target="_blank"
-                                                    class="font-bold text-black dark:text-white truncate text-lg hover:text-orange-400 transition-colors cursor-pointer">
-                                                    {{ Str::limit($track['track_details']->title, 20, '...') }}
+                                                    class="font-bold text-black dark:text-white truncate text-lg hover:text-orange-400 transition-colors cursor-pointer block w-full">
+                                                    {{ Str::limit($track['track_details']->title, 30, '...') }}
                                                 </a>
                                                 <a href="{{ route('user.my-account', $track['track_details']->user->urn) }}"
                                                     class="text-gray-600 dark:text-gray-300 truncate">
@@ -1199,7 +1263,8 @@
                                                     class="inline-block mt-1 bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-600 dark:text-gray-700 border border-gray-300 dark:border-gray-600">{{ $track['track_details']->genre ?? 'Unknown' }}</span>
                                             </div>
                                             <div class="text-right cursor-pointer">
-                                                <div class="text-lg font-bold text-black dark:text-white">10/10</div>
+                                                <div class="text-lg font-bold text-black dark:text-white">
+                                                    {{ $engagementScore }}/10</div>
                                                 <div class="text-xs text-gray-800 dark:text-gray-400">score</div>
                                             </div>
                                         </div>
@@ -1235,11 +1300,11 @@
                                         <div class="mt-3 mb-3">
                                             <div
                                                 class="flex items-center justify-between text-xs text-gray-800 dark:text-gray-400 mb-1">
-                                                <span>Engagement</span><span>100%</span>
+                                                <span>Engagement</span><span>{{ $engagementRate }}%</span>
                                             </div>
                                             <div class="w-full bg-gray-700 rounded-full h-2">
                                                 <div class="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-orange-400 to-orange-600"
-                                                    style="width: 100%;"></div>
+                                                    style="width: {{ $engagementRate }}%;"></div>
                                             </div>
                                         </div>
                                         <div class="flex items-center justify-between">
