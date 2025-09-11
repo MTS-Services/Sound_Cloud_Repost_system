@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class UserAnalytics extends BaseModel
 {
+    protected $with = ['user', 'track', 'action'];
+
     protected $fillable = [
         'user_urn',
         'track_urn',
@@ -74,8 +76,7 @@ class UserAnalytics extends BaseModel
      */
     public function track(): BelongsTo
     {
-        return $this->belongsTo(Track::class, 'track_urn', 'urn')
-            ->select(['urn', 'title', 'genre', 'created_at', 'user_urn']);
+        return $this->belongsTo(Track::class, 'track_urn', 'urn');
     }
 
     /**

@@ -795,21 +795,20 @@ if (!function_exists('userFeatures')) {
             Feature::KEY_COLLABORATION_HUB => "True",
             Feature::KEY_SUPPORT_LEVEL => "Community Support",
         ];
-
     }
-
 }
 
-function hasEmailSentPermission($value, $userUrn = null) : bool
+function hasEmailSentPermission($value, $userUrn = null): bool
 {
     if ($userUrn) {
         return UserSetting::where('user_urn', $userUrn)->value($value) ?? false;
     }
     return UserSetting::where('user_urn', user()->urn)->value($value) ?? false;
 }
-function app_setting($key){
+function app_setting($key)
+{
     $setting = ApplicationSetting::where('key', $key)->first();
-    if($setting){
+    if ($setting) {
         return $setting->value;
     }
     return null;
