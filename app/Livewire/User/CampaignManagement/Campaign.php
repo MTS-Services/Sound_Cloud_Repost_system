@@ -58,7 +58,7 @@ class Campaign extends Component
     public $selectedTags = [];
     public $selecteTags = [];
     public $selectedGenre = [];
-    public $searchMusicType = [];
+    public $searchMusicType = 'all';
     public $suggestedTags = [];
     public $showSuggestions = false;
     public $showSelectedTags = false;
