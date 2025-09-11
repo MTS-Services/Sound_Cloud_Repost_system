@@ -68,8 +68,9 @@ class Chart extends Component
 
     public function baseValidation($encryptedCampaignId, $encryptedTrackUrn)
     {
-        $currentUserUrn = user()->urn;
-        if ($this->campaignService->getCampaigns()->where('id', decrypt($encryptedCampaignId))->where('user_urn', $currentUserUrn)->exists()) {
+        $this->soundCloudService->ensureSoundCloudConnection(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        if ($this->campaignService->getCampaigns()->where('id', decrypt($encryptedCampaignId))->where('user_urn', user()->urn)->exists()) {
             $this->dispatch('alert', type: 'error', message: 'You cannot act on your own campaign.');
             return null;
         }
@@ -84,8 +85,6 @@ class Chart extends Component
 
     public function likeTrack($encryptedCampaignId, $encryptedTrackUrn)
     {
-        $this->soundCloudService->ensureSoundCloudConnection(user());
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         try {
             $campaign = $this->baseValidation($encryptedCampaignId, $encryptedTrackUrn);
             if (!$campaign) {
@@ -97,30 +96,91 @@ class Chart extends Component
             $httpClient = Http::withHeaders([
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
-            $like_response = null;
+            $response = null;
 
             switch ($campaign->music_type) {
                 case Track::class:
-                    $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$campaign->music->urn}");
+                    $response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$campaign->music->urn}");
                     break;
                 case Playlist::class:
-                    $like_response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$campaign->music->urn}");
+                    $response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$campaign->music->urn}");
                     break;
                 default:
                     $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
                     return;
             }
             $data = [
-                'likeable' => $like_response ? true : false,
+                'likeable' => $response ? true : false,
                 'comment' => false,
                 'follow' => false
             ];
-            if ($like_response->successful()) {
+            if ($response->successful()) {
                 $soundcloudRepostId = $campaign->music->soundcloud_track_id;
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
                 $this->dispatch('alert', type: 'success', message: 'Like successful.');
             } else {
-                Log::error("SoundCloud Repost Failed: " . $like_response->body());
+                Log::error("SoundCloud Repost Failed: " . $response->body());
+                $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
+            }
+        } catch (Throwable $e) {
+            Log::error("Error in repost method: " . $e->getMessage(), [
+                'exception' => $e,
+                'campaign_id_input' => decrypt($encryptedCampaignId),
+                'user_urn' => user()->urn ?? 'N/A',
+            ]);
+            $this->dispatch('alert', type: 'error', message: 'An unexpected error occurred. Please try again later.');
+            return;
+        }
+    }
+    public function repostTrack($encryptedCampaignId, $encryptedTrackUrn)
+    {
+        try {
+            $campaign = $this->baseValidation($encryptedCampaignId, $encryptedTrackUrn);
+            if (!$campaign) {
+                return;
+            }
+
+            $soundcloudRepostId = null;
+
+            $httpClient = Http::withHeaders([
+                'Authorization' => 'OAuth ' . user()->token,
+            ]);
+            $response = null;
+
+            switch ($campaign->music_type) {
+                case Track::class:
+                    $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
+                    break;
+                case Playlist::class:
+                    $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$campaign->music->urn}");
+                    break;
+                default:
+                    $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
+                    return;
+            }
+            $data = [
+                'likeable' => false,
+                'comment' => false,
+                'follow' => false
+            ];
+            if ($response->successful()) {
+                $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
+                if ($repostEmailPermission) {
+                    $datas = [
+                        [
+                            'email' => $campaign->user->email,
+                            'subject' => 'Repost Notification',
+                            'title' => 'Dear ' . $campaign->user->name,
+                            'body' => 'Your ' . $campaign->title . 'campaign has been reposted successfully.',
+                        ],
+                    ];
+                    NotificationMailSent::dispatch($datas);
+                }
+                $soundcloudRepostId = $campaign->music->soundcloud_track_id;
+                $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
+                $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.');
+            } else {
+                Log::error("SoundCloud Repost Failed: " . $response->body());
                 $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
             }
         } catch (Throwable $e) {
