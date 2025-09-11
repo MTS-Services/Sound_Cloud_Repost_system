@@ -6,6 +6,7 @@ use App\Jobs\NotificationMailSent;
 use App\Models\Campaign;
 use App\Models\Playlist;
 use App\Models\Track;
+use App\Services\SoundCloud\SoundCloudService;
 use App\Services\User\AnalyticsService;
 use App\Services\User\CampaignManagement\CampaignService;
 use Livewire\Component;
@@ -23,6 +24,7 @@ class Chart extends Component
 
     protected AnalyticsService $analyticsService;
     protected ?CampaignService $campaignService = null;
+    protected ?SoundCloudService $soundCloudService = null;
     #[Locked]
     protected string $baseUrl = 'https://api.soundcloud.com';
 
@@ -30,10 +32,11 @@ class Chart extends Component
     public $activeTab = 'listView';
     // public $topTracks = [];
 
-    public function boot(AnalyticsService $analyticsService, CampaignService $campaignService)
+    public function boot(AnalyticsService $analyticsService, CampaignService $campaignService, SoundCloudService $soundCloudService)
     {
         $this->analyticsService = $analyticsService;
         $this->campaignService = $campaignService;
+        $this->soundCloudService = $soundCloudService;
     }
 
     public function refresh()
