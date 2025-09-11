@@ -69,7 +69,7 @@ class Chart extends Component
     public function baseValidation($encryptedCampaignId, $encryptedTrackUrn)
     {
         $currentUserUrn = user()->urn;
-        if ($this->campaignService->getCampaigns()->where('id', decrypt($encryptedCampaignId))->where('user_urn', $currentUserUrn)->exits()) {
+        if ($this->campaignService->getCampaigns()->where('id', decrypt($encryptedCampaignId))->where('user_urn', $currentUserUrn)->exists()) {
             $this->dispatch('alert', type: 'error', message: 'You cannot act on your own campaign.');
             return null;
         }
