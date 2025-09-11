@@ -688,9 +688,12 @@ function searchableRoutes()
 }
 
 
-function proUser()
+function proUser($userUrn = null)
 {
-    $isPro = UserPlan::where('user_urn', user()->urn)->active()->exists();
+    if ($userUrn == null) {
+        $userUrn = user()->urn;
+    }
+    $isPro = UserPlan::where('user_urn', $userUrn)->active()->exists();
     return $isPro;
 }
 
