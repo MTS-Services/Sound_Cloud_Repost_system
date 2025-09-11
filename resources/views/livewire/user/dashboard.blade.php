@@ -381,6 +381,17 @@
                     @endif
                 </div>
                 @foreach ($repostRequests as $request)
+                    <div class="p-2 pb-4">
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-slate-400 font-bold">#{{ $loop->iteration }}</span>
+                                    <span class="text-slate-400 text-sm">{{ $request->track?->title }}</span>
+                                </div>
+                                <span class="text-slate-400">{{ $request->track?->genre ?? 'Unknown' }}</span>
+                            </div>
+                        </div>
+                    </div>
                     <div class="space-y-4">
                         <div class="shadow-sm rounded-lg p-4">
                             <div class="flex items-start space-x-3 mb-3">
@@ -403,37 +414,6 @@
                                     <x-gbutton variant="primary" full-width="true"
                                         wire:click="directRepost('{{ encrypt($request->id) }}')">Repost</x-gbutton>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-6 pt-6  p-2">
-                        {{-- <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-orange-500"
-                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
-                                    <polyline points="16 7 22 7 22 13" />
-                                </svg>
-                                <span class="text-sm font-medium">Trending</span>
-                            </div>
-                            <a class="text-orange-500 hover:text-orange-400 text-sm" href="/charts">View
-                                charts</a>
-                        </div> --}}
-                        <div class="space-y-2">
-                            {{-- <div class="flex justify-between text-sm">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-orange-500 font-bold">#1</span>
-                                    <span class="text-sm">Why Do I?</span>
-                                </div>
-                                <span
-                                    class="text-slate-400">{{ $request?->track?->embeddable_by ?? 'Unknown' }}</span>
-                            </div> --}}
-                            <div class="flex justify-between text-sm">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-slate-400 font-bold">#2</span>
-                                    <span class="text-slate-400 text-sm">The Strength Of Love</span>
-                                </div>
-                                <span class="text-slate-400">Constellation Lyra</span>
                             </div>
                         </div>
                     </div>

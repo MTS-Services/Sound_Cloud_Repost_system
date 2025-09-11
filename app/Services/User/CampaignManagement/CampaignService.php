@@ -65,7 +65,7 @@ class CampaignService
                     NotificationMailSent::dispatch($datas);
                 }
 
-                if ($repost) {
+                if ($repost != null) {
                     $response = $this->analyticsService->updateAnalytics($campaign->music, $campaign, 'total_reposts', $campaign->target_genre);
                 }
 
