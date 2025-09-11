@@ -69,18 +69,16 @@ class Chart extends Component
     public function baseValidation($encryptedCampaignId, $encryptedTrackUrn)
     {
         $currentUserUrn = user()->urn;
-
-        $campaign = $this->campaignService->getCampaigns()->where('id', decrypt($encryptedCampaignId))->where('user_urn', $currentUserUrn)->first();
-        // if ($campaign) {
-        //     $this->dispatch('alert', type: 'error', message: 'You cannot act on your own campaign.');
-        //     return null;
-        // }
-        $campaign->load('music.user.userInfo');
+        if ($this->campaignService->getCampaigns()->where('id', decrypt($encryptedCampaignId))->where('user_urn', $currentUserUrn)->exists()) {
+            $this->dispatch('alert', type: 'error', message: 'You cannot act on your own campaign.');
+            return null;
+        }
+        $campaign = $this->campaignService->getCampaign($encryptedCampaignId);
+        $campaign->load('music.user');
         if (decrypt($encryptedTrackUrn) != $campaign->music->urn) {
             $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
             return null;
         }
-        dd($campaign);
         return $campaign;
     }
 
@@ -99,7 +97,6 @@ class Chart extends Component
             $httpClient = Http::withHeaders([
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
-            dd($campaign);
             $like_response = null;
 
             switch ($campaign->music_type) {
@@ -114,19 +111,17 @@ class Chart extends Component
                     return;
             }
             $data = [
-                'likeable' => $like_response ? true : false
+                'likeable' => $like_response ? true : false,
+                'comment' => false,
+                'follow' => false
             ];
             if ($like_response->successful()) {
                 $soundcloudRepostId = $campaign->music->soundcloud_track_id;
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
-                $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.');
+                $this->dispatch('alert', type: 'success', message: 'Like successful.');
             } else {
-                Log::error("SoundCloud Repost Failed: " . $response->body(), [
-                    'campaign_id' => $campaign->id,
-                    'user_urn' => $currentUserUrn,
-                    'status' => $response->status(),
-                ]);
-                $this->dispatch('alert', type: 'error', message: 'Failed to repost campaign music to SoundCloud. Please try again.');
+                Log::error("SoundCloud Repost Failed: " . $like_response->body());
+                $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
             }
         } catch (Throwable $e) {
             Log::error("Error in repost method: " . $e->getMessage(), [

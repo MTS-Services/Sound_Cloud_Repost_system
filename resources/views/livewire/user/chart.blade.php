@@ -268,6 +268,7 @@
                                             </svg>
                                         </button>
                                         <button
+                                            wire:click="likeTrack('{{ encrypt($track['action_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
                                             class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white"><svg
                                                 xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -718,7 +719,7 @@
                                         {{ $track['track_details']->user?->name }}</a>
                                     <span
                                         class="inline-block bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600">
-                                        {{ $track['track_details']->genre }}
+                                        {{ $track['track_details']->genre ?? 'Unknown' }}
                                     </span>
                                 </div>
                                 <div class="mb-4">
@@ -759,6 +760,7 @@
                                         </svg>
                                     </button>
                                     <button
+                                        wire:click="likeTrack('{{ encrypt($track['action_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
                                         class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-600">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -1192,7 +1194,7 @@
                                                     class="text-gray-600 dark:text-gray-300 truncate">
                                                     {{ $track['track_details']->user->name }}</a>
                                                 <span
-                                                    class="inline-block mt-1 bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-600 dark:text-gray-700 border border-gray-300 dark:border-gray-600">{{ $track['track_details']->genre }}</span>
+                                                    class="inline-block mt-1 bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-600 dark:text-gray-700 border border-gray-300 dark:border-gray-600">{{ $track['track_details']->genre ?? 'Unknown' }}</span>
                                             </div>
                                             <div class="text-right cursor-pointer">
                                                 <div class="text-lg font-bold text-black dark:text-white">10/10</div>

@@ -871,7 +871,6 @@ class Campaign extends Component
             if ($response != false || $response != null) {
                 $campaign->increment('playback_count');
             }
-            Log::info('end analytics.');
 
             $this->playcount = true;
             // $this->reset([
