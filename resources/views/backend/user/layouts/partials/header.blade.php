@@ -130,7 +130,7 @@
                         </svg>
                     </button>
                     <div x-show="open" @click.outside="open = false" x-transition x-cloak
-                        class="absolute right-2 !top-[62px] w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
+                        class="absolute right-2 !top-[54px] w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
                         <ul class="p-0 text-sm text-gray-700 dark:text-gray-200">
                             <li>
                                 <a href="{{ route('user.help-support') }}" wire:navigate
