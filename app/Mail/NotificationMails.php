@@ -12,37 +12,29 @@ class NotificationMails extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $mailData;
-    public function __construct($mailData)
+    public array $mailData;
+
+    public function __construct(array $mailData)
     {
         $this->mailData = $mailData;
     }
 
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->mailData['subject'],
+            subject: $this->mailData['subject'] ?? 'Hi there!',
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(
             view: 'emails.notifications',
+            with: $this->mailData,
         );
     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
+
     public function attachments(): array
     {
         return [];

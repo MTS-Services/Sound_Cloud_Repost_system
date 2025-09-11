@@ -105,6 +105,7 @@ class Dashboard extends Component
     public $editOriginalBudget = null;
 
     public $userFollowerAnalysis = [];
+    public $followerPercentage = 0;
 
     protected function rules()
     {
@@ -144,6 +145,17 @@ class Dashboard extends Component
     public function mount()
     {
         $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers());
+
+        $lastWeekFollowerPercentage = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers(), 'last_week');
+        $currentWeekFollowerPercentage = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers(), 'this_week');
+        $lastWeek = $lastWeekFollowerPercentage['averageCredibilityScore'];
+        $currentWeek = $currentWeekFollowerPercentage['averageCredibilityScore'];
+
+        if ($lastWeek > 0) {
+            $this->followerPercentage = (($currentWeek - $lastWeek) / $lastWeek) * 100;
+        } else {
+            $this->followerPercentage = 0;
+        }
         $this->loadDashboardData();
         $this->calculateFollowersLimit();
     }
