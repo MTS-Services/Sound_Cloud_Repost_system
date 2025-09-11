@@ -224,7 +224,7 @@
                                 <div class="col-span-4 flex items-center gap-3">
                                     <div class="relative group">
                                         <img src="{{ soundcloud_image($track['track_details']->artwork_url) }}"
-                                            alt="{{ $track['track_details']->title }}"
+                                            alt="{{ Str::limit($track['track_details']->title, 20, '...') }}"
                                             class="w-12 h-12 rounded-lg object-cover transition-transform duration-300 group-hover:scale-105">
                                         <a href="{{ $track['track_details']->permalink_url }}" target="_blank"
                                             class="absolute inset-0 shadow group-hover:bg-gray-950/20 rounded-lg transition-all duration-300 flex items-center justify-center">
@@ -701,7 +701,7 @@
 
                                     <div class="relative group cursor-pointer">
                                         <img src="{{ soundcloud_image($track['track_details']->artwork_url) }}"
-                                            alt="{{ $track['track_details']->title }}"
+                                            alt="{{ Str::limit($track['track_details']->title, 10, '...') }}"
                                             class="w-full aspect-square rounded-xl object-cover transition-transform duration-300 group-hover:scale-105">
                                         <a href="{{ $track['track_details']->permalink_url }}" target="_blank"
                                             class="absolute inset-0 bg-gray-950 bg-gray-950/0 group-hover:bg-gray-950/30 rounded-xl transition-all duration-300 flex items-center justify-center">
@@ -1174,8 +1174,8 @@
                                                 : 'bg-gray-700 text-gray-300 border border-gray-300 dark:border-gray-600') }}">
                                         {{ $loop->iteration }}
                                     </div>
-                                    <div class="relative group cursor-pointer"><img
-                                            src="{{ soundcloud_image($track['track_details']->artwork_url) }}"
+                                    <div class="relative group cursor-pointer">
+                                        <img src="{{ soundcloud_image($track['track_details']->artwork_url) }}"
                                             alt="{{ $track['track_details']->title }}"
                                             class="rounded-xl object-cover transition-transform duration-300 group-hover:scale-105 w-20 h-20">
                                         <a href="{{ $track['track_details']->permalink_url }}" target="_blank"
@@ -1190,7 +1190,7 @@
                                                 <a href="{{ $track['track_details']->permalink_url }}"
                                                     target="_blank"
                                                     class="font-bold text-black dark:text-white truncate text-lg hover:text-orange-400 transition-colors cursor-pointer">
-                                                    {{ $track['track_details']->title }}
+                                                    {{ Str::limit($track['track_details']->title, 20, '...') }}
                                                 </a>
                                                 <a href="{{ route('user.my-account', $track['track_details']->user->urn) }}"
                                                     class="text-gray-600 dark:text-gray-300 truncate">
