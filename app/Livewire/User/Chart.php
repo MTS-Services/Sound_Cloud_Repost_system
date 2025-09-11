@@ -111,7 +111,9 @@ class Chart extends Component
                     return;
             }
             $data = [
-                'likeable' => $like_response ? true : false
+                'likeable' => $like_response ? true : false,
+                'comment' => false,
+                'follow' => false
             ];
             if ($like_response->successful()) {
                 $soundcloudRepostId = $campaign->music->soundcloud_track_id;
