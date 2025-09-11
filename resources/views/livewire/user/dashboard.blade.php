@@ -401,7 +401,7 @@
                             <div class="flex space-x-2">
                                 <div class="flex-1">
                                     <x-gbutton variant="secondary" full-width="true"
-                                        wire:click="declineRepost('{{ encrypt($request->id) }}')">Decline</x-gbutton>
+                                         wire:click="declineRepost('{{ encrypt($request->id) }}')">Decline</x-gbutton>
                                 </div>
                                 <div class="flex-1">
                                     <x-gbutton variant="primary" full-width="true"
@@ -420,7 +420,7 @@
                                 </svg>
                                 <span class="text-sm font-medium">Trending</span>
                             </div>
-                            <a class="text-orange-500 hover:text-orange-400 text-sm" href="/charts">View
+                            <a class="text-orange-500 hover:text-orange-400 text-sm" href="{{ route('user.charts') }}">View
                                 charts</a>
                         </div>
                         <div class="space-y-2">
