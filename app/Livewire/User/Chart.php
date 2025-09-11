@@ -97,7 +97,6 @@ class Chart extends Component
             $httpClient = Http::withHeaders([
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
-            dd($campaign);
             $like_response = null;
 
             switch ($campaign->music_type) {
