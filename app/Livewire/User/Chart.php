@@ -69,13 +69,11 @@ class Chart extends Component
     public function baseValidation($encryptedCampaignId, $encryptedTrackUrn)
     {
         $currentUserUrn = user()->urn;
-        dd(decrypt($encryptedCampaignId), decrypt($encryptedTrackUrn));
-        $campaign = $this->campaignService->getCampaigns()->where('id', decrypt($encryptedCampaignId))->where('user_urn', $currentUserUrn)->first();
-        dd($campaign);
-        // if ($campaign) {
-        //     $this->dispatch('alert', type: 'error', message: 'You cannot act on your own campaign.');
-        //     return null;
-        // }
+        if ($this->campaignService->getCampaigns()->where('id', decrypt($encryptedCampaignId))->where('user_urn', $currentUserUrn)->exits()) {
+            $this->dispatch('alert', type: 'error', message: 'You cannot act on your own campaign.');
+            return null;
+        }
+        $campaign = $this->campaignService->getCampaign($encryptedCampaignId);
         $campaign->load('music.user');
         if (decrypt($encryptedTrackUrn) != $campaign->music->urn) {
             $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
