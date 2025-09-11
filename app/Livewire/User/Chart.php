@@ -79,14 +79,13 @@ class Chart extends Component
             $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
             return null;
         }
-        dd($campaign);
         return $campaign;
     }
 
     public function likeTrack($encryptedCampaignId, $encryptedTrackUrn)
     {
-        // $this->soundCloudService->ensureSoundCloudConnection(user());
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->ensureSoundCloudConnection(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         try {
             $campaign = $this->baseValidation($encryptedCampaignId, $encryptedTrackUrn);
             if (!$campaign) {
