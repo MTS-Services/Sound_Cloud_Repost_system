@@ -407,7 +407,7 @@
                         </div>
                     </div>
                     <div class="mt-6 pt-6  p-2">
-                        <div class="flex items-center justify-between mb-4">
+                        {{-- <div class="flex items-center justify-between mb-4">
                             <div class="flex items-center space-x-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-orange-500"
                                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -418,16 +418,16 @@
                             </div>
                             <a class="text-orange-500 hover:text-orange-400 text-sm" href="/charts">View
                                 charts</a>
-                        </div>
+                        </div> --}}
                         <div class="space-y-2">
-                            <div class="flex justify-between text-sm">
+                            {{-- <div class="flex justify-between text-sm">
                                 <div class="flex items-center space-x-2">
                                     <span class="text-orange-500 font-bold">#1</span>
                                     <span class="text-sm">Why Do I?</span>
                                 </div>
                                 <span
                                     class="text-slate-400">{{ $request?->track?->embeddable_by ?? 'Unknown' }}</span>
-                            </div>
+                            </div> --}}
                             <div class="flex justify-between text-sm">
                                 <div class="flex items-center space-x-2">
                                     <span class="text-slate-400 font-bold">#2</span>
