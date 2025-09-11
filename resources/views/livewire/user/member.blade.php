@@ -110,7 +110,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-3 gap-6">
                 @forelse ($users as $user_)
                     <div
-                        class="bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-900 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
+                        class="bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
                         <!-- Profile Header -->
                         <div class="flex items-center gap-3 mb-6">
                             <div class="relative">
