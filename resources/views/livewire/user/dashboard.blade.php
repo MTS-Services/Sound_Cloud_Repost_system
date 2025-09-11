@@ -381,41 +381,44 @@
                     @endif
                 </div>
                 @foreach ($repostRequests as $request)
-                    <div class="p-2">
-                        <div class="space-y-2">
-                            <div class="flex justify-between text-sm">
-                                <div class="w-[70%] flex items-center space-x-2">
-                                    <span class="text-slate-400 font-bold">#{{ $loop->iteration }}</span>
-                                    <span class="text-slate-400 text-sm block max-w-[200px] truncate">
-                                        {{ $request->track?->title }}
-                                    </span>
+                    <div class="w-full">
+                        <div class="p-2">
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-sm">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-slate-400 font-bold">#{{ $loop->iteration }}</span>
+                                        <span class="text-slate-400 text-sm block max-w-[200px] truncate">
+                                            {{ $request->track?->title }}
+                                        </span>
 
+                                    </div>
+                                    <span
+                                        class="text-slate-400">{{ $request->track?->genre ?? 'Unknown' }}</span>
                                 </div>
-                                <span class="w-[30%] text-slate-400">{{ $request->track?->genre ?? 'Unknown' }}</span>
                             </div>
                         </div>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="shadow-sm rounded-lg p-4">
-                            <div class="flex items-start space-x-3 mb-3">
-                                <img src="https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg"
-                                    class="w-8 h-8 rounded-full" alt="">
-                                <div class="flex-1">
-                                    <h4 class="text-sm font-medium">{{ $request?->requester?->name }}</h4>
-                                    <p class="text-slate-400 text-xs">by {{ $request?->requester?->email }}</p>
+                        <div class="space-y-4">
+                            <div class="shadow-sm rounded-lg p-4">
+                                <div class="flex items-start space-x-3 mb-3">
+                                    <img src="https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg"
+                                        class="w-8 h-8 rounded-full" alt="">
+                                    <div class="flex-1">
+                                        <h4 class="text-sm font-medium">{{ $request?->requester?->name }}</h4>
+                                        <p class="text-slate-400 text-xs">by {{ $request?->requester?->email }}</p>
+                                    </div>
+                                    <span
+                                        class="text-orange-500 font-semibold text-sm">+{{ $request->credits_spent ?? '0' }}
+                                        credits</span>
                                 </div>
-                                <span
-                                    class="text-orange-500 font-semibold text-sm">+{{ $request->credits_spent ?? '0' }}
-                                    credits</span>
-                            </div>
-                            <div class="flex space-x-2">
-                                <div class="flex-1">
-                                    <x-gbutton variant="secondary" full-width="true"
-                                        wire:click="declineRepost('{{ encrypt($request->id) }}')">Decline</x-gbutton>
-                                </div>
-                                <div class="flex-1">
-                                    <x-gbutton variant="primary" full-width="true"
-                                        wire:click="directRepost('{{ encrypt($request->id) }}')">Repost</x-gbutton>
+                                <div class="flex space-x-2">
+                                    <div class="flex-1">
+                                        <x-gbutton variant="secondary" full-width="true"
+                                            wire:click="declineRepost('{{ encrypt($request->id) }}')">Decline</x-gbutton>
+                                    </div>
+                                    <div class="flex-1">
+                                        <x-gbutton variant="primary" full-width="true"
+                                            wire:click="directRepost('{{ encrypt($request->id) }}')">Repost</x-gbutton>
+                                    </div>
                                 </div>
                             </div>
                         </div>
