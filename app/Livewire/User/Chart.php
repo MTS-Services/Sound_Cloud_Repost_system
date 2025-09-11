@@ -118,11 +118,7 @@ class Chart extends Component
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
                 $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.');
             } else {
-                Log::error("SoundCloud Repost Failed: " . $response->body(), [
-                    'campaign_id' => $campaign->id,
-                    'user_urn' => $currentUserUrn,
-                    'status' => $response->status(),
-                ]);
+                Log::error("SoundCloud Repost Failed: " . $like_response->body());
                 $this->dispatch('alert', type: 'error', message: 'Failed to repost campaign music to SoundCloud. Please try again.');
             }
         } catch (Throwable $e) {
