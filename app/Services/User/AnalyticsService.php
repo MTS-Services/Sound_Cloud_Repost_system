@@ -271,16 +271,16 @@ class AnalyticsService
         // dd($trackUrnsQuery->get());
 
         $trackUrns = $trackUrnsQuery
-            ->select([
-                'track_urn',
-                DB::raw('ANY_VALUE(action_type) as action_type'),
-                DB::raw('ANY_VALUE(action_id) as action_id'),
-                DB::raw('SUM(total_views) as total_views'),
-                DB::raw('SUM(total_plays) as total_streams'),
-                DB::raw('SUM(total_likes) as total_likes'),
-                DB::raw('SUM(total_reposts) as total_reposts'),
-                DB::raw('SUM(total_comments) as total_comments'),
-            ])
+            ->selectRaw('
+                track_urn,
+                MIN(action_type) as action_type,
+                MIN(action_id) as action_id,
+                SUM(total_views) as total_views,
+                SUM(total_plays) as total_streams,
+                SUM(total_likes) as total_likes,
+                SUM(total_reposts) as total_reposts,
+                SUM(total_comments) as total_comments
+            ')
             ->groupBy('track_urn')
             ->orderByDesc('total_views')
             ->orderByDesc('total_streams')
@@ -430,7 +430,7 @@ class AnalyticsService
 
             if ($actionDetails) {
                 $actionDetails['created_at_formatted'] = $actionDetails['created_at']->format('M d, Y');
-            }            
+            }
 
             $totalMetrics = [];
             foreach (self::METRICS as $metric) {
