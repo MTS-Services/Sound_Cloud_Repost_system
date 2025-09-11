@@ -701,7 +701,7 @@
 
                                     <div class="relative group cursor-pointer">
                                         <img src="{{ soundcloud_image($track['track_details']->artwork_url) }}"
-                                            alt="{{ Str::limit($track['track_details']->title, 10, '...') }}"
+                                            alt="{{ $track['track_details']->title }}"
                                             class="w-full aspect-square rounded-xl object-cover transition-transform duration-300 group-hover:scale-105">
                                         <a href="{{ $track['track_details']->permalink_url }}" target="_blank"
                                             class="absolute inset-0 bg-gray-950 bg-gray-950/0 group-hover:bg-gray-950/30 rounded-xl transition-all duration-300 flex items-center justify-center">
@@ -713,8 +713,8 @@
                                 </div>
                                 <div class="mb-4">
                                     <a href="{{ $track['track_details']->permalink_url }}" target="_blank"
-                                        class="font-bold text-black dark:text-white text-lg mb-1 cursor-pointer hover:text-orange-400 transition-colors truncate">
-                                        {{ $track['track_details']->title }}</a>
+                                        class="font-bold text-black dark:text-white mb-1 cursor-pointer hover:text-orange-400 transition-colors truncate">
+                                        {{ Str::limit($track['track_details']->title, 10, '...') }}</a>
                                     <a href="{{ route('user.my-account', $track['track_details']->user->urn) }}"
                                         class="text-gray-600 dark:text-gray-300 text-sm mb-2 truncate">
                                         {{ $track['track_details']->user?->name }}</a>
