@@ -71,11 +71,11 @@ class Chart extends Component
         $currentUserUrn = user()->urn;
 
         $campaign = $this->campaignService->getCampaigns()->where('id', decrypt($encryptedCampaignId))->where('user_urn', $currentUserUrn)->first();
+        dd($campaign);
         // if ($campaign) {
         //     $this->dispatch('alert', type: 'error', message: 'You cannot act on your own campaign.');
         //     return null;
         // }
-        dd($campaign);
         $campaign->load('music.user');
         if (decrypt($encryptedTrackUrn) != $campaign->music->urn) {
             $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
