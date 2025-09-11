@@ -248,14 +248,28 @@ class Campaign extends Component
     {
         $this->activeMainTab = $tab;
 
-        // Reset the relevant pager when switching tabs
-        match ($tab) {
-            'recommended_pro' => $this->resetPage('recommendedProPage'),
-            'recommended' => $this->resetPage('recommendedPage'),
-            'all' => $this->resetPage('allPage'),
-            default => $this->resetPage('recommendedProPage')
-        };
+        switch ($tab) {
+            case 'recommended_pro':
+                $this->resetPage('recommendedProPage');
+                $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
+                break;
+
+            case 'recommended':
+                $this->resetPage('recommendedPage');
+                $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
+                break;
+
+            case 'all':
+                $this->resetPage('allPage');
+                $this->selectedGenres = [];
+                break;
+
+            default:
+                $this->resetPage('recommendedProPage');
+                $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
+        }
     }
+
 
     /**
      * Get the base campaigns query with common filters
@@ -1269,7 +1283,7 @@ class Campaign extends Component
                             $query->whereIn('genre', $userGenres);
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
-                    $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
+
                     break;
 
                 case 'recommended':
@@ -1279,13 +1293,13 @@ class Campaign extends Component
                             $query->whereIn('genre', $userGenres);
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
-                    $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
+
                     break;
 
                 case 'all':
                     $campaigns = $baseQuery
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage);
-                    $this->selectedGenres = [];
+
                     break;
                 default:
                     $campaigns = $baseQuery
@@ -1297,7 +1311,7 @@ class Campaign extends Component
                             $query->whereIn('genre', $userGenres);
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
-                    $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
+
                     break;
             }
 
