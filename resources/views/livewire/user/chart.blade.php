@@ -226,20 +226,20 @@
                                         <img src="{{ soundcloud_image($track['track_details']->artwork_url) }}"
                                             alt="{{ $track['track_details']->title }}"
                                             class="w-12 h-12 rounded-lg object-cover transition-transform duration-300 group-hover:scale-105">
-                                        <a href="#"
+                                        <a href="{{ $track['track_details']->permalink_url }}" target="_blank"
                                             class="absolute inset-0 shadow group-hover:bg-gray-950/20 rounded-lg transition-all duration-300 flex items-center justify-center">
                                             <x-lucide-external-link
                                                 class="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                         </a>
                                     </div>
                                     <div class="min-w-0 flex-1">
-                                        <a href="#"
+                                        <a href="{{ $track['track_details']->permalink_url }}" target="_blank"
                                             class="font-semibold text-gray-900 dark:text-white truncate cursor-pointer hover:text-orange-400 transition-colors block">
                                             {{ $track['track_details']->title }}
                                         </a>
-                                        <p
+                                        <a href="{{ route('user.my-account', $track['track_details']->user->urn) }}"
                                             class="text-sm text-gray-600 dark:text-gray-400 truncate hover:text-orange-400 transition-colors block">
-                                            {{ $track['track_details']->user->name }}</p>
+                                            {{ $track['track_details']->user->name }}</a>
                                     </div>
                                 </div>
 
@@ -701,20 +701,21 @@
                                         <img src="{{ soundcloud_image($track['track_details']->artwork_url) }}"
                                             alt="{{ $track['track_details']->title }}"
                                             class="w-full aspect-square rounded-xl object-cover transition-transform duration-300 group-hover:scale-105">
-                                        <div
+                                        <a href="{{ $track['track_details']->permalink_url }}" target="_blank"
                                             class="absolute inset-0 bg-gray-950 bg-gray-950/0 group-hover:bg-gray-950/30 rounded-xl transition-all duration-300 flex items-center justify-center">
                                             <x-lucide-external-link
                                                 class="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                                        </div>
+                                        </a>
                                     </div>
                                 </div>
                                 <div class="mb-4">
-                                    <h3
+                                    <a href="{{ $track['track_details']->permalink_url }}" target="_blank"
                                         class="font-bold text-black dark:text-white text-lg mb-1 cursor-pointer hover:text-orange-400 transition-colors truncate">
-                                        {{ $track['track_details']->title }}</h3>
-                                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-2 truncate">
-                                        {{ $track['track_details']->user?->name }}</p>
+                                        {{ $track['track_details']->title }}</a>
+                                    <a href="{{ route('user.my-account', $track['track_details']->user->urn) }}"
+                                        class="text-gray-600 dark:text-gray-300 text-sm mb-2 truncate">
+                                        {{ $track['track_details']->user?->name }}</a>
                                     <span
                                         class="inline-block bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600">
                                         {{ $track['track_details']->genre }}
@@ -1173,20 +1174,23 @@
                                             src="{{ soundcloud_image($track['track_details']->artwork_url) }}"
                                             alt="{{ $track['track_details']->title }}"
                                             class="rounded-xl object-cover transition-transform duration-300 group-hover:scale-105 w-20 h-20">
-                                        <div
+                                        <a href="{{ $track['track_details']->permalink_url }}" target="_blank"
                                             class="absolute inset-0 shadow group-hover:bg-gray-950/30 rounded-xl transition-all duration-300 flex items-center justify-center">
                                             <x-lucide-external-link
                                                 class="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                        </div>
+                                        </a>
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <div class="flex items-start justify-between gap-2">
                                             <div class="flex-1 min-w-0">
-                                                <h3 class="font-bold text-black dark:text-white truncate text-lg">
+                                                <a href="{{ $track['track_details']->permalink_url }}"
+                                                    target="_blank"
+                                                    class="font-bold text-black dark:text-white truncate text-lg hover:text-orange-400 transition-colors cursor-pointer">
                                                     {{ $track['track_details']->title }}
-                                                </h3>
-                                                <p class="text-gray-600 dark:text-gray-300 truncate">
-                                                    {{ $track['track_details']->user->name }}</p>
+                                                </a>
+                                                <a href="{{ route('user.my-account', $track['track_details']->user->urn) }}"
+                                                    class="text-gray-600 dark:text-gray-300 truncate">
+                                                    {{ $track['track_details']->user->name }}</a>
                                                 <span
                                                     class="inline-block mt-1 bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-600 dark:text-gray-700 border border-gray-300 dark:border-gray-600">{{ $track['track_details']->genre }}</span>
                                             </div>

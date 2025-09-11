@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User;
 
+use App\Jobs\NotificationMailSent;
 use App\Models\Campaign;
 use App\Models\Playlist;
 use App\Models\Track;
@@ -13,6 +14,8 @@ use Livewire\WithPagination;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Http;
+use Livewire\Attributes\Locked;
+use Throwable;
 
 class Chart extends Component
 {
@@ -20,6 +23,8 @@ class Chart extends Component
 
     protected AnalyticsService $analyticsService;
     protected ?CampaignService $campaignService = null;
+    #[Locked]
+    protected string $baseUrl = 'https://api.soundcloud.com';
 
     public $tracksPerPage = 20;
     public $activeTab = 'listView';
@@ -77,44 +82,57 @@ class Chart extends Component
 
     public function likeTrack($encryptedCampaignId, $encryptedTrackUrn)
     {
-        $campaign = $this->baseValidation($encryptedCampaignId, $encryptedTrackUrn);
+        $this->soundCloudService->ensureSoundCloudConnection(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        try {
+            $campaign = $this->baseValidation($encryptedCampaignId, $encryptedTrackUrn);
+            if (!$campaign) {
+                return;
+            }
 
-        if (!$campaign) {
+            $soundcloudRepostId = null;
+
+            $httpClient = Http::withHeaders([
+                'Authorization' => 'OAuth ' . user()->token,
+            ]);
+            dd($campaign);
+            $like_response = null;
+
+            switch ($campaign->music_type) {
+                case Track::class:
+                    $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$campaign->music->urn}");
+                    break;
+                case Playlist::class:
+                    $like_response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$campaign->music->urn}");
+                    break;
+                default:
+                    $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
+                    return;
+            }
+            $data = [
+                'likeable' => $like_response ? true : false
+            ];
+            if ($like_response->successful()) {
+                $soundcloudRepostId = $campaign->music->soundcloud_track_id;
+                $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
+                $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.');
+            } else {
+                Log::error("SoundCloud Repost Failed: " . $response->body(), [
+                    'campaign_id' => $campaign->id,
+                    'user_urn' => $currentUserUrn,
+                    'status' => $response->status(),
+                ]);
+                $this->dispatch('alert', type: 'error', message: 'Failed to repost campaign music to SoundCloud. Please try again.');
+            }
+        } catch (Throwable $e) {
+            Log::error("Error in repost method: " . $e->getMessage(), [
+                'exception' => $e,
+                'campaign_id_input' => decrypt($encryptedCampaignId),
+                'user_urn' => user()->urn ?? 'N/A',
+            ]);
+            $this->dispatch('alert', type: 'error', message: 'An unexpected error occurred. Please try again later.');
             return;
         }
-
-        $soundcloudRepostId = null;
-
-        $httpClient = Http::withHeaders([
-            'Authorization' => 'OAuth ' . user()->token,
-        ]);
-
-        switch ($campaign->music_type) {
-            case Track::class:
-                $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$campaign->music->urn}");
-                $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
-                break;
-            case Playlist::class:
-                $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$campaign->music->urn}");
-                if ($this->liked) {
-                    $like_response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$campaign->music->urn}");
-                }
-                if ($this->commented) {
-                    $comment_response = $httpClient->post("{$this->baseUrl}/playlists/{$campaign->music->urn}/comments", $commentSoundcloud);
-                }
-                if ($this->followed) {
-                    $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
-                }
-                break;
-            default:
-                $this->dispatch('alert', type: 'error', message: 'Invalid music type specified for the campaign.');
-                return;
-        }
-        $data = [
-            'likeable' => $like_response ? $this->liked : false,
-            'comment' => $comment_response ? $this->commented : false,
-            'follow' => $follow_response ? $this->followed : false
-        ];
     }
 
     public function render()

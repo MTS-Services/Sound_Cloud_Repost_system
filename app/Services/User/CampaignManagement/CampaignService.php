@@ -87,7 +87,6 @@ class CampaignService
                     $campaign->update(['status' => Campaign::STATUS_COMPLETED]);
                 }
 
-
                 // Create the CreditTransaction record
                 $transaction = CreditTransaction::create([
                     'receiver_urn' => $reposter->urn,
