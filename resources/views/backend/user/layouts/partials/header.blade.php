@@ -101,11 +101,9 @@
         </div>
         <div class="flex items-center space-x-1 md:space-x-2">
             <nav class="hidden lg:flex items-center space-x-2 md:space-x-4 text-sm relative" x-data="{ activeButton: '' }">
-                @if (!prouser())
-                    <a class="text-orange-500 hover:text-white hover:bg-orange-500 px-4 py-2 rounded-md text-sm font-medium"
-                        href="{{ route('user.plans') }}" wire:navigate
-                        data-discover="true">{{ __('Upgrade My Plan') }}</a>
-                @endif
+                <a class="text-orange-500 hover:text-white hover:bg-orange-500 px-4 py-2 rounded-md text-sm font-medium"
+                    href="{{ route('user.plans') }}" wire:navigate
+                    data-discover="true">{{ __('Upgrade My Plan') }}</a>
                 <a x-bind:class="{ 'text-orange-500': activeButton === 'charts', 'hover:text-orange-400': activeButton !== 'charts' }"
                     class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
                     wire:navigate href="{{ route('user.charts') }}" data-discover="true"
