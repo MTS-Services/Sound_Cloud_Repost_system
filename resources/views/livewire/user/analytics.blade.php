@@ -774,23 +774,17 @@
                                 </div>
                             </div>
                             <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
-                                @dd($track)
                                 @php
-                                    $totalViews = $track['metrics']['total_views']['current_total'];
-                                    $totalPlays = $track['metrics']['total_plays']['current_total'];
-                                    $totalReposts = $track['metrics']['total_reposts']['current_total'];
-                                    $totalLikes = $track['metrics']['total_likes']['current_total'];
-                                    $totalComments = $track['metrics']['total_comments']['current_total'];
-                                    $totalFollowers = $track['metrics']['total_followers']['current_total'];
-
-                                    $totalEngagements =
-                                        $totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers;
-                                    $averageEngagements = $totalEngagements / 5;
-                                    // Engagement % (capped at 100)
-                                    $engagementRate = min(100, ($totalEngagements / max(1, $totalViews)) * 100);
+                                    $maxStreams = $topTracks[0]['streams'] ?? 1;
+                                    $percentage =
+                                        $maxStreams > 0
+                                            ? ((($maxStreams - $track['streams']) / $maxStreams) * 100 < 0
+                                                ? 0
+                                                : (($maxStreams - $track['streams']) / $maxStreams) * 100)
+                                            : 0;
                                 @endphp
                                 <div class="h-2 rounded-full transition-all duration-300"
-                                    style="width: {{ number_format($engagementRate, 2) }}%; background: linear-gradient(90deg, #ff6b35, #ff6b35cc);">
+                                    style="width: {{ $percentage > 100 ? 100 : $percentage }}%; background: linear-gradient(90deg, #ff6b35, #ff6b35cc);">
                                 </div>
                             </div>
                         </div>
