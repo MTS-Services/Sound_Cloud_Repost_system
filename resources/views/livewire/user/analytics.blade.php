@@ -774,6 +774,7 @@
                                 </div>
                             </div>
                             <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
+                                @dd($track)
                                 @php
                                     $totalViews = $track['metrics']['total_views']['current_total'];
                                     $totalPlays = $track['metrics']['total_plays']['current_total'];
