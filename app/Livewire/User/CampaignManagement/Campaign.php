@@ -332,11 +332,16 @@ class Campaign extends Component
             });
         }
 
+        if ($this->activeMainTab != 'all') {
+            $this->selectedGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+        }
         if (!empty($this->selectedGenres)) {
             $query->whereHas('music', function ($q) {
                 $q->whereIn('genre', $this->selectedGenres);
             });
         }
+
+
 
         if (!empty($this->searchMusicType)) {
             $query->where('music_type', 'like', "%{$this->searchMusicType}%");
@@ -1316,7 +1321,7 @@ class Campaign extends Component
                             $query->isPro();
                         })
                         ->whereHas('music', function ($query) {
-                            $userGenres = user()->genres->pluck('genre')->toArray();
+                            $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
                             $query->whereIn('genre', $userGenres);
 
                         })
@@ -1327,7 +1332,7 @@ class Campaign extends Component
                 case 'recommended':
                     $campaigns = $baseQuery
                         ->whereHas('music', function ($query) {
-                            $userGenres = user()->genres->pluck('genre')->toArray();
+                            $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
                             $query->whereIn('genre', $userGenres);
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
@@ -1335,6 +1340,11 @@ class Campaign extends Component
 
                 case 'all':
                     $campaigns = $baseQuery
+                        ->whereHas('music', function ($query) {
+                            if (!empty($this->selectedGenres)) {
+                                $query->whereIn('genre', $this->selectedGenres);
+                            }
+                        })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage);
 
                     break;
@@ -1344,7 +1354,7 @@ class Campaign extends Component
                             $query->isPro();
                         })
                         ->whereHas('music', function ($query) {
-                            $userGenres = user()->genres->pluck('genre')->toArray();
+                            $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
                             $query->whereIn('genre', $userGenres);
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
