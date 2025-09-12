@@ -283,8 +283,8 @@ class AnalyticsService
             ')
             ->groupBy('track_urn')
             // ->orderByDesc('total_views')
+            ->orderByDesc('total_reposts')
             ->orderByDesc('total_streams')
-            ->groupByDesc('total_reposts')
             ->get();
 
         // Create paginator
