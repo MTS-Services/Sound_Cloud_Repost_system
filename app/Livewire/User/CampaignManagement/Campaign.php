@@ -1308,11 +1308,8 @@ class Campaign extends Component
                         })
                         ->whereHas('music', function ($query) {
                             $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
-                            if (!empty($userGenres)) {
-                                $query->whereIn('genre', $userGenres);
-                            } else {
-                                return $query;
-                            }
+                            $query->whereIn('genre', $userGenres);
+
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
 
@@ -1322,11 +1319,7 @@ class Campaign extends Component
                     $campaigns = $baseQuery
                         ->whereHas('music', function ($query) {
                             $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
-                            if (!empty($userGenres)) {
-                                $query->whereIn('genre', $userGenres);
-                            } else {
-                                return $query;
-                            }
+                            $query->whereIn('genre', $userGenres);
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
 
@@ -1337,8 +1330,6 @@ class Campaign extends Component
                         ->whereHas('music', function ($query) {
                             if (!empty($this->selectedGenres)) {
                                 $query->whereIn('genre', $this->selectedGenres);
-                            } else {
-                                return $query;
                             }
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage);
@@ -1351,11 +1342,7 @@ class Campaign extends Component
                         })
                         ->whereHas('music', function ($query) {
                             $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
-                            if (!empty($userGenres)) {
-                                $query->whereIn('genre', $userGenres);
-                            } else {
-                                return $query;
-                            }
+                            $query->whereIn('genre', $userGenres);
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
 
