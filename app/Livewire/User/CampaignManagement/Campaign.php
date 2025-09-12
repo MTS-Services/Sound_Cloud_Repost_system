@@ -332,14 +332,14 @@ class Campaign extends Component
             });
         }
 
-        // if ($this->activeMainTab != 'all') {
-        //     $this->selectedGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
-        // }
-        // if (!empty($this->selectedGenres)) {
-        //     $query->whereHas('music', function ($q) {
-        //         $q->whereIn('genre', $this->selectedGenres);
-        //     });
-        // }
+        if ($this->activeMainTab != 'all') {
+            $this->selectedGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+        }
+        if (!empty($this->selectedGenres)) {
+            $query->whereHas('music', function ($q) {
+                $q->whereIn('genre', $this->selectedGenres);
+            });
+        }
 
 
 
