@@ -457,8 +457,8 @@ class Campaign extends Component
         }
 
         // Reset pagination ONLY for the active tab
-        $pageProperty = $this->activeMainTab . 'Page';
-        $this->$pageProperty = 1;
+        // $pageProperty = $this->activeMainTab . 'Page';
+        // $this->$pageProperty = 1;
     }
 
     public function filterByTrackType($Type)
