@@ -100,6 +100,13 @@ class Campaign extends Component
         'audioEnded' => 'handleAudioEnded'
     ];
 
+    protected $queryString = [
+        'selectedGenres',
+        'recommendedProPage' => ['except' => 1],
+        'recommendedPage' => ['except' => 1],
+        'allPage' => ['except' => 1],
+    ];
+
     ############################## Campaign Creation ##########################
     // Total number of campaigns
     public $totalCampaign;
@@ -431,6 +438,16 @@ class Campaign extends Component
         }
     }
 
+    // public function toggleGenre($genre)
+    // {
+    //     if (in_array($genre, $this->selectedGenres)) {
+    //         $this->selectedGenres = array_diff($this->selectedGenres, [$genre]);
+    //     } else {
+    //         $this->selectedGenres[] = $genre;
+    //     }
+    //     $this->totalCampaigns();
+    // }
+
     public function toggleGenre($genre)
     {
         if (in_array($genre, $this->selectedGenres)) {
@@ -438,7 +455,19 @@ class Campaign extends Component
         } else {
             $this->selectedGenres[] = $genre;
         }
-        $this->totalCampaigns();
+
+        // Reset only the current active tab pagination
+        switch ($this->activeMainTab) {
+            case 'recommended_pro':
+                $this->recommendedProPage = 1;
+                break;
+            case 'recommended':
+                $this->recommendedPage = 1;
+                break;
+            case 'all':
+                $this->allPage = 1;
+                break;
+        }
     }
 
     public function filterByTrackType($Type)
