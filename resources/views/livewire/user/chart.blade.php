@@ -1184,11 +1184,7 @@
                                 $totalFollowers = $track['metrics']['total_followers']['current_total'];
 
                                 $totalEngagements =
-                                    $track['metrics']['total_likes']['current_total'] +
-                                    $track['metrics']['total_comments']['current_total'] +
-                                    $track['metrics']['total_reposts']['current_total'] +
-                                    $track['metrics']['total_plays']['current_total'] +
-                                    $track['metrics']['total_followers']['current_total'];
+                                    $totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers;
                                 $averageEngagements = $totalEngagements / 5;
                                 // Engagement % (capped at 100)
                                 $engagementRate = min(100, ($totalEngagements / max(1, $totalViews)) * 100);
