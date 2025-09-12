@@ -425,6 +425,7 @@ class Campaign extends Component
         } else {
             $this->selectedGenres[] = $genre;
         }
+        $this->totalCampaigns();
     }
 
     public function filterByTrackType($Type)
