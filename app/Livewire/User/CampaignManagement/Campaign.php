@@ -254,7 +254,7 @@ class Campaign extends Component
      */
     public function setActiveMainTab(string $tab): void
     {
-        $this->reset('selectedGenres');
+        // $this->reset('selectedGenres');
         $this->activeMainTab = $tab;
         switch ($tab) {
             case 'recommended_pro':
@@ -1332,7 +1332,6 @@ class Campaign extends Component
                             $query->whereIn('genre', $userGenres);
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
-
                     break;
 
                 case 'all':
