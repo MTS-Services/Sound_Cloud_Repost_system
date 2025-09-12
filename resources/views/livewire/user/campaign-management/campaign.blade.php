@@ -42,7 +42,7 @@
             <button @click="openFilterByTrack = !openFilterByTrack , openFilterByGenre = false"
                 wire:click="getAllTrackTypes" @click.outside="openFilterByTrack = false"
                 class="bg-orange-100 !hover:bg-orange-400 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer">
-                Filter by track type /all
+                Filter by track type /{{ $searchMusicType }}
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                     class="lucide lucide-chevron-down-icon lucide-chevron-down">
@@ -80,7 +80,7 @@
 
         <!-- Filter by genre dropdown -->
         <div class="relative">
-            <button @click="openFilterByGenre = !openFilterByGenre, openFilterByTrack = false" wire:click="getAllGenres"
+            <button @click="openFilterByGenre = !openFilterByGenre, openFilterByTrack = false"
                 class="bg-orange-100 hover:bg-orange-300 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -96,35 +96,34 @@
                     <path d="m6 9 6 6 6-6" />
                 </svg>
             </button>
-            @if (!empty($genres))
-                <div x-show="openFilterByGenre" x-transition:enter="transition ease-out duration-100"
-                    x-transition:enter-start="transform opacity-0 scale-95"
-                    x-transition:enter-end="transform opacity-100 scale-100"
-                    x-transition:leave="transition ease-in duration-75"
-                    x-transition:leave-start="transform opacity-100 scale-100"
-                    x-transition:leave-end="transform opacity-0 scale-95"
-                    class="absolute left-0 mt-2 w-96 rounded-md shadow-lg z-100">
-                    <div
-                        class="rounded-md shadow-xs bg-white dark:bg-slate-800 "@click.outside="openFilterByGenre = false">
-                        <div class="flex flex-wrap gap-2 p-2">
-                            {{-- @foreach ($genres as $genre)
+
+            <div x-show="openFilterByGenre" x-transition:enter="transition ease-out duration-100"
+                x-transition:enter-start="transform opacity-0 scale-95"
+                x-transition:enter-end="transform opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-75"
+                x-transition:leave-start="transform opacity-100 scale-100"
+                x-transition:leave-end="transform opacity-0 scale-95"
+                class="absolute left-0 mt-2 w-96 rounded-md shadow-lg z-100">
+                <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 "@click.outside="openFilterByGenre = false">
+                    <div class="flex flex-wrap gap-2 p-2">
+                        {{-- @foreach ($genres as $genre)
                                     <span wire:click="filterByGenre('{{ $genre }}')"
                                         class="px-3 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md cursor-pointer">
                                         {{ $genre }}
                                     </span>
                                 @endforeach --}}
-                            @foreach ($genres as $genre)
-                                <span wire:click="toggleGenre('{{ $genre }}')"
-                                    class="px-3 py-2 text-sm rounded-md cursor-pointer
+                        @foreach (AllGenres() as $genre)
+                            <span wire:click="toggleGenre('{{ $genre }}')"
+                                class="px-3 py-2 text-sm rounded-md cursor-pointer
                                             {{ in_array($genre, $selectedGenres) ? 'bg-orange-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300' }}">
-                                    {{ $genre }}
-                                </span>
-                            @endforeach
+                                {{ $genre }}
+                            </span>
+                        @endforeach
 
-                        </div>
                     </div>
                 </div>
-            @endif
+            </div>
+
         </div>
         {{-- Search --}}
         <div x-data="{ showInput: false }"

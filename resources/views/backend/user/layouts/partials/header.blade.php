@@ -100,9 +100,10 @@
             </button>
         </div>
         <div class="flex items-center space-x-1 md:space-x-2">
-            <nav class="hidden lg:flex items-center space-x-2 md:space-x-4 text-sm" x-data="{ activeButton: '' }">
-                <a class="text-orange-500 hover:text-orange-400 font-medium" href="{{ route('user.plans') }}"
-                    wire:navigate data-discover="true">{{ __('Upgrade My Plan') }}</a>
+            <nav class="hidden lg:flex items-center space-x-2 md:space-x-4 text-sm relative" x-data="{ activeButton: '' }">
+                <a class="text-orange-500 hover:text-white hover:bg-orange-500 px-4 py-2 rounded-md text-sm font-medium"
+                    href="{{ route('user.plans') }}" wire:navigate
+                    data-discover="true">{{ __('Upgrade My Plan') }}</a>
                 <a x-bind:class="{ 'text-orange-500': activeButton === 'charts', 'hover:text-orange-400': activeButton !== 'charts' }"
                     class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
                     wire:navigate href="{{ route('user.charts') }}" data-discover="true"
@@ -114,7 +115,7 @@
                     wire:navigate href="{{ route('blog') }}" data-discover="true" @click="activeButton = 'blog'">
                     Blog
                 </a>
-                <div x-data="{ open: false }" class="relative text-left rounded-lg flex justify-center">
+                <div x-data="{ open: false }" class="text-left rounded-lg flex justify-center">
                     <button @click="open = !open"
                         x-bind:class="{ 'text-orange-500': activeButton === 'help', 'hover:text-orange-400': activeButton !== 'help' }"
                         class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50 flex items-center space-x-1"
@@ -127,7 +128,7 @@
                         </svg>
                     </button>
                     <div x-show="open" @click.outside="open = false" x-transition x-cloak
-                        class="absolute right-2 mt-5 w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
+                        class="absolute right-2 !top-[54px] w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
                         <ul class="p-0 text-sm text-gray-700 dark:text-gray-200">
                             <li>
                                 <a href="{{ route('user.help-support') }}" wire:navigate
@@ -172,7 +173,7 @@
                     </svg>
                 </div>
                 <ul tabindex="0"
-                    class="menu menu-sm dropdown-content bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-lg shadow-lg z-10 mt-3 w-64 py-2 space-y-1">
+                    class="menu menu-sm dropdown-content bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-lg shadow-lg z-10 mt-5 lg:!top-[40px] w-64 py-2 space-y-1">
                     <li>
                         <a href="{{ route('user.my-account') }}" wire:navigate
                             class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm">

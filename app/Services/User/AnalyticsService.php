@@ -190,7 +190,7 @@ class AnalyticsService
      * Optimized data fetching with eager loading
      */
     private function fetchOptimizedAnalyticsData(
-        string $userUrn,
+        ?string $userUrn = null,
         Carbon $startDate,
         Carbon $endDate,
         ?array $genres = null,
@@ -198,12 +198,15 @@ class AnalyticsService
         ?string $actionType = null,
         ?int $actionId = null
     ): Collection {
-        $query = UserAnalytics::where('user_urn', $userUrn)
-            ->whereDate('date', '>=', $startDate->format('Y-m-d'))
-            ->whereDate('date', '<=', $endDate->format('Y-m-d'))
-            ->with(['track' => function ($query) {
-                $query->select('urn', 'title', 'genre', 'created_at');
-            }]);
+        $query = UserAnalytics::query();
+
+        if ($userUrn !== null) {
+            $query->where('user_urn', $userUrn);
+        }
+
+        $query->whereDate('date', '>=', $startDate->format('Y-m-d'))
+            ->whereDate('date', '<=', $endDate->format('Y-m-d'));
+
 
         if ($trackUrn) {
             $query->where('track_urn', $trackUrn);
@@ -223,7 +226,6 @@ class AnalyticsService
                 $query->whereIn('genre', $filteredGenres);
             }
         }
-
         return $query->get();
     }
 
@@ -235,14 +237,26 @@ class AnalyticsService
         ?array $dateRange = null,
         ?array $genres = null,
         int $perPage = 10,
-        int $page = 1
+        int $page = 1,
+        ?string $userUrn = null,
+        ?string $actionType = null
     ): LengthAwarePaginator {
-        $userUrn = user()->urn;
+
         $periods = $this->calculatePeriods($filter, $dateRange);
 
+
         // Get track URNs with aggregated data
-        $trackUrnsQuery = UserAnalytics::where('user_urn', $userUrn)
-            ->whereDate('date', '>=', $periods['current']['start']->format('Y-m-d'))
+        $trackUrnsQuery = UserAnalytics::query();
+
+        if ($userUrn !== null) {
+            $trackUrnsQuery->where('user_urn', $userUrn);
+        }
+
+        if ($actionType !== null) {
+            $trackUrnsQuery->where('action_type', $actionType);
+        }
+
+        $trackUrnsQuery->whereDate('date', '>=', $periods['current']['start']->format('Y-m-d'))
             ->whereDate('date', '<=', $periods['current']['end']->format('Y-m-d'));
 
         if ($genres) {
@@ -254,16 +268,19 @@ class AnalyticsService
                 $trackUrnsQuery->whereIn('genre', $filteredGenres);
             }
         }
+        // dd($trackUrnsQuery->get());
 
         $trackUrns = $trackUrnsQuery
-            ->select([
-                'track_urn',
-                DB::raw('SUM(total_views) as total_views'),
-                DB::raw('SUM(total_plays) as total_streams'),
-                DB::raw('SUM(total_likes) as total_likes'),
-                DB::raw('SUM(total_reposts) as total_reposts'),
-                DB::raw('SUM(total_comments) as total_comments')
-            ])
+            ->selectRaw('
+                track_urn,
+                MIN(action_type) as action_type,
+                MIN(action_id) as action_id,
+                SUM(total_views) as total_views,
+                SUM(total_plays) as total_streams,
+                SUM(total_likes) as total_likes,
+                SUM(total_reposts) as total_reposts,
+                SUM(total_comments) as total_comments
+            ')
             ->groupBy('track_urn')
             ->orderByDesc('total_views')
             ->orderByDesc('total_streams')
@@ -294,6 +311,7 @@ class AnalyticsService
                 $periods['previous']['end'],
                 $genres
             )->whereIn('track_urn', $trackUrnsList);
+
 
             $currentMetricsByTrack = $this->calculateMetricsByTrack($currentData);
             $previousMetricsByTrack = $this->calculateMetricsByTrack($previousData);
@@ -399,13 +417,19 @@ class AnalyticsService
     {
         $metricsByTrack = [];
 
+
         $data->groupBy('track_urn')->each(function ($trackGroup, $trackUrn) use (&$metricsByTrack) {
             $track = $trackGroup->first()->track;
             $trackName = $track ? $track->title : 'Unknown Track';
-            $trackDetails = $track ? $track->toArray() : null;
+            $trackDetails = $track ? $track : null;
+            $actionDetails = $trackGroup->first()->action ?? null;
 
             if ($trackDetails) {
                 $trackDetails['created_at_formatted'] = $track->created_at?->format('M d, Y') ?? 'Unknown';
+            }
+
+            if ($actionDetails) {
+                $actionDetails['created_at_formatted'] = $actionDetails['created_at']->format('M d, Y');
             }
 
             $totalMetrics = [];
@@ -417,10 +441,10 @@ class AnalyticsService
                 'track_urn' => $trackUrn,
                 'track_name' => $trackName,
                 'track_details' => $trackDetails,
+                'action_details' => $actionDetails,
                 'metrics' => $totalMetrics
             ];
         });
-
         return $metricsByTrack;
     }
 
@@ -438,10 +462,13 @@ class AnalyticsService
 
             $trackName = $current['track_name'] ?? $previous['track_name'] ?? 'Unknown Track';
             $trackDetails = $current['track_details'] ?? $previous['track_details'] ?? null;
+            $actionDetails = $current['action_details'] ?? $previous['action_details'] ?? null;
+
             $trackResult = [
                 'track_urn' => $trackUrn,
                 'track_name' => $trackName,
                 'track_details' => $trackDetails,
+                'action_details' => $actionDetails
             ];
 
             foreach (self::METRICS as $metric) {
@@ -661,10 +688,7 @@ class AnalyticsService
             ->orderByDesc('total_streams')
             ->orderByDesc('total_likes')
             ->orderByDesc('total_reposts')
-            ->with(['track' => function ($query) {
-                $query->select('urn', 'title', 'genre', 'created_at')
-                    ->with(['user:urn,name']);
-            }])
+            ->with(['track.user'])
             ->limit($limit)
             ->get()
             ->map(function ($item) {
