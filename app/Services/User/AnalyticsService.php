@@ -281,7 +281,7 @@ class AnalyticsService
                 SUM(total_reposts) as total_reposts,
                 SUM(total_comments) as total_comments
             ')
-            // ->groupBy('track_urn')
+            ->groupBy('track_urn')
             // ->orderByDesc('total_views')
             ->orderBy('total_streams')
             ->groupBy('total_reposts')
