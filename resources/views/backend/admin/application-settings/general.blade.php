@@ -56,7 +56,7 @@
                         </div>
                         <div class="w-full space-y-2">
                             <p class="label">{{ __('Favicon') }} <small>({{ __('16x16') }})</small></p>
-                            <input type="file" name="favicon" class="filepond" id="favicon"
+                            <input type="file" name="favicon" class="filepond" id="f_icon"
                                 accept="image/jpeg, image/png, image/jpg, image/webp, image/svg+xml">
                             <x-input-error class="mt-2" :messages="$errors->get('favicon')" />
                         </div>
@@ -89,8 +89,8 @@
         <script>
             document.addEventListener('DOMContentLoaded', function() {
 
-                file_upload(["#favicon"], ["image/jpeg", "image/png", "image/jpg, image/webp, image/svg+xml"], {
-                    "#favicon": "{{ isset($general_settings['favicon']) ? asset('storage/' . $general_settings['favicon']) : null }}"
+                file_upload(["#f_icon"], ["image/jpeg", "image/png", "image/jpg, image/webp, image/svg+xml"], {
+                    "#f_icon": "{{ isset($general_settings['favicon']) ? asset('storage/' . $general_settings['favicon']) : null }}"
                 });
                 file_upload(["#app_logo"], ["image/jpeg", "image/png", "image/jpg, image/webp, image/svg+xml"], {
                     "#app_logo": "{{ isset($general_settings['app_logo']) ? asset('storage/' . $general_settings['app_logo']) : null }}"

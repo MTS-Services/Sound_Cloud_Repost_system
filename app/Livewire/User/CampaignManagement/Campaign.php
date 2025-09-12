@@ -5,6 +5,7 @@ namespace App\Livewire\User\CampaignManagement;
 use App\Jobs\NotificationMailSent;
 use App\Models\Campaign as ModelsCampaign;
 use App\Models\CreditTransaction;
+use App\Models\Feature;
 use App\Models\Playlist;
 use App\Models\Repost;
 use App\Models\Track;
@@ -57,7 +58,7 @@ class Campaign extends Component
     public $selectedTags = [];
     public $selecteTags = [];
     public $selectedGenre = [];
-    public $searchMusicType = [];
+    public $searchMusicType = 'all';
     public $suggestedTags = [];
     public $showSuggestions = false;
     public $showSelectedTags = false;
@@ -68,7 +69,6 @@ class Campaign extends Component
     // Properties for track type filtering
     public $selectedTrackTypes = [];
     public $selectedTrackType = 'all';
-    public $genres = [];
     public $selectedGenres = [];
     public $showTrackTypes = false;
 
@@ -199,7 +199,6 @@ class Campaign extends Component
 
     public function mount()
     {
-        // $this->getAllGenres();
         $this->getAllTrackTypes();
         $this->totalCampaigns();
         $this->calculateFollowersLimit();
@@ -249,14 +248,28 @@ class Campaign extends Component
     {
         $this->activeMainTab = $tab;
 
-        // Reset the relevant pager when switching tabs
-        match ($tab) {
-            'recommended_pro' => $this->resetPage('recommendedProPage'),
-            'recommended' => $this->resetPage('recommendedPage'),
-            'all' => $this->resetPage('allPage'),
-            default => $this->resetPage('recommendedProPage')
-        };
+        switch ($tab) {
+            case 'recommended_pro':
+                $this->resetPage('recommendedProPage');
+                $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
+                break;
+
+            case 'recommended':
+                $this->resetPage('recommendedPage');
+                $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
+                break;
+
+            case 'all':
+                $this->resetPage('allPage');
+                $this->selectedGenres = [];
+                break;
+
+            default:
+                $this->resetPage('recommendedProPage');
+                $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
+        }
     }
+
 
     /**
      * Get the base campaigns query with common filters
@@ -646,7 +659,6 @@ class Campaign extends Component
         }
 
         $this->showSubmitModal = true;
-        // $this->getAllGenres();
 
         try {
             if ($type === 'track') {
@@ -873,7 +885,6 @@ class Campaign extends Component
             if ($response != false || $response != null) {
                 $campaign->increment('playback_count');
             }
-            Log::info('end analytics.');
 
             $this->playcount = true;
             // $this->reset([
@@ -1001,10 +1012,18 @@ class Campaign extends Component
                 'follow' => $follow_response ? $this->followed : false
             ];
             if ($response->successful()) {
-                // $repostEmailPermission =hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
-                // if ($repostEmailPermission) {
-                //     NotificationMailSent::dispatch();
-                // }
+                $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
+                if ($repostEmailPermission) {
+                    $datas = [
+                        [
+                            'email' => $campaign->user->email,
+                            'subject' => 'Repost Notification',
+                            'title' => 'Dear ' . $campaign->user->name,
+                            'body' => 'Your ' . $campaign->title . 'campaign has been reposted successfully.',
+                        ],
+                    ];
+                    NotificationMailSent::dispatch($datas);
+                }
                 $soundcloudRepostId = $campaign->music->soundcloud_track_id;
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
                 $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.');
@@ -1264,6 +1283,7 @@ class Campaign extends Component
                             $query->whereIn('genre', $userGenres);
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
+
                     break;
 
                 case 'recommended':
@@ -1273,11 +1293,13 @@ class Campaign extends Component
                             $query->whereIn('genre', $userGenres);
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
+
                     break;
 
                 case 'all':
                     $campaigns = $baseQuery
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage);
+
                     break;
                 default:
                     $campaigns = $baseQuery
@@ -1289,6 +1311,7 @@ class Campaign extends Component
                             $query->whereIn('genre', $userGenres);
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
+
                     break;
             }
 

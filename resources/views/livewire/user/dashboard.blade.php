@@ -1,4 +1,151 @@
-<div>
+<div x-data="{
+    chartData: {{ Js::from($this->getChartData()) }},
+    performanceChart: null,
+
+    initPerformanceChart() {
+        const ctx = document.getElementById('campaignChart');
+        if (!ctx) return;
+        this.performanceChart = new Chart(ctx.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: this.chartData.length > 0 ? this.chartData.map(item => {
+                    const date = new Date(item.date);
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                }) : ['No Data'],
+                datasets: [{
+                    label: 'Views',
+                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_views || 0) : [0],
+                    borderColor: '#E9E294',
+                    backgroundColor: 'rgba(233, 226, 148, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#E9E294',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#E9E294',
+                }, {
+                    label: 'Streams',
+                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_plays || 0) : [0],
+                    borderColor: '#ff6b35',
+                    backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#ff6b35',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#ff6b35',
+                }, {
+                    label: 'Likes',
+                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_likes || 0) : [0],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#10b981',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#10b981',
+                }, {
+                    label: 'Reposts',
+                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_reposts || 0) : [0],
+                    borderColor: '#8b5cf6',
+                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#8b5cf6',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#8b5cf6',
+                }, {
+                    label: 'Comments',
+                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_comments || 0) : [0],
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#f59e0b',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#f59e0b',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        {{-- beginAtZero: true, --}}
+                        ticks: {
+                            color: '#94a3b8',
+                            font: {
+                                size: 10
+                            }
+                        },
+                        grid: {
+                            drawBorder: false,
+                        },
+                    },
+                    x: {
+                        ticks: {
+                            color: '#94a3b8',
+                            font: {
+                                size: 10
+                            }
+                        },
+                        grid: {
+                            drawBorder: false,
+                        },
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            {{-- color: '#e2e8f0', --}}
+                            boxWidth: 12,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#0f172a',
+                        titleColor: '#ffffff',
+                        bodyColor: '#cbd5e1',
+                        borderColor: '#334155',
+                        borderWidth: 1,
+                        padding: 12,
+                        cornerRadius: 8,
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+            }
+        });
+    },
+
+    init() {
+        // Initialize charts after DOM is ready
+        this.$nextTick(() => {
+            if (typeof Chart !== 'undefined') {
+                this.initPerformanceChart();
+            } else {
+                // Wait for Chart.js to load
+                const checkChart = () => {
+                    if (typeof Chart !== 'undefined') {
+                        this.initPerformanceChart();
+                    } else {
+                        setTimeout(checkChart, 100);
+                    }
+                };
+                checkChart();
+            }
+        });
+    }
+}">
     <x-slot name="page_slug">dashboard</x-slot>
     <div id="content-dashboard" class="page-content py-2 px-2">
         <div
@@ -136,8 +283,13 @@
                     </div>
                 </div>
                 <div class="space-y-2">
-                    <p class="text-2xl font-bold text-slate-700 dark:text-white">82%</p>
-                    <p class="text-sm flex items-center space-x-1 text-green-400"><span>+3% from last week</span></p>
+                    <p class="text-2xl font-bold text-slate-700 dark:text-white">
+                        {{ $userFollowerAnalysis['averageCredibilityScore'] }}%</p>
+                    <p
+                        class="text-sm flex items-center space-x-1 {{ $followerPercentage >= 0 ? 'text-green-400' : 'text-red-400' }}">
+                        <span>{{ $followerPercentage }}% from
+                            last week</span>
+                    </p>
                 </div>
             </div>
         </div>
@@ -152,7 +304,7 @@
                         <h2 class="dark:text-white text-lg font-semibold">Performance Overview</h2>
                         <p class="text-sm text-slate-400">Track the impact of your campaigns</p>
                     </div>
-                    <a href="#"
+                    <a href="{{ route('user.analytics') }}" wire:navigate
                         class="text-orange-400 text-sm font-medium mt-4 sm:mt-0 hover:text-orange-300 transition-colors">
                         View all →
                     </a>
@@ -229,59 +381,45 @@
                     @endif
                 </div>
                 @foreach ($repostRequests as $request)
-                    <div class="space-y-4">
-                        <div class="shadow-sm rounded-lg p-4">
-                            <div class="flex items-start space-x-3 mb-3">
-                                <img src="https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg"
-                                    class="w-8 h-8 rounded-full" alt="">
-                                <div class="flex-1">
-                                    <h4 class="text-sm font-medium">{{ $request?->requester?->name }}</h4>
-                                    <p class="text-slate-400 text-xs">by {{ $request?->requester?->email }}</p>
-                                </div>
-                                <span
-                                    class="text-orange-500 font-semibold text-sm">+{{ $request->credits_spent ?? '0' }}
-                                    credits</span>
-                            </div>
-                            <div class="flex space-x-2">
-                                <div class="flex-1">
-                                    <x-gbutton variant="secondary" full-width="true"
-                                        wire:click="declineRepost('{{ encrypt($request->id) }}')">Decline</x-gbutton>
-                                </div>
-                                <div class="flex-1">
-                                    <x-gbutton variant="primary" full-width="true"
-                                        wire:click="directRepost('{{ encrypt($request->id) }}')">Repost</x-gbutton>
+                    <div class="w-full">
+                        <div class="p-2">
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-sm">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-slate-400 font-bold">#{{ $loop->iteration }}</span>
+                                        <span class="text-slate-400 text-sm block max-w-[200px] truncate">
+                                            {{ $request->track?->title }}
+                                        </span>
+
+                                    </div>
+                                    <span
+                                        class="text-slate-400">{{ $request->track?->genre ?? 'Unknown' }}</span>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="mt-6 pt-6  p-2">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-orange-500"
-                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
-                                    <polyline points="16 7 22 7 22 13" />
-                                </svg>
-                                <span class="text-sm font-medium">Trending</span>
-                            </div>
-                            <a class="text-orange-500 hover:text-orange-400 text-sm" href="/charts">View
-                                charts</a>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="flex justify-between text-sm">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-orange-500 font-bold">#1</span>
-                                    <span class="text-sm">Why Do I?</span>
+                        <div class="space-y-4">
+                            <div class="shadow-sm rounded-lg p-4">
+                                <div class="flex items-start space-x-3 mb-3">
+                                    <img src="https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg"
+                                        class="w-8 h-8 rounded-full" alt="">
+                                    <div class="flex-1">
+                                        <h4 class="text-sm font-medium">{{ $request?->requester?->name }}</h4>
+                                        <p class="text-slate-400 text-xs">by {{ $request?->requester?->email }}</p>
+                                    </div>
+                                    <span
+                                        class="text-orange-500 font-semibold text-sm">+{{ $request->credits_spent ?? '0' }}
+                                        credits</span>
                                 </div>
-                                <span
-                                    class="text-slate-400">{{ $request?->track?->embeddable_by ?? 'Unknown' }}</span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-slate-400 font-bold">#2</span>
-                                    <span class="text-slate-400 text-sm">The Strength Of Love</span>
+                                <div class="flex space-x-2">
+                                    <div class="flex-1">
+                                        <x-gbutton variant="secondary" full-width="true"
+                                            wire:click="declineRepost('{{ encrypt($request->id) }}')">Decline</x-gbutton>
+                                    </div>
+                                    <div class="flex-1">
+                                        <x-gbutton variant="primary" full-width="true"
+                                            wire:click="directRepost('{{ encrypt($request->id) }}')">Repost</x-gbutton>
+                                    </div>
                                 </div>
-                                <span class="text-slate-400">Constellation Lyra</span>
                             </div>
                         </div>
                     </div>
@@ -311,8 +449,8 @@
                         @else
                             <img src="{{ asset('assets/favicons/fav icon 1.svg') }}" alt="{{ config('app.name') }}"
                                 class="w-12 dark:hidden" />
-                            <img src="{{ asset('assets/favicons/fav icon 2 (1).svg') }}" alt="{{ config('app.name') }}"
-                                class="w-12 hidden dark:block" />
+                            <img src="{{ asset('assets/favicons/fav icon 2 (1).svg') }}"
+                                alt="{{ config('app.name') }}" class="w-12 hidden dark:block" />
                         @endif
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
@@ -539,7 +677,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
 
-    <script>
+    {{-- <script>
         // Define a function to create the chart
         function createCampaignChart() {
             const ctx = document.getElementById('campaignChart');
@@ -638,5 +776,5 @@
         document.addEventListener('livewire:navigated', () => {
             createCampaignChart();
         });
-    </script>
+    </script> --}}
 </div>

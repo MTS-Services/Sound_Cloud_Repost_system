@@ -10,6 +10,7 @@ use App\Models\RepostRequest;
 use App\Models\Track;
 use App\Models\User;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
+use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\User\CampaignManagement\MyCampaignService;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Throwable;
 use App\Models\Feature;
+use App\Services\User\AnalyticsService;
 
 use function PHPSTORM_META\type;
 
@@ -27,6 +29,9 @@ class Dashboard extends Component
     protected SoundCloudService $soundCloudService;
 
     protected MyCampaignService $myCampaignService;
+    protected AnalyticsService $analyticsService;
+
+    protected FollowerAnalyzer $followerAnalyzer;
 
     public $total_credits;
     public $totalCount;
@@ -99,6 +104,9 @@ class Dashboard extends Component
     public int $editCostPerRepost;
     public $editOriginalBudget = null;
 
+    public $userFollowerAnalysis = [];
+    public $followerPercentage = 0;
+
     protected function rules()
     {
         $rules = [
@@ -125,15 +133,29 @@ class Dashboard extends Component
         ];
     }
 
-    public function boot(CreditTransactionService $creditTransactionService, SoundCloudService $soundCloudService, MyCampaignService $myCampaignService)
+    public function boot(CreditTransactionService $creditTransactionService, SoundCloudService $soundCloudService, MyCampaignService $myCampaignService, AnalyticsService $analyticsService, FollowerAnalyzer $followerAnalyzer)
     {
         $this->creditTransactionService = $creditTransactionService;
         $this->soundCloudService = $soundCloudService;
         $this->myCampaignService = $myCampaignService;
+        $this->analyticsService = $analyticsService;
+        $this->followerAnalyzer = $followerAnalyzer;
     }
 
     public function mount()
     {
+        $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers());
+
+        $lastWeekFollowerPercentage = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers(), 'last_week');
+        $currentWeekFollowerPercentage = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers(), 'this_week');
+        $lastWeek = $lastWeekFollowerPercentage['averageCredibilityScore'];
+        $currentWeek = $currentWeekFollowerPercentage['averageCredibilityScore'];
+
+        if ($lastWeek > 0) {
+            $this->followerPercentage = (($currentWeek - $lastWeek) / $lastWeek) * 100;
+        } else {
+            $this->followerPercentage = 0;
+        }
         $this->loadDashboardData();
         $this->calculateFollowersLimit();
     }
@@ -574,6 +596,23 @@ class Dashboard extends Component
                 'user_urn' => user()->urn ?? 'N/A',
             ]);
             $this->dispatch('alert', type: 'error', message: 'Failed to decline repost request. Please try again.');
+        }
+    }
+
+    // Analytics data
+    public function getChartData(): array
+    {
+        try {
+            return $this->analyticsService->getChartData(
+                'last_month',
+                null,
+                [],
+                null,
+                null
+            );
+        } catch (\Exception $e) {
+            logger()->error('Chart data loading failed', ['error' => $e->getMessage()]);
+            return [];
         }
     }
 

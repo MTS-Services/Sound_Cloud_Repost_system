@@ -13,6 +13,7 @@ class NotificationMailSent implements ShouldQueue
 
     public $mailDatas = [];
 
+
     /**
      * Create a new job instance.
      */

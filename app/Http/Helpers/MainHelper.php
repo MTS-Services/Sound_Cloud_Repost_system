@@ -127,7 +127,7 @@ function slugToTitle($slug)
 }
 function storage_url($urlOrArray)
 {
-    $image = asset('https://i.imgur.com/IpH9g5Q.png');
+    $image = asset('default_img/no_img.jpg');
     if (is_array($urlOrArray) || is_object($urlOrArray)) {
         $result = '';
         $count = 0;
@@ -688,9 +688,12 @@ function searchableRoutes()
 }
 
 
-function proUser()
+function proUser($userUrn = null)
 {
-    $isPro = UserPlan::where('user_urn', user()->urn)->active()->exists();
+    if ($userUrn == null) {
+        $userUrn = user()->urn;
+    }
+    $isPro = UserPlan::where('user_urn', $userUrn)->active()->exists();
     return $isPro;
 }
 
@@ -795,18 +798,54 @@ if (!function_exists('userFeatures')) {
     }
 }
 
-function hasEmailSentPermission($value, $userUrn = null) : bool
+function hasEmailSentPermission($value, $userUrn = null): bool
 {
     if ($userUrn) {
         return UserSetting::where('user_urn', $userUrn)->value($value) ?? false;
     }
     return UserSetting::where('user_urn', user()->urn)->value($value) ?? false;
 }
-function app_setting($key){
+function app_setting($key)
+{
     $setting = ApplicationSetting::where('key', $key)->first();
-    if($setting){
+    if ($setting) {
         return $setting->value;
     }
     return null;
 }
 // function logos()
+
+if (! function_exists('number_shorten')) {
+    function number_shorten($number, $precision = 1)
+    {
+        if ($number < 900) {
+            // 0 - 900
+            $number_format = number_format($number, $precision);
+            $suffix = '';
+        } elseif ($number < 900000) {
+            // 0.9k-850k
+            $number_format = number_format($number / 1000, $precision);
+            $suffix = 'k';
+        } elseif ($number < 900000000) {
+            // 0.9m-850m
+            $number_format = number_format($number / 1000000, $precision);
+            $suffix = 'M';
+        } elseif ($number < 900000000000) {
+            // 0.9b-850b
+            $number_format = number_format($number / 1000000000, $precision);
+            $suffix = 'B';
+        } else {
+            // 0.9t+
+            $number_format = number_format($number / 1000000000000, $precision);
+            $suffix = 'T';
+        }
+
+        // Remove unnecessary .0
+        if ($precision > 0) {
+            $dotzero = '.' . str_repeat('0', $precision);
+            $number_format = str_replace($dotzero, '', $number_format);
+        }
+
+        return $number_format . $suffix;
+    }
+}

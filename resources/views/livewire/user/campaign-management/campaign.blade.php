@@ -38,97 +38,93 @@
 
     <div x-data ="{ openFilterByTrack: false, openFilterByGenre: false }"
         class="flex items-center justify-start gap-4 mt-4 mb-2 relative">
-        @if ($activeMainTab !== 'all')
-            <div class="relative">
-                <button @click="openFilterByTrack = !openFilterByTrack , openFilterByGenre = false"
-                    wire:click="getAllTrackTypes" @click.outside="openFilterByTrack = false"
-                    class="bg-orange-100 !hover:bg-orange-400 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer">
-                    Filter by track type /all
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-chevron-down-icon lucide-chevron-down">
-                        <path d="m6 9 6 6 6-6" />
-                    </svg>
-                </button>
+        <div class="relative">
+            <button @click="openFilterByTrack = !openFilterByTrack , openFilterByGenre = false"
+                wire:click="getAllTrackTypes" @click.outside="openFilterByTrack = false"
+                class="bg-orange-100 !hover:bg-orange-400 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer">
+                Filter by track type /{{ $searchMusicType }}
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-chevron-down-icon lucide-chevron-down">
+                    <path d="m6 9 6 6 6-6" />
+                </svg>
+            </button>
 
-                @if (!empty($selectedTrackTypes) && $activeMainTab !== 'all')
-                    <div x-show="openFilterByTrack" x-transition:enter="transition ease-out duration-100"
-                        x-transition:enter-start="transform opacity-0 scale-95"
-                        x-transition:enter-end="transform opacity-100 scale-100"
-                        x-transition:leave="transition ease-in duration-75"
-                        x-transition:leave-start="transform opacity-100 scale-100"
-                        x-transition:leave-end="transform opacity-0 scale-95"
-                        class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
-                        <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
-                            <div class="py-1">
-                                <button wire:click="filterByTrackType('all')"
-                                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
-                                    All
-                                </button>
-                                <button wire:click="filterByTrackType('{{ Track::class }}')"
-                                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
-                                    Tacks
-                                </button>
-                                <button wire:click="filterByTrackType('{{ Playlist::class }}')"
-                                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
-                                    Playlists
-                                </button>
-                            </div>
+            @if (!empty($selectedTrackTypes) && $activeMainTab !== 'all')
+                <div x-show="openFilterByTrack" x-transition:enter="transition ease-out duration-100"
+                    x-transition:enter-start="transform opacity-0 scale-95"
+                    x-transition:enter-end="transform opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-75"
+                    x-transition:leave-start="transform opacity-100 scale-100"
+                    x-transition:leave-end="transform opacity-0 scale-95"
+                    class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
+                    <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
+                        <div class="py-1">
+                            <button wire:click="filterByTrackType('all')"
+                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                All
+                            </button>
+                            <button wire:click="filterByTrackType('{{ Track::class }}')"
+                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                Tacks
+                            </button>
+                            <button wire:click="filterByTrackType('{{ Playlist::class }}')"
+                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                Playlists
+                            </button>
                         </div>
                     </div>
-                @endif
-            </div>
+                </div>
+            @endif
+        </div>
 
-            <!-- Filter by genre dropdown -->
-            <div class="relative">
-                <button @click="openFilterByGenre = !openFilterByGenre, openFilterByTrack = false"
-                    wire:click="getAllGenres"
-                    class="bg-orange-100 hover:bg-orange-300 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-music-icon lucide-music">
-                        <path d="M9 18V5l12-2v13" />
-                        <circle cx="6" cy="18" r="3" />
-                        <circle cx="18" cy="16" r="3" />
-                    </svg>
-                    Filter by genre / {{ count($selectedGenres) }}
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-chevron-down-icon lucide-chevron-down">
-                        <path d="m6 9 6 6 6-6" />
-                    </svg>
-                </button>
-                @if (!empty($genres))
-                    <div x-show="openFilterByGenre" x-transition:enter="transition ease-out duration-100"
-                        x-transition:enter-start="transform opacity-0 scale-95"
-                        x-transition:enter-end="transform opacity-100 scale-100"
-                        x-transition:leave="transition ease-in duration-75"
-                        x-transition:leave-start="transform opacity-100 scale-100"
-                        x-transition:leave-end="transform opacity-0 scale-95"
-                        class="absolute left-0 mt-2 w-96 rounded-md shadow-lg z-100">
-                        <div
-                            class="rounded-md shadow-xs bg-white dark:bg-slate-800 "@click.outside="openFilterByGenre = false">
-                            <div class="flex flex-wrap gap-2 p-2">
-                                {{-- @foreach ($genres as $genre)
+        <!-- Filter by genre dropdown -->
+        <div class="relative">
+            <button @click="openFilterByGenre = !openFilterByGenre, openFilterByTrack = false"
+                class="bg-orange-100 hover:bg-orange-300 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-music-icon lucide-music">
+                    <path d="M9 18V5l12-2v13" />
+                    <circle cx="6" cy="18" r="3" />
+                    <circle cx="18" cy="16" r="3" />
+                </svg>
+                Filter by genre / {{ count($selectedGenres) }}
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-chevron-down-icon lucide-chevron-down">
+                    <path d="m6 9 6 6 6-6" />
+                </svg>
+            </button>
+
+            <div x-show="openFilterByGenre" x-transition:enter="transition ease-out duration-100"
+                x-transition:enter-start="transform opacity-0 scale-95"
+                x-transition:enter-end="transform opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-75"
+                x-transition:leave-start="transform opacity-100 scale-100"
+                x-transition:leave-end="transform opacity-0 scale-95"
+                class="absolute left-0 mt-2 w-96 rounded-md shadow-lg z-100">
+                <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 "@click.outside="openFilterByGenre = false">
+                    <div class="flex flex-wrap gap-2 p-2">
+                        {{-- @foreach ($genres as $genre)
                                     <span wire:click="filterByGenre('{{ $genre }}')"
                                         class="px-3 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md cursor-pointer">
                                         {{ $genre }}
                                     </span>
                                 @endforeach --}}
-                                @foreach ($genres as $genre)
-                                    <span wire:click="toggleGenre('{{ $genre }}')"
-                                        class="px-3 py-2 text-sm rounded-md cursor-pointer
+                        @foreach (AllGenres() as $genre)
+                            <span wire:click="toggleGenre('{{ $genre }}')"
+                                class="px-3 py-2 text-sm rounded-md cursor-pointer
                                             {{ in_array($genre, $selectedGenres) ? 'bg-orange-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300' }}">
-                                        {{ $genre }}
-                                    </span>
-                                @endforeach
+                                {{ $genre }}
+                            </span>
+                        @endforeach
 
-                            </div>
-                        </div>
                     </div>
-                @endif
+                </div>
             </div>
-        @endif
+
+        </div>
         {{-- Search --}}
         <div x-data="{ showInput: false }"
             class="w-64 relative flex items-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded">
@@ -361,8 +357,8 @@
                         @else
                             <img src="{{ asset('assets/favicons/fav icon 1.svg') }}" alt="{{ config('app.name') }}"
                                 class="w-12 dark:hidden" />
-                            <img src="{{ asset('assets/favicons/fav icon 2 (1).svg') }}" alt="{{ config('app.name') }}"
-                                class="w-12 hidden dark:block" />
+                            <img src="{{ asset('assets/favicons/fav icon 2 (1).svg') }}"
+                                alt="{{ config('app.name') }}" class="w-12 hidden dark:block" />
                         @endif
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">

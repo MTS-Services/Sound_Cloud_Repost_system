@@ -31,7 +31,7 @@
                             <div class="flex flex-col sm:flex-row items-center gap-6">
                                 <div class="relative">
                                     {{-- Profile image --}}
-                                    <img src="{{ auth_storage_url(user()->avatar) }}" alt="Profile Picture"
+                                    <img src="{{ auth_storage_url($user->avatar) }}" alt="Profile Picture"
                                         class="w-24 h-24 lg:w-32 lg:h-32 rounded-full border-4 border-white shadow-lg object-cover"
                                         id="profilePreview" />
 
@@ -55,10 +55,10 @@
                                 </div>
 
                                 <div class="text-center sm:text-left dark:text-white">
-                                    <h2 class="text-2xl font-bold text-white  mb-1">{{ user()->name }}</h2>
-                                    <p class="text-primary-100">{{ user()->email }}</p>
+                                    <h2 class="text-2xl font-bold text-white  mb-1">{{ $user->name }}</h2>
+                                    <p class="text-primary-100">{{ $user->email }}</p>
                                     <p class="text-primary-200 text-sm mt-1">Joined
-                                        {{ user()->created_at->diffForHumans() }}</p>
+                                        {{ $user->created_at->diffForHumans() }}</p>
                                 </div>
                             </div>
                         </div>
@@ -103,7 +103,7 @@
                                     <label for="email"
                                         class="block text-sm font-medium text-gray-700 dark:text-white">Email
                                         Address</label>
-                                    <input type="email" id="email" name="email" value="{{ user()->email }}"
+                                    <input type="email" id="email" name="email" value="{{ $user->email }}"
                                         placeholder="Enter your email address"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-gray-400 dark:bg-gray-600 dark:text-white" />
                                 </div>
@@ -187,7 +187,7 @@
                             {{-- Buttons --}}
                             <div
                                 class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
-                                <a href="{{ user()->soundcloud_permalink_url ?? '#' }}"
+                                <a href="{{ $user->soundcloud_permalink_url ?? '#' }}"
                                     class="bg-gray-300 hover:bg-gray-400 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-900 dark:text-white px-3 py-1 sm:px-4 sm:py-2 rounded-lg transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -440,7 +440,7 @@
                                                     <div class="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
                                                     <span
                                                         class="text-green-600 dark:text-green-400 text-xs sm:text-sm font-medium">
-                                                        92% Real Followers
+                                                        {{ $userFollowerAnalysis['realPercentage'] }}% Real Followers
                                                     </span>
                                                 </div>
                                             </div>
@@ -452,12 +452,12 @@
                                                             class="text-gray-600 dark:text-slate-300 text-xs sm:text-sm">Follower
                                                             Growth</span>
                                                         <span
-                                                            class="text-gray-900 dark:text-white font-semibold text-xs sm:text-sm">78%</span>
+                                                            class="text-gray-900 dark:text-white font-semibold text-xs sm:text-sm">{{ $followerGrowth }}%</span>
                                                     </div>
                                                     <div
                                                         class="w-full bg-gray-300 dark:bg-slate-700 rounded-full h-1 sm:h-2">
                                                         <div class="bg-orange-500 h-1 sm:h-2 rounded-full transition-all duration-300"
-                                                            style="width: 78%;"></div>
+                                                            style="width: {{ $followerGrowth }}%;"></div>
                                                     </div>
                                                 </div>
 
@@ -969,8 +969,8 @@
                                                                         <div x-show="open" x-transition.opacity
                                                                             class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
                                                                             x-cloak>
-                                                                            <a href="{{ $repost->source->user->soundcloud_url ?? '#' }}"
-                                                                                target="_blank"
+                                                                            <a target="_blank"
+                                                                                href="{{ $repost->source->user->soundcloud_url ?? '#' }}"
                                                                                 class="block hover:bg-gray-800 px-3 py-1 rounded">
                                                                                 Visit SoundCloud Profile
                                                                             </a>
@@ -982,19 +982,17 @@
                                                                     {{-- Track Title --}}
                                                                     <h3
                                                                         class="text-base font-semibold text-gray-900 dark:text-white mt-1 truncate">
-                                                                        <a href="#"
-                                                                            class="hover:text-orange-500 dark:hover:text-orange-400">
-                                                                            {{ $repost->source->title ?? 'Untitled Track' }}
+                                                                        <a href="javascript:void(0)"
+                                                                            class="hover:text-orange-500 dark:hover:text-orange-400 line-clamp-1">
+                                                                            {{ Str::limit($repost->source?->title, 50) ?? 'Untitled Track' }}
                                                                         </a>
                                                                     </h3>
                                                                     {{-- Genre --}}
                                                                     <div class="flex flex-wrap gap-2 mt-1">
-                                                                        @foreach (array_slice(explode(',', $repost->source->genre ?? 'Unknown Genre'), 0, 3) as $genre)
-                                                                            <span
-                                                                                class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
-                                                                                {{ trim($genre) }}
-                                                                            </span>
-                                                                        @endforeach
+                                                                        <span
+                                                                            class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
+                                                                            {{ !empty($repost->source?->genre) ? $repost->source?->genre : 'Unknown Genre' }}
+                                                                        </span>
                                                                     </div>
                                                                 </div>
                                                             </div>
