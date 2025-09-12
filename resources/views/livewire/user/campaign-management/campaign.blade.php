@@ -356,8 +356,7 @@
         <div class="mt-6">
             {{ $campaigns->links('components.pagination.wire-navigate', [
                 'pageName' => $activeMainTab . 'Page',
-                'keep' => ['tab' => $activeMainTab],
-                'selectedGenres' => $selectedGenres,
+                'keep' => ['tab' => $activeMainTab, 'selectedGenres' => $selectedGenres],
             ]) }}
         </div>
     @endif

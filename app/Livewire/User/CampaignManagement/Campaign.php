@@ -456,18 +456,9 @@ class Campaign extends Component
             $this->selectedGenres[] = $genre;
         }
 
-        // Reset only the current active tab pagination
-        switch ($this->activeMainTab) {
-            case 'recommended_pro':
-                $this->recommendedProPage = 1;
-                break;
-            case 'recommended':
-                $this->recommendedPage = 1;
-                break;
-            case 'all':
-                $this->allPage = 1;
-                break;
-        }
+        // Reset pagination ONLY for the active tab
+        $pageProperty = $this->activeMainTab . 'Page';
+        $this->$pageProperty = 1;
     }
 
     public function filterByTrackType($Type)
