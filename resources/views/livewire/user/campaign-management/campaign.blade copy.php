@@ -4,64 +4,36 @@
     <!-- Header Section -->
     <div class="w-full mt-6 relative">
         <!-- Header Tabs & Button -->
-        <div x-data="{ activeTab: @entangle('activeMainTab') }"
-            class="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-4 pt-3 border-b border-b-gray-200 dark:border-b-gray-700 gap-2 sm:gap-0">
-            <div>
-                <nav class="-mb-px flex space-x-8">
-                    <!-- Recommended Pro -->
-                    <button
-                        @click="
-                    activeTab = 'recommended_pro';
-                    $wire.setActiveMainTab('recommended_pro');
-                "
-                        :class="activeTab === 'recommended_pro'
-                            ?
-                            'border-orange-500 text-orange-600 border-b-2' :
-                            'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                        class="tab-button py-3 pb-1 px-2 text-md font-semibold transition-all duration-200 border-b-2">
-                        {{ __('Recommended Pro') }}
-                        <span class="text-xs ml-2 text-orange-500">{{ $totalRecommendedPro }}</span>
-                    </button>
-
-                    <!-- Recommended -->
-                    <button
-                        @click="
-                    activeTab = 'recommended';
-                    $wire.setActiveMainTab('recommended');
-                "
-                        :class="activeTab === 'recommended'
-                            ?
-                            'border-orange-500 text-orange-600 border-b-2' :
-                            'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                        class="tab-button py-3 pb-1 px-2 text-md font-semibold transition-all duration-200 border-b-2">
-                        {{ __('Recommended') }}
-                        <span class="text-xs ml-2 text-orange-500">{{ $totalRecommended }}</span>
-                    </button>
-
-                    <!-- All -->
-                    <button
-                        @click="
-                    activeTab = 'all';
-                    $wire.setActiveMainTab('all');
-                "
-                        :class="activeTab === 'all'
-                            ?
-                            'border-orange-500 text-orange-600 border-b-2' :
-                            'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                        class="tab-button py-3 pb-1 px-2 text-md font-semibold transition-all duration-200 border-b-2">
-                        {{ __('All') }}
-                        <span class="text-xs ml-2 text-orange-500">{{ $totalCampaign }}</span>
-                    </button>
-                </nav>
+        <div
+            class="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-4 pt-3 border-b border-b-gray-200 dark:border-b-gray-700  gap-2 sm:gap-0">
+            <div class="">
+                <div class="">
+                    <nav class="-mb-px flex space-x-8">
+                        <button
+                            class="tab-button @if ($activeMainTab === 'recommended_pro') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 pb-1 px-2 text-md font-semibold transition-all duration-200"
+                            wire:click="setActiveMainTab('recommended_pro')">
+                            {{ __('Recommended Pro') }} <span
+                                class="text-xs ml-2 text-orange-500">{{ $totalRecommendedPro }}</span>
+                        </button>
+                        <button
+                            class="tab-button @if ($activeMainTab === 'recommended') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 pb-1 px-2 text-md font-semibold transition-all duration-200"
+                            wire:click="setActiveMainTab('recommended')">
+                            {{ __('Recommended') }}<span
+                                class="text-xs ml-2 text-orange-500">{{ $totalRecommended }}</span>
+                        </button>
+                        <button
+                            class="tab-button @if ($activeMainTab === 'all') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 pb-1 px-2 text-md font-semibold transition-all duration-200"
+                            wire:click="setActiveMainTab('all')">
+                            {{ __('All') }}<span class="text-xs ml-2 text-orange-500">{{ $totalCampaign }}</span>
+                        </button>
+                    </nav>
+                </div>
             </div>
 
-            <!-- Start Campaign Button -->
             <x-gbutton variant="primary" wire:click="toggleCampaignsModal" class="mb-2">
                 <span><x-lucide-plus class="w-5 h-5 mr-1" /></span>
-                {{ __('Start a new campaign') }}
-            </x-gbutton>
+                {{ __('Start a new campaign') }}</x-gbutton>
         </div>
-
     </div>
 
     <div x-data ="{ openFilterByTrack: false, openFilterByGenre: false }"
