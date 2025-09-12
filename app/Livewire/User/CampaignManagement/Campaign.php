@@ -268,6 +268,7 @@ class Campaign extends Component
                 $this->resetPage('recommendedProPage');
                 $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
         }
+        $this->totalCampaigns();
     }
 
 
