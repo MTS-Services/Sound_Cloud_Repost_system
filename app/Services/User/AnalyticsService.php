@@ -283,7 +283,8 @@ class AnalyticsService
             ')
             ->groupBy('track_urn')
             ->orderByDesc('total_views')
-            ->orderByDesc('total_streams')
+            ->groupBy('total_reposts')
+            ->orderBy('total_streams')
             ->get();
 
         // Create paginator
@@ -524,7 +525,8 @@ class AnalyticsService
         $avgViews = $metrics['total_views']['average'];
 
         foreach (self::METRICS as $metric) {
-            if ($metric === 'total_views') continue;
+            if ($metric === 'total_views')
+                continue;
 
             $metrics[$metric]['total_percent'] = $totalViews > 0
                 ? ($metrics[$metric]['total'] / $totalViews) * 100
