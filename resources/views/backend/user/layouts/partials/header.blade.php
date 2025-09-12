@@ -74,7 +74,7 @@
                 <x-lucide-menu class="w-5 h-5 md:w-6 md:h-6" />
             </button>
             <a class="flex items-center space-x-2" href="{{ route('user.dashboard') }}" data-discover="true" wire:navigate>
-                <img src="{{ app_setting('app_logo') ? asset('storage/' . app_setting('app_logo_dark')) : asset('assets/logo/rc-logo-black.png') }}"
+                <img src="{{ app_setting('app_logo') ? asset('storage/' . app_setting('app_logo')) : asset('assets/logo/rc-logo-black.png') }}"
                     alt="{{ config('app.name') }}" class="w-36 lg:w-48 dark:hidden" />
                 <img src="{{ app_setting('app_logo_dark') ? asset('storage/' . app_setting('app_logo_dark')) : asset('assets/logo/rc-logo-white.png') }}"
                     alt="{{ config('app.name') }}" class="w-36 lg:w-48 hidden dark:block" />
