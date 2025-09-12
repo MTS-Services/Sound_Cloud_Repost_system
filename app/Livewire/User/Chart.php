@@ -203,11 +203,23 @@ class Chart extends Component
 
     public function render()
     {
-        dd($this->getTopTrackData());
+        $paginated = $this->getTopTrackData();
+
+        // Get the collection from paginator
+        $items = $paginated->getCollection();
+
+        // Sort by total plays descending first, then total reposts descending
+        $sorted = $items->sortByDesc(function ($track) {
+            return $track['metrics']['total_plays']['current_total'] +
+                $track['metrics']['total_reposts']['current_total'];
+        });
+
+        // Replace the paginator collection with sorted items
+        $paginated->setCollection($sorted);
         return view(
             'livewire.user.chart',
             [
-                'topTracks' => $this->getTopTrackData()
+                'topTracks' => $paginated
             ]
         );
     }
