@@ -217,11 +217,12 @@ class Chart extends Component
             $totalLikes = $track['metrics']['total_likes']['current_total'];
             $totalComments = $track['metrics']['total_comments']['current_total'];
             $totalFollowers = $track['metrics']['total_followers']['current_total'];
-
+            $track['repost'] = false;
             $repost = Repost::where('reposter_urn', user()->urn)->where('campaign_id', $track['action_details']['id'])->exists();
             if ($repost) {
                 $track['repost'] = true;
             }
+
 
             $totalEngagements = $totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers;
 
