@@ -207,7 +207,7 @@
             </div>
         </div>
     </div>
-
+    @dd($campaigns);
 
     @forelse ($campaigns as $campaign_)
         <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm">
