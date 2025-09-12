@@ -151,24 +151,11 @@
         <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <div class="flex items-center justify-between">
-                    <!-- Logo Section -->
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center shadow-md"
-                            aria-hidden="true">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="text-white">
-                                <path d="M9 18V5l12-2v13" />
-                                <circle cx="6" cy="18" r="3" />
-                                <circle cx="18" cy="16" r="3" />
-                            </svg>
-                        </div>
-                        <h1 class="text-2xl font-bold text-gray-900 bg-primary-600 bg-clip-text text-transparent">
-                            <a href="{{ route('f.landing') }}"> RepostChain</a>
-                        </h1>
-                    </div>
 
-                    <!-- Step Indicators -->
+                    <a href="{{ route('f.landing') }}">
+                        <img src="{{ app_setting('app_logo_dark') ? asset('storage/' . app_setting('app_logo')) : asset('assets/logo/rc-logo-black.png') }}"
+                            alt="{{ config('app.name') }}" class="w-36 lg:w-48 object-contain">
+                    </a>
                     <div class="hidden sm:flex items-center gap-2" aria-label="Steps">
                         <template x-for="step in 3" :key="step">
                             <div class="flex items-center">
@@ -197,8 +184,6 @@
                             </div>
                         </template>
                     </div>
-
-                    <!-- Mobile step indicator -->
                     <div class="sm:hidden text-sm font-medium text-gray-600">
                         Step <span x-text="currentStep"></span>/3
                     </div>
@@ -441,15 +426,12 @@
                         </div>
 
                         <!-- Navigation Buttons -->
-                        <div class="flex flex-col sm:flex-row gap-3 justify-between">
+                        <div class="flex flex-row gap-3 justify-between">
                             <div class="flex items-center">
-                                <x-gbutton variant="text" @click="goToStep(1)"><svg
-                                        xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                        fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                                            clip-rule="evenodd" />
-                                    </svg> Back</x-gbutton>
+                                <x-gbutton variant="text" @click="goToStep(1)">
+                                    <x-heroicon-o-arrow-left class="w-5 h-5 mr-2" />
+                                    {{ __('Back') }}
+                                </x-gbutton>
                             </div>
                             <div>
                                 <button @click="goToStep(3)" :disabled="!canContinueGenres"

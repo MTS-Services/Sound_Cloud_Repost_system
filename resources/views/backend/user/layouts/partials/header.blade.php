@@ -74,17 +74,10 @@
                 <x-lucide-menu class="w-5 h-5 md:w-6 md:h-6" />
             </button>
             <a class="flex items-center space-x-2" href="{{ route('user.dashboard') }}" data-discover="true" wire:navigate>
-                @if (app_setting('app_logo') && app_setting('app_logo_dark'))
-                    <img src="{{ storage_url(app_setting('app_logo')) }}" alt="{{ config('app.name') }}"
-                        class="w-36 lg:w-48 dark:hidden" />
-                    <img src="{{ storage_url(app_setting('app_logo_dark')) }}" alt="{{ config('app.name') }}"
-                        class="w-36 lg:w-48 hidden dark:block" />
-                @else
-                    <img src="{{ asset('assets/logo/rc-logo-black.png') }}" alt="{{ config('app.name') }}"
-                        class="w-36 lg:w-48 dark:hidden" />
-                    <img src="{{ asset('assets/logo/rc-logo-white.png') }}" alt="{{ config('app.name') }}"
-                        class="w-36 lg:w-48 hidden dark:block" />
-                @endif
+                <img src="{{ app_setting('app_logo') ? asset('storage/' . app_setting('app_logo_dark')) : asset('assets/logo/rc-logo-black.png') }}"
+                    alt="{{ config('app.name') }}" class="w-36 lg:w-48 dark:hidden" />
+                <img src="{{ app_setting('app_logo_dark') ? asset('storage/' . app_setting('app_logo_dark')) : asset('assets/logo/rc-logo-white.png') }}"
+                    alt="{{ config('app.name') }}" class="w-36 lg:w-48 hidden dark:block" />
             </a>
         </div>
         <div class="flex-1 flex justify-center px-2 md:px-4 lg:px-0 lg:ml-8 md:mr-3">
@@ -98,8 +91,7 @@
         <div class="flex items-center space-x-1 md:space-x-2">
             <nav class="hidden lg:flex items-center space-x-2 md:space-x-4 text-sm relative" x-data="{ activeButton: '' }">
                 <a class="text-orange-500 hover:text-white hover:bg-orange-500 px-4 py-2 rounded-md text-sm font-medium"
-                    href="{{ route('user.plans') }}" wire:navigate
-                    data-discover="true">{{ __('Upgrade My Plan') }}</a>
+                    href="{{ route('user.plans') }}" wire:navigate data-discover="true">{{ __('Upgrade My Plan') }}</a>
                 <a x-bind:class="{ 'text-orange-500': activeButton === 'blog', 'hover:text-orange-400': activeButton !== 'blog' }"
                     class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
                     wire:navigate href="{{ route('blog') }}" data-discover="true" @click="activeButton = 'blog'">
