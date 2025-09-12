@@ -203,6 +203,7 @@ class Chart extends Component
 
     public function render()
     {
+        dd($this->getTopTrackData());
         return view(
             'livewire.user.chart',
             [
