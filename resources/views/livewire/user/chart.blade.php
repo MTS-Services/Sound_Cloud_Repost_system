@@ -943,7 +943,7 @@
                                                 </button>
                                                 <button
                                                     wire:click="repostTrack('{{ encrypt($track['action_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
-                                                    class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
+                                                    class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600 {{ $track['repost'] ? '!bg-green-500 !text-white' : '' }}"
                                                     title="Repost">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                         height="24" viewBox="0 0 24 24" fill="none"
