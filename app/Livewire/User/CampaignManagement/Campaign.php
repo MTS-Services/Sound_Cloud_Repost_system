@@ -332,14 +332,14 @@ class Campaign extends Component
             });
         }
 
-        if ($this->activeMainTab != 'all') {
-            $this->selectedGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
-        }
-        if (!empty($this->selectedGenres)) {
-            $query->whereHas('music', function ($q) {
-                $q->whereIn('genre', $this->selectedGenres);
-            });
-        }
+        // if ($this->activeMainTab != 'all') {
+        //     $this->selectedGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+        // }
+        // if (!empty($this->selectedGenres)) {
+        //     $query->whereHas('music', function ($q) {
+        //         $q->whereIn('genre', $this->selectedGenres);
+        //     });
+        // }
 
 
 
@@ -1312,7 +1312,7 @@ class Campaign extends Component
     {
         try {
             $baseQuery = $this->getCampaignsQuery();
-            // $baseQuery = $this->applyFilters($baseQuery);
+            $baseQuery = $this->applyFilters($baseQuery);
             $campaigns = collect();
             switch ($this->activeMainTab) {
                 case 'recommended_pro':
