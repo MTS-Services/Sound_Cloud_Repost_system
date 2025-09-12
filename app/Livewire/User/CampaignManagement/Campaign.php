@@ -322,7 +322,7 @@ class Campaign extends Component
         }
 
         // Apply tag filters
-        if (!empty($this->selectedTags)) {
+        if (!empty($this->selectedTags) && $this->selectedTags != 'all') {
             $query->whereHas('music', function ($q) {
                 $q->where(function ($tagQuery) {
                     foreach ($this->selectedTags as $tag) {
