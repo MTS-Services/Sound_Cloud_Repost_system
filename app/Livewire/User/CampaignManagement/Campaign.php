@@ -343,7 +343,7 @@ class Campaign extends Component
 
 
 
-        if (!empty($this->searchMusicType)) {
+        if (!empty($this->searchMusicType) && $this->searchMusicType != 'all') {
             $query->where('music_type', 'like', "%{$this->searchMusicType}%");
         }
 
