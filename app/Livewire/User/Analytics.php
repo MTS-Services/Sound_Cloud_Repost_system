@@ -406,6 +406,7 @@ class Analytics extends Component
 
     public function render()
     {
+        $this->getChartData();
         $paginated = $this->getPaginatedTrackData();
 
         // Get the collection from paginator
