@@ -261,6 +261,7 @@ class Campaign extends Component
 
             case 'all':
                 $this->resetPage('allPage');
+                $this->selectedGenres = [];
                 break;
 
             default:
@@ -1249,8 +1250,6 @@ class Campaign extends Component
                 ->whereHas('music', function ($query) {
                     if (!empty($this->selectedGenres)) {
                         $query->whereIn('genre', $this->selectedGenres);
-                    } else {
-                        $query->whereNull('genre');
                     }
                 })->count();
         } else {
@@ -1290,14 +1289,6 @@ class Campaign extends Component
                     $query->whereIn('genre', $userGenres);
                 })->count();
         }
-
-
-
-
-
-
-
-
     }
 
     /**
@@ -1306,7 +1297,6 @@ class Campaign extends Component
     public function render()
     {
         try {
-            $this->totalCampaigns();
             $baseQuery = $this->getCampaignsQuery();
             $baseQuery = $this->applyFilters($baseQuery);
             $campaigns = collect();
