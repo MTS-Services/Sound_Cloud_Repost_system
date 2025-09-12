@@ -1016,35 +1016,21 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @php
-                                    $totalViews = $track['metrics']['total_views']['current_total'];
-                                    $totalPlays = $track['metrics']['total_plays']['current_total'];
-                                    $totalReposts = $track['metrics']['total_reposts']['current_total'];
-                                    $totalLikes = $track['metrics']['total_likes']['current_total'];
-                                    $totalComments = $track['metrics']['total_comments']['current_total'];
-                                    $totalFollowers = $track['metrics']['total_followers']['current_total'];
-
-                                    $totalEngagements =
-                                        $totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers;
-                                    $averageEngagements = $totalEngagements / 5;
-                                    // Engagement % (capped at 100)
-                                    $engagementRate = min(100, ($totalEngagements / max(1, $totalViews)) * 100);
-                                @endphp
                                 <div class="flex items-center">
                                     <div class="text-sm font-bold text-gray-900 dark:text-white">
-                                        {{ number_format($engagementRate, 2) }}%
+                                        {{ number_format($track['engagement_rate'], 2) }}%
                                     </div>
                                     <div class="ml-2 w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                                         <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] h-2 rounded-full transition-all duration-300 max-w-full"
-                                            style="width: {{ $engagementRate }}%;"></div>
+                                            style="width: {{ $track['engagement_rate'] }}%;"></div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                {{ number_shorten($totalLikes) }}
+                                {{ number_shorten($track['metrics']['total_likes']['current_total']) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                {{ number_shorten($totalReposts) }}
+                                {{ number_shorten($track['metrics']['total_reposts']['current_total']) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm text-gray-900 dark:text-white">
