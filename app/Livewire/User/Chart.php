@@ -218,6 +218,8 @@ class Chart extends Component
             $totalComments = $track['metrics']['total_comments']['current_total'];
             $totalFollowers = $track['metrics']['total_followers']['current_total'];
 
+
+
             $totalEngagements = $totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers;
 
             // Engagement % (capped at 100)
@@ -232,6 +234,8 @@ class Chart extends Component
 
             return $track;
         });
+
+        dd($itemsWithMetrics);
 
         // Sort by engagement score descending
         $sorted = $itemsWithMetrics->sortByDesc('engagement_score');
