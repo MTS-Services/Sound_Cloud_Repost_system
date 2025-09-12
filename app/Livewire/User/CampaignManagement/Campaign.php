@@ -202,7 +202,12 @@ class Campaign extends Component
         $this->getAllTrackTypes();
         $this->totalCampaigns();
         $this->calculateFollowersLimit();
-        $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
+        if ($this->activeMainTab === 'all') {
+            $this->selectedGenres = [];
+        } else {
+            $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
+        }
+
 
 
         // $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
