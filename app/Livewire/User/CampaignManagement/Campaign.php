@@ -1314,61 +1314,53 @@ class Campaign extends Component
             $baseQuery = $this->getCampaignsQuery();
             // $baseQuery = $this->applyFilters($baseQuery);
             $campaigns = collect();
-            $campaigns = $baseQuery
-                ->whereHas('music', function ($query) {
-                    if (!empty($this->selectedGenres)) {
-                        $query->whereIn('genre', $this->selectedGenres);
-                    }
-                })
-                ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage);
+            switch ($this->activeMainTab) {
+                case 'recommended_pro':
+                    $campaigns = $baseQuery
+                        ->whereHas('user', function ($query) {
+                            $query->isPro();
+                        })
+                        ->whereHas('music', function ($query) {
+                            $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+                            $query->whereIn('genre', $userGenres);
 
-            // switch ($this->activeMainTab) {
-            //     case 'recommended_pro':
-            //         $campaigns = $baseQuery
-            //             ->whereHas('user', function ($query) {
-            //                 $query->isPro();
-            //             })
-            //             ->whereHas('music', function ($query) {
-            //                 $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
-            //                 $query->whereIn('genre', $userGenres);
+                        })
+                        ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
 
-            //             })
-            //             ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
+                    break;
 
-            //         break;
+                case 'recommended':
+                    $campaigns = $baseQuery
+                        ->whereHas('music', function ($query) {
+                            $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+                            $query->whereIn('genre', $userGenres);
+                        })
+                        ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
+                    break;
 
-            //     case 'recommended':
-            //         $campaigns = $baseQuery
-            //             ->whereHas('music', function ($query) {
-            //                 $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
-            //                 $query->whereIn('genre', $userGenres);
-            //             })
-            //             ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
-            //         break;
+                case 'all':
+                    $campaigns = $baseQuery
+                        ->whereHas('music', function ($query) {
+                            if (!empty($this->selectedGenres)) {
+                                $query->whereIn('genre', $this->selectedGenres);
+                            }
+                        })
+                        ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage);
 
-            //     case 'all':
-            //         $campaigns = $baseQuery
-            //             ->whereHas('music', function ($query) {
-            //                 if (!empty($this->selectedGenres)) {
-            //                     $query->whereIn('genre', $this->selectedGenres);
-            //                 }
-            //             })
-            //             ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage);
+                    break;
+                default:
+                    $campaigns = $baseQuery
+                        ->whereHas('user', function ($query) {
+                            $query->isPro();
+                        })
+                        ->whereHas('music', function ($query) {
+                            $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+                            $query->whereIn('genre', $userGenres);
+                        })
+                        ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
 
-            //         break;
-            //     default:
-            //         $campaigns = $baseQuery
-            //             ->whereHas('user', function ($query) {
-            //                 $query->isPro();
-            //             })
-            //             ->whereHas('music', function ($query) {
-            //                 $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
-            //                 $query->whereIn('genre', $userGenres);
-            //             })
-            //             ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
-
-            //         break;
-            // }
+                    break;
+            }
 
             return view('livewire.user.campaign-management.campaign', [
                 'campaigns' => $campaigns
