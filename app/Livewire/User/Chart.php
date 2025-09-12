@@ -218,7 +218,10 @@ class Chart extends Component
             $totalComments = $track['metrics']['total_comments']['current_total'];
             $totalFollowers = $track['metrics']['total_followers']['current_total'];
 
-
+            $repost = Repost::where('reposter_urn', user()->urn)->where('campaign_id', $track['action_details']['id'])->exists();
+            if ($repost) {
+                $track['repost'] = true;
+            }
 
             $totalEngagements = $totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers;
 
@@ -234,8 +237,6 @@ class Chart extends Component
 
             return $track;
         });
-
-        dd($itemsWithMetrics);
 
         // Sort by engagement score descending
         $sorted = $itemsWithMetrics->sortByDesc('engagement_score');
