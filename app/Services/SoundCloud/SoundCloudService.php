@@ -859,7 +859,7 @@ class SoundCloudService
         try {
             // 🔹 Handle if input is a track URI like "soundcloud:tracks:2166785337"
             if (str_starts_with($trackUri, 'soundcloud:tracks:')) {
-                $trackId  = str_replace('soundcloud:tracks:', '', $trackUri);
+                $trackId = str_replace("soundcloud:tracks:", "", $trackUri);
                 $trackUrl = "https://api.soundcloud.com/tracks/" . $trackId;
             } else {
                 // Otherwise assume it is a normal SoundCloud track URL
