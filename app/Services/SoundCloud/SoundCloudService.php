@@ -866,6 +866,7 @@ class SoundCloudService
                 'url'       => $trackUrl,
                 'client_id' => $clientId,
             ]);
+            dd($resolve, $clientId);
 
             if ($resolve->failed()) {
                 Log::error("SoundCloud resolve failed", ['track' => $trackUri]);
