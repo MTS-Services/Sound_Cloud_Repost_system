@@ -625,27 +625,80 @@ class SoundCloudService
 
 
 
-    public function getMusicSrc($trackUri)
-    {
-        if (!isset($trackUri)) {
+    // public function getMusicSrc($trackUri)
+    // {
+    //     if (!isset($trackUri)) {
+    //         return null;
+    //     }
+
+    //     $params = [
+    //         'url'          => urlencode($trackUri),
+    //         'color'        => str_replace('#', '%23', '#ff5500'),
+    //         'auto_play'    => 'false',
+    //         'show_comments' => 'false',
+    //         'show_user'    => 'false',
+    //         'show_reposts' => 'false',
+    //         'show_teaser'  => 'false',
+    //         'buying'       => 'false',
+    //         'sharing'      => 'false',
+    //         'download'     => 'false',
+    //         'hide_related' => 'true',
+    //         'visual'       => 'false',
+    //     ];
+
+    //     return "https://w.soundcloud.com/player/?" . http_build_query($params);
+    // }
+
+    public function getMusicSrc(string $trackUri): ?string
+{
+    if (!$trackUri) {
+        return null;
+    }
+
+    $clientId = config('services.soundcloud.client_id'); // keep in config/services.php
+
+    try {
+        // 1. Resolve the track details
+        $resolveUrl = "https://api-v2.soundcloud.com/resolve";
+        $resolveResponse = Http::get($resolveUrl, [
+            'url' => $trackUri,
+            'client_id' => $clientId,
+        ]);
+
+        if ($resolveResponse->failed()) {
+            Log::error("SoundCloud resolve API failed", ['trackUri' => $trackUri]);
             return null;
         }
 
-        $params = [
-            'url'          => urlencode($trackUri),
-            'color'        => str_replace('#', '%23', '#ff5500'),
-            'auto_play'    => 'false',
-            'show_comments' => 'false',
-            'show_user'    => 'false',
-            'show_reposts' => 'false',
-            'show_teaser'  => 'false',
-            'buying'       => 'false',
-            'sharing'      => 'false',
-            'download'     => 'false',
-            'hide_related' => 'true',
-            'visual'       => 'false',
-        ];
+        $trackData = $resolveResponse->json();
 
-        return "https://w.soundcloud.com/player/?" . http_build_query($params);
+        if (!isset($trackData['media']['transcodings'])) {
+            return null;
+        }
+
+        // 2. Find progressive mp3 stream
+        $progressive = collect($trackData['media']['transcodings'])
+            ->firstWhere('format.protocol', 'progressive');
+
+        if (!$progressive) {
+            return null;
+        }
+
+        // 3. Get final stream URL
+        $streamResponse = Http::get($progressive['url'], [
+            'client_id' => $clientId,
+        ]);
+
+        if ($streamResponse->failed()) {
+            Log::error("SoundCloud stream API failed", ['url' => $progressive['url']]);
+            return null;
+        }
+
+        return $streamResponse->json('url'); // <-- direct mp3/opus stream link
+
+    } catch (\Exception $e) {
+        Log::error("SoundCloud API exception: " . $e->getMessage());
+        return null;
     }
+}
 }
