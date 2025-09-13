@@ -868,7 +868,7 @@ class SoundCloudService
 
             // 1. Resolve the track
             $resolve = Http::get("https://soundcloud.com/resolve", [
-                'url'       => "https://soundcloud.com/user-434241656",
+                'url'       => $trackUrl,
                 'client_id' => $clientId,
             ]);
 
