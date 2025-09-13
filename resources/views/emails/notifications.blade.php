@@ -436,7 +436,7 @@
 <body>
     <div class="email-wrapper">
         <div class="email-container">
-            <!-- Header with Logo -->
+            <!-- Header with Logo 
             <div class="header">
                 <div class="logo-container">
                     <a href="{{ url('/') }}">
@@ -444,7 +444,7 @@
                             class="logo">
                     </a>
                 </div>
-            </div>
+            </div>-->
 
             <!-- Main Content -->
             <div class="content">
