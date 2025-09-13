@@ -13,7 +13,6 @@ use App\Services\User\CampaignManagement\CampaignService;
 use Livewire\Component;
 use Illuminate\Support\Facades\Log;
 use Livewire\WithPagination;
-use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Http;
 use Livewire\Attributes\Locked;
