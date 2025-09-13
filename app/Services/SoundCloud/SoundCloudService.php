@@ -622,4 +622,30 @@ class SoundCloudService
 
         return collect($response['collection']);
     }
+
+
+
+    public function getMusicSrc($trackUri)
+    {
+        if (!isset($trackUri)) {
+            return null;
+        }
+
+        $params = [
+            'url'          => urlencode($trackUri),
+            'color'        => str_replace('#', '%23', '#ff5500'),
+            'auto_play'    => 'false',
+            'show_comments' => 'false',
+            'show_user'    => 'false',
+            'show_reposts' => 'false',
+            'show_teaser'  => 'false',
+            'buying'       => 'false',
+            'sharing'      => 'false',
+            'download'     => 'false',
+            'hide_related' => 'true',
+            'visual'       => 'false',
+        ];
+
+        return "https://w.soundcloud.com/player/?" . http_build_query($params);
+    }
 }
