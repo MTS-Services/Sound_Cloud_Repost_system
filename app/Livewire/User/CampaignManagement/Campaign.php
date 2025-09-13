@@ -265,16 +265,19 @@ class Campaign extends Component
         switch ($tab) {
             case 'recommended_pro':
                 $this->resetPage('recommended_proPage');
+                $this->{$tab . 'Page'} = 1;
                 $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
                 break;
 
             case 'recommended':
                 $this->resetPage('recommendedPage');
+                $this->{$tab . 'Page'} = 1;
                 $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
                 break;
 
             case 'all':
                 $this->resetPage('allPage');
+                $this->{$tab . 'Page'} = 1;
                 $this->selectedGenres = [];
                 break;
 
@@ -451,7 +454,8 @@ class Campaign extends Component
 
     public function toggleGenre($genre)
     {
-        $this->resetPage($this->getActivePageName());
+        $tab = $this->activeMainTab;
+        $this->{$tab . 'Page'} = 1;
         if (in_array($genre, $this->selectedGenres)) {
             $this->selectedGenres = array_diff($this->selectedGenres, [$genre]);
         } else {
