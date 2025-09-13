@@ -593,6 +593,7 @@ class Chart extends Component
 
         // Update paginator collection
         $paginated->setCollection($sorted);
+        Log::info($paginated);
         return view(
             'livewire.user.chart',
             [
