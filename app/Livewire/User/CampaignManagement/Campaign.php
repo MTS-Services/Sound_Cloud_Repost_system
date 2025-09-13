@@ -35,8 +35,8 @@ class Campaign extends Component
     protected string $baseUrl = 'https://api.soundcloud.com';
 
     // Pagination URL parameters
-    #[Url(as: 'recommendedProPage')]
-    public ?int $recommendedProPage = 1;
+    #[Url(as: 'recommended_proPage')]
+    public ?int $recommended_proPage = 1;
 
     #[Url(as: 'recommendedPage')]
     public ?int $recommendedPage = 1;
@@ -102,7 +102,7 @@ class Campaign extends Component
 
     protected $queryString = [
         'selectedGenres',
-        'recommendedProPage' => ['except' => 1],
+        'recommended_proPage' => ['except' => 1],
         'recommendedPage' => ['except' => 1],
         'allPage' => ['except' => 1],
     ];
@@ -264,7 +264,7 @@ class Campaign extends Component
         $this->activeMainTab = $tab;
         switch ($tab) {
             case 'recommended_pro':
-                $this->resetPage('recommendedProPage');
+                $this->resetPage('recommended_proPage');
                 $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
                 break;
 
@@ -279,7 +279,7 @@ class Campaign extends Component
                 break;
 
             default:
-                $this->resetPage('recommendedProPage');
+                $this->resetPage('recommended_proPage');
                 $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
         }
         $this->totalCampaigns();
@@ -379,10 +379,10 @@ class Campaign extends Component
     private function getActivePageName(): string
     {
         return match ($this->activeMainTab) {
-            'recommended_pro' => 'recommendedProPage',
+            'recommended_pro' => 'recommended_proPage',
             'recommended' => 'recommendedPage',
             'all' => 'allPage',
-            default => 'recommendedProPage'
+            default => 'recommended_proPage'
         };
     }
 
@@ -1343,7 +1343,7 @@ class Campaign extends Component
                             $query->whereIn('genre', $userGenres);
 
                         })
-                        ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
+                        ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
 
                     break;
 
@@ -1375,7 +1375,7 @@ class Campaign extends Component
                             $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
                             $query->whereIn('genre', $userGenres);
                         })
-                        ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedProPage', $this->recommendedProPage);
+                        ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
 
                     break;
             }
