@@ -305,16 +305,31 @@
                                     </div>
                                     <span class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
                                 </div>
-                                <div class="relative">
+                                <div class="relative" data-campaign-id="{{ $campaign_->id }}">
                                     <!-- Repost Button -->
                                     <button wire:click="confirmRepost('{{ $campaign_->id }}')"
-                                        @class([
-                                            'flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-colors',
-                                            'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white dark:text-gray-300 cursor-pointer' => $this->canRepost(
-                                                $campaign_->id),
-                                            'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
-                                                $campaign_->id),
-                                        ]) @disabled(!$this->canRepost($campaign_->id))>
+                                        class="repost-btn flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-colors bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                                        disabled x-data="{
+                                            campaignId: '{{ $campaign_->id }}',
+                                            checkRepostState() {
+                                                if (window.audioTracker && window.audioTracker.playedCampaigns.has(this.campaignId)) {
+                                                    this.$el.classList.remove('bg-gray-300', 'dark:bg-gray-600', 'text-gray-500', 'dark:text-gray-400', 'cursor-not-allowed');
+                                                    this.$el.classList.add('bg-orange-600', 'dark:bg-orange-500', 'hover:bg-orange-700', 'dark:hover:bg-orange-400', 'text-white', 'dark:text-gray-300', 'cursor-pointer');
+                                                    this.$el.removeAttribute('disabled');
+                                                }
+                                            }
+                                        }" x-init="// Check state immediately on init
+                                        checkRepostState();
+                                        
+                                        // Also check periodically in case state changes
+                                        setInterval(() => checkRepostState(), 1000);
+                                        
+                                        // Listen for custom events from the audio tracker
+                                        document.addEventListener('campaignPlayable', (e) => {
+                                            if (e.detail.campaignId === campaignId) {
+                                                checkRepostState();
+                                            }
+                                        });">
                                         <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <rect x="1" y="1" width="24" height="16" rx="3"
@@ -322,9 +337,9 @@
                                             <circle cx="8" cy="9" r="3" fill="none"
                                                 stroke="currentColor" stroke-width="2" />
                                         </svg>
-                                        <span>{{ repostPrice() }}
-                                            Repost</span>
+                                        <span>{{ repostPrice() }} Repost</span>
                                     </button>
+
                                     @if (in_array($campaign_->id, $this->repostedCampaigns))
                                         <div
                                             class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
@@ -649,6 +664,7 @@
         initializeSoundCloudWidgets();
     });
 </script> --}}
+
 <script>
     // Global tracking state
     window.audioTracker = {
@@ -723,6 +739,13 @@
                         // Enable repost button visually
                         enableRepostButton(campaignId);
 
+                        // Dispatch custom event for Alpine to listen to
+                        document.dispatchEvent(new CustomEvent('campaignPlayable', {
+                            detail: {
+                                campaignId: campaignId
+                            }
+                        }));
+
                         // Notify Livewire
                         @this.call('markCampaignPlayable', campaignId);
                     }
@@ -758,8 +781,7 @@
     }
 
     // Initialize on page load and Livewire navigation
-    // document.addEventListener('livewire:navigated', initializeSoundCloudWidgets);
-    document.addEventListener('livewire:initialized', initializeSoundCloudWidgets);
+    document.addEventListener('livewire:navigated', initializeSoundCloudWidgets);
     document.addEventListener('DOMContentLoaded', initializeSoundCloudWidgets);
 
     // Re-initialize when new content is loaded
