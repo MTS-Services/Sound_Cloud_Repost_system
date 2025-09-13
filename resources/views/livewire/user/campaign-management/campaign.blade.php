@@ -311,8 +311,10 @@
                                         class="repost-btn flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-colors bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
                                         disabled x-data="{
                                             campaignId: '{{ $campaign_->id }}',
+                                            repostActive: false,
                                             checkRepostState() {
                                                 if (window.audioTracker && window.audioTracker.playedCampaigns.has(this.campaignId)) {
+                                                    repostActive = true;
                                                     this.$el.classList.remove('bg-gray-300', 'dark:bg-gray-600', 'text-gray-500', 'dark:text-gray-400', 'cursor-not-allowed');
                                                     this.$el.classList.add('bg-orange-600', 'dark:bg-orange-500', 'hover:bg-orange-700', 'dark:hover:bg-orange-400', 'text-white', 'dark:text-gray-300', 'cursor-pointer');
                                                     this.$el.removeAttribute('disabled');
@@ -322,7 +324,10 @@
                                         checkRepostState();
                                         
                                         // Also check periodically in case state changes
-                                        setInterval(() => checkRepostState(), 1000);
+                                        if (!repostActive) {
+                                            setInterval(() => checkRepostState(), 1000);
+                                        }
+                                        
                                         
                                         // Listen for custom events from the audio tracker
                                         document.addEventListener('campaignPlayable', (e) => {
@@ -675,6 +680,8 @@
         playCountUpdated: new Set()
     };
 
+    let repostActive = false;
+
     function initializeSoundCloudWidgets() {
         if (typeof SC === 'undefined') {
             setTimeout(initializeSoundCloudWidgets, 500);
@@ -767,6 +774,7 @@
     function enableRepostButton(campaignId) {
         const button = document.querySelector(`[data-campaign-id="${campaignId}"] .repost-btn`);
         if (button) {
+            repostActive = true;
             button.classList.remove('bg-gray-300', 'dark:bg-gray-600', 'text-gray-500', 'dark:text-gray-400',
                 'cursor-not-allowed');
             button.classList.add('bg-orange-600', 'dark:bg-orange-500', 'hover:bg-orange-700',
@@ -786,7 +794,10 @@
 
     // Re-initialize when new content is loaded
     document.addEventListener('livewire:updated', () => {
-        setTimeout(initializeSoundCloudWidgets, 100);
+        if (!repostActive) {
+            setTimeout(initializeSoundCloudWidgets, 100);
+        }
+
     });
 </script>
 </div>
