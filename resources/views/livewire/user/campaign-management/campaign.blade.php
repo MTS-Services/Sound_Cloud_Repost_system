@@ -309,31 +309,116 @@
                                 <div class="relative" data-campaign-id="{{ $campaign_->id }}">
                                     <button wire:click="confirmRepost('{{ $campaign_->id }}')"
                                         class="repost-btn flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-colors bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                                        disabled x-data="{
+                                        disabled data-campaign-id="{{ $campaign_->id }}" x-data="{
                                             campaignId: '{{ $campaign_->id }}',
                                             isEnabled: false,
                                         
                                             init() {
-                                                // Check if already enabled from previous session
+                                                console.log('🎯 Alpine init for campaign:', this.campaignId);
+                                        
+                                                // Mark this button in global state
+                                                if (!window.buttonStates) {
+                                                    window.buttonStates = new Map();
+                                                }
+                                                window.buttonStates.set(this.campaignId, this);
+                                        
+                                                // Check if should be enabled from start
                                                 if (window.audioTracker?.enabledCampaigns?.has(this.campaignId)) {
+                                                    console.log('🟢 Campaign already enabled, activating button:', this.campaignId);
                                                     this.enableButton();
                                                 }
                                         
-                                                // Listen for one-time enable event
-                                                document.addEventListener('enableRepost_' + this.campaignId, () => {
+                                                // Listen for enable event
+                                                const enableHandler = () => {
+                                                    console.log('🎵 Received enable event for:', this.campaignId);
                                                     this.enableButton();
-                                                });
+                                                };
+                                        
+                                                document.addEventListener('enableRepost_' + this.campaignId, enableHandler);
+                                        
+                                                // Store handler for cleanup
+                                                this.$el._enableHandler = enableHandler;
+                                        
+                                                // Debug: Watch for external changes
+                                                this.watchForExternalChanges();
                                             },
                                         
                                             enableButton() {
-                                                if (this.isEnabled) return;
+                                                if (this.isEnabled) {
+                                                    console.log('⚠️ Button already enabled for:', this.campaignId);
+                                                    return;
+                                                }
                                         
+                                                console.log('✅ Enabling button for campaign:', this.campaignId);
                                                 this.isEnabled = true;
-                                                this.$el.classList.remove('bg-gray-300', 'dark:bg-gray-600', 'text-gray-500', 'dark:text-gray-400', 'cursor-not-allowed');
-                                                this.$el.classList.add('bg-orange-600', 'dark:bg-orange-500', 'hover:bg-orange-700', 'dark:hover:bg-orange-400', 'text-white', 'cursor-pointer');
+                                        
+                                                // Force enable regardless of current state
+                                                this.$el.disabled = false;
                                                 this.$el.removeAttribute('disabled');
+                                        
+                                                // Remove disabled classes
+                                                this.$el.classList.remove('bg-gray-300', 'dark:bg-gray-600', 'text-gray-500', 'dark:text-gray-400', 'cursor-not-allowed');
+                                        
+                                                // Add enabled classes
+                                                this.$el.classList.add('bg-orange-600', 'dark:bg-orange-500', 'hover:bg-orange-700', 'dark:hover:bg-orange-400', 'text-white', 'cursor-pointer');
+                                        
+                                                // Mark in global state
+                                                if (window.audioTracker) {
+                                                    if (!window.audioTracker.enabledCampaigns) {
+                                                        window.audioTracker.enabledCampaigns = new Set();
+                                                    }
+                                                    window.audioTracker.enabledCampaigns.add(this.campaignId);
+                                                }
+                                        
+                                                console.log('✅ Button enabled successfully for:', this.campaignId);
+                                            },
+                                        
+                                            watchForExternalChanges() {
+                                                // Watch for disabled attribute changes
+                                                Object.defineProperty(this.$el, 'disabled', {
+                                                    set: function(value) {
+                                                        if (this.isEnabled && value === true) {
+                                                            console.error('🚫 EXTERNAL CODE tried to disable button for campaign:', this.campaignId);
+                                                            console.trace('Call stack:');
+                                                            return; // Prevent disabling
+                                                        }
+                                                        this._disabled = value;
+                                                    }.bind(this),
+                                                    get: function() {
+                                                        return this._disabled || false;
+                                                    }.bind(this)
+                                                });
+                                        
+                                                // Watch for class changes
+                                                const observer = new MutationObserver((mutations) => {
+                                                    if (!this.isEnabled) return;
+                                        
+                                                    mutations.forEach((mutation) => {
+                                                        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                                                            if (this.$el.classList.contains('cursor-not-allowed') ||
+                                                                this.$el.classList.contains('bg-gray-300')) {
+                                                                console.error('🚫 EXTERNAL CODE changed classes for campaign:', this.campaignId);
+                                                                console.trace('Call stack:');
+                                                                // Re-enable immediately
+                                                                setTimeout(() => this.enableButton(), 0);
+                                                            }
+                                                        }
+                                                    });
+                                                });
+                                        
+                                                observer.observe(this.$el, { attributes: true, attributeFilter: ['class', 'disabled'] });
+                                                this.$el._observer = observer;
                                             }
-                                        }">
+                                        }"
+                                        x-destroy="
+            console.log('🧹 Cleaning up button for campaign:', campaignId);
+            if ($el._enableHandler) {
+                document.removeEventListener('enableRepost_' + campaignId, $el._enableHandler);
+            }
+            if ($el._observer) {
+                $el._observer.disconnect();
+            }
+        ">
                                         <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <rect x="1" y="1" width="24" height="16" rx="3"
@@ -343,6 +428,13 @@
                                         </svg>
                                         <span>{{ repostPrice() }} Repost</span>
                                     </button>
+
+                                    @if (in_array($campaign_->id, $this->repostedCampaigns))
+                                        <div
+                                            class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
+                                            Reposted! ✓
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -663,12 +755,29 @@
 </script> --}}
 
 <script>
-    // Minimal global state - no continuous checking
+    // Enhanced debug version
     window.audioTracker = {
         playStartTimes: {},
         totalPlayTimes: {},
         enabledCampaigns: new Set(),
         widgets: {}
+    };
+
+    // Debug helper to see all button states
+    window.debugButtons = function() {
+        console.log('🔍 Current button states:');
+        if (window.buttonStates) {
+            window.buttonStates.forEach((alpineComponent, campaignId) => {
+                const button = alpineComponent.$el;
+                console.log(`Campaign ${campaignId}:`, {
+                    alpineEnabled: alpineComponent.isEnabled,
+                    globalEnabled: window.audioTracker.enabledCampaigns.has(campaignId),
+                    htmlDisabled: button.disabled,
+                    hasDisabledAttr: button.hasAttribute('disabled'),
+                    classes: button.className
+                });
+            });
+        }
     };
 
     function initializeSoundCloudWidgets() {
@@ -678,43 +787,55 @@
         }
 
         const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+        console.log('🎵 Initializing', playerContainers.length, 'SoundCloud widgets');
 
         playerContainers.forEach(container => {
             const campaignId = container.dataset.campaignId;
             const iframe = container.querySelector('iframe');
 
-            // Skip if already initialized or already enabled
-            if (!iframe || !campaignId || window.audioTracker.widgets[campaignId] || window.audioTracker
-                .enabledCampaigns.has(campaignId)) {
+            if (!iframe || !campaignId) {
+                console.warn('⚠️ Missing iframe or campaignId for container:', container);
                 return;
             }
 
+            // Skip if already enabled
+            if (window.audioTracker.enabledCampaigns.has(campaignId)) {
+                console.log('⏭️ Skipping already enabled campaign:', campaignId);
+                return;
+            }
+
+            // Skip if already initialized
+            if (window.audioTracker.widgets[campaignId]) {
+                console.log('⏭️ Skipping already initialized campaign:', campaignId);
+                return;
+            }
+
+            console.log('🎯 Setting up widget for campaign:', campaignId);
+
             const widget = SC.Widget(iframe);
             window.audioTracker.widgets[campaignId] = widget;
-
-            // Initialize play time tracking
             window.audioTracker.totalPlayTimes[campaignId] = 0;
 
             widget.bind(SC.Widget.Events.PLAY, () => {
-                // Only start tracking if not already enabled
                 if (!window.audioTracker.enabledCampaigns.has(campaignId)) {
+                    console.log('▶️ Play started for campaign:', campaignId);
                     window.audioTracker.playStartTimes[campaignId] = Date.now();
                 }
-
                 @this.call('handleAudioPlay', campaignId);
             });
 
             widget.bind(SC.Widget.Events.PAUSE, () => {
+                console.log('⏸️ Paused for campaign:', campaignId);
                 updatePlayTimeAndCheck(campaignId);
                 @this.call('handleAudioPause', campaignId);
             });
 
             widget.bind(SC.Widget.Events.FINISH, () => {
+                console.log('⏹️ Finished for campaign:', campaignId);
                 updatePlayTimeAndCheck(campaignId);
                 @this.call('handleAudioEnded', campaignId);
             });
 
-            // Only track progress if not yet enabled
             widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
                 if (!window.audioTracker.enabledCampaigns.has(campaignId)) {
                     updatePlayTimeAndCheck(campaignId);
@@ -724,54 +845,85 @@
     }
 
     function updatePlayTimeAndCheck(campaignId) {
-        // Skip if already enabled
         if (window.audioTracker.enabledCampaigns.has(campaignId)) {
             return;
         }
 
-        // Calculate current session time
         if (window.audioTracker.playStartTimes[campaignId]) {
             const now = Date.now();
             const sessionTime = now - window.audioTracker.playStartTimes[campaignId];
             window.audioTracker.totalPlayTimes[campaignId] += sessionTime;
             window.audioTracker.playStartTimes[campaignId] = now;
 
-            // Check if 5 seconds reached - ONE TIME ONLY
-            if (window.audioTracker.totalPlayTimes[campaignId] >= 5000) {
+            const totalTime = window.audioTracker.totalPlayTimes[campaignId];
+
+            if (totalTime >= 5000) {
+                console.log('🎊 5 seconds reached! Enabling repost for campaign:', campaignId, 'Total time:',
+                    totalTime);
                 enableRepostForCampaign(campaignId);
             }
         }
     }
 
     function enableRepostForCampaign(campaignId) {
-        // Mark as enabled - stops all further tracking
+        console.log('🚀 Enabling repost for campaign:', campaignId);
+
+        // Mark as enabled FIRST
         window.audioTracker.enabledCampaigns.add(campaignId);
 
-        // Clean up tracking data to free memory
+        // Clean up tracking
         delete window.audioTracker.playStartTimes[campaignId];
         delete window.audioTracker.totalPlayTimes[campaignId];
 
-        // Unbind events to stop tracking completely
+        // Unbind progress events
         const widget = window.audioTracker.widgets[campaignId];
         if (widget) {
             try {
                 widget.unbind(SC.Widget.Events.PLAY_PROGRESS);
+                console.log('📴 Unbound progress events for campaign:', campaignId);
             } catch (e) {
-                // Silent fail if widget is already destroyed
+                console.warn('⚠️ Could not unbind events:', e);
             }
         }
 
-        console.log(`Repost enabled for campaign ${campaignId} - tracking stopped`);
-
-        // Dispatch one-time enable event
+        // Dispatch enable event
+        console.log('📡 Dispatching enable event for campaign:', campaignId);
         document.dispatchEvent(new CustomEvent('enableRepost_' + campaignId));
 
-        // Notify Livewire once
+        // Notify Livewire
         @this.call('markCampaignPlayable', campaignId);
+
+        console.log('✅ Repost fully enabled for campaign:', campaignId);
     }
 
-    // Initialize only on navigation
+    // Livewire event debugging
+    document.addEventListener('livewire:updated', function(event) {
+        console.log('🔄 Livewire updated, checking button states...');
+        setTimeout(() => {
+            if (window.debugButtons) window.debugButtons();
+        }, 100);
+    });
+
+    // Initialize
     document.addEventListener('livewire:navigated', initializeSoundCloudWidgets);
     document.addEventListener('DOMContentLoaded', initializeSoundCloudWidgets);
+
+    // Global debug function - run this in console to see what's happening
+    window.checkRepostState = function(campaignId) {
+        console.log('🔍 Checking state for campaign:', campaignId);
+        console.log('Global enabled:', window.audioTracker?.enabledCampaigns?.has(campaignId));
+        console.log('Play time:', window.audioTracker?.totalPlayTimes?.[campaignId]);
+
+        const button = document.querySelector(`[data-campaign-id="${campaignId}"] .repost-btn`);
+        if (button) {
+            console.log('Button disabled:', button.disabled);
+            console.log('Button classes:', button.className);
+        }
+
+        if (window.buttonStates?.has(campaignId)) {
+            const alpine = window.buttonStates.get(campaignId);
+            console.log('Alpine enabled:', alpine.isEnabled);
+        }
+    };
 </script>
 </div>
