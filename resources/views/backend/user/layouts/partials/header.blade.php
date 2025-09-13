@@ -160,13 +160,13 @@
                         </a>
                     </li>
                     <li
-                        class="px-4 py-2 border-t border-gray-200 dark:border-slate-700 cursor-default select-none pointer-events-none">
+                        class="px-4 pt-2 border-t border-gray-200 dark:border-slate-700 cursor-default select-none pointer-events-none">
                         <div class="text-xs flex justify-between items-center text-gray-500 dark:text-gray-300">
                             <p>{{ __('Current Plan') }}</p>
                         </div>
                     </li>
                     <li
-                        class="px-4 py-2 border-t border-gray-200 dark:border-slate-700">
+                        class="px-4 pb-2">
                         <div class="text-sm flex justify-between items-center">
                             <span class="font-semibold text-slate-800 dark:text-white">
                                 {{ userPlanName() }}
