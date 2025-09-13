@@ -659,7 +659,7 @@ class SoundCloudService
 
     try {
         // 1. Resolve the track details
-        $resolveUrl = "https://api-v2.soundcloud.com/resolve";
+        $resolveUrl = $this->baseUrl . "/resolve";
         $resolveResponse = Http::get($resolveUrl, [
             'url' => $trackUri,
             'client_id' => $clientId,
