@@ -455,10 +455,7 @@ class Campaign extends Component
         } else {
             $this->selectedGenres[] = $genre;
         }
-
-        // Reset pagination ONLY for the active tab
-        // $pageProperty = $this->activeMainTab . 'Page';
-        // $this->$pageProperty = 1;
+        $this->totalCampaigns();
     }
 
     public function filterByTrackType($Type)
