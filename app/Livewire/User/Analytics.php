@@ -346,6 +346,7 @@ class Analytics extends Component
         $this->resetPage();
         $this->loadData();
         $this->loadAdditionalData();
+        $this->getChartData();
         $this->showFilters = false;
     }
 
@@ -360,6 +361,7 @@ class Analytics extends Component
         $this->endDate = '';
         $this->resetPage();
         $this->loadData();
+        $this->getChartData();
         $this->loadAdditionalData();
     }
 
@@ -406,8 +408,43 @@ class Analytics extends Component
 
     public function render()
     {
+        $this->getChartData();
+        $paginated = $this->getPaginatedTrackData();
+
+        // Get the collection from paginator
+        $items = $paginated->getCollection();
+
+        // Map over items to calculate engagement score and rate
+        $itemsWithMetrics = $items->map(function ($track) {
+            $totalViews = $track['metrics']['total_views']['current_total'];
+            $totalPlays = $track['metrics']['total_plays']['current_total'];
+            $totalReposts = $track['metrics']['total_reposts']['current_total'];
+            $totalLikes = $track['metrics']['total_likes']['current_total'];
+            $totalComments = $track['metrics']['total_comments']['current_total'];
+            $totalFollowers = $track['metrics']['total_followers']['current_total'];
+
+            $totalEngagements = $totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers;
+
+            // Engagement % (capped at 100)
+            $engagementRate = min(100, ($totalEngagements / max(1, $totalViews)) * 100);
+
+            // Engagement Score (0–10 scale)
+            $engagementScore = round(($engagementRate / 100) * 10, 1);
+
+            // Add score and rate to track array
+            $track['engagement_score'] = $engagementScore;
+            $track['engagement_rate'] = round($engagementRate, 2); // optional rounding
+
+            return $track;
+        });
+
+        // Sort by engagement score descending
+        $sorted = $itemsWithMetrics->sortByDesc('engagement_score');
+
+        // Update paginator collection
+        $paginated->setCollection($sorted);
         return view('livewire.user.analytics', [
-            'paginatedTracks' => $this->getPaginatedTrackData()
+            'paginatedTracks' => $paginated
         ]);
     }
 }
