@@ -307,110 +307,33 @@
                                 </div>
                                 <!-- Updated HTML for the repost button -->
                                 <div class="relative" data-campaign-id="{{ $campaign_->id }}">
-                                    <!-- Repost Button -->
                                     <button wire:click="confirmRepost('{{ $campaign_->id }}')"
                                         class="repost-btn flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-colors bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
                                         disabled x-data="{
                                             campaignId: '{{ $campaign_->id }}',
-                                            isButtonEnabled: false,
+                                            isEnabled: false,
                                         
                                             init() {
-                                                // Check initial state
-                                                this.checkInitialState();
-                                        
-                                                // Listen for the campaign becoming playable
-                                                this.setupEventListener();
-                                        
-                                                // Protect against external changes
-                                                this.protectButtonState();
-                                            },
-                                        
-                                            checkInitialState() {
-                                                if (window.audioTracker && window.audioTracker.playedCampaigns && window.audioTracker.playedCampaigns.has(this.campaignId)) {
-                                                    this.enableButtonPermanently();
+                                                // Check if already enabled from previous session
+                                                if (window.audioTracker?.enabledCampaigns?.has(this.campaignId)) {
+                                                    this.enableButton();
                                                 }
+                                        
+                                                // Listen for one-time enable event
+                                                document.addEventListener('enableRepost_' + this.campaignId, () => {
+                                                    this.enableButton();
+                                                });
                                             },
                                         
-                                            setupEventListener() {
-                                                const handler = (e) => {
-                                                    if (e.detail && e.detail.campaignId === this.campaignId) {
-                                                        this.enableButtonPermanently();
-                                                    }
-                                                };
+                                            enableButton() {
+                                                if (this.isEnabled) return;
                                         
-                                                document.addEventListener('campaignPlayable', handler);
-                                        
-                                                // Cleanup on destroy
-                                                this.$el._cleanupHandler = () => {
-                                                    document.removeEventListener('campaignPlayable', handler);
-                                                };
-                                            },
-                                        
-                                            enableButtonPermanently() {
-                                                if (this.isButtonEnabled) return; // Already enabled
-                                        
-                                                this.isButtonEnabled = true;
-                                        
-                                                // Remove disabled classes
-                                                this.$el.classList.remove(
-                                                    'bg-gray-300',
-                                                    'dark:bg-gray-600',
-                                                    'text-gray-500',
-                                                    'dark:text-gray-400',
-                                                    'cursor-not-allowed'
-                                                );
-                                        
-                                                // Add enabled classes
-                                                this.$el.classList.add(
-                                                    'bg-orange-600',
-                                                    'dark:bg-orange-500',
-                                                    'hover:bg-orange-700',
-                                                    'dark:hover:bg-orange-400',
-                                                    'text-white',
-                                                    'dark:text-gray-300',
-                                                    'cursor-pointer'
-                                                );
-                                        
-                                                // Remove disabled attribute
+                                                this.isEnabled = true;
+                                                this.$el.classList.remove('bg-gray-300', 'dark:bg-gray-600', 'text-gray-500', 'dark:text-gray-400', 'cursor-not-allowed');
+                                                this.$el.classList.add('bg-orange-600', 'dark:bg-orange-500', 'hover:bg-orange-700', 'dark:hover:bg-orange-400', 'text-white', 'cursor-pointer');
                                                 this.$el.removeAttribute('disabled');
-                                        
-                                                console.log(`Button permanently enabled for campaign: ${this.campaignId}`);
-                                            },
-                                        
-                                            protectButtonState() {
-                                                // Use MutationObserver to prevent external changes
-                                                const observer = new MutationObserver((mutations) => {
-                                                    if (!this.isButtonEnabled) return;
-                                        
-                                                    mutations.forEach((mutation) => {
-                                                        if (mutation.type === 'attributes') {
-                                                            // If someone tries to disable the button, re-enable it
-                                                            if (this.$el.hasAttribute('disabled')) {
-                                                                this.$el.removeAttribute('disabled');
-                                                            }
-                                        
-                                                            // Check if disabled classes were re-added
-                                                            if (this.$el.classList.contains('cursor-not-allowed') ||
-                                                                this.$el.classList.contains('bg-gray-300')) {
-                                                                this.enableButtonPermanently();
-                                                            }
-                                                        }
-                                                    });
-                                                });
-                                        
-                                                observer.observe(this.$el, {
-                                                    attributes: true,
-                                                    attributeFilter: ['disabled', 'class']
-                                                });
-                                        
-                                                // Store observer for cleanup
-                                                this.$el._observer = observer;
                                             }
-                                        }"
-                                        x-destroy="
-            if ($el._observer) $el._observer.disconnect();
-            if ($el._cleanupHandler) $el._cleanupHandler();
-        ">
+                                        }">
                                         <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <rect x="1" y="1" width="24" height="16" rx="3"
@@ -420,13 +343,6 @@
                                         </svg>
                                         <span>{{ repostPrice() }} Repost</span>
                                     </button>
-
-                                    @if (in_array($campaign_->id, $this->repostedCampaigns))
-                                        <div
-                                            class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
-                                            Reposted! ✓
-                                        </div>
-                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -747,25 +663,12 @@
 </script> --}}
 
 <script>
-    // Enhanced Global tracking state with persistence
+    // Minimal global state - no continuous checking
     window.audioTracker = {
-        playTimes: {},
         playStartTimes: {},
-        playedCampaigns: new Set(),
-        activeWidgets: {},
-        playCountUpdated: new Set(),
-
-        // Method to check if campaign is playable
-        isCampaignPlayable(campaignId) {
-            return this.playedCampaigns.has(campaignId) &&
-                (this.playTimes[campaignId] || 0) >= 5000;
-        },
-
-        // Method to mark campaign as playable
-        markAsPlayable(campaignId) {
-            this.playedCampaigns.add(campaignId);
-            console.log(`Campaign ${campaignId} marked as permanently playable`);
-        }
+        totalPlayTimes: {},
+        enabledCampaigns: new Set(),
+        widgets: {}
     };
 
     function initializeSoundCloudWidgets() {
@@ -780,101 +683,95 @@
             const campaignId = container.dataset.campaignId;
             const iframe = container.querySelector('iframe');
 
-            // Skip if already initialized
-            if (!iframe || !campaignId || window.audioTracker.activeWidgets[campaignId]) {
+            // Skip if already initialized or already enabled
+            if (!iframe || !campaignId || window.audioTracker.widgets[campaignId] || window.audioTracker
+                .enabledCampaigns.has(campaignId)) {
                 return;
             }
 
             const widget = SC.Widget(iframe);
-            window.audioTracker.activeWidgets[campaignId] = widget;
+            window.audioTracker.widgets[campaignId] = widget;
 
-            // Initialize tracking data
-            if (!window.audioTracker.playTimes[campaignId]) {
-                window.audioTracker.playTimes[campaignId] = 0;
-            }
-
-            widget.bind(SC.Widget.Events.READY, () => {
-                console.log(`Widget ready for campaign ${campaignId}`);
-            });
+            // Initialize play time tracking
+            window.audioTracker.totalPlayTimes[campaignId] = 0;
 
             widget.bind(SC.Widget.Events.PLAY, () => {
-                console.log(`Play started for campaign ${campaignId}`);
-                window.audioTracker.playStartTimes[campaignId] = Date.now();
-
-                // Update play count only once per session per campaign
-                if (!window.audioTracker.playCountUpdated.has(campaignId)) {
-                    @this.call('updatePlayCount', campaignId);
-                    window.audioTracker.playCountUpdated.add(campaignId);
+                // Only start tracking if not already enabled
+                if (!window.audioTracker.enabledCampaigns.has(campaignId)) {
+                    window.audioTracker.playStartTimes[campaignId] = Date.now();
                 }
 
                 @this.call('handleAudioPlay', campaignId);
             });
 
             widget.bind(SC.Widget.Events.PAUSE, () => {
-                console.log(`Pause for campaign ${campaignId}`);
-                updatePlayTime(campaignId);
+                updatePlayTimeAndCheck(campaignId);
                 @this.call('handleAudioPause', campaignId);
             });
 
             widget.bind(SC.Widget.Events.FINISH, () => {
-                console.log(`Finish for campaign ${campaignId}`);
-                updatePlayTime(campaignId);
+                updatePlayTimeAndCheck(campaignId);
                 @this.call('handleAudioEnded', campaignId);
             });
 
-            // Progress tracking with one-time enablement
+            // Only track progress if not yet enabled
             widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-                updatePlayTime(campaignId);
-
-                // Check if 5 seconds reached - ONLY ONCE
-                const totalPlayTime = window.audioTracker.playTimes[campaignId] || 0;
-
-                if (totalPlayTime >= 5000 && !window.audioTracker.playedCampaigns.has(campaignId)) {
-
-                    // Mark as playable permanently
-                    window.audioTracker.markAsPlayable(campaignId);
-
-                    console.log(
-                        `🎵 Campaign ${campaignId} reached 5+ seconds - PERMANENTLY ENABLING repost button`
-                    );
-
-                    // Dispatch the event ONCE
-                    setTimeout(() => {
-                        document.dispatchEvent(new CustomEvent('campaignPlayable', {
-                            detail: {
-                                campaignId: campaignId
-                            },
-                            bubbles: true
-                        }));
-                    }, 100);
-
-                    // Notify Livewire
-                    @this.call('markCampaignPlayable', campaignId);
+                if (!window.audioTracker.enabledCampaigns.has(campaignId)) {
+                    updatePlayTimeAndCheck(campaignId);
                 }
             });
         });
     }
 
-    function updatePlayTime(campaignId) {
+    function updatePlayTimeAndCheck(campaignId) {
+        // Skip if already enabled
+        if (window.audioTracker.enabledCampaigns.has(campaignId)) {
+            return;
+        }
+
+        // Calculate current session time
         if (window.audioTracker.playStartTimes[campaignId]) {
             const now = Date.now();
             const sessionTime = now - window.audioTracker.playStartTimes[campaignId];
-            const currentTotal = window.audioTracker.playTimes[campaignId] || 0;
-            window.audioTracker.playTimes[campaignId] = currentTotal + sessionTime;
+            window.audioTracker.totalPlayTimes[campaignId] += sessionTime;
             window.audioTracker.playStartTimes[campaignId] = now;
+
+            // Check if 5 seconds reached - ONE TIME ONLY
+            if (window.audioTracker.totalPlayTimes[campaignId] >= 5000) {
+                enableRepostForCampaign(campaignId);
+            }
         }
     }
 
-    // Initialize on different events
+    function enableRepostForCampaign(campaignId) {
+        // Mark as enabled - stops all further tracking
+        window.audioTracker.enabledCampaigns.add(campaignId);
+
+        // Clean up tracking data to free memory
+        delete window.audioTracker.playStartTimes[campaignId];
+        delete window.audioTracker.totalPlayTimes[campaignId];
+
+        // Unbind events to stop tracking completely
+        const widget = window.audioTracker.widgets[campaignId];
+        if (widget) {
+            try {
+                widget.unbind(SC.Widget.Events.PLAY_PROGRESS);
+            } catch (e) {
+                // Silent fail if widget is already destroyed
+            }
+        }
+
+        console.log(`Repost enabled for campaign ${campaignId} - tracking stopped`);
+
+        // Dispatch one-time enable event
+        document.dispatchEvent(new CustomEvent('enableRepost_' + campaignId));
+
+        // Notify Livewire once
+        @this.call('markCampaignPlayable', campaignId);
+    }
+
+    // Initialize only on navigation
     document.addEventListener('livewire:navigated', initializeSoundCloudWidgets);
     document.addEventListener('DOMContentLoaded', initializeSoundCloudWidgets);
-
-    // Re-initialize after Livewire updates but preserve state
-    document.addEventListener('livewire:updated', () => {
-        // Small delay to ensure DOM is updated
-        setTimeout(() => {
-            initializeSoundCloudWidgets();
-        }, 100);
-    });
 </script>
 </div>
