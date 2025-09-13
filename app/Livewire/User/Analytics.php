@@ -51,6 +51,7 @@ class Analytics extends Component
         $this->selectedGenres = ['Any Genre'];
         $this->loadData();
         $this->loadAdditionalData();
+        $this->getChartData();
     }
 
     /**
@@ -346,7 +347,7 @@ class Analytics extends Component
         $this->resetPage();
         $this->loadData();
         $this->loadAdditionalData();
-        // $this->getChartData();
+        $this->getChartData();
         $this->showFilters = false;
     }
 
@@ -361,7 +362,7 @@ class Analytics extends Component
         $this->endDate = '';
         $this->resetPage();
         $this->loadData();
-        // $this->getChartData();
+        $this->getChartData();
         $this->loadAdditionalData();
     }
 
