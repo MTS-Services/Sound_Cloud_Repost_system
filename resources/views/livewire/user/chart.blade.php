@@ -935,7 +935,7 @@
                                                         title="Play" data-title="{{ $track['track_details']->title }}"
                                                         data-artist="{{ $track['track_details']->author_username }}"
                                                         data-cover="{{ $track['track_details']->artwork_url }}"
-                                                        data-src="{{ $track['getMusicSrc'] }}">
+                                                        data-src="{{ $track['track_details']->permalink_url }}">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                             height="24" viewBox="0 0 24 24" fill="none"
                                                             stroke="currentColor" stroke-width="2"
