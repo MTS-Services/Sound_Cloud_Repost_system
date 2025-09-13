@@ -758,7 +758,8 @@
     }
 
     // Initialize on page load and Livewire navigation
-    document.addEventListener('livewire:navigated', initializeSoundCloudWidgets);
+    // document.addEventListener('livewire:navigated', initializeSoundCloudWidgets);
+    document.addEventListener('livewire:initialized', initializeSoundCloudWidgets);
     document.addEventListener('DOMContentLoaded', initializeSoundCloudWidgets);
 
     // Re-initialize when new content is loaded
