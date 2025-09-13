@@ -665,6 +665,8 @@ class SoundCloudService
             'client_id' => $clientId,
         ]);
 
+        dd($resolveResponse);
+
         if ($resolveResponse->failed()) {
             Log::error("SoundCloud resolve API failed", ['trackUri' => $trackUri]);
             return null;
