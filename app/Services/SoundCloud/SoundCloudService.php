@@ -864,12 +864,11 @@ class SoundCloudService
             } else {
                 // Otherwise assume it is a normal SoundCloud track URL
                 $trackUrl = $trackUri;
-                dd($trackUrl);
             }
 
             // 1. Resolve the track
             $resolve = Http::get("https://api-v2.soundcloud.com/resolve", [
-                'url'       => $trackUrl,
+                'url'       => "https://soundcloud.com/user-434241656",
                 'client_id' => $clientId,
             ]);
             dd($resolve, $clientId);
