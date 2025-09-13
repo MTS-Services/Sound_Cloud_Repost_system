@@ -274,8 +274,7 @@
                 });
             });
         }
-    }" @livewire:navigated.window="setupCharts()" @livewire:load.window="setupCharts()"
-        @livewire:initialized.window="setupCharts()">
+    }">
         <div class="border-b border-gray-200 dark:border-gray-700 mb-6">
             <div class="px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center py-6 gap-4">
@@ -1149,24 +1148,18 @@
 
         @push('js')
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-            <!-- Add this script at the bottom of your component -->
+
             <script>
-                // Global function for chart initialization that can be called from anywhere
                 function initializeAnalyticsCharts() {
-                    // Check if Alpine.js component exists
                     const alpineComponent = document.querySelector('[x-data]').__x?.$data;
                     if (alpineComponent && typeof alpineComponent.setupCharts === 'function') {
                         alpineComponent.setupCharts();
                     }
                 }
-
-                // Listen to various Livewire events
                 document.addEventListener('livewire:navigated', initializeAnalyticsCharts);
                 document.addEventListener('livewire:load', initializeAnalyticsCharts);
                 document.addEventListener('livewire:initialized', initializeAnalyticsCharts);
                 document.addEventListener('DOMContentLoaded', initializeAnalyticsCharts);
-
-                // Also listen for Turbo events if you're using Turbo
                 document.addEventListener('turbo:load', initializeAnalyticsCharts);
                 document.addEventListener('turbo:render', initializeAnalyticsCharts);
             </script>
