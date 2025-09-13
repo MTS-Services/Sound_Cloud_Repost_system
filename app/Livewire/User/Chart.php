@@ -558,7 +558,6 @@ class Chart extends Component
 
         // Map over items to calculate engagement score and rate
         $itemsWithMetrics = $items->map(function ($track) {
-            dd($track);
             $totalViews = $track['metrics']['total_views']['current_total'];
             $totalPlays = $track['metrics']['total_plays']['current_total'];
             $totalReposts = $track['metrics']['total_reposts']['current_total'];
@@ -579,7 +578,7 @@ class Chart extends Component
 
             // Engagement Score (0–10 scale)
             $engagementScore = round(($engagementRate / 100) * 10, 1);
-            $track['getMusicSrc'] = $this->soundCloudService->getMusicSrc($track['action_details']['uri']);
+            $track['getMusicSrc'] = $this->soundCloudService->getMusicSrc($track['track_details']['uri']);
 
 
             // Add score and rate to track array
