@@ -311,25 +311,35 @@
                                         class="repost-btn flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-colors bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
                                         disabled x-data="{
                                             campaignId: '{{ $campaign_->id }}',
+                                            isEnabled: false,
+                                        
+                                            init() {
+                                                // Check initial state
+                                                this.checkRepostState();
+                                        
+                                                // Listen for custom events from the audio tracker
+                                                document.addEventListener('campaignPlayable', (e) => {
+                                                    if (e.detail.campaignId === this.campaignId) {
+                                                        this.enableButton();
+                                                    }
+                                                });
+                                            },
+                                        
                                             checkRepostState() {
                                                 if (window.audioTracker && window.audioTracker.playedCampaigns.has(this.campaignId)) {
+                                                    this.enableButton();
+                                                }
+                                            },
+                                        
+                                            enableButton() {
+                                                if (!this.isEnabled) {
+                                                    this.isEnabled = true;
                                                     this.$el.classList.remove('bg-gray-300', 'dark:bg-gray-600', 'text-gray-500', 'dark:text-gray-400', 'cursor-not-allowed');
                                                     this.$el.classList.add('bg-orange-600', 'dark:bg-orange-500', 'hover:bg-orange-700', 'dark:hover:bg-orange-400', 'text-white', 'dark:text-gray-300', 'cursor-pointer');
                                                     this.$el.removeAttribute('disabled');
                                                 }
                                             }
-                                        }" x-init="// Check state immediately on init
-                                        checkRepostState();
-                                        setInterval(() => checkRepostState(), 1000);
-                                        
-                                        
-                                        
-                                        // Listen for custom events from the audio tracker
-                                        document.addEventListener('campaignPlayable', (e) => {
-                                            if (e.detail.campaignId === campaignId) {
-                                                checkRepostState();
-                                            }
-                                        });">
+                                        }">
                                         <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <rect x="1" y="1" width="24" height="16" rx="3"
@@ -729,17 +739,16 @@
                 widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
                     updatePlayTime(campaignId);
 
-                    // Check if 5 seconds reached
+                    // Check if 5 seconds reached (only once per campaign)
                     if (window.audioTracker.playTimes[campaignId] >= 5000 &&
                         !window.audioTracker.playedCampaigns.has(campaignId)) {
 
                         window.audioTracker.playedCampaigns.add(campaignId);
-                        console.log(`Campaign ${campaignId} played for 5+ seconds`);
+                        console.log(
+                            `Campaign ${campaignId} played for 5+ seconds - enabling repost permanently`
+                        );
 
-                        // Enable repost button visually
-                        enableRepostButton(campaignId);
-
-                        // Dispatch custom event for Alpine to listen to
+                        // Dispatch custom event for Alpine to listen to (ONE TIME ONLY)
                         document.dispatchEvent(new CustomEvent('campaignPlayable', {
                             detail: {
                                 campaignId: campaignId
@@ -764,32 +773,8 @@
         }
     }
 
-    function enableRepostButton(campaignId) {
-        const button = document.querySelector(`[data-campaign-id="${campaignId}"] .repost-btn`);
-        if (button) {
-            button.classList.remove('bg-gray-300', 'dark:bg-gray-600', 'text-gray-500', 'dark:text-gray-400',
-                'cursor-not-allowed');
-            button.classList.add('bg-orange-600', 'dark:bg-orange-500', 'hover:bg-orange-700',
-                'dark:hover:bg-orange-400', 'text-white', 'dark:text-gray-300', 'cursor-pointer');
-            button.removeAttribute('disabled');
-        }
-    }
-
-    function canRepost(campaignId) {
-        return window.audioTracker.playedCampaigns.has(campaignId) &&
-            window.audioTracker.playTimes[campaignId] >= 5000;
-    }
-
     // Initialize on page load and Livewire navigation
     document.addEventListener('livewire:navigated', initializeSoundCloudWidgets);
     document.addEventListener('DOMContentLoaded', initializeSoundCloudWidgets);
-
-    // Re-initialize when new content is loaded
-    // document.addEventListener('livewire:updated', () => {
-
-    //         setTimeout(initializeSoundCloudWidgets, 100);
-
-
-    // });
 </script>
 </div>
