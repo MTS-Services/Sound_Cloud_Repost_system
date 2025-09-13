@@ -625,29 +625,29 @@ class SoundCloudService
 
 
 
-    public function getMusicSrc($trackUri)
-    {
-        if (!isset($trackUri)) {
-            return null;
-        }
+    // public function getMusicSrc($trackUri)
+    // {
+    //     if (!isset($trackUri)) {
+    //         return null;
+    //     }
 
-        $params = [
-            'url'          => urlencode($trackUri),
-            'color'        => str_replace('#', '%23', '#ff5500'),
-            'auto_play'    => 'false',
-            'show_comments' => 'false',
-            'show_user'    => 'false',
-            'show_reposts' => 'false',
-            'show_teaser'  => 'false',
-            'buying'       => 'false',
-            'sharing'      => 'false',
-            'download'     => 'false',
-            'hide_related' => 'true',
-            'visual'       => 'false',
-        ];
+    //     $params = [
+    //         'url'          => urlencode($trackUri),
+    //         'color'        => str_replace('#', '%23', '#ff5500'),
+    //         'auto_play'    => 'false',
+    //         'show_comments' => 'false',
+    //         'show_user'    => 'false',
+    //         'show_reposts' => 'false',
+    //         'show_teaser'  => 'false',
+    //         'buying'       => 'false',
+    //         'sharing'      => 'false',
+    //         'download'     => 'false',
+    //         'hide_related' => 'true',
+    //         'visual'       => 'false',
+    //     ];
 
-        return "https://w.soundcloud.com/player/?" . http_build_query($params);
-    }
+    //     return "https://w.soundcloud.com/player/?" . http_build_query($params);
+    // }
 
     // public function getMusicSrc(string $trackUri): ?string
     // {
@@ -839,4 +839,68 @@ class SoundCloudService
 
     //     return $streamResponse->json('url');
     // }
+
+
+
+
+    public function getMusicSrc(string $trackUri): ?string
+    {
+        if (!$trackUri) {
+            return null;
+        }
+
+        $clientId = config('services.soundcloud.client_id'); // from config/services.php
+
+        try {
+            // 🔹 Handle if input is a track URI like "soundcloud:tracks:2166785337"
+            if (str_starts_with($trackUri, 'soundcloud:tracks:')) {
+                $trackId  = str_replace('soundcloud:tracks:', '', $trackUri);
+                $trackUrl = "https://api.soundcloud.com/tracks/" . $trackId;
+            } else {
+                // Otherwise assume it is a normal SoundCloud track URL
+                $trackUrl = $trackUri;
+            }
+
+            // 1. Resolve the track
+            $resolve = Http::get("https://api-v2.soundcloud.com/resolve", [
+                'url'       => $trackUrl,
+                'client_id' => $clientId,
+            ]);
+
+            if ($resolve->failed()) {
+                Log::error("SoundCloud resolve failed", ['track' => $trackUri]);
+                return null;
+            }
+
+            $trackData = $resolve->json();
+
+            if (!isset($trackData['media']['transcodings'])) {
+                return null;
+            }
+
+            // 2. Find a progressive mp3 stream
+            $progressive = collect($trackData['media']['transcodings'])
+                ->firstWhere('format.protocol', 'progressive');
+
+            if (!$progressive) {
+                return null;
+            }
+
+            // 3. Request the stream endpoint
+            $stream = Http::get($progressive['url'], [
+                'client_id' => $clientId,
+            ]);
+
+            if ($stream->failed()) {
+                Log::error("SoundCloud stream fetch failed", ['url' => $progressive['url']]);
+                return null;
+            }
+
+            return $stream->json('url'); // ✅ direct playable mp3/opus link
+
+        } catch (\Exception $e) {
+            Log::error("SoundCloud API exception: " . $e->getMessage());
+            return null;
+        }
+    }
 }
