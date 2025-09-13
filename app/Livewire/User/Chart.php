@@ -558,6 +558,7 @@ class Chart extends Component
 
         // Map over items to calculate engagement score and rate
         $itemsWithMetrics = $items->map(function ($track) {
+            dd($track);
             $totalViews = $track['metrics']['total_views']['current_total'];
             $totalPlays = $track['metrics']['total_plays']['current_total'];
             $totalReposts = $track['metrics']['total_reposts']['current_total'];
@@ -593,7 +594,6 @@ class Chart extends Component
 
         // Update paginator collection
         $paginated->setCollection($sorted);
-        Log::info($paginated);
         return view(
             'livewire.user.chart',
             [
