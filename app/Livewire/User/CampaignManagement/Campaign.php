@@ -48,7 +48,7 @@ class Campaign extends Component
     public ?int $recentPage = 1;
 
     // Main tab state
-    #[Url(as: 'tab', except: 'recommended_pro')]
+    #[Url(as: 'tab', except: '')]
     public string $activeMainTab = 'recommended_pro';
 
     // Properties for filtering and search
