@@ -164,12 +164,15 @@
                         <div class="text-xs flex justify-between items-center text-gray-500 dark:text-gray-300">
                             <p>{{ __('Current Plan') }}</p>
                         </div>
+                    </li>
+                    <li
+                        class="px-4 py-2 border-t border-gray-200 dark:border-slate-700">
                         <div class="text-sm flex justify-between items-center">
                             <span class="font-semibold text-slate-800 dark:text-white">
                                 {{ userPlanName() }}
                             </span>
                             <a href="{{ route('user.plans') }}" wire:navigate
-                                class="text-orange-500 text-xs !hover:underline !cursor-pointer">
+                                class="text-orange-500 text-xs hover:underline">
                                 {{ __('Plans') }}
                             </a>
                         </div>
