@@ -670,7 +670,7 @@ public function getMusicSrc(string $trackUri): ?string
             'url' => $trackUri,
             'client_id' => $clientId,
         ]);
-        dd($resolveResponse);
+
 
         // Debug: Log the response to see what's happening
         Log::info("SoundCloud resolve response", [
