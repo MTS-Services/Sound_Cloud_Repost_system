@@ -189,13 +189,8 @@
                                 class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
                                 <a href="{{ $user->soundcloud_permalink_url ?? '#' }}"
                                     class="bg-gray-300 hover:bg-gray-400 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-900 dark:text-white px-3 py-1 sm:px-4 sm:py-2 rounded-lg transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="w-3 h-3 sm:w-4 sm:h-4">
-                                        <path d="M15 3h6v6"></path>
-                                        <path d="M10 14 21 3"></path>
-                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                    </svg>
+                                    <x-lucide-external-link
+                                        class="w-6 h-6 text-gray-500 hover:text-orange-500 transition-colors" />
                                     <span>Visit on SoundCloud</span>
                                 </a>
                                 @if (user()->urn == $user->urn)
@@ -210,13 +205,7 @@
                                         <span class="ms-1">Edit</span>
                                     </x-gbutton> --}}
                                     <x-gabutton variant="primary" wire:navigate href="{{ route('user.settings') }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                            fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
-                                            class="w-3 h-3 sm:w-4 sm:h-4">
-                                            <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                            <path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"></path>
-                                        </svg>
+                                        <x-lucide-edit class="w-4 h-4 mr-1" />
                                         <span class="ms-1">Edit</span>
                                     </x-gabutton>
                                 @endif
