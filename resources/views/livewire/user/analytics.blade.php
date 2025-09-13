@@ -274,7 +274,8 @@
                 });
             });
         }
-    }">
+    }" @livewire:navigated.window="setupCharts()" @livewire:load.window="setupCharts()"
+        @livewire:initialized.window="setupCharts()">
         <div class="border-b border-gray-200 dark:border-gray-700 mb-6">
             <div class="px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center py-6 gap-4">
