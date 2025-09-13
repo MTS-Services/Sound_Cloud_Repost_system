@@ -262,7 +262,6 @@ class Campaign extends Component
     public function setActiveMainTab(string $tab): void
     {
         $this->activeMainTab = $tab;
-        $this->resetPage();
         switch ($tab) {
             case 'recommended_pro':
                 $this->resetPage('recommendedProPage');
