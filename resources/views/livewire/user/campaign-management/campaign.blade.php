@@ -610,7 +610,7 @@
     {{-- Repost Confirmation Modal --}}
     @include('backend.user.includes.repost-confirmation-modal')
 </div>
-<script>
+{{-- <script>
     function initializeSoundCloudWidgets() {
         if (typeof SC === 'undefined') {
             setTimeout(initializeSoundCloudWidgets, 500);
@@ -647,6 +647,123 @@
     }
     document.addEventListener('livewire:navigated', function() {
         initializeSoundCloudWidgets();
+    });
+</script> --}}
+<script>
+    // Global tracking state
+    window.audioTracker = {
+        playTimes: {},
+        playStartTimes: {},
+        playedCampaigns: new Set(),
+        activeWidgets: {},
+        playCountUpdated: new Set()
+    };
+
+    function initializeSoundCloudWidgets() {
+        if (typeof SC === 'undefined') {
+            setTimeout(initializeSoundCloudWidgets, 500);
+            return;
+        }
+
+        const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+
+        playerContainers.forEach(container => {
+            const campaignId = container.dataset.campaignId;
+            const iframe = container.querySelector('iframe');
+
+            if (iframe && campaignId && !window.audioTracker.activeWidgets[campaignId]) {
+                const widget = SC.Widget(iframe);
+                window.audioTracker.activeWidgets[campaignId] = widget;
+
+                // Initialize tracking data
+                if (!window.audioTracker.playTimes[campaignId]) {
+                    window.audioTracker.playTimes[campaignId] = 0;
+                }
+
+                widget.bind(SC.Widget.Events.READY, () => {
+                    console.log(`Widget ready for campaign ${campaignId}`);
+                });
+
+                widget.bind(SC.Widget.Events.PLAY, () => {
+                    console.log(`Play started for campaign ${campaignId}`);
+                    window.audioTracker.playStartTimes[campaignId] = Date.now();
+
+                    // Update play count only once per session per campaign
+                    if (!window.audioTracker.playCountUpdated.has(campaignId)) {
+                        @this.call('updatePlayCount', campaignId);
+                        window.audioTracker.playCountUpdated.add(campaignId);
+                    }
+
+                    @this.call('handleAudioPlay', campaignId);
+                });
+
+                widget.bind(SC.Widget.Events.PAUSE, () => {
+                    console.log(`Pause for campaign ${campaignId}`);
+                    updatePlayTime(campaignId);
+                    @this.call('handleAudioPause', campaignId);
+                });
+
+                widget.bind(SC.Widget.Events.FINISH, () => {
+                    console.log(`Finish for campaign ${campaignId}`);
+                    updatePlayTime(campaignId);
+                    @this.call('handleAudioEnded', campaignId);
+                });
+
+                // More frequent progress tracking for better accuracy
+                widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+                    updatePlayTime(campaignId);
+
+                    // Check if 5 seconds reached
+                    if (window.audioTracker.playTimes[campaignId] >= 5000 &&
+                        !window.audioTracker.playedCampaigns.has(campaignId)) {
+
+                        window.audioTracker.playedCampaigns.add(campaignId);
+                        console.log(`Campaign ${campaignId} played for 5+ seconds`);
+
+                        // Enable repost button visually
+                        enableRepostButton(campaignId);
+
+                        // Notify Livewire
+                        @this.call('markCampaignPlayable', campaignId);
+                    }
+                });
+            }
+        });
+    }
+
+    function updatePlayTime(campaignId) {
+        if (window.audioTracker.playStartTimes[campaignId]) {
+            const now = Date.now();
+            const sessionTime = now - window.audioTracker.playStartTimes[campaignId];
+            window.audioTracker.playTimes[campaignId] =
+                (window.audioTracker.playTimes[campaignId] || 0) + sessionTime;
+            window.audioTracker.playStartTimes[campaignId] = now;
+        }
+    }
+
+    function enableRepostButton(campaignId) {
+        const button = document.querySelector(`[data-campaign-id="${campaignId}"] .repost-btn`);
+        if (button) {
+            button.classList.remove('bg-gray-300', 'dark:bg-gray-600', 'text-gray-500', 'dark:text-gray-400',
+                'cursor-not-allowed');
+            button.classList.add('bg-orange-600', 'dark:bg-orange-500', 'hover:bg-orange-700',
+                'dark:hover:bg-orange-400', 'text-white', 'dark:text-gray-300', 'cursor-pointer');
+            button.removeAttribute('disabled');
+        }
+    }
+
+    function canRepost(campaignId) {
+        return window.audioTracker.playedCampaigns.has(campaignId) &&
+            window.audioTracker.playTimes[campaignId] >= 5000;
+    }
+
+    // Initialize on page load and Livewire navigation
+    document.addEventListener('livewire:navigated', initializeSoundCloudWidgets);
+    document.addEventListener('DOMContentLoaded', initializeSoundCloudWidgets);
+
+    // Re-initialize when new content is loaded
+    document.addEventListener('livewire:updated', () => {
+        setTimeout(initializeSoundCloudWidgets, 100);
     });
 </script>
 </div>
