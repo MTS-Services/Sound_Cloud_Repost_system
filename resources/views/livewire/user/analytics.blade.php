@@ -37,19 +37,49 @@
         $wire.set('filter', newFilter);
     },
 
+    // Main chart initialization function
     initializeCharts() {
-        this.initPerformanceChart();
-        this.initGenreChart();
+        this.destroyExistingCharts();
+
+        // Wait for next tick to ensure DOM is ready
+        this.$nextTick(() => {
+            if (typeof Chart !== 'undefined') {
+                this.initPerformanceChart();
+                this.initGenreChart();
+            } else {
+                this.waitForChart();
+            }
+        });
+    },
+
+    // Helper function to wait for Chart.js to load
+    waitForChart() {
+        const checkChart = () => {
+            if (typeof Chart !== 'undefined') {
+                this.initPerformanceChart();
+                this.initGenreChart();
+            } else {
+                setTimeout(checkChart, 100);
+            }
+        };
+        checkChart();
+    },
+
+    // Destroy existing charts to prevent memory leaks
+    destroyExistingCharts() {
+        if (this.performanceChart instanceof Chart) {
+            this.performanceChart.destroy();
+            this.performanceChart = null;
+        }
+        if (this.genreChart instanceof Chart) {
+            this.genreChart.destroy();
+            this.genreChart = null;
+        }
     },
 
     initPerformanceChart() {
-        if (this.performanceChart instanceof Chart) {
-            this.performanceChart.destroy();
-        }
         const ctx = document.getElementById('performanceChart');
         if (!ctx) return;
-
-
 
         this.performanceChart = new Chart(ctx.getContext('2d'), {
             type: 'line',
@@ -123,7 +153,6 @@
                         position: 'top',
                         align: 'center',
                         labels: {
-                            {{-- color: '#e2e8f0', --}}
                             boxWidth: 12,
                             font: {
                                 size: 12
@@ -155,13 +184,8 @@
     },
 
     initGenreChart() {
-        if (this.initGenreChart instanceof Chart) {
-            this.initGenreChart.destroy();
-        }
         const ctx = document.getElementById('genreChart');
         if (!ctx) return;
-
-
 
         this.genreChart = new Chart(ctx.getContext('2d'), {
             type: 'pie',
@@ -216,33 +240,17 @@
         }
     },
 
-    init() {
-        // Destroy existing charts before re-initializing
-        if (this.performanceChart instanceof Chart) {
-            this.performanceChart.destroy();
-        }
-        if (this.genreChart instanceof Chart) {
-            this.genreChart.destroy();
-        }
+    // Main initialization function that can be called by various events
+    setupCharts() {
         this.displayedData = $wire.data;
+        this.initializeCharts();
+    },
 
+    init() {
+        // Initial setup
+        this.setupCharts();
 
-
-        this.$nextTick(() => {
-            if (typeof Chart !== 'undefined') {
-                this.initializeCharts();
-            } else {
-                const checkChart = () => {
-                    if (typeof Chart !== 'undefined') {
-                        this.initializeCharts();
-                    } else {
-                        setTimeout(checkChart, 100);
-                    }
-                };
-                checkChart();
-            }
-        });
-
+        // Watch for data changes
         this.$watch('$wire.data', (newData, oldData) => {
             if (JSON.stringify(newData) !== JSON.stringify(oldData)) {
                 this.displayedData = newData;
@@ -250,6 +258,7 @@
             }
         });
 
+        // Listen for data updates
         Livewire.on('dataUpdated', () => {
             this.chartData = $wire.getChartData();
             this.genreBreakdown = $wire.genreBreakdown;
@@ -264,6 +273,30 @@
         });
     }
 }">
+    @livewire:navigated.window="setupCharts()"
+    @livewire:load.window="setupCharts()"
+    @livewire:initialized.window="setupCharts()">
+    <!-- Add this script at the bottom of your component -->
+    <script>
+        // Global function for chart initialization that can be called from anywhere
+        function initializeAnalyticsCharts() {
+            // Check if Alpine.js component exists
+            const alpineComponent = document.querySelector('[x-data]').__x?.$data;
+            if (alpineComponent && typeof alpineComponent.setupCharts === 'function') {
+                alpineComponent.setupCharts();
+            }
+        }
+
+        // Listen to various Livewire events
+        document.addEventListener('livewire:navigated', initializeAnalyticsCharts);
+        document.addEventListener('livewire:load', initializeAnalyticsCharts);
+        document.addEventListener('livewire:initialized', initializeAnalyticsCharts);
+        document.addEventListener('DOMContentLoaded', initializeAnalyticsCharts);
+
+        // Also listen for Turbo events if you're using Turbo
+        document.addEventListener('turbo:load', initializeAnalyticsCharts);
+        document.addEventListener('turbo:render', initializeAnalyticsCharts);
+    </script>
     <x-slot name="page_slug">analytics</x-slot>
 
     <div class="border-b border-gray-200 dark:border-gray-700 mb-6">
