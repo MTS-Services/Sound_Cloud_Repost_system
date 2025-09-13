@@ -123,4 +123,6 @@ class SoundCloudPlayer extends Component
 
         return "https://w.soundcloud.com/player/?" . implode('&', $queryParams);
     }
+
+    
 }

@@ -579,6 +579,7 @@ class Chart extends Component
             // Engagement Score (0–10 scale)
             $engagementScore = round(($engagementRate / 100) * 10, 1);
             $track['getMusicSrc'] = $this->soundCloudService->getMusicSrc($track['track_details']['uri']);
+            dd($track['getMusicSrc']);
 
 
             // Add score and rate to track array
