@@ -2237,11 +2237,15 @@
 
         <style>
             .player-hidden {
-                transform: translateY(100%);
+                /* transform: translateY(100%); */
+                opacity: 0;
+                display: none;
             }
 
             .player-visible {
-                transform: translateY(0);
+                /* transform: translateY(0); */
+                opacity: 1;
+                display: block;
             }
 
             .progress-bar {
@@ -2326,7 +2330,7 @@
 
     </div>
     <div id="bottomPlayer"
-        class="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700  py-3 transform transition-transform duration-300 player-hidden z-50">
+        class="sticky bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700  py-3 transform transition-transform duration-300 player-hidden z-50">
         <div class="flex items-center justify-between max-w-7xl mx-auto">
             <!-- Track Info -->
             <div class="flex items-center gap-3 min-w-0 flex-1">
@@ -2389,13 +2393,6 @@
 
             <!-- Volume and Additional Controls -->
             <div class="flex items-center gap-3 flex-1 justify-end">
-                <button class="text-gray-400 hover:text-white transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
-                        </path>
-                    </svg>
-                </button>
                 <div class="flex items-center gap-2">
                     <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
                         <path
@@ -2414,7 +2411,7 @@
         </div>
     </div>
 
-    <audio id="audioPlayer" preload="metadata"></audio>
+    <audio id="audioPlayer" preload="metadata" class="bg-orange-500"></audio>
 
     <script>
         class MusicPlayer {
