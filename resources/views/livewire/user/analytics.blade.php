@@ -84,13 +84,13 @@
         this.performanceChart = new Chart(ctx.getContext('2d'), {
             type: 'line',
             data: {
-                labels: this.chartData.length > 0 ? this.chartData.map(item => {
+                labels: this.chartData.length > 0 ? this.chartData.map((item) => {
                     const date = new Date(item.date);
                     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                 }) : ['No Data'],
                 datasets: [{
                     label: 'Views',
-                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_views || 0) : [0],
+                    data: this.chartData.length > 0 ? this.chartData.map((item) => item.total_views || 0) : [0],
                     borderColor: '#E9E294',
                     backgroundColor: 'rgba(233, 226, 148, 0.1)',
                     tension: 0.4,
@@ -101,7 +101,7 @@
                     pointHoverBorderColor: '#E9E294',
                 }, {
                     label: 'Streams',
-                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_plays || 0) : [0],
+                    data: this.chartData.length > 0 ? this.chartData.map((item) => item.total_plays || 0) : [0],
                     borderColor: '#ff6b35',
                     backgroundColor: 'rgba(255, 107, 53, 0.1)',
                     tension: 0.4,
@@ -112,7 +112,7 @@
                     pointHoverBorderColor: '#ff6b35',
                 }, {
                     label: 'Likes',
-                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_likes || 0) : [0],
+                    data: this.chartData.length > 0 ? this.chartData.map((item) => item.total_likes || 0) : [0],
                     borderColor: '#10b981',
                     backgroundColor: 'rgba(16, 185, 129, 0.1)',
                     tension: 0.4,
@@ -123,7 +123,7 @@
                     pointHoverBorderColor: '#10b981',
                 }, {
                     label: 'Reposts',
-                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_reposts || 0) : [0],
+                    data: this.chartData.length > 0 ? this.chartData.map((item) => item.total_reposts || 0) : [0],
                     borderColor: '#8b5cf6',
                     backgroundColor: 'rgba(139, 92, 246, 0.1)',
                     tension: 0.4,
@@ -134,7 +134,7 @@
                     pointHoverBorderColor: '#8b5cf6',
                 }, {
                     label: 'Comments',
-                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_comments || 0) : [0],
+                    data: this.chartData.length > 0 ? this.chartData.map((item) => item.total_comments || 0) : [0],
                     borderColor: '#f59e0b',
                     backgroundColor: 'rgba(245, 158, 11, 0.1)',
                     tension: 0.4,
@@ -190,9 +190,9 @@
         this.genreChart = new Chart(ctx.getContext('2d'), {
             type: 'pie',
             data: {
-                labels: this.genreBreakdown.length > 0 ? this.genreBreakdown.map(item => item.genre) : ['No Data'],
+                labels: this.genreBreakdown.length > 0 ? this.genreBreakdown.map((item) => item.genre) : ['No Data'],
                 datasets: [{
-                    data: this.genreBreakdown.length > 0 ? this.genreBreakdown.map(item => item.percentage) : [100],
+                    data: this.genreBreakdown.length > 0 ? this.genreBreakdown.map((item) => item.percentage) : [100],
                     backgroundColor: this.genreBreakdown.length > 0 ? ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'].slice(0, this.genreBreakdown.length) : ['#9ca3af'],
                     borderColor: '#1f2937',
                     borderWidth: 2,
@@ -217,7 +217,7 @@
 
     updateCharts() {
         if (this.performanceChart) {
-            this.performanceChart.data.labels = this.chartData.length > 0 ? this.chartData.map(item => {
+            this.performanceChart.data.labels = this.chartData.length > 0 ? this.chartData.map((item) => {
                 const date = new Date(item.date);
                 return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             }) : ['No Data'];
@@ -225,7 +225,7 @@
             const metrics = ['total_views', 'total_plays', 'total_likes', 'total_reposts', 'total_comments'];
             this.performanceChart.data.datasets.forEach((dataset, index) => {
                 dataset.data = this.chartData.length > 0 ?
-                    this.chartData.map(item => item[metrics[index]] || 0) : [0];
+                    this.chartData.map((item) => item[metrics[index]] || 0) : [0];
             });
 
             this.performanceChart.update();
@@ -233,9 +233,9 @@
 
         if (this.genreChart) {
             this.genreChart.data.labels = this.genreBreakdown.length > 0 ?
-                this.genreBreakdown.map(item => item.genre) : ['No Data'];
+                this.genreBreakdown.map((item) => item.genre) : ['No Data'];
             this.genreChart.data.datasets[0].data = this.genreBreakdown.length > 0 ?
-                this.genreBreakdown.map(item => item.percentage) : [100];
+                this.genreBreakdown.map((item) => item.percentage) : [100];
             this.genreChart.update();
         }
     },
