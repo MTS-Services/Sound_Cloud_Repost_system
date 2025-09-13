@@ -161,7 +161,7 @@
                     </li>
                     <li class="px-4 py-2 border-t border-gray-200 dark:border-slate-700 cursor-default select-none">
                         <div class="text-xs flex justify-between items-center text-gray-500 dark:text-gray-300">
-                            <span>{{ __('Current Plan') }}</span>
+                            <p>{{ __('Current Plan') }}</p>
                         </div>
                         <div class="text-sm flex justify-between items-center">
                             <span class="font-semibold text-slate-800 dark:text-white">
@@ -171,6 +171,7 @@
                                 class="text-orange-500 text-xs hover:underline">{{ __('Plans') }}</a>
                         </div>
                     </li>
+
                     <li>
                         <a href="{{ route('user.settings') }}" wire:navigate
                             class="flex items-center  px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm block">
