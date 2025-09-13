@@ -187,10 +187,10 @@
                             {{-- Buttons --}}
                             <div
                                 class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
-                                <a href="{{ $user->soundcloud_permalink_url ?? '#' }}"
-                                    class="bg-gray-300 hover:bg-gray-400 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-900 dark:text-white px-3 py-1 sm:px-4 sm:py-2 rounded-lg transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base">
+                                <a href="{{ $user->soundcloud_permalink_url ?? '#' }}" target="_blank"
+                                    class="bg-gray-300 hover:bg-gray-400 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-900 dark:text-white px-3 py-1 sm:px-4 sm:py-2 rounded-lg transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base group">
                                     <x-lucide-external-link
-                                        class="w-6 h-6 text-gray-500 hover:text-orange-500 transition-colors" />
+                                        class="w-6 h-6 text-gray-50 group-hover:text-orange-500 transition-colors" />
                                     <span>Visit on SoundCloud</span>
                                 </a>
                                 @if (user()->urn == $user->urn)
