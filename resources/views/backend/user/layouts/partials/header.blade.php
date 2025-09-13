@@ -169,7 +169,7 @@
                                 {{ userPlanName() }}
                             </span>
                             <a href="{{ route('user.plans') }}" wire:navigate
-                                class="text-orange-500 text-xs hover:underline pointer-events-auto">
+                                class="text-orange-500 text-xs !hover:underline !cursor-pointer">
                                 {{ __('Plans') }}
                             </a>
                         </div>
