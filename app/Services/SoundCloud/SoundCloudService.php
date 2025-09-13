@@ -845,10 +845,10 @@ class SoundCloudService
 
     public function getMusicSrc(string $trackUri): ?string
     {
-        $trackUri = "soundcloud:tracks:2166785337";
-        $trackId = str_replace("soundcloud:tracks:", "", $trackUri);
-        $trackUrl = "https://api.soundcloud.com/tracks/" . $trackId;
-        dd($trackUrl);
+        // $trackUri = "soundcloud:tracks:2166785337";
+        // $trackId = str_replace("soundcloud:tracks:", "", $trackUri);
+        // $trackUrl = "https://api.soundcloud.com/tracks/" . $trackId;
+        // dd($trackUrl);
 
         if (!$trackUri) {
             return null;
@@ -864,6 +864,7 @@ class SoundCloudService
             } else {
                 // Otherwise assume it is a normal SoundCloud track URL
                 $trackUrl = $trackUri;
+                dd($trackUrl);
             }
 
             // 1. Resolve the track
