@@ -277,26 +277,7 @@
     @livewire:load.window="setupCharts()"
     @livewire:initialized.window="setupCharts()">
     <!-- Add this script at the bottom of your component -->
-    <script>
-        // Global function for chart initialization that can be called from anywhere
-        function initializeAnalyticsCharts() {
-            // Check if Alpine.js component exists
-            const alpineComponent = document.querySelector('[x-data]').__x?.$data;
-            if (alpineComponent && typeof alpineComponent.setupCharts === 'function') {
-                alpineComponent.setupCharts();
-            }
-        }
 
-        // Listen to various Livewire events
-        document.addEventListener('livewire:navigated', initializeAnalyticsCharts);
-        document.addEventListener('livewire:load', initializeAnalyticsCharts);
-        document.addEventListener('livewire:initialized', initializeAnalyticsCharts);
-        document.addEventListener('DOMContentLoaded', initializeAnalyticsCharts);
-
-        // Also listen for Turbo events if you're using Turbo
-        document.addEventListener('turbo:load', initializeAnalyticsCharts);
-        document.addEventListener('turbo:render', initializeAnalyticsCharts);
-    </script>
     <x-slot name="page_slug">analytics</x-slot>
 
     <div class="border-b border-gray-200 dark:border-gray-700 mb-6">
@@ -1164,6 +1145,26 @@
 
     @push('js')
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            // Global function for chart initialization that can be called from anywhere
+            function initializeAnalyticsCharts() {
+                // Check if Alpine.js component exists
+                const alpineComponent = document.querySelector('[x-data]').__x?.$data;
+                if (alpineComponent && typeof alpineComponent.setupCharts === 'function') {
+                    alpineComponent.setupCharts();
+                }
+            }
+
+            // Listen to various Livewire events
+            document.addEventListener('livewire:navigated', initializeAnalyticsCharts);
+            document.addEventListener('livewire:load', initializeAnalyticsCharts);
+            document.addEventListener('livewire:initialized', initializeAnalyticsCharts);
+            document.addEventListener('DOMContentLoaded', initializeAnalyticsCharts);
+
+            // Also listen for Turbo events if you're using Turbo
+            document.addEventListener('turbo:load', initializeAnalyticsCharts);
+            document.addEventListener('turbo:render', initializeAnalyticsCharts);
+        </script>
     @endpush
 
 </div>
