@@ -935,7 +935,7 @@
                                                         title="Play" data-title="{{ $track['track_details']->title }}"
                                                         data-artist="{{ $track['track_details']->author_username }}"
                                                         data-cover="{{ $track['track_details']->artwork_url }}"
-                                                        data-src="{{ $track['track_details']->permalink_url }}">
+                                                        data-src="https://api-v2.soundcloud.com/media/soundcloud:tracks:1252113682/0622321d-02e6-4b77-86aa-a54b4fc4d82d/stream/hls">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                             height="24" viewBox="0 0 24 24" fill="none"
                                                             stroke="currentColor" stroke-width="2"
@@ -2269,7 +2269,7 @@
                     <button class="play-btn bg-orange-500 hover:bg-orange-600 p-3 rounded-full transition-colors"
                         data-title="Midnight Dreams" data-artist="Luna Waves"
                         data-cover="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=center"
-                        data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
+                        data-src="https://api-v2.soundcloud.com/media/soundcloud:tracks:1252113682/0622321d-02e6-4b77-86aa-a54b4fc4d82d/stream/hls">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M8 5v14l11-7z" />
                         </svg>
