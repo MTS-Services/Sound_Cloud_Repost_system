@@ -2326,7 +2326,7 @@
 
     </div>
     <div id="bottomPlayer"
-        class="sticky bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700  py-3 transform transition-transform duration-300 player-hidden z-50">
+        class="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700  py-3 transform transition-transform duration-300 player-hidden z-50">
         <div class="flex items-center justify-between max-w-7xl mx-auto">
             <!-- Track Info -->
             <div class="flex items-center gap-3 min-w-0 flex-1">
