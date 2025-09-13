@@ -159,8 +159,8 @@
                             {{ __('View Profile') }}
                         </a>
                     </li>
-                    <li class="px-4 py-2 border-t border-gray-200 dark:border-slate-700">
-                        <div class="text-xs flex justify-between items-center text-gray-500 dark:text-gray-300 mb-0.5 hover:bg-transparent cursor-default">
+                    <li class="px-4 py-2 border-t border-gray-200 dark:border-slate-700 cursor-default select-none">
+                        <div class="text-xs flex justify-between items-center text-gray-500 dark:text-gray-300">
                             <span>{{ __('Current Plan') }}</span>
                         </div>
                         <div class="text-sm flex justify-between items-center">
