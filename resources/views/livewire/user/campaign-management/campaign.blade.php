@@ -714,46 +714,6 @@
     {{-- Repost Confirmation Modal --}}
     @include('backend.user.includes.repost-confirmation-modal')
 </div>
-{{-- <script>
-    function initializeSoundCloudWidgets() {
-        if (typeof SC === 'undefined') {
-            setTimeout(initializeSoundCloudWidgets, 500);
-            return;
-        }
-
-        const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
-
-        playerContainers.forEach(container => {
-            const campaignId = container.dataset.campaignId;
-            const iframe = container.querySelector('iframe');
-
-            if (iframe && campaignId) {
-                const widget = SC.Widget(iframe);
-
-                widget.bind(SC.Widget.Events.PLAY, () => {
-                    @this.call('handleAudioPlay', campaignId);
-                });
-
-                widget.bind(SC.Widget.Events.PAUSE, () => {
-                    @this.call('handleAudioPause', campaignId);
-                });
-
-                widget.bind(SC.Widget.Events.FINISH, () => {
-                    @this.call('handleAudioEnded', campaignId);
-                });
-
-                widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-                    const currentTime = data.currentPosition / 1000;
-                    @this.call('handleAudioTimeUpdate', campaignId, currentTime);
-                });
-            }
-        });
-    }
-    document.addEventListener('livewire:navigated', function() {
-        initializeSoundCloudWidgets();
-    });
-</script> --}}
-
 <script>
     // Enhanced debug version
     window.audioTracker = {
@@ -897,12 +857,12 @@
     }
 
     // Livewire event debugging
-    document.addEventListener('livewire:updated', function(event) {
-        console.log('🔄 Livewire updated, checking button states...');
-        setTimeout(() => {
-            if (window.debugButtons) window.debugButtons();
-        }, 100);
-    });
+    // document.addEventListener('livewire:updated', function(event) {
+    //     console.log('🔄 Livewire updated, checking button states...');
+    //     setTimeout(() => {
+    //         if (window.debugButtons) window.debugButtons();
+    //     }, 100);
+    // });
 
     // Initialize
     document.addEventListener('livewire:navigated', initializeSoundCloudWidgets);
