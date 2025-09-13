@@ -988,14 +988,8 @@
                             engagement to climb
                             the charts!</p>
                         <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                            <button
-                                class="bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-all duration-200 transform hover:scale-105">Start
-                                Campaign
-                            </button>
-                            <button
-                                class="border border-gray-300 dark:border-gray-600 text-gray-700 dark:bg-gray-700 dark:text-gray-300 px-6 py-3 rounded-xl font-semibold bg-gray-100 hover:bg-white dark:hover:bg-gray-700 transition-all duration-200">Learn
-                                More
-                            </button>
+                            <x-gabutton variant="primary" wire:navigate href="{{ route('user.cm.my-campaigns') }}">Start Campaign</x-gabutton>
+                            <x-gabutton variant="secondary" wire:navigate href="{{ route('user.faq') }}">Learn More</x-gabutton>
                         </div>
                     </div>
                 </div>
