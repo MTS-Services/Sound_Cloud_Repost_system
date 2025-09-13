@@ -806,7 +806,7 @@
                         <div class="space-y-3">
 
                             @forelse ($topTracks as $track)
-                            {{-- @dd($track); --}}
+                                {{-- @dd($track); --}}
                                 <div
                                     class="relative border rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-900 dark:to-gray-800  shadow-lg {{ proUser($track['track_details']->user_urn) && $track['action_details']->is_featured
                                         ? 'shadow-orange-500/20 border-orange-300 dark:border-orange-500'
@@ -932,7 +932,8 @@
                                                 <div class="flex items-center gap-2">
                                                     <button
                                                         class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600 play-btn"
-                                                        title="Play" data-title="{{ $track['track_details']->title }}"
+                                                        title="Play"
+                                                        data-title="{{ $track['track_details']->title }}"
                                                         data-artist="{{ $track['track_details']->author_username }}"
                                                         data-cover="{{ $track['track_details']->artwork_url }}"
                                                         data-src="https://api-v2.soundcloud.com/media/soundcloud:tracks:1252113682/0622321d-02e6-4b77-86aa-a54b4fc4d82d/stream/hls">
@@ -1022,6 +1023,7 @@
             </div>
 
         </div>
+    </div>
 
         {{-- <div class="max-w-6xl mx-auto px-4 py-6">
             <!-- Header -->
@@ -2250,7 +2252,7 @@
                 background: linear-gradient(to right, #f97316 0%, #f97316 var(--volume), #374151 var(--volume), #374151 100%);
             }
         </style>
-        <!-- Sample track list (simplified version of your template) -->
+        {{-- <!-- Sample track list (simplified version of your template) -->
         <div class="container mx-auto px-4 py-8">
             <h1 class="text-3xl font-bold mb-8 text-center">Weekly Top Tracks</h1>
 
@@ -2318,259 +2320,259 @@
                     </button>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <!-- Bottom Music Player -->
-        <div id="bottomPlayer"
-            class="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 px-4 py-3 transform transition-transform duration-300 player-hidden z-50">
-            <div class="flex items-center justify-between max-w-7xl mx-auto">
-                <!-- Track Info -->
-                <div class="flex items-center gap-3 min-w-0 flex-1">
-                    <img id="playerCover" src="" alt="" class="w-12 h-12 rounded-lg object-cover">
-                    <div class="min-w-0 flex-1">
-                        <h4 id="playerTitle" class="font-semibold text-white truncate">Track Title</h4>
-                        <p id="playerArtist" class="text-sm text-gray-400 truncate">Artist Name</p>
-                    </div>
-                    <!-- <button id="heartBtn" class="text-gray-400 hover:text-red-500 transition-colors">
+
+    </div>
+    <div id="bottomPlayer"
+        class="sticky bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700  py-3 transform transition-transform duration-300 player-hidden z-50">
+        <div class="flex items-center justify-between max-w-7xl mx-auto">
+            <!-- Track Info -->
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+                <img id="playerCover" src="" alt="" class="w-12 h-12 rounded-lg object-cover">
+                <div class="min-w-0 flex-1">
+                    <h4 id="playerTitle" class="font-semibold text-white truncate">Track Title</h4>
+                    <p id="playerArtist" class="text-sm text-gray-400 truncate">Artist Name</p>
+                </div>
+                <!-- <button id="heartBtn" class="text-gray-400 hover:text-red-500 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                     </svg>
                 </button> -->
-                </div>
+            </div>
 
-                <!-- Playback Controls -->
-                <div class="flex flex-col items-center gap-2 flex-1 max-w-md mx-8">
-                    <div class="flex items-center gap-4">
-                        <!-- <button id="shuffleBtn" class="text-gray-400 hover:text-white transition-colors">
+            <!-- Playback Controls -->
+            <div class="flex flex-col items-center gap-2 flex-1 max-w-md mx-8">
+                <div class="flex items-center gap-4">
+                    <!-- <button id="shuffleBtn" class="text-gray-400 hover:text-white transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4l6 6m0 0l6-6m-6 6L4 16m6-6l6 6M16 4h4v4M20 20h-4v-4"></path>
                         </svg>
                     </button> -->
-                        <button id="prevBtn" class="text-gray-400 hover:text-white transition-colors">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
-                            </svg>
-                        </button>
-                        <button id="playPauseBtn"
-                            class="bg-white text-black p-2 rounded-full hover:scale-105 transition-transform">
-                            <svg id="playIcon" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M8 5v14l11-7z" />
-                            </svg>
-                            <svg id="pauseIcon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                            </svg>
-                        </button>
-                        <button id="nextBtn" class="text-gray-400 hover:text-white transition-colors">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
-                            </svg>
-                        </button>
-                        <!-- <button id="repeatBtn" class="text-gray-400 hover:text-white transition-colors">
+                    <button id="prevBtn" class="text-gray-400 hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+                        </svg>
+                    </button>
+                    <button id="playPauseBtn"
+                        class="bg-white text-black p-2 rounded-full hover:scale-105 transition-transform">
+                        <svg id="playIcon" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                        <svg id="pauseIcon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                        </svg>
+                    </button>
+                    <button id="nextBtn" class="text-gray-400 hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+                        </svg>
+                    </button>
+                    <!-- <button id="repeatBtn" class="text-gray-400 hover:text-white transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                         </svg>
                     </button> -->
-                    </div>
-
-                    <!-- Progress Bar -->
-                    <div class="flex items-center gap-2 w-full">
-                        <span id="currentTime" class="text-xs text-gray-400 w-10">0:00</span>
-                        <div class="flex-1 bg-gray-600 rounded-full h-1 cursor-pointer" id="progressContainer">
-                            <div id="progressBar" class="bg-orange-500 h-1 rounded-full progress-bar"
-                                style="width: 0%"></div>
-                        </div>
-                        <span id="totalTime" class="text-xs text-gray-400 w-10">0:00</span>
-                    </div>
                 </div>
 
-                <!-- Volume and Additional Controls -->
-                <div class="flex items-center gap-3 flex-1 justify-end">
-                    <button class="text-gray-400 hover:text-white transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
-                            </path>
-                        </svg>
-                    </button>
-                    <div class="flex items-center gap-2">
-                        <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
-                        </svg>
-                        <input type="range" id="volumeSlider" min="0" max="100" value="50"
-                            class="w-24 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer volume-slider">
+                <!-- Progress Bar -->
+                <div class="flex items-center gap-2 w-full">
+                    <span id="currentTime" class="text-xs text-gray-400 w-10">0:00</span>
+                    <div class="flex-1 bg-gray-600 rounded-full h-1 cursor-pointer" id="progressContainer">
+                        <div id="progressBar" class="bg-orange-500 h-1 rounded-full progress-bar" style="width: 0%">
+                        </div>
                     </div>
-                    <button id="closeBtn" class="text-gray-400 hover:text-white transition-colors ml-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
+                    <span id="totalTime" class="text-xs text-gray-400 w-10">0:00</span>
                 </div>
             </div>
+
+            <!-- Volume and Additional Controls -->
+            <div class="flex items-center gap-3 flex-1 justify-end">
+                <button class="text-gray-400 hover:text-white transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                        </path>
+                    </svg>
+                </button>
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+                    </svg>
+                    <input type="range" id="volumeSlider" min="0" max="100" value="50"
+                        class="w-24 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer volume-slider">
+                </div>
+                <button id="closeBtn" class="text-gray-400 hover:text-white transition-colors ml-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
         </div>
+    </div>
 
-        <audio id="audioPlayer" preload="metadata"></audio>
+    <audio id="audioPlayer" preload="metadata"></audio>
 
-        <script>
-            class MusicPlayer {
-                constructor() {
-                    this.audio = document.getElementById('audioPlayer');
-                    this.bottomPlayer = document.getElementById('bottomPlayer');
-                    this.playPauseBtn = document.getElementById('playPauseBtn');
-                    this.playIcon = document.getElementById('playIcon');
-                    this.pauseIcon = document.getElementById('pauseIcon');
-                    this.progressBar = document.getElementById('progressBar');
-                    this.progressContainer = document.getElementById('progressContainer');
-                    this.currentTimeSpan = document.getElementById('currentTime');
-                    this.totalTimeSpan = document.getElementById('totalTime');
-                    this.volumeSlider = document.getElementById('volumeSlider');
-                    this.playerCover = document.getElementById('playerCover');
-                    this.playerTitle = document.getElementById('playerTitle');
-                    this.playerArtist = document.getElementById('playerArtist');
-                    this.closeBtn = document.getElementById('closeBtn');
+    <script>
+        class MusicPlayer {
+            constructor() {
+                this.audio = document.getElementById('audioPlayer');
+                this.bottomPlayer = document.getElementById('bottomPlayer');
+                this.playPauseBtn = document.getElementById('playPauseBtn');
+                this.playIcon = document.getElementById('playIcon');
+                this.pauseIcon = document.getElementById('pauseIcon');
+                this.progressBar = document.getElementById('progressBar');
+                this.progressContainer = document.getElementById('progressContainer');
+                this.currentTimeSpan = document.getElementById('currentTime');
+                this.totalTimeSpan = document.getElementById('totalTime');
+                this.volumeSlider = document.getElementById('volumeSlider');
+                this.playerCover = document.getElementById('playerCover');
+                this.playerTitle = document.getElementById('playerTitle');
+                this.playerArtist = document.getElementById('playerArtist');
+                this.closeBtn = document.getElementById('closeBtn');
 
-                    this.currentTrack = null;
-                    this.isPlaying = false;
+                this.currentTrack = null;
+                this.isPlaying = false;
 
-                    this.initEventListeners();
-                    this.setVolume(0.5);
-                }
+                this.initEventListeners();
+                this.setVolume(0.5);
+            }
 
-                initEventListeners() {
-                    // Play buttons from track list
-                    document.querySelectorAll('.play-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            const button = e.currentTarget;
-                            this.loadTrack({
-                                title: button.dataset.title,
-                                artist: button.dataset.artist,
-                                cover: button.dataset.cover,
-                                src: button.dataset.src
-                            });
+            initEventListeners() {
+                // Play buttons from track list
+                document.querySelectorAll('.play-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const button = e.currentTarget;
+                        this.loadTrack({
+                            title: button.dataset.title,
+                            artist: button.dataset.artist,
+                            cover: button.dataset.cover,
+                            src: button.dataset.src
                         });
                     });
+                });
 
-                    // Main play/pause button
-                    this.playPauseBtn.addEventListener('click', () => {
-                        this.togglePlayPause();
-                    });
+                // Main play/pause button
+                this.playPauseBtn.addEventListener('click', () => {
+                    this.togglePlayPause();
+                });
 
-                    // Progress bar click
-                    this.progressContainer.addEventListener('click', (e) => {
-                        const rect = this.progressContainer.getBoundingClientRect();
-                        const clickX = e.clientX - rect.left;
-                        const width = rect.width;
-                        const percentage = clickX / width;
-                        this.audio.currentTime = percentage * this.audio.duration;
-                    });
+                // Progress bar click
+                this.progressContainer.addEventListener('click', (e) => {
+                    const rect = this.progressContainer.getBoundingClientRect();
+                    const clickX = e.clientX - rect.left;
+                    const width = rect.width;
+                    const percentage = clickX / width;
+                    this.audio.currentTime = percentage * this.audio.duration;
+                });
 
-                    // Volume slider
-                    this.volumeSlider.addEventListener('input', (e) => {
-                        this.setVolume(e.target.value / 100);
-                    });
+                // Volume slider
+                this.volumeSlider.addEventListener('input', (e) => {
+                    this.setVolume(e.target.value / 100);
+                });
 
-                    // Close player
-                    this.closeBtn.addEventListener('click', () => {
-                        this.closePlayer();
-                    });
+                // Close player
+                this.closeBtn.addEventListener('click', () => {
+                    this.closePlayer();
+                });
 
-                    // Audio events
-                    this.audio.addEventListener('loadedmetadata', () => {
-                        this.totalTimeSpan.textContent = this.formatTime(this.audio.duration);
-                    });
+                // Audio events
+                this.audio.addEventListener('loadedmetadata', () => {
+                    this.totalTimeSpan.textContent = this.formatTime(this.audio.duration);
+                });
 
-                    this.audio.addEventListener('timeupdate', () => {
-                        this.updateProgress();
-                    });
+                this.audio.addEventListener('timeupdate', () => {
+                    this.updateProgress();
+                });
 
-                    this.audio.addEventListener('ended', () => {
-                        this.isPlaying = false;
-                        this.updatePlayButton();
-                    });
-                }
-
-                loadTrack(track) {
-                    this.currentTrack = track;
-                    this.audio.src = track.src;
-                    this.playerCover.src = track.cover;
-                    this.playerTitle.textContent = track.title;
-                    this.playerArtist.textContent = track.artist;
-
-                    this.showPlayer();
-                    this.play();
-                }
-
-                play() {
-                    this.audio.play().then(() => {
-                        this.isPlaying = true;
-                        this.updatePlayButton();
-                    }).catch(error => {
-                        console.error('Error playing audio:', error);
-                    });
-                }
-
-                pause() {
-                    this.audio.pause();
+                this.audio.addEventListener('ended', () => {
                     this.isPlaying = false;
                     this.updatePlayButton();
-                }
+                });
+            }
 
-                togglePlayPause() {
-                    if (this.isPlaying) {
-                        this.pause();
-                    } else {
-                        this.play();
-                    }
-                }
+            loadTrack(track) {
+                this.currentTrack = track;
+                this.audio.src = track.src;
+                this.playerCover.src = track.cover;
+                this.playerTitle.textContent = track.title;
+                this.playerArtist.textContent = track.artist;
 
-                updatePlayButton() {
-                    if (this.isPlaying) {
-                        this.playIcon.classList.add('hidden');
-                        this.pauseIcon.classList.remove('hidden');
-                    } else {
-                        this.playIcon.classList.remove('hidden');
-                        this.pauseIcon.classList.add('hidden');
-                    }
-                }
+                this.showPlayer();
+                this.play();
+            }
 
-                updateProgress() {
-                    if (this.audio.duration) {
-                        const percentage = (this.audio.currentTime / this.audio.duration) * 100;
-                        this.progressBar.style.width = percentage + '%';
-                        this.currentTimeSpan.textContent = this.formatTime(this.audio.currentTime);
-                    }
-                }
+            play() {
+                this.audio.play().then(() => {
+                    this.isPlaying = true;
+                    this.updatePlayButton();
+                }).catch(error => {
+                    console.error('Error playing audio:', error);
+                });
+            }
 
-                setVolume(volume) {
-                    this.audio.volume = volume;
-                    this.volumeSlider.style.setProperty('--volume', (volume * 100) + '%');
-                }
+            pause() {
+                this.audio.pause();
+                this.isPlaying = false;
+                this.updatePlayButton();
+            }
 
-                showPlayer() {
-                    this.bottomPlayer.classList.remove('player-hidden');
-                    this.bottomPlayer.classList.add('player-visible');
-                }
-
-                closePlayer() {
+            togglePlayPause() {
+                if (this.isPlaying) {
                     this.pause();
-                    this.bottomPlayer.classList.add('player-hidden');
-                    this.bottomPlayer.classList.remove('player-visible');
-                }
-
-                formatTime(seconds) {
-                    if (isNaN(seconds)) return '0:00';
-                    const minutes = Math.floor(seconds / 60);
-                    const remainingSeconds = Math.floor(seconds % 60);
-                    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+                } else {
+                    this.play();
                 }
             }
 
-            // Initialize the music player when the page loads
-            document.addEventListener('DOMContentLoaded', () => {
-                new MusicPlayer();
-            });
-        </script>
+            updatePlayButton() {
+                if (this.isPlaying) {
+                    this.playIcon.classList.add('hidden');
+                    this.pauseIcon.classList.remove('hidden');
+                } else {
+                    this.playIcon.classList.remove('hidden');
+                    this.pauseIcon.classList.add('hidden');
+                }
+            }
 
-    </div>
+            updateProgress() {
+                if (this.audio.duration) {
+                    const percentage = (this.audio.currentTime / this.audio.duration) * 100;
+                    this.progressBar.style.width = percentage + '%';
+                    this.currentTimeSpan.textContent = this.formatTime(this.audio.currentTime);
+                }
+            }
+
+            setVolume(volume) {
+                this.audio.volume = volume;
+                this.volumeSlider.style.setProperty('--volume', (volume * 100) + '%');
+            }
+
+            showPlayer() {
+                this.bottomPlayer.classList.remove('player-hidden');
+                this.bottomPlayer.classList.add('player-visible');
+            }
+
+            closePlayer() {
+                this.pause();
+                this.bottomPlayer.classList.add('player-hidden');
+                this.bottomPlayer.classList.remove('player-visible');
+            }
+
+            formatTime(seconds) {
+                if (isNaN(seconds)) return '0:00';
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = Math.floor(seconds % 60);
+                return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+            }
+        }
+
+        // Initialize the music player when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new MusicPlayer();
+        });
+    </script>
 </section>
