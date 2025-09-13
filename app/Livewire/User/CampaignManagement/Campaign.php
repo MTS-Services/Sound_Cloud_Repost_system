@@ -219,68 +219,6 @@ class Campaign extends Component
 
         // $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
     }
-
-    /**
-     * Server-side validation for 5-second minimum play requirement
-     */
-    public function markCampaignPlayable($campaignId)
-    {
-        if (!in_array($campaignId, $this->playedCampaigns)) {
-            $this->playedCampaigns[] = $campaignId;
-            Log::info("Campaign {$campaignId} marked as playable for user " . user()->urn);
-        }
-    }
-
-    /**
-     * Update play count with database persistence and session tracking
-     */
-    public function updatePlayCount($campaignId)
-    {
-        try {
-            // Prevent multiple increments per session
-            $sessionKey = "play_count_updated_" . $campaignId;
-            if (session()->has($sessionKey)) {
-                return;
-            }
-
-            $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
-            if (!$campaign) {
-                return;
-            }
-
-            // Get the track/playlist
-            $track = null;
-            if ($campaign->music_type == Track::class) {
-                $track = $this->trackService->getTrack(encrypt($campaign->music_id));
-            } elseif ($campaign->music_type == Playlist::class) {
-                $playlist = PlaylistTrack::where('playlist_urn', $campaign->music_id)->with('track')->first();
-                $track = $playlist?->track;
-            }
-
-            if ($track) {
-                // Update analytics in database
-                $response = $this->analyticsService->updateAnalytics(
-                    $track,
-                    $campaign,
-                    'total_plays',
-                    $campaign->target_genre
-                );
-
-                if ($response !== false && $response !== null) {
-                    // Increment campaign playback count in database
-                    $campaign->increment('playback_count');
-
-                    // Mark as updated in session to prevent duplicates
-                    session()->put($sessionKey, true);
-
-                    Log::info("Play count updated for campaign {$campaignId} by user " . user()->urn);
-                }
-            }
-        } catch (\Exception $e) {
-            Log::error("Failed to update play count for campaign {$campaignId}: " . $e->getMessage());
-        }
-    }
-
     public function updated($propertyName)
     {
         if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
@@ -963,27 +901,42 @@ class Campaign extends Component
         }
     }
 
-    /**
-     * Enhanced server-side validation for repost eligibility
-     */
     public function canRepost($campaignId): bool
     {
-        // Server-side validation - must be in played campaigns array
-        $isPlayedEnough = in_array($campaignId, $this->playedCampaigns);
-        $notAlreadyReposted = !in_array($campaignId, $this->repostedCampaigns);
+        $canRepost = in_array($campaignId, $this->playedCampaigns) &&
+            !in_array($campaignId, $this->repostedCampaigns);
 
-        // Additional security: Check if user owns the campaign
-        $campaign = $this->campaignService->getCampaigns()->find($campaignId);
-        $isNotOwnCampaign = $campaign && $campaign->user_urn !== user()->urn;
+        if ($canRepost && !$this->playcount) {
+            $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
 
-        // Check if already reposted in database
-        $notRepostedInDb = !Repost::where('reposter_urn', user()->urn)
-            ->where('campaign_id', $campaignId)
-            ->exists();
+            if ($campaign->music_type == Track::class) {
+                $this->reset('track');
+                $this->track = $this->trackService->getTrack(encrypt($campaign->music_id));
+            } elseif ($campaign->music_type == Playlist::class) {
+                $this->reset('track');
+                $playlist = PlaylistTrack::where('playlist_urn', $campaign->music_id)->with('track')->get();
+                $this->track = $playlist->track;
+            }
 
-        return $isPlayedEnough && $notAlreadyReposted && $isNotOwnCampaign && $notRepostedInDb;
+            $response = $this->analyticsService->updateAnalytics($this->track, $campaign, 'total_plays', $campaign->target_genre);
+            if ($response != false || $response != null) {
+                $campaign->increment('playback_count');
+            }
+
+            $this->playcount = true;
+            // $this->reset([
+            //     'playcount',
+            //     'playedCampaigns',
+            //     'repostedCampaigns',
+            //     'campaign',
+            //     'showRepostConfirmationModal',
+            //     'commented',
+            //     'liked',
+            //     'followed',
+            // ]);
+        }
+        return $canRepost;
     }
-
 
     public function isPlaying($campaignId): bool
     {
@@ -1015,30 +968,28 @@ class Campaign extends Component
         Log::info($this->campaign);
     }
 
-    /**
-     * Enhanced repost method with strict validation
-     */
     public function repost($campaignId)
     {
+        $this->soundCloudService->ensureSoundCloudConnection(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         try {
-            // Strict server-side validation
             if (!$this->canRepost($campaignId)) {
-                $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please ensure you have played it for at least 5 seconds.');
+                $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
                 return;
             }
-
-            // Additional security check - verify play time from session if available
-            $sessionPlayTime = session("campaign_play_time_{$campaignId}", 0);
-            if ($sessionPlayTime < 5) {
-                Log::warning("Repost attempt without sufficient play time for campaign {$campaignId} by user " . user()->urn);
-                $this->dispatch('alert', type: 'error', message: 'Invalid repost attempt. Please play the track for at least 5 seconds.');
-                return;
-            }
-
-            $this->soundCloudService->ensureSoundCloudConnection(user());
-            $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
             $currentUserUrn = user()->urn;
+
+            if ($this->campaignService->getCampaigns()->where('id', $campaignId)->where('user_urn', $currentUserUrn)->exists()) {
+                $this->dispatch('alert', type: 'error', message: 'You cannot repost your own campaign.');
+                return;
+            }
+
+            if (Repost::where('reposter_urn', $currentUserUrn)->where('campaign_id', $campaignId)->exists()) {
+                $this->dispatch('alert', type: 'error', message: 'You have already reposted this campaign.');
+                return;
+            }
+
             $campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
 
             if (!$campaign->music) {
@@ -1046,10 +997,17 @@ class Campaign extends Component
                 return;
             }
 
-            // Perform SoundCloud API calls
+            $soundcloudRepostId = null;
+
             $httpClient = Http::withHeaders([
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
+            $commentSoundcloud = [
+                'comment' => [
+                    'body' => $this->commented,
+                    'timestamp' => time()
+                ]
+            ];
 
             $response = null;
             $like_response = null;
@@ -1059,105 +1017,69 @@ class Campaign extends Component
             switch ($campaign->music_type) {
                 case Track::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
-
                     if ($this->commented) {
-                        $commentSoundcloud = [
-                            'comment' => [
-                                'body' => $this->commented,
-                                'timestamp' => time()
-                            ]
-                        ];
                         $comment_response = $httpClient->post("{$this->baseUrl}/tracks/{$campaign->music->urn}/comments", $commentSoundcloud);
                     }
-
                     if ($this->liked) {
                         $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$campaign->music->urn}");
                     }
-
                     if ($this->followed) {
                         $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
                     }
                     break;
-
                 case Playlist::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$campaign->music->urn}");
-
                     if ($this->liked) {
                         $like_response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$campaign->music->urn}");
                     }
-
                     if ($this->commented) {
-                        $commentSoundcloud = [
-                            'comment' => [
-                                'body' => $this->commented,
-                                'timestamp' => time()
-                            ]
-                        ];
                         $comment_response = $httpClient->post("{$this->baseUrl}/playlists/{$campaign->music->urn}/comments", $commentSoundcloud);
                     }
-
                     if ($this->followed) {
                         $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
                     }
                     break;
-
                 default:
                     $this->dispatch('alert', type: 'error', message: 'Invalid music type specified for the campaign.');
                     return;
             }
-
-            if ($response && $response->successful()) {
-                // Add to reposted campaigns to prevent duplicate attempts
-                if (!in_array($campaignId, $this->repostedCampaigns)) {
-                    $this->repostedCampaigns[] = $campaignId;
-                }
-
-                $data = [
-                    'likeable' => $like_response ? $this->liked : false,
-                    'comment' => $comment_response ? $this->commented : false,
-                    'follow' => $follow_response ? $this->followed : false
-                ];
-
-                // Send email notification if permitted
+            $data = [
+                'likeable' => $like_response ? $this->liked : false,
+                'comment' => $comment_response ? $this->commented : false,
+                'follow' => $follow_response ? $this->followed : false
+            ];
+            if ($response->successful()) {
                 $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
                 if ($repostEmailPermission) {
-                    $emailData = [
+                    $datas = [
                         [
                             'email' => $campaign->user->email,
                             'subject' => 'Repost Notification',
                             'title' => 'Dear ' . $campaign->user->name,
-                            'body' => 'Your ' . $campaign->title . ' campaign has been reposted successfully.',
+                            'body' => 'Your ' . $campaign->title . 'campaign has been reposted successfully.',
                         ],
                     ];
-                    NotificationMailSent::dispatch($emailData);
+                    NotificationMailSent::dispatch($datas);
                 }
-
-                // Sync reposts to database
                 $soundcloudRepostId = $campaign->music->soundcloud_track_id;
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
-
-                // Clear session play time
-                session()->forget("campaign_play_time_{$campaignId}");
-
                 $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.');
-                $this->showRepostConfirmationModal = false;
-
             } else {
-                Log::error("SoundCloud Repost Failed: " . ($response ? $response->body() : 'No response'), [
+                Log::error("SoundCloud Repost Failed: " . $response->body(), [
                     'campaign_id' => $campaignId,
                     'user_urn' => $currentUserUrn,
-                    'status' => $response ? $response->status() : 'N/A',
+                    'status' => $response->status(),
                 ]);
                 $this->dispatch('alert', type: 'error', message: 'Failed to repost campaign music to SoundCloud. Please try again.');
             }
-
         } catch (Throwable $e) {
             Log::error("Error in repost method: " . $e->getMessage(), [
                 'exception' => $e,
-                'campaign_id' => $campaignId,
+                'campaign_id_input' => $campaignId,
                 'user_urn' => user()->urn ?? 'N/A',
             ]);
             $this->dispatch('alert', type: 'error', message: 'An unexpected error occurred. Please try again later.');
+            return;
         }
     }
 
