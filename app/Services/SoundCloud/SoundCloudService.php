@@ -867,11 +867,10 @@ class SoundCloudService
             }
 
             // 1. Resolve the track
-            $resolve = Http::get("https://api-v2.soundcloud.com/resolve", [
+            $resolve = Http::get("https://soundcloud.com/resolve", [
                 'url'       => "https://soundcloud.com/user-434241656",
                 'client_id' => $clientId,
             ]);
-            dd($resolve, $clientId);
 
             if ($resolve->failed()) {
                 Log::error("SoundCloud resolve failed", ['track' => $trackUri]);
