@@ -451,6 +451,7 @@ class Campaign extends Component
 
     public function toggleGenre($genre)
     {
+        $this->resetPage($this->getActivePageName());
         if (in_array($genre, $this->selectedGenres)) {
             $this->selectedGenres = array_diff($this->selectedGenres, [$genre]);
         } else {
