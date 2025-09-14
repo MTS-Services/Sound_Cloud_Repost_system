@@ -387,6 +387,13 @@
                 @foreach ($repostRequests as $request)
                     <div class="space-y-4">
                         <div class="shadow-sm rounded-lg p-4">
+                            <div class="flex justify-between text-sm mb-3">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-orange-500 font-bold">#{{ $loop->iteration }}</span>
+                                    <span class="text-sm max-w-[200px] truncate">{{ $request?->track?->title }}</span>
+                                </div>
+                                <span class="text-slate-400">{{ $request?->track?->genre }}</span>
+                            </div>
                             <div class="flex items-start space-x-3 mb-3">
                                 <img src="https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg"
                                     class="w-8 h-8 rounded-full" alt="">
@@ -407,17 +414,6 @@
                                     <x-gbutton variant="primary" full-width="true"
                                         wire:click="directRepost('{{ encrypt($request->id) }}')">Repost</x-gbutton>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-4  p-2">
-                        <div class="space-y-2">
-                            <div class="flex justify-between text-sm">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-orange-500 font-bold">#{{ $loop->iteration }}</span>
-                                    <span class="text-sm max-w-[200px] truncate">{{ $request?->track?->title }}</span>
-                                </div>
-                                <span class="text-slate-400">{{ $request?->track?->genre }}</span>
                             </div>
                         </div>
                     </div>
