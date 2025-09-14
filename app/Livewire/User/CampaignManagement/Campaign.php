@@ -130,6 +130,7 @@ class Campaign extends Component
     public $maxRepostsPerDay = 0;
     public $targetGenre = 'anyGenre';
     public $user = null;
+    public $showOptions = false;
 
     public $musicId = null;
     public $musicType = null;

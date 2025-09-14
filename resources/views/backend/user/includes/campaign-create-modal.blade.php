@@ -155,7 +155,7 @@
                                     :max="localCredit" class="w-full h-2 cursor-pointer">
                             </div>
                             <div
-                                class="px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
+                                class="min-w-[80px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
                                 <span class="text-sm font-medium text-gray-900 dark:text-white"
                                     x-text="localMaxFollower"></span>
                             </div>
@@ -235,8 +235,8 @@
                                             :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                     </div>
                                     <div
-                                        class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
-                                        <span>{{ $maxRepostsPerDay }}</span>
+                                        class="min-w-[80px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
+                                        <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $maxRepostsPerDay }}</span>
                                     </div>
                                     @error('maxRepostsPerDay')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>

@@ -89,6 +89,7 @@ class MyCampaign extends Component
     public $maxRepostsPerDay = 0;
     public $targetGenre = 'anyGenre';
     public $user = null;
+    public $showOptions = false;
 
     // Form fields - Add Credit
     public $addCreditCampaignId = null;
