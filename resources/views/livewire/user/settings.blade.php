@@ -576,155 +576,120 @@
             </div>
 
             <!-- Credit History Table -->
-            <div x-show="activeTab === 'credit'" class="overflow-x-auto w-full p-6" x-transition>
-                {{-- <!-- Header -->
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="p-2 bg-blue-100 text-blue-600 rounded-xl">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2-1.343-2-3-2z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 14c-3.866 0-7 1.343-7 3v2h14v-2c0-1.657-3.134-3-7-3z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-bold text-gray-800">Credit History</h2>
-                        <p class="text-gray-500 text-sm">Track your earned and spent credits</p>
-                    </div>
-                </div> --}}
-
-                <!-- Card Table -->
-                <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-                    <table class="w-full text-sm text-left">
-                        <thead class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
-                            <tr>
-                                <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Date</th>
-                                <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Description</th>
-                                <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Type</th>
-                                <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Credits</th>
-                                <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Balance</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                            @forelse ($credits as $credit)
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-600 transition">
-                                    <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap">
-                                        {{ $credit->created_at_formatted }}
-                                    </td>
-                                    <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap">
-                                        {{ $credit->description }}
-                                    </td>
-                                    <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap">
-                                        <span
-                                            class="badge badge-soft {{ $credit->calculation_type_color }}">{{ $credit->calculation_type_name }}</span>
-                                    </td>
-                                    <td
-                                        class="px-5 p-3 {{ $credit->calculation_type == App\Models\CreditTransaction::CALCULATION_TYPE_CREDIT ? 'text-red-500' : 'text-green-500' }} font-semibold flex items-center gap-1 whitespace-nowrap">
-                                        <svg class="w-8 h-" width="26" height="18" viewBox="0 0 26 18"
-                                            fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <rect x="1" y="1" width="24" height="16" rx="3"
-                                                fill="none" stroke="currentColor" stroke-width="2" />
-                                            <circle cx="8" cy="9" r="3" fill="none"
-                                                stroke="currentColor" stroke-width="2" />
-                                        </svg>
-                                        {{ ($credit->calculation_type == App\Models\CreditTransaction::CALCULATION_TYPE_CREDIT ? '-' : '+') . number_format($credit->credits) }}
-                                    </td>
-                                    <td class="px-5 p-3 text-gray-800 dark:text-white font-medium whitespace-nowrap">
-                                        {{ number_format($credit->balance) }} credits
-                                    </td>
-                                </tr>
-                            @empty
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <div x-show="activeTab === 'credit'" class="w-full p-6" x-transition>
+    <!-- Card Table -->
+    <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+        <!-- Mobile horizontal scroll wrapper -->
+        <div class="overflow-x-auto">
+            <table class="min-w-max w-full text-sm text-left">
+                <thead class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+                    <tr>
+                        <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Date</th>
+                        <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Description</th>
+                        <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Type</th>
+                        <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Credits</th>
+                        <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Balance</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                    @forelse ($credits as $credit)
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-600 transition">
+                            <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap">
+                                {{ $credit->created_at_formatted }}
+                            </td>
+                            <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap">
+                                {{ $credit->description }}
+                            </td>
+                            <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap">
+                                <span
+                                    class="badge badge-soft {{ $credit->calculation_type_color }}">{{ $credit->calculation_type_name }}</span>
+                            </td>
+                            <td
+                                class="px-5 p-3 {{ $credit->calculation_type == App\Models\CreditTransaction::CALCULATION_TYPE_CREDIT ? 'text-red-500' : 'text-green-500' }} font-semibold flex items-center gap-1 whitespace-nowrap">
+                                <svg class="w-8 h-5" width="26" height="18" viewBox="0 0 26 18"
+                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="1" y="1" width="24" height="16" rx="3"
+                                        fill="none" stroke="currentColor" stroke-width="2" />
+                                    <circle cx="8" cy="9" r="3" fill="none"
+                                        stroke="currentColor" stroke-width="2" />
+                                </svg>
+                                {{ ($credit->calculation_type == App\Models\CreditTransaction::CALCULATION_TYPE_CREDIT ? '-' : '+') . number_format($credit->credits) }}
+                            </td>
+                            <td class="px-5 p-3 text-gray-800 dark:text-white font-medium whitespace-nowrap">
+                                {{ number_format($credit->balance) }} credits
+                            </td>
+                        </tr>
+                    @empty
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
             <!--invoices Section -->
-            <div x-show="activeTab === 'invoices'" class="overflow-x-auto w-full p-6" x-transition>
-                <!-- Header -->
-                {{-- <div class="flex items-center gap-3 mb-6">
-                    <div class="p-2 bg-blue-100 text-blue-600 rounded-xl">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2-1.343-2-3-2z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 14c-3.866 0-7 1.343-7 3v2h14v-2c0-1.657-3.134-3-7-3z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-bold text-gray-800">Invoices</h2>
-                        <p class="text-gray-500 text-sm"></p>
-                    </div>
-                </div> --}}
+           <div x-show="activeTab === 'invoices'" class="w-full p-6" x-transition>
+    <!-- Card Table -->
+    <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+        <!-- Mobile horizontal scroll wrapper -->
+        <div class="overflow-x-auto">
+            <table class="min-w-max w-full text-sm text-left">
+                <thead class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+                    <tr>
+                        <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Date</th>
+                        <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Description</th>
+                        <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Source</th>
+                        <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Total</th>
+                        <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Invoice</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                    @forelse ($payments as $payment)
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-600 transition">
+                            <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap">
+                                {{ $payment->created_at_formatted }}
+                            </td>
+                            <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap">
+                                {{ $payment->notes ?? 'N/A' }}
+                            </td>
+                            <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap">
+                                @if ($payment->order->type == App\Models\Order::TYPE_PLAN)
+                                    {{ $payment->order->source->name ?? 'N/A' }} Plan Subscription
+                                @else
+                                    <div class="flex items-center gap-1">
+                                        <span class="flex items-center gap-1 font-semibold text-orange-500">
+                                            <svg class="w-8 h-5" width="26" height="18" viewBox="0 0 26 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <rect x="1" y="1" width="24" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2" />
+                                                <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor" stroke-width="2" />
+                                            </svg>
+                                            {{ number_format($payment->order->credits) }}
+                                        </span>
+                                        <span>Credits</span>
+                                    </div>
+                                @endif
+                            </td>
+                            <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap font-semibold">
+                                {{ ($payment->amount ?? '0.00') . ' ' . $payment->currency }}
+                            </td>
+                            <td class="px-5 p-3 text-gray-800 font-medium whitespace-nowrap">
+                                <a href="javascript:void(0);" wire:click="downloadInvoice({{ $payment->id }})" class="text-blue-600 hover:underline">
+                                    <x-lucide-file-down class="w-6 h-6" />
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap" colspan="5">
+                                No transactions found.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-                <!-- Card Table -->
-                <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-                    <table class="w-full text-sm text-left">
-                        <thead class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
-                            <tr>
-                                <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Date</th>
-                                <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Description</th>
-                                <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Source</th>
-                                <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Total</th>
-                                <th class="px-5 p-3 font-medium text-gray-600 dark:text-white">Invoice</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                            @forelse ($payments as $payment)
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-600 transition">
-                                    <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap">
-                                        {{ $payment->created_at_formatted }}
-                                    </td>
-                                    <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap">
-                                        {{ $payment->notes ?? 'N/A' }}
-                                    </td>
-                                    <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap">
-                                        @if ($payment->order->type == App\Models\Order::TYPE_PLAN)
-                                            {{ $payment->order->source->name ?? 'N/A' }} Plan Subscription
-                                        @else
-                                            <div class="flex items-center gap-1">
-                                                <span class="flex items-center gap-1 font-semibold text-orange-500">
-                                                    <svg class="w-8 h-" width="26" height="18"
-                                                        viewBox="0 0 26 18" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <rect x="1" y="1" width="24" height="16"
-                                                            rx="3" fill="none" stroke="currentColor"
-                                                            stroke-width="2" />
-                                                        <circle cx="8" cy="9" r="3" fill="none"
-                                                            stroke="currentColor" stroke-width="2" />
-                                                    </svg>
-                                                    {{ number_format($payment->order->credits) }}
-                                                </span>
-                                                <span>Credits</span>
-                                            </div>
-                                        @endif
-                                    </td>
-                                    <td
-                                        class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap font-semibold">
-                                        {{ ($payment->amount ?? '0.00') . ' ' . $payment->currency }}
-                                    </td>
-                                    <td class="px-5 p-3 text-gray-800 font-medium whitespace-nowrap">
-                                        <a href="javascript:void(0);"
-                                            wire:click="downloadInvoice({{ $payment->id }})"
-                                            class="text-blue-600 hover:underline">
-                                            <x-lucide-file-down class="w-6 h-6" />
-                                        </a>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr class="">
-                                    <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap">
-                                        No transactions found.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
     </div>
     <div x-data="{ confirmModal: @entangle('confirmModal').live }" x-show="confirmModal" x-cloak x-transition:enter="transition ease-out duration-300"
