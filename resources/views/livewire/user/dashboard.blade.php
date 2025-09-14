@@ -430,7 +430,7 @@
                                     <span class="text-orange-500 font-bold">#1</span>
                                     <span class="text-sm">Why Do I?</span>
                                 </div>
-                                <span class="text-slate-400">{{ $request?->track?->embeddable_by }}</span>
+                                {{-- <span class="text-slate-400">{{ $request?->track?->embeddable_by }}</span> --}}
                             </div>
                             <div class="flex justify-between text-sm">
                                 <div class="flex items-center space-x-2">
