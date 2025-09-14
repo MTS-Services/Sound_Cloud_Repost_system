@@ -60,6 +60,7 @@ class Dashboard extends Component
 
     public $track = null;
     public $credit = 50;
+    public $localCredit = 50;
     public $commentable = true;
     public $likeable = true;
     public $proFeatureEnabled = false;

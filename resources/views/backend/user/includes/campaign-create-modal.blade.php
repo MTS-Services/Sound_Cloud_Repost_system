@@ -39,7 +39,7 @@
             momentumEnabled: @js(proUser()),
             showGenreRadios: false,
             showRepostPerDay: false,
-            showOptions: {{ $maxFollower > 100 ? 'true' : 'false' }},
+            showOptions: false,
             localCredit: @entangle('credit').defer,
             localMaxFollower: @entangle('maxFollower').defer,
             localMaxRepostsPerDay: @entangle('maxRepostsPerDay').defer
