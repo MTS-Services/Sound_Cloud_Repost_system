@@ -79,32 +79,31 @@
                 </svg>
             </button>
 
-            @if (!empty($selectedTrackTypes))
-                <div x-show="openFilterByTrack" x-transition:enter="transition ease-out duration-100"
-                    x-transition:enter-start="transform opacity-0 scale-95"
-                    x-transition:enter-end="transform opacity-100 scale-100"
-                    x-transition:leave="transition ease-in duration-75"
-                    x-transition:leave-start="transform opacity-100 scale-100"
-                    x-transition:leave-end="transform opacity-0 scale-95"
-                    class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
-                    <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
-                        <div class="py-1">
-                            <button wire:click="filterByTrackType('all')"
-                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
-                                All
-                            </button>
-                            <button wire:click="filterByTrackType('{{ Track::class }}')"
-                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
-                                Tacks
-                            </button>
-                            <button wire:click="filterByTrackType('{{ Playlist::class }}')"
-                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
-                                Playlists
-                            </button>
-                        </div>
+            <div x-show="openFilterByTrack" x-transition:enter="transition ease-out duration-100"
+                x-transition:enter-start="transform opacity-0 scale-95"
+                x-transition:enter-end="transform opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-75"
+                x-transition:leave-start="transform opacity-100 scale-100"
+                x-transition:leave-end="transform opacity-0 scale-95"
+                class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
+                <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
+                    <div class="py-1">
+                        <button wire:click="filterByTrackType('all')"
+                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                            All
+                        </button>
+                        <button wire:click="filterByTrackType('{{ App\Models\Track::class }}')"
+                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                            Tacks
+                        </button>
+                        <button wire:click="filterByTrackType('{{ App\Models\Playlist::class }}')"
+                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                            Playlists
+                        </button>
                     </div>
                 </div>
-            @endif
+            </div>
+
         </div>
 
         <!-- Filter by genre dropdown -->
