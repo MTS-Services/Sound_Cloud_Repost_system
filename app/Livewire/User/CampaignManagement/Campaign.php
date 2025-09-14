@@ -815,18 +815,6 @@ class Campaign extends Component
         $this->showRepostConfirmationModal = true;
     }
 
-    public function getRemainingTime($campaignId): int
-    {
-        $playTime = $this->getPlayTime($campaignId);
-        return max(0, 5 - $playTime);
-    }
-    public function confirmRepost($campaignId)
-    {
-        Log::info('confirmRepost');
-        $this->showRepostConfirmationModal = true;
-        $this->campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
-        Log::info($this->campaign);
-    }
 
     public function repost($campaignId)
     {
