@@ -1,4 +1,4 @@
-<div wire:poll.1s="updatePlayingTimes">
+<div>
     <x-slot name="page_slug">campaign-feed</x-slot>
 
     <!-- Header Section -->
@@ -211,18 +211,18 @@
             </div>
         </div>
     </div>
-    @forelse ($campaigns as $campaign_)
-        <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm">
-            <div class="flex flex-col lg:flex-row" wire:key="featured-{{ $campaign_->id }}">
+        @forelse ($campaigns as $campaign_)
+        <div x-data="audioPlayer('{{ $campaign_->id }}')" x-init="init()"
+            class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm">
+            <div class="flex flex-col lg:flex-row" wire:key="campaign-{{ $campaign_->id }}">
                 <!-- Left Column - Track Info -->
                 <div
                     class="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
                     <div class="flex flex-col md:flex-row gap-4">
                         <!-- Track Details -->
                         <div class="flex-1 flex flex-col justify-between relative">
-                            <!-- Your Original SoundCloud Player -->
-                            <div id="soundcloud-player-{{ $campaign_->id }}" data-campaign-id="{{ $campaign_->id }}"
-                                wire:ignore>
+                            <!-- SoundCloud Player -->
+                            <div :id="'soundcloud-player-' + campaignId" wire:ignore>
                                 <x-sound-cloud.sound-cloud-player :track="$campaign_->music" :height="166"
                                     :visual="false" />
                             </div>
@@ -310,14 +310,13 @@
                                 </div>
                                 <div class="relative">
                                     <!-- Repost Button -->
-                                    <button wire:click="confirmRepost('{{ $campaign_->id }}')"
-                                        @class([
-                                            'flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-colors',
-                                            'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white dark:text-gray-300 cursor-pointer' => $this->canRepost(
-                                                $campaign_->id),
-                                            'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
-                                                $campaign_->id),
-                                        ]) @disabled(!$this->canRepost($campaign_->id))>
+                                    <button wire:click="confirmRepost('{{ $campaign_->id }}')" :disabled="!canRepost"
+                                        :class="{
+                                            'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white dark:text-gray-300 cursor-pointer': canRepost,
+                                            'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed': !canRepost
+                                        }"
+                                        class="flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-colors">
+
                                         <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <rect x="1" y="1" width="24" height="16" rx="3"
@@ -325,9 +324,9 @@
                                             <circle cx="8" cy="9" r="3" fill="none"
                                                 stroke="currentColor" stroke-width="2" />
                                         </svg>
-                                        <span>{{ repostPrice() }}
-                                            Repost</span>
+                                        <span>{{ repostPrice() }} Repost</span>
                                     </button>
+
                                     @if (in_array($campaign_->id, $this->repostedCampaigns))
                                         <div
                                             class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
@@ -613,6 +612,49 @@
     {{-- Repost Confirmation Modal --}}
     @include('backend.user.includes.repost-confirmation-modal')
 </div>
+@push('scripts')
+    <script>
+        function audioPlayer(campaignId) {
+            return {
+                campaignId: campaignId,
+                player: null,
+                canRepost: false,
+                playCountUpdated: false,
+                init() {
+                    this.$nextTick(() => {
+                        const iframeElement = document.querySelector(`#soundcloud-player-${this.campaignId} iframe`);
+                        if (iframeElement) {
+                            this.player = SC.Widget(iframeElement);
+
+                            this.player.bind(SC.Widget.Events.PLAY_PROGRESS, (e) => {
+                                if (e.currentPosition >= 5000 && !this.canRepost) {
+                                    this.canRepost = true;
+                                    if (!this.playCountUpdated) {
+                                        this.$wire.incrementPlayCount(this.campaignId);
+                                        this.playCountUpdated = true;
+                                    }
+                                }
+                            });
+
+                            this.player.bind(SC.Widget.Events.PLAY, () => {
+                                // When a player starts, pause all others
+                                document.querySelectorAll('[x-data^="audioPlayer"]').forEach(node => {
+                                    const otherPlayer = node.__x.$data;
+                                    if (otherPlayer.campaignId !== this.campaignId && otherPlayer.player) {
+                                        otherPlayer.player.pause();
+                                    }
+                                });
+                            });
+
+                        } else {
+                            console.error('SoundCloud player iframe not found for campaign:', this.campaignId);
+                        }
+                    });
+                },
+            }
+        }
+    </script>
+@endpush
 <script>
     function initializeSoundCloudWidgets() {
         if (typeof SC === 'undefined') {
