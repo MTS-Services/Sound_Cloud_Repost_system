@@ -108,7 +108,7 @@
                     @enderror
 
                     <div class="relative">
-                        <input type="range" x-model="localCredit" min="50" step="10"
+                        <input type="range" x-init="localCredit = @entangle('credit').defer || 50" x-model="localCredit" min="50" step="10"
                             max="{{ userCredits() }}"
                             class="w-full h-2 border-0 cursor-pointer outline-none transition-all duration-200">
                     </div>
@@ -151,7 +151,7 @@
                     <div x-show="showOptions" x-transition class="p-3">
                         <div class="flex justify-between items-center gap-4">
                             <div class="w-full relative">
-                                <input type="range" x-model="localMaxFollower" min="100"
+                                <input type="range" x-init="localMaxFollower = @entangle('maxFollower').defer || 100" x-model="localMaxFollower" min="100"
                                     :max="localCredit" class="w-full h-2 cursor-pointer">
                             </div>
                             <div
