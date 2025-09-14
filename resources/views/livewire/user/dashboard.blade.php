@@ -411,15 +411,10 @@
                         </div>
                     </div>
                     <div class="mt-4  p-2">
-                        <div class="flex items-center justify-between mb-4">
-                            <a class="text-orange-500 hover:text-orange-400 text-sm"
-                                href="{{ route('user.charts') }}">View
-                                charts</a>
-                        </div>
                         <div class="space-y-2">
                             <div class="flex justify-between text-sm">
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-orange-500 font-bold">{{ $loop->iteration }}</span>
+                                    <span class="text-orange-500 font-bold">#{{ $loop->iteration }}</span>
                                     <span class="text-sm max-w-[200px] truncate">{{ $request?->track?->title }}</span>
                                 </div>
                                 <span class="text-slate-400">{{ $request?->track?->genre }}</span>
