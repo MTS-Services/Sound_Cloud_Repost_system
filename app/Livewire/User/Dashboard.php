@@ -73,6 +73,10 @@ class Dashboard extends Component
     public $allTracks;
     public $allPlaylists;
 
+    public $playlistLimit = 4;
+    public $playlistTrackLimit = 4;
+    public $trackLimit = 4;
+
     public $musicId = null;
     public $musicType = null;
     public $title = null;
