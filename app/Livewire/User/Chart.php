@@ -30,6 +30,7 @@ class Chart extends Component
 
     public $tracksPerPage = 20;
     public $activeTab = 'listView';
+    public $playing = null;
     // public $topTracks = [];
 
     public function boot(AnalyticsService $analyticsService, CampaignService $campaignService, SoundCloudService $soundCloudService)

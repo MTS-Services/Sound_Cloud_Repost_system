@@ -118,7 +118,7 @@
                         </div>
                     </div>
                 </div>
-                <div x-data="{ activeTab: @entangle('activeTab').live }">
+                <div x-data="{ activeTab: @entangle('activeTab').live, playing: @entangle('playing').live  }">
                     <div class="flex items-center justify-between mb-6">
                         <div class="flex items-center gap-4">
                             <h2 class="text-xl font-bold text-gray-800 dark:text-white">{{ $topTracks->count() }}
@@ -267,9 +267,14 @@
 
                                     <div class="col-span-1 flex items-center justify-center">
                                         <div class="flex items-center gap-1">
-                                            <button
-                                                class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white"><svg
-                                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            <button @click="playing('{{ $track['track_details']->urn }}')"
+                                                class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white play-btn"
+                                                :class="{ 'bg-orange-500 text-white': playing === '{{ $track['track_details']->urn }}' }"
+                                                data-title="{{ $track['track_details']->title }}"
+                                                data-artist="{{ $track['track_details']->author_username }}"
+                                                data-cover="{{ $track['track_details']->artwork_url }}"
+                                                data-src="{{ $track['track_details']->stream_url }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                                     class="lucide lucide-play w-3 h-3 ml-0.5">
@@ -762,8 +767,13 @@
                                         </div>
                                     </div>
                                     <div class="flex items-center justify-center gap-2">
-                                        <button
-                                            class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white hover:shadow-lg border border-gray-600">
+                                        <button @click="playing('{{ $track['track_details']->urn }}')"
+                                            class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white hover:shadow-lg border border-gray-600 play-btn"
+                                            :class="{ 'bg-orange-500 text-white': playing === '{{ $track['track_details']->urn }}' }"
+                                            data-title="{{ $track['track_details']->title }}"
+                                            data-artist="{{ $track['track_details']->author_username }}"
+                                            data-cover="{{ $track['track_details']->artwork_url }}"
+                                            data-src="{{ $track['track_details']->stream_url }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -930,8 +940,9 @@
                                                         plays</span>
                                                 </div>
                                                 <div class="flex items-center gap-2">
-                                                    <button
+                                                    <button @click="playing('{{ $track['track_details']->urn }}')"
                                                         class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600 play-btn"
+                                                        :class="{ 'bg-orange-500 text-white': playing === '{{ $track['track_details']->urn }}' }"
                                                         title="Play"
                                                         data-title="{{ $track['track_details']->title }}"
                                                         data-artist="{{ $track['track_details']->author_username }}"
@@ -1025,1308 +1036,99 @@
         </div>
     </div>
 
-        {{-- <div class="max-w-6xl mx-auto px-4 py-6">
-            <!-- Header -->
-            <div class="text-center mb-8">
-                <h1
-                    class="text-4xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-orange-400 to-cyan-400 bg-clip-text text-transparent">
-                    My Playlist
-                </h1>
-                <p class="text-gray-300 text-lg">Discover your favorite music</p>
-            </div>
+    <style>
+        .player-hidden {
+            /* transform: translateY(100%); */
+            opacity: 0;
+            display: none;
+        }
 
-            <!-- Playlist Container -->
-            <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-2xl border border-white/20">
-                <!-- Playlist Header -->
-                <div class="flex justify-between items-center mb-6 pb-4 border-b border-white/20">
+        .player-visible {
+            /* transform: translateY(0); */
+            opacity: 1;
+            display: block;
+        }
+
+        .progress-bar {
+            transition: width 0.1s ease-out;
+        }
+
+        .volume-slider {
+            background: linear-gradient(to right, #f97316 0%, #f97316 var(--volume), #374151 var(--volume), #374151 100%);
+        }
+    </style>
+
+    {{-- <!-- Sample track list (simplified version of your template) -->
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-8 text-center">Weekly Top Tracks</h1>
+
+        <div class="space-y-4">
+            <!-- Track 1 -->
+            <div
+                class="bg-gray-800 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors">
+                <div class="flex items-center gap-4">
+                    <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=center"
+                        alt="Midnight Dreams" class="w-16 h-16 rounded-lg object-cover">
                     <div>
-                        <h2 class="text-2xl font-semibold text-white">Recently Played</h2>
-                        <p class="text-gray-400 text-sm mt-1">Your music collection</p>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-gray-300 text-sm" id="songCount">12 songs</span>
-                        <div class="text-xs text-gray-500 mt-1">Total: 42:18</div>
+                        <h3 class="font-bold">Midnight Dreams</h3>
+                        <p class="text-gray-400">Luna Waves</p>
                     </div>
                 </div>
-
-                <!-- Song List -->
-                <div class="space-y-3" id="songList">
-                    <!-- Song items will be populated by JavaScript -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer Player -->
-        <div class="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-xl border-t border-gray-700/50 p-4 hidden shadow-2xl"
-            id="footerPlayer">
-            <div class="max-w-7xl mx-auto">
-                <!-- Mobile Layout -->
-                <div class="block md:hidden space-y-3">
-                    <!-- Current Song Info -->
-                    <div class="flex items-center space-x-3">
-                        <div
-                            class="w-12 h-12 bg-gradient-to-br from-orange-500 to-cyan-500 rounded-lg flex items-center justify-center text-xl animate-pulse-slow">
-                            <x-lucide-music class="w-8 h-8 text-white" />
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="font-semibold text-white truncate" id="currentTitle">Feel Alone</div>
-                            <div class="text-sm text-gray-400 truncate" id="currentArtist">Dilip Wannigamage</div>
-                        </div>
-                        <button
-                            class="w-10 h-10 bg-gradient-to-r from-orange-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold hover:scale-110 transition-transform duration-200 shadow-lg"
-                            id="mainPlayBtn">
-                            ▶
-                        </button>
-                    </div>
-
-                    <!-- Progress Bar -->
-                    <div class="flex items-center space-x-2 text-xs text-gray-400">
-                        <span id="currentTime">0:36</span>
-                        <div class="flex-1 h-1 bg-gray-600 rounded-full cursor-pointer group" id="progressBar">
-                            <div class="h-full bg-gradient-to-r from-orange-500 to-cyan-500 rounded-full relative transition-all duration-300 group-hover:h-1.5"
-                                style="width: 100%" id="progressFill">
-                                <div
-                                    class="absolute right-0 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
-                                </div>
-                            </div>
-                        </div>
-                        <span id="totalTime">2:19</span>
-                    </div>
-
-                    <!-- Controls -->
-                    <div class="flex items-center justify-center space-x-6">
-                        <button
-                            class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors duration-200"
-                            id="prevBtn">
-                            ⏮
-                        </button>
-                        <button
-                            class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors duration-200"
-                            id="nextBtn">
-                            ⏭
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Desktop Layout -->
-                <div class="hidden md:flex items-center space-x-6">
-                    <!-- Current Song Info -->
-                    <div class="flex items-center space-x-4 min-w-0 w-80">
-                        <div
-                            class="w-14 h-14 bg-gradient-to-br from-orange-500 to-cyan-500 rounded-xl flex items-center justify-center text-2xl animate-pulse-slow shadow-lg">
-                            <x-lucide-music class="w-8 h-8 text-white" />
-                        </div>
-                        <div class="min-w-0 flex-1">
-                            <div class="font-semibold text-white truncate text-lg" id="currentTitleDesktop">Feel Alone
-                            </div>
-                            <div class="text-sm text-gray-400 truncate" id="currentArtistDesktop">Dilip Wannigamage
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Main Controls -->
-                    <div class="flex-1 max-w-2xl mx-8">
-                        <div class="flex items-center justify-center space-x-6 mb-2">
-                            <button
-                                class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white transition-all duration-200 hover:scale-110"
-                                id="prevBtnDesktop">
-                                ⏮
-                            </button>
-                            <button
-                                class="w-12 h-12 bg-gradient-to-r from-orange-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold hover:scale-110 transition-transform duration-200 shadow-lg hover:shadow-orange-500/25"
-                                id="mainPlayBtnDesktop">
-                                ▶
-                            </button>
-                            <button
-                                class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white transition-all duration-200 hover:scale-110"
-                                id="nextBtnDesktop">
-                                ⏭
-                            </button>
-                        </div>
-
-                        <!-- Progress Bar -->
-                        <div class="flex items-center space-x-3 text-sm text-gray-400">
-                            <span class="min-w-10 text-right" id="currentTimeDesktop">0:00</span>
-                            <div class="flex-1 h-1 bg-gray-600 rounded-full cursor-pointer group"
-                                id="progressBarDesktop">
-                                <div class="h-full bg-gradient-to-r from-orange-500 to-cyan-500 rounded-full relative transition-all duration-300 group-hover:h-1.5"
-                                    style="width: 30%" id="progressFillDesktop">
-                                    <div
-                                        class="absolute right-0 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
-                                    </div>
-                                </div>
-                            </div>
-                            <span class="min-w-10" id="totalTimeDesktop">2:19</span>
-                        </div>
-                    </div>
-
-                    <!-- Volume & Additional Controls -->
-                    <div class="flex items-center space-x-4 w-48">
-                        <button
-                            class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors duration-200"
-                            id="volumeBtn">
-                            <x-lucide-volume-2 class="w-6 h-6" />
-                        </button>
-                        <div class="flex-1 h-1 bg-gray-600 rounded-full cursor-pointer group" id="volumeBar">
-                            <div class="h-full bg-gradient-to-r from-orange-500 to-cyan-500 rounded-full transition-all duration-300"
-                                style="width: 70%" id="volumeFill"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <script>
-            class MusicPlayer {
-                constructor() {
-                    this.currentSong = null;
-                    this.isPlaying = false;
-                    this.currentIndex = 0;
-                    this.shuffle = false;
-                    this.repeat = 'none'; // 'none', 'one', 'all'
-                    this.volume = 0.7;
-                    this.currentTime = 0;
-                    this.duration = 0;
-                    this.songs = [{
-                            title: "Feel Alone",
-                            artist: "Dilip Wannigamage",
-                            duration: "2:19",
-                            id: 1
-                        },
-                        {
-                            title: "Midnight Dreams",
-                            artist: "Luna Artist",
-                            duration: "3:45",
-                            id: 2
-                        },
-                        {
-                            title: "Ocean Waves",
-                            artist: "Nature Sounds",
-                            duration: "4:12",
-                            id: 3
-                        },
-                        {
-                            title: "City Lights",
-                            artist: "Urban Beats",
-                            duration: "3:28",
-                            id: 4
-                        },
-                        {
-                            title: "Peaceful Mind",
-                            artist: "Meditation Music",
-                            duration: "5:30",
-                            id: 5
-                        },
-                        {
-                            title: "Summer Vibes",
-                            artist: "Chill Collective",
-                            duration: "3:55",
-                            id: 6
-                        },
-                        {
-                            title: "Electric Pulse",
-                            artist: "Synth Masters",
-                            duration: "4:08",
-                            id: 7
-                        },
-                        {
-                            title: "Acoustic Soul",
-                            artist: "Folk Harmony",
-                            duration: "3:22",
-                            id: 8
-                        },
-                        {
-                            title: "Digital Dreams",
-                            artist: "Cyber Beats",
-                            duration: "4:45",
-                            id: 9
-                        },
-                        {
-                            title: "Jazz Nights",
-                            artist: "Smooth Collective",
-                            duration: "5:12",
-                            id: 10
-                        },
-                        {
-                            title: "Mountain Echo",
-                            artist: "Nature Symphony",
-                            duration: "6:18",
-                            id: 11
-                        },
-                        {
-                            title: "Urban Rhythm",
-                            artist: "Street Sounds",
-                            duration: "3:33",
-                            id: 12
-                        }
-                    ];
-                    this.favorites = new Set();
-                    this.initializePlayer();
-                }
-
-                initializePlayer() {
-                    this.renderSongList();
-                    this.setupEventListeners();
-                    this.startProgressSimulation();
-                }
-
-                renderSongList() {
-                    const songList = document.getElementById('songList');
-                    songList.innerHTML = '';
-
-                    this.songs.forEach((song, index) => {
-                        const songElement = document.createElement('div');
-                        songElement.className = `flex items-center p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all duration-300 cursor-pointer group hover:shadow-lg hover:-translate-y-0.5 ${
-                        this.currentIndex === index && this.currentSong ? 'bg-gradient-to-r from-orange-500/20 to-cyan-500/20 border border-orange-500/30' : ''
-                    }`;
-
-                        songElement.innerHTML = `
-                        <button class="w-12 h-12 bg-gradient-to-br from-orange-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold hover:scale-110 transition-all duration-200 mr-4 shadow-lg group-hover:shadow-orange-500/25 play-btn" data-index="${index}">
-                            ${this.currentIndex === index && this.isPlaying ? '⏸' : '▶'}
-                        </button>
-                        <div class="flex-1 min-w-0">
-                            <div class="font-semibold text-white mb-1 truncate text-lg">${song.title}</div>
-                            <div class="text-gray-400 text-sm truncate">${song.artist}</div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-orange-400 transition-colors duration-200 favorite-btn" data-id="${song.id}">
-                                ${this.favorites.has(song.id) ? '❤️' : '🤍'}
-                            </button>
-                            <button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors duration-200 more-btn">
-                                ⋮
-                            </button>
-                            <span class="text-gray-400 text-sm min-w-12 text-right">${song.duration}</span>
-                        </div>
-                    `;
-
-                        songList.appendChild(songElement);
-                    });
-
-                    this.updateSongCount();
-                }
-
-                setupEventListeners() {
-                    // Play buttons in song list
-                    document.addEventListener('click', (e) => {
-                        if (e.target.classList.contains('play-btn')) {
-                            const index = parseInt(e.target.dataset.index);
-                            this.playSong(index);
-                        }
-
-                        if (e.target.classList.contains('favorite-btn')) {
-                            const songId = parseInt(e.target.dataset.id);
-                            this.toggleFavorite(songId);
-                        }
-                    });
-
-                    // Mobile controls
-                    document.getElementById('mainPlayBtn')?.addEventListener('click', () => this.togglePlay());
-                    document.getElementById('prevBtn')?.addEventListener('click', () => this.previousSong());
-                    document.getElementById('nextBtn')?.addEventListener('click', () => this.nextSong());
-                    document.getElementById('shuffleBtn')?.addEventListener('click', () => this.toggleShuffle());
-                    document.getElementById('repeatBtn')?.addEventListener('click', () => this.toggleRepeat());
-
-                    // Desktop controls
-                    document.getElementById('mainPlayBtnDesktop')?.addEventListener('click', () => this.togglePlay());
-                    document.getElementById('prevBtnDesktop')?.addEventListener('click', () => this.previousSong());
-                    document.getElementById('nextBtnDesktop')?.addEventListener('click', () => this.nextSong());
-                    document.getElementById('shuffleBtnDesktop')?.addEventListener('click', () => this.toggleShuffle());
-                    document.getElementById('repeatBtnDesktop')?.addEventListener('click', () => this.toggleRepeat());
-                    document.getElementById('favoriteBtn')?.addEventListener('click', () => this.toggleCurrentFavorite());
-                    document.getElementById('volumeBtn')?.addEventListener('click', () => this.toggleMute());
-
-                    // Progress bars
-                    document.getElementById('progressBar')?.addEventListener('click', (e) => this.seekTo(e, 'mobile'));
-                    document.getElementById('progressBarDesktop')?.addEventListener('click', (e) => this.seekTo(e,
-                        'desktop'));
-
-                    // Volume bar
-                    document.getElementById('volumeBar')?.addEventListener('click', (e) => this.setVolume(e));
-                }
-
-                playSong(index) {
-                    this.currentIndex = index;
-                    this.currentSong = this.songs[index];
-                    this.isPlaying = true;
-                    this.currentTime = 0;
-                    this.duration = this.parseTime(this.currentSong.duration);
-
-                    this.showFooterPlayer();
-                    this.updateFooterPlayer();
-                    this.renderSongList(); // Re-render to update active states
-                    this.updatePlayButtons();
-                }
-
-                togglePlay() {
-                    if (!this.currentSong) {
-                        this.playSong(0);
-                        return;
-                    }
-
-                    this.isPlaying = !this.isPlaying;
-                    this.updatePlayButtons();
-                    this.renderSongList();
-                }
-
-                previousSong() {
-                    let newIndex;
-                    if (this.shuffle) {
-                        newIndex = Math.floor(Math.random() * this.songs.length);
-                    } else {
-                        newIndex = this.currentIndex > 0 ? this.currentIndex - 1 : this.songs.length - 1;
-                    }
-                    this.playSong(newIndex);
-                }
-
-                nextSong() {
-                    let newIndex;
-                    if (this.shuffle) {
-                        newIndex = Math.floor(Math.random() * this.songs.length);
-                    } else {
-                        newIndex = this.currentIndex < this.songs.length - 1 ? this.currentIndex + 1 : 0;
-                    }
-                    this.playSong(newIndex);
-                }
-
-                toggleShuffle() {
-                    this.shuffle = !this.shuffle;
-                    this.updateShuffleButtons();
-                }
-
-                toggleRepeat() {
-                    const modes = ['none', 'all', 'one'];
-                    const currentIndex = modes.indexOf(this.repeat);
-                    this.repeat = modes[(currentIndex + 1) % modes.length];
-                    this.updateRepeatButtons();
-                }
-
-                toggleFavorite(songId) {
-                    if (this.favorites.has(songId)) {
-                        this.favorites.delete(songId);
-                    } else {
-                        this.favorites.add(songId);
-                    }
-                    this.renderSongList();
-                    this.updateFooterPlayer();
-                }
-
-                toggleCurrentFavorite() {
-                    if (this.currentSong) {
-                        this.toggleFavorite(this.currentSong.id);
-                    }
-                }
-
-                toggleMute() {
-                    this.volume = this.volume > 0 ? 0 : 0.7;
-                    this.updateVolumeDisplay();
-                }
-
-                showFooterPlayer() {
-                    const footerPlayer = document.getElementById('footerPlayer');
-                    footerPlayer.classList.remove('hidden');
-                    footerPlayer.classList.add('flex');
-                }
-
-                updateFooterPlayer() {
-                    if (!this.currentSong) return;
-
-                    // Update mobile
-                    document.getElementById('currentTitle').textContent = this.currentSong.title;
-                    document.getElementById('currentArtist').textContent = this.currentSong.artist;
-                    document.getElementById('totalTime').textContent = this.currentSong.duration;
-
-                    // Update desktop
-                    document.getElementById('currentTitleDesktop').textContent = this.currentSong.title;
-                    document.getElementById('currentArtistDesktop').textContent = this.currentSong.artist;
-                    document.getElementById('totalTimeDesktop').textContent = this.currentSong.duration;
-
-                    // Update favorite button
-                    const favoriteBtn = document.getElementById('favoriteBtn');
-                    if (favoriteBtn) {
-                        favoriteBtn.textContent = this.favorites.has(this.currentSong.id) ? '❤️' : '🤍';
-                    }
-                }
-
-                updatePlayButtons() {
-                    const playText = this.isPlaying ? '⏸' : '▶';
-                    document.getElementById('mainPlayBtn').textContent = playText;
-                    document.getElementById('mainPlayBtnDesktop').textContent = playText;
-                }
-
-                updateShuffleButtons() {
-                    const shuffleClass = this.shuffle ? 'text-orange-400' : 'text-gray-400';
-                    document.getElementById('shuffleBtn').className = document.getElementById('shuffleBtn').className
-                        .replace(/text-\w+-400/, shuffleClass);
-                    document.getElementById('shuffleBtnDesktop').className = document.getElementById('shuffleBtnDesktop')
-                        .className.replace(/text-\w+-400/, shuffleClass);
-                }
-
-                seekTo(e, type) {
-                    const progressBar = type === 'mobile' ? document.getElementById('progressBar') : document
-                        .getElementById('progressBarDesktop');
-                    const rect = progressBar.getBoundingClientRect();
-                    const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-
-                    if (this.currentSong) {
-                        this.currentTime = Math.floor(this.duration * percent);
-                        this.updateProgressDisplay();
-                    }
-                }
-
-                setVolume(e) {
-                    const volumeBar = document.getElementById('volumeBar');
-                    const rect = volumeBar.getBoundingClientRect();
-                    const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-                    this.volume = percent;
-                    this.updateVolumeDisplay();
-                }
-
-                updateProgressDisplay() {
-                    const percent = this.duration > 0 ? (this.currentTime / this.duration) * 100 : 0;
-                    const timeString = this.formatTime(this.currentTime);
-
-                    // Update mobile
-                    document.getElementById('progressFill').style.width = percent + '%';
-                    document.getElementById('currentTime').textContent = timeString;
-
-                    // Update desktop
-                    document.getElementById('progressFillDesktop').style.width = percent + '%';
-                    document.getElementById('currentTimeDesktop').textContent = timeString;
-                }
-
-                updateVolumeDisplay() {
-                    const volumePercent = this.volume * 100;
-                    document.getElementById('volumeFill').style.width = volumePercent + '%';
-
-                    const volumeIcon = this.volume === 0 ? '🔇' : this.volume < 0.5 ? '🔉' : '🔊';
-                    document.getElementById('volumeBtn').textContent = volumeIcon;
-                }
-
-                updateSongCount() {
-                    document.getElementById('songCount').textContent = `${this.songs.length} songs`;
-                }
-
-                startProgressSimulation() {
-                    setInterval(() => {
-                        if (this.isPlaying && this.currentSong) {
-                            this.currentTime += 1;
-                            if (this.currentTime >= this.duration) {
-                                this.currentTime = 0;
-                                if (this.repeat === 'one') {
-                                    // Restart current song
-                                } else if (this.repeat === 'all' || this.currentIndex < this.songs.length - 1) {
-                                    this.nextSong();
-                                } else {
-                                    this.isPlaying = false;
-                                    this.updatePlayButtons();
-                                }
-                            }
-                            this.updateProgressDisplay();
-                        }
-                    }, 1000);
-                }
-
-                parseTime(timeString) {
-                    const [minutes, seconds] = timeString.split(':').map(Number);
-                    return minutes * 60 + seconds;
-                }
-
-                formatTime(seconds) {
-                    const mins = Math.floor(seconds / 60);
-                    const secs = seconds % 60;
-                    return `${mins}:${secs.toString().padStart(2, '0')}`;
-                }
-            }
-
-            // Initialize the music player when the page loads
-            document.addEventListener('DOMContentLoaded', () => {
-                new MusicPlayer();
-            });
-        </script> --}}
-
-
-
-
-        {{-- <div class="max-w-6xl mx-auto px-4 py-6">
-            <!-- Header -->
-            <div class="text-center mb-8">
-                <h1
-                    class="text-4xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-orange-400 to-cyan-400 bg-clip-text text-transparent">
-                    My Playlist
-                </h1>
-                <p class="text-gray-300 text-lg">Discover your favorite music</p>
+                <button class="play-btn bg-orange-500 hover:bg-orange-600 p-3 rounded-full transition-colors"
+                    data-title="Midnight Dreams" data-artist="Luna Waves"
+                    data-cover="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=center"
+                    data-src="https://api-v2.soundcloud.com/media/soundcloud:tracks:1252113682/0622321d-02e6-4b77-86aa-a54b4fc4d82d/stream/hls">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                </button>
             </div>
 
-            <!-- Playlist -->
-            <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-2xl border border-white/20">
-                <div class="flex justify-between items-center mb-6 pb-4 border-b border-white/20">
+            <!-- Track 2 -->
+            <div
+                class="bg-gray-800 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors">
+                <div class="flex items-center gap-4">
+                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop&crop=center"
+                        alt="Urban Pulse" class="w-16 h-16 rounded-lg object-cover">
                     <div>
-                        <h2 class="text-2xl font-semibold text-white">Recently Played</h2>
-                        <p class="text-gray-400 text-sm mt-1">Your music collection</p>
+                        <h3 class="font-bold">Urban Pulse</h3>
+                        <p class="text-gray-400">Metro Vibes</p>
                     </div>
-                    <span class="text-gray-300 text-sm">{{ count($songs) }} songs</span>
                 </div>
-
-                <!-- Song List -->
-                <div class="space-y-3">
-                    @foreach ($songs as $index => $song)
-                        <div
-                            class="flex items-center p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all cursor-pointer {{ $currentIndex === $index ? 'border border-orange-400 bg-gradient-to-r from-orange-500/20 to-cyan-500/20' : '' }}">
-                            <button wire:click="playSong({{ $index }})"
-                                class="w-12 h-12 bg-gradient-to-br from-orange-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold hover:scale-110 transition mr-4">
-                                {{ $currentIndex === $index && $isPlaying ? '⏸' : '▶' }}
-                            </button>
-                            <div class="flex-1 min-w-0">
-                                <div class="font-semibold text-white mb-1 truncate">{{ $song['title'] }}</div>
-                                <div class="text-gray-400 text-sm truncate">{{ $song['artist'] }}</div>
-                            </div>
-                            <span class="text-gray-400 text-sm">{{ $song['duration'] }}</span>
-                        </div>
-                    @endforeach
-                </div>
+                <button class="play-btn bg-orange-500 hover:bg-orange-600 p-3 rounded-full transition-colors"
+                    data-title="Urban Pulse" data-artist="Metro Vibes"
+                    data-cover="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop&crop=center"
+                    data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                </button>
             </div>
 
-            <!-- Footer Player -->
-            @if ($currentIndex !== null)
-                <div
-                    class="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-xl border-t border-gray-700/50 p-4 shadow-2xl">
-                    <div class="max-w-7xl mx-auto flex items-center justify-between">
-                        <div>
-                            <div class="text-white font-semibold">{{ $songs[$currentIndex]['title'] }}</div>
-                            <div class="text-gray-400 text-sm">{{ $songs[$currentIndex]['artist'] }}</div>
-                        </div>
-                        <div class="flex items-center space-x-6">
-                            <button wire:click="prevSong" class="text-gray-400 hover:text-white">⏮</button>
-                            <button wire:click="togglePlay" class="text-white text-lg">
-                                {{ $isPlaying ? '⏸' : '▶' }}
-                            </button>
-                            <button wire:click="nextSong" class="text-gray-400 hover:text-white">⏭</button>
-                        </div>
+            <!-- Track 3 -->
+            <div
+                class="bg-gray-800 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors">
+                <div class="flex items-center gap-4">
+                    <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop&crop=center"
+                        alt="Cosmic Flow" class="w-16 h-16 rounded-lg object-cover">
+                    <div>
+                        <h3 class="font-bold">Cosmic Flow</h3>
+                        <p class="text-gray-400">Stellar Sound</p>
                     </div>
                 </div>
-                <div class="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-xl border-t border-gray-700/50 p-4  shadow-2xl"
-                    id="footerPlayer">
-                    <div class="max-w-7xl mx-auto">
-                        <!-- Mobile Layout -->
-                        <div class="block md:hidden space-y-3">
-                            <!-- Current Song Info -->
-                            <div class="flex items-center space-x-3">
-                                <div
-                                    class="w-12 h-12 bg-gradient-to-br from-orange-500 to-cyan-500 rounded-lg flex items-center justify-center text-xl animate-pulse-slow">
-                                    <x-lucide-music class="w-8 h-8 text-white" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="font-semibold text-white truncate" id="currentTitle">{{ $songs[$currentIndex]['title'] }}</div>
-                                    <div class="text-sm text-gray-400 truncate" id="currentArtist">{{ $songs[$currentIndex]['artist'] }}</div>
-                                </div>
-                                <button
-                                    class="w-10 h-10 bg-gradient-to-r from-orange-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold hover:scale-110 transition-transform duration-200 shadow-lg"
-                                    id="mainPlayBtn">
-                                    {{ $isPlaying ? '⏸' : '▶' }}
-                                </button>
-                            </div>
-
-                            <!-- Progress Bar -->
-                            <div class="flex items-center space-x-2 text-xs text-gray-400">
-                                <span id="currentTime">0:36</span>
-                                <div class="flex-1 h-1 bg-gray-600 rounded-full cursor-pointer group"
-                                    id="progressBar">
-                                    <div class="h-full bg-gradient-to-r from-orange-500 to-cyan-500 rounded-full relative transition-all duration-300 group-hover:h-1.5"
-                                        style="width: 100%" id="progressFill">
-                                        <div
-                                            class="absolute right-0 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
-                                        </div>
-                                    </div>
-                                </div>
-                                <span id="totalTime">2:19</span>
-                            </div>
-
-                            <!-- Controls -->
-                            <div class="flex items-center justify-center space-x-6">
-                                <button wire:click="prevSong"
-                                    class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors duration-200"
-                                    id="prevBtn">
-                                    ⏮
-                                </button>
-                                <button wire:click="nextSong"
-                                    class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors duration-200"
-                                    id="nextBtn">
-                                    ⏭
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Desktop Layout -->
-                        <div class="hidden md:flex items-center space-x-6">
-                            <!-- Current Song Info -->
-                            <div class="flex items-center space-x-4 min-w-0 w-80">
-                                <div
-                                    class="w-14 h-14 bg-gradient-to-br from-orange-500 to-cyan-500 rounded-xl flex items-center justify-center text-2xl animate-pulse-slow shadow-lg">
-                                    <x-lucide-music class="w-8 h-8 text-white" />
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <div class="font-semibold text-white truncate text-lg" id="currentTitleDesktop">
-                                        {{ $songs[$currentIndex]['title'] }}
-                                    </div>
-                                    <div class="text-sm text-gray-400 truncate" id="currentArtistDesktop">Dilip
-                                        {{ $songs[$currentIndex]['artist'] }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Main Controls -->
-                            <div class="flex-1 max-w-2xl mx-8">
-                                <div class="flex items-center justify-center space-x-6 mb-2">
-                                    <button wire:click="prevSong"
-                                        class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white transition-all duration-200 hover:scale-110"
-                                        id="prevBtnDesktop">
-                                        ⏮
-                                    </button>
-                                    <button
-                                        class="w-12 h-12 bg-gradient-to-r from-orange-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold hover:scale-110 transition-transform duration-200 shadow-lg hover:shadow-orange-500/25"
-                                        id="mainPlayBtnDesktop">
-                                        {{ $isPlaying ? '⏸' : '▶' }}
-                                    </button>
-                                    <button wire:click="nextSong"
-                                        class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white transition-all duration-200 hover:scale-110"
-                                        id="nextBtnDesktop">
-                                        ⏭
-                                    </button>
-                                </div>
-
-                                <!-- Progress Bar -->
-                                <div class="flex items-center space-x-3 text-sm text-gray-400">
-                                    <span class="min-w-10 text-right" id="currentTimeDesktop">0:00</span>
-                                    <div class="flex-1 h-1 bg-gray-600 rounded-full cursor-pointer group"
-                                        id="progressBarDesktop">
-                                        <div class="h-full bg-gradient-to-r from-orange-500 to-cyan-500 rounded-full relative transition-all duration-300 group-hover:h-1.5"
-                                            style="width: 30%" id="progressFillDesktop">
-                                            <div
-                                                class="absolute right-0 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <span class="min-w-10" id="totalTimeDesktop">2:19</span>
-                                </div>
-                            </div>
-
-                            <!-- Volume & Additional Controls -->
-                            <div class="flex items-center space-x-4 w-48">
-                                <button
-                                    class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors duration-200"
-                                    id="volumeBtn">
-                                    <x-lucide-volume-2 class="w-6 h-6" />
-                                </button>
-                                <div class="flex-1 h-1 bg-gray-600 rounded-full cursor-pointer group" id="volumeBar">
-                                    <div class="h-full bg-gradient-to-r from-orange-500 to-cyan-500 rounded-full transition-all duration-300"
-                                        style="width: 70%" id="volumeFill"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif
-        </div> --}}
-
-
-
-        {{-- <div class="bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 text-white min-h-screen pb-20">
-
-            <div class="max-w-6xl mx-auto px-4 py-6">
-                <!-- Header -->
-                <div class="text-center mb-8">
-                    <h1
-                        class="text-4xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-orange-400 to-cyan-400 bg-clip-text text-transparent">
-                        My Playlist
-                    </h1>
-                    <p class="text-gray-300 text-lg">Discover your favorite music</p>
-                </div>
-
-                <!-- Playlist Container -->
-                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-2xl border border-white/20">
-                    <!-- Playlist Header -->
-                    <div class="flex justify-between items-center mb-6 pb-4 border-b border-white/20">
-                        <div>
-                            <h2 class="text-2xl font-semibold text-white">Recently Played</h2>
-                            <p class="text-gray-400 text-sm mt-1">Your music collection</p>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-gray-300 text-sm">{{ count($songs) }} songs</span>
-                            <div class="text-xs text-gray-500 mt-1">Total: 24:32</div>
-                        </div>
-                    </div>
-
-                    <!-- Song List -->
-                    <div class="space-y-3">
-                        @foreach ($songs as $index => $song)
-                            <div
-                                class="flex items-center p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all duration-300 cursor-pointer group hover:shadow-lg hover:-translate-y-0.5 
-                    {{ $currentIndex === $index && $currentSong ? 'bg-gradient-to-r from-orange-500/20 to-cyan-500/20 border border-orange-500/30' : '' }}">
-
-                                <button wire:click="playSong({{ $index }})"
-                                    class="w-12 h-12 bg-gradient-to-br from-orange-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold hover:scale-110 transition-all duration-200 mr-4 shadow-lg group-hover:shadow-orange-500/25">
-                                    {{ $currentIndex === $index && $isPlaying ? '⏸' : '▶' }}
-                                </button>
-
-                                <div class="flex-1 min-w-0" wire:click="playSong({{ $index }})">
-                                    <div class="font-semibold text-white mb-1 truncate text-lg">{{ $song['title'] }}
-                                    </div>
-                                    <div class="text-gray-400 text-sm truncate">{{ $song['artist'] }}</div>
-                                </div>
-
-                                <div class="flex items-center space-x-3">
-                                    <span
-                                        class="text-gray-400 text-sm min-w-12 text-right">{{ $song['duration'] }}</span>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
+                <button class="play-btn bg-orange-500 hover:bg-orange-600 p-3 rounded-full transition-colors"
+                    data-title="Cosmic Flow" data-artist="Stellar Sound"
+                    data-cover="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop&crop=center"
+                    data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                </button>
             </div>
-
-            <!-- Footer Player -->
-            @if ($currentSong)
-                <div
-                    class="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-xl border-t border-gray-700/50 p-4 shadow-2xl">
-                    <div class="max-w-7xl mx-auto">
-                        <!-- Mobile Layout -->
-                        <div class="block md:hidden space-y-3">
-                            <!-- Current Song Info -->
-                            <div class="flex items-center space-x-3">
-                                <div
-                                    class="w-12 h-12 bg-gradient-to-br from-orange-500 to-cyan-500 rounded-lg flex items-center justify-center text-xl animate-pulse">
-                                    🎵
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="font-semibold text-white truncate">{{ $currentSong['title'] }}</div>
-                                    <div class="text-sm text-gray-400 truncate">{{ $currentSong['artist'] }}</div>
-                                </div>
-                                <button wire:click="togglePlay"
-                                    class="w-10 h-10 bg-gradient-to-r from-orange-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold hover:scale-110 transition-transform duration-200 shadow-lg">
-                                    {{ $isPlaying ? '⏸' : '▶' }}
-                                </button>
-                            </div>
-
-                            <!-- Progress Bar -->
-                            <div class="flex items-center space-x-2 text-xs text-gray-400">
-                                <span>{{ $this->formatTime($currentTime) }}</span>
-                                <div class="flex-1 h-1 bg-gray-600 rounded-full cursor-pointer group"
-                                    x-data="{ seeking: false }"
-                                    @click="
-                            let rect = $el.getBoundingClientRect();
-                            let percent = Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100));
-                            $wire.seekTo(percent);
-                         ">
-                                    <div class="h-full bg-gradient-to-r from-orange-500 to-cyan-500 rounded-full relative transition-all duration-300 group-hover:h-1.5"
-                                        style="width: {{ $progressPercent }}%">
-                                        <div
-                                            class="absolute right-0 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
-                                        </div>
-                                    </div>
-                                </div>
-                                <span>{{ $currentSong['duration'] }}</span>
-                            </div>
-
-                            <!-- Controls -->
-                            <div class="flex items-center justify-center space-x-6">
-                                <button wire:click="previousSong"
-                                    class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors duration-200">
-                                    ⏮
-                                </button>
-                                <button wire:click="nextSong"
-                                    class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors duration-200">
-                                    ⏭
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Desktop Layout -->
-                        <div class="hidden md:flex items-center space-x-6">
-                            <!-- Current Song Info -->
-                            <div class="flex items-center space-x-4 min-w-0 w-80">
-                                <div
-                                    class="w-14 h-14 bg-gradient-to-br from-orange-500 to-cyan-500 rounded-xl flex items-center justify-center text-2xl animate-pulse shadow-lg">
-                                    🎵
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <div class="font-semibold text-white truncate text-lg">{{ $currentSong['title'] }}
-                                    </div>
-                                    <div class="text-sm text-gray-400 truncate">{{ $currentSong['artist'] }}</div>
-                                </div>
-                            </div>
-
-                            <!-- Main Controls -->
-                            <div class="flex-1 max-w-2xl mx-8">
-                                <div class="flex items-center justify-center space-x-6 mb-2">
-                                    <button wire:click="previousSong"
-                                        class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white transition-all duration-200 hover:scale-110">
-                                        ⏮
-                                    </button>
-                                    <button wire:click="togglePlay"
-                                        class="w-12 h-12 bg-gradient-to-r from-orange-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold hover:scale-110 transition-transform duration-200 shadow-lg hover:shadow-orange-500/25">
-                                        {{ $isPlaying ? '⏸' : '▶' }}
-                                    </button>
-                                    <button wire:click="nextSong"
-                                        class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white transition-all duration-200 hover:scale-110">
-                                        ⏭
-                                    </button>
-                                </div>
-
-                                <!-- Progress Bar -->
-                                <div class="flex items-center space-x-3 text-sm text-gray-400">
-                                    <span class="min-w-10 text-right">{{ $this->formatTime($currentTime) }}</span>
-                                    <div class="flex-1 h-1 bg-gray-600 rounded-full cursor-pointer group" x-data
-                                        @click="
-                                let rect = $el.getBoundingClientRect();
-                                let percent = Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100));
-                                $wire.seekTo(percent);
-                             ">
-                                        <div class="h-full bg-gradient-to-r from-orange-500 to-cyan-500 rounded-full relative transition-all duration-300 group-hover:h-1.5"
-                                            style="width: {{ $progressPercent }}%">
-                                            <div
-                                                class="absolute right-0 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <span class="min-w-10">{{ $currentSong['duration'] }}</span>
-                                </div>
-                            </div>
-
-                            <!-- Volume Control -->
-                            <div class="flex items-center space-x-4 w-48">
-                                <button
-                                    class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors duration-200">
-                                    🔊
-                                </button>
-                                <div class="flex-1 h-1 bg-gray-600 rounded-full cursor-pointer group" x-data
-                                    @click="
-                            let rect = $el.getBoundingClientRect();
-                            let percent = Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100));
-                            $wire.setVolume(percent);
-                         ">
-                                    <div class="h-full bg-gradient-to-r from-orange-500 to-cyan-500 rounded-full transition-all duration-300"
-                                        style="width: {{ $volume }}%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif
-
-            <!-- Auto-update progress (only when playing) -->
-            @if ($isPlaying)
-                <div x-data x-init="setInterval(() => {
-                    $wire.updateProgress();
-                }, 1000)"></div>
-            @endif
         </div>
+    </div> --}}
 
-        @push('scripts')
-            <script>
-                // Listen for Livewire events
-                window.addEventListener('song-changed', event => {
-                    console.log('Song changed:', event.detail[0].song);
-                });
-
-                window.addEventListener('play-toggled', event => {
-                    console.log('Play toggled:', event.detail[0].isPlaying);
-                });
-
-                window.addEventListener('seek-to', event => {
-                    console.log('Seek to:', event.detail[0]);
-                });
-
-                window.addEventListener('volume-changed', event => {
-                    console.log('Volume changed:', event.detail[0].volume);
-                });
-            </script>
-        @endpush --}}
-
-
-
-
-
-        {{-- <div class=" text-white min-h-screen pb-20">
-
-            <div class="max-w-6xl mx-auto px-4 py-6">
-                <!-- Header -->
-                <div class="text-center mb-8">
-                    <h1
-                        class="text-4xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-orange-400 to-cyan-400 bg-clip-text text-transparent">
-                        My Playlist
-                    </h1>
-                    <p class="text-gray-300 text-lg">Discover your favorite music</p>
-                </div>
-
-                <!-- Playlist Container -->
-                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-2xl border border-white/20">
-                    <!-- Playlist Header -->
-                    <div class="flex justify-between items-center mb-6 pb-4 border-b border-white/20">
-                        <div>
-                            <h2 class="text-2xl font-semibold text-white">Recently Played</h2>
-                            <p class="text-gray-400 text-sm mt-1">Your music collection</p>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-gray-300 text-sm">{{ count($songs) }} songs</span>
-                            <div class="text-xs text-gray-500 mt-1">Total: 24:32</div>
-                        </div>
-                    </div>
-
-                    <!-- Song List -->
-                    <div class="space-y-3">
-                        @foreach ($songs as $index => $song)
-                            <div
-                                class="flex items-center p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all duration-300 cursor-pointer group hover:shadow-lg hover:-translate-y-0.5 
-                    {{ $currentIndex === $index && $currentSong ? 'bg-gradient-to-r from-orange-500/20 to-cyan-500/20 border border-orange-500/30' : '' }}">
-
-                                <button wire:click="playSong({{ $index }})"
-                                    class="w-12 h-12 bg-gradient-to-br from-orange-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold hover:scale-110 transition-all duration-200 mr-4 shadow-lg group-hover:shadow-orange-500/25">
-                                    {{ $currentIndex === $index && $isPlaying ? '⏸' : '▶' }}
-                                </button>
-
-                                <div class="flex-1 min-w-0" wire:click="playSong({{ $index }})">
-                                    <div class="font-semibold text-white mb-1 truncate text-lg">{{ $song['title'] }}
-                                    </div>
-                                    <div class="text-gray-400 text-sm truncate">{{ $song['artist'] }}</div>
-                                </div>
-
-                                <div class="flex items-center space-x-3">
-                                    <span
-                                        class="text-gray-400 text-sm min-w-12 text-right">{{ $song['duration'] }}</span>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer Player -->
-            @if ($currentSong)
-                <div
-                    class="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-xl border-t border-gray-700/50 p-4 shadow-2xl">
-                    <div class="max-w-7xl mx-auto">
-                        <!-- Mobile Layout -->
-                        <div class="block md:hidden space-y-3">
-                            <!-- Current Song Info -->
-                            <div class="flex items-center space-x-3">
-                                <div
-                                    class="w-12 h-12 bg-gradient-to-br from-orange-500 to-cyan-500 rounded-lg flex items-center justify-center text-xl animate-pulse">
-                                    🎵
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="font-semibold text-white truncate">{{ $currentSong['title'] }}</div>
-                                    <div class="text-sm text-gray-400 truncate">{{ $currentSong['artist'] }}</div>
-                                </div>
-                                <button wire:click="togglePlay"
-                                    class="w-10 h-10 bg-gradient-to-r from-orange-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold hover:scale-110 transition-transform duration-200 shadow-lg">
-                                    {{ $isPlaying ? '⏸' : '▶' }}
-                                </button>
-                            </div>
-
-                            <!-- Progress Bar -->
-                            <div class="flex items-center space-x-2 text-xs text-gray-400">
-                                <span>{{ $this->formatTime($currentTime) }}</span>
-                                <div class="flex-1 h-1 bg-gray-600 rounded-full cursor-pointer group"
-                                    x-data="{ seeking: false }"
-                                    @click="
-                            let rect = $el.getBoundingClientRect();
-                            let percent = Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100));
-                            $wire.seekTo(percent);
-                         ">
-                                    <div class="h-full bg-gradient-to-r from-orange-500 to-cyan-500 rounded-full relative transition-all duration-300 group-hover:h-1.5"
-                                        style="width: {{ $progressPercent }}%">
-                                        <div
-                                            class="absolute right-0 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
-                                        </div>
-                                    </div>
-                                </div>
-                                <span>{{ $currentSong['duration'] }}</span>
-                            </div>
-
-                            <!-- Controls -->
-                            <div class="flex items-center justify-center space-x-6">
-                                <button wire:click="previousSong"
-                                    class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors duration-200">
-                                    ⏮
-                                </button>
-                                <button wire:click="nextSong"
-                                    class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors duration-200">
-                                    ⏭
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Desktop Layout -->
-                        <div class="hidden md:flex items-center space-x-6">
-                            <!-- Current Song Info -->
-                            <div class="flex items-center space-x-4 min-w-0 w-80">
-                                <div
-                                    class="w-14 h-14 bg-gradient-to-br from-orange-500 to-cyan-500 rounded-xl flex items-center justify-center text-2xl animate-pulse shadow-lg">
-                                    🎵
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <div class="font-semibold text-white truncate text-lg">{{ $currentSong['title'] }}
-                                    </div>
-                                    <div class="text-sm text-gray-400 truncate">{{ $currentSong['artist'] }}</div>
-                                </div>
-                            </div>
-
-                            <!-- Main Controls -->
-                            <div class="flex-1 max-w-2xl mx-8">
-                                <div class="flex items-center justify-center space-x-6 mb-2">
-                                    <button wire:click="previousSong"
-                                        class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white transition-all duration-200 hover:scale-110">
-                                        ⏮
-                                    </button>
-                                    <button wire:click="togglePlay"
-                                        class="w-12 h-12 bg-gradient-to-r from-orange-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold hover:scale-110 transition-transform duration-200 shadow-lg hover:shadow-orange-500/25">
-                                        {{ $isPlaying ? '⏸' : '▶' }}
-                                    </button>
-                                    <button wire:click="nextSong"
-                                        class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white transition-all duration-200 hover:scale-110">
-                                        ⏭
-                                    </button>
-                                </div>
-
-                                <!-- Progress Bar -->
-                                <div class="flex items-center space-x-3 text-sm text-gray-400">
-                                    <span class="min-w-10 text-right">{{ $this->formatTime($currentTime) }}</span>
-                                    <div class="flex-1 h-1 bg-gray-600 rounded-full cursor-pointer group" x-data
-                                        @click="
-                                let rect = $el.getBoundingClientRect();
-                                let percent = Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100));
-                                $wire.seekTo(percent);
-                             ">
-                                        <div class="h-full bg-gradient-to-r from-orange-500 to-cyan-500 rounded-full relative transition-all duration-300 group-hover:h-1.5"
-                                            style="width: {{ $progressPercent }}%">
-                                            <div
-                                                class="absolute right-0 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <span class="min-w-10">{{ $currentSong['duration'] }}</span>
-                                </div>
-                            </div>
-
-                            <!-- Volume Control -->
-                            <div class="flex items-center space-x-4 w-48">
-                                <button
-                                    class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors duration-200">
-                                    🔊
-                                </button>
-                                <div class="flex-1 h-1 bg-gray-600 rounded-full cursor-pointer group" x-data
-                                    @click="
-                            let rect = $el.getBoundingClientRect();
-                            let percent = Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100));
-                            $wire.setVolume(percent);
-                         ">
-                                    <div class="h-full bg-gradient-to-r from-orange-500 to-cyan-500 rounded-full transition-all duration-300"
-                                        style="width: {{ $volume }}%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif
-
-            <!-- Auto-update progress (only when playing) -->
-            @if ($isPlaying)
-                <div x-data x-init="setInterval(() => {
-                    $wire.updateProgress();
-                }, 1000)"></div>
-            @endif
-        </div>
-
-        <!-- Hidden Audio Element -->
-        <audio id="audioPlayer" preload="auto">
-            Your browser does not support the audio element.
-        </audio>
-
-        @push('scripts')
-            <script>
-                // Audio Player Management
-                const audioPlayer = document.getElementById('audioPlayer');
-                let currentSongUrl = '';
-
-                // Demo music URLs (free samples)
-                const demoSongs = [
-                    'https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3',
-                    'https://www.soundjay.com/buttons/sounds/button-09.mp3',
-                    'https://www.soundjay.com/buttons/sounds/button-10.mp3',
-                    'https://www.soundjay.com/buttons/sounds/button-3.mp3',
-                    'https://www.soundjay.com/buttons/sounds/button-4.mp3',
-                    'https://www.soundjay.com/buttons/sounds/button-5.mp3'
-                ];
-
-                // Set volume on load
-                audioPlayer.volume = 0.7;
-
-                // Audio event listeners
-                audioPlayer.addEventListener('loadedmetadata', function() {
-                    console.log('Audio loaded, duration:', audioPlayer.duration);
-                });
-
-                audioPlayer.addEventListener('timeupdate', function() {
-                    if (audioPlayer.duration) {
-                        const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-                        const currentTime = Math.floor(audioPlayer.currentTime);
-
-                        // Update Livewire component
-                        @this.set('progressPercent', percent);
-                        @this.set('currentTime', currentTime);
-                    }
-                });
-
-                audioPlayer.addEventListener('ended', function() {
-                    @this.call('nextSong');
-                });
-
-                // Listen for Livewire events
-                window.addEventListener('song-changed', event => {
-                    const song = event.detail[0].song;
-                    const isPlaying = event.detail[0].isPlaying;
-
-                    // Use demo URL or provided URL
-                    const songIndex = @this.currentIndex;
-                    currentSongUrl = demoSongs[songIndex] || song.url || demoSongs[0];
-
-                    audioPlayer.src = currentSongUrl;
-                    audioPlayer.load();
-
-                    if (isPlaying) {
-                        audioPlayer.play().catch(e => {
-                            console.log('Autoplay prevented:', e);
-                        });
-                    }
-                });
-
-                window.addEventListener('play-toggled', event => {
-                    const isPlaying = event.detail[0].isPlaying;
-
-                    if (isPlaying) {
-                        audioPlayer.play().catch(e => {
-                            console.log('Play failed:', e);
-                            // Reset playing state if play fails
-                            @this.set('isPlaying', false);
-                        });
-                    } else {
-                        audioPlayer.pause();
-                    }
-                });
-
-                window.addEventListener('seek-to', event => {
-                    const percent = event.detail[0].percent;
-                    const currentTime = event.detail[0].currentTime;
-
-                    if (audioPlayer.duration) {
-                        audioPlayer.currentTime = (percent / 100) * audioPlayer.duration;
-                    }
-                });
-
-                window.addEventListener('volume-changed', event => {
-                    const volume = event.detail[0].volume;
-                    audioPlayer.volume = volume / 100;
-                });
-
-                // Initialize demo message
-                console.log('🎵 Demo Music Player Ready!');
-                console.log('Available demo tracks:', demoSongs.length);
-            </script>
-        @endpush --}}
-
-
-        <style>
-            .player-hidden {
-                /* transform: translateY(100%); */
-                opacity: 0;
-                display: none;
-            }
-
-            .player-visible {
-                /* transform: translateY(0); */
-                opacity: 1;
-                display: block;
-            }
-
-            .progress-bar {
-                transition: width 0.1s ease-out;
-            }
-
-            .volume-slider {
-                background: linear-gradient(to right, #f97316 0%, #f97316 var(--volume), #374151 var(--volume), #374151 100%);
-            }
-        </style>
-        {{-- <!-- Sample track list (simplified version of your template) -->
-        <div class="container mx-auto px-4 py-8">
-            <h1 class="text-3xl font-bold mb-8 text-center">Weekly Top Tracks</h1>
-
-            <div class="space-y-4">
-                <!-- Track 1 -->
-                <div
-                    class="bg-gray-800 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors">
-                    <div class="flex items-center gap-4">
-                        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=center"
-                            alt="Midnight Dreams" class="w-16 h-16 rounded-lg object-cover">
-                        <div>
-                            <h3 class="font-bold">Midnight Dreams</h3>
-                            <p class="text-gray-400">Luna Waves</p>
-                        </div>
-                    </div>
-                    <button class="play-btn bg-orange-500 hover:bg-orange-600 p-3 rounded-full transition-colors"
-                        data-title="Midnight Dreams" data-artist="Luna Waves"
-                        data-cover="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=center"
-                        data-src="https://api-v2.soundcloud.com/media/soundcloud:tracks:1252113682/0622321d-02e6-4b77-86aa-a54b4fc4d82d/stream/hls">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z" />
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- Track 2 -->
-                <div
-                    class="bg-gray-800 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors">
-                    <div class="flex items-center gap-4">
-                        <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop&crop=center"
-                            alt="Urban Pulse" class="w-16 h-16 rounded-lg object-cover">
-                        <div>
-                            <h3 class="font-bold">Urban Pulse</h3>
-                            <p class="text-gray-400">Metro Vibes</p>
-                        </div>
-                    </div>
-                    <button class="play-btn bg-orange-500 hover:bg-orange-600 p-3 rounded-full transition-colors"
-                        data-title="Urban Pulse" data-artist="Metro Vibes"
-                        data-cover="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop&crop=center"
-                        data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z" />
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- Track 3 -->
-                <div
-                    class="bg-gray-800 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors">
-                    <div class="flex items-center gap-4">
-                        <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop&crop=center"
-                            alt="Cosmic Flow" class="w-16 h-16 rounded-lg object-cover">
-                        <div>
-                            <h3 class="font-bold">Cosmic Flow</h3>
-                            <p class="text-gray-400">Stellar Sound</p>
-                        </div>
-                    </div>
-                    <button class="play-btn bg-orange-500 hover:bg-orange-600 p-3 rounded-full transition-colors"
-                        data-title="Cosmic Flow" data-artist="Stellar Sound"
-                        data-cover="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop&crop=center"
-                        data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div> --}}
-
-        <!-- Bottom Music Player -->
+    <!-- Bottom Music Player -->
 
     </div>
     <div id="bottomPlayer"
@@ -2399,7 +1201,7 @@
                             d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
                     </svg>
                     <input type="range" id="volumeSlider" min="0" max="100" value="50"
-                        class="w-24 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer volume-slider">
+                        class="w-full h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer volume-slider">
                 </div>
                 <button id="closeBtn" class="text-gray-400 hover:text-white transition-colors ml-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2411,7 +1213,7 @@
         </div>
     </div>
 
-    <audio id="audioPlayer" preload="metadata" class="bg-orange-500"></audio>
+    <audio id="audioPlayer" preload="metadata"></audio>
 
     <script>
         class MusicPlayer {
