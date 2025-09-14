@@ -153,12 +153,12 @@
                         <div class="flex justify-between items-center gap-4">
                             <div class="w-full relative">
                                 <input type="range" x-init="localMaxFollower = @entangle('maxFollower').defer || 100" x-model="localMaxFollower"
-                                    min="100" :max="localCredit" class="w-full h-2 cursor-pointer">
+                                    min="100" :max="localCredit * 100" class="w-full h-2 cursor-pointer">
                             </div>
                             <div
                                 class="min-w-[80px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
                                 <span class="text-sm font-medium text-gray-900 dark:text-white"
-                                    x-text="localMaxFollower"></span>
+                                    x-text="localMaxFollower * 100"></span>
                             </div>
                         </div>
                         @error('maxFollower')
