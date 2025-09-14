@@ -70,6 +70,8 @@ class Dashboard extends Component
     public $maxRepostsPerDay = 0;
     public $targetGenre = 'anyGenre';
     public $user = null;
+    public $allTracks;
+    public $allPlaylists;
 
     public $musicId = null;
     public $musicType = null;
@@ -359,11 +361,6 @@ class Dashboard extends Component
             'editCostPerRepost',
             'editOriginalBudget',
             'showCancelWarningModal',
-            // 'campaignToDeleteId',
-            // 'refundAmount',
-            // 'showBudgetWarning',
-            // 'budgetWarningMessage',
-            // 'canSubmit'
         ]);
 
         if ($this->myCampaignService->thisMonthCampaignsCount() >= (int) userFeatures()[Feature::KEY_SIMULTANEOUS_CAMPAIGNS]) {
@@ -459,6 +456,58 @@ class Dashboard extends Component
     {
         $this->proFeatureEnabled = $isChecked ? false : true;
         $this->proFeatureValue = $isChecked ? 0 : 1;
+    }
+
+    public function searchSoundcloud()
+    {
+        if (empty($this->searchQuery)) {
+            if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
+                $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()->get();
+                $this->tracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
+            } else {
+                if ($this->activeTab == 'tracks') {
+                    $this->allTracks = Track::where('user_urn', user()->urn)->get();
+                    $this->tracks = $this->allTracks->take($this->trackLimit);
+                }
+                if ($this->activeTab == 'playlists') {
+                    $this->allPlaylists = Playlist::where('user_urn', user()->urn)->get();
+                    $this->playlists = $this->allPlaylists->take($this->playlistLimit);
+                }
+            }
+            return;
+        }
+
+        if (preg_match('/^https?:\/\/(www\.)?soundcloud\.com\//', $this->searchQuery)) {
+            $this->resolveSoundcloudUrl();
+        } else {
+            if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
+                $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
+                    ->where(function ($query) {
+                        $query->where('permalink_url', 'like', '%' . $this->searchQuery . '%')
+                            ->orWhere('title', 'like', '%' . $this->searchQuery . '%');
+                    })
+                    ->get();
+                $this->tracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
+            } else {
+                if ($this->activeTab === 'tracks') {
+                    $this->allTracks = Track::where('user_urn', user()->urn)
+                        ->where(function ($query) {
+                            $query->where('permalink_url', 'like', '%' . $this->searchQuery . '%')
+                                ->orWhere('title', 'like', '%' . $this->searchQuery . '%');
+                        })
+                        ->get();
+                    $this->tracks = $this->allTracks->take($this->trackLimit);
+                } elseif ($this->activeTab === 'playlists') {
+                    $this->allPlaylists = Playlist::where('user_urn', user()->urn)
+                        ->where(function ($query) {
+                            $query->where('permalink_url', 'like', '%' . $this->searchQuery . '%')
+                                ->orWhere('title', 'like', '%' . $this->searchQuery . '%');
+                        })
+                        ->get();
+                    $this->playlists = $this->allPlaylists->take($this->playlistLimit);
+                }
+            }
+        }
     }
 
     public function createCampaign()
