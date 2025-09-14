@@ -11,10 +11,13 @@
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
+
 :root {
     --primary: #1CA577;
     --secondary: theme(colors.bg-light-primary);
+
 }
+
 
 @layer base {
     * {
@@ -53,6 +56,7 @@
         background: transparent;
     }
 }
+
 
 @theme {
     --breakpoint-xs: 480px;
@@ -184,12 +188,12 @@
 
     /* =================================== End of Colors =================================== */
 
+
     /* Shadow */
     --shadow-sm: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
     --shadow-md: rgba(99, 99, 99, 0.2) 0px 0px 10px 0px;
     --shadow-lg: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 
-    /* animations */
     --animate-starFade: starFade 0.6s ease-out forwards, rise-top-left 0.6s ease-out;
 
     @keyframes starFade {
@@ -232,26 +236,9 @@
         }
     }
 
-    /* FIXED: Replaced @animation with custom properties + keyframes */
-    --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    --animate-bounce-gentle: bounce 2s infinite;
-
-    @keyframes pulse {
-        0%, 100% {
-            opacity: 1;
-        }
-        50% {
-            opacity: 0.5;
-        }
-    }
-
-    @keyframes bounce {
-        0%, 100% {
-            transform: translateY(0);
-        }
-        50% {
-            transform: translateY(-5%);
-        }
+    @animation {
+        pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        bounce-gentle: bounce 2s infinite;
     }
 }
 
@@ -271,7 +258,7 @@
     }
 
     .star {
-        @apply fixed w-1.5 h-1.5 rounded-full pointer-events-none z-[9999999999] animate-[var(--animate-starFade)];
+        @apply fixed w-1.5 h-1.5 rounded-full pointer-events-none z-[9999999999] animate-starFade;
         background-image: radial-gradient(circle, rgba(153, 113, 3, 0.404), transparent);
     }
 
@@ -280,6 +267,7 @@
 button {
     @apply cursor-pointer;
 }
+
 
 @layer utilities {
     .bg-gradient-light {
@@ -304,7 +292,6 @@ button {
 
 }
 
-/* input fieldset */
 .form-input,
 .form-textarea,
 .form-select {
