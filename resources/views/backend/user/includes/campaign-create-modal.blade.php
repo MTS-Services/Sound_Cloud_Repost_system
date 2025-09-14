@@ -40,24 +40,24 @@
             showGenreRadios: false,
             showRepostPerDay: false,
             showOptions: false,
-            localCredit: @entangle('credit').defer,
-            localMaxFollower: @entangle('maxFollower').defer,
+            localCredit: @entangle('credit').defer || 50,
+            localMaxFollower: @entangle('maxFollower').defer || 5000,
             localMaxRepostsPerDay: @entangle('maxRepostsPerDay').defer
-        }" x-init="// budget watcher
+        }" x-init="// Initialize maxFollower according to credit (1 credit = 100 followers)
+        if (!localCredit) localCredit = 50;
+        localMaxFollower = Math.max(100, localCredit * 100);
+        $wire.set('credit', localCredit);
+        $wire.set('maxFollower', localMaxFollower);
+        
+        // Watch credit changes
         $watch('localCredit', value => {
             $wire.set('credit', value);
-            if (localMaxFollower > value) {
-                localMaxFollower = value;
-                $wire.set('maxFollower', value);
-            }
+            localMaxFollower = Math.max(100, value * 100);
+            $wire.set('maxFollower', localMaxFollower);
         });
         
-        // maxFollower watcher
-        $watch('localMaxFollower', value => $wire.set('maxFollower', value));
-        
-        // maxReposts watcher
-        $watch('localMaxRepostsPerDay', value => $wire.set('maxRepostsPerDay', value));" class="flex-grow overflow-y-auto p-6">
-
+        // Watch maxRepostsPerDay changes
+        $watch('localMaxRepostsPerDay', value => $wire.set('maxRepostsPerDay', value));">
             <!-- Selected Track -->
             @if ($track)
                 <div>
@@ -108,8 +108,8 @@
                     @enderror
 
                     <div class="relative">
-                        <input type="range" x-init="localCredit = @entangle('credit').defer || 50" x-model="localCredit" min="50" step="10"
-                            max="{{ userCredits() }}"
+                        <input type="range" x-init="localCredit = @entangle('credit').defer || 50" x-model="localCredit" min="50"
+                            step="10" max="{{ userCredits() }}"
                             class="w-full h-2 border-0 cursor-pointer outline-none transition-all duration-200">
                     </div>
                 </div>
@@ -143,7 +143,7 @@
                 <!-- Max Follower -->
                 <div class="flex flex-col space-y-2">
                     <div class="flex items-start space-x-3">
-                        <input type="checkbox" @change="showOptions = !showOptions" x-model="showOptions"
+                        <input type="checkbox" @change="showOptions = !showOptions"
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                         <span class="text-sm font-medium text-gray-900 dark:text-white">Limit to users with max follower
                             count</span>
@@ -151,8 +151,8 @@
                     <div x-show="showOptions" x-transition class="p-3">
                         <div class="flex justify-between items-center gap-4">
                             <div class="w-full relative">
-                                <input type="range" x-init="localMaxFollower = @entangle('maxFollower').defer || 100" x-model="localMaxFollower" min="100"
-                                    :max="localCredit" class="w-full h-2 cursor-pointer">
+                                <input type="range" x-init="localMaxFollower = @entangle('maxFollower').defer || 100" x-model="localMaxFollower"
+                                    min="100" :max="localCredit" class="w-full h-2 cursor-pointer">
                             </div>
                             <div
                                 class="min-w-[80px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
@@ -236,7 +236,8 @@
                                     </div>
                                     <div
                                         class="min-w-[80px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
-                                        <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $maxRepostsPerDay }}</span>
+                                        <span
+                                            class="text-sm font-medium text-gray-900 dark:text-white">{{ $maxRepostsPerDay }}</span>
                                     </div>
                                     @error('maxRepostsPerDay')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
