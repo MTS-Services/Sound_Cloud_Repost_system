@@ -1,176 +1,152 @@
-<div>
+<div wire:poll.1s="updatePlayingTimes">
     <x-slot name="page_slug">campaign-feed</x-slot>
 
     <!-- Header Section -->
     <div class="w-full mt-6 relative">
         <!-- Header Tabs & Button -->
-        <div x-data="{ activeTab: @entangle('activeMainTab') }"
-            class="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-4 pt-3 border-b border-b-gray-200 dark:border-b-gray-700 gap-2 sm:gap-0">
-            <div>
-                <nav class="-mb-px flex space-x-8">
-                    <!-- Recommended Pro -->
-                    <button
-                        @click="
-                    activeTab = 'recommended_pro';
-                    $wire.setActiveMainTab('recommended_pro');
-                "
-                        :class="activeTab === 'recommended_pro'
-                            ?
-                            'border-orange-500 text-orange-600 border-b-2' :
-                            'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                        class="tab-button py-3 pb-1 px-2 text-md font-semibold transition-all duration-200 border-b-2">
-                        {{ __('Recommended Pro') }}
-                        <span class="text-xs ml-2 text-orange-500">{{ $totalRecommendedPro }}</span>
-                    </button>
-
-                    <!-- Recommended -->
-                    <button
-                        @click="
-                    activeTab = 'recommended';
-                    $wire.setActiveMainTab('recommended');
-                "
-                        :class="activeTab === 'recommended'
-                            ?
-                            'border-orange-500 text-orange-600 border-b-2' :
-                            'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                        class="tab-button py-3 pb-1 px-2 text-md font-semibold transition-all duration-200 border-b-2">
-                        {{ __('Recommended') }}
-                        <span class="text-xs ml-2 text-orange-500">{{ $totalRecommended }}</span>
-                    </button>
-
-                    <!-- All -->
-                    <button
-                        @click="
-                    activeTab = 'all';
-                    $wire.setActiveMainTab('all');
-                "
-                        :class="activeTab === 'all'
-                            ?
-                            'border-orange-500 text-orange-600 border-b-2' :
-                            'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                        class="tab-button py-3 pb-1 px-2 text-md font-semibold transition-all duration-200 border-b-2">
-                        {{ __('All') }}
-                        <span class="text-xs ml-2 text-orange-500">{{ $totalCampaign }}</span>
-                    </button>
-                </nav>
+        <div
+            class="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-4 pt-3 border-b border-b-gray-200 dark:border-b-gray-700  gap-2 sm:gap-0">
+            <div class="">
+                <div class="">
+                    <nav class="-mb-px flex space-x-8">
+                        <button
+                            class="tab-button @if ($activeMainTab === 'recommended_pro') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 pb-1 px-2 text-md font-semibold transition-all duration-200"
+                            wire:click="setActiveMainTab('recommended_pro')">
+                            {{ __('Recommended Pro') }} <span
+                                class="text-xs ml-2 text-orange-500">{{ $totalRecommendedPro }}</span>
+                        </button>
+                        <button
+                            class="tab-button @if ($activeMainTab === 'recommended') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 pb-1 px-2 text-md font-semibold transition-all duration-200"
+                            wire:click="setActiveMainTab('recommended')">
+                            {{ __('Recommended') }}<span
+                                class="text-xs ml-2 text-orange-500">{{ $totalRecommended }}</span>
+                        </button>
+                        <button
+                            class="tab-button @if ($activeMainTab === 'all') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 pb-1 px-2 text-md font-semibold transition-all duration-200"
+                            wire:click="setActiveMainTab('all')">
+                            {{ __('All') }}<span class="text-xs ml-2 text-orange-500">{{ $totalCampaign }}</span>
+                        </button>
+                    </nav>
+                </div>
             </div>
 
-            <!-- Start Campaign Button -->
             <x-gbutton variant="primary" wire:click="toggleCampaignsModal" class="mb-2">
                 <span><x-lucide-plus class="w-5 h-5 mr-1" /></span>
-                {{ __('Start a new campaign') }}
-            </x-gbutton>
+                {{ __('Start a new campaign') }}</x-gbutton>
         </div>
-
-
     </div>
 
-    <div x-data ="{ openFilterByTrack: false, openFilterByGenre: false }"
-        class="flex items-center justify-start gap-4 mt-4 mb-2 relative">
-        <div class="relative">
-            <button @click="openFilterByTrack = !openFilterByTrack , openFilterByGenre = false"
-                wire:click="getAllTrackTypes" @click.outside="openFilterByTrack = false"
-                class="bg-orange-100 !hover:bg-orange-400 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer">
-                Filter by track type /{{ $searchMusicType }}
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-chevron-down-icon lucide-chevron-down">
-                    <path d="m6 9 6 6 6-6" />
-                </svg>
-            </button>
+    <div x-data="{ openFilterByTrack: false, openFilterByGenre: false }"
+        class="flex flex-col sm:flex-row sm:items-center sm:justify-start gap-4 mt-4 mb-2 relative">
 
-            <div x-show="openFilterByTrack" x-transition:enter="transition ease-out duration-100"
-                x-transition:enter-start="transform opacity-0 scale-95"
-                x-transition:enter-end="transform opacity-100 scale-100"
-                x-transition:leave="transition ease-in duration-75"
-                x-transition:leave-start="transform opacity-100 scale-100"
-                x-transition:leave-end="transform opacity-0 scale-95"
-                class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
-                <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
-                    <div class="py-1">
-                        <button wire:click="filterByTrackType('all')"
-                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
-                            All
-                        </button>
-                        <button wire:click="filterByTrackType('{{ App\Models\Track::class }}')"
-                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
-                            Tacks
-                        </button>
-                        <button wire:click="filterByTrackType('{{ App\Models\Playlist::class }}')"
-                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
-                            Playlists
-                        </button>
+        <!-- Filters wrapper (track + genre side by side on mobile also) -->
+        <div class="flex w-full sm:w-auto gap-2">
+            <!-- Filter by track -->
+            <div class="relative flex-1 sm:flex-none">
+                <button @click="openFilterByTrack = !openFilterByTrack , openFilterByGenre = false"
+                    wire:click="getAllTrackTypes" @click.outside="openFilterByTrack = false"
+                    class="bg-orange-100 !hover:bg-orange-400 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer w-full sm:w-auto">
+                    Filter by track type /{{ $searchMusicType }}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                    </svg>
+                </button>
+
+                <div x-show="openFilterByTrack" x-transition:enter="transition ease-out duration-100"
+                    x-transition:enter-start="transform opacity-0 scale-95"
+                    x-transition:enter-end="transform opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-75"
+                    x-transition:leave-start="transform opacity-100 scale-100"
+                    x-transition:leave-end="transform opacity-0 scale-95"
+                    class="absolute mt-2 rounded-md shadow-lg z-100 
+           w-56 right-0 
+           sm:w-56 sm:right-0 
+           w-full left-0 sm:left-auto">
+
+                    <div class="rounded-md shadow-xs bg-white dark:bg-slate-800">
+                        <div class="py-1">
+                            <button wire:click="filterByTrackType('all')"
+                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 
+                       border-b border-gray-100 dark:border-gray-700 
+                       hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                All
+                            </button>
+                            <button wire:click="filterByTrackType('{{ App\Models\Track::class }}')"
+                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 
+                       border-b border-gray-100 dark:border-gray-700 
+                       hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                Tracks
+                            </button>
+                            <button wire:click="filterByTrackType('{{ App\Models\Playlist::class }}')"
+                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 
+                       hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                Playlists
+                            </button>
+                        </div>
                     </div>
                 </div>
+
             </div>
 
-        </div>
+            <!-- Filter by genre -->
+            <div class="relative flex-1 sm:flex-none">
+                <button @click="openFilterByGenre = !openFilterByGenre, openFilterByTrack = false"
+                    class="{{ count($selectedGenres) > 0 ? ' bg-orange-100 ' : ' bg-transparent border border-gray-300 dark:border-gray-600 ' }} hover:bg-orange-300 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors w-full sm:w-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18V5l12-2v13" />
+                        <circle cx="6" cy="18" r="3" />
+                        <circle cx="18" cy="16" r="3" />
+                    </svg>
+                    Filter by genre / {{ count($selectedGenres) }}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                    </svg>
+                </button>
 
-        <!-- Filter by genre dropdown -->
-        <div class="relative">
-            <button @click="openFilterByGenre = !openFilterByGenre, openFilterByTrack = false"
-                class="{{ count($selectedGenres) > 0 ? ' bg-orange-100 ' : ' bg-transparent border border-gray-300 dark:border-gray-600 ' }} hover:bg-orange-300 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-music-icon lucide-music">
-                    <path d="M9 18V5l12-2v13" />
-                    <circle cx="6" cy="18" r="3" />
-                    <circle cx="18" cy="16" r="3" />
-                </svg>
-                Filter by genre / {{ count($selectedGenres) }}
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-chevron-down-icon lucide-chevron-down">
-                    <path d="m6 9 6 6 6-6" />
-                </svg>
-            </button>
+                <div x-show="openFilterByGenre" x-transition:enter="transition ease-out duration-100"
+                    x-transition:enter-start="transform opacity-0 scale-95"
+                    x-transition:enter-end="transform opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-75"
+                    x-transition:leave-start="transform opacity-100 scale-100"
+                    x-transition:leave-end="transform opacity-0 scale-95"
+                    class="absolute mt-2 rounded-md shadow-lg z-100
+           w-full left-0 
+           sm:w-96 sm:left-0">
 
-            <div x-show="openFilterByGenre" x-transition:enter="transition ease-out duration-100"
-                x-transition:enter-start="transform opacity-0 scale-95"
-                x-transition:enter-end="transform opacity-100 scale-100"
-                x-transition:leave="transition ease-in duration-75"
-                x-transition:leave-start="transform opacity-100 scale-100"
-                x-transition:leave-end="transform opacity-0 scale-95"
-                class="absolute left-0 mt-2 w-96 rounded-md shadow-lg z-100">
-                <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 "@click.outside="openFilterByGenre = false">
-                    <div class="flex flex-wrap gap-2 p-2">
-                        {{-- @foreach ($genres as $genre)
-                                    <span wire:click="filterByGenre('{{ $genre }}')"
-                                        class="px-3 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md cursor-pointer">
-                                        {{ $genre }}
-                                    </span>
-                                @endforeach --}}
-                        @foreach (AllGenres() as $genre)
-                            <span @click=" $wire.toggleGenre('{{ $genre }}'); "
-                                class="px-3 py-2 text-sm rounded-md cursor-pointer
-                                            {{ in_array($genre, $selectedGenres) ? 'bg-orange-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300' }}">
-                                {{ $genre }}
-                            </span>
-                        @endforeach
+                    <div class="rounded-md shadow-xs bg-white dark:bg-slate-800"
+                        @click.outside="openFilterByGenre = false">
 
+                        <div class="flex flex-wrap gap-2 p-2 max-h-64 overflow-y-auto">
+                            @foreach (AllGenres() as $genre)
+                                <span @click="$wire.toggleGenre('{{ $genre }}');"
+                                    class="px-3 py-2 text-sm rounded-md cursor-pointer
+                    {{ in_array($genre, $selectedGenres)
+                        ? 'bg-orange-500 text-white'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300' }}">
+                                    {{ $genre }}
+                                </span>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
-            </div>
 
+            </div>
         </div>
-        {{-- Search --}}
+
+        <!-- Search box - will go below on mobile -->
         <div x-data="{ showInput: false }"
-            class="w-64 relative flex items-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded">
+            class="w-full sm:w-64 relative flex items-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded mt-3 sm:mt-0">
             <svg class="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-slate-300 pointer-events-none"
                 fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round"
                     d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
 
-            <!-- Search -->
             <div x-data="{ showInput: false }"
-                class="w-full sm:w-64 relative flex items-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded">
-                <svg class="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-slate-300 pointer-events-none"
-                    fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-
+                class="w-full relative flex items-center text-gray-600 dark:text-gray-400 rounded">
                 <div x-show="!showInput" @click="showInput = true" wire:click="getAllTags"
                     class="pl-7 pr-2 py-2 cursor-pointer whitespace-nowrap dark:text-slate-300 w-full">
                     <span>{{ $search ? $search : 'Type to search tags...' }}</span>
@@ -185,13 +161,7 @@
                         autocomplete="off" />
                 </div>
 
-                <div x-show="showInput" x-transition:enter="transition ease-out duration-100"
-                    x-transition:enter-start="transform opacity-0 scale-95"
-                    x-transition:enter-end="transform opacity-100 scale-100"
-                    x-transition:leave="transition ease-in duration-75"
-                    x-transition:leave-start="transform opacity-100 scale-100"
-                    x-transition:leave-end="transform opacity-0 scale-95"
-                    class="absolute left-0 mt-12 w-full sm:w-80 rounded-md shadow-lg z-50">
+                <div x-show="showInput" class="absolute left-0 mt-12 w-full sm:w-80 rounded-md shadow-lg z-50">
                     @if ($showSuggestions && !empty($suggestedTags))
                         <div
                             class="w-full flex flex-wrap gap-2 absolute left-0 top-full z-50 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto py-2">
@@ -211,18 +181,20 @@
             </div>
         </div>
     </div>
-        @forelse ($campaigns as $campaign_)
-        <div x-data="audioPlayer('{{ $campaign_->id }}')" x-init="init()"
-            class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm">
-            <div class="flex flex-col lg:flex-row" wire:key="campaign-{{ $campaign_->id }}">
+
+
+    @forelse ($campaigns as $campaign_)
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm">
+            <div class="flex flex-col lg:flex-row" wire:key="featured-{{ $campaign_->id }}">
                 <!-- Left Column - Track Info -->
                 <div
                     class="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
                     <div class="flex flex-col md:flex-row gap-4">
                         <!-- Track Details -->
                         <div class="flex-1 flex flex-col justify-between relative">
-                            <!-- SoundCloud Player -->
-                            <div :id="'soundcloud-player-' + campaignId" wire:ignore>
+                            <!-- Your Original SoundCloud Player -->
+                            <div id="soundcloud-player-{{ $campaign_->id }}" data-campaign-id="{{ $campaign_->id }}"
+                                wire:ignore>
                                 <x-sound-cloud.sound-cloud-player :track="$campaign_->music" :height="166"
                                     :visual="false" />
                             </div>
@@ -310,13 +282,14 @@
                                 </div>
                                 <div class="relative">
                                     <!-- Repost Button -->
-                                    <button wire:click="confirmRepost('{{ $campaign_->id }}')" :disabled="!canRepost"
-                                        :class="{
-                                            'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white dark:text-gray-300 cursor-pointer': canRepost,
-                                            'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed': !canRepost
-                                        }"
-                                        class="flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-colors">
-
+                                    <button wire:click="confirmRepost('{{ $campaign_->id }}')"
+                                        @class([
+                                            'flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-colors',
+                                            'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white dark:text-gray-300 cursor-pointer' => $this->canRepost(
+                                                $campaign_->id),
+                                            'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
+                                                $campaign_->id),
+                                        ]) @disabled(!$this->canRepost($campaign_->id))>
                                         <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <rect x="1" y="1" width="24" height="16" rx="3"
@@ -324,9 +297,9 @@
                                             <circle cx="8" cy="9" r="3" fill="none"
                                                 stroke="currentColor" stroke-width="2" />
                                         </svg>
-                                        <span>{{ repostPrice() }} Repost</span>
+                                        <span>{{ repostPrice() }}
+                                            Repost</span>
                                     </button>
-
                                     @if (in_array($campaign_->id, $this->repostedCampaigns))
                                         <div
                                             class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
@@ -358,7 +331,7 @@
         <div class="mt-6">
             {{ $campaigns->links('components.pagination.wire-navigate', [
                 'pageName' => $activeMainTab . 'Page',
-                'keep' => ['tab' => $activeMainTab, 'selectedGenres' => $selectedGenres],
+                'keep' => ['tab' => $activeMainTab],
             ]) }}
         </div>
     @endif
@@ -386,8 +359,8 @@
                         @else
                             <img src="{{ asset('assets/favicons/fav icon 1.svg') }}" alt="{{ config('app.name') }}"
                                 class="w-12 dark:hidden" />
-                            <img src="{{ asset('assets/favicons/fav icon 2 (1).svg') }}"
-                                alt="{{ config('app.name') }}" class="w-12 hidden dark:block" />
+                            <img src="{{ asset('assets/favicons/fav icon 2 (1).svg') }}" alt="{{ config('app.name') }}"
+                                class="w-12 hidden dark:block" />
                         @endif
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
@@ -612,49 +585,6 @@
     {{-- Repost Confirmation Modal --}}
     @include('backend.user.includes.repost-confirmation-modal')
 </div>
-@push('scripts')
-    <script>
-        function audioPlayer(campaignId) {
-            return {
-                campaignId: campaignId,
-                player: null,
-                canRepost: false,
-                playCountUpdated: false,
-                init() {
-                    this.$nextTick(() => {
-                        const iframeElement = document.querySelector(`#soundcloud-player-${this.campaignId} iframe`);
-                        if (iframeElement) {
-                            this.player = SC.Widget(iframeElement);
-
-                            this.player.bind(SC.Widget.Events.PLAY_PROGRESS, (e) => {
-                                if (e.currentPosition >= 5000 && !this.canRepost) {
-                                    this.canRepost = true;
-                                    if (!this.playCountUpdated) {
-                                        this.$wire.incrementPlayCount(this.campaignId);
-                                        this.playCountUpdated = true;
-                                    }
-                                }
-                            });
-
-                            this.player.bind(SC.Widget.Events.PLAY, () => {
-                                // When a player starts, pause all others
-                                document.querySelectorAll('[x-data^="audioPlayer"]').forEach(node => {
-                                    const otherPlayer = node.__x.$data;
-                                    if (otherPlayer.campaignId !== this.campaignId && otherPlayer.player) {
-                                        otherPlayer.player.pause();
-                                    }
-                                });
-                            });
-
-                        } else {
-                            console.error('SoundCloud player iframe not found for campaign:', this.campaignId);
-                        }
-                    });
-                },
-            }
-        }
-    </script>
-@endpush
 <script>
     function initializeSoundCloudWidgets() {
         if (typeof SC === 'undefined') {
@@ -690,16 +620,7 @@
             }
         });
     }
-    document.addEventListener('livewire:initialized', function() {
-        initializeSoundCloudWidgets();
-    });
     document.addEventListener('livewire:navigated', function() {
-        initializeSoundCloudWidgets();
-    });
-    document.addEventListener('livewire:load', function() {
-        initializeSoundCloudWidgets();
-    });
-    document.addEventListener('DOMContentLoaded', function() {
         initializeSoundCloudWidgets();
     });
 </script>
