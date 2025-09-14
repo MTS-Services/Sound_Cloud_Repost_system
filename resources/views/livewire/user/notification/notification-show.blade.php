@@ -44,11 +44,13 @@
                 {{-- Header --}}
                 <div class="flex items-start justify-between mb-6">
                     <div class="flex items-start gap-4">
-                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg bg-orange-500/30">
-                            <i data-lucide="{{ $this->getNotificationIcon() }}" class="w-8 h-8 text-orange-400"></i>
+                        <div
+                            class="w-10 h-10  rounded-full flex items-center justify-center shadow-lg bg-orange-500/30">
+                            <i data-lucide="{{ $this->getNotificationIcon() }}" class="w-5 h-5 text-orange-400"></i>
                         </div>
+
                         <div>
-                            <h1 class="text-3xl font-bold mb-2 text-gray-800 dark:text-gray-200">
+                            <h1 class="text-xl font-bold mb-2 text-gray-800 dark:text-gray-200">
                                 {{ $this->getNotificationTitle() }}
                             </h1>
                             <div class="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
@@ -66,7 +68,8 @@
 
                     {{-- Actions --}}
                     <div class="dropdown dropdown-end">
-                        <div tabindex="0" role="button" class="btn btn-ghost btn-sm text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-900">
+                        <div tabindex="0" role="button"
+                            class="btn btn-ghost btn-sm text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-900">
                             <x-lucide-more-vertical class="w-5 h-5 " />
                         </div>
                         <ul tabindex="0"

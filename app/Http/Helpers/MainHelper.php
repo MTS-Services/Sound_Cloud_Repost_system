@@ -849,3 +849,4 @@ if (! function_exists('number_shorten')) {
         return $number_format . $suffix;
     }
 }
+

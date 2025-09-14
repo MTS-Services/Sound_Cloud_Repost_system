@@ -282,7 +282,8 @@ class AnalyticsService
                 SUM(total_comments) as total_comments
             ')
             ->groupBy('track_urn')
-            ->orderByDesc('total_views')
+            // ->orderByDesc('total_views')
+            ->orderByDesc('total_reposts')
             ->orderByDesc('total_streams')
             ->get();
 
@@ -524,7 +525,8 @@ class AnalyticsService
         $avgViews = $metrics['total_views']['average'];
 
         foreach (self::METRICS as $metric) {
-            if ($metric === 'total_views') continue;
+            if ($metric === 'total_views')
+                continue;
 
             $metrics[$metric]['total_percent'] = $totalViews > 0
                 ? ($metrics[$metric]['total'] / $totalViews) * 100

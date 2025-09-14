@@ -163,52 +163,49 @@
                     d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
 
-    <!-- Search -->
-    <div x-data="{ showInput: false }"
-        class="w-full sm:w-64 relative flex items-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded">
-        <svg class="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-slate-300 pointer-events-none"
-            fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
+            <div x-show="!showInput" @click="showInput = true" wire:click ="getAllTags"
+                class="pl-7 pr-2 py-2 cursor-pointer whitespace-nowrap dark:text-slate-300">
+                <span>{{ $search ? $search : 'Type to search tags...' }}</span>
+            </div>
 
-        <div x-show="!showInput" @click="showInput = true" wire:click="getAllTags"
-            class="pl-7 pr-2 py-2 cursor-pointer whitespace-nowrap dark:text-slate-300 w-full">
-            <span>{{ $search ? $search : 'Type to search tags...' }}</span>
-        </div>
-
-        <div x-show="showInput" x-cloak class="w-full">
-            <input type="text" wire:model.debounce.300ms="search" wire:focus="$set('showSuggestions', true)"
-                wire:blur="hideSuggestions"
-                placeholder="{{ $search ? $search : 'Type to search tags...' }}"
-                class="w-full py-2 pl-7 pr-2 dark:text-slate-300 dark:border-red-400 dark:bg-gray-800 rounded focus:outline-none focus:ring-1 focus:ring-red-400"
-                @click.outside="showInput = false" x-ref="searchInput"
-                x-init="$watch('showInput', (value) => { if (value) { $nextTick(() => $refs.searchInput.focus()) } })"
-                autocomplete="off" />
-        </div>
-
-        <div x-show="showInput" x-transition:enter="transition ease-out duration-100"
-            x-transition:enter-start="transform opacity-0 scale-95"
-            x-transition:enter-end="transform opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-75"
-            x-transition:leave-start="transform opacity-100 scale-100"
-            x-transition:leave-end="transform opacity-0 scale-95"
-            class="absolute left-0 mt-12 w-full sm:w-80 rounded-md shadow-lg z-50">
-            @if ($showSuggestions && !empty($suggestedTags))
-                <div
-                    class="w-full flex flex-wrap gap-2 absolute left-0 top-full z-50 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto py-2">
-                    @foreach ($suggestedTags as $index => $tag)
-                        <span wire:click="selectTag('{{ $tag }}')"
-                            class="inline-flex items-center px-3 py-1 rounded-sm text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 ml-2 cursor-default">
-                            {{ $tag }}
-                            <button type="button"
-                                class=" text-blue-600 hover:text-blue-800 focus:outline-none cursor-pointer"
-                                onclick="event.stopPropagation(); @this.call('removeTag', {{ $index }})">
-                            </button>
-                        </span>
-                    @endforeach
-                </div>
-            @endif
+            <div x-show="showInput" x-cloak>
+                <input type="text" wire:model.debounce.300ms="search" wire:focus="$set('showSuggestions', true)"
+                    wire:blur="hideSuggestions" placeholder="{{ $search ? $search : 'Type to search tags...' }}"
+                    class="w-64 border py-2 border-red-500 pl-7 dark:text-slate-300 dark:border-red-400 dark:bg-gray-800 pr-2 rounded focus:outline-none focus:ring-1 focus:ring-red-400 mr-20"
+                    @click.outside="showInput = false" x-ref="searchInput" x-init="$watch('showInput', (value) => { if (value) { $nextTick(() => $refs.searchInput.focus()) } })"
+                    autocomplete="off" />
+                {{-- <input type="text" wire:model.debounce.300ms="search" wire:focus="$set('showSuggestions', true)"
+                        wire:blur="hideSuggestions" placeholder="Type to search tags..."
+                        class="flex-1 min-w-0 border-0 outline-none focus:ring-0 p-1" autocomplete="off"> --}}
+            </div>
+            <div x-show="showInput" x-transition:enter="transition ease-out duration-100"
+                x-transition:enter-start="transform opacity-0 scale-95"
+                x-transition:enter-end="transform opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-75"
+                x-transition:leave-start="transform opacity-100 scale-100"
+                x-transition:leave-end="transform opacity-0 scale-95"
+                class="absolute left-0 mt-12 w-56 rounded-md shadow-lg z-100">
+                <!-- Suggestions Dropdown -->
+                @if ($showSuggestions && !empty($suggestedTags))
+                    <div
+                        class="w-96 flex flex-wrap gap-2 absolute left-0 top-full z-50 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto py-2">
+                        @foreach ($suggestedTags as $index => $tag)
+                            <span wire:click="selectTag('{{ $tag }}')"
+                                class="inline-flex items-center px-3 py-1 rounded-sm text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 ml-2 cursor-default">
+                                {{ $tag }}
+                                <button type="button"
+                                    class=" text-blue-600 hover:text-blue-800 focus:outline-none cursor-pointer"
+                                    onclick="event.stopPropagation(); @this.call('removeTag', {{ $index }})">
+                                    {{-- <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg> --}}
+                                </button>
+                            </span>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
         </div>
     </div>
     @forelse ($campaigns as $campaign_)
@@ -308,16 +305,120 @@
                                     </div>
                                     <span class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
                                 </div>
-                                <div class="relative">
-                                    <!-- Repost Button -->
+                                <!-- Updated HTML for the repost button -->
+                                <div class="relative" data-campaign-id="{{ $campaign_->id }}">
                                     <button wire:click="confirmRepost('{{ $campaign_->id }}')"
-                                        @class([
-                                            'flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-colors',
-                                            'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white dark:text-gray-300 cursor-pointer' => $this->canRepost(
-                                                $campaign_->id),
-                                            'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
-                                                $campaign_->id),
-                                        ]) @disabled(!$this->canRepost($campaign_->id))>
+                                        class="repost-btn flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-colors bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                                        disabled data-campaign-id="{{ $campaign_->id }}" x-data="{
+                                            campaignId: '{{ $campaign_->id }}',
+                                            isEnabled: false,
+                                        
+                                            init() {
+                                                console.log('🎯 Alpine init for campaign:', this.campaignId);
+                                        
+                                                // Mark this button in global state
+                                                if (!window.buttonStates) {
+                                                    window.buttonStates = new Map();
+                                                }
+                                                window.buttonStates.set(this.campaignId, this);
+                                        
+                                                // Check if should be enabled from start
+                                                if (window.audioTracker?.enabledCampaigns?.has(this.campaignId)) {
+                                                    console.log('🟢 Campaign already enabled, activating button:', this.campaignId);
+                                                    this.enableButton();
+                                                }
+                                        
+                                                // Listen for enable event
+                                                const enableHandler = () => {
+                                                    console.log('🎵 Received enable event for:', this.campaignId);
+                                                    this.enableButton();
+                                                };
+                                        
+                                                document.addEventListener('enableRepost_' + this.campaignId, enableHandler);
+                                        
+                                                // Store handler for cleanup
+                                                this.$el._enableHandler = enableHandler;
+                                        
+                                                // Debug: Watch for external changes
+                                                this.watchForExternalChanges();
+                                            },
+                                        
+                                            enableButton() {
+                                                if (this.isEnabled) {
+                                                    console.log('⚠️ Button already enabled for:', this.campaignId);
+                                                    return;
+                                                }
+                                        
+                                                console.log('✅ Enabling button for campaign:', this.campaignId);
+                                                this.isEnabled = true;
+                                        
+                                                // Force enable regardless of current state
+                                                this.$el.disabled = false;
+                                                this.$el.removeAttribute('disabled');
+                                        
+                                                // Remove disabled classes
+                                                this.$el.classList.remove('bg-gray-300', 'dark:bg-gray-600', 'text-gray-500', 'dark:text-gray-400', 'cursor-not-allowed');
+                                        
+                                                // Add enabled classes
+                                                this.$el.classList.add('bg-orange-600', 'dark:bg-orange-500', 'hover:bg-orange-700', 'dark:hover:bg-orange-400', 'text-white', 'cursor-pointer');
+                                        
+                                                // Mark in global state
+                                                if (window.audioTracker) {
+                                                    if (!window.audioTracker.enabledCampaigns) {
+                                                        window.audioTracker.enabledCampaigns = new Set();
+                                                    }
+                                                    window.audioTracker.enabledCampaigns.add(this.campaignId);
+                                                }
+                                        
+                                                console.log('✅ Button enabled successfully for:', this.campaignId);
+                                            },
+                                        
+                                            watchForExternalChanges() {
+                                                // Watch for disabled attribute changes
+                                                Object.defineProperty(this.$el, 'disabled', {
+                                                    set: function(value) {
+                                                        if (this.isEnabled && value === true) {
+                                                            console.error('🚫 EXTERNAL CODE tried to disable button for campaign:', this.campaignId);
+                                                            console.trace('Call stack:');
+                                                            return; // Prevent disabling
+                                                        }
+                                                        this._disabled = value;
+                                                    }.bind(this),
+                                                    get: function() {
+                                                        return this._disabled || false;
+                                                    }.bind(this)
+                                                });
+                                        
+                                                // Watch for class changes
+                                                const observer = new MutationObserver((mutations) => {
+                                                    if (!this.isEnabled) return;
+                                        
+                                                    mutations.forEach((mutation) => {
+                                                        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                                                            if (this.$el.classList.contains('cursor-not-allowed') ||
+                                                                this.$el.classList.contains('bg-gray-300')) {
+                                                                console.error('🚫 EXTERNAL CODE changed classes for campaign:', this.campaignId);
+                                                                console.trace('Call stack:');
+                                                                // Re-enable immediately
+                                                                setTimeout(() => this.enableButton(), 0);
+                                                            }
+                                                        }
+                                                    });
+                                                });
+                                        
+                                                observer.observe(this.$el, { attributes: true, attributeFilter: ['class', 'disabled'] });
+                                                this.$el._observer = observer;
+                                            }
+                                        }"
+                                        x-destroy="
+            console.log('🧹 Cleaning up button for campaign:', campaignId);
+            if ($el._enableHandler) {
+                document.removeEventListener('enableRepost_' + campaignId, $el._enableHandler);
+            }
+            if ($el._observer) {
+                $el._observer.disconnect();
+            }
+        ">
                                         <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <rect x="1" y="1" width="24" height="16" rx="3"
@@ -325,9 +426,9 @@
                                             <circle cx="8" cy="9" r="3" fill="none"
                                                 stroke="currentColor" stroke-width="2" />
                                         </svg>
-                                        <span>{{ repostPrice() }}
-                                            Repost</span>
+                                        <span>{{ repostPrice() }} Repost</span>
                                     </button>
+
                                     @if (in_array($campaign_->id, $this->repostedCampaigns))
                                         <div
                                             class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
@@ -614,6 +715,31 @@
     @include('backend.user.includes.repost-confirmation-modal')
 </div>
 <script>
+    // Enhanced debug version
+    window.audioTracker = {
+        playStartTimes: {},
+        totalPlayTimes: {},
+        enabledCampaigns: new Set(),
+        widgets: {}
+    };
+
+    // Debug helper to see all button states
+    window.debugButtons = function() {
+        console.log('🔍 Current button states:');
+        if (window.buttonStates) {
+            window.buttonStates.forEach((alpineComponent, campaignId) => {
+                const button = alpineComponent.$el;
+                console.log(`Campaign ${campaignId}:`, {
+                    alpineEnabled: alpineComponent.isEnabled,
+                    globalEnabled: window.audioTracker.enabledCampaigns.has(campaignId),
+                    htmlDisabled: button.disabled,
+                    hasDisabledAttr: button.hasAttribute('disabled'),
+                    classes: button.className
+                });
+            });
+        }
+    };
+
     function initializeSoundCloudWidgets() {
         if (typeof SC === 'undefined') {
             setTimeout(initializeSoundCloudWidgets, 500);
@@ -621,44 +747,143 @@
         }
 
         const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+        console.log('🎵 Initializing', playerContainers.length, 'SoundCloud widgets');
 
         playerContainers.forEach(container => {
             const campaignId = container.dataset.campaignId;
             const iframe = container.querySelector('iframe');
 
-            if (iframe && campaignId) {
-                const widget = SC.Widget(iframe);
-
-                widget.bind(SC.Widget.Events.PLAY, () => {
-                    @this.call('handleAudioPlay', campaignId);
-                });
-
-                widget.bind(SC.Widget.Events.PAUSE, () => {
-                    @this.call('handleAudioPause', campaignId);
-                });
-
-                widget.bind(SC.Widget.Events.FINISH, () => {
-                    @this.call('handleAudioEnded', campaignId);
-                });
-
-                widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-                    const currentTime = data.currentPosition / 1000;
-                    @this.call('handleAudioTimeUpdate', campaignId, currentTime);
-                });
+            if (!iframe || !campaignId) {
+                console.warn('⚠️ Missing iframe or campaignId for container:', container);
+                return;
             }
+
+            // Skip if already enabled
+            if (window.audioTracker.enabledCampaigns.has(campaignId)) {
+                console.log('⏭️ Skipping already enabled campaign:', campaignId);
+                return;
+            }
+
+            // Skip if already initialized
+            if (window.audioTracker.widgets[campaignId]) {
+                console.log('⏭️ Skipping already initialized campaign:', campaignId);
+                return;
+            }
+
+            console.log('🎯 Setting up widget for campaign:', campaignId);
+
+            const widget = SC.Widget(iframe);
+            window.audioTracker.widgets[campaignId] = widget;
+            window.audioTracker.totalPlayTimes[campaignId] = 0;
+
+            widget.bind(SC.Widget.Events.PLAY, () => {
+                if (!window.audioTracker.enabledCampaigns.has(campaignId)) {
+                    console.log('▶️ Play started for campaign:', campaignId);
+                    window.audioTracker.playStartTimes[campaignId] = Date.now();
+                }
+                @this.call('handleAudioPlay', campaignId);
+            });
+
+            widget.bind(SC.Widget.Events.PAUSE, () => {
+                console.log('⏸️ Paused for campaign:', campaignId);
+                updatePlayTimeAndCheck(campaignId);
+                @this.call('handleAudioPause', campaignId);
+            });
+
+            widget.bind(SC.Widget.Events.FINISH, () => {
+                console.log('⏹️ Finished for campaign:', campaignId);
+                updatePlayTimeAndCheck(campaignId);
+                @this.call('handleAudioEnded', campaignId);
+            });
+
+            widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+                if (!window.audioTracker.enabledCampaigns.has(campaignId)) {
+                    updatePlayTimeAndCheck(campaignId);
+                }
+            });
         });
     }
-    document.addEventListener('livewire:initialized', function() {
-        initializeSoundCloudWidgets();
-    });
-    document.addEventListener('livewire:navigated', function() {
-        initializeSoundCloudWidgets();
-    });
-    document.addEventListener('livewire:load', function() {
-        initializeSoundCloudWidgets();
-    });
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeSoundCloudWidgets();
-    });
+
+    function updatePlayTimeAndCheck(campaignId) {
+        if (window.audioTracker.enabledCampaigns.has(campaignId)) {
+            return;
+        }
+
+        if (window.audioTracker.playStartTimes[campaignId]) {
+            const now = Date.now();
+            const sessionTime = now - window.audioTracker.playStartTimes[campaignId];
+            window.audioTracker.totalPlayTimes[campaignId] += sessionTime;
+            window.audioTracker.playStartTimes[campaignId] = now;
+
+            const totalTime = window.audioTracker.totalPlayTimes[campaignId];
+
+            if (totalTime >= 5000) {
+                console.log('🎊 5 seconds reached! Enabling repost for campaign:', campaignId, 'Total time:',
+                    totalTime);
+                enableRepostForCampaign(campaignId);
+            }
+        }
+    }
+
+    function enableRepostForCampaign(campaignId) {
+        console.log('🚀 Enabling repost for campaign:', campaignId);
+
+        // Mark as enabled FIRST
+        window.audioTracker.enabledCampaigns.add(campaignId);
+
+        // Clean up tracking
+        delete window.audioTracker.playStartTimes[campaignId];
+        delete window.audioTracker.totalPlayTimes[campaignId];
+
+        // Unbind progress events
+        const widget = window.audioTracker.widgets[campaignId];
+        if (widget) {
+            try {
+                widget.unbind(SC.Widget.Events.PLAY_PROGRESS);
+                console.log('📴 Unbound progress events for campaign:', campaignId);
+            } catch (e) {
+                console.warn('⚠️ Could not unbind events:', e);
+            }
+        }
+
+        // Dispatch enable event
+        console.log('📡 Dispatching enable event for campaign:', campaignId);
+        document.dispatchEvent(new CustomEvent('enableRepost_' + campaignId));
+
+        // Notify Livewire
+        @this.call('markCampaignPlayable', campaignId);
+
+        console.log('✅ Repost fully enabled for campaign:', campaignId);
+    }
+
+    // Livewire event debugging
+    // document.addEventListener('livewire:updated', function(event) {
+    //     console.log('🔄 Livewire updated, checking button states...');
+    //     setTimeout(() => {
+    //         if (window.debugButtons) window.debugButtons();
+    //     }, 100);
+    // });
+
+    // Initialize
+    document.addEventListener('livewire:navigated', initializeSoundCloudWidgets);
+    document.addEventListener('DOMContentLoaded', initializeSoundCloudWidgets);
+
+    // Global debug function - run this in console to see what's happening
+    window.checkRepostState = function(campaignId) {
+        console.log('🔍 Checking state for campaign:', campaignId);
+        console.log('Global enabled:', window.audioTracker?.enabledCampaigns?.has(campaignId));
+        console.log('Play time:', window.audioTracker?.totalPlayTimes?.[campaignId]);
+
+        const button = document.querySelector(`[data-campaign-id="${campaignId}"] .repost-btn`);
+        if (button) {
+            console.log('Button disabled:', button.disabled);
+            console.log('Button classes:', button.className);
+        }
+
+        if (window.buttonStates?.has(campaignId)) {
+            const alpine = window.buttonStates.get(campaignId);
+            console.log('Alpine enabled:', alpine.isEnabled);
+        }
+    };
 </script>
 </div>

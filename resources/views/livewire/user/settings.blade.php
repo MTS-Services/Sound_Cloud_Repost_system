@@ -23,39 +23,40 @@
 
     <div x-data="{ open: true, activeTab: @entangle('activeTab').live, isGenreDropdownOpen: false }" class="">
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg max-w-8xl mx-auto overflow-hidden">
-            <div class="border-b border-gray-200 dark:border-gray-700">
-                <div class="flex text-gray-600 dark:text-gray-300 font-medium">
-                    <button wire:click="setActiveTab('profile')"
-                        class="py-4 px-6 relative tab-link focus:outline-none transition-colors duration-200 ease-in-out {{ $activeTab === 'profile' ? 'border-b-2 border-orange-500 text-orange-500' : 'hover:bg-gray-50 dark:hover:bg-gray-600' }}">
-                        Edit profile
-                        <span class="tab-indicator {{ $activeTab === 'profile' ? '' : 'hidden' }}"></span>
-                    </button>
+          <div class="border-b border-gray-200 dark:border-gray-700">
+    <div class="flex overflow-x-auto no-scrollbar text-gray-600 dark:text-gray-300 font-medium text-xs sm:text-sm">
+        <button wire:click="setActiveTab('profile')"
+            class="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap relative tab-link focus:outline-none transition-colors duration-200 ease-in-out {{ $activeTab === 'profile' ? 'border-b-2 border-orange-500 text-orange-500' : 'hover:bg-gray-50 dark:hover:bg-gray-600' }}">
+            Edit profile
+            <span class="tab-indicator {{ $activeTab === 'profile' ? '' : 'hidden' }}"></span>
+        </button>
 
-                    <button wire:click="setActiveTab('notifications')"
-                        class="py-4 px-6 relative tab-link focus:outline-none transition-colors duration-200 ease-in-out {{ $activeTab === 'notifications' ? 'border-b-2 border-orange-500 text-orange-500' : 'hover:bg-gray-50 dark:hover:bg-gray-600' }}">
-                        Notifications & alerts
-                        <span class="tab-indicator {{ $activeTab === 'notifications' ? '' : 'hidden' }}"></span>
-                    </button>
+        <button wire:click="setActiveTab('notifications')"
+            class="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap relative tab-link focus:outline-none transition-colors duration-200 ease-in-out {{ $activeTab === 'notifications' ? 'border-b-2 border-orange-500 text-orange-500' : 'hover:bg-gray-50 dark:hover:bg-gray-600' }}">
+            Notifications & alerts
+            <span class="tab-indicator {{ $activeTab === 'notifications' ? '' : 'hidden' }}"></span>
+        </button>
 
-                    <button wire:click="setActiveTab('settings')"
-                        class="py-4 px-6 relative tab-link focus:outline-none transition-colors duration-200 ease-in-out {{ $activeTab === 'settings' ? 'border-b-2 border-orange-500 text-orange-500' : 'hover:bg-gray-50 dark:hover:bg-gray-600' }}">
-                        Settings
-                        <span class="tab-indicator {{ $activeTab === 'settings' ? '' : 'hidden' }}"></span>
-                    </button>
+        <button wire:click="setActiveTab('settings')"
+            class="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap relative tab-link focus:outline-none transition-colors duration-200 ease-in-out {{ $activeTab === 'settings' ? 'border-b-2 border-orange-500 text-orange-500' : 'hover:bg-gray-50 dark:hover:bg-gray-600' }}">
+            Settings
+            <span class="tab-indicator {{ $activeTab === 'settings' ? '' : 'hidden' }}"></span>
+        </button>
 
-                    <button wire:click="setActiveTab('credit')"
-                        class="py-4 px-6 relative tab-link focus:outline-none transition-colors duration-200 ease-in-out {{ $activeTab === 'credit' ? 'border-b-2 border-orange-500 text-orange-500' : 'hover:bg-gray-50 dark:hover:bg-gray-600' }}">
-                        Credit history
-                        <span class="tab-indicator {{ $activeTab === 'credit' ? '' : 'hidden' }}"></span>
-                    </button>
+        <button wire:click="setActiveTab('credit')"
+            class="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap relative tab-link focus:outline-none transition-colors duration-200 ease-in-out {{ $activeTab === 'credit' ? 'border-b-2 border-orange-500 text-orange-500' : 'hover:bg-gray-50 dark:hover:bg-gray-600' }}">
+            Credit history
+            <span class="tab-indicator {{ $activeTab === 'credit' ? '' : 'hidden' }}"></span>
+        </button>
 
-                    <button wire:click="setActiveTab('invoices')"
-                        class="py-4 px-6 relative tab-link focus:outline-none transition-colors duration-200 ease-in-out {{ $activeTab === 'invoices' ? 'border-b-2 border-orange-500 text-orange-500' : 'hover:bg-gray-50 dark:hover:bg-gray-600' }}">
-                        Invoices
-                        <span class="tab-indicator {{ $activeTab === 'invoices' ? '' : 'hidden' }}"></span>
-                    </button>
-                </div>
-            </div>
+        <button wire:click="setActiveTab('invoices')"
+            class="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap relative tab-link focus:outline-none transition-colors duration-200 ease-in-out {{ $activeTab === 'invoices' ? 'border-b-2 border-orange-500 text-orange-500' : 'hover:bg-gray-50 dark:hover:bg-gray-600' }}">
+            Invoices
+            <span class="tab-indicator {{ $activeTab === 'invoices' ? '' : 'hidden' }}"></span>
+        </button>
+    </div>
+</div>
+
 
             <div x-show="activeTab === 'profile'" x-cloak>
                 <!-- Edit Profile -->

@@ -284,7 +284,7 @@
                 </div>
                 <div class="space-y-2">
                     <p class="text-2xl font-bold text-slate-700 dark:text-white">
-                        {{-- {{ $userFollowerAnalysis['averageCredibilityScore'] }}%</p> --}}
+                        {{ $userFollowerAnalysis['averageCredibilityScore'] ?? 0 }}%</p>
                     <p
                         class="text-sm flex items-center space-x-1 {{ $followerPercentage >= 0 ? 'text-green-400' : 'text-red-400' }}">
                         <span>{{ $followerPercentage }}% from
@@ -439,8 +439,7 @@
                                         </span>
 
                                     </div>
-                                    <span
-                                        class="text-slate-400">{{ $request->track?->genre ?? 'Unknown' }}</span>
+                                    <span class="text-slate-400">{{ $request->track?->genre ?? 'Unknown' }}</span>
                                 </div>
                             </div>
                         </div>

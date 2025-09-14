@@ -30,7 +30,7 @@
     <div class="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto mb-16">
         @forelse ($plans as $plan)
             <div
-                class="relative bg-white dark:bg-slate-700 rounded-3xl shadow-2xl border transition-all duration-300 hover:shadow-3xl hover:scale-105 border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500 {{ Auth::check() && user()->activePlan()?->plan?->id == $plan->id ? 'opacity-50 pointer-events-none' : '' }}">
+                class="relative bg-white dark:bg-slate-700 rounded-3xl shadow-2xl border transition-all duration-300 hover:shadow-3xl hover:scale-105 border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500 {{ Auth::check() && (user()->activePlan()?->plan?->id == $plan->id || (!isset(user()->activePlan()->plan) && $plan->monthly_price == 0)) ? 'opacity-50 pointer-events-none' : '' }}">
                 <div class="p-8">
                     <div class="text-center mb-8">
                         <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-3">{{ $plan->name }}</h3>
@@ -90,11 +90,13 @@
                     @endforeach
                     @if ($plan->monthly_price > 0)
                         <x-gbutton variant="primary" wire:click="subscribe('{{ encrypt($plan->id) }}')"
-                            class="w-full py-4 px-6">Choose Plan</x-gbutton>
+                            class="w-full py-4 px-6">{{ Auth::check() && (user()->activePlan()?->plan?->id == $plan->id || (!isset(user()->activePlan()->plan) && $plan->monthly_price == 0)) ? 'Current Plan' : 'Choose Plan' }}</x-gbutton>
                     @else
                         <x-gabutton variant="secondary" href="{{ route('user.dashboard') }}"
-                            class="w-full py-4 px-6">Get
-                            Started</x-gabutton>
+                            class="w-full py-4 px-6">{{ Auth::check() &&
+                            (user()->activePlan()?->plan?->id == $plan->id || (!isset(user()->activePlan()->plan) && $plan->monthly_price == 0))
+                                ? 'Current Plan'
+                                : 'Get Started' }}</x-gabutton>
                     @endif
 
                 </div>

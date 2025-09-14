@@ -1,12 +1,17 @@
 <div>
     <x-slot name="page_slug">request</x-slot>
-    <div class="flex justify-between items-start mb-5">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-5 space-y-3 sm:space-y-0">
         <div>
-            <h1 class="text-xl text-black dark:text-gray-100 font-bold">{{ __('Repost Requests') }}</h1>
+            <h1 class="text-xl text-black dark:text-gray-100 font-bold">
+                {{ __('Repost Requests') }}
+            </h1>
         </div>
-        <x-gbutton variant="primary" wire:navigate href="{{ route('user.members') }}"><span><x-lucide-plus
-                    class="w-5 h-5 mr-1" /></span> Send a New Request</x-gbutton>
+        <x-gbutton variant="primary" wire:navigate href="{{ route('user.members') }}" class="w-full sm:w-auto">
+            <span><x-lucide-plus class="w-5 h-5 mr-1" /></span>
+            Send a New Request
+        </x-gbutton>
     </div>
+
 
     <div class="mb-8">
         <div class="border-b border-gray-200 dark:border-gray-700">
@@ -271,7 +276,7 @@
                                         @endif
                                     </div>
                                     @if ($activeMainTab == 'outgoing_request')
-                                        <div class="flex justify-end gap-3">
+                                        <div class="flex flex-col sm:flex-row justify-end gap-3">
                                             <a class="cursor-pointer" wire:navigate
                                                 href="{{ route('user.my-account', $repostRequest->targetUser->urn) }}">
                                                 <img class="w-10 h-10 rounded-full object-cover"
@@ -300,6 +305,7 @@
                                             </div>
                                         </div>
                                     @endif
+
                                     <!-- Status Badge -->
                                     <div class="text-right">
                                         <span @class([

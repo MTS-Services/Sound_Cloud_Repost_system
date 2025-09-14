@@ -43,12 +43,13 @@
     },
 
     initPerformanceChart() {
+        if (this.performanceChart instanceof Chart) {
+            this.performanceChart.destroy();
+        }
         const ctx = document.getElementById('performanceChart');
         if (!ctx) return;
 
-        if (this.performanceChart) {
-            this.performanceChart.destroy();
-        }
+
 
         this.performanceChart = new Chart(ctx.getContext('2d'), {
             type: 'line',
@@ -154,12 +155,13 @@
     },
 
     initGenreChart() {
+        if (this.initGenreChart instanceof Chart) {
+            this.initGenreChart.destroy();
+        }
         const ctx = document.getElementById('genreChart');
         if (!ctx) return;
 
-        if (this.genreChart) {
-            this.genreChart.destroy();
-        }
+
 
         this.genreChart = new Chart(ctx.getContext('2d'), {
             type: 'pie',
@@ -215,14 +217,21 @@
     },
 
     init() {
+        // Destroy existing charts before re-initializing
+        if (this.performanceChart instanceof Chart) {
+            this.performanceChart.destroy();
+        }
+        if (this.genreChart instanceof Chart) {
+            this.genreChart.destroy();
+        }
         this.displayedData = $wire.data;
 
-        // Initialize charts after DOM is ready
+
+
         this.$nextTick(() => {
             if (typeof Chart !== 'undefined') {
                 this.initializeCharts();
             } else {
-                // Wait for Chart.js to load
                 const checkChart = () => {
                     if (typeof Chart !== 'undefined') {
                         this.initializeCharts();
@@ -234,21 +243,23 @@
             }
         });
 
-        this.$watch('$wire.data', (newData) => {
-            this.displayedData = newData;
-            this.dataCache = $wire.dataCache;
+        this.$watch('$wire.data', (newData, oldData) => {
+            if (JSON.stringify(newData) !== JSON.stringify(oldData)) {
+                this.displayedData = newData;
+                this.dataCache = $wire.dataCache;
+            }
         });
 
-        this.$watch('$wire.dataCache', (newCache) => {
-            this.dataCache = newCache;
-        });
-
-        // Listen for data updates
         Livewire.on('dataUpdated', () => {
             this.chartData = $wire.getChartData();
             this.genreBreakdown = $wire.genreBreakdown;
+
             this.$nextTick(() => {
-                this.updateCharts();
+                if (this.performanceChart) {
+                    this.updateCharts();
+                } else {
+                    this.initializeCharts();
+                }
             });
         });
     }
@@ -680,9 +691,8 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Avg. Engagement Rate</p>
-                <p class="text-2xl font-bold text-gray-900 dark:text-white"
-                    x-text="(displayedData?.avgEngagementRate !== undefined ? displayedData.avgEngagementRate + '%' : '-')">
-                    {{ $data['avgEngagementRate'] ?? '-' }}%
+                <p class="text-2xl font-bold text-gray-900 dark:text-white" {{-- x-text="(displayedData?.avgEngagementRate !== undefined ? displayedData.avgEngagementRate + '%' : '-')"> --}}>
+                    {{ min($data['avgEngagementRate'], 100) ?? '-' }}%
                 </p>
             </div>
             <div class="mt-3 h-1 bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] rounded-full"></div>
@@ -759,17 +769,22 @@
                                 </div>
                                 <div class="flex items-center ml-4">
                                     <span
-                                        class="text-xs text-gray-900 dark:text-white font-medium">{{ number_format($track['streams']) }}</span>
+                                        class="text-xs text-gray-900 dark:text-white font-medium">{{ number_shorten($track['streams']) }}</span>
                                     <span class="text-xs text-gray-500 dark:text-gray-400 ml-1">streams</span>
                                 </div>
                             </div>
                             <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
                                 @php
                                     $maxStreams = $topTracks[0]['streams'] ?? 1;
-                                    $percentage = $maxStreams > 0 ? ($track['streams'] / $maxStreams) * 100 : 0;
+                                    $percentage =
+                                        $maxStreams > 0
+                                            ? ((($maxStreams - $track['streams']) / $maxStreams) * 100 < 0
+                                                ? 0
+                                                : (($maxStreams - $track['streams']) / $maxStreams) * 100)
+                                            : 0;
                                 @endphp
                                 <div class="h-2 rounded-full transition-all duration-300"
-                                    style="width: {{ $percentage }}%; background: linear-gradient(90deg, #ff6b35, #ff6b35cc);">
+                                    style="width: {{ $percentage > 100 ? 100 : $percentage }}%; background: linear-gradient(90deg, #ff6b35, #ff6b35cc);">
                                 </div>
                             </div>
                         </div>
@@ -854,7 +869,7 @@
                             <div class="flex items-center">
                                 <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
                                 <span class="text-sm text-gray-600 dark:text-gray-400">Reached
-                                    {{ number_format($data['detailed']['overall_metrics']['total_views']['current_total']) }}
+                                    {{ number_shorten($data['detailed']['overall_metrics']['total_views']['current_total']) }}
                                     total
                                     views!</span>
                             </div>
@@ -951,17 +966,17 @@
                                     </div>
                                     <div>
                                         <div class="text-sm font-medium text-gray-900 dark:text-white">
-                                            {{ $track['track_details']['title'] ?? 'Unknown Track' }}
+                                            {{ $track['track_details']->title ?? 'Unknown Track' }}
                                         </div>
                                         <div class="text-sm text-gray-500 dark:text-gray-400">
-                                            {{ $track['track_details']['genre'] ?? 'Unknown' }} • You
+                                            {{ $track['track_details']->genre ?? 'Unknown' }} • You
                                         </div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-bold text-gray-900 dark:text-white">
-                                    {{ number_format($track['metrics']['total_views']['current_total']) }}
+                                    {{ number_shorten($track['metrics']['total_views']['current_total']) }}
                                 </div>
                                 <div class="text-xs text-gray-500 dark:text-gray-400">streams</div>
                             </td>
@@ -1001,33 +1016,25 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @php
-                                    $totalViews = $track['metrics']['total_views']['current_total'];
-                                    $totalEngagements =
-                                        $track['metrics']['total_likes']['current_total'] +
-                                        $track['metrics']['total_comments']['current_total'] +
-                                        $track['metrics']['total_reposts']['current_total'];
-                                    $engagementRate = $totalViews > 0 ? ($totalEngagements / $totalViews) * 100 : 0;
-                                @endphp
                                 <div class="flex items-center">
                                     <div class="text-sm font-bold text-gray-900 dark:text-white">
-                                        {{ number_format($engagementRate, 1) }}%
+                                        {{ number_format($track['engagement_rate'], 2) }}%
                                     </div>
                                     <div class="ml-2 w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                                         <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] h-2 rounded-full transition-all duration-300 max-w-full"
-                                            style="width: {{ min($engagementRate, 100) }}%;"></div>
+                                            style="width: {{ $track['engagement_rate'] }}%;"></div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                {{ number_format($track['metrics']['total_likes']['current_total']) }}
+                                {{ number_shorten($track['metrics']['total_likes']['current_total']) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                {{ number_format($track['metrics']['total_reposts']['current_total']) }}
+                                {{ number_shorten($track['metrics']['total_reposts']['current_total']) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm text-gray-900 dark:text-white">
-                                    {{ $track['track_details']['created_at_formatted'] ?? 'Unknown' }}
+                                    {{ $track['track_details']->created_at_formatted ?? 'Unknown' }}
                                 </div>
                             </td>
                         </tr>
