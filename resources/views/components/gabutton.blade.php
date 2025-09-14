@@ -1,4 +1,4 @@
-<a wire:navigate href="{{ $href }}"
+<a href="{{ $href }}"
     class="{{ $getButtonClasses() }} {{ $attributes->get('class', '') }}"
     @if ($disabled) disabled @endif {{ $attributes->except(['class']) }}>
     {{ $slot }}
