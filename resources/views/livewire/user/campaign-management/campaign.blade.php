@@ -1,4 +1,4 @@
-<div wire:poll.1s="updatePlayingTimes">
+<div>
     <x-slot name="page_slug">campaign-feed</x-slot>
 
     <!-- Header Section -->
