@@ -1,4 +1,4 @@
-<div x-data="{ showSubmitModal: @entangle('showSubmitModal').live }" x-show="showSubmitModal" x-cloak x-transition:enter="transition ease-out duration-300"
+{{-- <div x-data="{ showSubmitModal: @entangle('showSubmitModal').live }" x-show="showSubmitModal" x-cloak x-transition:enter="transition ease-out duration-300"
     x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
     x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100"
     x-transition:leave-end="opacity-0 scale-95"
@@ -135,7 +135,7 @@
                             <input type="range" x-model="localMaxFollower"
                                 x-on:input="$wire.set('maxFollower', localMaxFollower)" min="100"
                                 max="{{ $followersLimit }}" class="w-full h-2 cursor-pointer">
-                            <div class="px-3 py-2 border rounded-md">
+                            <div class="max-w-[80px] px-3 py-2 border rounded-md text-gray-700 dark:text-gray-400">
                                 <span x-text="localMaxFollower"></span>
                             </div>
                         </div>
@@ -193,4 +193,74 @@
             </form>
         </div>
     </div>
+</div> --}}
+
+<div x-data="{
+    momentumEnabled: @js(proUser()),
+    showGenreRadios: false,
+    showRepostPerDay: false,
+    showOptions: false,
+    localCredit: @entangle('credit').defer,
+    localMaxFollower: @entangle('maxFollower').defer,
+    localMaxRepostsPerDay: @entangle('maxRepostsPerDay').defer
+}" x-init="// Budget watcher
+$watch('localCredit', value => {
+    $wire.set('credit', value);
+
+    if (localMaxFollower > value) {
+        localMaxFollower = value;
+        $wire.set('maxFollower', value);
+    }
+});
+
+// MaxFollower watcher (sync livewire)
+$watch('localMaxFollower', value => {
+    $wire.set('maxFollower', value);
+});
+
+// MaxReposts watcher (sync livewire)
+$watch('localMaxRepostsPerDay', value => {
+    $wire.set('maxRepostsPerDay', value);
+});" class="flex-grow overflow-y-auto p-6">
+    <!-- Budget Display -->
+    <div class="flex items-center justify-center space-x-2 mb-4">
+        <svg class="w-8 h-8 text-orange-500" width="26" height="18" viewBox="0 0 26 18" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <rect x="1" y="1" width="24" height="16" rx="3" fill="none" stroke="currentColor"
+                stroke-width="2" />
+            <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor" stroke-width="2" />
+        </svg>
+        <span class="text-2xl font-bold text-orange-500" x-text="localCredit"></span>
+    </div>
+
+    <!-- Budget Slider -->
+    <div class="relative mb-6">
+        <input type="range" x-model="localCredit" min="50" step="10" max="{{ userCredits() }}"
+            class="w-full h-2 border-0 cursor-pointer outline-none transition-all duration-200">
+    </div>
+
+    <!-- Max Follower Display -->
+    <div class="flex items-center justify-center space-x-2 mb-4">
+        <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 20h5v-2a4 4 0 00-3-3.87M9 20h6M3 20h5v-2a4 4 0 013-3.87M12 12a4 4 0 100-8 4 4 0 000 8z" />
+        </svg>
+        <span class="text-lg font-semibold text-blue-500" x-text="localMaxFollower"></span>
+    </div>
+
+    <!-- Max Follower Slider -->
+    <div class="relative mb-6">
+        <input type="range" x-model="localMaxFollower" min="50" step="10" :max="localCredit"
+            class="w-full h-2 border-0 cursor-pointer outline-none transition-all duration-200">
+    </div>
+
+    <!-- Max Reposts Per Day -->
+    <template x-if="showRepostPerDay">
+        <div class="mt-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Max Reposts per Day</label>
+            <input type="range" x-model="localMaxRepostsPerDay" min="1" step="1" max="20"
+                class="w-full h-2 border-0 cursor-pointer outline-none transition-all duration-200">
+            <p class="text-sm text-gray-600 mt-1">Selected: <span x-text="localMaxRepostsPerDay"></span></p>
+        </div>
+    </template>
 </div>
