@@ -136,7 +136,7 @@ class Dashboard extends Component
     public function boot(CreditTransactionService $creditTransactionService, SoundCloudService $soundCloudService, MyCampaignService $myCampaignService, AnalyticsService $analyticsService, FollowerAnalyzer $followerAnalyzer)
     {
         $this->creditTransactionService = $creditTransactionService;
-        // $this->soundCloudService = $soundCloudService;
+        $this->soundCloudService = $soundCloudService;
         $this->myCampaignService = $myCampaignService;
         $this->analyticsService = $analyticsService;
         $this->followerAnalyzer = $followerAnalyzer;
@@ -144,18 +144,18 @@ class Dashboard extends Component
 
     public function mount()
     {
-        // $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers());
+        $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers());
 
-        // $lastWeekFollowerPercentage = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers(), 'last_week');
-        // $currentWeekFollowerPercentage = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers(), 'this_week');
-        // $lastWeek = $lastWeekFollowerPercentage['averageCredibilityScore'];
-        // $currentWeek = $currentWeekFollowerPercentage['averageCredibilityScore'];
+        $lastWeekFollowerPercentage = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers(), 'last_week');
+        $currentWeekFollowerPercentage = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers(), 'this_week');
+        $lastWeek = $lastWeekFollowerPercentage['averageCredibilityScore'];
+        $currentWeek = $currentWeekFollowerPercentage['averageCredibilityScore'];
 
-        // if ($lastWeek > 0) {
-        //     $this->followerPercentage = (($currentWeek - $lastWeek) / $lastWeek) * 100;
-        // } else {
-        //     $this->followerPercentage = 0;
-        // }
+        if ($lastWeek > 0) {
+            $this->followerPercentage = (($currentWeek - $lastWeek) / $lastWeek) * 100;
+        } else {
+            $this->followerPercentage = 0;
+        }
         $this->loadDashboardData();
         $this->calculateFollowersLimit();
     }
