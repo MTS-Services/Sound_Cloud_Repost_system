@@ -90,11 +90,13 @@
                     @endforeach
                     @if ($plan->monthly_price > 0)
                         <x-gbutton variant="primary" wire:click="subscribe('{{ encrypt($plan->id) }}')"
-                            class="w-full py-4 px-6">Choose Plan</x-gbutton>
+                            class="w-full py-4 px-6">{{ Auth::check() && (user()->activePlan()?->plan?->id == $plan->id || (!isset(user()->activePlan()->plan) && $plan->monthly_price == 0)) ? 'Current Plan' : 'Choose Plan' }}</x-gbutton>
                     @else
                         <x-gabutton variant="secondary" href="{{ route('user.dashboard') }}"
-                            class="w-full py-4 px-6">Get
-                            Started</x-gabutton>
+                            class="w-full py-4 px-6">{{ Auth::check() &&
+                            (user()->activePlan()?->plan?->id == $plan->id || (!isset(user()->activePlan()->plan) && $plan->monthly_price == 0))
+                                ? 'Current Plan'
+                                : 'Get Started' }}</x-gabutton>
                     @endif
 
                 </div>
