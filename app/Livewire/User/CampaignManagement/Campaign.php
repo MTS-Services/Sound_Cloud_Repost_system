@@ -75,14 +75,19 @@ class Campaign extends Component
     // Track which campaigns are currently playing
     public $playingCampaigns = [];
 
+    // Track play start times
+    public $playStartTimes = [];
+
+    // Track total play time for each campaign
+    public $playTimes = [];
+
     // Track which campaigns have been played for 5+ seconds
     public $playedCampaigns = [];
 
     // Track which campaigns have been reposted
     public $repostedCampaigns = [];
 
-    // Track which campaigns have had their play counted
-    public $playCounts = [];
+    public $playcount = false;
 
     // Constants
     private const ITEMS_PER_PAGE = 10;
@@ -91,8 +96,8 @@ class Campaign extends Component
     protected $listeners = [
         'audioPlay' => 'handleAudioPlay',
         'audioPause' => 'handleAudioPause',
-        'audioEnded' => 'handleAudioEnded',
-        'trackPlayedEnough' => 'trackPlayedEnough'
+        'audioTimeUpdate' => 'handleAudioTimeUpdate',
+        'audioEnded' => 'handleAudioEnded'
     ];
 
     protected $queryString = [
@@ -808,30 +813,91 @@ class Campaign extends Component
     /**
      * Audio Player Event Handlers
      */
-    public function handleAudioPlay($data)
+    public function handleAudioPlay($campaignId)
     {
-        $campaignId = $data['campaignId'];
         $this->playingCampaigns[$campaignId] = true;
+        $this->playStartTimes[$campaignId] = now()->timestamp;
     }
 
-    public function handleAudioPause($data)
+    public function handleAudioPause($campaignId)
     {
-        $campaignId = $data['campaignId'];
+        $this->updatePlayTime($campaignId);
         unset($this->playingCampaigns[$campaignId]);
+        unset($this->playStartTimes[$campaignId]);
     }
 
-
-    public function handleAudioEnded($data)
+    public function handleAudioTimeUpdate($campaignId, $currentTime)
     {
-        $campaignId = $data['campaignId'];
-        unset($this->playingCampaigns[$campaignId]);
-    }
-
-    public function trackPlayedEnough($data)
-    {
-        $campaignId = $data['campaignId'];
-        if (!in_array($campaignId, $this->playedCampaigns)) {
+        if ($currentTime >= 5 && !in_array($campaignId, $this->playedCampaigns)) {
             $this->playedCampaigns[] = $campaignId;
+            // $this->dispatch('campaignPlayedEnough', $campaignId);
+        }
+    }
+
+    public function handleAudioEnded($campaignId)
+    {
+        $this->handleAudioPause($campaignId);
+    }
+
+    private function updatePlayTime($campaignId)
+    {
+        if (isset($this->playStartTimes[$campaignId])) {
+            $playDuration = now()->timestamp - $this->playStartTimes[$campaignId];
+            $this->playTimes[$campaignId] = ($this->playTimes[$campaignId] ?? 0) + $playDuration;
+
+            if ($this->playTimes[$campaignId] >= 5 && !in_array($campaignId, $this->playedCampaigns)) {
+                $this->playedCampaigns[] = $campaignId;
+                // $this->dispatch('campaignPlayedEnough', $campaignId);
+            }
+        }
+    }
+
+    public function updatePlayingTimes()
+    {
+        foreach ($this->playingCampaigns as $campaignId => $isPlaying) {
+            if ($isPlaying && isset($this->playStartTimes[$campaignId])) {
+                $playDuration = now()->timestamp - $this->playStartTimes[$campaignId];
+                $totalPlayTime = ($this->playTimes[$campaignId] ?? 0) + $playDuration;
+
+                if ($totalPlayTime >= 5 && !in_array($campaignId, $this->playedCampaigns)) {
+                    $this->playedCampaigns[] = $campaignId;
+                    // $this->dispatch('campaignPlayedEnough', $campaignId);
+                }
+            }
+        }
+    }
+
+    public function startPlaying($campaignId)
+    {
+        $this->reset([
+            'playcount',
+            'playedCampaigns',
+            'repostedCampaigns',
+            'campaign',
+            'showRepostConfirmationModal',
+            'commented',
+            'liked',
+            'followed',
+        ]);
+        $this->handleAudioPlay($campaignId);
+    }
+
+    public function stopPlaying($campaignId)
+    {
+        $this->handleAudioPause($campaignId);
+    }
+
+    public function simulateAudioProgress($campaignId, $seconds = 1)
+    {
+        if (!isset($this->playTimes[$campaignId])) {
+            $this->playTimes[$campaignId] = 0;
+        }
+
+        $this->playTimes[$campaignId] += $seconds;
+
+        if ($this->playTimes[$campaignId] >= 5 && !in_array($campaignId, $this->playedCampaigns)) {
+            $this->playedCampaigns[] = $campaignId;
+            $this->dispatch('alert', type: 'success', message: 'Campaign marked as played for 5+ seconds!');
         }
     }
 
@@ -840,28 +906,35 @@ class Campaign extends Component
         $canRepost = in_array($campaignId, $this->playedCampaigns) &&
             !in_array($campaignId, $this->repostedCampaigns);
 
-        if ($canRepost && !isset($this->playCounts[$campaignId])) {
+        if ($canRepost && !$this->playcount) {
             $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
 
-            if ($campaign) {
-                if ($campaign->music_type == Track::class) {
-                    $this->track = $this->trackService->getTrack(encrypt($campaign->music_id));
-                } elseif ($campaign->music_type == Playlist::class) {
-                    $playlistTrack = PlaylistTrack::where('playlist_urn', $campaign->music_id)->with('track')->first();
-                    $this->track = $playlistTrack ? $playlistTrack->track : null;
-                }
-
-                if ($this->track) {
-                    $response = $this->analyticsService->updateAnalytics($this->track, $campaign, 'total_plays', $campaign->target_genre);
-                    if ($response) {
-                        $campaign->increment('playback_count');
-                    }
-                }
-
-                $this->playCounts[$campaignId] = true;
+            if ($campaign->music_type == Track::class) {
+                $this->reset('track');
+                $this->track = $this->trackService->getTrack(encrypt($campaign->music_id));
+            } elseif ($campaign->music_type == Playlist::class) {
+                $this->reset('track');
+                $playlist = PlaylistTrack::where('playlist_urn', $campaign->music_id)->with('track')->get();
+                $this->track = $playlist->track;
             }
-        }
 
+            $response = $this->analyticsService->updateAnalytics($this->track, $campaign, 'total_plays', $campaign->target_genre);
+            if ($response != false || $response != null) {
+                $campaign->increment('playback_count');
+            }
+
+            $this->playcount = true;
+            // $this->reset([
+            //     'playcount',
+            //     'playedCampaigns',
+            //     'repostedCampaigns',
+            //     'campaign',
+            //     'showRepostConfirmationModal',
+            //     'commented',
+            //     'liked',
+            //     'followed',
+            // ]);
+        }
         return $canRepost;
     }
 
