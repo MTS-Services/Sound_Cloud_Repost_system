@@ -35,7 +35,7 @@
         </div>
 
         <!-- Body -->
-        <div x-data="{
+        <div class="p-6 overflow-y-auto" x-data="{
             momentumEnabled: @js(proUser()),
             showGenreRadios: false,
             showRepostPerDay: false,
