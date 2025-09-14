@@ -401,7 +401,7 @@
                             <div class="flex space-x-2">
                                 <div class="flex-1">
                                     <x-gbutton variant="secondary" full-width="true"
-                                         wire:click="declineRepost('{{ encrypt($request->id) }}')">Decline</x-gbutton>
+                                        wire:click="declineRepost('{{ encrypt($request->id) }}')">Decline</x-gbutton>
                                 </div>
                                 <div class="flex-1">
                                     <x-gbutton variant="primary" full-width="true"
@@ -410,37 +410,23 @@
                             </div>
                         </div>
                     </div>
-                     @endforeach
-                    <div class="mt-6 pt-6  p-2">
+                    <div class="mt-4  p-2">
                         <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-orange-500"
-                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
-                                    <polyline points="16 7 22 7 22 13" />
-                                </svg>
-                                <span class="text-sm font-medium">Trending</span>
-                            </div>
-                            <a class="text-orange-500 hover:text-orange-400 text-sm" href="{{ route('user.charts') }}">View
+                            <a class="text-orange-500 hover:text-orange-400 text-sm"
+                                href="{{ route('user.charts') }}">View
                                 charts</a>
                         </div>
                         <div class="space-y-2">
                             <div class="flex justify-between text-sm">
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-orange-500 font-bold">#1</span>
-                                    <span class="text-sm">Why Do I?</span>
+                                    <span class="text-orange-500 font-bold">{{ $loop->iteration }}</span>
+                                    <span class="text-sm max-w-[200px] truncate">{{ $request?->track?->title }}</span>
                                 </div>
-                                {{-- <span class="text-slate-400">{{ $request?->track?->embeddable_by }}</span> --}}
-                            </div>
-                            <div class="flex justify-between text-sm">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-slate-400 font-bold">#2</span>
-                                    <span class="text-slate-400 text-sm">The Strength Of Love</span>
-                                </div>
-                                <span class="text-slate-400">Constellation Lyra</span>
+                                <span class="text-slate-400">{{ $request?->track?->genre }}</span>
                             </div>
                         </div>
                     </div>
+                @endforeach
             </div>
         </div>
     </div>
