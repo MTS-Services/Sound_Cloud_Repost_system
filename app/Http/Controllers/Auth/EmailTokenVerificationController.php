@@ -6,13 +6,20 @@ use App\Events\UserNotificationSent;
 use App\Http\Controllers\Controller;
 use App\Models\CustomNotification;
 use App\Models\User;
+use App\Services\User\UserSettingsService;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class EmailTokenVerificationController extends Controller
 {
+    protected UserSettingsService $userSettingsService;
+    public function __construct(UserSettingsService $userSettingsService)
+    {
+        $this->userSettingsService = $userSettingsService;
+    }
 
     public function confirmEmail(Request $request): RedirectResponse
     {
@@ -54,19 +61,48 @@ class EmailTokenVerificationController extends Controller
         if (!Auth::check()) {
             Auth::login($user);
         }
-        $notification = CustomNotification::create([
-            'receiver_id' => $user->id,
-            'receiver_type' => get_class($user),
-            'type' => CustomNotification::TYPE_USER,
-            'message_data' => [
-                'title' => 'Email Verified Successfully!',
-                'message' => 'Your email has been successfully verified. Welcome aboard!',
-                'description' => 'You can now access your account and start using the platform.',
-                'icon' => 'check-circle',
-            ],
-        ]);
+        DB::transaction(function () use ($user) {
+            $notification = CustomNotification::create([
+                'receiver_id' => $user->id,
+                'receiver_type' => get_class($user),
+                'type' => CustomNotification::TYPE_USER,
+                'message_data' => [
+                    'title' => 'Email Verified Successfully!',
+                    'message' => 'Your email has been successfully verified. Welcome aboard!',
+                    'description' => 'You can now access your account and start using the platform.',
+                    'icon' => 'check-circle',
+                ],
+            ]);
 
-        broadcast(new UserNotificationSent($notification));
+            broadcast(new UserNotificationSent($notification));
+
+            $keys = [
+                'em_new_repost',
+                'em_repost_accepted',
+                'em_repost_declined',
+                'em_repost_expired',
+                'em_campaign_summary',
+                'em_free_boost',
+                'em_feedback_campaign',
+                'em_feedback_rated',
+                'em_referrals',
+                'em_reputation',
+                'em_inactivity_warn',
+                'em_marketing',
+                'em_chart_entry',
+                'em_mystery_box',
+                'em_discussions',
+                'em_competitions',
+            ];
+
+            $data = array_merge(
+                ['user_urn' => $user->urn],
+                array_fill_keys($keys, 1)
+            );
+
+            $this->userSettingsService->createOrUpdate($user->urn, $data);
+        });
+
 
 
         $request->session()->forget('email_verification_token');

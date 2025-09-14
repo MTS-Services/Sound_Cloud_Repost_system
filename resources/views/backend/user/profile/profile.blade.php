@@ -70,7 +70,7 @@
                                     Unverified
                                 </span>
                             @endif
-                            @if (!user()->email_verified_at && user()->urn == $user->user_urn)
+                            {{-- @if (!user()->email_verified_at && user()->urn == $user->user_urn)
                                 <form x-data="{ loading: false }" x-ref="form" method="POST"
                                     action="{{ route('user.email.resend.verification') }}"
                                     @submit.prevent="loading = true; $refs.submitButton.disabled = true; $refs.form.submit();">
@@ -93,7 +93,7 @@
                                         <path fill="currentColor" d="M4 12a8 8 0 0116 0" class="opacity-75"></path>
                                     </svg>
                                 </div>
-                            @endif
+                            @endif --}}
                         </div>
                     </div>
                 </div>

@@ -74,17 +74,10 @@
                 <x-lucide-menu class="w-5 h-5 md:w-6 md:h-6" />
             </button>
             <a class="flex items-center space-x-2" href="{{ route('user.dashboard') }}" data-discover="true" wire:navigate>
-                @if (app_setting('app_logo') && app_setting('app_logo_dark'))
-                    <img src="{{ storage_url(app_setting('app_logo')) }}"
-                        alt="{{ config('app.name') }}" class="w-36 lg:w-48 dark:hidden" />
-                    <img src="{{ storage_url(app_setting('app_logo_dark')) }}"
-                        alt="{{ config('app.name') }}" class="w-36 lg:w-48 hidden dark:block" />
-                @else
-                    <img src="{{ asset('assets/logo/rc-logo-black.png') }}" alt="{{ config('app.name') }}"
-                        class="w-36 lg:w-48 dark:hidden" />
-                    <img src="{{ asset('assets/logo/rc-logo-white.png') }}" alt="{{ config('app.name') }}"
-                        class="w-36 lg:w-48 hidden dark:block" />
-                @endif
+                <img src="{{ app_setting('app_logo') ? asset('storage/' . app_setting('app_logo')) : asset('assets/logo/rc-logo-black.png') }}"
+                    alt="{{ config('app.name') }}" class="w-36 lg:w-48 dark:hidden" />
+                <img src="{{ app_setting('app_logo_dark') ? asset('storage/' . app_setting('app_logo_dark')) : asset('assets/logo/rc-logo-white.png') }}"
+                    alt="{{ config('app.name') }}" class="w-36 lg:w-48 hidden dark:block" />
             </a>
         </div>
         <div class="flex-1 flex justify-center px-2 md:px-4 lg:px-0 lg:ml-8 md:mr-3">
@@ -93,52 +86,30 @@
                 <x-lucide-search
                     class="w-5 h-5 text-slate-800 dark:text-slate-300 group-hover:text-orange-500 transition-colors" />
                 <span class="ml-3 text-slate-400 dark:text-slate-300 text-left flex-1">Search...</span>
-                {{-- <kbd
-                    class="hidden md:inline-flex items-center px-2 py-1 text-xs font-medium text-slate-400 bg-slate-100 dark:bg-slate-600 dark:text-slate-300 rounded border">
-                    ⌘K
-                </kbd> --}}
             </button>
         </div>
         <div class="flex items-center space-x-1 md:space-x-2">
-            <nav class="hidden lg:flex items-center space-x-2 md:space-x-4 text-sm" x-data="{ activeButton: '' }">
-                <a class="text-orange-500 hover:text-orange-400 font-medium" href="{{ route('user.plans') }}"
-                    wire:navigate data-discover="true">{{ __('Upgrade My Plan') }}</a>
-                <a x-bind:class="{ 'text-orange-500': activeButton === 'charts', 'hover:text-orange-400': activeButton !== 'charts' }"
-                    class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
-                    wire:navigate href="{{ route('user.charts') }}" data-discover="true"
-                    @click="activeButton = 'charts'">
-                    Charts
-                </a>
+            <nav class="hidden lg:flex items-center space-x-2 md:space-x-4 text-sm relative" x-data="{ activeButton: '' }">
+                <a class="text-orange-500 hover:text-white hover:bg-orange-500 px-4 py-2 rounded-md text-sm font-medium"
+                    href="{{ route('user.plans') }}" wire:navigate data-discover="true">{{ __('Upgrade My Plan') }}</a>
                 <a x-bind:class="{ 'text-orange-500': activeButton === 'blog', 'hover:text-orange-400': activeButton !== 'blog' }"
                     class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
                     wire:navigate href="{{ route('blog') }}" data-discover="true" @click="activeButton = 'blog'">
-                    Blog
+                    {{ __('Blog') }}
                 </a>
-                <div x-data="{ open: false }" class="relative text-left rounded-lg flex justify-center">
+                <div x-data="{ open: false }" class="text-left rounded-lg flex justify-center">
                     <button @click="open = !open"
                         x-bind:class="{ 'text-orange-500': activeButton === 'help', 'hover:text-orange-400': activeButton !== 'help' }"
                         class="text-slate-800 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50 flex items-center space-x-1"
                         @click="activeButton = 'help'">
                         <span>Help</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" class="lucide lucide-chevron-down w-4 h-4">
-                            <path d="m6 9 6 6 6-6"></path>
-                        </svg>
+                        <x-heroicon-o-chevron-down class="w-4 h-4" />
                     </button>
                     <div x-show="open" @click.outside="open = false" x-transition x-cloak
-                        class="absolute right-2 mt-5 w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
+                        class="absolute right-2 !top-[62px] w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
                         <ul class="p-0 text-sm text-gray-700 dark:text-gray-200">
                             <li>
-                                <a href="{{ route('user.settings') }}" wire:navigate
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Getting Started') }}</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('user.settings') }}"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Contact Support') }}</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('user.settings') }}"
+                                <a href="{{ route('user.help-support') }}" wire:navigate
                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Help Center') }}</a>
                             </li>
                             <li>
@@ -181,53 +152,54 @@
                     </svg>
                 </div>
                 <ul tabindex="0"
-                    class="menu menu-sm dropdown-content bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-lg shadow-lg z-10 mt-3 w-64 py-2 space-y-1">
+                    class="menu menu-sm dropdown-content bg-white dark:bg-slate-800 text-slate-800 dark:text-white border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50 mt-5 lg:!top-[40px] w-64 py-2 space-y-1">
                     <li>
                         <a href="{{ route('user.my-account') }}" wire:navigate
                             class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5.121 17.804A4 4 0 017 16h10a4 4 0 011.879.496M15 11a3 3 0 10-6 0 3 3 0 006 0z" />
-                            </svg>
-                            View Profile
+                            <x-heroicon-o-user class="w-5 h-5" />
+                            {{ __('View Profile') }}
                         </a>
                     </li>
-                    <li class="px-4 py-2 border-t border-gray-200 dark:border-slate-700">
-                        <div class="text-xs flex justify-between items-center text-gray-500 dark:text-gray-300 mb-0.5">
-                            <span>Current Plan</span>
+                    <li
+                        class="px-4 pt-2 border-t border-gray-200 dark:border-slate-700 cursor-default select-none pointer-events-none">
+                        <div class="text-xs flex justify-between items-center text-gray-500 dark:text-gray-300">
+                            <p>{{ __('Current Plan') }}</p>
                         </div>
+                    </li>
+                    <li
+                        class="px-4 pb-2">
                         <div class="text-sm flex justify-between items-center">
                             <span class="font-semibold text-slate-800 dark:text-white">
                                 {{ userPlanName() }}
                             </span>
                             <a href="{{ route('user.plans') }}" wire:navigate
-                                class="text-orange-500 text-xs hover:underline">{{ __('View All Plans') }}</a>
+                                class="text-orange-500 text-xs hover:underline">
+                                {{ __('Plans') }}
+                            </a>
                         </div>
                     </li>
+
                     <li>
-                        <a href="#"
-                            class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm block">
-                            Settings & Preferences
+                        <a href="{{ route('user.settings') }}" wire:navigate
+                            class="flex items-center  px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm block">
+                            <x-heroicon-o-cog-6-tooth class="w-5 h-5" />
+                            {{ __('Settings & Preferences') }}
                         </a>
                     </li>
                     <li>
                         <a wire:navigate href="{{ route('user.settings', ['activeTab' => 'credit']) }}"
-                            class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm block">
-                            Credit History
+                            class="flex items-center  px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm block">
+                            <x-heroicon-o-credit-card class="w-5 h-5" />
+                            {{ __('Credit History') }}
                         </a>
                     </li>
                     <li class="border-t border-gray-200 dark:border-slate-700 pt-2">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit"
-                                class="w-full text-left py-2 dark:hover:bg-slate-700 rounded-md flex items-center text-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-9V4m-4 12H7a4 4 0 01-4-4V7a4 4 0 014-4h4" />
-                                </svg>
-                                Log Out
+                                class="w-full text-left px-1 py-2 dark:hover:bg-slate-700 rounded-md flex items-center text-sm">
+                                <x-heroicon-o-arrow-left-on-rectangle class="w-5 h-5 mr-2" />
+                                {{ __('Log Out') }}
                             </button>
                         </form>
                     </li>

@@ -7,10 +7,14 @@ use App\Models\UserGenre;
 use Livewire\Component;
 use App\Services\User\AnalyticsService;
 use Livewire\Attributes\On;
+use Livewire\WithPagination;
 use Carbon\Carbon;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class Analytics extends Component
 {
+    use WithPagination;
+
     public bool $showGrowthTips = false;
     public bool $showFilters = false;
 
@@ -32,6 +36,9 @@ class Analytics extends Component
 
     protected AnalyticsService $analyticsService;
 
+    // Track performance pagination
+    public int $tracksPerPage = 10;
+
     public function boot(AnalyticsService $analyticsService)
     {
         $this->analyticsService = $analyticsService;
@@ -42,86 +49,63 @@ class Analytics extends Component
         $this->filterOptions = $this->analyticsService->getFilterOptions();
         $this->userGenres = $this->fetchUserGenres();
         $this->selectedGenres = ['Any Genre'];
-        // $this->initializeDateRange();
         $this->loadData();
         $this->loadAdditionalData();
-
-        // dd($this->userGenres);
+        $this->getChartData();
     }
 
+    /**
+     * Optimized user genres fetching
+     */
     public function fetchUserGenres(): array
     {
         return UserGenre::where('user_urn', user()->urn)
             ->pluck('genre')
+            ->unique()
+            ->values()
             ->toArray();
     }
 
     public function updatedFilter()
     {
         $this->resetErrorBag();
+        $this->resetPage(); // Reset pagination when filter changes
+
         if ($this->filter === 'date_range') {
-            // $this->initializeDateRange();
             $this->showFilters = true;
         }
         $this->loadData();
+        $this->loadAdditionalData();
     }
-    // public function updatedSelectedGenres()
-    // {
-    //     // The value of 'Any Genre'
-    //     $anyGenre = 'Any Genre';
-    //     // If 'Any Genre' is selected AND there are other genres also selected...
-    //     if (in_array($anyGenre, $this->selectedGenres) && count($this->selectedGenres) > 1) {
-    //         // Remove 'Any Genre' from the array.
-    //         $this->selectedGenres = array_values(array_diff($this->selectedGenres, [$anyGenre]));
-    //     }
-
-    //     // If all genres have been deselected and the array is empty...
-    //     if (empty($this->selectedGenres)) {
-    //         // Add 'Any Genre' back.
-    //         $this->selectedGenres = [$anyGenre];
-    //     }
-    // }
 
     public function updatedStartDate()
     {
         if ($this->filter === 'date_range') {
+            $this->resetPage();
             $this->loadData();
+            $this->loadAdditionalData();
         }
     }
 
     public function updatedEndDate()
     {
         if ($this->filter === 'date_range') {
+            $this->resetPage();
             $this->loadData();
+            $this->loadAdditionalData();
         }
     }
 
-    // private function initializeDateRange()
-    // {
-    //     if (empty($this->startDate) || empty($this->endDate)) {
-    //         $this->endDate = Carbon::now()->format('Y-m-d');
-    //         $this->startDate = Carbon::now()->subDays(30)->format('Y-m-d');
-    //     }
-    // }
-
+    /**
+     * Optimized main data loading
+     */
     public function loadData()
     {
         try {
-            $dateRange = null;
+            $dateRange = $this->getDateRange();
 
-            // Prepare date range for custom filter
-            if ($this->filter === 'date_range' && $this->startDate && $this->endDate) {
-                // dd($this->startDate, $this->endDate);
-                $dateRange = [
-                    'start' => $this->startDate,
-                    'end' => $this->endDate
-                ];
-
-                // Validate date range
-                if (!$this->analyticsService->validateDateRange($dateRange)) {
-                    $this->addError('dateRange', 'Invalid date range selected.');
-                    return;
-                }
+            if ($dateRange === false) {
+                return;
             }
 
             // Get fresh analytics data
@@ -129,43 +113,76 @@ class Analytics extends Component
                 $this->filter,
                 $dateRange,
                 $this->selectedGenres,
-                null, // trackUrn - can be added later for specific track filtering
-                null  // actionType - can be added later for specific action filtering
+                null,
+                null
             );
 
-            // Transform data for your existing UI structure
+            // Transform data for UI
             $this->data = $this->transformDataForUI($freshData);
 
-            // Store in cache for optimistic UI updates
-            $cacheKey = $this->filter . ($dateRange ? '_' . $this->startDate . '_' . $this->endDate : '');
+            // Store in cache
+            $cacheKey = $this->getCacheKey($dateRange);
             $this->dataCache[$cacheKey] = $this->data;
+
+            $this->dispatch('dataUpdated');
         } catch (\Exception $e) {
             $this->addError('general', 'Failed to load analytics data. Please try again.');
             logger()->error('Analytics data loading failed', ['error' => $e->getMessage()]);
         }
     }
 
+    /**
+     * Get date range for current filter
+     */
+    private function getDateRange()
+    {
+        if ($this->filter === 'date_range' && $this->startDate && $this->endDate) {
+            $dateRange = [
+                'start' => $this->startDate,
+                'end' => $this->endDate
+            ];
+
+            if (!$this->analyticsService->validateDateRange($dateRange)) {
+                $this->addError('dateRange', 'Invalid date range selected.');
+                return false;
+            }
+
+            return $dateRange;
+        }
+
+        return null;
+    }
+
+    /**
+     * Generate cache key
+     */
+    private function getCacheKey(?array $dateRange): string
+    {
+        $genreKey = implode(',', $this->selectedGenres);
+        return $this->filter .
+            ($dateRange ? '_' . $this->startDate . '_' . $this->endDate : '') .
+            '_' . md5($genreKey);
+    }
+
+    /**
+     * Load additional data (top tracks, genre breakdown)
+     */
     private function loadAdditionalData()
     {
         try {
-            $dateRange = null;
+            $dateRange = $this->getDateRange();
 
-            // Prepare date range for custom filter
-            if ($this->filter === 'date_range' && $this->startDate && $this->endDate) {
-                // dd($this->startDate, $this->endDate);
-                $dateRange = [
-                    'start' => $this->startDate,
-                    'end' => $this->endDate
-                ];
-
-                // Validate date range
-                if (!$this->analyticsService->validateDateRange($dateRange)) {
-                    $this->addError('dateRange', 'Invalid date range selected.');
-                    return;
-                }
+            if ($dateRange === false) {
+                return;
             }
-            $this->topTracks = $this->analyticsService->getTopTracks(userUrn: user()->urn, limit: 5, filter: $this->filter, dateRange: $dateRange);
-            // dd($this->topTracks);
+
+            $this->topTracks = $this->analyticsService->getTopTracks(
+                userUrn: user()->urn,
+                limit: 5,
+                filter: $this->filter,
+                dateRange: $dateRange
+            );
+
             $this->genreBreakdown = $this->analyticsService->getGenreBreakdown();
         } catch (\Exception $e) {
             logger()->error('Additional data loading failed', ['error' => $e->getMessage()]);
@@ -173,30 +190,51 @@ class Analytics extends Component
     }
 
     /**
-     * Transform the comprehensive analytics data to match your existing UI expectations
+     * Get paginated track performance data
+     */
+    public function getPaginatedTrackData(): LengthAwarePaginator
+    {
+        try {
+            $dateRange = $this->getDateRange();
+
+            if ($dateRange === false) {
+                return new LengthAwarePaginator([], 0, $this->tracksPerPage, $this->getPage());
+            }
+
+            return $this->analyticsService->getPaginatedTrackAnalytics(
+                filter: $this->filter,
+                dateRange: $dateRange,
+                genres: $this->selectedGenres,
+                perPage: $this->tracksPerPage,
+                page: $this->getPage(),
+                userUrn: user()->urn
+            );
+        } catch (\Exception $e) {
+            logger()->error('Paginated track data loading failed', ['error' => $e->getMessage()]);
+            return new LengthAwarePaginator([], 0, $this->tracksPerPage, $this->getPage());
+        }
+    }
+
+    /**
+     * Transform analytics data for UI
      */
     private function transformDataForUI(array $analyticsData): array
     {
-        // dd($analyticsData);
-        // Extract the metrics you're currently displaying
         $streams = $analyticsData['overall_metrics']['total_plays']['current_total'] ?? 0;
         $likes = $analyticsData['overall_metrics']['total_likes']['current_total'] ?? 0;
         $reposts = $analyticsData['overall_metrics']['total_reposts']['current_total'] ?? 0;
 
-        // Calculate engagement rate (you can customize this formula)
+        // Calculate engagement rate
         $totalEngagements = $streams + $likes + $reposts + ($analyticsData['overall_metrics']['total_comments']['current_total'] ?? 0);
-        $avgEngagementRate = $streams > 0 ? round(($totalEngagements / $analyticsData['overall_metrics']['total_views']['current_total']) * 100, 1) : 0;
+        $totalViews = $analyticsData['overall_metrics']['total_views']['current_total'] ?? 1;
+        $avgEngagementRate = $totalViews > 0 ? round(($totalEngagements / $totalViews) * 100, 1) : 0;
 
         return [
             'streams' => $this->formatNumber($streams),
             'likes' => $this->formatNumber($likes),
             'reposts' => $this->formatNumber($reposts),
             'avgEngagementRate' => $avgEngagementRate,
-
-            // Include detailed analytics for potential future use
             'detailed' => $analyticsData,
-
-            // Change rates for trend indicators (already capped at ±100%)
             'streams_change' => $analyticsData['overall_metrics']['total_plays']['change_rate'] ?? 0,
             'likes_change' => $analyticsData['overall_metrics']['total_likes']['change_rate'] ?? 0,
             'reposts_change' => $analyticsData['overall_metrics']['total_reposts']['change_rate'] ?? 0,
@@ -209,20 +247,18 @@ class Analytics extends Component
      */
     private function calculateEngagementRateChange(array $analyticsData): float
     {
-        $currentStreams = $analyticsData['total_plays']['current_total'] ?? 0;
-        $currentViews = $analyticsData['total_views']['current_total'] ?? 0;
-        $previousStreams = $analyticsData['total_plays']['previous_total'] ?? 0;
-        $previousViews = $analyticsData['total_views']['previous_total'] ?? 0;
+        $currentViews = $analyticsData['overall_metrics']['total_views']['current_total'] ?? 0;
+        $previousViews = $analyticsData['overall_metrics']['total_views']['previous_total'] ?? 0;
 
-        $currentEngagements = ($analyticsData['total_likes']['current_total'] ?? 0) +
-            ($analyticsData['total_reposts']['current_total'] ?? 0) +
-            ($analyticsData['total_comments']['current_total'] ?? 0) +
-            ($analyticsData['total_plays']['current_total'] ?? 0);
+        $currentEngagements = ($analyticsData['overall_metrics']['total_likes']['current_total'] ?? 0) +
+            ($analyticsData['overall_metrics']['total_reposts']['current_total'] ?? 0) +
+            ($analyticsData['overall_metrics']['total_comments']['current_total'] ?? 0) +
+            ($analyticsData['overall_metrics']['total_plays']['current_total'] ?? 0);
 
-        $previousEngagements = ($analyticsData['total_likes']['previous_total'] ?? 0) +
-            ($analyticsData['total_reposts']['previous_total'] ?? 0) +
-            ($analyticsData['total_comments']['previous_total'] ?? 0) +
-            ($analyticsData['total_plays']['previous_total'] ?? 0);
+        $previousEngagements = ($analyticsData['overall_metrics']['total_likes']['previous_total'] ?? 0) +
+            ($analyticsData['overall_metrics']['total_reposts']['previous_total'] ?? 0) +
+            ($analyticsData['overall_metrics']['total_comments']['previous_total'] ?? 0) +
+            ($analyticsData['overall_metrics']['total_plays']['previous_total'] ?? 0);
 
         $currentRate = $currentViews > 0 ? ($currentEngagements / $currentViews) * 100 : 0;
         $previousRate = $previousViews > 0 ? ($previousEngagements / $previousViews) * 100 : 0;
@@ -232,8 +268,6 @@ class Analytics extends Component
         }
 
         $changeRate = (($currentRate - $previousRate) / $previousRate) * 100;
-
-        // Cap at ±100%
         return round(max(-100, min(100, $changeRate)), 1);
     }
 
@@ -251,22 +285,21 @@ class Analytics extends Component
     }
 
     /**
-     * Get chart data for the performance overview
+     * Get chart data for performance overview
      */
     public function getChartData(): array
     {
         try {
-            $dateRange = null;
-            if ($this->filter === 'date_range' && $this->startDate && $this->endDate) {
-                $dateRange = [
-                    'start' => $this->startDate,
-                    'end' => $this->endDate
-                ];
+            $dateRange = $this->getDateRange();
+
+            if ($dateRange === false) {
+                return [];
             }
 
             return $this->analyticsService->getChartData(
                 $this->filter,
                 $dateRange,
+                $this->selectedGenres,
                 null,
                 null
             );
@@ -303,17 +336,18 @@ class Analytics extends Component
     }
 
     /**
-     * Apply advanced filters (for future implementation)
+     * Apply advanced filters
      */
     public function applyFilters()
     {
-
         if (!empty($this->startDate) || !empty($this->endDate)) {
             $this->filter = 'date_range';
         }
 
+        $this->resetPage();
         $this->loadData();
-        // dd($this->data);
+        $this->loadAdditionalData();
+        $this->getChartData();
         $this->showFilters = false;
     }
 
@@ -324,10 +358,17 @@ class Analytics extends Component
     {
         $this->selectedGenres = ['Any Genre'];
         $this->filter = 'last_week';
-        // $this->initializeDateRange();
+        $this->startDate = '';
+        $this->endDate = '';
+        $this->resetPage();
         $this->loadData();
+        $this->getChartData();
+        $this->loadAdditionalData();
     }
 
+    /**
+     * Get filter text for display
+     */
     public function getFilterText(): string
     {
         return match ($this->filter) {
@@ -358,107 +399,53 @@ class Analytics extends Component
     }
 
     /**
-     * Get mock track data for display (replace with actual data from your models)
+     * Livewire pagination URL handling
      */
-    // public function getTrackPerformanceData(): array
-    // {
-    //     // This should be replaced with actual track data from your database
-    //     return [
-    //         [
-    //             'name' => 'Midnight Vibes',
-    //             'genre' => 'Electronic',
-    //             'streams' => 45632,
-    //             'stream_growth' => 28.4,
-    //             'engagement' => 94,
-    //             'likes' => 15632,
-    //             'reposts' => 2847,
-    //             'released' => '2024-01-15'
-    //         ],
-    //         [
-    //             'name' => 'Urban Dreams',
-    //             'genre' => 'Hip Hop',
-    //             'streams' => 38921,
-    //             'stream_growth' => 22.1,
-    //             'engagement' => 87,
-    //             'likes' => 12458,
-    //             'reposts' => 1923,
-    //             'released' => '2024-02-03'
-    //         ],
-    //         [
-    //             'name' => 'Sunset Boulevard',
-    //             'genre' => 'Indie',
-    //             'streams' => 32154,
-    //             'stream_growth' => 15.8,
-    //             'engagement' => 82,
-    //             'likes' => 9876,
-    //             'reposts' => 1654,
-    //             'released' => '2024-01-28'
-    //         ],
-    //         [
-    //             'name' => 'Electric Soul',
-    //             'genre' => 'Electronic',
-    //             'streams' => 28743,
-    //             'stream_growth' => 19.3,
-    //             'engagement' => 78,
-    //             'likes' => 8765,
-    //             'reposts' => 1432,
-    //             'released' => '2024-02-12'
-    //         ],
-    //         [
-    //             'name' => 'Golden Hour',
-    //             'genre' => 'Pop',
-    //             'streams' => 24891,
-    //             'stream_growth' => -3.2,
-    //             'engagement' => 74,
-    //             'likes' => 7654,
-    //             'reposts' => 1287,
-    //             'released' => '2024-01-08'
-    //         ],
-    //         [
-    //             'name' => 'Bass Drop',
-    //             'genre' => 'Hip Hop',
-    //             'streams' => 21567,
-    //             'stream_growth' => 11.7,
-    //             'engagement' => 71,
-    //             'likes' => 6543,
-    //             'reposts' => 1156,
-    //             'released' => '2024-02-20'
-    //         ],
-    //         [
-    //             'name' => 'Acoustic Dreams',
-    //             'genre' => 'Indie',
-    //             'streams' => 18432,
-    //             'stream_growth' => 7.4,
-    //             'engagement' => 68,
-    //             'likes' => 5432,
-    //             'reposts' => 987,
-    //             'released' => '2024-01-22'
-    //         ],
-    //         [
-    //             'name' => 'Neon Nights',
-    //             'genre' => 'Electronic',
-    //             'streams' => 15298,
-    //             'stream_growth' => -8.1,
-    //             'engagement' => 65,
-    //             'likes' => 4321,
-    //             'reposts' => 876,
-    //             'released' => '2024-01-05'
-    //         ],
-    //         [
-    //             'name' => 'Neon Nights',
-    //             'genre' => 'Electronic',
-    //             'streams' => 15298,
-    //             'stream_growth' => -8.1,
-    //             'engagement' => 65,
-    //             'likes' => 4321,
-    //             'reposts' => 876,
-    //             'released' => '2024-01-05'
-    //         ]
-    //     ];
-    // }
+    public function updatingPage()
+    {
+        // This will be called before the page is updated
+        // You can add any cleanup logic here if needed
+    }
 
     public function render()
     {
-        return view('livewire.user.analytics');
+        $this->getChartData();
+        $paginated = $this->getPaginatedTrackData();
+
+        // Get the collection from paginator
+        $items = $paginated->getCollection();
+
+        // Map over items to calculate engagement score and rate
+        $itemsWithMetrics = $items->map(function ($track) {
+            $totalViews = $track['metrics']['total_views']['current_total'];
+            $totalPlays = $track['metrics']['total_plays']['current_total'];
+            $totalReposts = $track['metrics']['total_reposts']['current_total'];
+            $totalLikes = $track['metrics']['total_likes']['current_total'];
+            $totalComments = $track['metrics']['total_comments']['current_total'];
+            $totalFollowers = $track['metrics']['total_followers']['current_total'];
+
+            $totalEngagements = $totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers;
+
+            // Engagement % (capped at 100)
+            $engagementRate = min(100, ($totalEngagements / max(1, $totalViews)) * 100);
+
+            // Engagement Score (0–10 scale)
+            $engagementScore = round(($engagementRate / 100) * 10, 1);
+
+            // Add score and rate to track array
+            $track['engagement_score'] = $engagementScore;
+            $track['engagement_rate'] = round($engagementRate, 2); // optional rounding
+
+            return $track;
+        });
+
+        // Sort by engagement score descending
+        $sorted = $itemsWithMetrics->sortByDesc('engagement_score');
+
+        // Update paginator collection
+        $paginated->setCollection($sorted);
+        return view('livewire.user.analytics', [
+            'paginatedTracks' => $paginated
+        ]);
     }
 }

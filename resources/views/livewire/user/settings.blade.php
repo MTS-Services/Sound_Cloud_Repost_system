@@ -22,37 +22,6 @@
     </style>
 
     <div x-data="{ open: true, activeTab: @entangle('activeTab').live, isGenreDropdownOpen: false }" class="">
-        @if (!user()->email_verified_at)
-            <div x-show="open" x-transition.opacity.duration.300ms
-                class=" top-0  mb-8 max-w-8xl mx-auto  bg-gray-50 dark:bg-gray-800 border-l-4 border-orange-500 text-black dark:text-white  p-4 shadow-sm flex items-center justify-center z-1 rounded-md relative"
-                role="alert">
-                <div class="flex justify-center items-center gap-1">
-                    <p class="text-sm text-gray-600 dark:text-gray-300">
-                        Please confirm your email address to unlock core platform features.
-                    <form x-data="{ loading: false }" x-ref="form" method="POST"
-                        action="{{ route('user.email.resend.verification') }}"
-                        @submit.prevent="loading = true; $refs.submitButton.disabled = true; $refs.form.submit();">
-                        @csrf
-                        <button type="submit" x-ref="submitButton" :disabled="loading"
-                            class="text-sm font-semibold text-orange-600 hover:underline">
-                            <template x-if="!loading">
-                                <span>Resend confirmation</span>
-                            </template>
-                            <template x-if="loading">
-                                <span>Sending...</span>
-                            </template>
-                        </button>
-                    </form>
-                    </p>
-                    {{-- <button class="absolute top-1/2 right-4 transform -translate-y-1/2 transition-colors text-gray-500 dark:text-gray-400 hover:text-gray-700 flex-shrink-0"
-                        @click="open = false">
-                        <x-lucide-x class="w-5 h-5" />
-                    </button> --}}
-                </div>
-            </div>
-        @endif
-
-
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg max-w-8xl mx-auto overflow-hidden">
           <div class="border-b border-gray-200 dark:border-gray-700">
     <div class="flex overflow-x-auto no-scrollbar text-gray-600 dark:text-gray-300 font-medium text-xs sm:text-sm">
@@ -131,26 +100,8 @@
                                 @if (!user()->email_verified_at)
                                     <div class="flex items-center gap-1">
                                         <p class="mt-1 text-xs text-red-500">
-                                            Email not verified.
-                                            {{-- <a wire:navigate href="#" class="font-semibold hover:underline">Resend
-                                            confirmation
-                                            email</a> --}}
+                                            Email not verified, please verify your email.
                                         </p>
-                                        <div x-data="{ loading: false }" class="inline-block">
-                                            <button type="button"
-                                                @click="loading = true; document.getElementById('email-verification-form').submit();"
-                                                :disabled="loading"
-                                                class="text-sm font-semibold text-orange-600 hover:underline">
-                                                <template x-if="!loading">
-                                                    <span>Resend confirmation</span>
-                                                </template>
-                                                <template x-if="loading">
-                                                    <span>Sending...</span>
-                                                </template>
-                                            </button>
-                                        </div>
-
-
                                     </div>
                                 @endif
                             </div>
@@ -393,7 +344,8 @@
                         </div>
                         <div
                             class="mt-8 flex justify-end space-x-4 border-t border-gray-200 dark:border-gray-700 pt-4">
-                            <x-gbutton variant="secondary">Cancel</x-gbutton>
+                            <x-gbutton variant="secondary" type="button"
+                                onclick="window.history.back()">Cancel</x-gbutton>
 
                             <x-gbutton type="submit" variant="primary">
                                 <span wire:loading.remove wire:target="saveProfile">Save Profile</span>
@@ -403,9 +355,9 @@
                                         <circle class="opacity-25" cx="12" cy="12" r="10"
                                             stroke="currentColor" stroke-width="4"></circle>
                                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0
-                                            0 5.373 0 12h4zm2 5.291A7.962
-                                            7.962 0 014 12H0c0 3.042 1.135
-                                            5.824 3 7.938l3-2.647z">
+                    0 5.373 0 12h4zm2 5.291A7.962
+                    7.962 0 014 12H0c0 3.042 1.135
+                    5.824 3 7.938l3-2.647z">
                                         </path>
                                     </svg>
                                     Saving...
@@ -413,11 +365,7 @@
                             </x-gbutton>
                         </div>
 
-                    </form>
 
-                    <form id="email-verification-form" action="{{ route('user.email.resend.verification') }}"
-                        method="POST">
-                        @csrf
                     </form>
 
 
@@ -451,31 +399,34 @@
                             class="flex items-center py-3 ps-2 {{ $key % 2 == 1 ? 'bg-gray-100 dark:bg-gray-700' : '' }}">
                             <div class="w-full text-sm text-gray-800 dark:text-white">{{ $alert['name'] }}</div>
                             <div class="mr-4">
-                                <input type="checkbox" wire:model="{{ $alert['email_key'] }}"
-                                    class="w-4 h-4 text-orange-600 border-gray-200 rounded focus:ring-orange-600">
+                                <input type="checkbox" wire:model="{{ $alert['email_key'] }}" {{ !user()->email_verified_at ? 'disabled' : '' }}
+                                    class="w-4 h-4 text-orange-600 border-gray-200 rounded focus:ring-orange-600 {{ !user()->email_verified_at ? 'cursor-not-allowed' : '' }}">
                             </div>
                         </div>
                     @endforeach
 
                     <div class="mt-8 flex justify-end space-x-4 border-t border-gray-200 dark:border-gray-700 pt-4">
-                        <x-gbutton type="button" variant="secondary" wire:click="loadSettings">Cancel</x-gbutton>
+                        <x-gbutton variant="secondary" type="button"
+                            onclick="window.history.back()">Cancel</x-gbutton>
+
                         <x-gbutton type="submit" variant="primary">
-                            <span wire:loading.remove wire:target="notificationUpdate">Save Profile</span>
-                            <span wire:loading wire:target="notificationUpdate" class="flex items-center">
+                            <span wire:loading.remove wire:target="saveProfile">Save Profile</span>
+                            <span wire:loading wire:target="saveProfile" class="flex items-center">
                                 <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block"
                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10"
                                         stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0
-                                            0 5.373 0 12h4zm2 5.291A7.962
-                                            7.962 0 014 12H0c0 3.042 1.135
-                                            5.824 3 7.938l3-2.647z">
+                    0 5.373 0 12h4zm2 5.291A7.962
+                    7.962 0 014 12H0c0 3.042 1.135
+                    5.824 3 7.938l3-2.647z">
                                     </path>
                                 </svg>
                                 Saving...
                             </span>
                         </x-gbutton>
                     </div>
+
                 </form>
             </div>
             <!-- Settings Section -->
@@ -597,25 +548,29 @@
                             </div>
                         </div>
 
-                        <div class="mt-8 flex justify-end space-x-4">
-                            <x-gbutton variant="secondary">Cancel</x-gbutton>
+                        <div
+                            class="mt-8 flex justify-end space-x-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+                            <x-gbutton variant="secondary" type="button"
+                                onclick="window.history.back()">Cancel</x-gbutton>
+
                             <x-gbutton type="submit" variant="primary">
-                                <span wire:loading.remove wire:target="settingsUpdate">Save Profile</span>
-                                <span wire:loading wire:target="settingsUpdate" class="flex items-center">
+                                <span wire:loading.remove wire:target="saveProfile">Save Profile</span>
+                                <span wire:loading wire:target="saveProfile" class="flex items-center">
                                     <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block"
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10"
                                             stroke="currentColor" stroke-width="4"></circle>
                                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0
-                                            0 5.373 0 12h4zm2 5.291A7.962
-                                            7.962 0 014 12H0c0 3.042 1.135
-                                            5.824 3 7.938l3-2.647z">
+                    0 5.373 0 12h4zm2 5.291A7.962
+                    7.962 0 014 12H0c0 3.042 1.135
+                    5.824 3 7.938l3-2.647z">
                                         </path>
                                     </svg>
                                     Saving...
                                 </span>
                             </x-gbutton>
                         </div>
+
                     </form>
                 </div>
             </div>
@@ -794,8 +749,8 @@
                         @else
                             <img src="{{ asset('assets/favicons/fav icon 1.svg') }}" alt="{{ config('app.name') }}"
                                 class="w-12 dark:hidden" />
-                            <img src="{{ asset('assets/favicons/fav icon 2 (1).svg') }}" alt="{{ config('app.name') }}"
-                                class="w-12 hidden dark:block" />
+                            <img src="{{ asset('assets/favicons/fav icon 2 (1).svg') }}"
+                                alt="{{ config('app.name') }}" class="w-12 hidden dark:block" />
                         @endif
                     </div>
                     <h2 class="text-xl font-bold text-gray-900 dark:text-white">
