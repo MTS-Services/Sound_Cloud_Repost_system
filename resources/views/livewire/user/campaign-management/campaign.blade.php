@@ -163,52 +163,53 @@
                     d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
 
-    <!-- Search -->
-    <div x-data="{ showInput: false }"
-        class="w-full sm:w-64 relative flex items-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded">
-        <svg class="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-slate-300 pointer-events-none"
-            fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
+            <!-- Search -->
+            <div x-data="{ showInput: false }"
+                class="w-full sm:w-64 relative flex items-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded">
+                <svg class="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-slate-300 pointer-events-none"
+                    fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
 
-        <div x-show="!showInput" @click="showInput = true" wire:click="getAllTags"
-            class="pl-7 pr-2 py-2 cursor-pointer whitespace-nowrap dark:text-slate-300 w-full">
-            <span>{{ $search ? $search : 'Type to search tags...' }}</span>
-        </div>
-
-        <div x-show="showInput" x-cloak class="w-full">
-            <input type="text" wire:model.debounce.300ms="search" wire:focus="$set('showSuggestions', true)"
-                wire:blur="hideSuggestions"
-                placeholder="{{ $search ? $search : 'Type to search tags...' }}"
-                class="w-full py-2 pl-7 pr-2 dark:text-slate-300 dark:border-red-400 dark:bg-gray-800 rounded focus:outline-none focus:ring-1 focus:ring-red-400"
-                @click.outside="showInput = false" x-ref="searchInput"
-                x-init="$watch('showInput', (value) => { if (value) { $nextTick(() => $refs.searchInput.focus()) } })"
-                autocomplete="off" />
-        </div>
-
-        <div x-show="showInput" x-transition:enter="transition ease-out duration-100"
-            x-transition:enter-start="transform opacity-0 scale-95"
-            x-transition:enter-end="transform opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-75"
-            x-transition:leave-start="transform opacity-100 scale-100"
-            x-transition:leave-end="transform opacity-0 scale-95"
-            class="absolute left-0 mt-12 w-full sm:w-80 rounded-md shadow-lg z-50">
-            @if ($showSuggestions && !empty($suggestedTags))
-                <div
-                    class="w-full flex flex-wrap gap-2 absolute left-0 top-full z-50 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto py-2">
-                    @foreach ($suggestedTags as $index => $tag)
-                        <span wire:click="selectTag('{{ $tag }}')"
-                            class="inline-flex items-center px-3 py-1 rounded-sm text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 ml-2 cursor-default">
-                            {{ $tag }}
-                            <button type="button"
-                                class=" text-blue-600 hover:text-blue-800 focus:outline-none cursor-pointer"
-                                onclick="event.stopPropagation(); @this.call('removeTag', {{ $index }})">
-                            </button>
-                        </span>
-                    @endforeach
+                <div x-show="!showInput" @click="showInput = true" wire:click="getAllTags"
+                    class="pl-7 pr-2 py-2 cursor-pointer whitespace-nowrap dark:text-slate-300 w-full">
+                    <span>{{ $search ? $search : 'Type to search tags...' }}</span>
                 </div>
-            @endif
+
+                <div x-show="showInput" x-cloak class="w-full">
+                    <input type="text" wire:model.debounce.300ms="search"
+                        wire:focus="$set('showSuggestions', true)" wire:blur="hideSuggestions"
+                        placeholder="{{ $search ? $search : 'Type to search tags...' }}"
+                        class="w-full py-2 pl-7 pr-2 dark:text-slate-300 dark:border-red-400 dark:bg-gray-800 rounded focus:outline-none focus:ring-1 focus:ring-red-400"
+                        @click.outside="showInput = false" x-ref="searchInput" x-init="$watch('showInput', (value) => { if (value) { $nextTick(() => $refs.searchInput.focus()) } })"
+                        autocomplete="off" />
+                </div>
+
+                <div x-show="showInput" x-transition:enter="transition ease-out duration-100"
+                    x-transition:enter-start="transform opacity-0 scale-95"
+                    x-transition:enter-end="transform opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-75"
+                    x-transition:leave-start="transform opacity-100 scale-100"
+                    x-transition:leave-end="transform opacity-0 scale-95"
+                    class="absolute left-0 mt-12 w-full sm:w-80 rounded-md shadow-lg z-50">
+                    @if ($showSuggestions && !empty($suggestedTags))
+                        <div
+                            class="w-full flex flex-wrap gap-2 absolute left-0 top-full z-50 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto py-2">
+                            @foreach ($suggestedTags as $index => $tag)
+                                <span wire:click="selectTag('{{ $tag }}')"
+                                    class="inline-flex items-center px-3 py-1 rounded-sm text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 ml-2 cursor-default">
+                                    {{ $tag }}
+                                    <button type="button"
+                                        class=" text-blue-600 hover:text-blue-800 focus:outline-none cursor-pointer"
+                                        onclick="event.stopPropagation(); @this.call('removeTag', {{ $index }})">
+                                    </button>
+                                </span>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
     @forelse ($campaigns as $campaign_)
