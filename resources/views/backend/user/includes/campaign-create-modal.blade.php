@@ -374,24 +374,9 @@
             showOptions: false,
             localCredit: @entangle('credit').defer || 50,
             localMaxFollower: @entangle('maxFollower').defer || 100,
-            localMaxRepostsPerDay: @entangle('maxRepostsPerDay').defer
-        }" x-init="// Initialize maxFollower according to credit (1 credit = 100 followers)
-        if (!localCredit) localCredit = 50;
-        localMaxFollower = localCredit * 100;
-        $wire.set('credit', localCredit);
-        $wire.set('maxFollower', localMaxFollower);
-        
-        // Watch credit changes and update maxFollower accordingly
-        $watch('localCredit', value => {
-            $wire.set('credit', value);
-            localMaxFollower = value * 100;
-            if(localMaxFollower > localCredit){
-                $wire.set('maxFollower', localMaxFollower);
-            }
-        });
-        
-        // Watch maxRepostsPerDay changes
-        $watch('localMaxRepostsPerDay', value => $wire.set('maxRepostsPerDay', value));">
+            localMaxRepostsPerDay: @entangle('maxRepostsPerDay').defer,
+            campaignModal(),
+        }">
 
             <!-- Selected Track -->
             @if ($track)
@@ -661,3 +646,28 @@
         </div>
     </div>
 </div>
+<script>
+    function campaignModal() {
+        return {
+            localCredit: 50,
+            localMaxFollower: 100,
+            localMaxRepostsPerDay: 0,
+
+            init() {
+                this.localMaxFollower = Math.max(100, this.localCredit * 100);
+
+                this.$watch('localCredit', value => {
+                    this.localMaxFollower = Math.min(this.localMaxFollower, Math.max(100, value * 100));
+                });
+
+                this.$watch('localMaxFollower', value => {
+                    const maxAllowed = Math.max(100, this.localCredit * 100);
+                    if (value > maxAllowed) {
+                        this.localMaxFollower = maxAllowed;
+                    }
+                });
+                this.$watch('localMaxRepostsPerDay', value => this.localMaxRepostsPerDay = value);
+            }
+        }
+    }
+</script>
