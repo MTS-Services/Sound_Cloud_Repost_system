@@ -42,25 +42,28 @@
             showOptions: false,
             localCredit: @entangle('credit').defer || 50,
             localMaxFollower: @entangle('maxFollower').defer || 5000,
-            localMaxRepostsPerDay: @entangle('maxRepostsPerDay').defer
-        }" x-init="// Initialize maxFollower according to credit (1 credit = 100 followers)
-        if (!localCredit) localCredit = 50;
-        localMaxFollower = localCredit * 100;
-        $wire.set('credit', localCredit);
-        $wire.set('maxFollower', localMaxFollower);
+            localMaxRepostsPerDay: @entangle('maxRepostsPerDay').defer,
+            init() {
+                if (!this.localCredit) this.localCredit = 50;
+                this.localMaxFollower = this.localCredit * 100;
+                $wire.set('credit', this.localCredit);
+                $wire.set('maxFollower', this.localMaxFollower);
         
-        // Watch credit changes and update maxFollower accordingly
-        $watch('localCredit', value => {
-            console.log(value);
-            if(localMaxFollower > (value * 100)) {
-                localMaxFollower = value * 100;
-                $wire.set('maxFollower', localMaxFollower);
+                $watch('localCredit', value => {
+                    console.log('credit changed to', value);
+                    $wire.set('credit', value);
+                    if (this.localMaxFollower > (value * 100)) {
+                        this.localMaxFollower = value * 100;
+                        $wire.set('maxFollower', this.localMaxFollower);
+                    }
+                });
+        
+                $watch('localMaxRepostsPerDay', value => {
+                    console.log('reposts changed to', value);
+                    $wire.set('maxRepostsPerDay', value);
+                });
             }
-            {{-- $wire.set('credit', value); --}}
-        });
-        
-        // Watch maxRepostsPerDay changes
-        $watch('localMaxRepostsPerDay', value => $wire.set('maxRepostsPerDay', value));">
+        }">
 
             <!-- Selected Track -->
             @if ($track)
