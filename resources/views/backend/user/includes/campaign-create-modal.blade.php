@@ -379,13 +379,9 @@
         if (!localCredit) localCredit = 50;
         if (!localMaxFollower) localMaxFollower = 100;
         let maxAllowed = localCredit * 100;
-        if (localMaxFollower > maxAllowed) localMaxFollower = maxAllowed;
-        
-        $wire.set('credit', localCredit);
-        $wire.set('maxFollower', localMaxFollower);
-        
         // credit watcher
         $watch('localCredit', value => {
+        console.log(value);
             $wire.set('credit', value);
             let maxAllowed = value * 100;
             if (localMaxFollower > maxAllowed) {
