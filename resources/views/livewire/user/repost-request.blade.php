@@ -255,7 +255,8 @@
                                                     $repostRequest->status == App\Models\RepostRequest::STATUS_APPROVED,
                                                 'bg-blue-100 text-blue-800' =>
                                                     $repostRequest->status == App\Models\RepostRequest::STATUS_APPROVED,
-                                                // 'bg-red-100 text-red-800' => $repostRequest->status == App\Models\RepostRequest::STATUS_REJECTED,
+                                                'bg-red-100 text-red-800' =>
+                                                    $repostRequest->status == App\Models\RepostRequest::STATUS_DECLINE,
                                                 'bg-gray-100 text-gray-800' =>
                                                     $repostRequest->status == App\Models\RepostRequest::STATUS_EXPIRED,
                                             ])>
