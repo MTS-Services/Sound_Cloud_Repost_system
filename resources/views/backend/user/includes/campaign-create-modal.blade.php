@@ -52,8 +52,11 @@
         // Watch credit changes and update maxFollower accordingly
         $watch('localCredit', value => {
             $wire.set('credit', value);
-            localMaxFollower = value * 100;
-            if(localMaxFollower > $wire.maxFollower) $wire.set('maxFollower', localMaxFollower);
+            if(localMaxFollower > (value * 100)) {
+                console.log(value);
+                localMaxFollower = value * 100;
+                $wire.set('maxFollower', localMaxFollower);
+            }
         });
         
         // Watch maxRepostsPerDay changes
