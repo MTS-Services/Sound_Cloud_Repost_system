@@ -506,7 +506,7 @@ class RepostRequest extends Component
     }
     public function dataLoad()
     {
-        $query = ModelsRepostRequest::with(['track', 'targetUser'])->whereTime('expired_at', '>', now());
+        $query = ModelsRepostRequest::with(['track', 'targetUser'])->where('expired_at', '>', now());
 
         switch ($this->activeMainTab) {
             case 'incoming_request':
