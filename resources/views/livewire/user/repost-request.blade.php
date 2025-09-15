@@ -246,7 +246,7 @@
                                         </div>
                                         <!-- Status Badge -->
 
-                                        <div class="text-right">
+                                        <div class="text-right my-2">
                                             <span @class([
                                                 'inline-block text-xs font-medium px-2 py-1 rounded-full',
                                                 'bg-yellow-100 text-yellow-800' =>
