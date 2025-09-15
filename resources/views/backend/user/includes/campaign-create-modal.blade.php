@@ -40,28 +40,24 @@
             showGenreRadios: false,
             showRepostPerDay: false,
             showOptions: false,
-            localCredit: @entangle('credit').defer,
-            localMaxFollower: @entangle('maxFollower').defer,
+            localCredit: @entangle('credit').defer || 50,
+            localMaxFollower: @entangle('maxFollower').defer || 5000,
             localMaxRepostsPerDay: @entangle('maxRepostsPerDay').defer
-        }" x-init="// Budget watcher
+        }" x-init="// Initialize maxFollower according to credit (1 credit = 100 followers)
+        if (!localCredit) localCredit = 50;
+        localMaxFollower = localCredit * 100;
+        $wire.set('credit', localCredit);
+        $wire.set('maxFollower', localMaxFollower);
+        
+        // Watch credit changes and update maxFollower accordingly
         $watch('localCredit', value => {
             $wire.set('credit', value);
-            
-            if (localMaxFollower > value) {
-                localMaxFollower = value;
-                $wire.set('maxFollower', value);
-            }
+            localMaxFollower = value * 100;
+            $wire.set('maxFollower', localMaxFollower);
         });
         
-        // MaxFollower watcher (sync livewire)
-        $watch('localMaxFollower', value => {
-            $wire.set('maxFollower', value);
-        });
-        
-        // MaxReposts watcher (sync livewire)
-        $watch('localMaxRepostsPerDay', value => {
-            $wire.set('maxRepostsPerDay', value);
-        });">
+        // Watch maxRepostsPerDay changes
+        $watch('localMaxRepostsPerDay', value => $wire.set('maxRepostsPerDay', value));">
 
             <!-- Selected Track -->
             @if ($track)
@@ -157,12 +153,12 @@
                         <div class="flex justify-between items-center gap-4">
                             <div class="w-full relative">
                                 <input type="range" x-init="localMaxFollower = @entangle('maxFollower').defer || 100" x-model="localMaxFollower"
-                                    min="100" :max="localMaxFollower" class="w-full h-2 cursor-pointer">
+                                    min="100" :max="localCredit * 100" class="w-full h-2 cursor-pointer">
                             </div>
                             <div
                                 class="min-w-[80px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
                                 <span class="text-sm font-medium text-gray-900 dark:text-white"
-                                    x-text="localMaxFollower"></span>
+                                    x-text="localMaxFollower * 100"></span>
                             </div>
                         </div>
                         @error('maxFollower')
