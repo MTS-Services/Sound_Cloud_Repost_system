@@ -328,7 +328,10 @@
                                         </span>
                                     </div>
                                     <div class="text-right">
-                                        @if ($repostRequest->status !== App\Models\RepostRequest::STATUS_APPROVED)
+                                        @if (
+                                            $repostRequest->status !== App\Models\RepostRequest::STATUS_APPROVED &&
+                                                $repostRequest->status !== App\Models\RepostRequest::STATUS_EXPIRED &&
+                                                $repostRequest->status !== App\Models\RepostRequest::STATUS_DECLINE)
                                             {{-- <button wire:click="cancleRepostRequest({{ $repostRequest->id }})"
                                                 class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Cancle</button> --}}
                                             <x-gbutton variant="primary" size="sm"
