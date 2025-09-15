@@ -64,7 +64,7 @@
                 });
                 $watch('proFeatureEnabled', value => {
                     if (value) {
-                        let newCredit = Math.floor(this.userCreditLimit * 0.5);
+                        let newCredit = Math.floor(this.localCredit * 2);
                         if (newCredit > this.userCreditLimit) {
                             this.errorMessage = 'Credit exceeds your available credits.';
                             this.localCredit = newCredit;
