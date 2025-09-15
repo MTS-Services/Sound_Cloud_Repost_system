@@ -39,6 +39,7 @@
             momentumEnabled: @js(proUser()),
             userCreditLimit: {{ userCredits() }},
             errorMessage: '',
+            proFeatureValid: false,
             showGenreRadios: false,
             showRepostPerDay: false,
             showOptions: false,
@@ -62,13 +63,16 @@
                 $watch('localMaxRepostsPerDay', value => {
                     $wire.set('maxRepostsPerDay', value);
                 });
-                $watch('proFeatureEnabled', value => {
+                $watch('proFeatureValid', value => {
                     if (value) {
-                        let newCredit = Math.floor(this.userCreditLimit * 0.5);
+                        let newCredit = Math.floor(this.localCredit * 2);
                         if (newCredit > this.userCreditLimit) {
                             this.errorMessage = 'Credit exceeds your available credits.';
-                            this.localCredit = newCredit;
-                            $wire.set('credit', newCredit);
+                            this.momentumEnabled = false;
+                            this.localCredit = this.userCreditLimit / 2;
+                            this.localMaxFollower = this.userCreditLimit / 2 * 100;
+                            $wire.set('credit', this.localCredit);
+                            {{-- $wire.set('maxFollower', this.localMaxFollower); --}}
                         } else {
                             this.errorMessage = '';
                         }
@@ -191,7 +195,7 @@
                 <!-- Enable Campaign Accelerator -->
                 <div class="flex items-start space-x-3 {{ !proUser() ? 'opacity-30' : '' }}">
                     <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
-                        x-model="proFeatureEnabled" {{ !proUser() ? 'disabled' : '' }}
+                        x-model="proFeatureValid" {{ !proUser() ? 'disabled' : '' }}
                         class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ !proUser() ? 'cursor-not-allowed' : 'cursor-pointer' }}">
                     <div>
                         <div class="flex items-center space-x-2">
