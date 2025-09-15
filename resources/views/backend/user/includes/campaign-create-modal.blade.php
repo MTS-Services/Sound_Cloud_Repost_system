@@ -377,19 +377,27 @@
             localMaxRepostsPerDay: @entangle('maxRepostsPerDay').defer
         }" x-init="// Initialize maxFollower according to credit (1 credit = 100 followers)
         if (!localCredit) localCredit = 50;
-        localMaxFollower = localCredit * 100;
         $wire.set('credit', localCredit);
-        if (localMaxFollower > localCredit) {
-            localMaxFollower = localCredit * 100;
-            $wire.set('maxFollower', localMaxFollower);
-        }
-        $wire.set('maxFollower', localMaxFollower);
+        $wire.set('maxFollower', maxFollower);
         
         // Watch credit changes and update maxFollower accordingly
-        $watch('localCredit', value => {
+        {{-- $watch('localCredit', value => {
             $wire.set('credit', value);
             localMaxFollower = value * 100;
             $wire.set('maxFollower', localMaxFollower);
+        }); --}}
+        $watch('localCredit', value => {
+            $wire.set('credit', value);
+        
+            if (localMaxFollower > value) {
+                localMaxFollower = value;
+                $wire.set('maxFollower', value);
+            }
+        
+            if (localMaxFollower < value) {
+                localMaxFollower = value;
+                $wire.set('maxFollower', value);
+            }
         });
         
         // Watch maxRepostsPerDay changes
