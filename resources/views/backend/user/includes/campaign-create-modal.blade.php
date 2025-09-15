@@ -62,15 +62,15 @@
                 $watch('localMaxRepostsPerDay', value => {
                     $wire.set('maxRepostsPerDay', value);
                 });
-                $watch('momentumEnabled', value => {
+                $watch('proFeatureEnabled', value => {
                     if (value) {
-                        let newCredit = Math.floor(this.localCredit / 2);
+                        let newCredit = Math.floor(this.userCreditLimit * 0.5);
                         if (newCredit > this.userCreditLimit) {
                             this.errorMessage = 'Credit exceeds your available credits.';
-                        } else {
-                            this.errorMessage = '';
                             this.localCredit = newCredit;
                             $wire.set('credit', newCredit);
+                        } else {
+                            this.errorMessage = '';
                         }
                     } else {
                         this.errorMessage = '';
@@ -190,8 +190,8 @@
                 <!-- PRO Features, Audience Filtering, Genres (unchanged)... -->
                 <!-- Enable Campaign Accelerator -->
                 <div class="flex items-start space-x-3 {{ !proUser() ? 'opacity-30' : '' }}">
-                    <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )" x-model="momentumEnabled"
-                        {{ !proUser() ? 'disabled' : '' }}
+                    <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
+                        x-model="proFeatureEnabled" {{ !proUser() ? 'disabled' : '' }}
                         class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ !proUser() ? 'cursor-not-allowed' : 'cursor-pointer' }}">
                     <div>
                         <div class="flex items-center space-x-2">
@@ -209,6 +209,9 @@
                         <p class="text-xs text-gray-700 dark:text-gray-400"
                             x-text="'Use Campaign Accelerator (+ ' + (localCredit * 0.5) + ' credits)'"></p>
                     </div>
+                    <template x-if="errorMessage">
+                        <p class="text-red-500 text-sm mt-2" x-text="errorMessage"></p>
+                    </template>
                 </div>
 
 
