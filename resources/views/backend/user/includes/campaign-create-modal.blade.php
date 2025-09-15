@@ -379,6 +379,10 @@
         if (!localCredit) localCredit = 50;
         localMaxFollower = localCredit * 100;
         $wire.set('credit', localCredit);
+        if (localMaxFollower > localCredit) {
+            localMaxFollower = localCredit * 100;
+            $wire.set('maxFollower', localMaxFollower);
+        }
         $wire.set('maxFollower', localMaxFollower);
         
         // Watch credit changes and update maxFollower accordingly
