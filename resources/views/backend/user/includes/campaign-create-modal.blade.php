@@ -38,14 +38,16 @@
         <div class="p-6 overflow-y-auto" x-data="{
             momentumEnabled: @js(proUser()),
             userCreditLimit: {{ userCredits() }},
+            totalCredit: {{ $credit }},
+            showError: false,
             errorMessage: '',
             proFeatureValid: false,
             showGenreRadios: false,
             showRepostPerDay: false,
             showOptions: false,
-            localCredit: @entangle('credit').defer || 50,
-            localMaxFollower: @entangle('maxFollower').defer || 5000,
-            localMaxRepostsPerDay: @entangle('maxRepostsPerDay').defer,
+            localCredit: @entangle('credit').live,
+            localMaxFollower: @entangle('maxFollower').live,
+            localMaxRepostsPerDay: @entangle('maxRepostsPerDay').live,
             init() {
                 if (!this.localCredit) this.localCredit = 50;
                 this.localMaxFollower = this.localCredit * 100;
@@ -54,6 +56,7 @@
         
                 $watch('localCredit', value => {
                     $wire.set('credit', value);
+                    this.totalCredit = value;
                     if (this.localMaxFollower > (value * 100)) {
                         this.localMaxFollower = value * 100;
                         $wire.set('maxFollower', this.localMaxFollower);
@@ -65,21 +68,23 @@
                 });
                 $watch('proFeatureValid', value => {
                     if (value) {
-                        let newCredit = Math.floor(this.localCredit * 2);
-                        if (newCredit > this.userCreditLimit) {
+                        let requiredCredit = Math.floor(this.localCredit * 2);
+        
+                        if (requiredCredit > this.userCreditLimit) {
+                            this.showError = true;
+                            this.proFeatureValid = false;
                             this.errorMessage = 'Credit exceeds your available credits.';
-                            this.momentumEnabled = false;
-                            this.localCredit = this.userCreditLimit / 2;
-                            this.localMaxFollower = this.userCreditLimit / 2 * 100;
-                            $wire.set('credit', this.localCredit);
-                            {{-- $wire.set('maxFollower', this.localMaxFollower); --}}
+        
                         } else {
-                            this.errorMessage = '';
+                            this.totalCredit = this.localCredit;
                         }
+                        this.totalCredit = Math.round(this.localCredit * 1.5);
                     } else {
-                        this.errorMessage = '';
+                        this.totalCredit = this.localCredit;
                     }
+        
                 });
+        
             }
         }">
 
@@ -213,10 +218,9 @@
                         <p class="text-xs text-gray-700 dark:text-gray-400"
                             x-text="'Use Campaign Accelerator (+ ' + (localCredit * 0.5) + ' credits)'"></p>
                     </div>
-                    <template x-if="errorMessage">
-                        <p class="text-red-500 text-sm mt-2" x-text="errorMessage"></p>
-                    </template>
                 </div>
+
+                <p x-show="errorMessage" class="text-red-500 text-xs mt-1" x-text="errorMessage"></p>
 
 
                 <!-- Campaign Targeting -->
@@ -347,7 +351,8 @@
                                     stroke-width="2" />
                             </svg>
                         </span>
-                        <span>{{ $proFeatureEnabled ? $credit * 1.5 : $credit }}</span>
+                        {{-- <span>{{ $proFeatureEnabled ? $credit * 1.5 : $credit }}</span> --}}
+                        <span x-text="totalCredit"></span>
                         <span wire:loading.remove wire:target="createCampaign">{{ __('Create Campaign') }}</span>
                         <span wire:loading wire:target="createCampaign">{{ __('Creating...') }}</span>
                     </button>
