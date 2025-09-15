@@ -3,8 +3,7 @@
         <x-slot name="page_slug">chart</x-slot>
         <div class="py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div
-    class="bg-gradient-to-r bg-gray-100 dark:bg-black text-gray-900 dark:text-white p-6 sm:p-8 rounded-2xl mb-8 border dark:border-gray-800">
+                   <div class="bg-gradient-to-r bg-gray-100 dark:bg-black text-gray-900 dark:text-white p-6 sm:p-8 rounded-2xl mb-8 border dark:border-gray-800">
     <div class="max-w-4xl mx-auto">
 
         <!-- Header -->
@@ -83,7 +82,6 @@
         </div>
     </div>
 </div>
-
                 <div x-data="{ activeTab: @entangle('activeTab').live, playing: @entangle('playing').live }">
                     <div class="flex items-center justify-between mb-6">
                         <div class="flex items-center gap-4">
