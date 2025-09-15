@@ -269,8 +269,8 @@ class RepostRequest extends Component
             // Check if the user has already reposted this specific request
             if (
                 Repost::where('reposter_urn', $currentUserUrn)
-                ->where('repost_request_id', $requestId)
-                ->exists()
+                    ->where('repost_request_id', $requestId)
+                    ->exists()
             ) {
 
                 $this->dispatch('alert', type: 'error', message: 'You have already reposted this request.');
@@ -497,7 +497,7 @@ class RepostRequest extends Component
     {
         if ($this->activeMainTab == 'accept_requests') {
             $this->activeMainTab = 'incoming_request';
-            
+
             $this->dataLoad();
         } else {
             $this->activeMainTab = $tab;
@@ -506,7 +506,7 @@ class RepostRequest extends Component
     }
     public function dataLoad()
     {
-        $query = ModelsRepostRequest::with(['track', 'targetUser']);
+        $query = ModelsRepostRequest::with(['track', 'targetUser'])->whereTime('expired_at', '>', now());
 
         switch ($this->activeMainTab) {
             case 'incoming_request':
