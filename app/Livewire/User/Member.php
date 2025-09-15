@@ -399,6 +399,7 @@ class Member extends Component
                     'likeable' => $this->likeable,
                     'commentable' => $this->commentable,
                     'following' => $this->following,
+                    'requested_at' => now(),
                     'expired_at' => now()->addDay(),
                 ]);
 
