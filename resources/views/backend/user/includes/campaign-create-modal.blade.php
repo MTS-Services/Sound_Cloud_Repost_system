@@ -421,20 +421,6 @@
                     $wire.maxFollower = 100;
                 }
             },
-        
-            // Calculate total cost
-            get totalCost() {
-                let baseCost = $wire.credit || 50;
-                return $wire.proFeatureEnabled ? Math.ceil(baseCost * 1.5) : baseCost;
-            },
-        
-            // Check if form can be submitted
-            get canSubmit() {
-                return ($wire.credit >= 50) &&
-                    ($wire.credit <= {{ userCredits() }}) &&
-                    ($wire.maxFollower >= 100) &&
-                    ($wire.track || false);
-            }
         }">
 
             <!-- Selected Track -->
@@ -555,158 +541,136 @@
                     </div>
                 </div>
 
-                <!-- PRO Features - Fixed momentum enablement -->
-                <div class="flex items-start space-x-3" :class="!momentumEnabled ? 'opacity-30' : ''">
-                    <input type="checkbox" wire:model.live="proFeatureEnabled"
-                        x-on:change="$wire.call('profeature', {{ $proFeatureValue ?? 0 }})"
-                        :disabled="!momentumEnabled"
-                        class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
-                        :class="!momentumEnabled ? 'cursor-not-allowed' : 'cursor-pointer'">
+                <!-- PRO Features, Audience Filtering, Genres (unchanged)... -->
+                <!-- Enable Campaign Accelerator -->
+                <div class="flex items-start space-x-3 {{ !proUser() ? 'opacity-30' : '' }}">
+                    <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
+                        {{ !proUser() ? 'disabled' : '' }}
+                        class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ !proUser() ? 'cursor-not-allowed' : 'cursor-pointer' }}">
                     <div>
                         <div class="flex items-center space-x-2">
                             <h4 class="text-sm font-medium text-dark dark:text-white">
                                 {{ __('Turn on Momentum+ (') }}
                                 <span class="text-md font-semibold">PRO</span>{{ __(')') }}
                             </h4>
-                            <div class="w-4 h-4 text-gray-700 dark:text-gray-400 rounded-full flex items-center justify-center cursor-help"
-                                title="Use Campaign Accelerator (+50% credits)">
+                            <div
+                                class="w-4 h-4 text-gray-700 dark:text-gray-400 rounded-full flex items-center justify-center">
                                 <span class="text-white text-xs">i</span>
                             </div>
                         </div>
-                        <p class="text-xs text-gray-700 dark:text-gray-400">Use Campaign Accelerator (+50% credits)</p>
+                        <p class="text-xs text-gray-700 dark:text-gray-400">Use Campaign Accelerator (+50 credits)
+                        </p>
                     </div>
                 </div>
 
+
                 <!-- Campaign Targeting -->
-                <div class="border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-lg p-4"
-                    :class="(momentumEnabled && $wire.proFeatureEnabled) ? 'opacity-100' : 'opacity-30'">
-                    <div class="mb-4">
+                <div class="border border-gray-200 dark:border-gray-700 bg-gray-200 dark:bg-gray-900 rounded-lg p-4"
+                    :class="momentumEnabled ? 'opacity-100' : 'opacity-30 border-opacity-10'">
+                    <div class=" mb-4">
                         <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                            {{ __('Audience Filtering (PRO Feature)') }}
-                        </h4>
-                        <p class="text-sm text-gray-700 dark:text-gray-400 mb-4 mt-2">Fine-tune who can support your
-                            track:</p>
+                            {{ __('Audience Filtering (PRO Feature)') }}</h4>
+                        <p class="text-sm  text-gray-700 dark:text-gray-400 mb-4 mt-2">Fine-tune who can support
+                            your track:</p>
                     </div>
 
                     <div class="space-y-3 ml-4">
                         <div class="flex flex-col space-y-2">
                             <div class="flex items-start space-x-3">
-                                <input type="checkbox" wire:model.live="excludeFrequentReposters"
-                                    :disabled="!(momentumEnabled && $wire.proFeatureEnabled)"
+                                <input type="checkbox" :disabled="!momentumEnabled"
                                     class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
-                                    :class="(momentumEnabled && $wire.proFeatureEnabled) ? 'cursor-pointer' :
-                                    'cursor-not-allowed'">
+                                    :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-gray-700 dark:text-gray-400">
-                                        Exclude users who repost too often (last 24h)
-                                    </span>
+                                    <span class="text-sm text-gray-700 dark:text-gray-400">Exclude users who repost
+                                        too often (last
+                                        24h)</span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="flex flex-col space-y-2">
                             <div class="flex items-start space-x-3">
-                                <input type="checkbox" x-model="showRepostPerDay"
-                                    :disabled="!(momentumEnabled && $wire.proFeatureEnabled)"
+                                <input type="checkbox" @click="showRepostPerDay = !showRepostPerDay"
+                                    :disabled="!momentumEnabled"
                                     class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
-                                    :class="(momentumEnabled && $wire.proFeatureEnabled) ? 'cursor-pointer' :
-                                    'cursor-not-allowed'">
+                                    :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-gray-700 dark:text-gray-400">
-                                        Limit average repost frequency per day
-                                    </span>
+                                    <span class="text-sm text-gray-700 dark:text-gray-400">Limit average repost
+                                        frequency per
+                                        day</span>
                                 </div>
                             </div>
-
-                            <div x-show="showRepostPerDay && (momentumEnabled && $wire.proFeatureEnabled)"
-                                x-transition:enter="transition ease-out duration-200"
-                                x-transition:enter-start="opacity-0 transform -translate-y-2"
-                                x-transition:enter-end="opacity-100 transform translate-y-0" class="p-3">
+                            <div x-show="showRepostPerDay" x-transition class="p-3">
                                 <div class="flex justify-between items-center gap-4">
                                     <div class="w-full relative">
-                                        <input type="range" x-model.number="$wire.maxRepostsPerDay" min="0"
-                                            max="100" :disabled="!(momentumEnabled && $wire.proFeatureEnabled)"
-                                            class="w-full h-2 cursor-pointer"
-                                            :class="(momentumEnabled && $wire.proFeatureEnabled) ? 'cursor-pointer' :
-                                            'cursor-not-allowed'">
+                                        <input type="range" x-data :disabled="!momentumEnabled"
+                                            x-on:input="$wire.set('maxRepostsPerDay', $event.target.value)"
+                                            min="0" max="100" value="{{ $maxRepostsPerDay }}"
+                                            class="w-full h-2  cursor-pointer"
+                                            :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                     </div>
                                     <div
                                         class="min-w-[80px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
-                                        <span class="text-sm font-medium text-gray-900 dark:text-white"
-                                            x-text="$wire.maxRepostsPerDay"></span>
+                                        <span
+                                            class="text-sm font-medium text-gray-900 dark:text-white">{{ $maxRepostsPerDay }}</span>
                                     </div>
+                                    @error('maxRepostsPerDay')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
-                                @error('maxRepostsPerDay')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
                             </div>
                         </div>
                     </div>
-
                     <!-- Genre Selection -->
                     <div class="mt-4">
-                        <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Genre Preferences for
+                        <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Genre
+                            Preferences for
                             Sharers</h2>
-                        <p class="text-sm text-gray-700 dark:text-gray-400 mb-3 mt-2">Reposters must have the following
-                            genres:</p>
-
+                        <p class="text-sm text-gray-700 dark:text-gray-400 mb-3 mt-2">Reposters must have
+                            the
+                            following genres:</p>
                         <div class="space-y-2 ml-4">
                             <div class="flex items-center space-x-2">
-                                <input type="radio" name="targetGenre" wire:model.live='targetGenre'
-                                    value="anyGenre" x-on:change="showGenreRadios = false"
-                                    :disabled="!(momentumEnabled && $wire.proFeatureEnabled)"
+                                <input type="radio" name="targetGenre" wire:model='targetGenre' value="anyGenre"
+                                    checked @click="showGenreRadios = false" :disabled="!momentumEnabled"
                                     class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
-                                    :class="(momentumEnabled && $wire.proFeatureEnabled) ? 'cursor-pointer' :
-                                    'cursor-not-allowed'">
-                                <span class="text-sm text-gray-700 dark:text-gray-400">Open to all music types</span>
+                                    :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
+                                <span class="text-sm text-gray-700 dark:text-gray-400">Open to all music
+                                    types</span>
                             </div>
-
-                            @if ($track && $track->genre)
-                                <div class="flex items-center space-x-2">
-                                    <input type="radio" name="targetGenre" value="{{ $track->genre }}"
-                                        wire:model.live='targetGenre' x-on:change="showGenreRadios = false"
-                                        :disabled="!(momentumEnabled && $wire.proFeatureEnabled)"
-                                        class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
-                                        :class="(momentumEnabled && $wire.proFeatureEnabled) ? 'cursor-pointer' :
-                                        'cursor-not-allowed'">
-                                    <span class="text-sm text-gray-700 dark:text-gray-400">
-                                        Match track genre – {{ $track->genre }}
-                                    </span>
-                                </div>
-                            @endif
-
+                            <div class="flex items-center space-x-2">
+                                <input type="radio" name="targetGenre" value="{{ $track?->genre }}"
+                                    @click="showGenreRadios = false" wire:model='targetGenre'
+                                    :disabled="!momentumEnabled"
+                                    class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                                    :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
+                                <span class="text-sm text-gray-700 dark:text-gray-400">Match track genre –
+                                    {{ $track?->genre }}</span>
+                            </div>
                             <div class="space-y-3">
                                 <div class="flex items-center space-x-2">
-                                    <input type="radio" name="targetGenre" value="userGenres"
-                                        wire:model.live='targetGenre'
-                                        x-on:change="showGenreRadios = ($event.target.checked)"
-                                        :disabled="!(momentumEnabled && $wire.proFeatureEnabled)"
+                                    <input type="radio" name="targetGenre"
+                                        @click="showGenreRadios = !showGenreRadios" :disabled="!momentumEnabled"
                                         class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
-                                        :class="(momentumEnabled && $wire.proFeatureEnabled) ? 'cursor-pointer' :
-                                        'cursor-not-allowed'">
-                                    <span class="text-sm text-gray-700 dark:text-gray-400">
-                                        Match one of your profile's chosen genres
-                                    </span>
+                                        :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
+                                    <span class="text-sm text-gray-700 dark:text-gray-400">Match one of
+                                        your
+                                        profile's chosen
+                                        genres</span>
                                 </div>
-
-                                <div x-show="showGenreRadios && $wire.targetGenre === 'userGenres'"
-                                    x-transition:enter="transition ease-out duration-200"
-                                    x-transition:enter-start="opacity-0 transform -translate-y-2"
-                                    x-transition:enter-end="opacity-100 transform translate-y-0"
-                                    class="ml-6 space-y-2">
-                                    @forelse (user()->genres ?? [] as $genre)
+                                <div x-show="showGenreRadios" x-transition class="ml-6 space-y-2">
+                                    @forelse (user()->genres as $genre)
                                         <div class="flex items-center space-x-2">
-                                            <input type="radio" name="specificGenre"
-                                                wire:model.live='specificTargetGenre' value="{{ $genre->genre }}"
+                                            <input type="radio" name="targetGenre" wire:model='targetGenre'
+                                                value="{{ $genre->genre }}"
                                                 class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
                                             <span
                                                 class="text-sm text-gray-700 dark:text-gray-400">{{ $genre->genre }}</span>
                                         </div>
                                     @empty
-                                        <div>
-                                            <span class="text-sm text-gray-700 dark:text-gray-400">
-                                                No genres found. Please add genres to your profile first.
-                                            </span>
+                                        <div class="">
+                                            <span class="text-sm text-gray-700 dark:text-gray-400">No genres
+                                                found</span>
                                         </div>
                                     @endforelse
                                 </div>
@@ -715,23 +679,20 @@
                     </div>
                 </div>
 
-                <!-- Submit Button - Fixed condition logic -->
+                <!-- Submit -->
                 <div class="pt-4">
-                    <button type="submit" :disabled="!canSubmit"
-                        class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform font-bold py-3 px-4 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg"
-                        :class="canSubmit ?
-                            'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white hover:-translate-y-0.5' :
-                            'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'">
+                    <button type="submit"
+                        class="w-full flex items-center justify-center gap-3 font-bold py-2 px-4 rounded-lg transition-all duration-300
+                               {{ !$canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed' }}">
                         <span>
-                            <svg class="w-6 h-6" width="26" height="18" viewBox="0 0 26 18" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <rect x="1" y="1" width="24" height="16" rx="3" fill="none"
-                                    stroke="currentColor" stroke-width="2" />
-                                <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
+                            <svg class="w-8 h-8 text-white" viewBox="0 0 26 18" fill="none">
+                                <rect x="1" y="1" width="24" height="16" rx="3" stroke="currentColor"
+                                    stroke-width="2" />
+                                <circle cx="8" cy="9" r="3" stroke="currentColor"
                                     stroke-width="2" />
                             </svg>
                         </span>
-                        <span x-text="totalCost"></span>
+                        <span>{{ $proFeatureEnabled ? $credit * 1.5 : $credit }}</span>
                         <span wire:loading.remove wire:target="createCampaign">{{ __('Create Campaign') }}</span>
                         <span wire:loading wire:target="createCampaign">{{ __('Creating...') }}</span>
                     </button>
