@@ -63,6 +63,7 @@
                     $wire.set('maxRepostsPerDay', value);
                 });
                 $watch('proFeatureEnabled', value => {
+                console.log(value);
                     if (value) {
                         let newCredit = Math.floor(this.localCredit * 2);
                         if (newCredit > this.userCreditLimit) {
