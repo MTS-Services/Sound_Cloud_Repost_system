@@ -372,11 +372,11 @@
             showGenreRadios: false,
             showRepostPerDay: false,
             showOptions: false,
-            localCredit: @entangle('credit').defer || 50,
-            localMaxFollower: @entangle('maxFollower').defer || 100,
-            localMaxRepostsPerDay: @entangle('maxRepostsPerDay').defer,
-            campaignModal(),
-        }">
+            {{-- localCredit: @entangle('credit').defer || 50,
+            localMaxFollower: @entangle('maxFollower').defer || 100, 
+            localMaxRepostsPerDay: @entangle('maxRepostsPerDay').defer, --}}
+            campaignModal(@entangle('credit').defer, @entangle('maxFollower').defer, @entangle('maxRepostsPerDay').defer),
+        }" x-init="init()">
 
             <!-- Selected Track -->
             @if ($track)
@@ -647,17 +647,16 @@
     </div>
 </div>
 <script>
-    function campaignModal() {
+    function campaignModal(credit, maxFollower, maxRepostsPerDay) {
         return {
-            localCredit: 50,
-            localMaxFollower: 100,
-            localMaxRepostsPerDay: 0,
+            localCredit: credit,
+            localMaxFollower: maxFollower,
+            localMaxRepostsPerDay: maxRepostsPerDay,
 
             init() {
-                this.localMaxFollower = Math.max(100, this.localCredit * 100);
-
                 this.$watch('localCredit', value => {
                     this.localMaxFollower = Math.min(this.localMaxFollower, Math.max(100, value * 100));
+                    credit = value;
                 });
 
                 this.$watch('localMaxFollower', value => {
@@ -665,6 +664,7 @@
                     if (value > maxAllowed) {
                         this.localMaxFollower = maxAllowed;
                     }
+                    maxFollower = this.localMaxFollower;
                 });
                 this.$watch('localMaxRepostsPerDay', value => this.localMaxRepostsPerDay = value);
             }
