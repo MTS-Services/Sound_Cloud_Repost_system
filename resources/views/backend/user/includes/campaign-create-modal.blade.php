@@ -373,33 +373,22 @@
             showRepostPerDay: false,
             showOptions: false,
             localCredit: @entangle('credit').defer || 50,
-            localMaxFollower: @entangle('maxFollower').defer || 100,
+            localMaxFollower: @entangle('maxFollower').defer || 5000,
             localMaxRepostsPerDay: @entangle('maxRepostsPerDay').defer
-        }" x-init="// initialize credit + maxFollower
+        }" x-init="// Initialize maxFollower according to credit (1 credit = 100 followers)
         if (!localCredit) localCredit = 50;
-        if (!localMaxFollower) localMaxFollower = 100;
-        let maxAllowed = localCredit * 100;
-        // credit watcher
-        $watch('localCredit', value => {
-        console.log(value);
-            $wire.set('credit', value);
-            let maxAllowed = value * 100;
-            if (localMaxFollower > maxAllowed) {
-                localMaxFollower = maxAllowed;
-                $wire.set('maxFollower', localMaxFollower);
-            }
-        });
+        localMaxFollower = localCredit * 100;
+        $wire.set('credit', localCredit);
+        $wire.set('maxFollower', localMaxFollower);
         
-        // maxFollower watcher
-        $watch('localMaxFollower', value => {
-            if (value < 100) value = 100;
-            let maxAllowed = localCredit * 100;
-            if (value > maxAllowed) value = maxAllowed;
-            localMaxFollower = value;
+        // Watch credit changes and update maxFollower accordingly
+        $watch('localCredit', value => {
+            $wire.set('credit', value);
+            localMaxFollower = value * 100;
             $wire.set('maxFollower', localMaxFollower);
         });
         
-        // maxReposts watcher
+        // Watch maxRepostsPerDay changes
         $watch('localMaxRepostsPerDay', value => $wire.set('maxRepostsPerDay', value));">
 
             <!-- Selected Track -->
@@ -499,7 +488,7 @@
                                     min="100" :max="localCredit * 100" class="w-full h-2 cursor-pointer">
                             </div>
                             <div
-                                class="min-w-[100px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
+                                class="min-w-[80px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
                                 <span class="text-sm font-medium text-gray-900 dark:text-white"
                                     x-text="localMaxFollower"></span>
                             </div>
