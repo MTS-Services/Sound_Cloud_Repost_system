@@ -368,15 +368,74 @@
 
         <!-- Body -->
         <div class="p-6 overflow-y-auto" x-data="{
+            // Proper Livewire entanglement
             momentumEnabled: @js(proUser()),
             showGenreRadios: false,
             showRepostPerDay: false,
             showOptions: false,
-            {{-- localCredit: @entangle('credit').defer || 50,
-            localMaxFollower: @entangle('maxFollower').defer || 100, --}}
-            localMaxRepostsPerDay: @entangle('maxRepostsPerDay').defer,
-            campaignModal(@entangle('credit').defer, @entangle('maxFollower').defer),
-        }" x-init="init()">
+        
+            // Fixed initialization and validation
+            init() {
+                // Initialize values if they don't exist
+                if (!$wire.credit) {
+                    $wire.credit = 50;
+                }
+                if (!$wire.maxFollower) {
+                    $wire.maxFollower = 5000;
+                }
+        
+                // Watch for credit changes and validate maxFollower
+                this.$watch('$wire.credit', (value) => {
+                    const maxAllowed = Math.max(100, value * 100);
+                    if ($wire.maxFollower > maxAllowed) {
+                        $wire.maxFollower = maxAllowed;
+                    }
+                    this.validateForm();
+                });
+        
+                // Watch for maxFollower changes
+                this.$watch('$wire.maxFollower', () => {
+                    this.validateForm();
+                });
+        
+                // Initial validation
+                this.validateForm();
+            },
+        
+            // Form validation method
+            validateForm() {
+                // Ensure credit is within valid range
+                if ($wire.credit < 50) {
+                    $wire.credit = 50;
+                }
+                if ($wire.credit > {{ userCredits() }}) {
+                    $wire.credit = {{ userCredits() }};
+                }
+        
+                // Ensure maxFollower is within valid range
+                const maxAllowed = Math.max(100, $wire.credit * 100);
+                if ($wire.maxFollower > maxAllowed) {
+                    $wire.maxFollower = maxAllowed;
+                }
+                if ($wire.maxFollower < 100) {
+                    $wire.maxFollower = 100;
+                }
+            },
+        
+            // Calculate total cost
+            get totalCost() {
+                let baseCost = $wire.credit || 50;
+                return $wire.proFeatureEnabled ? Math.ceil(baseCost * 1.5) : baseCost;
+            },
+        
+            // Check if form can be submitted
+            get canSubmit() {
+                return ($wire.credit >= 50) &&
+                    ($wire.credit <= {{ userCredits() }}) &&
+                    ($wire.maxFollower >= 100) &&
+                    ($wire.track || false);
+            }
+        }">
 
             <!-- Selected Track -->
             @if ($track)
@@ -384,7 +443,9 @@
                     <div class="flex items-center justify-between mb-3">
                         <h3 class="text-md font-medium text-gray-900 dark:text-white">Selected Track</h3>
                         <button x-on:click="showSubmitModal = false"
-                            class="bg-gray-100 dark:bg-slate-700 py-1.5 px-3 rounded-xl text-orange-500 text-sm font-medium hover:text-orange-600">Edit</button>
+                            class="bg-gray-100 dark:bg-slate-700 py-1.5 px-3 rounded-xl text-orange-500 text-sm font-medium hover:text-orange-600 transition-colors duration-200">
+                            Edit
+                        </button>
                     </div>
                     <div
                         class="p-4 flex items-center space-x-4 dark:bg-slate-700 rounded-xl transition-all duration-200 border border-orange-200">
@@ -400,12 +461,13 @@
             @endif
 
             <!-- Form -->
-            <form wire:submit.prevent="createCampaign" class="space-y-6">
+            <form wire:submit.prevent="createCampaign" class="space-y-6" x-on:submit="validateForm()">
                 <!-- Budget -->
                 <div class="mt-4">
                     <div class="flex items-center space-x-2 mb-2">
                         <h3 class="text-sm font-medium text-gray-900 dark:text-white">Set budget</h3>
-                        <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
+                        <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center cursor-help"
+                            title="A potential 10,000 people reached per campaign">
                             <span class="text-white text-xs">i</span>
                         </div>
                     </div>
@@ -420,7 +482,7 @@
                             <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
                                 stroke-width="2" />
                         </svg>
-                        <span class="text-2xl font-bold text-orange-500" x-text="localCredit"></span>
+                        <span class="text-2xl font-bold text-orange-500" x-text="$wire.credit"></span>
                     </div>
 
                     @error('credit')
@@ -428,8 +490,8 @@
                     @enderror
 
                     <div class="relative">
-                        <input type="range" x-init="localCredit = @entangle('credit').defer || 50" x-model="localCredit" min="50"
-                            step="10" max="{{ userCredits() }}"
+                        <input type="range" x-model.number="$wire.credit" min="50" step="10"
+                            max="{{ userCredits() }}" x-on:input="validateForm()"
                             class="w-full h-2 border-0 cursor-pointer outline-none transition-all duration-200">
                     </div>
                 </div>
@@ -439,45 +501,52 @@
                     <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mt-4">Campaign Settings</h2>
                     <p class="text-sm text-gray-700 dark:text-gray-400 mb-4 mt-2">Select amount of credits to be spent
                     </p>
-                    <div class="flex items-start space-x-3">
-                        <input type="checkbox" wire:model="commentable" checked
-                            class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                        <div>
-                            <h4 class="text-sm font-medium text-gray-900 dark:text-white">Activate Feedback</h4>
-                            <p class="text-xs text-gray-700 dark:text-gray-400">Encourage listeners to comment (2
-                                credits per comment).</p>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="flex items-start space-x-3">
-                    <input type="checkbox" wire:model="likeable" checked
-                        class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                    <div>
-                        <h4 class="text-sm font-medium text-gray-900 dark:text-white">Activate HeartPush</h4>
-                        <p class="text-xs text-gray-700 dark:text-gray-400">Motivate users to like your track (2 credits
-                            per like).</p>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <input type="checkbox" wire:model.live="commentable"
+                                class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-900 dark:text-white">Activate Feedback</h4>
+                                <p class="text-xs text-gray-700 dark:text-gray-400">Encourage listeners to comment (2
+                                    credits per comment).</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <input type="checkbox" wire:model.live="likeable"
+                                class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-900 dark:text-white">Activate HeartPush</h4>
+                                <p class="text-xs text-gray-700 dark:text-gray-400">Motivate users to like your track (2
+                                    credits per like).</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Max Follower -->
                 <div class="flex flex-col space-y-2">
                     <div class="flex items-start space-x-3">
-                        <input type="checkbox" @change="showOptions = !showOptions"
+                        <input type="checkbox" x-model="showOptions"
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                         <span class="text-sm font-medium text-gray-900 dark:text-white">Limit to users with max follower
                             count</span>
                     </div>
-                    <div x-show="showOptions" x-transition class="p-3">
+
+                    <div x-show="showOptions" x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 transform -translate-y-2"
+                        x-transition:enter-end="opacity-100 transform translate-y-0" class="p-3">
                         <div class="flex justify-between items-center gap-4">
                             <div class="w-full relative">
-                                <input type="range" x-init="localMaxFollower = @entangle('maxFollower').defer || 5000" x-model="localMaxFollower"
-                                    min="100" :max="localCredit * 100" class="w-full h-2 cursor-pointer">
+                                <input type="range" x-model.number="$wire.maxFollower" min="100"
+                                    :max="Math.max(100, $wire.credit * 100)" step="100"
+                                    x-on:input="validateForm()" class="w-full h-2 cursor-pointer">
                             </div>
                             <div
                                 class="min-w-[80px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
                                 <span class="text-sm font-medium text-gray-900 dark:text-white"
-                                    x-text="localMaxFollower"></span>
+                                    x-text="$wire.maxFollower"></span>
                             </div>
                         </div>
                         @error('maxFollower')
@@ -486,136 +555,158 @@
                     </div>
                 </div>
 
-                <!-- PRO Features, Audience Filtering, Genres (unchanged)... -->
-                <!-- Enable Campaign Accelerator -->
-                <div class="flex items-start space-x-3 {{ !proUser() ? 'opacity-30' : '' }}">
-                    <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
-                        {{ !proUser() ? 'disabled' : '' }}
-                        class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ !proUser() ? 'cursor-not-allowed' : 'cursor-pointer' }}">
+                <!-- PRO Features - Fixed momentum enablement -->
+                <div class="flex items-start space-x-3" :class="!momentumEnabled ? 'opacity-30' : ''">
+                    <input type="checkbox" wire:model.live="proFeatureEnabled"
+                        x-on:change="$wire.call('profeature', {{ $proFeatureValue ?? 0 }})"
+                        :disabled="!momentumEnabled"
+                        class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
+                        :class="!momentumEnabled ? 'cursor-not-allowed' : 'cursor-pointer'">
                     <div>
                         <div class="flex items-center space-x-2">
                             <h4 class="text-sm font-medium text-dark dark:text-white">
                                 {{ __('Turn on Momentum+ (') }}
                                 <span class="text-md font-semibold">PRO</span>{{ __(')') }}
                             </h4>
-                            <div
-                                class="w-4 h-4 text-gray-700 dark:text-gray-400 rounded-full flex items-center justify-center">
+                            <div class="w-4 h-4 text-gray-700 dark:text-gray-400 rounded-full flex items-center justify-center cursor-help"
+                                title="Use Campaign Accelerator (+50% credits)">
                                 <span class="text-white text-xs">i</span>
                             </div>
                         </div>
-                        <p class="text-xs text-gray-700 dark:text-gray-400">Use Campaign Accelerator (+50 credits)
-                        </p>
+                        <p class="text-xs text-gray-700 dark:text-gray-400">Use Campaign Accelerator (+50% credits)</p>
                     </div>
                 </div>
 
-
                 <!-- Campaign Targeting -->
-                <div class="border border-gray-200 dark:border-gray-700 bg-gray-200 dark:bg-gray-900 rounded-lg p-4"
-                    :class="momentumEnabled ? 'opacity-100' : 'opacity-30 border-opacity-10'">
-                    <div class=" mb-4">
+                <div class="border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-lg p-4"
+                    :class="(momentumEnabled && $wire.proFeatureEnabled) ? 'opacity-100' : 'opacity-30'">
+                    <div class="mb-4">
                         <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                            {{ __('Audience Filtering (PRO Feature)') }}</h4>
-                        <p class="text-sm  text-gray-700 dark:text-gray-400 mb-4 mt-2">Fine-tune who can support
-                            your track:</p>
+                            {{ __('Audience Filtering (PRO Feature)') }}
+                        </h4>
+                        <p class="text-sm text-gray-700 dark:text-gray-400 mb-4 mt-2">Fine-tune who can support your
+                            track:</p>
                     </div>
 
                     <div class="space-y-3 ml-4">
                         <div class="flex flex-col space-y-2">
                             <div class="flex items-start space-x-3">
-                                <input type="checkbox" :disabled="!momentumEnabled"
+                                <input type="checkbox" wire:model.live="excludeFrequentReposters"
+                                    :disabled="!(momentumEnabled && $wire.proFeatureEnabled)"
                                     class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
-                                    :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
+                                    :class="(momentumEnabled && $wire.proFeatureEnabled) ? 'cursor-pointer' :
+                                    'cursor-not-allowed'">
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-gray-700 dark:text-gray-400">Exclude users who repost
-                                        too often (last
-                                        24h)</span>
+                                    <span class="text-sm text-gray-700 dark:text-gray-400">
+                                        Exclude users who repost too often (last 24h)
+                                    </span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="flex flex-col space-y-2">
                             <div class="flex items-start space-x-3">
-                                <input type="checkbox" @click="showRepostPerDay = !showRepostPerDay"
-                                    :disabled="!momentumEnabled"
+                                <input type="checkbox" x-model="showRepostPerDay"
+                                    :disabled="!(momentumEnabled && $wire.proFeatureEnabled)"
                                     class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
-                                    :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
+                                    :class="(momentumEnabled && $wire.proFeatureEnabled) ? 'cursor-pointer' :
+                                    'cursor-not-allowed'">
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-gray-700 dark:text-gray-400">Limit average repost
-                                        frequency per
-                                        day</span>
+                                    <span class="text-sm text-gray-700 dark:text-gray-400">
+                                        Limit average repost frequency per day
+                                    </span>
                                 </div>
                             </div>
-                            <div x-show="showRepostPerDay" x-transition class="p-3">
+
+                            <div x-show="showRepostPerDay && (momentumEnabled && $wire.proFeatureEnabled)"
+                                x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 transform -translate-y-2"
+                                x-transition:enter-end="opacity-100 transform translate-y-0" class="p-3">
                                 <div class="flex justify-between items-center gap-4">
                                     <div class="w-full relative">
-                                        <input type="range" x-data :disabled="!momentumEnabled"
-                                            x-on:input="$wire.set('maxRepostsPerDay', $event.target.value)"
-                                            min="0" max="100" value="{{ $maxRepostsPerDay }}"
-                                            class="w-full h-2  cursor-pointer"
-                                            :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
+                                        <input type="range" x-model.number="$wire.maxRepostsPerDay" min="0"
+                                            max="100" :disabled="!(momentumEnabled && $wire.proFeatureEnabled)"
+                                            class="w-full h-2 cursor-pointer"
+                                            :class="(momentumEnabled && $wire.proFeatureEnabled) ? 'cursor-pointer' :
+                                            'cursor-not-allowed'">
                                     </div>
                                     <div
                                         class="min-w-[80px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
-                                        <span
-                                            class="text-sm font-medium text-gray-900 dark:text-white">{{ $maxRepostsPerDay }}</span>
+                                        <span class="text-sm font-medium text-gray-900 dark:text-white"
+                                            x-text="$wire.maxRepostsPerDay"></span>
                                     </div>
-                                    @error('maxRepostsPerDay')
-                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                    @enderror
                                 </div>
+                                @error('maxRepostsPerDay')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
                     </div>
+
                     <!-- Genre Selection -->
                     <div class="mt-4">
-                        <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Genre
-                            Preferences for
+                        <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Genre Preferences for
                             Sharers</h2>
-                        <p class="text-sm text-gray-700 dark:text-gray-400 mb-3 mt-2">Reposters must have
-                            the
-                            following genres:</p>
+                        <p class="text-sm text-gray-700 dark:text-gray-400 mb-3 mt-2">Reposters must have the following
+                            genres:</p>
+
                         <div class="space-y-2 ml-4">
                             <div class="flex items-center space-x-2">
-                                <input type="radio" name="targetGenre" wire:model='targetGenre' value="anyGenre"
-                                    checked @click="showGenreRadios = false" :disabled="!momentumEnabled"
+                                <input type="radio" name="targetGenre" wire:model.live='targetGenre'
+                                    value="anyGenre" x-on:change="showGenreRadios = false"
+                                    :disabled="!(momentumEnabled && $wire.proFeatureEnabled)"
                                     class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
-                                    :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
-                                <span class="text-sm text-gray-700 dark:text-gray-400">Open to all music
-                                    types</span>
+                                    :class="(momentumEnabled && $wire.proFeatureEnabled) ? 'cursor-pointer' :
+                                    'cursor-not-allowed'">
+                                <span class="text-sm text-gray-700 dark:text-gray-400">Open to all music types</span>
                             </div>
-                            <div class="flex items-center space-x-2">
-                                <input type="radio" name="targetGenre" value="{{ $track?->genre }}"
-                                    @click="showGenreRadios = false" wire:model='targetGenre'
-                                    :disabled="!momentumEnabled"
-                                    class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
-                                    :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
-                                <span class="text-sm text-gray-700 dark:text-gray-400">Match track genre –
-                                    {{ $track?->genre }}</span>
-                            </div>
+
+                            @if ($track && $track->genre)
+                                <div class="flex items-center space-x-2">
+                                    <input type="radio" name="targetGenre" value="{{ $track->genre }}"
+                                        wire:model.live='targetGenre' x-on:change="showGenreRadios = false"
+                                        :disabled="!(momentumEnabled && $wire.proFeatureEnabled)"
+                                        class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                                        :class="(momentumEnabled && $wire.proFeatureEnabled) ? 'cursor-pointer' :
+                                        'cursor-not-allowed'">
+                                    <span class="text-sm text-gray-700 dark:text-gray-400">
+                                        Match track genre – {{ $track->genre }}
+                                    </span>
+                                </div>
+                            @endif
+
                             <div class="space-y-3">
                                 <div class="flex items-center space-x-2">
-                                    <input type="radio" name="targetGenre"
-                                        @click="showGenreRadios = !showGenreRadios" :disabled="!momentumEnabled"
+                                    <input type="radio" name="targetGenre" value="userGenres"
+                                        wire:model.live='targetGenre'
+                                        x-on:change="showGenreRadios = ($event.target.checked)"
+                                        :disabled="!(momentumEnabled && $wire.proFeatureEnabled)"
                                         class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
-                                        :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
-                                    <span class="text-sm text-gray-700 dark:text-gray-400">Match one of
-                                        your
-                                        profile's chosen
-                                        genres</span>
+                                        :class="(momentumEnabled && $wire.proFeatureEnabled) ? 'cursor-pointer' :
+                                        'cursor-not-allowed'">
+                                    <span class="text-sm text-gray-700 dark:text-gray-400">
+                                        Match one of your profile's chosen genres
+                                    </span>
                                 </div>
-                                <div x-show="showGenreRadios" x-transition class="ml-6 space-y-2">
-                                    @forelse (user()->genres as $genre)
+
+                                <div x-show="showGenreRadios && $wire.targetGenre === 'userGenres'"
+                                    x-transition:enter="transition ease-out duration-200"
+                                    x-transition:enter-start="opacity-0 transform -translate-y-2"
+                                    x-transition:enter-end="opacity-100 transform translate-y-0"
+                                    class="ml-6 space-y-2">
+                                    @forelse (user()->genres ?? [] as $genre)
                                         <div class="flex items-center space-x-2">
-                                            <input type="radio" name="targetGenre" wire:model='targetGenre'
-                                                value="{{ $genre->genre }}"
+                                            <input type="radio" name="specificGenre"
+                                                wire:model.live='specificTargetGenre' value="{{ $genre->genre }}"
                                                 class="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
                                             <span
                                                 class="text-sm text-gray-700 dark:text-gray-400">{{ $genre->genre }}</span>
                                         </div>
                                     @empty
-                                        <div class="">
-                                            <span class="text-sm text-gray-700 dark:text-gray-400">No genres
-                                                found</span>
+                                        <div>
+                                            <span class="text-sm text-gray-700 dark:text-gray-400">
+                                                No genres found. Please add genres to your profile first.
+                                            </span>
                                         </div>
                                     @endforelse
                                 </div>
@@ -624,20 +715,23 @@
                     </div>
                 </div>
 
-                <!-- Submit -->
+                <!-- Submit Button - Fixed condition logic -->
                 <div class="pt-4">
-                    <button type="submit"
-                        class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-2 px-4 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg {{ !$canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }}">
+                    <button type="submit" :disabled="!canSubmit"
+                        class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform font-bold py-3 px-4 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg"
+                        :class="canSubmit ?
+                            'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white hover:-translate-y-0.5' :
+                            'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'">
                         <span>
-                            <svg class="w-8 h-8 text-white" width="26" height="18" viewBox="0 0 26 18"
-                                fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg class="w-6 h-6" width="26" height="18" viewBox="0 0 26 18" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
                                 <rect x="1" y="1" width="24" height="16" rx="3" fill="none"
                                     stroke="currentColor" stroke-width="2" />
                                 <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
                                     stroke-width="2" />
                             </svg>
                         </span>
-                        <span>{{ $proFeatureEnabled ? $credit * 1.5 : $credit }}</span>
+                        <span x-text="totalCost"></span>
                         <span wire:loading.remove wire:target="createCampaign">{{ __('Create Campaign') }}</span>
                         <span wire:loading wire:target="createCampaign">{{ __('Creating...') }}</span>
                     </button>
@@ -646,30 +740,6 @@
         </div>
     </div>
 </div>
-<script>
-    function campaignModal(credit, maxFollower) {
-        return {
-            localCredit: credit || 50,
-            localMaxFollower: maxFollower || 100,
-            showOptions: false,
-
-            init() {
-                this.$watch('localCredit', value => {
-                    this.localMaxFollower = Math.min(this.localMaxFollower, Math.max(100, value * 100));
-                    credit = value; // sync with Livewire
-                });
-
-                this.$watch('localMaxFollower', value => {
-                    const maxAllowed = Math.max(100, this.localCredit * 100);
-                    if (value > maxAllowed) {
-                        this.localMaxFollower = maxAllowed;
-                    }
-                    maxFollower = this.localMaxFollower; // sync with Livewire
-                });
-            }
-        }
-    }
-</script>
 
 
 
