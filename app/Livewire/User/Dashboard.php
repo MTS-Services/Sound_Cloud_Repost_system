@@ -757,7 +757,6 @@ class Dashboard extends Component
 
     public function profeature($isChecked)
     {
-        Log::info($this->all());
         if (!proUser()) {
             return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
         } elseif (($this->credit * 2) > userCredits()) {
