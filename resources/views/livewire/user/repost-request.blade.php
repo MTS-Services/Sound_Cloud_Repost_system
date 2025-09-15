@@ -245,10 +245,7 @@
 
                                         </div>
                                         <!-- Status Badge -->
-                                        @if ($repostRequest->status == App\Models\RepostRequest::STATUS_PENDING && $activeMainTab == 'incoming_request')
-                                            <button wire:click="declineRepostRequest({{ $repostRequest->id }})"
-                                                class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">{{ $repostRequest->pending_to_declined }}</button>
-                                        @endif
+
                                         <div class="text-right">
                                             <span @class([
                                                 'inline-block text-xs font-medium px-2 py-1 rounded-full',
@@ -265,6 +262,13 @@
                                                 {{ $repostRequest->status_label }}
                                             </span>
                                         </div>
+                                        @if ($repostRequest->status == App\Models\RepostRequest::STATUS_PENDING && $activeMainTab == 'incoming_request')
+                                            <div class="text-right">
+
+                                                <x-gbutton variant="primary" size="sm"
+                                                    wire:click="declineRepostRequest({{ $repostRequest->id }})">Decline</x-gbutton>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             @elseif ($activeMainTab == 'outgoing_request')
