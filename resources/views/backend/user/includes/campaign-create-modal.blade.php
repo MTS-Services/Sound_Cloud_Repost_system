@@ -373,34 +373,37 @@
             showRepostPerDay: false,
             showOptions: false,
             localCredit: @entangle('credit').defer || 50,
-            localMaxFollower: @entangle('maxFollower').defer || 5000,
+            localMaxFollower: @entangle('maxFollower').defer || 100,
             localMaxRepostsPerDay: @entangle('maxRepostsPerDay').defer
-        }" x-init="// Initialize maxFollower according to credit (1 credit = 100 followers)
+        }" x-init="// initialize credit + maxFollower
         if (!localCredit) localCredit = 50;
-        $wire.set('credit', localCredit);
-        $wire.set('maxFollower', maxFollower);
+        if (!localMaxFollower) localMaxFollower = 100;
+        let maxAllowed = localCredit * 100;
+        if (localMaxFollower > maxAllowed) localMaxFollower = maxAllowed;
         
-        // Watch credit changes and update maxFollower accordingly
-        {{-- $watch('localCredit', value => {
-            $wire.set('credit', value);
-            localMaxFollower = value * 100;
-            $wire.set('maxFollower', localMaxFollower);
-        }); --}}
+        $wire.set('credit', localCredit);
+        $wire.set('maxFollower', localMaxFollower);
+        
+        // credit watcher
         $watch('localCredit', value => {
             $wire.set('credit', value);
-        
-            if (localMaxFollower > value) {
-                localMaxFollower = value;
-                $wire.set('maxFollower', value);
-            }
-        
-            if (localMaxFollower < value) {
-                localMaxFollower = value;
-                $wire.set('maxFollower', value);
+            let maxAllowed = value * 100;
+            if (localMaxFollower > maxAllowed) {
+                localMaxFollower = maxAllowed;
+                $wire.set('maxFollower', localMaxFollower);
             }
         });
         
-        // Watch maxRepostsPerDay changes
+        // maxFollower watcher
+        $watch('localMaxFollower', value => {
+            if (value < 100) value = 100;
+            let maxAllowed = localCredit * 100;
+            if (value > maxAllowed) value = maxAllowed;
+            localMaxFollower = value;
+            $wire.set('maxFollower', localMaxFollower);
+        });
+        
+        // maxReposts watcher
         $watch('localMaxRepostsPerDay', value => $wire.set('maxRepostsPerDay', value));">
 
             <!-- Selected Track -->
@@ -500,7 +503,7 @@
                                     min="100" :max="localCredit * 100" class="w-full h-2 cursor-pointer">
                             </div>
                             <div
-                                class="min-w-[80px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
+                                class="min-w-[100px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
                                 <span class="text-sm font-medium text-gray-900 dark:text-white"
                                     x-text="localMaxFollower"></span>
                             </div>
