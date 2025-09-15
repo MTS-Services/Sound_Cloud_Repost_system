@@ -64,12 +64,15 @@
                     $wire.set('maxRepostsPerDay', value);
                 });
                 $watch('proFeatureValid', value => {
-                console.log(value);
                     if (value) {
-                    console.log('proFeatureValid', value);
                         let newCredit = Math.floor(this.localCredit * 2);
                         if (newCredit > this.userCreditLimit) {
                             this.errorMessage = 'Credit exceeds your available credits.';
+                            this.momentumEnabled = false;
+                            this.localCredit = this.userCreditLimit / 2;
+                            this.localMaxFollower = this.userCreditLimit / 2 * 100;
+                            $wire.set('credit', this.localCredit);
+                            {{-- $wire.set('maxFollower', this.localMaxFollower); --}}
                         } else {
                             this.errorMessage = '';
                         }
