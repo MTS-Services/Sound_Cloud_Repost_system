@@ -399,7 +399,7 @@ class Member extends Component
                     'likeable' => $this->likeable,
                     'commentable' => $this->commentable,
                     'following' => $this->following,
-                    'expired_at' => now()->addHours(24),
+                    'expired_at' => now()->addDay(),
                 ]);
 
                 $creditTransaction = CreditTransaction::create([
@@ -460,7 +460,7 @@ class Member extends Component
 
                 broadcast(new UserNotificationSent($requesterNotification));
                 broadcast(new UserNotificationSent($targetUserNotification));
-                $repostEmailPermission =hasEmailSentPermission('em_new_repost', $this->user->urn);
+                $repostEmailPermission = hasEmailSentPermission('em_new_repost', $this->user->urn);
                 if ($repostRequest && $creditTransaction && $repostEmailPermission) {
                     $datas = [
                         [
