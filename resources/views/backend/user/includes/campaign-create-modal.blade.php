@@ -190,7 +190,7 @@
                 <!-- PRO Features, Audience Filtering, Genres (unchanged)... -->
                 <!-- Enable Campaign Accelerator -->
                 <div class="flex items-start space-x-3 {{ !proUser() ? 'opacity-30' : '' }}">
-                    <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
+                    <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )" x-model="momentumEnabled"
                         {{ !proUser() ? 'disabled' : '' }}
                         class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ !proUser() ? 'cursor-not-allowed' : 'cursor-pointer' }}">
                     <div>
