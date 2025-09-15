@@ -473,7 +473,7 @@
 
                                             {{-- Mobile Score --}}
                                             <div
-                                                class="  flex flex-col items-center sm:items-start sm:justify-start space-y-3">
+                                                class="mt-2  flex flex-col items-center sm:items-start sm:justify-start space-y-3">
                                                 {{-- Mobile Score --}}
                                                 <div class="sm:hidden mt-2 text-center">
                                                     <div class="text-lg font-bold text-orange-500 dark:text-white">
@@ -500,7 +500,7 @@
                                             </div>
 
                                                 {{-- Engagement --}}
-                                                <div class="w-full px-1 sm:px-0">
+                                                <div class="hidden sm:block w-full px-1 sm:px-0">
                                                     <div
                                                         class="flex items-center justify-between text-xs text-gray-800 dark:text-gray-400 mb-1">
                                                         <span>Engagement</span>
