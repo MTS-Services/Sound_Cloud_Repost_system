@@ -345,14 +345,11 @@
             <div class="flex items-center gap-3">
                 <div>
                     @if (app_setting('favicon') && app_setting('favicon_dark'))
-                        <img src="{{ storage_url(app_setting('favicon')) }}" alt="{{ config('app.name') }}"
-                            class="w-12 dark:hidden" />
-                        <img src="{{ storage_url(app_setting('favicon_dark')) }}" alt="{{ config('app.name') }}"
-                            class="w-12 hidden dark:block" />
+                        <img src="{{ storage_url(app_setting('favicon')) }}" class="w-12 dark:hidden" />
+                        <img src="{{ storage_url(app_setting('favicon_dark')) }}" class="w-12 hidden dark:block" />
                     @else
-                        <img src="{{ asset('assets/favicons/fav icon 1.svg') }}" alt="{{ config('app.name') }}"
-                            class="w-12 dark:hidden" />
-                        <img src="{{ asset('assets/favicons/fav icon 2 (1).svg') }}" alt="{{ config('app.name') }}"
+                        <img src="{{ asset('assets/favicons/fav icon 1.svg') }}" class="w-12 dark:hidden" />
+                        <img src="{{ asset('assets/favicons/fav icon 2 (1).svg') }}"
                             class="w-12 hidden dark:block" />
                     @endif
                 </div>
@@ -367,16 +364,7 @@
         </div>
 
         <!-- Body -->
-        <div class="p-6 overflow-y-auto" x-data="{
-            momentumEnabled: @js(proUser()),
-            showGenreRadios: false,
-            showRepostPerDay: false,
-            showOptions: false,
-            {{-- localCredit: @entangle('credit').defer || 50,
-            localMaxFollower: @entangle('maxFollower').defer || 100, 
-            localMaxRepostsPerDay: @entangle('maxRepostsPerDay').defer, --}}
-            campaignModal(@entangle('credit').defer, @entangle('maxFollower').defer, @entangle('maxRepostsPerDay').defer),
-        }" x-init="init()">
+        <div class="p-6 overflow-y-auto" x-data="campaignModal(@entangle('credit').defer, @entangle('maxFollower').defer, @entangle('maxRepostsPerDay').defer)" x-init="init()">
 
             <!-- Selected Track -->
             @if ($track)
@@ -388,8 +376,7 @@
                     </div>
                     <div
                         class="p-4 flex items-center space-x-4 dark:bg-slate-700 rounded-xl transition-all duration-200 border border-orange-200">
-                        <img src="{{ soundcloud_image($track->artwork_url) }}" alt="Album cover"
-                            class="w-12 h-12 rounded">
+                        <img src="{{ soundcloud_image($track->artwork_url) }}" class="w-12 h-12 rounded">
                         <div>
                             <p class="text-sm text-gray-600 dark:text-white">{{ $track->type }} -
                                 {{ $track->author_username }}</p>
@@ -401,6 +388,7 @@
 
             <!-- Form -->
             <form wire:submit.prevent="createCampaign" class="space-y-6">
+
                 <!-- Budget -->
                 <div class="mt-4">
                     <div class="flex items-center space-x-2 mb-2">
@@ -413,12 +401,10 @@
                         campaign</p>
 
                     <div class="flex items-center justify-center space-x-2 mb-4">
-                        <svg class="w-8 h-8 text-orange-500" width="26" height="18" viewBox="0 0 26 18"
-                            fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="1" y="1" width="24" height="16" rx="3" fill="none"
-                                stroke="currentColor" stroke-width="2" />
-                            <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
+                        <svg class="w-8 h-8 text-orange-500" viewBox="0 0 26 18" fill="none">
+                            <rect x="1" y="1" width="24" height="16" rx="3" stroke="currentColor"
                                 stroke-width="2" />
+                            <circle cx="8" cy="9" r="3" stroke="currentColor" stroke-width="2" />
                         </svg>
                         <span class="text-2xl font-bold text-orange-500" x-text="localCredit"></span>
                     </div>
@@ -427,37 +413,9 @@
                         <p class="text-xs text-red-500 mb-4">{{ $message }}</p>
                     @enderror
 
-                    <div class="relative">
-                        <input type="range" x-init="localCredit = @entangle('credit').defer || 50" x-model="localCredit" min="50"
-                            step="10" max="{{ userCredits() }}"
-                            class="w-full h-2 border-0 cursor-pointer outline-none transition-all duration-200">
-                    </div>
-                </div>
-
-                <!-- Campaign Settings -->
-                <div>
-                    <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mt-4">Campaign Settings</h2>
-                    <p class="text-sm text-gray-700 dark:text-gray-400 mb-4 mt-2">Select amount of credits to be spent
-                    </p>
-                    <div class="flex items-start space-x-3">
-                        <input type="checkbox" wire:model="commentable" checked
-                            class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                        <div>
-                            <h4 class="text-sm font-medium text-gray-900 dark:text-white">Activate Feedback</h4>
-                            <p class="text-xs text-gray-700 dark:text-gray-400">Encourage listeners to comment (2
-                                credits per comment).</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex items-start space-x-3">
-                    <input type="checkbox" wire:model="likeable" checked
-                        class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                    <div>
-                        <h4 class="text-sm font-medium text-gray-900 dark:text-white">Activate HeartPush</h4>
-                        <p class="text-xs text-gray-700 dark:text-gray-400">Motivate users to like your track (2 credits
-                            per like).</p>
-                    </div>
+                    <input type="range" x-model="localCredit" min="50" step="10"
+                        max="{{ userCredits() }}"
+                        class="w-full h-2 border-0 cursor-pointer outline-none transition-all duration-200">
                 </div>
 
                 <!-- Max Follower -->
@@ -465,15 +423,13 @@
                     <div class="flex items-start space-x-3">
                         <input type="checkbox" @change="showOptions = !showOptions"
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                        <span class="text-sm font-medium text-gray-900 dark:text-white">Limit to users with max follower
-                            count</span>
+                        <span class="text-sm font-medium text-gray-900 dark:text-white">Limit to users with max
+                            follower count</span>
                     </div>
                     <div x-show="showOptions" x-transition class="p-3">
                         <div class="flex justify-between items-center gap-4">
-                            <div class="w-full relative">
-                                <input type="range" x-init="localMaxFollower = @entangle('maxFollower').defer || 5000" x-model="localMaxFollower"
-                                    min="100" :max="localCredit * 100" class="w-full h-2 cursor-pointer">
-                            </div>
+                            <input type="range" x-model="localMaxFollower" min="100" :max="localCredit * 100"
+                                class="w-full h-2 cursor-pointer">
                             <div
                                 class="min-w-[80px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
                                 <span class="text-sm font-medium text-gray-900 dark:text-white"
@@ -627,13 +583,13 @@
                 <!-- Submit -->
                 <div class="pt-4">
                     <button type="submit"
-                        class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-2 px-4 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg {{ !$canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }}">
+                        class="w-full flex items-center justify-center gap-3 font-bold py-2 px-4 rounded-lg transition-all duration-300
+                               {{ !$canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed' }}">
                         <span>
-                            <svg class="w-8 h-8 text-white" width="26" height="18" viewBox="0 0 26 18"
-                                fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="1" y="1" width="24" height="16" rx="3" fill="none"
-                                    stroke="currentColor" stroke-width="2" />
-                                <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
+                            <svg class="w-8 h-8 text-white" viewBox="0 0 26 18" fill="none">
+                                <rect x="1" y="1" width="24" height="16" rx="3" stroke="currentColor"
+                                    stroke-width="2" />
+                                <circle cx="8" cy="9" r="3" stroke="currentColor"
                                     stroke-width="2" />
                             </svg>
                         </span>
@@ -646,17 +602,19 @@
         </div>
     </div>
 </div>
+
 <script>
     function campaignModal(credit, maxFollower, maxRepostsPerDay) {
         return {
             localCredit: credit,
             localMaxFollower: maxFollower,
             localMaxRepostsPerDay: maxRepostsPerDay,
+            showOptions: false,
 
             init() {
                 this.$watch('localCredit', value => {
                     this.localMaxFollower = Math.min(this.localMaxFollower, Math.max(100, value * 100));
-                    credit = value;
+                    credit = value; // sync with Livewire
                 });
 
                 this.$watch('localMaxFollower', value => {
@@ -664,9 +622,12 @@
                     if (value > maxAllowed) {
                         this.localMaxFollower = maxAllowed;
                     }
-                    maxFollower = this.localMaxFollower;
+                    maxFollower = this.localMaxFollower; // sync with Livewire
                 });
-                this.$watch('localMaxRepostsPerDay', value => this.localMaxRepostsPerDay = value);
+
+                this.$watch('localMaxRepostsPerDay', value => {
+                    maxRepostsPerDay = value; // sync with Livewire
+                });
             }
         }
     }
