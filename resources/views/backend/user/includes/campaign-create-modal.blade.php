@@ -37,6 +37,8 @@
         <!-- Body -->
         <div class="p-6 overflow-y-auto" x-data="{
             momentumEnabled: @js(proUser()),
+            userCreditLimit: {{ userCredits() }},
+            errorMessage: '',
             showGenreRadios: false,
             showRepostPerDay: false,
             showOptions: false,
@@ -58,8 +60,21 @@
                 });
         
                 $watch('localMaxRepostsPerDay', value => {
-                    console.log('reposts changed to', value);
                     $wire.set('maxRepostsPerDay', value);
+                });
+                $watch('momentumEnabled', value => {
+                    if (value) {
+                        let newCredit = Math.floor(this.localCredit / 2);
+                        if (newCredit > this.userCreditLimit) {
+                            this.errorMessage = 'Credit exceeds your available credits.';
+                        } else {
+                            this.errorMessage = '';
+                            this.localCredit = newCredit;
+                            $wire.set('credit', newCredit);
+                        }
+                    } else {
+                        this.errorMessage = '';
+                    }
                 });
             }
         }">
@@ -191,7 +206,8 @@
                         </div>
                         {{-- <p class="text-xs text-gray-700 dark:text-gray-400">Use Campaign Accelerator (+50 credits)
                         </p> --}}
-                        <p class="text-xs text-gray-700 dark:text-gray-400" x-text="'Use Campaign Accelerator (+ ' + (localCredit * 0.5) + ' credits)'"></p>
+                        <p class="text-xs text-gray-700 dark:text-gray-400"
+                            x-text="'Use Campaign Accelerator (+ ' + (localCredit * 0.5) + ' credits)'"></p>
                     </div>
                 </div>
 

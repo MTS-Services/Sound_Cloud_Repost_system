@@ -760,7 +760,8 @@ class Dashboard extends Component
         if (!proUser()) {
             return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
         } elseif (($this->credit * 2) > userCredits()) {
-            return $this->dispatch('alert', type: 'error', message: 'You do not have enough credits to use this feature');
+            $this->proFeatureEnabled = $isChecked ? true : false;
+            $this->proFeatureValue = $isChecked ? 1 : 0;
         } else {
             $this->proFeatureEnabled = $isChecked ? false : true;
             $this->proFeatureValue = $isChecked ? 0 : 1;
