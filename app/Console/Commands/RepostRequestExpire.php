@@ -28,7 +28,7 @@ class RepostRequestExpire extends Command
      */
     public function handle()
     {
-        $expireRequests = RepostRequest::query()->whereNotNull('track_urn')->where('status', RepostRequest::STATUS_PENDING)->whereTime('expired_at', '<=', now())->get();
+        $expireRequests = RepostRequest::query()->whereNotNull('track_urn')->where('status', RepostRequest::STATUS_PENDING)->where('expired_at', '<=', now())->get();
         if ($expireRequests->count() == 0) {
             $this->info('No Repost Request Expire');
             Log::info('No Repost Request Expire');
