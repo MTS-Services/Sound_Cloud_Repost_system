@@ -53,7 +53,7 @@
         $watch('localCredit', value => {
             $wire.set('credit', value);
             localMaxFollower = value * 100;
-            $wire.set('maxFollower', localMaxFollower);
+            if(localMaxFollower > $wire.maxFollower) $wire.set('maxFollower', localMaxFollower);
         });
         
         // Watch maxRepostsPerDay changes
@@ -156,9 +156,9 @@
                                     min="100" :max="localCredit * 100" class="w-full h-2 cursor-pointer">
                             </div>
                             <div
-                                class="min-w-[80px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
+                                class="min-w-[90px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
                                 <span class="text-sm font-medium text-gray-900 dark:text-white"
-                                    x-text="localMaxFollower * 100"></span>
+                                    x-text="localMaxFollower"></span>
                             </div>
                         </div>
                         @error('maxFollower')
