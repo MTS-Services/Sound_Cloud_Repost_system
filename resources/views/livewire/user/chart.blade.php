@@ -442,11 +442,7 @@
                             @forelse ($topTracks as $track)
                                 <div
                                     class="relative border rounded-2xl p-4 mb-8 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-900 dark:to-gray-800 shadow-lg 
-                {{ proUser($track['track_details']->user_urn) && $track['action_details']->is_featured
-                    ? 'shadow-orange-500/20 border-orange-300 dark:border-orange-500'
-                    : (proUser($track['track_details']->user_urn)
-                        ? 'shadow-gray-500/20 border-gray-500'
-                        : 'shadow-gray-700/20 border-gray-300 dark:border-gray-700') }}">
+                                    {{ proUser($track['track_details']->user_urn) && $track['action_details']->is_featured ? 'shadow-orange-500/20 border-orange-300 dark:border-orange-500'  : (proUser($track['track_details']->user_urn) ? 'shadow-gray-500/20 border-gray-500' : 'shadow-gray-700/20 border-gray-300 dark:border-gray-700') }}">
 
                                     {{-- Crown Icon --}}
                                     @if (proUser($track['track_details']->user_urn) && $track['action_details']->is_featured)
@@ -555,11 +551,12 @@
 
 
                                                 {{-- Bottom Section --}}
-                                                <div
-                                                class="ml-13 mt-4 flex flex-col items-center sm:items-start sm:justify-start space-y-3">
+                                               
                                                 <div
                                                     class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full">
                                                     {{-- Counts --}}
+                                                     <div
+                                                     class="ml-13 mt-4 flex flex-col items-center sm:items-start sm:justify-start space-y-3">
                                                     <div
                                                         class="grid grid-cols-3 gap-3 text-xs md:text-sm text-gray-800 dark:text-gray-400 justify-center sm:justify-start w-full">
                                                         {{-- Reposts --}}
