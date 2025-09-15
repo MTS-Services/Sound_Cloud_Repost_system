@@ -189,8 +189,9 @@
                                 <span class="text-white text-xs">i</span>
                             </div>
                         </div>
-                        <p class="text-xs text-gray-700 dark:text-gray-400">Use Campaign Accelerator (+50 credits)
-                        </p>
+                        {{-- <p class="text-xs text-gray-700 dark:text-gray-400">Use Campaign Accelerator (+50 credits)
+                        </p> --}}
+                        <p class="text-xs text-gray-700 dark:text-gray-400" x-text="'Use Campaign Accelerator (+ ' + (localCredit * 0.5) + ' credits)'"></p>
                     </div>
                 </div>
 
