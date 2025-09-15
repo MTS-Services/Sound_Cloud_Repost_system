@@ -45,9 +45,9 @@
             showGenreRadios: false,
             showRepostPerDay: false,
             showOptions: false,
-            localCredit: @entangle('credit').defer,
-            localMaxFollower: @entangle('maxFollower').defer,
-            localMaxRepostsPerDay: @entangle('maxRepostsPerDay').defer,
+            localCredit: @entangle('credit').live,
+            localMaxFollower: @entangle('maxFollower').live,
+            localMaxRepostsPerDay: @entangle('maxRepostsPerDay').live,
             init() {
                 if (!this.localCredit) this.localCredit = 50;
                 this.localMaxFollower = this.localCredit * 100;
