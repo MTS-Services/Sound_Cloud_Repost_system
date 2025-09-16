@@ -378,7 +378,7 @@ class Dashboard extends Component
 
     /**
      * Enhanced search functionality with security, validation, and performance improvements
-     * 
+     *
      * @return void
      */
     public function searchSoundcloud()
@@ -427,7 +427,7 @@ class Dashboard extends Component
 
     /**
      * Validate search query input
-     * 
+     *
      * @throws ValidationException
      */
     private function validateSearchQuery(): void
@@ -450,7 +450,7 @@ class Dashboard extends Component
 
     /**
      * Check if the search query is a SoundCloud URL
-     * 
+     *
      * @param string $query
      * @return bool
      */
@@ -461,7 +461,7 @@ class Dashboard extends Component
 
     /**
      * Reset search to show default content based on current context
-     * 
+     *
      * @return void
      */
     private function resetSearchToDefault(): void
@@ -500,7 +500,7 @@ class Dashboard extends Component
 
     /**
      * Perform text-based search with optimized queries
-     * 
+     *
      * @return void
      */
     private function performTextSearch(): void
@@ -522,7 +522,7 @@ class Dashboard extends Component
 
     /**
      * Sanitize search query to prevent SQL injection and improve search quality
-     * 
+     *
      * @param string $query
      * @return string
      */
@@ -542,7 +542,7 @@ class Dashboard extends Component
 
     /**
      * Search within playlist tracks
-     * 
+     *
      * @param string $sanitizedQuery
      * @return void
      */
@@ -569,7 +569,7 @@ class Dashboard extends Component
 
     /**
      * Search user's tracks with optimized query
-     * 
+     *
      * @param string $sanitizedQuery
      * @return void
      */
@@ -596,7 +596,7 @@ class Dashboard extends Component
 
     /**
      * Search user's playlists with optimized query
-     * 
+     *
      * @param string $sanitizedQuery
      * @return void
      */
@@ -623,7 +623,7 @@ class Dashboard extends Component
 
     /**
      * Clear search and reset to default view
-     * 
+     *
      * @return void
      */
     public function clearSearch(): void
@@ -636,7 +636,7 @@ class Dashboard extends Component
 
     /**
      * Get search statistics for display
-     * 
+     *
      * @return array
      */
     public function getSearchStats(): array
@@ -761,7 +761,8 @@ class Dashboard extends Component
     public function profeature($isChecked)
     {
         if (!proUser()) {
-            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
+            ;
         } elseif (($this->credit * 1.5) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;
@@ -900,7 +901,7 @@ class Dashboard extends Component
     /**
      * Resolve SoundCloud URL to get track/playlist information
      * This method should be implemented to handle SoundCloud URL resolution
-     * 
+     *
      * @return void
      */
     // private function resolveSoundcloudUrl(): void
