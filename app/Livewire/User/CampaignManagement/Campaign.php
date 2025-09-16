@@ -120,6 +120,7 @@ class Campaign extends Component
 
     public $track = null;
     public $credit = 50;
+    public $totalCredit = 50;
     public $commentable = true;
     public $likeable = true;
     public $proFeatureEnabled = false;
@@ -170,6 +171,7 @@ class Campaign extends Component
     public $commented = null;
     public $followed = true;
 
+    public $momentumEnabled = false;
     public $showSubmitModal = false;
     public $showCampaignsModal = false;
     public bool $showAddCreditModal = false;
@@ -738,7 +740,7 @@ class Campaign extends Component
     {
         if (!proUser()) {
             return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
-        } elseif (($this->credit * 2) > userCredits()) {
+        } elseif (($this->credit * 1.5) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;
         } else {

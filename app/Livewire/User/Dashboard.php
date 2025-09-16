@@ -60,6 +60,7 @@ class Dashboard extends Component
 
     public $track = null;
     public $credit = 50;
+    public $totalCredit = 50;
     public $commentable = true;
     public $likeable = true;
     public $proFeatureEnabled = false;
@@ -759,7 +760,7 @@ class Dashboard extends Component
     {
         if (!proUser()) {
             return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
-        } elseif (($this->credit * 2) > userCredits()) {
+        } elseif (($this->credit * 1.5) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;
         } else {
@@ -767,6 +768,41 @@ class Dashboard extends Component
             $this->proFeatureValue = $isChecked ? 0 : 1;
         }
     }
+
+    // public function profeature($isChecked)
+    // {
+    //     // 1. Only pro users can use this
+    //     if (!proUser()) {
+    //         $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
+    //         $this->proFeatureEnabled = false;
+    //         $this->proFeatureValue = 0;
+    //         $this->totalCredit = $this->credit;
+    //         return;
+    //     }
+
+    //     // 2. Calculate required credits if PRO is enabled
+    //     $requiredCredits = $this->credit * 1.5;
+
+    //     if ($isChecked) {
+    //         if ($requiredCredits > userCredits()) {
+    //             // Not enough credits → keep it off
+    //             $this->dispatch('alert', type: 'error', message: 'Not enough credits for Momentum+');
+    //             $this->proFeatureEnabled = false;
+    //             $this->proFeatureValue = 0;
+    //             $this->totalCredit = $this->credit;
+    //         } else {
+    //             // Enable successfully
+    //             $this->proFeatureEnabled = true;
+    //             $this->proFeatureValue = 1;
+    //             $this->totalCredit = $requiredCredits;
+    //         }
+    //     } else {
+    //         // Feature disabled manually
+    //         $this->proFeatureEnabled = false;
+    //         $this->proFeatureValue = 0;
+    //         $this->totalCredit = $this->credit;
+    //     }
+    // }
 
     public function createCampaign()
     {

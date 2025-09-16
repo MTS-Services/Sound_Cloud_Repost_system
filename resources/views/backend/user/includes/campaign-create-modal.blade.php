@@ -38,25 +38,31 @@
         <div class="p-6 overflow-y-auto" x-data="{
             momentumEnabled: @js(proUser()),
             userCreditLimit: {{ userCredits() }},
-            totalCredit: {{ $credit }},
+            proFeatureEnabled: @entangle('proFeatureEnabled').live,
             showError: false,
             errorMessage: '',
             proFeatureValid: false,
             showGenreRadios: false,
             showRepostPerDay: false,
             showOptions: false,
+            localTotalCredit: @entangle('totalCredit').live,
             localCredit: @entangle('credit').live,
             localMaxFollower: @entangle('maxFollower').live,
             localMaxRepostsPerDay: @entangle('maxRepostsPerDay').live,
             init() {
                 if (!this.localCredit) this.localCredit = 50;
-                this.localMaxFollower = this.localCredit * 100;
+                if (!this.localTotalCredit) this.localTotalCredit = this.localCredit;
+                this.localMaxFollower = 100;
                 $wire.set('credit', this.localCredit);
                 $wire.set('maxFollower', this.localMaxFollower);
         
                 $watch('localCredit', value => {
                     $wire.set('credit', value);
-                    this.totalCredit = value;
+                    if (this.proFeatureEnabled) {
+                        this.localTotalCredit = value * 1.5;
+                    } else {
+                        this.localTotalCredit = value;
+                    }
                     if (this.localMaxFollower > (value * 100)) {
                         this.localMaxFollower = value * 100;
                         $wire.set('maxFollower', this.localMaxFollower);
@@ -68,19 +74,23 @@
                 });
                 $watch('proFeatureValid', value => {
                     if (value) {
-                        let requiredCredit = Math.floor(this.localCredit * 2);
+                        let requiredCredit = Math.floor(this.localCredit * 1.5);
         
                         if (requiredCredit > this.userCreditLimit) {
                             this.showError = true;
                             this.proFeatureValid = false;
                             this.errorMessage = 'Credit exceeds your available credits.';
-        
+                            this.proFeatureEnabled = false;
                         } else {
-                            this.totalCredit = this.localCredit;
+                            this.showError = false;
+                            this.errorMessage = '';
+                            this.localTotalCredit = this.localCredit;
                         }
-                        this.totalCredit = Math.round(this.localCredit * 1.5);
+                        this.localTotalCredit = Math.round(this.localCredit * 1.5);
+                        this.proFeatureEnabled = false;
                     } else {
-                        this.totalCredit = this.localCredit;
+                        this.localTotalCredit = this.localCredit;
+                        this.proFeatureEnabled = true;
                     }
         
                 });
@@ -136,10 +146,15 @@
                     @error('credit')
                         <p class="text-xs text-red-500 mb-4">{{ $message }}</p>
                     @enderror
+                    {{-- @if (!$proFeatureEnabled)
+                    @dd( $proFeatureEnabled ? userCredits() : userCredits() -(($credit * 1.5) - $credit) );
+                    @endif --}}
 
                     <div class="relative">
                         <input type="range" x-init="localCredit = @entangle('credit').defer || 50" x-model="localCredit" min="50"
-                            step="10" max="{{ userCredits() }}"
+                            step="10" 
+                            {{-- max="{{ !$proFeatureEnabled ? userCredits() : userCredits() - ($credit * 1.5 - $credit) }}" --}}
+                            :max="!proFeatureEnabled ? userCreditLimit : (userCreditLimit - (localTotalCredit - localCredit))"
                             class="w-full h-2 border-0 cursor-pointer outline-none transition-all duration-200">
                     </div>
                 </div>
@@ -219,9 +234,7 @@
                             x-text="'Use Campaign Accelerator (+ ' + (localCredit * 0.5) + ' credits)'"></p>
                     </div>
                 </div>
-
                 <p x-show="errorMessage" class="text-red-500 text-xs mt-1" x-text="errorMessage"></p>
-
 
                 <!-- Campaign Targeting -->
                 <div class="border border-gray-200 dark:border-gray-700 bg-gray-200 dark:bg-gray-900 rounded-lg p-4"
@@ -352,7 +365,7 @@
                             </svg>
                         </span>
                         {{-- <span>{{ $proFeatureEnabled ? $credit * 1.5 : $credit }}</span> --}}
-                        <span x-text="totalCredit"></span>
+                        <span x-text="localTotalCredit"></span>
                         <span wire:loading.remove wire:target="createCampaign">{{ __('Create Campaign') }}</span>
                         <span wire:loading wire:target="createCampaign">{{ __('Creating...') }}</span>
                     </button>
