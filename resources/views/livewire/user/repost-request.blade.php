@@ -519,19 +519,13 @@
     document.addEventListener('livewire:load', function() {
         initializeSoundCloudWidgets();
     });
+    document.addEventListener('livewire:updated', function() {
+        initializeSoundCloudWidgets();
+    });
 
     document.addEventListener('DOMContentLoaded', function() {
         initializeSoundCloudWidgets();
     });
-
-    // Listen for Livewire events
-    document.addEventListener('livewire:initialized', function() {
-        Livewire.on('requestPlayedEnough', (requestId) => {
-            console.log('Request played for 5+ seconds:', requestId);
-            // You can add visual feedback here
-        });
-    });
-
     // Polling for play time updates (matches campaign feed polling)
     setInterval(() => {
         @this.call('updatePlayingTimes');
