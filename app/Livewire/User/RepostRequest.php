@@ -252,6 +252,10 @@ class RepostRequest extends Component
 
     public function confirmRepost($requestId)
     {
+        if (!$this->canRepost($requestId)) {
+            $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
+            return;
+        }
         $this->showRepostConfirmationModal = true;
         $this->request = ModelsRepostRequest::findOrFail($requestId)->load('track', 'requester');
     }

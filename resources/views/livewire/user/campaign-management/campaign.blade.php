@@ -13,7 +13,7 @@
                         @click="
                     activeTab = 'recommended_pro';
                     $wire.setActiveMainTab('recommended_pro');
-                    initializeSoundCloudWidgets();
+                    $nextTick(() => initializeSoundCloudWidgets());
                 "
                         :class="activeTab === 'recommended_pro'
                             ?
@@ -29,7 +29,7 @@
                         @click="
                     activeTab = 'recommended';
                     $wire.setActiveMainTab('recommended');
-                    initializeSoundCloudWidgets();
+                    $nextTick(() => initializeSoundCloudWidgets());
                 "
                         :class="activeTab === 'recommended'
                             ?
@@ -45,7 +45,7 @@
                         @click="
                     activeTab = 'all';
                     $wire.setActiveMainTab('all');
-                    initializeSoundCloudWidgets();
+                    $nextTick(() => initializeSoundCloudWidgets());
                 "
                         :class="activeTab === 'all'
                             ?
