@@ -72,6 +72,9 @@ class Campaign extends Component
     public $selectedGenres = [];
     public $showTrackTypes = false;
 
+    //=========================================
+    //  Music Play Control:
+    //=========================================
     // Track which campaigns are currently playing
     public $playingCampaigns = [];
 
@@ -83,22 +86,31 @@ class Campaign extends Component
 
     // Track which campaigns have been played for 5+ seconds
     public $playedCampaigns = [];
-
-    // Track which campaigns have been reposted
-    public $repostedCampaigns = [];
-
     public $playcount = false;
-
-    // Constants
-    private const ITEMS_PER_PAGE = 10;
-
     // Listeners for browser events
     protected $listeners = [
         'audioPlay' => 'handleAudioPlay',
         'audioPause' => 'handleAudioPause',
         'audioTimeUpdate' => 'handleAudioTimeUpdate',
-        'audioEnded' => 'handleAudioEnded'
+        'audioEnded' => 'handleAudioEnded',
     ];
+
+
+
+
+
+
+
+
+    // Track which campaigns have been reposted
+    public $repostedCampaigns = [];
+
+
+
+    // Constants
+    private const ITEMS_PER_PAGE = 10;
+
+
 
     protected $queryString = [
         'selectedGenres',
@@ -120,12 +132,9 @@ class Campaign extends Component
 
     public $track = null;
     public $credit = 50;
-    public $totalCredit = 50;
     public $commentable = true;
     public $likeable = true;
     public $proFeatureEnabled = false;
-    public $maxFollowerEnabled = false;
-    public $repostPerDayEnabled = false;
     public $proFeatureValue = 0;
     public $maxFollower = 100;
     public $followersLimit = 0;
@@ -173,7 +182,6 @@ class Campaign extends Component
     public $commented = null;
     public $followed = true;
 
-    public $momentumEnabled = false;
     public $showSubmitModal = false;
     public $showCampaignsModal = false;
     public bool $showAddCreditModal = false;
@@ -266,6 +274,7 @@ class Campaign extends Component
      */
     public function setActiveMainTab(string $tab): void
     {
+        $this->reset();
         $this->activeMainTab = $tab;
         switch ($tab) {
             case 'recommended_pro':
@@ -291,6 +300,8 @@ class Campaign extends Component
                 $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
         }
         $this->totalCampaigns();
+        $this->dispatch('soundcloud-widgets-reinitialize');
+        $this->render();
 
     }
 
@@ -301,15 +312,6 @@ class Campaign extends Component
     private function getCampaignsQuery(): Builder
     {
         $allowedTargetCredits = repostPrice(user(), true);
-
-        // return $this->campaignService->getCampaigns()
-        //     ->where('budget_credits', '>=', $allowedTargetCredits)
-        //     ->withoutSelf()
-        //     ->with(['music.user.userInfo', 'reposts'])
-        //     ->whereDoesntHave('reposts', function ($query) {
-        //         $query->where('reposter_urn', user()->urn);
-        //     });
-
         return ModelsCampaign::where('budget_credits', '>=', $allowedTargetCredits)
             ->withoutSelf()
             ->with(['music.user.userInfo', 'reposts'])
@@ -446,17 +448,6 @@ class Campaign extends Component
             $this->resetPage($this->getActivePageName());
         }
     }
-
-    // public function toggleGenre($genre)
-    // {
-    //     if (in_array($genre, $this->selectedGenres)) {
-    //         $this->selectedGenres = array_diff($this->selectedGenres, [$genre]);
-    //     } else {
-    //         $this->selectedGenres[] = $genre;
-    //     }
-    //     $this->totalCampaigns();
-    // }
-
     public function toggleGenre($genre)
     {
         $tab = $this->activeMainTab;
@@ -741,8 +732,9 @@ class Campaign extends Component
     public function profeature($isChecked)
     {
         if (!proUser()) {
-            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
-        } elseif (($this->credit * 1.5) > userCredits()) {
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
+            ;
+        } elseif (($this->credit * 2) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;
         } else {
@@ -768,7 +760,7 @@ class Campaign extends Component
                     'budget_credits' => $this->credit,
                     'user_urn' => user()->urn,
                     'status' => ModelsCampaign::STATUS_OPEN,
-                    'max_followers' => $this->maxFollowerEnabled ? $this->maxFollower : 100,
+                    'max_followers' => $this->maxFollower,
                     'creater_id' => user()->id,
                     'creater_type' => get_class(user()),
                     'commentable' => $commentable,
@@ -776,7 +768,7 @@ class Campaign extends Component
                     'pro_feature' => $proFeatureEnabled,
                     'momentum_price' => $proFeatureEnabled == 1 ? $this->credit / 2 : 0,
                     'max_repost_last_24_h' => $this->maxRepostLast24h,
-                    'max_repost_per_day' => $this->repostPerDayEnabled ? $this->maxRepostsPerDay : 0,
+                    'max_repost_per_day' => $this->maxRepostsPerDay,
                     'target_genre' => $this->targetGenre,
                 ]);
 
@@ -822,17 +814,19 @@ class Campaign extends Component
         }
     }
 
-    /**
+    /**========================================
      * Audio Player Event Handlers
-     */
+     =========================================*/
     public function handleAudioPlay($campaignId)
     {
+        Log::info('handleAudioPlay Campaign ID: ' . $campaignId);
         $this->playingCampaigns[$campaignId] = true;
         $this->playStartTimes[$campaignId] = now()->timestamp;
     }
 
     public function handleAudioPause($campaignId)
     {
+        Log::info('handleAudioPlay Campaign ID: ' . $campaignId);
         $this->updatePlayTime($campaignId);
         unset($this->playingCampaigns[$campaignId]);
         unset($this->playStartTimes[$campaignId]);
@@ -881,26 +875,30 @@ class Campaign extends Component
 
     public function startPlaying($campaignId)
     {
-        $this->reset([
-            'playcount',
-            'playedCampaigns',
-            'repostedCampaigns',
-            'campaign',
-            'showRepostConfirmationModal',
-            'commented',
-            'liked',
-            'followed',
-        ]);
+        Log::info('startPlaying campaignId: ' . $campaignId);
+        // $this->reset([
+        //     'playcount',
+        //     'playedCampaigns',
+        //     'repostedCampaigns',
+        //     'campaign',
+        //     'showRepostConfirmationModal',
+        //     'commented',
+        //     'liked',
+        //     'followed',
+        // ]);
+        $this->reset();
         $this->handleAudioPlay($campaignId);
     }
 
     public function stopPlaying($campaignId)
     {
+        Log::info('stopPlaying campaignId: ' . $campaignId);
         $this->handleAudioPause($campaignId);
     }
 
     public function simulateAudioProgress($campaignId, $seconds = 1)
     {
+        Log::info('simulateAudioProgress campaignId: ' . $campaignId);
         if (!isset($this->playTimes[$campaignId])) {
             $this->playTimes[$campaignId] = 0;
         }
@@ -915,6 +913,7 @@ class Campaign extends Component
 
     public function canRepost($campaignId): bool
     {
+        Log::info('canRepost campaignId: ' . $campaignId);
         $canRepost = in_array($campaignId, $this->playedCampaigns) &&
             !in_array($campaignId, $this->repostedCampaigns);
 
@@ -952,11 +951,13 @@ class Campaign extends Component
 
     public function isPlaying($campaignId): bool
     {
+        Log::info('isPlaying campaignId: ' . $campaignId);
         return isset($this->playingCampaigns[$campaignId]) && $this->playingCampaigns[$campaignId] === true;
     }
 
     public function getPlayTime($campaignId): int
     {
+        Log::info('getPlayTime campaignId: ' . $campaignId);
         $baseTime = $this->playTimes[$campaignId] ?? 0;
 
         if ($this->isPlaying($campaignId) && isset($this->playStartTimes[$campaignId])) {
@@ -969,12 +970,17 @@ class Campaign extends Component
 
     public function getRemainingTime($campaignId): int
     {
+        Log::info('getRemainingTime campaignId: ' . $campaignId);
         $playTime = $this->getPlayTime($campaignId);
         return max(0, 5 - $playTime);
     }
     public function confirmRepost($campaignId)
     {
-        Log::info('confirmRepost');
+        if (!$this->canRepost($campaignId)) {
+            $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
+            return;
+        }
+        Log::info('confirmRepost campaignId: ' . $campaignId);
         $this->showRepostConfirmationModal = true;
         $this->campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
         Log::info($this->campaign);

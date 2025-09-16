@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta http-equiv="Permissions-Policy" content="encrypted-media=()">
     <link id="favicon" rel="icon" href="{{ storage_url(app_setting('favicon')) }}" type="image/x-icon">
 
     <script>
@@ -173,6 +174,7 @@
 
 
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
+    <script src="https://w.soundcloud.com/player/api.js"></script>
     @livewireScripts()
     <script>
         document.addEventListener('livewire:initialized', () => {

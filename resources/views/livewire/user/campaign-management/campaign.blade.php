@@ -13,6 +13,7 @@
                         @click="
                     activeTab = 'recommended_pro';
                     $wire.setActiveMainTab('recommended_pro');
+                    $nextTick(() => initializeSoundCloudWidgets());
                 "
                         :class="activeTab === 'recommended_pro'
                             ?
@@ -28,6 +29,7 @@
                         @click="
                     activeTab = 'recommended';
                     $wire.setActiveMainTab('recommended');
+                    $nextTick(() => initializeSoundCloudWidgets());
                 "
                         :class="activeTab === 'recommended'
                             ?
@@ -43,6 +45,7 @@
                         @click="
                     activeTab = 'all';
                     $wire.setActiveMainTab('all');
+                    $nextTick(() => initializeSoundCloudWidgets());
                 "
                         :class="activeTab === 'all'
                             ?
@@ -603,6 +606,7 @@
             setTimeout(initializeSoundCloudWidgets, 500);
             return;
         }
+        console.log('SoundCloud Widget API loaded. Reinisialized widgets.');
 
         const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
 
@@ -641,8 +645,19 @@
     document.addEventListener('livewire:load', function() {
         initializeSoundCloudWidgets();
     });
+    document.addEventListener('livewire:updated', function() {
+        initializeSoundCloudWidgets();
+    });
     document.addEventListener('DOMContentLoaded', function() {
         initializeSoundCloudWidgets();
+    });
+
+    document.addEventListener('livewire:load', function() {
+        document.addEventListener('livewire:dispatched', (event) => {
+            if (event.detail.event === 'soundcloud-widgets-reinitialize') {
+                initializeSoundCloudWidgets();
+            }
+        });
     });
 </script>
 </div>

@@ -1,4 +1,4 @@
-<div>
+<div x-data="audioTracker()">
     <x-slot name="page_slug">request</x-slot>
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-5 space-y-3 sm:space-y-0">
         <div>
@@ -8,15 +8,13 @@
         </div>
         <x-gbutton variant="primary" wire:navigate href="{{ route('user.members') }}" class="w-full sm:w-auto">
             <span><x-lucide-plus class="w-5 h-5 mr-1" /></span>
-            Send a New Request
+            {{ __('Send a New Request') }}
         </x-gbutton>
     </div>
-
 
     <div class="mb-8">
         <div class="border-b border-gray-200 dark:border-gray-700">
             <nav class="-mb-px flex space-x-8">
-                <!-- Incoming Request Tab Button -->
                 <button
                     class="tab-button @if ($activeMainTab === 'incoming_request' || $activeMainTab === 'accept_requests') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
                     wire:click="setActiveTab('incoming_request')">
@@ -32,36 +30,27 @@
                     wire:click="setActiveTab('previously_reposted')">
                     {{ __('Previously Reposted') }}
                 </button>
-
             </nav>
         </div>
     </div>
 
-    <!-- Repost Requests -->
-    @if ($activeMainTab == 'incoming_request' || $activeMainTab == 'accept_requests')
+    @if ($activeMainTab == 'incoming_request')
         <div
-            class="flex flex-col md:flex-row md:items-start md:space-x-3 p-4  rounded bg-gray-100 dark:bg-gray-800 mb-8 gap-8">
-            <!-- Left Icon and "Quick Tip" -->
+            class="flex flex-col md:flex-row md:items-start md:space-x-3 p-4 rounded bg-gray-100 dark:bg-gray-800 mb-8 gap-8">
             <div class="flex items-top space-x-2 mb-2 md:mb-0 ">
-                <!-- Lightbulb Icon -->
                 <svg class="w-4 h-4 text-sky-600 dark:text-sky-400" fill="currentColor" viewBox="0 0 20 20">
                     <path
                         d="M10 2a6 6 0 00-4 10.49V15a1 1 0 001 1h6a1 1 0 001-1v-2.51A6 6 0 0010 2zm1 13h-2v-1h2v1zm1-2H8v-1h4v1zm-.44-2.93a1 1 0 01-.32 1.36L10 11l-.24-.14a1 1 0 111.36-1.36l.44.57z" />
                 </svg>
-                <!-- Quick Tip Text -->
                 <span class="text-sm font-medium text-gray-700 dark:text-white">Quick Tip</span>
             </div>
-            <!-- Content -->
             <div class="flex-1 flex flex-col space-y-2">
-                <!-- Message Text -->
                 <p class="text-sm text-gray-700 dark:text-white">
                     Your response rate could be better! Improve your response rate and get more requests by accepting OR
                     declining requests quickly.
                 </p>
-                <!-- Response Rate -->
                 <div class="flex items-center space-x-1">
                     <div class="w-4 h-4 rounded-full bg-orange-500"></div>
-
                     <span class="text-xs text-orange-600 font-semibold">{{ user()->responseRate() }}% <span
                             class="text-gray-900 dark:text-white">Response rate.</span></span>
                     <a href="{{ route('user.reposts-request') }}" wire:navigate
@@ -72,7 +61,6 @@
                     @if (user()->email_verified_at) wire:click="requestReceiveableToggle" @endif>
                     <input type="checkbox" class="sr-only peer" wire:model.live="requestReceiveable"
                         {{ $requestReceiveable ? 'checked' : '' }} {{ user()->email_verified_at ? '' : 'disabled' }}>
-
                     <div class="flex items-center space-x-2">
                         <div class="w-7 h-4 rounded-full relative transition-colors"
                             :class="on ? 'bg-green-500' : 'bg-gray-300'"
@@ -92,37 +80,20 @@
             </div>
         </div>
     @endif
+
     @foreach ($repostRequests as $repostRequest)
-        <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm">
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm"
+            x-data="trackPlayer({{ $repostRequest->id }})">
             <div class="flex flex-col lg:flex-row" wire:key="request-{{ $repostRequest->id }}">
                 <!-- Left Column - Track Info -->
                 <div
                     class="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
                     <div class="flex flex-col md:flex-row gap-4">
-                        <!-- Track Details -->
                         <div class="flex-1 flex flex-col justify-between relative">
-                            <!-- SoundCloud Player with Audio Events -->
                             <div id="soundcloud-player-{{ $repostRequest->id }}"
-                                data-request-id="{{ $repostRequest->id }}" wire:ignore>
+                                data-request-id="{{ $repostRequest->id }}" x-ref="player{{ $repostRequest->id }}">
                                 <x-sound-cloud.sound-cloud-player :track="$repostRequest->track" :visual="false" />
                             </div>
-
-                            {{-- <!-- Play Time Display -->
-                            <div class="absolute top-2 right-2 bg-blue-600 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10">
-                                {{ $this->getPlayTime($repostRequest->id) }}s / 5s
-                            </div> --}}
-
-                            <!-- Request Status Badge -->
-                            {{-- <div
-                                class="absolute top-2 left-2 bg-purple-600 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
-                                FEATURED
-                            </div> --}}
-
-                            {{-- <!-- Play Progress Bar -->
-                            <div class="absolute bottom-2 left-2 right-2 bg-gray-200 dark:bg-gray-600 rounded-full h-1.5">
-                                <div class="bg-blue-500 h-1.5 rounded-full transition-all duration-300"
-                                     style="width: {{ min(100, ($this->getPlayTime($repostRequest->id) / 5) * 100) }}%"></div>
-                            </div> --}}
                         </div>
                     </div>
                 </div>
@@ -148,7 +119,6 @@
                                             </svg>
                                         </div>
 
-                                        <!-- Rating Stars -->
                                         <div class="flex items-center mt-1">
                                             @for ($i = 1; $i <= 5; $i++)
                                                 <svg class="w-4 h-4 {{ $i <= ($repostRequest->requester->rating ?? 4) ? 'text-yellow-400' : 'text-gray-300' }}"
@@ -159,7 +129,6 @@
                                             @endfor
                                         </div>
 
-                                        <!-- Dropdown Menu -->
                                         <div x-show="open" x-transition.opacity
                                             class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
                                             x-cloak>
@@ -172,7 +141,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Track Info -->
                                 <div class="mb-2">
                                     <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">
                                         {{ $repostRequest->track->title ?? 'Unknown Track' }}
@@ -199,20 +167,15 @@
                                                 {{ strtoupper($repostRequest->created_at->diffForHumans()) }}
                                             </div>
                                             @if ($activeMainTab == 'incoming_request')
-                                                {{-- <!-- Repost Button -->
-                                                <button
-                                                    wire:click="confirmRepost('{{ $repostRequest->id }}')">test</button> --}}
                                                 <div class="relative flex justify-end">
-                                                    <button wire:click="confirmRepost('{{ $repostRequest->id }}')"
-                                                        @class([
-                                                            'flex items-center gap-2 py-2 px-3 sm:px-5 rounded-md shadow-sm text-sm sm:text-base transition-all duration-300',
-                                                            'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white cursor-pointer transform hover:scale-105' => $this->canRepost(
-                                                                $repostRequest->id),
-                                                            'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
-                                                                $repostRequest->id),
-                                                        ]) @disabled(!$this->canRepost($repostRequest->id))>
-
-                                                        <!-- Repost Icon -->
+                                                    <button @click="handleRepost()"
+                                                        x-bind:class="{
+                                                            'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white cursor-pointer transform hover:scale-105 transition-all duration-300': canRepost,
+                                                            'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed':
+                                                                !canRepost
+                                                        }"
+                                                        x-bind:disabled="!canRepost"
+                                                        class="flex items-center gap-2 py-2 px-3 sm:px-5 rounded-md shadow-sm text-sm sm:text-base">
                                                         <svg width="26" height="18" viewBox="0 0 26 18"
                                                             fill="none" xmlns="http://www.w3.org/2000/svg">
                                                             <rect x="1" y="1" width="24" height="16"
@@ -222,24 +185,12 @@
                                                                 fill="none" stroke="currentColor"
                                                                 stroke-width="2" />
                                                         </svg>
-
                                                         <span>{{ repostPrice($repostRequest->requester) }}
                                                             Repost</span>
                                                     </button>
-
-                                                    <!-- Success Indicator -->
-                                                    @if (in_array($repostRequest->id, $this->repostedRequests))
-                                                        <div
-                                                            class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
-                                                            Reposted! ✓
-                                                        </div>
-                                                    @endif
                                                 </div>
                                             @endif
-
                                         </div>
-                                        <!-- Status Badge -->
-
                                         <div class="text-right my-2">
                                             <span @class([
                                                 'inline-block text-xs font-medium px-2 py-1 rounded-full',
@@ -259,7 +210,6 @@
                                         </div>
                                         @if ($repostRequest->status == App\Models\RepostRequest::STATUS_PENDING && $activeMainTab == 'incoming_request')
                                             <div class="text-right">
-
                                                 <x-gbutton variant="primary" size="sm"
                                                     wire:click="declineRepostRequest({{ $repostRequest->id }})">Decline</x-gbutton>
                                             </div>
@@ -267,14 +217,14 @@
                                     </div>
                                 </div>
                             @elseif ($activeMainTab == 'outgoing_request')
+                                <!-- Outgoing request content unchanged -->
                                 <div class="flex flex-col justify-end gap-2">
                                     <div class="flex justify-end gap-3">
                                         <div class="text-sm font-semibold text-gray-500 dark:text-gray-400">
                                             {{ strtoupper($repostRequest->created_at->diffForHumans()) }}
                                         </div>
                                         @if ($activeMainTab == 'outgoing_request')
-                                            <h2 class="text-md font-semibold text-gray-700 dark:text-gray-200">
-                                                Targeted
+                                            <h2 class="text-md font-semibold text-gray-700 dark:text-gray-200">Targeted
                                                 Reposter</h2>
                                         @endif
                                     </div>
@@ -294,8 +244,6 @@
                                                         {{ $repostRequest->targetUser->name }}
                                                     </a>
                                                 </div>
-
-                                                <!-- Rating Stars -->
                                                 <div class="flex items-center mt-1">
                                                     @for ($i = 1; $i <= 5; $i++)
                                                         <svg class="w-4 h-4 {{ $i <= ($repostRequest->targetUser->rating ?? 4) ? 'text-yellow-400' : 'text-gray-300' }}"
@@ -308,8 +256,6 @@
                                             </div>
                                         </div>
                                     @endif
-
-                                    <!-- Status Badge -->
                                     <div class="text-right">
                                         <span @class([
                                             'inline-block text-xs font-medium px-2 py-1 rounded-full',
@@ -319,7 +265,6 @@
                                                 $repostRequest->status == App\Models\RepostRequest::STATUS_APPROVED,
                                             'bg-blue-100 text-blue-800' =>
                                                 $repostRequest->status == App\Models\RepostRequest::STATUS_APPROVED,
-                                            // 'bg-red-100 text-red-800' => $repostRequest->status == App\Models\RepostRequest::STATUS_REJECTED,
                                             'bg-gray-100 text-gray-800' =>
                                                 $repostRequest->status == App\Models\RepostRequest::STATUS_EXPIRED,
                                         ])>
@@ -331,10 +276,8 @@
                                             $repostRequest->status !== App\Models\RepostRequest::STATUS_APPROVED &&
                                                 $repostRequest->status !== App\Models\RepostRequest::STATUS_EXPIRED &&
                                                 $repostRequest->status !== App\Models\RepostRequest::STATUS_DECLINE)
-                                            {{-- <button wire:click="cancleRepostRequest({{ $repostRequest->id }})"
-                                                class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Cancle</button> --}}
                                             <x-gbutton variant="primary" size="sm"
-                                                wire:click="cancleRepostRequest({{ $repostRequest->id }})">Cancle</x-gbutton>
+                                                wire:click="cancleRepostRequest({{ $repostRequest->id }})">Cancel</x-gbutton>
                                         @endif
                                     </div>
                                 </div>
@@ -356,7 +299,8 @@
             </p>
         </div>
     @endif
-    {{-- Repost Confirmation Modal --}}
+
+    <!-- Modal unchanged -->
     <div x-data="{ showRepostConfirmationModal: @entangle('showRepostConfirmationModal').live }" x-show="showRepostConfirmationModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
@@ -409,7 +353,7 @@
                     <p
                         class="text-sm capitalize text-gray-700 dark:text-gray-300 {{ $request->description ? '' : 'hidden' }}">
                         {{ $request->description }}</p>
-                    <!-- Follow Options -->
+
                     <div class="space-y-2">
                         <label class="flex items-center justify-between">
                             <div class="flex items-center space-x-2">
@@ -421,7 +365,6 @@
                         </label>
                     </div>
 
-                    <!-- Like Plus -->
                     @if ($request->likeable)
                         <div class="flex items-center justify-between border-t pt-3 dark:border-gray-700">
                             <label class="flex items-center space-x-2">
@@ -433,7 +376,7 @@
                             <span class="text-sm text-gray-700 dark:text-gray-300">+2 credits</span>
                         </div>
                     @endif
-                    <!-- Comment Plus -->
+
                     @if ($request->commentable)
                         <div class="border-t pt-3 space-y-2 dark:border-gray-700">
                             <div class="flex items-center justify-between">
@@ -445,6 +388,7 @@
                                 class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"></textarea>
                         </div>
                     @endif
+
                     <div class="flex justify-center gap-4">
                         <button @click="showRepostConfirmationModal = false"
                             wire:click="repost('{{ $request->id }}')"
@@ -460,74 +404,229 @@
                             {{ __('Repost') }}
                         </button>
                     </div>
-
                 </div>
             </div>
         @endif
     </div>
-
-    <!--Previously Reposted Requests-->
-
-
 </div>
 
 <script>
-    // Replace the existing script section in your repost request blade with this complete tracking system
-    function initializeSoundCloudWidgets() {
-        if (typeof SC === 'undefined') {
-            setTimeout(initializeSoundCloudWidgets, 500);
-            return;
+    function audioTracker() {
+        return {
+            tracks: {},
+            globalDebug: true
         }
-
-        const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
-
-        playerContainers.forEach(container => {
-            const requestId = container.dataset.requestId;
-            const iframe = container.querySelector('iframe');
-
-            if (iframe && requestId) {
-                const widget = SC.Widget(iframe);
-
-                widget.bind(SC.Widget.Events.PLAY, () => {
-                    @this.call('handleAudioPlay', requestId);
-                });
-
-                widget.bind(SC.Widget.Events.PAUSE, () => {
-                    @this.call('handleAudioPause', requestId);
-                });
-
-                widget.bind(SC.Widget.Events.FINISH, () => {
-                    @this.call('handleAudioEnded', requestId);
-                });
-
-                widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-                    const currentTime = data.currentPosition / 1000;
-                    @this.call('handleAudioTimeUpdate', requestId, currentTime);
-                });
-            }
-        });
     }
 
+    function trackPlayer(requestId) {
+        return {
+            requestId: requestId,
+            playTime: 0,
+            isPlaying: false,
+            canRepost: false,
+            hasStartedPlaying: false,
+            widget: null,
+            playProgressInterval: null,
+            lastLoggedTime: 0,
+
+            init() {
+                console.log(`🎯 Initializing player for request ${this.requestId}`);
+
+                // Find iframe in this component
+                this.$nextTick(() => {
+                    const playerContainer = this.$refs[`player${this.requestId}`];
+                    const iframe = playerContainer?.querySelector('iframe');
+
+                    if (!iframe) {
+                        console.error(`❌ No iframe found for request ${this.requestId}`);
+                        return;
+                    }
+
+                    console.log(`✅ Found iframe for request ${this.requestId}`);
+
+                    // Wait for SoundCloud widget to load
+                    const initWidget = () => {
+                        if (typeof SC === 'undefined' || !SC.Widget) {
+                            console.log(`⏳ Waiting for SoundCloud API...`);
+                            setTimeout(initWidget, 500);
+                            return;
+                        }
+
+                        try {
+                            this.widget = SC.Widget(iframe);
+                            console.log(`🔗 Widget created for request ${this.requestId}`);
+                            this.bindEvents();
+                        } catch (error) {
+                            console.error(`❌ Widget creation failed for request ${this.requestId}:`, error);
+                            setTimeout(initWidget, 1000);
+                        }
+                    };
+
+                    // Try to initialize immediately if iframe is loaded
+                    if (iframe.src && iframe.contentWindow) {
+                        setTimeout(initWidget, 1000);
+                    } else {
+                        // Wait for iframe load event
+                        iframe.addEventListener('load', () => {
+                            console.log(`📡 Iframe loaded for request ${this.requestId}`);
+                            setTimeout(initWidget, 500);
+                        });
+                    }
+                });
+            },
+
+            bindEvents() {
+                if (!this.widget) {
+                    console.error(`❌ No widget available for request ${this.requestId}`);
+                    return;
+                }
+
+                console.log(`🔄 Binding events for request ${this.requestId}`);
+
+                this.widget.bind(SC.Widget.Events.READY, () => {
+                    console.log(`🎵 Widget READY for request ${this.requestId}`);
+                });
+
+                this.widget.bind(SC.Widget.Events.PLAY, () => {
+                    console.log(`▶️ PLAY started for request ${this.requestId}`);
+                    this.isPlaying = true;
+                    this.hasStartedPlaying = true;
+                    this.startPlayTracking();
+                });
+
+                this.widget.bind(SC.Widget.Events.PAUSE, () => {
+                    console.log(`⏸️ PAUSE for request ${this.requestId}`);
+                    this.isPlaying = false;
+                    this.stopPlayTracking();
+                });
+
+                this.widget.bind(SC.Widget.Events.FINISH, () => {
+                    console.log(`⏹️ FINISHED for request ${this.requestId}`);
+                    this.isPlaying = false;
+                    this.stopPlayTracking();
+                });
+
+                this.widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+                    if (data && data.currentPosition !== undefined) {
+                        const currentSeconds = data.currentPosition / 1000;
+                        this.playTime = Math.max(this.playTime, currentSeconds);
+                        this.checkCanRepost();
+
+                        // Log progress every second
+                        const currentFloor = Math.floor(currentSeconds);
+                        if (currentFloor !== this.lastLoggedTime && currentFloor % 1 === 0) {
+                            console.log(`⏰ Request ${this.requestId}: ${currentSeconds.toFixed(1)}s played`);
+                            this.lastLoggedTime = currentFloor;
+                        }
+                    }
+                });
+
+                console.log(`✅ All events bound for request ${this.requestId}`);
+            },
+
+            startPlayTracking() {
+                if (this.playProgressInterval) return;
+
+                this.playProgressInterval = setInterval(() => {
+                    if (this.isPlaying && this.hasStartedPlaying) {
+                        this.playTime += 0.1;
+                        this.checkCanRepost();
+                    }
+                }, 100);
+            },
+
+            stopPlayTracking() {
+                if (this.playProgressInterval) {
+                    clearInterval(this.playProgressInterval);
+                    this.playProgressInterval = null;
+                }
+            },
+
+            checkCanRepost() {
+                if (!this.canRepost && this.playTime >= 5) {
+                    console.log(`🎉 ENABLING REPOST BUTTON for request ${this.requestId}!`);
+                    console.log(`📊 Total play time: ${this.playTime.toFixed(1)}s (required: 5.0s)`);
+
+                    this.canRepost = true;
+
+                    // Force Alpine reactivity update
+                    this.$nextTick(() => {
+                        console.log(`🔄 Alpine state updated. canRepost: ${this.canRepost}`);
+
+                        // Verify button state
+                        const button = this.$el.querySelector('button[x-bind\\:disabled]');
+                        if (button) {
+                            console.log(`🎨 Button found. Disabled: ${button.disabled}`);
+                            console.log(`🎨 Button classes: ${button.className}`);
+                        }
+                    });
+
+                    // Stop intensive tracking once enabled
+                    this.stopPlayTracking();
+                }
+            },
+
+            handleRepost() {
+                console.log(`🎯 Repost button clicked for request ${this.requestId}`);
+                console.log(`🔍 canRepost: ${this.canRepost}, playTime: ${this.playTime.toFixed(1)}s`);
+
+                if (!this.canRepost) {
+                    const remaining = Math.max(0, 5 - this.playTime).toFixed(1);
+                    console.log(`❌ Cannot repost yet. Need ${remaining}s more`);
+
+                    alert(
+                        `Please listen to at least 5 seconds of the track before reposting.\n\nCurrent play time: ${this.playTime.toFixed(1)}s\nRemaining: ${remaining}s`
+                    );
+                    return false;
+                }
+
+                console.log(`✅ Proceeding with repost for request ${this.requestId}`);
+
+                // Call Livewire method
+                try {
+                    this.$wire.call('confirmRepost', this.requestId);
+                } catch (error) {
+                    console.error(`❌ Error calling confirmRepost:`, error);
+                }
+
+                return true;
+            },
+
+            destroy() {
+                console.log(`🧹 Cleaning up player for request ${this.requestId}`);
+                this.stopPlayTracking();
+
+                if (this.widget) {
+                    try {
+                        // Unbind all events
+                        this.widget.unbind(SC.Widget.Events.READY);
+                        this.widget.unbind(SC.Widget.Events.PLAY);
+                        this.widget.unbind(SC.Widget.Events.PAUSE);
+                        this.widget.unbind(SC.Widget.Events.FINISH);
+                        this.widget.unbind(SC.Widget.Events.PLAY_PROGRESS);
+                    } catch (error) {
+                        console.log(`⚠️ Error unbinding events:`, error);
+                    }
+                }
+            }
+        }
+    }
+
+    // Global initialization
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚀 DOM loaded - SoundCloud Widget API should be available');
+    });
+
     document.addEventListener('livewire:initialized', function() {
-        initializeSoundCloudWidgets();
+        console.log('🔄 Livewire initialized');
     });
 
     document.addEventListener('livewire:navigated', function() {
-        initializeSoundCloudWidgets();
+        console.log('🧭 Livewire navigated - Components will reinitialize');
     });
 
-    document.addEventListener('livewire:load', function() {
-        initializeSoundCloudWidgets();
+    // Handle component cleanup on navigation
+    document.addEventListener('livewire:navigating', function() {
+        console.log('🧹 Livewire navigating - Cleaning up audio trackers');
     });
-    document.addEventListener('livewire:updated', function() {
-        initializeSoundCloudWidgets();
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeSoundCloudWidgets();
-    });
-    // Polling for play time updates (matches campaign feed polling)
-    setInterval(() => {
-        @this.call('updatePlayingTimes');
-    }, 1000);
 </script>
