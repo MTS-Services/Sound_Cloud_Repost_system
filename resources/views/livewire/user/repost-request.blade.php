@@ -33,27 +33,22 @@
             </nav>
         </div>
     </div>
+
     @if ($activeMainTab == 'incoming_request')
         <div
             class="flex flex-col md:flex-row md:items-start md:space-x-3 p-4 rounded bg-gray-100 dark:bg-gray-800 mb-8 gap-8">
-            <!-- Left Icon and "Quick Tip" -->
             <div class="flex items-top space-x-2 mb-2 md:mb-0 ">
-                <!-- Lightbulb Icon -->
                 <svg class="w-4 h-4 text-sky-600 dark:text-sky-400" fill="currentColor" viewBox="0 0 20 20">
                     <path
                         d="M10 2a6 6 0 00-4 10.49V15a1 1 0 001 1h6a1 1 0 001-1v-2.51A6 6 0 0010 2zm1 13h-2v-1h2v1zm1-2H8v-1h4v1zm-.44-2.93a1 1 0 01-.32 1.36L10 11l-.24-.14a1 1 0 111.36-1.36l.44.57z" />
                 </svg>
-                <!-- Quick Tip Text -->
                 <span class="text-sm font-medium text-gray-700 dark:text-white">Quick Tip</span>
             </div>
-            <!-- Content -->
             <div class="flex-1 flex flex-col space-y-2">
-                <!-- Message Text -->
                 <p class="text-sm text-gray-700 dark:text-white">
                     Your response rate could be better! Improve your response rate and get more requests by accepting OR
                     declining requests quickly.
                 </p>
-                <!-- Response Rate -->
                 <div class="flex items-center space-x-1">
                     <div class="w-4 h-4 rounded-full bg-orange-500"></div>
                     <span class="text-xs text-orange-600 font-semibold">{{ user()->responseRate() }}% <span
@@ -66,7 +61,6 @@
                     @if (user()->email_verified_at) wire:click="requestReceiveableToggle" @endif>
                     <input type="checkbox" class="sr-only peer" wire:model.live="requestReceiveable"
                         {{ $requestReceiveable ? 'checked' : '' }} {{ user()->email_verified_at ? '' : 'disabled' }}>
-
                     <div class="flex items-center space-x-2">
                         <div class="w-7 h-4 rounded-full relative transition-colors"
                             :class="on ? 'bg-green-500' : 'bg-gray-300'"
@@ -95,9 +89,7 @@
                 <div
                     class="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
                     <div class="flex flex-col md:flex-row gap-4">
-                        <!-- Track Details -->
                         <div class="flex-1 flex flex-col justify-between relative">
-                            <!-- SoundCloud Player -->
                             <div id="soundcloud-player-{{ $repostRequest->id }}"
                                 data-request-id="{{ $repostRequest->id }}" x-ref="player{{ $repostRequest->id }}">
                                 <x-sound-cloud.sound-cloud-player :track="$repostRequest->track" :visual="false" />
@@ -127,7 +119,6 @@
                                             </svg>
                                         </div>
 
-                                        <!-- Rating Stars -->
                                         <div class="flex items-center mt-1">
                                             @for ($i = 1; $i <= 5; $i++)
                                                 <svg class="w-4 h-4 {{ $i <= ($repostRequest->requester->rating ?? 4) ? 'text-yellow-400' : 'text-gray-300' }}"
@@ -138,7 +129,6 @@
                                             @endfor
                                         </div>
 
-                                        <!-- Dropdown Menu -->
                                         <div x-show="open" x-transition.opacity
                                             class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
                                             x-cloak>
@@ -151,7 +141,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Track Info -->
                                 <div class="mb-2">
                                     <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">
                                         {{ $repostRequest->track->title ?? 'Unknown Track' }}
@@ -180,15 +169,13 @@
                                             @if ($activeMainTab == 'incoming_request')
                                                 <div class="relative flex justify-end">
                                                     <button @click="handleRepost()"
-                                                        :class="{
-                                                            'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white cursor-pointer transform hover:scale-105': canRepost,
+                                                        x-bind:class="{
+                                                            'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white cursor-pointer transform hover:scale-105 transition-all duration-300': canRepost,
                                                             'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed':
                                                                 !canRepost
                                                         }"
-                                                        :disabled="!canRepost"
-                                                        class="flex items-center gap-2 py-2 px-3 sm:px-5 rounded-md shadow-sm text-sm sm:text-base transition-all duration-300">
-
-                                                        <!-- Repost Icon -->
+                                                        x-bind:disabled="!canRepost"
+                                                        class="flex items-center gap-2 py-2 px-3 sm:px-5 rounded-md shadow-sm text-sm sm:text-base">
                                                         <svg width="26" height="18" viewBox="0 0 26 18"
                                                             fill="none" xmlns="http://www.w3.org/2000/svg">
                                                             <rect x="1" y="1" width="24" height="16"
@@ -198,15 +185,12 @@
                                                                 fill="none" stroke="currentColor"
                                                                 stroke-width="2" />
                                                         </svg>
-
                                                         <span>{{ repostPrice($repostRequest->requester) }}
                                                             Repost</span>
                                                     </button>
                                                 </div>
                                             @endif
-
                                         </div>
-                                        <!-- Status Badge -->
                                         <div class="text-right my-2">
                                             <span @class([
                                                 'inline-block text-xs font-medium px-2 py-1 rounded-full',
@@ -233,14 +217,15 @@
                                     </div>
                                 </div>
                             @elseif ($activeMainTab == 'outgoing_request')
+                                <!-- Outgoing request content unchanged -->
                                 <div class="flex flex-col justify-end gap-2">
                                     <div class="flex justify-end gap-3">
                                         <div class="text-sm font-semibold text-gray-500 dark:text-gray-400">
                                             {{ strtoupper($repostRequest->created_at->diffForHumans()) }}
                                         </div>
                                         @if ($activeMainTab == 'outgoing_request')
-                                            <h2 class="text-md font-semibold text-gray-700 dark:text-gray-200">
-                                                Targeted Reposter</h2>
+                                            <h2 class="text-md font-semibold text-gray-700 dark:text-gray-200">Targeted
+                                                Reposter</h2>
                                         @endif
                                     </div>
                                     @if ($activeMainTab == 'outgoing_request')
@@ -259,8 +244,6 @@
                                                         {{ $repostRequest->targetUser->name }}
                                                     </a>
                                                 </div>
-
-                                                <!-- Rating Stars -->
                                                 <div class="flex items-center mt-1">
                                                     @for ($i = 1; $i <= 5; $i++)
                                                         <svg class="w-4 h-4 {{ $i <= ($repostRequest->targetUser->rating ?? 4) ? 'text-yellow-400' : 'text-gray-300' }}"
@@ -273,8 +256,6 @@
                                             </div>
                                         </div>
                                     @endif
-
-                                    <!-- Status Badge -->
                                     <div class="text-right">
                                         <span @class([
                                             'inline-block text-xs font-medium px-2 py-1 rounded-full',
@@ -319,7 +300,7 @@
         </div>
     @endif
 
-    {{-- Repost Confirmation Modal --}}
+    <!-- Modal unchanged -->
     <div x-data="{ showRepostConfirmationModal: @entangle('showRepostConfirmationModal').live }" x-show="showRepostConfirmationModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
@@ -373,7 +354,6 @@
                         class="text-sm capitalize text-gray-700 dark:text-gray-300 {{ $request->description ? '' : 'hidden' }}">
                         {{ $request->description }}</p>
 
-                    <!-- Follow Options -->
                     <div class="space-y-2">
                         <label class="flex items-center justify-between">
                             <div class="flex items-center space-x-2">
@@ -385,7 +365,6 @@
                         </label>
                     </div>
 
-                    <!-- Like Plus -->
                     @if ($request->likeable)
                         <div class="flex items-center justify-between border-t pt-3 dark:border-gray-700">
                             <label class="flex items-center space-x-2">
@@ -398,7 +377,6 @@
                         </div>
                     @endif
 
-                    <!-- Comment Plus -->
                     @if ($request->commentable)
                         <div class="border-t pt-3 space-y-2 dark:border-gray-700">
                             <div class="flex items-center justify-between">
@@ -435,7 +413,8 @@
 <script>
     function audioTracker() {
         return {
-            tracks: {}
+            tracks: {},
+            globalDebug: true
         }
     }
 
@@ -445,129 +424,209 @@
             playTime: 0,
             isPlaying: false,
             canRepost: false,
-            startTime: null,
+            hasStartedPlaying: false,
             widget: null,
+            playProgressInterval: null,
+            lastLoggedTime: 0,
 
             init() {
-                console.log(`Initializing player for request ${this.requestId}`);
-                this.$nextTick(() => {
-                    const iframe = this.$refs[`player${this.requestId}`]?.querySelector('iframe');
-                    if (iframe) {
-                        console.log(`Found iframe for request ${this.requestId}`);
-                        iframe.addEventListener('load', () => {
-                            console.log(`Iframe loaded for request ${this.requestId}`);
-                            this.widget = SC.Widget(iframe);
-                            this.bindEvents();
-                        });
+                console.log(`🎯 Initializing player for request ${this.requestId}`);
 
-                        // If iframe is already loaded
-                        if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
-                            console.log(`Iframe already loaded for request ${this.requestId}`);
-                            this.widget = SC.Widget(iframe);
-                            this.bindEvents();
+                // Find iframe in this component
+                this.$nextTick(() => {
+                    const playerContainer = this.$refs[`player${this.requestId}`];
+                    const iframe = playerContainer?.querySelector('iframe');
+
+                    if (!iframe) {
+                        console.error(`❌ No iframe found for request ${this.requestId}`);
+                        return;
+                    }
+
+                    console.log(`✅ Found iframe for request ${this.requestId}`);
+
+                    // Wait for SoundCloud widget to load
+                    const initWidget = () => {
+                        if (typeof SC === 'undefined' || !SC.Widget) {
+                            console.log(`⏳ Waiting for SoundCloud API...`);
+                            setTimeout(initWidget, 500);
+                            return;
                         }
+
+                        try {
+                            this.widget = SC.Widget(iframe);
+                            console.log(`🔗 Widget created for request ${this.requestId}`);
+                            this.bindEvents();
+                        } catch (error) {
+                            console.error(`❌ Widget creation failed for request ${this.requestId}:`, error);
+                            setTimeout(initWidget, 1000);
+                        }
+                    };
+
+                    // Try to initialize immediately if iframe is loaded
+                    if (iframe.src && iframe.contentWindow) {
+                        setTimeout(initWidget, 1000);
                     } else {
-                        console.error(`No iframe found for request ${this.requestId}`);
+                        // Wait for iframe load event
+                        iframe.addEventListener('load', () => {
+                            console.log(`📡 Iframe loaded for request ${this.requestId}`);
+                            setTimeout(initWidget, 500);
+                        });
                     }
                 });
             },
 
             bindEvents() {
                 if (!this.widget) {
-                    console.error(`No widget available for request ${this.requestId}`);
+                    console.error(`❌ No widget available for request ${this.requestId}`);
                     return;
                 }
 
-                console.log(`Binding events for request ${this.requestId}`);
+                console.log(`🔄 Binding events for request ${this.requestId}`);
+
+                this.widget.bind(SC.Widget.Events.READY, () => {
+                    console.log(`🎵 Widget READY for request ${this.requestId}`);
+                });
 
                 this.widget.bind(SC.Widget.Events.PLAY, () => {
-                    console.log(`🎵 Audio player STARTED playing for request ${this.requestId}`);
+                    console.log(`▶️ PLAY started for request ${this.requestId}`);
                     this.isPlaying = true;
-                    this.startTime = Date.now();
+                    this.hasStartedPlaying = true;
+                    this.startPlayTracking();
                 });
 
                 this.widget.bind(SC.Widget.Events.PAUSE, () => {
-                    console.log(`⏸️ Audio player PAUSED for request ${this.requestId}`);
+                    console.log(`⏸️ PAUSE for request ${this.requestId}`);
                     this.isPlaying = false;
+                    this.stopPlayTracking();
                 });
 
                 this.widget.bind(SC.Widget.Events.FINISH, () => {
-                    console.log(`⏹️ Audio player FINISHED playing for request ${this.requestId}`);
+                    console.log(`⏹️ FINISHED for request ${this.requestId}`);
                     this.isPlaying = false;
+                    this.stopPlayTracking();
                 });
 
-                // Track play progress
                 this.widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-                    const currentSeconds = data.currentPosition / 1000;
-                    console.log(`⏰ Play progress for request ${this.requestId}: ${currentSeconds.toFixed(1)}s`);
+                    if (data && data.currentPosition !== undefined) {
+                        const currentSeconds = data.currentPosition / 1000;
+                        this.playTime = Math.max(this.playTime, currentSeconds);
+                        this.checkCanRepost();
 
-                    this.playTime = currentSeconds;
-                    this.checkCanRepost();
+                        // Log progress every second
+                        const currentFloor = Math.floor(currentSeconds);
+                        if (currentFloor !== this.lastLoggedTime && currentFloor % 1 === 0) {
+                            console.log(`⏰ Request ${this.requestId}: ${currentSeconds.toFixed(1)}s played`);
+                            this.lastLoggedTime = currentFloor;
+                        }
+                    }
                 });
 
-                console.log(`✅ Events bound successfully for request ${this.requestId}`);
+                console.log(`✅ All events bound for request ${this.requestId}`);
+            },
+
+            startPlayTracking() {
+                if (this.playProgressInterval) return;
+
+                this.playProgressInterval = setInterval(() => {
+                    if (this.isPlaying && this.hasStartedPlaying) {
+                        this.playTime += 0.1;
+                        this.checkCanRepost();
+                    }
+                }, 100);
+            },
+
+            stopPlayTracking() {
+                if (this.playProgressInterval) {
+                    clearInterval(this.playProgressInterval);
+                    this.playProgressInterval = null;
+                }
             },
 
             checkCanRepost() {
-                if (this.canRepost) {
-                    return; // Already enabled, no need to check
-                }
+                if (!this.canRepost && this.playTime >= 5) {
+                    console.log(`🎉 ENABLING REPOST BUTTON for request ${this.requestId}!`);
+                    console.log(`📊 Total play time: ${this.playTime.toFixed(1)}s (required: 5.0s)`);
 
-                console.log(
-                    `🔍 Checking repost eligibility for request ${this.requestId}: ${this.playTime.toFixed(1)}s / 5.0s required`
-                );
-
-                if (this.playTime >= 5) {
-                    console.log(
-                        `🎉 REPOST BUTTON ENABLED for request ${this.requestId}! Played for ${this.playTime.toFixed(1)}s`
-                    );
                     this.canRepost = true;
 
-                    // Force Alpine to update the UI
+                    // Force Alpine reactivity update
                     this.$nextTick(() => {
-                        console.log(
-                            `🔄 UI updated for request ${this.requestId}, canRepost: ${this.canRepost}`);
+                        console.log(`🔄 Alpine state updated. canRepost: ${this.canRepost}`);
+
+                        // Verify button state
+                        const button = this.$el.querySelector('button[x-bind\\:disabled]');
+                        if (button) {
+                            console.log(`🎨 Button found. Disabled: ${button.disabled}`);
+                            console.log(`🎨 Button classes: ${button.className}`);
+                        }
                     });
 
-                    // Optional: Unbind the progress event to save resources
-                    this.widget.unbind(SC.Widget.Events.PLAY_PROGRESS);
-                } else {
-                    console.log(
-                        `⏳ Still waiting... ${(5 - this.playTime).toFixed(1)}s remaining for request ${this.requestId}`
-                    );
+                    // Stop intensive tracking once enabled
+                    this.stopPlayTracking();
                 }
             },
 
             handleRepost() {
-                console.log(`🎯 Repost button clicked for request ${this.requestId}, canRepost: ${this.canRepost}`);
+                console.log(`🎯 Repost button clicked for request ${this.requestId}`);
+                console.log(`🔍 canRepost: ${this.canRepost}, playTime: ${this.playTime.toFixed(1)}s`);
 
-                if (this.canRepost) {
-                    console.log(`✅ Confirming repost for request ${this.requestId}`);
-                    // Trigger Livewire method
-                    this.$wire.call('confirmRepost', this.requestId);
-                } else {
-                    console.log(
-                        `❌ Cannot repost yet for request ${this.requestId}. Played: ${this.playTime.toFixed(1)}s`);
+                if (!this.canRepost) {
+                    const remaining = Math.max(0, 5 - this.playTime).toFixed(1);
+                    console.log(`❌ Cannot repost yet. Need ${remaining}s more`);
+
                     alert(
-                        `Please listen to at least 5 seconds of the track before reposting. Current: ${this.playTime.toFixed(1)}s`
+                        `Please listen to at least 5 seconds of the track before reposting.\n\nCurrent play time: ${this.playTime.toFixed(1)}s\nRemaining: ${remaining}s`
                     );
+                    return false;
+                }
+
+                console.log(`✅ Proceeding with repost for request ${this.requestId}`);
+
+                // Call Livewire method
+                try {
+                    this.$wire.call('confirmRepost', this.requestId);
+                } catch (error) {
+                    console.error(`❌ Error calling confirmRepost:`, error);
+                }
+
+                return true;
+            },
+
+            destroy() {
+                console.log(`🧹 Cleaning up player for request ${this.requestId}`);
+                this.stopPlayTracking();
+
+                if (this.widget) {
+                    try {
+                        // Unbind all events
+                        this.widget.unbind(SC.Widget.Events.READY);
+                        this.widget.unbind(SC.Widget.Events.PLAY);
+                        this.widget.unbind(SC.Widget.Events.PAUSE);
+                        this.widget.unbind(SC.Widget.Events.FINISH);
+                        this.widget.unbind(SC.Widget.Events.PLAY_PROGRESS);
+                    } catch (error) {
+                        console.log(`⚠️ Error unbinding events:`, error);
+                    }
                 }
             }
         }
     }
 
-    // Initialize when page loads
+    // Global initialization
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚀 Page loaded - SoundCloud Widget API ready');
+        console.log('🚀 DOM loaded - SoundCloud Widget API should be available');
     });
 
-    // Initialize when Livewire loads (for SPA navigation)
     document.addEventListener('livewire:initialized', function() {
-        console.log('🔄 Livewire initialized - Alpine audio tracker ready');
+        console.log('🔄 Livewire initialized');
     });
 
-    // Re-initialize when Livewire navigates (for dynamic content)
     document.addEventListener('livewire:navigated', function() {
-        console.log('🧭 Livewire navigated - Reinitializing audio trackers');
+        console.log('🧭 Livewire navigated - Components will reinitialize');
+    });
+
+    // Handle component cleanup on navigation
+    document.addEventListener('livewire:navigating', function() {
+        console.log('🧹 Livewire navigating - Cleaning up audio trackers');
     });
 </script>
