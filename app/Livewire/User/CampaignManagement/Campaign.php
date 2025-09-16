@@ -301,6 +301,7 @@ class Campaign extends Component
         }
         $this->totalCampaigns();
         $this->dispatch('soundcloud-widgets-reinitialize');
+        $this->render();
 
     }
 
