@@ -88,12 +88,12 @@ class Campaign extends Component
     public $playedCampaigns = [];
     public $playcount = false;
     // Listeners for browser events
-    protected $listeners = [
-        'audioPlay' => 'handleAudioPlay',
-        'audioPause' => 'handleAudioPause',
-        'audioTimeUpdate' => 'handleAudioTimeUpdate',
-        'audioEnded' => 'handleAudioEnded',
-    ];
+    // protected $listeners = [
+    //     'audioPlay' => 'handleAudioPlay',
+    //     'audioPause' => 'handleAudioPause',
+    //     'audioTimeUpdate' => 'handleAudioTimeUpdate',
+    //     'audioEnded' => 'handleAudioEnded',
+    // ];
 
 
 

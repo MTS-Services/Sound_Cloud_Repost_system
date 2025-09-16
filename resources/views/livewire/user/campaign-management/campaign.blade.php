@@ -655,10 +655,11 @@
                         widget.bind(SC.Widget.Events.READY, () => {
                             console.log('Widget ready for campaign:', campaignId);
 
+                            // Fixed: Call the correct method names
                             widget.bind(SC.Widget.Events.PLAY, () => {
                                 const component = getComponentInstance();
                                 if (component) {
-                                    component.call('audioPlay', campaignId);
+                                    component.call('handleAudioPlay', campaignId);
                                 } else {
                                     console.error(
                                         'Component instance not found for PLAY event');
@@ -685,11 +686,12 @@
                                 }
                             });
 
+                            // Fixed: Call the correct method name
                             widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
                                 const currentTime = data.currentPosition / 1000;
                                 const component = getComponentInstance();
                                 if (component) {
-                                    component.call('audioTimeUpdate', campaignId,
+                                    component.call('handleAudioTimeUpdate', campaignId,
                                         currentTime);
                                 } else {
                                     console.error(
@@ -744,6 +746,7 @@
                     initializeSoundCloudWidgets();
                 });
             });
+
             document.addEventListener('livewire:dispatched', (event) => {
                 if (event.detail.event === 'soundcloud-widgets-reinitialize') {
                     requestAnimationFrame(() => {
