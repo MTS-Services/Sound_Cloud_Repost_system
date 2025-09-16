@@ -146,14 +146,10 @@
                     @error('credit')
                         <p class="text-xs text-red-500 mb-4">{{ $message }}</p>
                     @enderror
-                    {{-- @if (!$proFeatureEnabled)
-                    @dd( $proFeatureEnabled ? userCredits() : userCredits() -(($credit * 1.5) - $credit) );
-                    @endif --}}
 
                     <div class="relative">
                         <input type="range" x-init="localCredit = @entangle('credit').defer || 50" x-model="localCredit" min="50"
                             step="10" 
-                            {{-- max="{{ !$proFeatureEnabled ? userCredits() : userCredits() - ($credit * 1.5 - $credit) }}" --}}
                             :max="!proFeatureEnabled ? userCreditLimit : (userCreditLimit - (localTotalCredit - localCredit))"
                             class="w-full h-2 border-0 cursor-pointer outline-none transition-all duration-200">
                     </div>
@@ -188,7 +184,7 @@
                 <!-- Max Follower -->
                 <div class="flex flex-col space-y-2">
                     <div class="flex items-start space-x-3">
-                        <input type="checkbox" @change="showOptions = !showOptions"
+                        <input type="checkbox" @change="showOptions = !showOptions" wire:model="maxFollowerEnabled"
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                         <span class="text-sm font-medium text-gray-900 dark:text-white">Limit to users with max follower
                             count</span>
@@ -212,7 +208,6 @@
                 </div>
 
                 <!-- PRO Features, Audience Filtering, Genres (unchanged)... -->
-                <!-- Enable Campaign Accelerator -->
                 <div class="flex items-start space-x-3 {{ !proUser() ? 'opacity-30' : '' }}">
                     <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
                         x-model="proFeatureValid" {{ !proUser() ? 'disabled' : '' }}
@@ -228,8 +223,6 @@
                                 <span class="text-white text-xs">i</span>
                             </div>
                         </div>
-                        {{-- <p class="text-xs text-gray-700 dark:text-gray-400">Use Campaign Accelerator (+50 credits)
-                        </p> --}}
                         <p class="text-xs text-gray-700 dark:text-gray-400"
                             x-text="'Use Campaign Accelerator (+ ' + (localCredit * 0.5) + ' credits)'"></p>
                     </div>
@@ -249,7 +242,7 @@
                     <div class="space-y-3 ml-4">
                         <div class="flex flex-col space-y-2">
                             <div class="flex items-start space-x-3">
-                                <input type="checkbox" :disabled="!momentumEnabled"
+                                <input type="checkbox" :disabled="!momentumEnabled" wire:model="repostPerDayEnabled"
                                     class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
                                     :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                 <div class="flex items-center space-x-2">

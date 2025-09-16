@@ -124,6 +124,8 @@ class Campaign extends Component
     public $commentable = true;
     public $likeable = true;
     public $proFeatureEnabled = false;
+    public $maxFollowerEnabled = false;
+    public $repostPerDayEnabled = false;
     public $proFeatureValue = 0;
     public $maxFollower = 100;
     public $followersLimit = 0;
@@ -766,7 +768,7 @@ class Campaign extends Component
                     'budget_credits' => $this->credit,
                     'user_urn' => user()->urn,
                     'status' => ModelsCampaign::STATUS_OPEN,
-                    'max_followers' => $this->maxFollower,
+                    'max_followers' => $this->maxFollowerEnabled ? $this->maxFollower : 100,
                     'creater_id' => user()->id,
                     'creater_type' => get_class(user()),
                     'commentable' => $commentable,
@@ -774,7 +776,7 @@ class Campaign extends Component
                     'pro_feature' => $proFeatureEnabled,
                     'momentum_price' => $proFeatureEnabled == 1 ? $this->credit / 2 : 0,
                     'max_repost_last_24_h' => $this->maxRepostLast24h,
-                    'max_repost_per_day' => $this->maxRepostsPerDay,
+                    'max_repost_per_day' => $this->repostPerDayEnabled ? $this->maxRepostsPerDay : 0,
                     'target_genre' => $this->targetGenre,
                 ]);
 

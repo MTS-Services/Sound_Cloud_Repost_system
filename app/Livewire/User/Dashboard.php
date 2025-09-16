@@ -47,6 +47,8 @@ class Dashboard extends Component
     public $showCampaignsModal = false;
     public $showSubmitModal = false;
     public $momentumEnabled = false;
+    public $maxFollowerEnabled = false;
+    public $repostPerDayEnabled = false;
     public bool $showAddCreditModal = false;
     public bool $showEditCampaignModal = false;
     public bool $showCancelWarningModal = false;
@@ -821,14 +823,14 @@ class Dashboard extends Component
                     'budget_credits' => $this->credit,
                     'user_urn' => user()->urn,
                     'status' => ModelsCampaign::STATUS_OPEN,
-                    'max_followers' => $this->maxFollower,
+                    'max_followers' => $this->maxFollowerEnabled ? $this->maxFollower : 100,
                     'creater_id' => user()->id,
                     'creater_type' => get_class(user()),
                     'commentable' => $commentable,
                     'likeable' => $likeable,
                     'pro_feature' => $proFeatureEnabled,
                     'momentum_price' => $proFeatureEnabled == 1 ? $this->credit / 2 : 0,
-                    'max_repost_last_24_h' => $this->maxRepostLast24h,
+                    'max_repost_per_day' => $this->repostPerDayEnabled ? $this->maxRepostsPerDay : 0,
                     'max_repost_per_day' => $this->maxRepostsPerDay,
                     'target_genre' => $this->targetGenre,
                 ]);
