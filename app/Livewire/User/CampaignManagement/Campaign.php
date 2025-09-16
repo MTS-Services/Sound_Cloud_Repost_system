@@ -26,6 +26,7 @@ use Throwable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\PlaylistTrack;
+use App\Models\UserAnalytics;
 
 class Campaign extends Component
 {
@@ -302,7 +303,6 @@ class Campaign extends Component
         $this->totalCampaigns();
         $this->dispatch('soundcloud-widgets-reinitialize');
         $this->render();
-
     }
 
 
@@ -732,8 +732,7 @@ class Campaign extends Component
     public function profeature($isChecked)
     {
         if (!proUser()) {
-            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
-            ;
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
         } elseif (($this->credit * 2) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;
@@ -929,7 +928,7 @@ class Campaign extends Component
                 $this->track = $playlist->track;
             }
 
-            $response = $this->analyticsService->updateAnalytics($this->track, $campaign, 'total_plays', $campaign->target_genre);
+            $response = $this->analyticsService->recordAnalytics($this->track, $campaign, UserAnalytics::TYPE_PLAY, $campaign->target_genre);
             if ($response != false || $response != null) {
                 $campaign->increment('playback_count');
             }
@@ -1364,7 +1363,6 @@ class Campaign extends Component
                         ->whereHas('music', function ($query) {
                             $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
                             $query->whereIn('genre', $userGenres);
-
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
 

@@ -26,6 +26,7 @@ use Throwable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\PlaylistTrack;
+use App\Models\UserAnalytics;
 
 class Campaign extends Component
 {
@@ -260,10 +261,10 @@ class Campaign extends Component
 
             if ($track) {
                 // Update analytics in database
-                $response = $this->analyticsService->updateAnalytics(
+                $response = $this->analyticsService->recordAnalytics(
                     $track,
                     $campaign,
-                    'total_plays',
+                    UserAnalytics::TYPE_PLAY,
                     $campaign->target_genre
                 );
 

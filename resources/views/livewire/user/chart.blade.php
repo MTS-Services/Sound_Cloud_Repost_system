@@ -196,7 +196,7 @@
                                 <div
                                     class="grid grid-cols-12 gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 border-b border-gray-300 dark:border-gray-700">
                                     {{-- @dd($track); --}}
-                                    @if (proUser($track['track_details']->user_urn) && $track['action_details']->is_featured)
+                                    @if (proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured)
                                         <div class="col-span-1 flex items-center">
                                             <div
                                                 class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gradient-to-br from-orange-400 to-orange-600 text-white">
@@ -282,7 +282,7 @@
                                                 </svg>
                                             </button>
                                             <button
-                                                wire:click="likeTrack('{{ encrypt($track['action_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
+                                                wire:click="likeTrack('{{ encrypt($track['actionable_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
                                                 class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white"><svg
                                                     xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -294,7 +294,7 @@
                                                 </svg>
                                             </button>
                                             <button
-                                                wire:click="repostTrack('{{ encrypt($track['action_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
+                                                wire:click="repostTrack('{{ encrypt($track['actionable_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
                                                 class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 {{ $track['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white "><svg
                                                     xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -680,14 +680,14 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             @forelse ($topTracks as $track)
                                 <div
-                                    class="bg-gray-200 dark:bg-gray-800 rounded-2xl p-4 border transition-all duration-300 hover:scale-105 hover:shadow-xl shadow-lg {{ proUser($track['track_details']->user_urn) && $track['action_details']->is_featured
+                                    class="bg-gray-200 dark:bg-gray-800 rounded-2xl p-4 border transition-all duration-300 hover:scale-105 hover:shadow-xl shadow-lg {{ proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured
                                         ? 'shadow-orange-500/20 border-orange-300 dark:border-orange-500'
                                         : (proUser($track['track_details']->user_urn)
                                             ? 'shadow-gray-500/20 border-gray-500'
                                             : 'shadow-gray-700/20 border-gray-300 dark:border-gray-700') }}">
                                     <div class="relative mb-4">
 
-                                        @if (proUser($track['track_details']->user_urn) && $track['action_details']->is_featured)
+                                        @if (proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured)
                                             <div
                                                 class="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold z-10 bg-gradient-to-br from-orange-400 to-orange-600 text-white">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -782,7 +782,7 @@
                                             </svg>
                                         </button>
                                         <button
-                                            wire:click="likeTrack('{{ encrypt($track['action_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
+                                            wire:click="likeTrack('{{ encrypt($track['actionable_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
                                             class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-600">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -794,7 +794,7 @@
                                             </svg>
                                         </button>
                                         <button
-                                            wire:click="repostTrack('{{ encrypt($track['action_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
+                                            wire:click="repostTrack('{{ encrypt($track['actionable_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
                                             class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 {{ $track['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-600"><svg
                                                 xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -818,13 +818,13 @@
                             @forelse ($topTracks as $track)
                                 {{-- @dd($track); --}}
                                 <div
-                                    class="relative border rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-900 dark:to-gray-800  shadow-lg {{ proUser($track['track_details']->user_urn) && $track['action_details']->is_featured
+                                    class="relative border rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-900 dark:to-gray-800  shadow-lg {{ proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured
                                         ? 'shadow-orange-500/20 border-orange-300 dark:border-orange-500'
                                         : (proUser($track['track_details']->user_urn)
                                             ? 'shadow-gray-500/20 border-gray-500'
                                             : 'shadow-gray-700/20 border-gray-300 dark:border-gray-700') }}">
 
-                                    @if (proUser($track['track_details']->user_urn) && $track['action_details']->is_featured)
+                                    @if (proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured)
                                         <div class="absolute -top-2 -right-2 z-10">
                                             <div
                                                 class="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-br from-orange-400 to-orange-600 text-white shadow-lg">
@@ -851,7 +851,7 @@
                                     @endif
                                     <div class="flex items-center gap-4">
                                         <div
-                                            class="w-12 h-12 rounded-full flex items-center justify-center font-bold bg-gradient-to-br shadow-lg text-2xl {{ proUser($track['track_details']->user_urn) && $track['action_details']->is_featured
+                                            class="w-12 h-12 rounded-full flex items-center justify-center font-bold bg-gradient-to-br shadow-lg text-2xl {{ proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured
                                                 ? 'from-orange-400 to-orange-600 text-white'
                                                 : (proUser($track['track_details']->user_urn)
                                                     ? 'from-gray-400 to-gray-600 text-white'
@@ -889,7 +889,7 @@
                                                 </div>
                                             </div>
                                             <div class="flex flex-wrap gap-1 mt-2">
-                                                @if ($track['action_details']->is_featured)
+                                                @if ($track['actionable_details']->is_featured)
                                                     <span
                                                         class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border bg-orange-900 text-orange-300 border-orange-700"><svg
                                                             xmlns="http://www.w3.org/2000/svg" width="24"
@@ -957,7 +957,7 @@
                                                         </svg>
                                                     </button>
                                                     <button
-                                                        wire:click="likeTrack('{{ encrypt($track['action_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
+                                                        wire:click="likeTrack('{{ encrypt($track['actionable_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
                                                         class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
                                                         title="Like">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
@@ -971,7 +971,7 @@
                                                         </svg>
                                                     </button>
                                                     <button
-                                                        wire:click="repostTrack('{{ encrypt($track['action_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
+                                                        wire:click="repostTrack('{{ encrypt($track['actionable_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
                                                         class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 {{ $track['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }}  hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
                                                         title="Repost">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"

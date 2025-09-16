@@ -17,32 +17,62 @@ return new class extends Migration
         Schema::create('user_analytics', function (Blueprint $table) {
             $table->id();
 
-            $table->string('user_urn');
-            $table->foreign('user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->string('owner_user_urn');
+            $table->foreign('owner_user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
+
+            $table->string('act_user_urn');
+            $table->foreign('act_user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
 
             $table->string('track_urn');
             $table->foreign('track_urn')->references('urn')->on('tracks')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->unsignedBigInteger('action_id');
-            $table->string('action_type');
+            $table->unsignedBigInteger('actionable_id');
+            $table->string('actionable_type');
 
-            $table->date('date');
-            $table->string('genre');
+            $table->tinyInteger('type')->index();
 
-            $table->unsignedBigInteger('total_requests')->default(0);
-            $table->unsignedBigInteger('total_plays')->default(0);
-            $table->unsignedBigInteger('total_followers')->default(0);
-            $table->unsignedBigInteger('total_likes')->default(0);
-            $table->unsignedBigInteger('total_reposts')->default(0);
-            $table->unsignedBigInteger('total_comments')->default(0);
-            $table->unsignedBigInteger('total_views')->default(0);
+            // ip address 
+            $table->string('ip_address')->nullable();
+
+            $table->string('genre')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
             $this->addMorphedAuditColumns($table);
 
-            $table->unique(['action_id', 'action_type', 'track_urn', 'user_urn', 'date'], 'user_analytics_unique_index');
+            // $table->unique(['act_user_urn', 'track_urn', 'type', 'ip_address'], 'user_analytics_unique_index');
         });
+
+
+        //  Schema::create('user_analytics', function (Blueprint $table) {
+        //     $table->id();
+
+        //     $table->string('user_urn');
+        //     $table->foreign('user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
+
+        //     $table->string('track_urn');
+        //     $table->foreign('track_urn')->references('urn')->on('tracks')->onDelete('cascade')->onUpdate('cascade');
+
+        //     $table->unsignedBigInteger('action_id');
+        //     $table->string('action_type');
+
+        //     $table->date('date');
+        //     $table->string('genre');
+
+        //     $table->unsignedBigInteger('total_requests')->default(0);
+        //     $table->unsignedBigInteger('total_plays')->default(0);
+        //     $table->unsignedBigInteger('total_followers')->default(0);
+        //     $table->unsignedBigInteger('total_likes')->default(0);
+        //     $table->unsignedBigInteger('total_reposts')->default(0);
+        //     $table->unsignedBigInteger('total_comments')->default(0);
+        //     $table->unsignedBigInteger('total_views')->default(0);
+
+        //     $table->timestamps();
+        //     $table->softDeletes();
+        //     $this->addMorphedAuditColumns($table);
+
+        //     $table->unique(['action_id', 'action_type', 'track_urn', 'user_urn', 'date'], 'user_analytics_unique_index');
+        // });
     }
 
     /**
