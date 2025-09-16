@@ -289,7 +289,7 @@
 
                     <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
                         <x-gbutton variant="outline"
-                            class="hover:!bg-[#ff6b35] hover:!text-white bg-white border-gray-300 dark:border-gray-600 w-full"
+                            class="hover:!bg-[#ff6b35] hover:!text-white bg-white border-gray-300 dark:border-gray-600 w-full sm:w-auto justify-center"
                             x-bind:class="showGrowthTips
                                 ?
                                 '!bg-[#ff6b35] !text-white' :
@@ -861,7 +861,7 @@
                                     ($data['reposts_change'] ?? 0);
                                 $avgGrowth = $totalGrowth / 3;
                             @endphp
-                            <p class="text-2xl font-bold">
+                            <p class="text-base  sm:text-lg md:text-xl font-bold">
                                 {{ $avgGrowth > 0 ? '+' : '' }}{{ number_format($avgGrowth, 1) }}%</p>
                             <p class="text-orange-100 text-sm">Average Growth</p>
                         </div>
