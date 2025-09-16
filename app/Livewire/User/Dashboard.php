@@ -406,13 +406,13 @@ class Dashboard extends Component
 
             // Perform text-based search
             $this->performTextSearch();
-        } catch (ValidationException $e) {
-            $this->dispatch('alert', type: 'error', message: $e->validator->errors()->first());
-            Log::warning('Search validation failed', [
-                'search_query' => $this->searchQuery,
-                'errors' => $e->validator->errors()->toArray(),
-                'user_urn' => user()->urn ?? 'unknown'
-            ]);
+        // } catch (ValidationException $e) {
+        //     $this->dispatch('alert', type: 'error', message: $e->validator->errors()->first());
+        //     Log::warning('Search validation failed', [
+        //         'search_query' => $this->searchQuery,
+        //         'errors' => $e->validator->errors()->toArray(),
+        //         'user_urn' => user()->urn ?? 'unknown'
+        //     ]);
         } catch (\Exception $e) {
             $this->dispatch('alert', type: 'error', message: 'Search failed. Please try again.');
             Log::error('Search failed: ' . $e->getMessage(), [
