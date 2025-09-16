@@ -58,6 +58,11 @@
         
                 $watch('localCredit', value => {
                     $wire.set('credit', value);
+                    let requiredCredit = Math.floor(value * 1.5);
+                    if (requiredCredit < this.userCreditLimit) {
+                        this.showError = true;
+                        this.errorMessage = '';
+                    }
                     if (this.proFeatureEnabled) {
                         this.localTotalCredit = value * 1.5;
                     } else {
@@ -149,7 +154,7 @@
 
                     <div class="relative">
                         <input type="range" x-init="localCredit = @entangle('credit').defer || 50" x-model="localCredit" min="50"
-                            step="10" 
+                            step="10"
                             :max="!proFeatureEnabled ? userCreditLimit : (userCreditLimit - (localTotalCredit - localCredit))"
                             class="w-full h-2 border-0 cursor-pointer outline-none transition-all duration-200">
                     </div>
@@ -269,7 +274,7 @@
                                 <div class="flex justify-between items-center gap-4">
                                     <div class="w-full relative">
                                         <input type="range" x-data :disabled="!momentumEnabled"
-                                            x-on:input="$wire.set('maxRepostsPerDay', $event.target.value)"
+                                            x-init="localMaxRepostsPerDay = @entangle('maxRepostsPerDay').defer || 100" x-model="localMaxRepostsPerDay"
                                             min="0" max="100" value="{{ $maxRepostsPerDay }}"
                                             class="w-full h-2  cursor-pointer"
                                             :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
@@ -277,7 +282,7 @@
                                     <div
                                         class="min-w-[80px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
                                         <span
-                                            class="text-sm font-medium text-gray-900 dark:text-white">{{ $maxRepostsPerDay }}</span>
+                                            class="text-sm font-medium text-gray-900 dark:text-white" x-text="localMaxRepostsPerDay"></span>
                                     </div>
                                     @error('maxRepostsPerDay')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
