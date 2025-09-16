@@ -652,10 +652,12 @@
         initializeSoundCloudWidgets();
     });
 
-    document.addEventListener('livewire:dispatched', (event) => {
-        if (event.detail.event === 'soundcloud-widgets-reinitialize') {
-            initializeSoundCloudWidgets();
-        }
+    document.addEventListener('livewire:load', function() {
+        document.addEventListener('livewire:dispatched', (event) => {
+            if (event.detail.event === 'soundcloud-widgets-reinitialize') {
+                initializeSoundCloudWidgets();
+            }
+        });
     });
 </script>
 </div>
