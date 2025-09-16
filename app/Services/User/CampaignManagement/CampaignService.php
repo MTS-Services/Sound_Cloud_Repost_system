@@ -156,4 +156,39 @@ class CampaignService
             throw $e;
         }
     }
+
+    public function likeCampaign($campaign, $reposter = null)
+    {
+        try {
+            if ($reposter == null) {
+                $reposter = user();
+            }
+            $trackOwnerName = $campaign->music->user?->name;
+
+            $response = $this->analyticsService->updateAnalytics($campaign->music, $campaign, 'total_likes', $campaign->target_genre);
+            if ($response != false || $response != null) {
+                $campaign->increment('like_count');
+            }
+
+            $ownerNotificaion = CustomNotification::create([
+                'receiver_id' => $campaign?->user?->id,
+                'receiver_type' => get_class($campaign?->user),
+                'type' => CustomNotification::TYPE_USER,
+                'message_data' => [
+                    'title' => "New Like on your campaign",
+                    'message' => "Your campaign has been liked",
+                    'description' => "Your campaign has been liked by {$reposter->name}.",
+                    'icon' => 'music',
+                    'additional_data' => [
+                        'Track Title' => $campaign->music->title,
+                        'Track Artist' => $trackOwnerName,
+                    ]
+                ]
+            ]);
+
+            broadcast(new UserNotificationSent($ownerNotificaion));
+        } catch (Throwable $e) {
+            throw $e;
+        }
+    }
 }
