@@ -449,110 +449,125 @@
             widget: null,
 
             init() {
+                console.log(`Initializing player for request ${this.requestId}`);
                 this.$nextTick(() => {
                     const iframe = this.$refs[`player${this.requestId}`]?.querySelector('iframe');
                     if (iframe) {
+                        console.log(`Found iframe for request ${this.requestId}`);
                         iframe.addEventListener('load', () => {
+                            console.log(`Iframe loaded for request ${this.requestId}`);
                             this.widget = SC.Widget(iframe);
                             this.bindEvents();
                         });
+
+                        // If iframe is already loaded
+                        if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+                            console.log(`Iframe already loaded for request ${this.requestId}`);
+                            this.widget = SC.Widget(iframe);
+                            this.bindEvents();
+                        }
+                    } else {
+                        console.error(`No iframe found for request ${this.requestId}`);
                     }
                 });
             },
 
             bindEvents() {
-                if (!this.widget) return;
-
-                this.widget.bind(SC.Widget.Events.PLAY, () => {
-                    console.log('Audio player is playing');
-
-                    this.isPlaying = true;
-                });
-
-                this.widget.bind(SC.Widget.Events.PAUSE, () => {
-                    console.log('Audio player is paused');
-                    this.isPlaying = false;
-                });
-
-                // Use the official event to get current time
-                this.widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-                    this.playTime = data.currentPosition / 1000;
-                    console.log(this.playTime);
-
-                    this.checkCanRepost();
-                });
-
-                this.widget.bind(SC.Widget.Events.FINISH, () => {
-                    console.log('Audio player has finished playing');
-                    this.isPlaying = false;
-                    console.log(this.isPlaying);
-
-                });
-            },
-
-
-            handlePlay() {
-                this.isPlaying = true;
-                this.startTime = Date.now();
-                this.updatePlayTime();
-            },
-
-            handlePause() {
-                this.isPlaying = false;
-                this.startTime = null;
-            },
-
-            handleTimeUpdate(currentTime) {
-                if (this.isPlaying && this.startTime) {
-                    const sessionTime = (Date.now() - this.startTime) / 1000;
-                    this.playTime = Math.max(this.playTime, sessionTime);
-                    this.checkCanRepost();
-                }
-            },
-
-            updatePlayTime() {
-                if (this.isPlaying && this.startTime) {
-                    const sessionTime = (Date.now() - this.startTime) / 1000;
-                    this.playTime = Math.max(this.playTime, sessionTime);
-                    this.checkCanRepost();
-
-                    // Continue updating if still playing
-                    setTimeout(() => this.updatePlayTime(), 100);
-                }
-            },
-
-            checkCanRepost() {
-                // If the button is already enabled, we can stop checking.
-                if (this.canRepost) {
+                if (!this.widget) {
+                    console.error(`No widget available for request ${this.requestId}`);
                     return;
                 }
 
-                if (this.playTime >= 5) {
+                console.log(`Binding events for request ${this.requestId}`);
 
-                    this.canRepost = true;;
-                    console.log(`Request ${this.requestId} can now be reposted!`);
-                    // Optional: you can unbind the event to save resources.
+                this.widget.bind(SC.Widget.Events.PLAY, () => {
+                    console.log(`🎵 Audio player STARTED playing for request ${this.requestId}`);
+                    this.isPlaying = true;
+                    this.startTime = Date.now();
+                });
+
+                this.widget.bind(SC.Widget.Events.PAUSE, () => {
+                    console.log(`⏸️ Audio player PAUSED for request ${this.requestId}`);
+                    this.isPlaying = false;
+                });
+
+                this.widget.bind(SC.Widget.Events.FINISH, () => {
+                    console.log(`⏹️ Audio player FINISHED playing for request ${this.requestId}`);
+                    this.isPlaying = false;
+                });
+
+                // Track play progress
+                this.widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+                    const currentSeconds = data.currentPosition / 1000;
+                    console.log(`⏰ Play progress for request ${this.requestId}: ${currentSeconds.toFixed(1)}s`);
+
+                    this.playTime = currentSeconds;
+                    this.checkCanRepost();
+                });
+
+                console.log(`✅ Events bound successfully for request ${this.requestId}`);
+            },
+
+            checkCanRepost() {
+                if (this.canRepost) {
+                    return; // Already enabled, no need to check
+                }
+
+                console.log(
+                    `🔍 Checking repost eligibility for request ${this.requestId}: ${this.playTime.toFixed(1)}s / 5.0s required`
+                );
+
+                if (this.playTime >= 5) {
+                    console.log(
+                        `🎉 REPOST BUTTON ENABLED for request ${this.requestId}! Played for ${this.playTime.toFixed(1)}s`
+                    );
+                    this.canRepost = true;
+
+                    // Force Alpine to update the UI
+                    this.$nextTick(() => {
+                        console.log(
+                            `🔄 UI updated for request ${this.requestId}, canRepost: ${this.canRepost}`);
+                    });
+
+                    // Optional: Unbind the progress event to save resources
                     this.widget.unbind(SC.Widget.Events.PLAY_PROGRESS);
+                } else {
+                    console.log(
+                        `⏳ Still waiting... ${(5 - this.playTime).toFixed(1)}s remaining for request ${this.requestId}`
+                    );
                 }
             },
 
-            // handleRepost() {
-            //     if (this.canRepost) {
-            //         // Use Alpine to trigger Livewire method
-            //         this.$wire.call('confirmRepost', this.requestId);
-            //         this.reposted = true;
+            handleRepost() {
+                console.log(`🎯 Repost button clicked for request ${this.requestId}, canRepost: ${this.canRepost}`);
 
-            //         // Hide success message after 3 seconds
-            //         setTimeout(() => {
-            //             this.reposted = false;
-            //         }, 3000);
-            //     }
-            // }
+                if (this.canRepost) {
+                    console.log(`✅ Confirming repost for request ${this.requestId}`);
+                    // Trigger Livewire method
+                    this.$wire.call('confirmRepost', this.requestId);
+                } else {
+                    console.log(
+                        `❌ Cannot repost yet for request ${this.requestId}. Played: ${this.playTime.toFixed(1)}s`);
+                    alert(
+                        `Please listen to at least 5 seconds of the track before reposting. Current: ${this.playTime.toFixed(1)}s`
+                    );
+                }
+            }
         }
     }
 
-    // Initialize SoundCloud Widget API
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚀 Page loaded - SoundCloud Widget API ready');
+    });
+
+    // Initialize when Livewire loads (for SPA navigation)
     document.addEventListener('livewire:initialized', function() {
-        console.log('Livewire initialized - Alpine audio tracker ready');
+        console.log('🔄 Livewire initialized - Alpine audio tracker ready');
+    });
+
+    // Re-initialize when Livewire navigates (for dynamic content)
+    document.addEventListener('livewire:navigated', function() {
+        console.log('🧭 Livewire navigated - Reinitializing audio trackers');
     });
 </script>
