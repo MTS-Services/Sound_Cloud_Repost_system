@@ -761,8 +761,7 @@ class Dashboard extends Component
     public function profeature($isChecked)
     {
         if (!proUser()) {
-            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
-            ;
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
         } elseif (($this->credit * 1.5) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;
@@ -900,6 +899,7 @@ class Dashboard extends Component
 
     protected function resolveSoundcloudUrl()
     {
+        dd($this->searchQuery);
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                 ->where('permalink_url', $this->searchQuery)
@@ -945,7 +945,7 @@ class Dashboard extends Component
         if ($response->successful()) {
             $resolvedData = $response->json();
             $this->processResolvedData($resolvedData);
-            Log::info('SoundCloud link resolved successfully', [ $resolvedData ]);
+            Log::info('SoundCloud link resolved successfully', [$resolvedData]);
         } else {
             if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
                 $this->allPlaylistTracks = collect();
@@ -980,6 +980,26 @@ class Dashboard extends Component
                 $this->hasMorePlaylists = $this->playlists->count() === $this->playlistLimit;
             }
         }
+    }
+
+    public function showPlaylistTracks($playlistId)
+    {
+        $this->selectedPlaylistId = $playlistId;
+        $playlist = Playlist::with('tracks')->find($playlistId);
+        if ($playlist) {
+            $this->allTracks = $playlist->tracks;
+            $this->tracks = $this->allTracks->take($this->trackLimit);
+            $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+        } else {
+            $this->tracks = collect();
+            $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+        }
+        $this->activeTab = 'tracks';
+        $this->playListTrackShow = true;
+
+        $this->reset([
+            'searchQuery',
+        ]);
     }
 
     public function directRepost($encryptedRequestId)
