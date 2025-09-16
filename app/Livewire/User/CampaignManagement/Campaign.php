@@ -238,7 +238,7 @@ class Campaign extends Component
         if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
             $this->calculateFollowersLimit();
         }
-        if (in_array($propertyName, ['activeMainTab', 'selectedGenres'])) {
+        if (in_array($propertyName, ['activeMainTab', 'campaigns'])) {
             $this->dispatch('soundcloud-widgets-reinitialize');
         }
     }
