@@ -898,40 +898,6 @@ class Dashboard extends Component
         }
     }
 
-    /**
-     * Resolve SoundCloud URL to get track/playlist information
-     * This method should be implemented to handle SoundCloud URL resolution
-     *
-     * @return void
-     */
-    // private function resolveSoundcloudUrl(): void
-    // {
-    //     try {
-    //         // This is a placeholder for SoundCloud URL resolution
-    //         // You would implement the actual SoundCloud API integration here
-
-    //         Log::info('SoundCloud URL resolution attempted', [
-    //             'url' => $this->searchQuery,
-    //             'user_urn' => user()->urn ?? 'unknown'
-    //         ]);
-
-    //         // For now, show a message that URL resolution is not yet implemented
-    //         $this->dispatch('alert', type: 'info', message: 'SoundCloud URL resolution is not yet implemented.');
-
-    //         // You could implement something like:
-    //         // $resolvedData = $this->soundCloudService->resolveUrl($this->searchQuery);
-    //         // Process the resolved data and update appropriate collections
-
-    //     } catch (\Exception $e) {
-    //         Log::error('SoundCloud URL resolution failed: ' . $e->getMessage(), [
-    //             'url' => $this->searchQuery,
-    //             'user_urn' => user()->urn ?? 'unknown'
-    //         ]);
-
-    //         $this->dispatch('alert', type: 'error', message: 'Failed to resolve SoundCloud URL.');
-    //     }
-    // }
-
     protected function resolveSoundcloudUrl()
     {
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
@@ -975,12 +941,12 @@ class Dashboard extends Component
 
         $response = Http::get("{$this->soundcloudApiUrl}/resolve", [
             'url' => $this->searchQuery,
-            'client_id' => $this->soundcloudClientId,
         ]);
 
         if ($response->successful()) {
             $resolvedData = $response->json();
             $this->processResolvedData($resolvedData);
+            Log::info('SoundCloud link resolved successfully', [ $resolvedData ]);
         } else {
             if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
                 $this->allPlaylistTracks = collect();
@@ -995,6 +961,25 @@ class Dashboard extends Component
                 }
             }
             $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
+        }
+    }
+
+    protected function processResolvedData($resolvedData)
+    {
+        if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
+            $this->allPlaylistTracks = collect($resolvedData);
+            $this->tracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
+            $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+        } else {
+            if ($this->activeTab === 'tracks') {
+                $this->allTracks = collect($resolvedData);
+                $this->tracks = $this->allTracks->take($this->trackLimit);
+                $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+            } elseif ($this->activeTab === 'playlists') {
+                $this->allPlaylists = collect($resolvedData);
+                $this->playlists = $this->allPlaylists->take($this->playlistLimit);
+                $this->hasMorePlaylists = $this->playlists->count() === $this->playlistLimit;
+            }
         }
     }
 
