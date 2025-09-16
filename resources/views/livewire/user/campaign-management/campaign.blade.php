@@ -658,7 +658,7 @@
                             widget.bind(SC.Widget.Events.PLAY, () => {
                                 const component = getComponentInstance();
                                 if (component) {
-                                    component.call('handleAudioPlay', campaignId);
+                                    component.call('audioPlay', campaignId);
                                 } else {
                                     console.error(
                                         'Component instance not found for PLAY event');
@@ -689,7 +689,7 @@
                                 const currentTime = data.currentPosition / 1000;
                                 const component = getComponentInstance();
                                 if (component) {
-                                    component.call('handleAudioTimeUpdate', campaignId,
+                                    component.call('audioTimeUpdate', campaignId,
                                         currentTime);
                                 } else {
                                     console.error(

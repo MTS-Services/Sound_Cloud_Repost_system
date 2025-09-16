@@ -92,9 +92,7 @@ class Campaign extends Component
         'audioPlay' => 'handleAudioPlay',
         'audioPause' => 'handleAudioPause',
         'audioTimeUpdate' => 'handleAudioTimeUpdate',
-        'handleAudioTimeUpdate' => 'handleAudioTimeUpdate',
         'audioEnded' => 'handleAudioEnded',
-        'handleAudioPlay' => 'handleAudioPlay'
     ];
 
 
