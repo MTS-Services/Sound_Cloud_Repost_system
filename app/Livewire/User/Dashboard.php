@@ -400,7 +400,6 @@ class Dashboard extends Component
 
             // Check if it's a SoundCloud URL
             if ($this->isSoundCloudUrl($this->searchQuery)) {
-
                 $this->resolveSoundcloudUrl();
                 return;
             }
@@ -457,8 +456,7 @@ class Dashboard extends Component
      */
     private function isSoundCloudUrl(string $query): bool
     {
-        dd(preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[\w\-\.\/]+$/i', $query));
-        return preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[\w\-\.\/]+$/i', $query);
+        return preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[\w\-\.\/]+(\?.*)?$/i', $query);
     }
 
     /**
@@ -901,7 +899,6 @@ class Dashboard extends Component
 
     protected function resolveSoundcloudUrl()
     {
-        dd($this->searchQuery);
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                 ->where('permalink_url', $this->searchQuery)
