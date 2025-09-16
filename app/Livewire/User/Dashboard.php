@@ -904,6 +904,7 @@ class Dashboard extends Component
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                 ->where('permalink_url', $this->searchQuery)
                 ->get();
+                dd($tracksFromDb);
             if ($tracksFromDb->isNotEmpty()) {
                 $this->allPlaylistTracks = $tracksFromDb;
                 $this->tracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
@@ -914,6 +915,7 @@ class Dashboard extends Component
             if ($this->activeTab == 'tracks') {
                 $tracksFromDb = Track::where('permalink_url', $this->searchQuery)
                     ->get();
+                    dd($tracksFromDb);
                 if ($tracksFromDb->isNotEmpty()) {
                     $this->activeTab = 'tracks';
                     $this->allTracks = $tracksFromDb;
