@@ -472,67 +472,46 @@
 </div>
 
 <script>
-    // Replace the existing script section in your repost request blade with this complete tracking system
-    function initializeSoundCloudWidgets() {
-        if (typeof SC === 'undefined') {
-            setTimeout(initializeSoundCloudWidgets, 500);
-            return;
-        }
+    document.addEventListener('livewire:initialized', function() {
+        // Audio event handling for SoundCloud players
+        document.querySelectorAll('[id^="soundcloud-player-"]').forEach(player => {
+            const requestId = player.dataset.requestId;
+            const iframe = player.querySelector('iframe');
 
-        const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+            if (iframe) {
+                iframe.addEventListener('load', function() {
 
-        playerContainers.forEach(container => {
-            const requestId = container.dataset.requestId;
-            const iframe = container.querySelector('iframe');
+                    // Simulate audio events for now
+                    const widget = SC.Widget(iframe);
 
-            if (iframe && requestId) {
-                const widget = SC.Widget(iframe);
+                    widget.bind(SC.Widget.Events.PLAY, function() {
+                        @this.call('handleAudioPlay', requestId);
+                    });
 
-                widget.bind(SC.Widget.Events.PLAY, () => {
-                    @this.call('handleAudioPlay', requestId);
-                });
+                    widget.bind(SC.Widget.Events.PAUSE, function() {
+                        @this.call('handleAudioPause', requestId);
+                    });
 
-                widget.bind(SC.Widget.Events.PAUSE, () => {
-                    @this.call('handleAudioPause', requestId);
-                });
+                    widget.bind(SC.Widget.Events.PLAY_PROGRESS, function(data) {
+                        @this.call('handleAudioTimeUpdate', requestId, data
+                            .currentPosition / 1000);
+                    });
 
-                widget.bind(SC.Widget.Events.FINISH, () => {
-                    @this.call('handleAudioEnded', requestId);
-                });
-
-                widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-                    const currentTime = data.currentPosition / 1000;
-                    @this.call('handleAudioTimeUpdate', requestId, currentTime);
+                    widget.bind(SC.Widget.Events.FINISH, function() {
+                        @this.call('handleAudioEnded', requestId);
+                    });
                 });
             }
         });
-    }
 
-    document.addEventListener('livewire:initialized', function() {
-        initializeSoundCloudWidgets();
-    });
-
-    document.addEventListener('livewire:navigated', function() {
-        initializeSoundCloudWidgets();
-    });
-
-    document.addEventListener('livewire:load', function() {
-        initializeSoundCloudWidgets();
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeSoundCloudWidgets();
-    });
-
-    // Listen for Livewire events
-    document.addEventListener('livewire:initialized', function() {
+        // Listen for Livewire events
         Livewire.on('requestPlayedEnough', (requestId) => {
             console.log('Request played for 5+ seconds:', requestId);
             // You can add visual feedback here
         });
     });
 
-    // Polling for play time updates (matches campaign feed polling)
+    // Polling for play time updates (optional)
     setInterval(() => {
         @this.call('updatePlayingTimes');
     }, 1000);
