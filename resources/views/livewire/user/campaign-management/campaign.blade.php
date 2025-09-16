@@ -744,6 +744,13 @@
                     initializeSoundCloudWidgets();
                 });
             });
+            document.addEventListener('livewire:dispatched', (event) => {
+                if (event.detail.event === 'soundcloud-widgets-reinitialize') {
+                    requestAnimationFrame(() => {
+                        initializeSoundCloudWidgets();
+                    });
+                }
+            });
         });
     </script>
 </div>

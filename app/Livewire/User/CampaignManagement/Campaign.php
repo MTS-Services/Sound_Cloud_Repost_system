@@ -92,7 +92,9 @@ class Campaign extends Component
         'audioPlay' => 'handleAudioPlay',
         'audioPause' => 'handleAudioPause',
         'audioTimeUpdate' => 'handleAudioTimeUpdate',
-        'audioEnded' => 'handleAudioEnded'
+        'handleAudioTimeUpdate' => 'handleAudioTimeUpdate',
+        'audioEnded' => 'handleAudioEnded',
+        'handleAudioPlay' => 'handleAudioPlay'
     ];
 
 
@@ -299,6 +301,7 @@ class Campaign extends Component
                 $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
         }
         $this->totalCampaigns();
+        $this->dispatch('soundcloud-widgets-reinitialize');
 
     }
 
