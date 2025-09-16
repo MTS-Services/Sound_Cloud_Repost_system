@@ -40,7 +40,7 @@ return new class extends Migration
             $table->softDeletes();
             $this->addMorphedAuditColumns($table);
 
-            $table->unique(['act_user_urn', 'track_urn', 'type', 'ip_address'], 'user_analytics_unique_index');
+            // $table->unique(['act_user_urn', 'track_urn', 'type', 'ip_address'], 'user_analytics_unique_index');
         });
 
 

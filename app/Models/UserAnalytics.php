@@ -13,6 +13,7 @@ class UserAnalytics extends BaseModel
     use SoftDeletes;
 
     // Action type constants
+    public const TYPE_PLAY = 0;
     public const TYPE_REPOST = 1;
     public const TYPE_LIKE = 2;
     public const TYPE_COMMENT = 3;
@@ -22,6 +23,7 @@ class UserAnalytics extends BaseModel
 
     // Type labels for display
     public const TYPE_LABELS = [
+        self::TYPE_PLAY => 'Play',
         self::TYPE_REPOST => 'Repost',
         self::TYPE_LIKE => 'Like',
         self::TYPE_COMMENT => 'Comment',

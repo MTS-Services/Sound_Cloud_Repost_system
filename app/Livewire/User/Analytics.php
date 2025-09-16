@@ -101,9 +101,9 @@ class Analytics extends Component
      */
     public function loadData()
     {
-        try {
-            $dateRange = $this->getDateRange();
+        $dateRange = $this->getDateRange();
 
+        try {
             if ($dateRange === false) {
                 return;
             }
@@ -225,9 +225,11 @@ class Analytics extends Component
         $reposts = $analyticsData['overall_metrics']['total_reposts']['current_total'] ?? 0;
 
         // Calculate engagement rate
-        $totalEngagements = $streams + $likes + $reposts + ($analyticsData['overall_metrics']['total_comments']['current_total'] ?? 0);
+        $totalEngagements = $streams + $likes + $reposts + ($analyticsData['overall_metrics']['total_comments']['current_total'] ?? 0) + ($analyticsData['overall_metrics']['total_followers']['current_total'] ?? 0);
+        $avgEngagement = $totalEngagements > 0 ? $totalEngagements / 5 : 0;
         $totalViews = $analyticsData['overall_metrics']['total_views']['current_total'] ?? 1;
-        $avgEngagementRate = $totalViews > 0 ? round(($totalEngagements / $totalViews) * 100, 1) : 0;
+
+        $avgEngagementRate = $avgEngagement > 0 ? round((($totalViews - $avgEngagement) / (($totalViews + $avgEngagement) / 2)) * 100, 2) : 0;
 
         return [
             'streams' => $this->formatNumber($streams),
@@ -253,12 +255,14 @@ class Analytics extends Component
         $currentEngagements = ($analyticsData['overall_metrics']['total_likes']['current_total'] ?? 0) +
             ($analyticsData['overall_metrics']['total_reposts']['current_total'] ?? 0) +
             ($analyticsData['overall_metrics']['total_comments']['current_total'] ?? 0) +
-            ($analyticsData['overall_metrics']['total_plays']['current_total'] ?? 0);
+            ($analyticsData['overall_metrics']['total_plays']['current_total'] ?? 0) +
+            ($analyticsData['overall_metrics']['total_followers']['current_total'] ?? 0);
 
         $previousEngagements = ($analyticsData['overall_metrics']['total_likes']['previous_total'] ?? 0) +
             ($analyticsData['overall_metrics']['total_reposts']['previous_total'] ?? 0) +
             ($analyticsData['overall_metrics']['total_comments']['previous_total'] ?? 0) +
-            ($analyticsData['overall_metrics']['total_plays']['previous_total'] ?? 0);
+            ($analyticsData['overall_metrics']['total_plays']['previous_total'] ?? 0) +
+            ($analyticsData['overall_metrics']['total_followers']['previous_total'] ?? 0);
 
         $currentRate = $currentViews > 0 ? ($currentEngagements / $currentViews) * 100 : 0;
         $previousRate = $previousViews > 0 ? ($previousEngagements / $previousViews) * 100 : 0;
@@ -267,8 +271,10 @@ class Analytics extends Component
             return $currentRate > 0 ? 100.0 : 0.0;
         }
 
-        $changeRate = (($currentRate - $previousRate) / $previousRate) * 100;
-        return round(max(-100, min(100, $changeRate)), 1);
+        // calculate the change rate in percentage
+        $changeRate = $previousRate > 0 ? (($currentRate - $previousRate) / $previousRate * 100) : 0;
+        $changeRate = max(-100, min(100, $changeRate));
+        return round($changeRate, 1);
     }
 
     /**

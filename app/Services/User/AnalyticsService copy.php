@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class AnalyticsService
+class AnalyticsServiceCopy
 {
     /**
      * Checks if an action update is allowed for a given action, user, and source today.
@@ -442,7 +442,7 @@ class AnalyticsService
                 'track_urn' => $trackUrn,
                 'track_name' => $trackName,
                 'track_details' => $trackDetails,
-                'action_details' => $actionDetails,
+                'actionable_details' => $actionDetails,
                 'metrics' => $totalMetrics
             ];
         });
@@ -463,13 +463,13 @@ class AnalyticsService
 
             $trackName = $current['track_name'] ?? $previous['track_name'] ?? 'Unknown Track';
             $trackDetails = $current['track_details'] ?? $previous['track_details'] ?? null;
-            $actionDetails = $current['action_details'] ?? $previous['action_details'] ?? null;
+            $actionDetails = $current['actionable_details'] ?? $previous['actionable_details'] ?? null;
 
             $trackResult = [
                 'track_urn' => $trackUrn,
                 'track_name' => $trackName,
                 'track_details' => $trackDetails,
-                'action_details' => $actionDetails
+                'actionable_details' => $actionDetails
             ];
 
             foreach (self::METRICS as $metric) {

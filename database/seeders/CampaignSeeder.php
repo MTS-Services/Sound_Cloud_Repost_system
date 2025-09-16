@@ -21,8 +21,8 @@ class CampaignSeeder extends Seeder
 
         $tracks = Track::where('user_urn', $user->urn)->get();
 
-
-        foreach ($tracks as $track) {
+        for ($i = 0; $i < 50; $i++) {
+            $track = $tracks->random();
             $this->createCampaign($user, $track, $genres);
         }
     }

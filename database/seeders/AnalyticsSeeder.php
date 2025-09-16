@@ -7,6 +7,7 @@ use App\Models\Playlist;
 use App\Models\RepostRequest;
 use App\Models\Track;
 use App\Models\UserAnalytics;
+use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -36,8 +37,8 @@ class AnalyticsSeeder extends Seeder
             return;
         }
 
-        for ($i = 1; $i <= 6; $i++) {
-            echo $i . "\n";
+
+        for ($i = 0; $i <= 6; $i++) {
             UserAnalytics::create([
                 'owner_user_urn' => $userUrn,
                 'act_user_urn' => $userUrn,
@@ -47,6 +48,8 @@ class AnalyticsSeeder extends Seeder
                 'genre' => $campaign->target_genre,
                 'type' => $i,
                 'ip_address' => '127.0.0.1',
+                'created_at' => Carbon::now()->subDays(rand(1, 60)),
+                'updated_at' => Carbon::now()->subDays(rand(1, 60)),
             ]);
         }
     }
