@@ -449,108 +449,131 @@
             widget: null,
 
             init() {
-                console.log(`Initializing player for request ${this.requestId}`);
+                console.log(`🎯 Initializing player for request ${this.requestId}`);
+                console.log(`🔍 Initial canRepost state: ${this.canRepost}`);
+
                 this.$nextTick(() => {
                     const iframe = this.$refs[`player${this.requestId}`]?.querySelector('iframe');
                     if (iframe) {
-                        console.log(`Found iframe for request ${this.requestId}`);
-                        iframe.addEventListener('load', () => {
-                            console.log(`Iframe loaded for request ${this.requestId}`);
-                            this.widget = SC.Widget(iframe);
-                            this.bindEvents();
-                        });
+                        console.log(`✅ Found iframe for request ${this.requestId}`);
 
-                        // If iframe is already loaded
-                        if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
-                            console.log(`Iframe already loaded for request ${this.requestId}`);
+                        const initWidget = () => {
                             this.widget = SC.Widget(iframe);
+                            console.log(`🔗 Widget created for request ${this.requestId}`);
                             this.bindEvents();
+                        };
+
+                        if (iframe.contentWindow && iframe.src) {
+                            // Wait a bit for SoundCloud to fully load
+                            setTimeout(() => {
+                                initWidget();
+                            }, 1000);
                         }
+
+                        iframe.addEventListener('load', () => {
+                            console.log(`📡 Iframe load event fired for request ${this.requestId}`);
+                            setTimeout(() => {
+                                initWidget();
+                            }, 500);
+                        });
                     } else {
-                        console.error(`No iframe found for request ${this.requestId}`);
+                        console.error(`❌ No iframe found for request ${this.requestId}`);
                     }
                 });
             },
 
             bindEvents() {
                 if (!this.widget) {
-                    console.error(`No widget available for request ${this.requestId}`);
+                    console.error(`❌ No widget available for request ${this.requestId}`);
                     return;
                 }
 
-                console.log(`Binding events for request ${this.requestId}`);
+                console.log(`🔄 Binding events for request ${this.requestId}`);
+
+                this.widget.bind(SC.Widget.Events.READY, () => {
+                    console.log(`🎵 Widget READY for request ${this.requestId}`);
+                });
 
                 this.widget.bind(SC.Widget.Events.PLAY, () => {
-                    console.log(`🎵 Audio player STARTED playing for request ${this.requestId}`);
+                    console.log(`▶️ PLAY started for request ${this.requestId}`);
                     this.isPlaying = true;
                     this.startTime = Date.now();
                 });
 
                 this.widget.bind(SC.Widget.Events.PAUSE, () => {
-                    console.log(`⏸️ Audio player PAUSED for request ${this.requestId}`);
+                    console.log(`⏸️ PAUSE for request ${this.requestId}`);
                     this.isPlaying = false;
                 });
 
                 this.widget.bind(SC.Widget.Events.FINISH, () => {
-                    console.log(`⏹️ Audio player FINISHED playing for request ${this.requestId}`);
+                    console.log(`⏹️ FINISHED for request ${this.requestId}`);
                     this.isPlaying = false;
                 });
 
-                // Track play progress
                 this.widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
                     const currentSeconds = data.currentPosition / 1000;
-                    console.log(`⏰ Play progress for request ${this.requestId}: ${currentSeconds.toFixed(1)}s`);
-
                     this.playTime = currentSeconds;
+
+                    // Log every second
+                    if (Math.floor(currentSeconds) !== Math.floor(this.lastLoggedTime || 0)) {
+                        console.log(`⏰ Request ${this.requestId} progress: ${currentSeconds.toFixed(1)}s`);
+                        this.lastLoggedTime = currentSeconds;
+                    }
+
                     this.checkCanRepost();
                 });
 
-                console.log(`✅ Events bound successfully for request ${this.requestId}`);
+                console.log(`✅ All events bound for request ${this.requestId}`);
             },
 
             checkCanRepost() {
-                if (this.canRepost) {
-                    return; // Already enabled, no need to check
-                }
+                const wasCanRepost = this.canRepost;
 
-                console.log(
-                    `🔍 Checking repost eligibility for request ${this.requestId}: ${this.playTime.toFixed(1)}s / 5.0s required`
-                );
+                if (!this.canRepost && this.playTime >= 5) {
+                    console.log(`🎉 ENABLING REPOST BUTTON for request ${this.requestId}!`);
+                    console.log(`📊 Play time: ${this.playTime.toFixed(1)}s (required: 5.0s)`);
 
-                if (this.playTime >= 5) {
-                    console.log(
-                        `🎉 REPOST BUTTON ENABLED for request ${this.requestId}! Played for ${this.playTime.toFixed(1)}s`
-                    );
                     this.canRepost = true;
 
-                    // Force Alpine to update the UI
+                    // Force Alpine to update immediately
                     this.$nextTick(() => {
-                        console.log(
-                            `🔄 UI updated for request ${this.requestId}, canRepost: ${this.canRepost}`);
+                        console.log(`🔄 Alpine updated. canRepost is now: ${this.canRepost}`);
+
+                        // Double check the button state
+                        const button = this.$el.querySelector('button');
+                        if (button) {
+                            console.log(`🎨 Button classes: ${button.className}`);
+                            console.log(`🔒 Button disabled: ${button.disabled}`);
+                        }
                     });
 
-                    // Optional: Unbind the progress event to save resources
-                    this.widget.unbind(SC.Widget.Events.PLAY_PROGRESS);
-                } else {
-                    console.log(
-                        `⏳ Still waiting... ${(5 - this.playTime).toFixed(1)}s remaining for request ${this.requestId}`
-                    );
+                    // Unbind progress event to save resources
+                    if (this.widget) {
+                        this.widget.unbind(SC.Widget.Events.PLAY_PROGRESS);
+                        console.log(`🔄 Unbound progress events for request ${this.requestId}`);
+                    }
+                } else if (this.playTime < 5) {
+                    const remaining = (5 - this.playTime).toFixed(1);
+                    if (Math.floor(this.playTime) !== Math.floor(this.lastLoggedTime || 0)) {
+                        console.log(`⏳ Request ${this.requestId}: ${remaining}s remaining`);
+                    }
                 }
             },
 
             handleRepost() {
-                console.log(`🎯 Repost button clicked for request ${this.requestId}, canRepost: ${this.canRepost}`);
+                console.log(`🎯 Repost clicked for request ${this.requestId}`);
+                console.log(`🔍 canRepost state: ${this.canRepost}`);
+                console.log(`⏰ Current play time: ${this.playTime.toFixed(1)}s`);
 
                 if (this.canRepost) {
-                    console.log(`✅ Confirming repost for request ${this.requestId}`);
-                    // Trigger Livewire method
+                    console.log(`✅ Proceeding with repost for request ${this.requestId}`);
                     this.$wire.call('confirmRepost', this.requestId);
                 } else {
-                    console.log(
-                        `❌ Cannot repost yet for request ${this.requestId}. Played: ${this.playTime.toFixed(1)}s`);
+                    const remaining = Math.max(0, 5 - this.playTime).toFixed(1);
+                    console.log(`❌ Cannot repost yet. Need ${remaining}s more`);
                     alert(
-                        `Please listen to at least 5 seconds of the track before reposting. Current: ${this.playTime.toFixed(1)}s`
-                    );
+                        `Please listen to at least 5 seconds of the track. You've listened to ${this.playTime.toFixed(1)}s. Need ${remaining}s more.`
+                        );
                 }
             }
         }
