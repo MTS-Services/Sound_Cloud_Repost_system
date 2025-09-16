@@ -238,6 +238,9 @@ class Campaign extends Component
         if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
             $this->calculateFollowersLimit();
         }
+        if (in_array($propertyName, ['activeMainTab', 'selectedGenres'])) {
+            $this->dispatch('soundcloud-widgets-reinitialize');
+        }
     }
     public function calculateFollowersLimit()
     {
@@ -277,6 +280,7 @@ class Campaign extends Component
     {
         $this->reset();
         $this->activeMainTab = $tab;
+
         switch ($tab) {
             case 'recommended_pro':
                 $this->resetPage('recommended_proPage');
@@ -300,9 +304,9 @@ class Campaign extends Component
                 $this->resetPage('recommended_proPage');
                 $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
         }
+
         $this->totalCampaigns();
         $this->dispatch('soundcloud-widgets-reinitialize');
-        $this->render();
     }
 
 
@@ -732,7 +736,8 @@ class Campaign extends Component
     public function profeature($isChecked)
     {
         if (!proUser()) {
-            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
+            ;
         } elseif (($this->credit * 2) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;

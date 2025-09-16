@@ -7,14 +7,9 @@
         <div x-data="{ activeTab: @entangle('activeMainTab') }"
             class="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-4 pt-3 border-b border-b-gray-200 dark:border-b-gray-700 gap-2 sm:gap-0">
             <div>
-                <nav class="-mb-px flex space-x-8">
+                <nav class="-mb-px flex space-x-8" x-data="{ activeTab: @entangle('activeMainTab') }">
                     <!-- Recommended Pro -->
-                    <button
-                        @click="
-                    activeTab = 'recommended_pro';
-                    $wire.setActiveMainTab('recommended_pro');
-                    $nextTick(() => initializeSoundCloudWidgets());
-                "
+                    <button @click="$wire.setActiveMainTab('recommended_pro')"
                         :class="activeTab === 'recommended_pro'
                             ?
                             'border-orange-500 text-orange-600 border-b-2' :
@@ -25,12 +20,7 @@
                     </button>
 
                     <!-- Recommended -->
-                    <button
-                        @click="
-                    activeTab = 'recommended';
-                    $wire.setActiveMainTab('recommended');
-                    $nextTick(() => initializeSoundCloudWidgets());
-                "
+                    <button @click="$wire.setActiveMainTab('recommended')"
                         :class="activeTab === 'recommended'
                             ?
                             'border-orange-500 text-orange-600 border-b-2' :
@@ -41,12 +31,7 @@
                     </button>
 
                     <!-- All -->
-                    <button
-                        @click="
-                    activeTab = 'all';
-                    $wire.setActiveMainTab('all');
-                    $nextTick(() => initializeSoundCloudWidgets());
-                "
+                    <button @click="$wire.setActiveMainTab('all')"
                         :class="activeTab === 'all'
                             ?
                             'border-orange-500 text-orange-600 border-b-2' :
@@ -56,6 +41,7 @@
                         <span class="text-xs ml-2 text-orange-500">{{ $totalCampaign }}</span>
                     </button>
                 </nav>
+
             </div>
 
             <!-- Start Campaign Button -->
@@ -599,65 +585,213 @@
     </div>
     {{-- Repost Confirmation Modal --}}
     @include('backend.user.includes.repost-confirmation-modal')
-</div>
-<script>
-    function initializeSoundCloudWidgets() {
-        if (typeof SC === 'undefined') {
-            setTimeout(initializeSoundCloudWidgets, 500);
-            return;
+
+    <script>
+        class SoundCloudWidgetManager {
+            constructor() {
+                this.observer = null;
+                this.initializedWidgets = new Set();
+                this.isInitializing = false;
+
+                this.init();
+            }
+
+            init() {
+                // Bind methods to maintain context
+                this.initializeWidgets = this.initializeWidgets.bind(this);
+                this.handleDOMChanges = this.handleDOMChanges.bind(this);
+
+                // Setup event listeners
+                this.setupEventListeners();
+                this.setupMutationObserver();
+
+                // Initial initialization
+                this.initializeWidgets();
+            }
+
+            setupEventListeners() {
+                // Livewire events
+                document.addEventListener('livewire:initialized', this.initializeWidgets);
+                document.addEventListener('livewire:updated', this.initializeWidgets);
+                document.addEventListener('livewire:navigated', this.initializeWidgets);
+
+                // Custom dispatch events
+                document.addEventListener('livewire:dispatched', (event) => {
+                    if (event.detail.event === 'soundcloud-widgets-reinitialize') {
+                        this.initializeWidgets();
+                    }
+                });
+
+                // DOM ready
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', this.initializeWidgets);
+                } else {
+                    this.initializeWidgets();
+                }
+            }
+
+            setupMutationObserver() {
+                if (this.observer) {
+                    this.observer.disconnect();
+                }
+
+                this.observer = new MutationObserver((mutations) => {
+                    let hasNewSoundCloudContent = false;
+
+                    mutations.forEach((mutation) => {
+                        if (mutation.type === 'childList') {
+                            mutation.addedNodes.forEach((node) => {
+                                if (node.nodeType === Node.ELEMENT_NODE) {
+                                    // Check if added node contains SoundCloud players
+                                    const hasSoundCloudPlayer = node.querySelector &&
+                                        (node.querySelector('[id^="soundcloud-player-"]') ||
+                                            node.matches('[id^="soundcloud-player-"]'));
+
+                                    if (hasSoundCloudPlayer) {
+                                        hasNewSoundCloudContent = true;
+                                    }
+                                }
+                            });
+                        }
+                    });
+
+                    if (hasNewSoundCloudContent && !this.isInitializing) {
+                        this.initializeWidgets();
+                    }
+                });
+
+                // Start observing
+                this.observer.observe(document.body, {
+                    childList: true,
+                    subtree: true,
+                    attributes: false,
+                    characterData: false
+                });
+            }
+
+            initializeWidgets() {
+                // Prevent concurrent initializations
+                if (this.isInitializing) {
+                    return;
+                }
+
+                // Check if SoundCloud API is available
+                if (typeof SC === 'undefined') {
+                    console.warn('SoundCloud Widget API not available');
+                    return;
+                }
+
+                this.isInitializing = true;
+
+                try {
+                    const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+                    console.log(`Found ${playerContainers.length} SoundCloud player containers`);
+
+                    let newWidgetsCount = 0;
+
+                    playerContainers.forEach((container) => {
+                        const campaignId = container.dataset.campaignId;
+                        const iframe = container.querySelector('iframe');
+                        const widgetId = `${campaignId}-${iframe?.src || 'no-src'}`;
+
+                        // Skip if already initialized
+                        if (!iframe || !campaignId || this.initializedWidgets.has(widgetId)) {
+                            return;
+                        }
+
+                        try {
+                            const widget = SC.Widget(iframe);
+
+                            // Mark as initialized immediately to prevent duplicates
+                            this.initializedWidgets.add(widgetId);
+                            iframe.dataset.initialized = 'true';
+                            newWidgetsCount++;
+
+                            // Bind events
+                            widget.bind(SC.Widget.Events.READY, () => {
+                                console.log(`SoundCloud widget ready for campaign: ${campaignId}`);
+                            });
+
+                            widget.bind(SC.Widget.Events.PLAY, () => {
+                                if (typeof @this !== 'undefined') {
+                                    @this.call('handleAudioPlay', campaignId);
+                                }
+                            });
+
+                            widget.bind(SC.Widget.Events.PAUSE, () => {
+                                if (typeof @this !== 'undefined') {
+                                    @this.call('handleAudioPause', campaignId);
+                                }
+                            });
+
+                            widget.bind(SC.Widget.Events.FINISH, () => {
+                                if (typeof @this !== 'undefined') {
+                                    @this.call('handleAudioEnded', campaignId);
+                                }
+                            });
+
+                            widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+                                if (typeof @this !== 'undefined') {
+                                    const currentTime = data.currentPosition / 1000;
+                                    @this.call('handleAudioTimeUpdate', campaignId, currentTime);
+                                }
+                            });
+
+                            widget.bind(SC.Widget.Events.ERROR, (error) => {
+                                console.error(`SoundCloud widget error for campaign ${campaignId}:`,
+                                    error);
+                                // Remove from initialized set so it can be retried
+                                this.initializedWidgets.delete(widgetId);
+                            });
+
+                        } catch (error) {
+                            console.error(`Failed to initialize SoundCloud widget for campaign ${campaignId}:`,
+                                error);
+                            // Remove from initialized set so it can be retried
+                            this.initializedWidgets.delete(widgetId);
+                        }
+                    });
+
+                    if (newWidgetsCount > 0) {
+                        console.log(`Initialized ${newWidgetsCount} new SoundCloud widgets`);
+                    }
+
+                } catch (error) {
+                    console.error('Error during SoundCloud widgets initialization:', error);
+                } finally {
+                    this.isInitializing = false;
+                }
+            }
+
+            // Cleanup method for when component is destroyed
+            destroy() {
+                if (this.observer) {
+                    this.observer.disconnect();
+                    this.observer = null;
+                }
+
+                this.initializedWidgets.clear();
+
+                // Remove event listeners
+                document.removeEventListener('livewire:initialized', this.initializeWidgets);
+                document.removeEventListener('livewire:updated', this.initializeWidgets);
+                document.removeEventListener('livewire:navigated', this.initializeWidgets);
+            }
+
+            // Method to manually reinitialize (useful for debugging)
+            reinitialize() {
+                this.initializedWidgets.clear();
+                this.initializeWidgets();
+            }
         }
-        console.log('SoundCloud Widget API loaded. Reinisialized widgets.');
 
-        const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+        // Initialize the manager
+        const soundCloudManager = new SoundCloudWidgetManager();
 
-        playerContainers.forEach(container => {
-            const campaignId = container.dataset.campaignId;
-            const iframe = container.querySelector('iframe');
+        // Make it globally available for debugging
+        window.soundCloudManager = soundCloudManager;
 
-            if (iframe && campaignId) {
-                const widget = SC.Widget(iframe);
-
-                widget.bind(SC.Widget.Events.PLAY, () => {
-                    @this.call('handleAudioPlay', campaignId);
-                });
-
-                widget.bind(SC.Widget.Events.PAUSE, () => {
-                    @this.call('handleAudioPause', campaignId);
-                });
-
-                widget.bind(SC.Widget.Events.FINISH, () => {
-                    @this.call('handleAudioEnded', campaignId);
-                });
-
-                widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-                    const currentTime = data.currentPosition / 1000;
-                    @this.call('handleAudioTimeUpdate', campaignId, currentTime);
-                });
-            }
-        });
-    }
-    document.addEventListener('livewire:initialized', function() {
-        initializeSoundCloudWidgets();
-    });
-    document.addEventListener('livewire:navigated', function() {
-        initializeSoundCloudWidgets();
-    });
-    document.addEventListener('livewire:load', function() {
-        initializeSoundCloudWidgets();
-    });
-    document.addEventListener('livewire:updated', function() {
-        initializeSoundCloudWidgets();
-    });
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeSoundCloudWidgets();
-    });
-
-    document.addEventListener('livewire:load', function() {
-        document.addEventListener('livewire:dispatched', (event) => {
-            if (event.detail.event === 'soundcloud-widgets-reinitialize') {
-                initializeSoundCloudWidgets();
-            }
-        });
-    });
-</script>
+        // Legacy function for backward compatibility
+        window.initializeSoundCloudWidgets = () => soundCloudManager.initializeWidgets();
+    </script>
 </div>
