@@ -245,7 +245,8 @@
 
                                         </div>
                                         <!-- Status Badge -->
-                                        <div class="text-right">
+
+                                        <div class="text-right my-2">
                                             <span @class([
                                                 'inline-block text-xs font-medium px-2 py-1 rounded-full',
                                                 'bg-yellow-100 text-yellow-800' =>
@@ -254,13 +255,21 @@
                                                     $repostRequest->status == App\Models\RepostRequest::STATUS_APPROVED,
                                                 'bg-blue-100 text-blue-800' =>
                                                     $repostRequest->status == App\Models\RepostRequest::STATUS_APPROVED,
-                                                // 'bg-red-100 text-red-800' => $repostRequest->status == App\Models\RepostRequest::STATUS_REJECTED,
+                                                'bg-red-100 text-red-800' =>
+                                                    $repostRequest->status == App\Models\RepostRequest::STATUS_DECLINE,
                                                 'bg-gray-100 text-gray-800' =>
                                                     $repostRequest->status == App\Models\RepostRequest::STATUS_EXPIRED,
                                             ])>
                                                 {{ $repostRequest->status_label }}
                                             </span>
                                         </div>
+                                        @if ($repostRequest->status == App\Models\RepostRequest::STATUS_PENDING && $activeMainTab == 'incoming_request')
+                                            <div class="text-right">
+
+                                                <x-gbutton variant="primary" size="sm"
+                                                    wire:click="declineRepostRequest({{ $repostRequest->id }})">Decline</x-gbutton>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             @elseif ($activeMainTab == 'outgoing_request')
@@ -324,16 +333,14 @@
                                         </span>
                                     </div>
                                     <div class="text-right">
-                                        @if ($activeMainTab == 'outgoing_request' && $repostRequest->status !== App\Models\RepostRequest::STATUS_APPROVED)
+                                        @if (
+                                            $repostRequest->status !== App\Models\RepostRequest::STATUS_APPROVED &&
+                                                $repostRequest->status !== App\Models\RepostRequest::STATUS_EXPIRED &&
+                                                $repostRequest->status !== App\Models\RepostRequest::STATUS_DECLINE)
                                             {{-- <button wire:click="cancleRepostRequest({{ $repostRequest->id }})"
                                                 class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Cancle</button> --}}
                                             <x-gbutton variant="primary" size="sm"
                                                 wire:click="cancleRepostRequest({{ $repostRequest->id }})">Cancle</x-gbutton>
-                                        @else
-                                            @if ($repostRequest->status == App\Models\RepostRequest::STATUS_PENDING && $activeMainTab == 'incoming_request')
-                                                <button wire:click="declineRepostRequest({{ $repostRequest->id }})"
-                                                    class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">{{ $repostRequest->pending_to_declined }}</button>
-                                            @endif
                                         @endif
                                     </div>
                                 </div>
@@ -467,7 +474,7 @@
 
     <!--Previously Reposted Requests-->
 
-    
+
 </div>
 
 <script>

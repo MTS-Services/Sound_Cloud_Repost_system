@@ -506,14 +506,14 @@ class RepostRequest extends Component
     }
     public function dataLoad()
     {
-        $query = ModelsRepostRequest::with(['track', 'targetUser'])->whereTime('expired_at', '>', now());
+        $query = ModelsRepostRequest::with(['track', 'targetUser']);
 
         switch ($this->activeMainTab) {
             case 'incoming_request':
-                $query->where('target_user_urn', user()->urn)->where('status', ModelsRepostRequest::STATUS_PENDING);
+                $query->where('target_user_urn', user()->urn)->where('status', ModelsRepostRequest::STATUS_PENDING)->where('expired_at', '>', now());
                 break;
             case 'outgoing_request':
-                $query->where('requester_urn', user()->urn)->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED)->where('status', '!=', ModelsRepostRequest::STATUS_DECLINE);
+                $query->where('requester_urn', user()->urn)->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED);
                 break;
             case 'previously_reposted' || 'accept_requests':
                 $query->where('target_user_urn', user()->urn)->Where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED);

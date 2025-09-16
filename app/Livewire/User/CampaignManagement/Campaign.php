@@ -531,7 +531,7 @@ class Campaign extends Component
     public function fetchTracks()
     {
         try {
-            $this->soundCloudService->syncSelfTracks([]);
+            // $this->soundCloudService->syncSelfTracks([]);
 
             $this->tracksPage = 1;
             $this->tracks = Track::where('user_urn', user()->urn)
@@ -561,7 +561,7 @@ class Campaign extends Component
     public function fetchPlaylists()
     {
         try {
-            $this->soundCloudService->syncSelfPlaylists();
+            // $this->soundCloudService->syncSelfPlaylists();
 
             $this->playlistsPage = 1;
             $this->playlists = Playlist::where('user_urn', user()->urn)
@@ -736,8 +736,15 @@ class Campaign extends Component
 
     public function profeature($isChecked)
     {
-        $this->proFeatureEnabled = $isChecked ? false : true;
-        $this->proFeatureValue = $isChecked ? 0 : 1;
+        if (!proUser()) {
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
+        } elseif (($this->credit * 2) > userCredits()) {
+            $this->proFeatureEnabled = $isChecked ? true : false;
+            $this->proFeatureValue = $isChecked ? 1 : 0;
+        } else {
+            $this->proFeatureEnabled = $isChecked ? false : true;
+            $this->proFeatureValue = $isChecked ? 0 : 1;
+        }
     }
 
     public function createCampaign()
