@@ -135,6 +135,7 @@ class Campaign extends Component
 
     public $track = null;
     public $credit = 50;
+    public $totalCredit = 50;
     public $commentable = true;
     public $likeable = true;
     public $proFeatureEnabled = false;
