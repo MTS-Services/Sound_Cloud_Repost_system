@@ -958,7 +958,7 @@ class Dashboard extends Component
                     $this->playlists = collect();
                 }
             }
-            $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
+            // $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
         }
     }
 
