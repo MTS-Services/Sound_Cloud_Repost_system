@@ -157,11 +157,29 @@ class RepostRequest extends BaseModel
     }
     public function scopeExpired($query)
     {
-        return $query->where('status', self::STATUS_EXPIRED);
+        return $query->where('status', self::STATUS_EXPIRED)->orWhere('expired_at', '<=', now());
+    }
+    public function scopeNotExpired($query)
+    {
+        return $query->where('status', '!=', self::STATUS_EXPIRED)->orWhere('expired_at', '>', now());
     }
 
     public function scopeSelf(Builder $query)
     {
         return $query->where('requester_urn', user()->urn);
     }
+    public function scopeOutgoing(Builder $query)
+    {
+        return $query->where('requester_urn', user()->urn);
+    }
+    public function scopeIncoming(Builder $query)
+    {
+        return $query->where('target_user_urn', user()->urn);
+    }
+
+    public function scopeDirectRequest(Builder $query)
+    {
+        return $query->where('campaign_id', null);
+    }
+
 }
