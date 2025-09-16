@@ -403,6 +403,7 @@ class Dashboard extends Component
                 $this->resolveSoundcloudUrl();
                 return;
             }
+        dd($this->all() );
 
             // Perform text-based search
             $this->performTextSearch();
@@ -900,6 +901,7 @@ class Dashboard extends Component
 
     protected function resolveSoundcloudUrl()
     {
+        dd($this->playListTrackShow);
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                 ->where('permalink_url', $this->searchQuery)
