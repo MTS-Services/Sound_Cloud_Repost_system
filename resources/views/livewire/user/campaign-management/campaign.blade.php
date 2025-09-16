@@ -599,63 +599,63 @@
     </div>
     {{-- Repost Confirmation Modal --}}
     @include('backend.user.includes.repost-confirmation-modal')
-</div>
-<script>
-    function initializeSoundCloudWidgets() {
-        if (typeof SC === 'undefined') {
-            setTimeout(initializeSoundCloudWidgets, 500);
-            return;
+
+    <script>
+        function initializeSoundCloudWidgets() {
+            if (typeof SC === 'undefined') {
+                setTimeout(initializeSoundCloudWidgets, 500);
+                return;
+            }
+            console.log('SoundCloud Widget API loaded. Reinisialized widgets.');
+
+            const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+
+            playerContainers.forEach(container => {
+                const campaignId = container.dataset.campaignId;
+                const iframe = container.querySelector('iframe');
+
+                if (iframe && campaignId) {
+                    const widget = SC.Widget(iframe);
+
+                    widget.bind(SC.Widget.Events.PLAY, () => {
+                        @this.call('handleAudioPlay', campaignId);
+                    });
+
+                    widget.bind(SC.Widget.Events.PAUSE, () => {
+                        @this.call('handleAudioPause', campaignId);
+                    });
+
+                    widget.bind(SC.Widget.Events.FINISH, () => {
+                        @this.call('handleAudioEnded', campaignId);
+                    });
+
+                    widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+                        const currentTime = data.currentPosition / 1000;
+                        @this.call('handleAudioTimeUpdate', campaignId, currentTime);
+                    });
+                }
+            });
         }
-        console.log('SoundCloud Widget API loaded. Reinisialized widgets.');
+        document.addEventListener('livewire:initialized', function() {
+            initializeSoundCloudWidgets();
+        });
+        document.addEventListener('livewire:navigated', function() {
+            initializeSoundCloudWidgets();
+        });
+        // document.addEventListener('livewire:load', function() {
+        //     initializeSoundCloudWidgets();
+        // });
+        document.addEventListener('livewire:updated', function() {
+            initializeSoundCloudWidgets();
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSoundCloudWidgets();
+        });
 
-        const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
-
-        playerContainers.forEach(container => {
-            const campaignId = container.dataset.campaignId;
-            const iframe = container.querySelector('iframe');
-
-            if (iframe && campaignId) {
-                const widget = SC.Widget(iframe);
-
-                widget.bind(SC.Widget.Events.PLAY, () => {
-                    @this.call('handleAudioPlay', campaignId);
-                });
-
-                widget.bind(SC.Widget.Events.PAUSE, () => {
-                    @this.call('handleAudioPause', campaignId);
-                });
-
-                widget.bind(SC.Widget.Events.FINISH, () => {
-                    @this.call('handleAudioEnded', campaignId);
-                });
-
-                widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-                    const currentTime = data.currentPosition / 1000;
-                    @this.call('handleAudioTimeUpdate', campaignId, currentTime);
-                });
+        document.addEventListener('livewire:dispatched', (event) => {
+            if (event.detail.event === 'soundcloud-widgets-reinitialize') {
+                initializeSoundCloudWidgets();
             }
         });
-    }
-    document.addEventListener('livewire:initialized', function() {
-        initializeSoundCloudWidgets();
-    });
-    document.addEventListener('livewire:navigated', function() {
-        initializeSoundCloudWidgets();
-    });
-    // document.addEventListener('livewire:load', function() {
-    //     initializeSoundCloudWidgets();
-    // });
-    document.addEventListener('livewire:updated', function() {
-        initializeSoundCloudWidgets();
-    });
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeSoundCloudWidgets();
-    });
-
-    document.addEventListener('livewire:dispatched', (event) => {
-        if (event.detail.event === 'soundcloud-widgets-reinitialize') {
-            initializeSoundCloudWidgets();
-        }
-    });
-</script>
+    </script>
 </div>
