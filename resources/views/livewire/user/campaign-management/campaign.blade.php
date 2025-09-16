@@ -11,13 +11,10 @@
                     <!-- Recommended Pro -->
                     <button
                         @click="
-                            activeTab = 'recommended_pro';
-                            $wire.setActiveMainTab('recommended_pro').then(() => {
-                                $nextTick(() => {
-                                    window.dispatchEvent(new CustomEvent('reinitialize-soundcloud'));
-                                });
-                            });
-                        "
+                    activeTab = 'recommended_pro';
+                    $wire.setActiveMainTab('recommended_pro');
+                    $nextTick(() => initializeSoundCloudWidgets());
+                "
                         :class="activeTab === 'recommended_pro'
                             ?
                             'border-orange-500 text-orange-600 border-b-2' :
@@ -30,13 +27,10 @@
                     <!-- Recommended -->
                     <button
                         @click="
-                            activeTab = 'recommended';
-                            $wire.setActiveMainTab('recommended').then(() => {
-                                $nextTick(() => {
-                                    window.dispatchEvent(new CustomEvent('reinitialize-soundcloud'));
-                                });
-                            });
-                        "
+                    activeTab = 'recommended';
+                    $wire.setActiveMainTab('recommended');
+                    $nextTick(() => initializeSoundCloudWidgets());
+                "
                         :class="activeTab === 'recommended'
                             ?
                             'border-orange-500 text-orange-600 border-b-2' :
@@ -49,13 +43,10 @@
                     <!-- All -->
                     <button
                         @click="
-                            activeTab = 'all';
-                            $wire.setActiveMainTab('all').then(() => {
-                                $nextTick(() => {
-                                    window.dispatchEvent(new CustomEvent('reinitialize-soundcloud'));
-                                });
-                            });
-                        "
+                    activeTab = 'all';
+                    $wire.setActiveMainTab('all');
+                    $nextTick(() => initializeSoundCloudWidgets());
+                "
                         :class="activeTab === 'all'
                             ?
                             'border-orange-500 text-orange-600 border-b-2' :
@@ -65,7 +56,6 @@
                         <span class="text-xs ml-2 text-orange-500">{{ $totalCampaign }}</span>
                     </button>
                 </nav>
-
             </div>
 
             <!-- Start Campaign Button -->
@@ -609,151 +599,63 @@
     </div>
     {{-- Repost Confirmation Modal --}}
     @include('backend.user.includes.repost-confirmation-modal')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let componentInstance = null;
+</div>
+<script>
+    function initializeSoundCloudWidgets() {
+        if (typeof SC === 'undefined') {
+            setTimeout(initializeSoundCloudWidgets, 500);
+            return;
+        }
+        console.log('SoundCloud Widget API loaded. Reinisialized widgets.');
 
-            // Get the Livewire component instance
-            function getComponentInstance() {
-                if (!componentInstance) {
-                    // Find the component instance using Livewire's API
-                    const componentElement = document.querySelector('[wire\\:id]');
-                    if (componentElement) {
-                        const componentId = componentElement.getAttribute('wire:id');
-                        componentInstance = window.Livewire?.find(componentId);
-                    }
-                }
-                return componentInstance;
-            }
+        const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
 
-            function initializeSoundCloudWidgets() {
-                if (typeof SC === 'undefined') {
-                    console.log('SoundCloud API not loaded yet, waiting...');
-                    return new Promise((resolve) => {
-                        const checkSC = () => {
-                            if (typeof SC !== 'undefined') {
-                                resolve();
-                            } else {
-                                requestAnimationFrame(checkSC);
-                            }
-                        };
-                        checkSC();
-                    }).then(() => initializeSoundCloudWidgets());
-                }
+        playerContainers.forEach(container => {
+            const campaignId = container.dataset.campaignId;
+            const iframe = container.querySelector('iframe');
 
-                console.log('SoundCloud widgets initialized');
-                const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
-                console.log('Found', playerContainers.length, 'SoundCloud containers');
+            if (iframe && campaignId) {
+                const widget = SC.Widget(iframe);
 
-                playerContainers.forEach(container => {
-                    const campaignId = container.dataset.campaignId;
-                    const iframe = container.querySelector('iframe');
+                widget.bind(SC.Widget.Events.PLAY, () => {
+                    @this.call('handleAudioPlay', campaignId);
+                });
 
-                    if (iframe && campaignId && !iframe.dataset.widgetInitialized) {
-                        const widget = SC.Widget(iframe);
+                widget.bind(SC.Widget.Events.PAUSE, () => {
+                    @this.call('handleAudioPause', campaignId);
+                });
 
-                        widget.bind(SC.Widget.Events.READY, () => {
-                            console.log('Widget ready for campaign:', campaignId);
+                widget.bind(SC.Widget.Events.FINISH, () => {
+                    @this.call('handleAudioEnded', campaignId);
+                });
 
-                            // Fixed: Call the correct method names
-                            widget.bind(SC.Widget.Events.PLAY, () => {
-                                const component = getComponentInstance();
-                                if (component) {
-                                    component.call('handleAudioPlay', campaignId);
-                                } else {
-                                    console.error(
-                                        'Component instance not found for PLAY event');
-                                }
-                            });
-
-                            widget.bind(SC.Widget.Events.PAUSE, () => {
-                                const component = getComponentInstance();
-                                if (component) {
-                                    component.call('handleAudioPause', campaignId);
-                                } else {
-                                    console.error(
-                                        'Component instance not found for PAUSE event');
-                                }
-                            });
-
-                            widget.bind(SC.Widget.Events.FINISH, () => {
-                                const component = getComponentInstance();
-                                if (component) {
-                                    component.call('handleAudioEnded', campaignId);
-                                } else {
-                                    console.error(
-                                        'Component instance not found for FINISH event');
-                                }
-                            });
-
-                            // Fixed: Call the correct method name
-                            widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-                                const currentTime = data.currentPosition / 1000;
-                                const component = getComponentInstance();
-                                if (component) {
-                                    component.call('handleAudioTimeUpdate', campaignId,
-                                        currentTime);
-                                } else {
-                                    console.error(
-                                        'Component instance not found for PLAY_PROGRESS event'
-                                    );
-                                }
-                            });
-                        });
-
-                        iframe.dataset.widgetInitialized = 'true';
-                    }
+                widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+                    const currentTime = data.currentPosition / 1000;
+                    @this.call('handleAudioTimeUpdate', campaignId, currentTime);
                 });
             }
-
-            // Initialize on DOM ready
-            function waitForLivewire() {
-                if (typeof window.Livewire !== 'undefined') {
-                    initializeSoundCloudWidgets();
-                } else {
-                    requestAnimationFrame(waitForLivewire);
-                }
-            }
-            waitForLivewire();
-
-            // Listen for Livewire events
-            document.addEventListener('livewire:initialized', () => {
-                componentInstance = null; // Reset component instance
-                requestAnimationFrame(() => {
-                    initializeSoundCloudWidgets();
-                });
-            });
-
-            document.addEventListener('livewire:navigated', () => {
-                componentInstance = null; // Reset component instance
-                requestAnimationFrame(() => {
-                    initializeSoundCloudWidgets();
-                });
-            });
-
-            window.addEventListener('livewire:updated', (event) => {
-                // Reset component instance to get fresh reference
-                componentInstance = null;
-                requestAnimationFrame(() => {
-                    initializeSoundCloudWidgets();
-                });
-            });
-
-            // Custom event listener for manual reinitialization
-            window.addEventListener('reinitialize-soundcloud', () => {
-                componentInstance = null; // Reset component instance
-                requestAnimationFrame(() => {
-                    initializeSoundCloudWidgets();
-                });
-            });
-
-            document.addEventListener('livewire:dispatched', (event) => {
-                if (event.detail.event === 'soundcloud-widgets-reinitialize') {
-                    requestAnimationFrame(() => {
-                        initializeSoundCloudWidgets();
-                    });
-                }
-            });
         });
-    </script>
+    }
+    document.addEventListener('livewire:initialized', function() {
+        initializeSoundCloudWidgets();
+    });
+    document.addEventListener('livewire:navigated', function() {
+        initializeSoundCloudWidgets();
+    });
+    document.addEventListener('livewire:load', function() {
+        initializeSoundCloudWidgets();
+    });
+    document.addEventListener('livewire:updated', function() {
+        initializeSoundCloudWidgets();
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeSoundCloudWidgets();
+    });
+
+    document.addEventListener('livewire:dispatched', (event) => {
+        if (event.detail.event === 'soundcloud-widgets-reinitialize') {
+            initializeSoundCloudWidgets();
+        }
+    });
+</script>
 </div>
