@@ -15,7 +15,6 @@
     <div class="mb-8">
         <div class="border-b border-gray-200 dark:border-gray-700">
             <nav class="-mb-px flex space-x-8">
-                <!-- Incoming Request Tab Button -->
                 <button
                     class="tab-button @if ($activeMainTab === 'incoming_request' || $activeMainTab === 'accept_requests') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
                     wire:click="setActiveTab('incoming_request')">
@@ -34,9 +33,7 @@
             </nav>
         </div>
     </div>
-
-    <!-- Repost Requests -->
-    @if ($activeMainTab == 'incoming_request' || $activeMainTab == 'accept_requests')
+    @if ($activeMainTab == 'incoming_request')
         <div
             class="flex flex-col md:flex-row md:items-start md:space-x-3 p-4 rounded bg-gray-100 dark:bg-gray-800 mb-8 gap-8">
             <!-- Left Icon and "Quick Tip" -->
@@ -487,21 +484,24 @@
                 if (!this.widget) return;
 
                 this.widget.bind(SC.Widget.Events.PLAY, () => {
-                    this.handlePlay();
+                    this.isPlaying = true;
                 });
 
                 this.widget.bind(SC.Widget.Events.PAUSE, () => {
-                    this.handlePause();
+                    this.isPlaying = false;
                 });
 
+                // Use the official event to get current time
                 this.widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-                    this.handleTimeUpdate(data.currentPosition / 1000);
+                    this.playTime = data.currentPosition / 1000;
+                    this.checkCanRepost();
                 });
 
                 this.widget.bind(SC.Widget.Events.FINISH, () => {
-                    this.handlePause();
+                    this.isPlaying = false;
                 });
             },
+
 
             handlePlay() {
                 this.isPlaying = true;
@@ -534,9 +534,16 @@
             },
 
             checkCanRepost() {
-                if (this.playTime >= 5 && !this.canRepost) {
+                // If the button is already enabled, we can stop checking.
+                if (this.canRepost) {
+                    return;
+                }
+
+                if (this.playTime >= 5) {
                     this.canRepost = true;
                     console.log(`Request ${this.requestId} can now be reposted!`);
+                    // Optional: you can unbind the event to save resources.
+                    this.widget.unbind(SC.Widget.Events.PLAY_PROGRESS);
                 }
             },
 
