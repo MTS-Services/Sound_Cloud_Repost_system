@@ -36,20 +36,18 @@ class AnalyticsSeeder extends Seeder
             return;
         }
 
-        UserAnalytics::create([
-            'user_urn' => $userUrn,
-            'track_urn' => $campaign->music->urn,
-            'action_id' => $campaign->id,
-            'action_type' => Campaign::class,
-            'genre' => $campaign->target_genre,
-            'date' => now()->subDays(rand(1, 30)),
-            'total_requests' => rand(1, 1000),
-            'total_views' => rand(1, 1000),
-            'total_comments' => rand(1, 1000),
-            'total_reposts' => rand(1, 1000),
-            'total_likes' => rand(1, 1000),
-            'total_followers' => rand(1, 1000),
-            'total_plays' => rand(1, 1000),
-        ]);
+        for ($i = 1; $i <= 6; $i++) {
+            echo $i . "\n";
+            UserAnalytics::create([
+                'owner_user_urn' => $userUrn,
+                'act_user_urn' => $userUrn,
+                'track_urn' => $campaign->music->urn,
+                'actionable_id' => $campaign->id,
+                'actionable_type' => Campaign::class,
+                'genre' => $campaign->target_genre,
+                'type' => $i,
+                'ip_address' => '127.0.0.1',
+            ]);
+        }
     }
 }
