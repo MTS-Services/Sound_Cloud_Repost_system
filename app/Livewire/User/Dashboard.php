@@ -396,7 +396,7 @@ class Dashboard extends Component
             }
 
             // Validate search query
-            $this->validateSearchQuery();
+            // $this->validateSearchQuery();
 
             // Check if it's a SoundCloud URL
             if ($this->isSoundCloudUrl($this->searchQuery)) {
