@@ -4,18 +4,18 @@
     <!-- Header Section -->
     <div class="w-full mt-6 relative">
         <!-- Header Tabs & Button -->
-        <div x-data="{ activeTab: @entangle('activeMainTab') }"
+        <div x-data="{ activeMainTab: @entangle('activeMainTab') }"
             class="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-4 pt-3 border-b border-b-gray-200 dark:border-b-gray-700 gap-2 sm:gap-0">
             <div>
                 <nav class="-mb-px flex space-x-8">
                     <!-- Recommended Pro -->
                     <button
                         @click="
-                    activeTab = 'recommended_pro';
+                    activeMainTab = 'recommended_pro';
                     $wire.setActiveMainTab('recommended_pro');
                     $nextTick(() => initializeSoundCloudWidgets());
                 "
-                        :class="activeTab === 'recommended_pro'
+                        :class="activeMainTab === 'recommended_pro'
                             ?
                             'border-orange-500 text-orange-600 border-b-2' :
                             'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
@@ -27,11 +27,11 @@
                     <!-- Recommended -->
                     <button
                         @click="
-                    activeTab = 'recommended';
+                    activeMainTab = 'recommended';
                     $wire.setActiveMainTab('recommended');
                     $nextTick(() => initializeSoundCloudWidgets());
                 "
-                        :class="activeTab === 'recommended'
+                        :class="activeMainTab === 'recommended'
                             ?
                             'border-orange-500 text-orange-600 border-b-2' :
                             'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
@@ -43,11 +43,11 @@
                     <!-- All -->
                     <button
                         @click="
-                    activeTab = 'all';
+                    activeMainTab = 'all';
                     $wire.setActiveMainTab('all');
                     $nextTick(() => initializeSoundCloudWidgets());
                 "
-                        :class="activeTab === 'all'
+                        :class="activeMainTab === 'all'
                             ?
                             'border-orange-500 text-orange-600 border-b-2' :
                             'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
