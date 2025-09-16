@@ -3,85 +3,99 @@
         <x-slot name="page_slug">chart</x-slot>
         <div class="py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                   <div class="bg-gradient-to-r bg-gray-100 dark:bg-black text-gray-900 dark:text-white p-6 sm:p-8 rounded-2xl mb-8 border dark:border-gray-800">
-    <div class="max-w-4xl mx-auto">
+                <div
+                    class="bg-gradient-to-r bg-gray-100 dark:bg-black text-gray-900 dark:text-white p-6 sm:p-8 rounded-2xl mb-8 border dark:border-gray-800">
+                    <div class="max-w-4xl mx-auto">
 
-        <!-- Header -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <!-- Header -->
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
 
-            <!-- Left: Title + Info -->
-            <div class="flex items-start sm:items-center gap-3 w-full sm:w-auto">
-                <div class="bg-orange-500 p-3 rounded-xl flex-shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                        viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-trophy w-8 h-8">
-                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
-                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
-                        <path d="M4 22h16"></path>
-                        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
-                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
-                        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
-                    </svg>
-                </div>
-                <div class="flex flex-col">
-                    <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 text-gray-900 dark:text-white leading-snug">
-                        Weekly Top {{ $topTracks->count() }} / 20 Chart
-                    </h1>
-                    <div class="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 text-gray-500 dark:text-gray-300 text-sm">
-                        <div class="flex items-center gap-2">
-                            <x-lucide-calendar class="w-4 h-4" />
-                            <span>Week of {{ date('F j, Y', strtotime(now()->subDays(7))) }}</span>
+                            <!-- Left: Title + Info -->
+                            <div class="flex items-start sm:items-center gap-3 w-full sm:w-auto">
+                                <div class="bg-orange-500 p-2 sm:p-3 rounded-xl flex-shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                        stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                        class="lucide lucide-trophy w-6 h-6 sm:w-8 sm:h-8">
+                                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                                        <path d="M4 22h16"></path>
+                                        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+                                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+                                        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                                    </svg>
+                                </div>
+
+                                <div class="flex flex-col">
+                                    <h1
+                                        class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-1 text-gray-900 dark:text-white leading-snug truncate">
+                                        Weekly Top {{ $topTracks->count() }} / 20 Chart
+                                    </h1>
+
+                                    <div
+                                        class="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 text-gray-500 dark:text-gray-300 text-sm">
+                                        <div class="flex items-center gap-2">
+                                            <x-lucide-calendar class="w-4 h-4" />
+                                            <span>Week of {{ date('F j, Y', strtotime(now()->subDays(7))) }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <x-lucide-clock class="w-4 h-4" />
+                                            <span>Updated {{ date('F j, Y', strtotime(now())) }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right: Buttons -->
+                            <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                                <button wire:click="refresh"
+                                    class="flex items-center justify-center gap-2 bg-gray-200 hover:bg-white dark:bg-gray-800 dark:hover:bg-gray-700 px-4 py-2 rounded-xl transition-all duration-200 font-medium border dark:border-gray-700 text-gray-900 dark:text-white flex-1 sm:flex-none">
+                                    <span wire:loading.remove>
+                                        <x-lucide-refresh-cw class="w-4 h-4" />
+                                    </span>
+                                    <span wire:loading class="animate-spin">
+                                        <x-lucide-refresh-cw class="w-4 h-4" />
+                                    </span>
+                                    <span class="hidden sm:inline" wire:loading.remove>Refresh</span>
+                                    <span class="hidden sm:inline" wire:loading>Refreshing...</span>
+                                </button>
+                                <button
+                                    class="flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-xl transition-all duration-200 font-medium flex-1 sm:flex-none text-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="lucide lucide-share2 w-4 h-4">
+                                        <circle cx="18" cy="5" r="3"></circle>
+                                        <circle cx="6" cy="12" r="3"></circle>
+                                        <circle cx="18" cy="19" r="3"></circle>
+                                        <line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line>
+                                        <line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line>
+                                    </svg>
+                                    <span class="hidden sm:inline">Share</span>
+                                </button>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <x-lucide-clock class="w-4 h-4" />
-                            <span>Updated {{ date('F j, Y', strtotime(now())) }}</span>
+
+                        <!-- Stats -->
+                        <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                            <div
+                                class="bg-gray-200 dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-center sm:text-left">
+                                <div class="text-lg sm:text-xl md:text-2xl font-bold">{{ $topTracks->count() }}</div>
+                                <div class="text-gray-700 dark:text-gray-300 text-sm">Top Tracks</div>
+                            </div>
+                            <div
+                                class="bg-gray-200 dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-center sm:text-left">
+                                <div class="text-lg sm:text-xl md:text-2xl font-bold">Weekly</div>
+
+                                <div class="text-gray-700 dark:text-gray-300 text-sm">Updates</div>
+                            </div>
+                            <div
+                                class="bg-gray-200 dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-center sm:text-left">
+                                <div class="text-lg sm:text-lg md:text-2xl font-bold">Live</div>
+                                <div class="text-gray-700 dark:text-gray-300 text-sm">Engagement</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Right: Buttons -->
-            <div class="flex flex-wrap gap-2 w-full sm:w-auto">
-                <button wire:click="refresh"
-                    class="flex items-center justify-center gap-2 bg-gray-200 hover:bg-white dark:bg-gray-800 dark:hover:bg-gray-700 px-4 py-2 rounded-xl transition-all duration-200 font-medium border dark:border-gray-700 text-gray-900 dark:text-white flex-1 sm:flex-none">
-                    <span wire:loading.remove>
-                        <x-lucide-refresh-cw class="w-4 h-4" />
-                    </span>
-                    <span wire:loading class="animate-spin">
-                        <x-lucide-refresh-cw class="w-4 h-4" />
-                    </span>
-                    <span class="hidden sm:inline" wire:loading.remove>Refresh</span>
-                    <span class="hidden sm:inline" wire:loading>Refreshing...</span>
-                </button>
-                <button
-                    class="flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-xl transition-all duration-200 font-medium flex-1 sm:flex-none text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share2 w-4 h-4"> <circle cx="18" cy="5" r="3"></circle> <circle cx="6" cy="12" r="3"></circle> <circle cx="18" cy="19" r="3"></circle> <line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line> <line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line> </svg>
-                    <span class="hidden sm:inline">Share</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Stats -->
-        <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <div
-                class="bg-gray-200 dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-center sm:text-left">
-                <div class="text-2xl font-bold">{{ $topTracks->count() }}</div>
-                <div class="text-gray-700 dark:text-gray-300 text-sm">Top Tracks</div>
-            </div>
-            <div
-                class="bg-gray-200 dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-center sm:text-left">
-                <div class="text-2xl font-bold">Weekly</div>
-                <div class="text-gray-700 dark:text-gray-300 text-sm">Updates</div>
-            </div>
-            <div
-                class="bg-gray-200 dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-center sm:text-left">
-                <div class="text-2xl font-bold">Live</div>
-                <div class="text-gray-700 dark:text-gray-300 text-sm">Engagement</div>
-            </div>
-        </div>
-    </div>
-</div>
                 <div x-data="{ activeTab: @entangle('activeTab').live, playing: @entangle('playing').live }">
                     <div class="flex items-center justify-between mb-6">
                         <div class="flex items-center gap-4">
@@ -97,8 +111,7 @@
                                 title="List View">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="lucide lucide-list w-4 h-4">
+                                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list w-4 h-4">
                                     <line x1="8" x2="21" y1="6" y2="6"></line>
                                     <line x1="8" x2="21" y1="12" y2="12"></line>
                                     <line x1="8" x2="21" y1="18" y2="18"></line>
@@ -406,7 +419,7 @@
                             @forelse ($topTracks as $track)
                                 <div
                                     class="relative border rounded-2xl p-4 mb-8 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-900 dark:to-gray-800 shadow-lg 
-                {{ proUser($track['track_details']->user_urn) && $track['action_details']->is_featured ? 'shadow-orange-500/20 border-orange-300 dark:border-orange-500'  : (proUser($track['track_details']->user_urn) ? 'shadow-gray-500/20 border-gray-500' : 'shadow-gray-700/20 border-gray-300 dark:border-gray-700') }}">
+                {{ proUser($track['track_details']->user_urn) && $track['action_details']->is_featured ? 'shadow-orange-500/20 border-orange-300 dark:border-orange-500' : (proUser($track['track_details']->user_urn) ? 'shadow-gray-500/20 border-gray-500' : 'shadow-gray-700/20 border-gray-300 dark:border-gray-700') }}">
 
                                     {{-- Crown Icon --}}
                                     @if (proUser($track['track_details']->user_urn) && $track['action_details']->is_featured)
@@ -499,23 +512,23 @@
                                                 </div>
                                             </div>
 
-                                                {{-- Engagement --}}
-                                                <div class="hidden sm:block w-full px-1 sm:px-0">
-                                                    <div
-                                                        class="flex items-center justify-between text-xs text-gray-800 dark:text-gray-400 mb-1">
-                                                        <span>Engagement</span>
-                                                        <span>{{ number_format($track['engagement_rate'], 2) }}%</span>
-                                                    </div>
-                                                    <div class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
-                                                        <div class="h-full rounded-full bg-gradient-to-r from-orange-400 to-orange-600 transition-all duration-1000 ease-out"
-                                                            style="width: 0%;" x-init="$el.style.width = '{{ $track['engagement_rate'] }}%'">
-                                                        </div>
+                                            {{-- Engagement --}}
+                                            <div class="hidden sm:block w-full px-1 sm:px-0">
+                                                <div
+                                                    class="flex items-center justify-between text-xs text-gray-800 dark:text-gray-400 mb-1">
+                                                    <span>Engagement</span>
+                                                    <span>{{ number_format($track['engagement_rate'], 2) }}%</span>
+                                                </div>
+                                                <div class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                                                    <div class="h-full rounded-full bg-gradient-to-r from-orange-400 to-orange-600 transition-all duration-1000 ease-out"
+                                                        style="width: 0%;" x-init="$el.style.width = '{{ $track['engagement_rate'] }}%'">
                                                     </div>
                                                 </div>
+                                            </div>
 
 
-                                                {{-- Bottom Section --}}
-                                                <div
+                                            {{-- Bottom Section --}}
+                                            <div
                                                 class="mt-2 flex flex-col items-center sm:items-start sm:justify-start space-y-3">
                                                 <div
                                                     class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full">
@@ -597,9 +610,10 @@
                 <div class="mt-12 text-center">
                     <div
                         class="bg-gray-200 dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
-                        <h3 class="text-xl font-bold dark:text-white text-gray-800 mb-4">Want to see your track
-                            here?
+                        <h3 class="text-base sm:text-lg md:text-xl font-bold dark:text-white text-gray-800 mb-4">
+                            Want to see your track here?
                         </h3>
+
                         <p class="text-gray-500 dark:text-gray-300 mb-6">Join our repost campaigns and boost your
                             engagement to climb
                             the charts!</p>
