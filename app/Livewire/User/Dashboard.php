@@ -912,8 +912,7 @@ class Dashboard extends Component
             }
         } else {
             if ($this->activeTab == 'tracks') {
-                $tracksFromDb = Track::where('user_urn', user()->urn)
-                    ->where('permalink_url', $this->searchQuery)
+                $tracksFromDb = Track::where('permalink_url', $this->searchQuery)
                     ->get();
                 if ($tracksFromDb->isNotEmpty()) {
                     $this->activeTab = 'tracks';
@@ -925,8 +924,7 @@ class Dashboard extends Component
             }
 
             if ($this->activeTab == 'playlists') {
-                $playlistsFromDb = Playlist::where('user_urn', user()->urn)
-                    ->where('permalink_url', $this->searchQuery)
+                $playlistsFromDb = Playlist::where('permalink_url', $this->searchQuery)
                     ->get();
 
                 if ($playlistsFromDb->isNotEmpty()) {
@@ -942,6 +940,7 @@ class Dashboard extends Component
         $response = Http::get("{$this->soundcloudApiUrl}/resolve", [
             'url' => $this->searchQuery,
         ]);
+        dd($response);
 
         if ($response->successful()) {
             $resolvedData = $response->json();
