@@ -78,7 +78,7 @@ class AnalyticsService
         return true;
     }
 
-    public function recordAnalytics(object $track, object $actionable, int $type, string $genre, int $increment = 1): UserAnalytics|bool|null
+    public function recordAnalytics(object $track, object $actionable, int $type, string $genre): UserAnalytics|bool|null
     {
         // Get the owner's URN from the track model.
         $ownerUserUrn = $actionable->user?->urn ?? $track->user?->urn ?? null;

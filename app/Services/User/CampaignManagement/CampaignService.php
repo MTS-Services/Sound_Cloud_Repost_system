@@ -8,6 +8,7 @@ use App\Models\Campaign;
 use App\Models\CreditTransaction;
 use App\Models\CustomNotification;
 use App\Models\Repost;
+use App\Models\UserAnalytics;
 use App\Services\User\AnalyticsService;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -66,25 +67,25 @@ class CampaignService
                 }
 
                 if ($repost != null) {
-                    $response = $this->analyticsService->updateAnalytics($campaign->music, $campaign, 'total_reposts', $campaign->target_genre);
+                    $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_REPOST, $campaign->target_genre);
                 }
 
                 if ($likeCommentAbleData['comment']) {
-                    $response = $this->analyticsService->updateAnalytics($campaign->music, $campaign, 'total_comments', $campaign->target_genre);
+                    $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_COMMENT, $campaign->target_genre);
                     if ($response != false || $response != null) {
                         $campaign->increment('comment_count');
                         $repost->increment('comment_count');
                     }
                 }
                 if ($likeCommentAbleData['likeable']) {
-                    $response = $this->analyticsService->updateAnalytics($campaign->music, $campaign, 'total_likes', $campaign->target_genre);
+                    $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_LIKE, $campaign->target_genre);
                     if ($response != false || $response != null) {
                         $campaign->increment('like_count');
                         $repost->increment('like_count');
                     }
                 }
                 if ($likeCommentAbleData['follow']) {
-                    $response = $this->analyticsService->updateAnalytics($campaign->music, $campaign, 'total_followers', $campaign->target_genre);
+                    $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_FOLLOW, $campaign->target_genre);
                     if ($response != false || $response != null) {
                         $campaign->increment('followowers_count');
                         $repost->increment('followowers_count');
@@ -165,7 +166,7 @@ class CampaignService
             }
             $trackOwnerName = $campaign->music->user?->name;
 
-            $response = $this->analyticsService->updateAnalytics($campaign->music, $campaign, 'total_likes', $campaign->target_genre);
+            $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_LIKE, $campaign->target_genre);
             if ($response != false || $response != null) {
                 $campaign->increment('like_count');
             }
