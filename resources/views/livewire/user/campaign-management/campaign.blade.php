@@ -603,35 +603,19 @@
 <script>
     function initializeSoundCloudWidgets() {
         if (typeof SC === 'undefined') {
-            console.log('SoundCloud Widget API not loaded yet, retrying...');
             setTimeout(initializeSoundCloudWidgets, 500);
             return;
         }
-
-        console.log('SoundCloud Widget API loaded. Initializing widgets...');
+        console.log('SoundCloud Widget API loaded. Reinisialized widgets.');
 
         const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
-        console.log(`Found ${playerContainers.length} player containers`);
 
         playerContainers.forEach(container => {
             const campaignId = container.dataset.campaignId;
             const iframe = container.querySelector('iframe');
 
             if (iframe && campaignId) {
-                // Check if this iframe is already initialized
-                if (iframe.dataset.initialized === 'true') {
-                    return; // Skip already initialized iframes
-                }
-
-                console.log(`Initializing widget for campaign: ${campaignId}`);
-
                 const widget = SC.Widget(iframe);
-
-                widget.bind(SC.Widget.Events.READY, () => {
-                    console.log(`Widget ready for campaign: ${campaignId}`);
-                    // Mark as initialized
-                    iframe.dataset.initialized = 'true';
-                });
 
                 widget.bind(SC.Widget.Events.PLAY, () => {
                     @this.call('handleAudioPlay', campaignId);
@@ -652,26 +636,25 @@
             }
         });
     }
-
-    // Initialize on page load
+    document.addEventListener('livewire:initialized', function() {
+        initializeSoundCloudWidgets();
+    });
+    document.addEventListener('livewire:navigated', function() {
+        initializeSoundCloudWidgets();
+    });
+    // document.addEventListener('livewire:load', function() {
+    //     initializeSoundCloudWidgets();
+    // });
+    document.addEventListener('livewire:updated', function() {
+        initializeSoundCloudWidgets();
+    });
     document.addEventListener('DOMContentLoaded', function() {
         initializeSoundCloudWidgets();
     });
 
-    // Initialize when Livewire is ready
-    document.addEventListener('livewire:initialized', function() {
-        initializeSoundCloudWidgets();
-    });
-
-    // Reinitialize when content is updated
-    document.addEventListener('livewire:updated', function() {
-        setTimeout(initializeSoundCloudWidgets, 100);
-    });
-
-    // Listen for custom dispatch event
-    document.addEventListener('livewire:dispatched', function(event) {
+    document.addEventListener('livewire:dispatched', (event) => {
         if (event.detail.event === 'soundcloud-widgets-reinitialize') {
-            setTimeout(initializeSoundCloudWidgets, 100);
+            initializeSoundCloudWidgets();
         }
     });
 </script>
