@@ -400,6 +400,7 @@ class Dashboard extends Component
 
             // Check if it's a SoundCloud URL
             if ($this->isSoundCloudUrl($this->searchQuery)) {
+
                 $this->resolveSoundcloudUrl();
                 return;
             }
@@ -456,6 +457,7 @@ class Dashboard extends Component
      */
     private function isSoundCloudUrl(string $query): bool
     {
+        dd(preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[\w\-\.\/]+$/i', $query));
         return preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[\w\-\.\/]+$/i', $query);
     }
 
