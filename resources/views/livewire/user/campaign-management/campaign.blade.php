@@ -641,6 +641,9 @@
     document.addEventListener('livewire:load', function() {
         initializeSoundCloudWidgets();
     });
+    document.addEventListener('livewire:updated', function() {
+        initializeSoundCloudWidgets();
+    });
     document.addEventListener('DOMContentLoaded', function() {
         initializeSoundCloudWidgets();
     });
