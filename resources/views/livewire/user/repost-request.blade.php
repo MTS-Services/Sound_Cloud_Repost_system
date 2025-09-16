@@ -102,19 +102,6 @@
                                 data-request-id="{{ $repostRequest->id }}" x-ref="player{{ $repostRequest->id }}">
                                 <x-sound-cloud.sound-cloud-player :track="$repostRequest->track" :visual="false" />
                             </div>
-
-                            <!-- Play Time Display -->
-                            <div class="absolute top-2 right-2 bg-blue-600 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10"
-                                x-show="playTime >= 0">
-                                <span x-text="Math.floor(playTime)"></span>s / 5s
-                            </div>
-
-                            <!-- Play Progress Bar -->
-                            <div
-                                class="absolute bottom-2 left-2 right-2 bg-gray-200 dark:bg-gray-600 rounded-full h-1.5">
-                                <div class="bg-blue-500 h-1.5 rounded-full transition-all duration-300"
-                                    :style="`width: ${Math.min(100, (playTime / 5) * 100)}%`"></div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -215,12 +202,6 @@
                                                         <span>{{ repostPrice($repostRequest->requester) }}
                                                             Repost</span>
                                                     </button>
-
-                                                    <!-- Success Indicator -->
-                                                    <div x-show="reposted" x-transition.opacity
-                                                        class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
-                                                        Reposted! ✓
-                                                    </div>
                                                 </div>
                                             @endif
 
@@ -464,7 +445,6 @@
             playTime: 0,
             isPlaying: false,
             canRepost: false,
-            reposted: false,
             startTime: null,
             widget: null,
 
@@ -484,21 +464,29 @@
                 if (!this.widget) return;
 
                 this.widget.bind(SC.Widget.Events.PLAY, () => {
+                    console.log('Audio player is playing');
+
                     this.isPlaying = true;
                 });
 
                 this.widget.bind(SC.Widget.Events.PAUSE, () => {
+                    console.log('Audio player is paused');
                     this.isPlaying = false;
                 });
 
                 // Use the official event to get current time
                 this.widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
                     this.playTime = data.currentPosition / 1000;
+                    console.log(this.playTime);
+
                     this.checkCanRepost();
                 });
 
                 this.widget.bind(SC.Widget.Events.FINISH, () => {
+                    console.log('Audio player has finished playing');
                     this.isPlaying = false;
+                    console.log(this.isPlaying);
+
                 });
             },
 
@@ -540,25 +528,26 @@
                 }
 
                 if (this.playTime >= 5) {
-                    this.canRepost = true;
+
+                    this.canRepost = true;;
                     console.log(`Request ${this.requestId} can now be reposted!`);
                     // Optional: you can unbind the event to save resources.
                     this.widget.unbind(SC.Widget.Events.PLAY_PROGRESS);
                 }
             },
 
-            handleRepost() {
-                if (this.canRepost) {
-                    // Use Alpine to trigger Livewire method
-                    this.$wire.call('confirmRepost', this.requestId);
-                    this.reposted = true;
+            // handleRepost() {
+            //     if (this.canRepost) {
+            //         // Use Alpine to trigger Livewire method
+            //         this.$wire.call('confirmRepost', this.requestId);
+            //         this.reposted = true;
 
-                    // Hide success message after 3 seconds
-                    setTimeout(() => {
-                        this.reposted = false;
-                    }, 3000);
-                }
-            }
+            //         // Hide success message after 3 seconds
+            //         setTimeout(() => {
+            //             this.reposted = false;
+            //         }, 3000);
+            //     }
+            // }
         }
     }
 
