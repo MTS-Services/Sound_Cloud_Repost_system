@@ -109,15 +109,10 @@ class Chart extends Component
                 default:
                     $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
                     return;
-            }
-            $data = [
-                'likeable' => $response ? true : false,
-                'comment' => false,
-                'follow' => false
-            ];
+            }           
             if ($response->successful()) {
                 $soundcloudRepostId = $campaign->music->soundcloud_track_id;
-                $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
+                $this->campaignService->likeCampaign($campaign, user());
                 $this->dispatch('alert', type: 'success', message: 'Like successful.');
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body());
