@@ -148,8 +148,11 @@
 }">
     <x-slot name="page_slug">dashboard</x-slot>
 
-    <input type="text" wire:model="searchQuery"
-        class="py-2 px-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200">
+    {{-- <form wire:submit.prevent="search"> --}}
+        <input type="text" wire:model="searchQuery"
+            class="py-2 px-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200">
+        <button wire:click="searchSoundcloud">search</button>
+    {{-- </form> --}}
 
     <div id="content-dashboard" class="page-content py-2 px-2">
         <div
