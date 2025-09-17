@@ -288,6 +288,8 @@ class SoundCloudService
 
                 $track = Track::where('soundcloud_track_id', $trackData['id'])->first();
 
+                Log::info('Track:' . json_encode($track));
+
                 if ($track) {
                     Log::info("Updating existing track {$track->soundcloud_track_id} for user {$userUrn}.");
                     continue;
