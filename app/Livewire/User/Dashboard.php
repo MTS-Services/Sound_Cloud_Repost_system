@@ -903,27 +903,27 @@ class Dashboard extends Component
     {
         $this->processSearchData();
 
-        $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
-        if ($response->successful()) {
-            $resolvedData['tracks'] = $response->json();
-            $this->soundCloudService->syncSelfTracks($resolvedData);
-            $this->processSearchData();
-            Log::info('SoundCloud link resolved successfully', [$resolvedData]);
-        } else {
-            if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
-                $this->allPlaylistTracks = collect();
-                $this->tracks = collect();
-            } else {
-                if ($this->activeTab === 'tracks') {
-                    $this->allTracks = collect();
-                    $this->tracks = collect();
-                } elseif ($this->activeTab === 'playlists') {
-                    $this->allPlaylists = collect();
-                    $this->playlists = collect();
-                }
-            }
-            $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
-        }
+        // $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
+        // if ($response->successful()) {
+        //     $resolvedData['tracks'] = $response->json();
+        //     $this->soundCloudService->syncSelfTracks($resolvedData);
+        //     $this->processSearchData();
+        //     Log::info('SoundCloud link resolved successfully', [$resolvedData]);
+        // } else {
+        //     if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
+        //         $this->allPlaylistTracks = collect();
+        //         $this->tracks = collect();
+        //     } else {
+        //         if ($this->activeTab === 'tracks') {
+        //             $this->allTracks = collect();
+        //             $this->tracks = collect();
+        //         } elseif ($this->activeTab === 'playlists') {
+        //             $this->allPlaylists = collect();
+        //             $this->playlists = collect();
+        //         }
+        //     }
+        //     $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
+        // }
     }
 
     protected function processSearchData()
