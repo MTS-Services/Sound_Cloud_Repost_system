@@ -266,7 +266,7 @@ class AnalyticsService
         int $perPage = 10,
         int $page = 1,
         ?string $userUrn = null,
-        ?int $actionType = null
+        ?string $actionType = null
     ): LengthAwarePaginator {
         $periods = $this->calculatePeriods($filter, $dateRange);
 
@@ -339,7 +339,7 @@ class AnalyticsService
             $page,
             [
                 'path' => request()->url(),
-                'pageName' => 'page',
+                'pageName' => 'top_tracks',
             ]
         );
     }
@@ -510,6 +510,7 @@ class AnalyticsService
 
         return $result;
     }
+
 
     /**
      * Calculate metrics from analytics data
@@ -741,7 +742,6 @@ class AnalyticsService
             $actionType
         );
 
-
         // Group by date for chart
         $chartData = $data->groupBy(function ($item) {
             return Carbon::parse($item->created_at)->format('Y-m-d');
@@ -758,7 +758,6 @@ class AnalyticsService
                 'total_followers' => $typeGroups->get(UserAnalytics::TYPE_FOLLOW, collect())->count(),
             ];
         })->values()->toArray();
-
         return $chartData;
     }
 
@@ -767,35 +766,56 @@ class AnalyticsService
      */
     public function getTopTracks(int $limit = 20, ?string $userUrn = null, ?string $filter = 'last_week', ?array $dateRange = null): array
     {
-        $userUrn = $userUrn ?? user()->urn;
         $periods = $this->calculatePeriods($filter, $dateRange);
 
-        $topTracks = UserAnalytics::where('owner_user_urn', $userUrn)
-            ->whereDate('created_at', '>=', $periods['current']['start']->format('Y-m-d'))
+        $query = UserAnalytics::query();
+
+        if ($userUrn !== null) {
+            $query->where('owner_user_urn', $userUrn);
+        }
+
+        // Start the query chain and store the final result directly in $topTracks
+        $topTracks = $query->whereDate('created_at', '>=', $periods['current']['start']->format('Y-m-d'))
             ->whereDate('created_at', '<=', $periods['current']['end']->format('Y-m-d'))
             ->select([
                 'track_urn',
                 DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 END) as total_views'),
-                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 END) as total_streams'),
+                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_PLAY . ' THEN 1 END) as total_streams'),
                 DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_likes'),
+                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_COMMENT . ' THEN 1 END) as total_comments'),
                 DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 END) as total_reposts'),
+                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 END) as total_followers'),
             ])
             ->groupBy('track_urn')
             ->orderByDesc('total_views')
             ->orderByDesc('total_streams')
             ->orderByDesc('total_likes')
             ->orderByDesc('total_reposts')
+            ->orderByDesc('total_followers')
             ->with(['track.user'])
             ->limit($limit)
             ->get()
             ->map(function ($item) {
+
+                // Calculate avg_total first
+                $avg_total = ($item->total_likes + $item->total_reposts + $item->total_followers + $item->total_streams + $item->total_comments) / 5;
+
+                // Apply the new engagement rate logic
+                $engagement_rate = 0;
+                if ($item->total_views > $avg_total) {
+                    $engagement_rate = round(min(100, (($item->total_views - $avg_total) / (($item->total_views + $avg_total) / 2)) * 100), 2);
+                }
+
                 return [
                     'track' => $item->track ? $item->track->toArray() : null,
+                    'views' => (int) $item->total_views,
                     'streams' => (int) $item->total_streams,
                     'likes' => (int) $item->total_likes,
+                    'comments' => (int) $item->total_comments,
                     'reposts' => (int) $item->total_reposts,
-                    'engagement_rate' => $item->total_streams > 0 ?
-                        round((($item->total_likes + $item->total_reposts) / $item->total_streams) * 100, 1) : 0
+                    'followers' => (int) $item->total_followers,
+                    'avg_total' => $avg_total,
+                    'engagement_rate' => $engagement_rate,
                 ];
             })
             ->filter(function ($item) {
@@ -806,7 +826,6 @@ class AnalyticsService
 
         return $topTracks;
     }
-
     /**
      * Get genre performance breakdown
      */

@@ -880,7 +880,7 @@
                                                         class="text-gray-600 dark:text-gray-300 truncate">
                                                         {{ $track['track_details']->user->name }}</a>
                                                     <span
-                                                        class="inline-block mt-1 bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-600 dark:text-gray-700 border border-gray-300 dark:border-gray-600">{{ $track['track_details']->genre ?? 'Unknown' }}</span>
+                                                        class="inline-block mt-1 bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600">{{ $track['track_details']->genre ?? 'Unknown' }}</span>
                                                 </div>
                                                 <div class="text-right cursor-pointer">
                                                     <div class="text-lg font-bold text-black dark:text-white">

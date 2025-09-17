@@ -788,17 +788,8 @@
                                     </div>
                                 </div>
                                 <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
-                                    @php
-                                        $maxStreams = $topTracks[0]['streams'] ?? 1;
-                                        $percentage =
-                                            $maxStreams > 0
-                                                ? ((($maxStreams - $track['streams']) / $maxStreams) * 100 < 0
-                                                    ? 0
-                                                    : (($maxStreams - $track['streams']) / $maxStreams) * 100)
-                                                : 0;
-                                    @endphp
                                     <div class="h-2 rounded-full transition-all duration-300"
-                                        style="width: {{ $percentage > 100 ? 100 : $percentage }}%; background: linear-gradient(90deg, #ff6b35, #ff6b35cc);">
+                                        style="width: {{ $track['engagement_rate'] }}%; background: linear-gradient(90deg, #ff6b35, #ff6b35cc);">
                                     </div>
                                 </div>
                             </div>
@@ -928,52 +919,38 @@
                     <thead class="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
                         <tr>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-                                <div class="flex items-center">Track Name
-                                    <x-lucide-chevron-down class="w-5 h-5 opacity-30" />
-                                </div>
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                                <p class="flex items-center">Track Name</p>
                             </th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-                                <div class="flex items-center">Streams
-                                    <x-lucide-chevron-down class="w-5 h-5 opacity-30" />
-                                </div>
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                                <p class="flex items-center">Streams</p>
                             </th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-                                <div class="flex items-center">Stream Growth
-                                    <x-lucide-chevron-down class="w-5 h-5 opacity-30" />
-                                </div>
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                                <p class="flex items-center">Stream Growth</p>
                             </th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-                                <div class="flex items-center">Engagement
-                                    <x-lucide-chevron-down class="w-5 h-5 opacity-30" />
-                                </div>
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                                <p class="flex items-center">Engagement</p>
                             </th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-                                <div class="flex items-center">Likes
-                                    <x-lucide-chevron-down class="w-5 h-5 opacity-30" />
-                                </div>
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                                <p class="flex items-center">Likes</p>
                             </th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-                                <div class="flex items-center">Reposts
-                                    <x-lucide-chevron-down class="w-5 h-5 opacity-30" />
-                                </div>
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                                <p class="flex items-center">Reposts</p>
                             </th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-                                <div class="flex items-center">Released
-                                    <x-lucide-chevron-down class="w-5 h-5 opacity-30" />
-                                </div>
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                                <p class="flex items-center">Released</p>
                             </th>
                         </tr>
                     </thead>
                     <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse($paginatedTracks as $track)
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer">
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div
