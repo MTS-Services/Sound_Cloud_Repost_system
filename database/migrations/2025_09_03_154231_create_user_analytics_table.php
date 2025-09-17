@@ -26,8 +26,8 @@ return new class extends Migration
             $table->string('track_urn');
             $table->foreign('track_urn')->references('urn')->on('tracks')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->unsignedBigInteger('actionable_id');
-            $table->string('actionable_type');
+            $table->unsignedBigInteger('actionable_id')->index()->nullable();
+            $table->string('actionable_type')->index()->nullable();
 
             $table->tinyInteger('type')->index();
 

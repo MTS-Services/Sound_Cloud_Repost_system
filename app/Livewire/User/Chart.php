@@ -54,7 +54,7 @@ class Chart extends Component
             genres: [],
             perPage: $this->tracksPerPage,
             page: $this->getPage(),
-            actionType: Campaign::class
+            actionableType: Campaign::class
         );
         // } catch (\Exception $e) {
         //     Log::error('Paginated track data loading failed', ['error' => $e->getMessage()]);
