@@ -920,6 +920,7 @@ class Dashboard extends Component
                     $this->allTracks = $tracksFromDb;
                     $this->tracks = $this->allTracks->take($this->trackLimit);
                     $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+                    dd($this->tracks, $this->allTracks, $this->hasMoreTracks);
                     return;
                 }
             }
@@ -943,7 +944,9 @@ class Dashboard extends Component
 
 
         if ($response->successful()) {
-            $resolvedData = $response->json();
+            $resolvedData['tracks'] = $response->json();
+            dd($resolvedData);
+            $this->soundCloudService->syncSelfTracks($resolvedData);
             $this->processResolvedData($resolvedData);
             Log::info('SoundCloud link resolved successfully', [$resolvedData]);
         } else {
@@ -966,10 +969,14 @@ class Dashboard extends Component
     protected function processResolvedData($resolvedData)
     {
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
-            $this->tracks = $resolvedData;
+            $this->allPlaylistTracks = collect($resolvedData);
+            $this->tracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
+            $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
         } else {
             if ($this->activeTab === 'tracks') {
-                $this->tracks = $resolvedData;
+                $this->allTracks = collect($resolvedData);
+                $this->tracks = $this->allTracks->take($this->trackLimit);
+                $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
             } elseif ($this->activeTab === 'playlists') {
                 $this->allPlaylists = collect($resolvedData);
                 $this->playlists = $this->allPlaylists->take($this->playlistLimit);
