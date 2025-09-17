@@ -741,6 +741,7 @@ class AnalyticsService
             $actionType
         );
 
+        dd($data->values()->all());
 
         // Group by date for chart
         $chartData = $data->groupBy(function ($item) {
@@ -758,7 +759,7 @@ class AnalyticsService
                 'total_followers' => $typeGroups->get(UserAnalytics::TYPE_FOLLOW, collect())->count(),
             ];
         })->values()->toArray();
-
+        dd($chartData);
         return $chartData;
     }
 
