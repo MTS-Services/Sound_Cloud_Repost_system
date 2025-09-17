@@ -225,7 +225,6 @@ class SoundCloudService
                 $commonTrackData = [
                     'user_urn' => $trackData['user']['urn'] ?? null,
                     'kind' => $trackData['kind'] ?? null,
-                    'urn' => $trackData['urn'] ?? null,
                     'duration' => $trackData['duration'] ?? 0,
                     'commentable' => $trackData['commentable'] ?? false,
                     'comment_count' => $trackData['comment_count'] ?? 0,
@@ -276,28 +275,17 @@ class SoundCloudService
                     'author_soundcloud_permalink_url' => $trackData['user']['permalink_url'] ?? null,
                     'author_soundcloud_permalink' => $trackData['user']['permalink'] ?? null,
                     'author_soundcloud_uri' => $trackData['user']['uri'] ?? null,
-                    'soundcloud_track_id' => $trackData['id']
                 ];
 
                 Log::info('Track Data:' . json_encode($commonTrackData));
 
-                // $track = Track::updateOrCreate(
-                //     ['soundcloud_track_id' => $trackData['id']],
-                //     $commonTrackData
-                // );
-
-                $track = Track::where('soundcloud_track_id', $trackData['id'])->first();
-
-                Log::info('Track:' . json_encode($track));
-
-                if ($track) {
-                    Log::info("Updating existing track {$track->soundcloud_track_id} for user {$userUrn}.");
-                    continue;
-                } else {
-                    Log::info("Creating new track id {$trackData['id']} for user {$userUrn}.");
-                    $track = Track::create($commonTrackData);
-                }
-
+                $track = Track::updateOrCreate(
+                    [
+                        'soundcloud_track_id' => $trackData['id'],
+                        'urn' => $trackData['urn']
+                    ],
+                    $commonTrackData
+                );
 
                 Log::info("Successfully synced track {$track->soundcloud_track_id} for user {$user->urn}.");
 
