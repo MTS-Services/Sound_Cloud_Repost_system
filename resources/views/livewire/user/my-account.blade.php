@@ -896,6 +896,7 @@
                                             Your Recent Reposts
                                         </h2>
 
+                                        @dd($reposts)
                                         @foreach ($reposts as $repost)
                                             <div
                                                 class="bg-gray-200 mb-2 dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 sm:flex space-y-4 sm:space-y-0">
