@@ -266,7 +266,7 @@ class AnalyticsService
         int $perPage = 10,
         int $page = 1,
         ?string $userUrn = null,
-        ?int $actionType = null
+        ?string $actionType = null
     ): LengthAwarePaginator {
         $periods = $this->calculatePeriods($filter, $dateRange);
 
