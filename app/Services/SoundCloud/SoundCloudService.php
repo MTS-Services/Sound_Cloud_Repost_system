@@ -276,6 +276,7 @@ class SoundCloudService
                     'author_soundcloud_permalink_url' => $trackData['user']['permalink_url'] ?? null,
                     'author_soundcloud_permalink' => $trackData['user']['permalink'] ?? null,
                     'author_soundcloud_uri' => $trackData['user']['uri'] ?? null,
+                    'soundcloud_track_id' => $trackData['id']
                 ];
 
                 Log::info('Track Data:' . json_encode($commonTrackData));
@@ -285,9 +286,14 @@ class SoundCloudService
                 //     $commonTrackData
                 // );
 
-                $track = Track::firstOrNew(['soundcloud_track_id' => $trackData['id']]);
-                $track->fill($commonTrackData);
-                $track->save();
+                $track = Track::where('soundcloud_track_id', $trackData['id'])->first();
+
+                if ($track) {
+                    continue;
+                } else {
+                    $track = Track::create($commonTrackData);
+                }
+
 
                 Log::info("Successfully synced track {$track->soundcloud_track_id} for user {$user->urn}.");
 
