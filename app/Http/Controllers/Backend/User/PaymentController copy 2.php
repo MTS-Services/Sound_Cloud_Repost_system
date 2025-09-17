@@ -33,6 +33,7 @@ class PaymentController extends Controller
 
     public function paymentMethod(string $order_id)
     {
+
         $data['order'] = $this->orderService->getOrder($order_id);
         return view('frontend.pages.payment_method', $data);
     }
@@ -54,12 +55,14 @@ class PaymentController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email_address' => 'required|email',
-            // 'currency' => 'sometimes|string|size:3',
             'customer_email' => 'sometimes|email',
         ]);
-        $order = $this->orderService->getOrder(encrypt($request->order_id));
-        Log::info("Order:" . $order);
+
         try {
+            $order = $this->orderService->getOrder(encrypt($request->order_id));
+            Log::info("Order:" . $order);
+
+
             $paymentIntent = $this->stripeService->createPaymentIntent([
                 'amount' => $order->amount,
                 'currency' => 'usd',
@@ -69,56 +72,56 @@ class PaymentController extends Controller
                 ],
             ]);
 
-            DB::transaction(function () use ($request, $order, $paymentIntent) {
 
-                // if ($order->source_type == Credit::class) {
-                //     CreditTransaction::create([
-                //         'receiver_urn' => $order->user_urn,
-                //         'transaction_type' => CreditTransaction::TYPE_PURCHASE,
-                //         'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
-                //         'source_id' => $order->id,
-                //         'source_type' => Order::class,
-                //         'amount' => $order->amount,
-                //         'credits' => $order->credits,
-                //         'description' => 'Purchased ' . $order->credits . ' credits for ' . $order->amount . ' ' . $request->currency,
-                //         'creater_id' => $order->creater_id,
-                //         'creater_type' => $order->creater_type,
+            if ($paymentIntent->status === 'succeeded') {
+                DB::transaction(function () use ($request, $order, $paymentIntent) {
+                    if ($order->source_type == Credit::class) {
+                        CreditTransaction::create([
+                            'receiver_urn' => $order->user_urn,
+                            'transaction_type' => CreditTransaction::TYPE_PURCHASE,
+                            'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
+                            'source_id' => $order->id,
+                            'source_type' => Order::class,
+                            'amount' => $order->amount,
+                            'credits' => $order->credits,
+                            'description' => 'Purchased ' . $order->credits . ' credits for ' . $order->amount,
+                            'creater_id' => $order->creater_id,
+                            'creater_type' => $order->creater_type,
+                        ]);
+                    }
 
-                //     ]);
-                // }
-
-
-                Payment::create([
-                    'name' => $request->name,
-                    'email_address' => $request->email_address,
-                    'address' => $request->address ?? null,
-                    'currency' => $request->currency ?? 'usd',
-                    'postal_code' => $request->postal_code ?? null,
-                    'reference' => $request->reference ?? null,
-                    'user_urn' => $order->user_urn,
-                    'order_id' => $order->id,
-                    'payment_method' => $request->payment_method ?? null,
-                    'notes' => $order->notes ?? null,
-
-                    'payment_gateway' => Payment::PAYMENT_GATEWAY_STRIPE,
-                    'payment_provider_id' => $request->payment_provider_id ?? null,
-                    'amount' => $order->amount,
-                    'credits_purchased' => $order->credits,
-                    'status' => $paymentIntent->status,
-                    'payment_intent_id' => $paymentIntent->id ?? null,
-                    'receipt_url' => $request->receipt_url ?? null,
-                    'failure_reason' => $request->failure_reason ?? null,
-                    'metadata' => $paymentIntent->metadata->toArray() ?? null,
-                    'processed_at' => $request->processed_at ?? null,
-                    'creater_id' => $order->creater_id,
-                    'creater_type' => $order->creater_type,
-
-                ]);
-            });
+                    Payment::create([
+                        'name' => $request->name,
+                        'email_address' => $request->email_address,
+                        'address' => $request->address ?? null,
+                        'currency' => $request->currency ?? 'usd',
+                        'postal_code' => $request->postal_code ?? null,
+                        'reference' => $request->reference ?? null,
+                        'user_urn' => $order->user_urn,
+                        'order_id' => $order->id,
+                        'payment_method' => $request->payment_method ?? null,
+                        'notes' => $order->notes ?? null,
+                        'payment_gateway' => Payment::PAYMENT_GATEWAY_STRIPE,
+                        'payment_provider_id' => $request->payment_provider_id ?? null,
+                        'amount' => $order->amount,
+                        'credits_purchased' => $order->credits,
+                        'status' => $paymentIntent->status,
+                        'payment_intent_id' => $paymentIntent->id ?? null,
+                        'receipt_url' => $request->receipt_url ?? null,
+                        'failure_reason' => $request->failure_reason ?? null,
+                        'metadata' => $paymentIntent->metadata->toArray() ?? null,
+                        'processed_at' => now(),
+                        'creater_id' => $order->creater_id,
+                        'creater_type' => $order->creater_type,
+                    ]);
+                });
+            }
 
             return response()->json([
                 'client_secret' => $paymentIntent->client_secret,
                 'payment_intent_id' => Crypt::encryptString($paymentIntent->id),
+                'redirect_url' => route('user.payment.form', ['order_id' => $order->id])
+
             ]);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
@@ -177,24 +180,6 @@ class PaymentController extends Controller
                     $additionalData['Receipt URL'] = $payment->receipt_url;
                 }
 
-                $order = Order::findOrFail($payment->order_id);
-
-                if ($order->source_type == Credit::class) {
-                    CreditTransaction::create([
-                        'receiver_urn' => $order->user_urn,
-                        'transaction_type' => CreditTransaction::TYPE_PURCHASE,
-                        'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
-                        'source_id' => $order->id,
-                        'source_type' => Order::class,
-                        'amount' => $order->amount,
-                        'credits' => $order->credits,
-                        'description' => 'Purchased ' . $order->credits . ' credits for ' . $order->amount . ' ' . $payment->currency,
-                        'creater_id' => $order->creater_id,
-                        'creater_type' => $order->creater_type,
-
-                    ]);
-                }
-
                 $userNotification = CustomNotification::create([
                     'receiver_id' => user()->id,
                     'receiver_type' => User::class,
@@ -237,6 +222,8 @@ class PaymentController extends Controller
     {
         return view('backend.admin.payments.cancel');
     }
+
+
 
 
     // Paypal Payment

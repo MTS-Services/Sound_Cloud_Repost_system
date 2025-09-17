@@ -53,7 +53,7 @@
                             <label class="block text-gray-700 text-sm font-semibold mb-2" for="name">
                                 <i class="fas fa-user mr-1"></i> Full Name
                             </label>
-                            <input type="text" id="name" name="name" required
+                            <input type="text" id="name" name="name"
                                 placeholder="Enter your full name"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-300">
                         </div>
@@ -64,7 +64,7 @@
                             <label class="block text-gray-700 text-sm font-semibold mb-2" for="email_address">
                                 <i class="fas fa-envelope mr-1"></i> Email Address
                             </label>
-                            <input type="email" id="email_address" name="email_address" required
+                            <input type="email" id="email_address" name="email_address"
                                 placeholder="your@email.com"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-300">
                         </div>
@@ -141,6 +141,7 @@
         const elements = stripe.elements();
 
         // Custom styling for Stripe Elements
+        
         const style = {
             base: {
                 fontSize: '16px',
@@ -262,21 +263,21 @@
         }
 
         function validateForm(formData) {
-            const requiredFields = ['name', 'email_address'];
+            // const requiredFields = ['name', 'email_address'];
 
-            for (let field of requiredFields) {
-                if (!formData.get(field) || formData.get(field).trim() === '') {
-                    showError(`Please fill in the ${field.replace('_', ' ')} field.`);
-                    return false;
-                }
-            }
+            // for (let field of requiredFields) {
+            //     if (!formData.get(field) || formData.get(field).trim() === '') {
+            //         showError(`Please fill in the ${field.replace('_', ' ')} field.`);
+            //         return false;
+            //     }
+            // }
 
-            const email = formData.get('email_address');
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                showError('Please enter a valid email address.');
-                return false;
-            }
+            // const email = formData.get('email_address');
+            // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            // if (!emailRegex.test(email)) {
+            //     showError('Please enter a valid email address.');
+            //     return false;
+            // }
 
             return true;
         }
