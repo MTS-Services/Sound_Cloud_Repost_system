@@ -10,8 +10,9 @@ use App\Models\CustomNotification;
 use App\Models\Repost;
 use App\Models\UserAnalytics;
 use App\Services\User\AnalyticsService;
-use Exception;
+
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class CampaignService
@@ -76,6 +77,7 @@ class CampaignService
                 }
 
                 if ($likeCommentAbleData['comment']) {
+                    Log::info("likeCommentAbleData", $likeCommentAbleData);
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_COMMENT, $campaign->target_genre);
                     if ($response != false || $response != null) {
                         $campaign->increment('comment_count');
