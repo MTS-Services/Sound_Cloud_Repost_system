@@ -334,7 +334,7 @@ class MyCampaign extends Component
 
     public function toggleCampaignsModal()
     {
-        $this->resetAllFormData();
+        // $this->resetAllFormData();
         if ($this->myCampaignService->thisMonthCampaignsCount() >= (int) userFeatures()[Feature::KEY_SIMULTANEOUS_CAMPAIGNS]) {
             return $this->dispatch('alert', type: 'error', message: 'You have reached the maximum number of campaigns for this month.');
         }
