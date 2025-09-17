@@ -729,7 +729,7 @@
                                                     <div class="group bg-white dark:bg-slate-800 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-gray-100 dark:border-slate-700"
                                                         wire:click="selectPlaylist({{ $playlist->id }})">
                                                         <div class="relative">
-                                                            <img src="{{ soundcloud_image($playlist->artwork_url) }}"
+                                                            <img src="{{ soundcloud_image($playlist->artwork_url) ?? '#' }}"
                                                                 alt="Playlist cover"
                                                                 class="w-full h-48 object-cover rounded-t-lg" />
                                                             <button
