@@ -34,6 +34,8 @@ class Dashboard extends Component
 
     protected FollowerAnalyzer $followerAnalyzer;
 
+    protected $soundcloudApiUrl = 'https://api.soundcloud.com';
+
     public $total_credits;
     public $totalCount;
     public $repostRequests;
