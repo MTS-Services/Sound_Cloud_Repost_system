@@ -895,8 +895,6 @@
                                             class="text-gray-900 dark:text-white text-lg sm:text-xl font-semibold mb-4">
                                             Your Recent Reposts
                                         </h2>
-
-                                        @dd($reposts)
                                         @foreach ($reposts as $repost)
                                             <div
                                                 class="bg-gray-200 mb-2 dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 sm:flex space-y-4 sm:space-y-0">
@@ -923,7 +921,7 @@
                                                             <div class="flex flex-col items-start gap-2">
                                                                 {{-- Avatar --}}
                                                                 <div class="flex items-center gap-2">
-                                                                    @dd($repost->source)
+                                                                    @dd($repost)
                                                                     {{-- <img src="{{ soundcloud_image($repost->source->artwork_url) }}"
                                                                         class="w-12 h-12 rounded-full object-cover"
                                                                         alt="Track artwork" /> --}}
