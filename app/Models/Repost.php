@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Repost extends BaseModel
 {
 
-    protected $with = ['request', 'reposter', 'trackOwner', 'user', 'track'];
+    protected $with = ['request', 'reposter', 'trackOwner', 'user'];
 
     protected $fillable = [
         'sort_order',
@@ -65,10 +65,7 @@ class Repost extends BaseModel
     {
         return $this->belongsTo(Campaign::class, 'campaign_id', 'id');
     }
-    public function track()
-    {
-        return $this->belongsTo(Track::class, 'track_id');
-    }
+
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
