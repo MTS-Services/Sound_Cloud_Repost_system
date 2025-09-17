@@ -216,14 +216,14 @@ class Chart extends Component
             $totalComments = $track['metrics']['total_comments']['current_total'];
             $totalFollowers = $track['metrics']['total_followers']['current_total'];
             $track['repost'] = false;
-            $reposted = $this->campaignService->alreadyReposted(
-                trackOwnerUrn: $track['track_details']['user_urn'],
-                campaignId: $track['actionable_details']['id'],
-                reposter: user()
-            );
-            if ($reposted) {
-                $track['repost'] = true;
-            }
+            // $reposted = $this->campaignService->alreadyReposted(
+            //     trackOwnerUrn: $track['track_details']['user_urn'],
+            //     campaignId: $track['actionable_details']['id'],
+            //     reposter: user()
+            // );
+            // if ($reposted) {
+            //     $track['repost'] = true;
+            // }
             $track['like'] = false;
             $like = UserAnalytics::where('act_user_urn', user()->urn)->where('track_urn', $track['track_details']['urn'])->exists();
             if ($like) {
