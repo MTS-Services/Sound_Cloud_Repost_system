@@ -62,7 +62,7 @@ class SoundCloudController extends Controller
 
             // SyncUserJob::dispatch($user, $soundCloudUser);
 
-            $this->syncUser($user, $soundCloudUser);
+            // $this->syncUser($user, $soundCloudUser);
 
             Auth::guard('web')->login($user, true);
 
