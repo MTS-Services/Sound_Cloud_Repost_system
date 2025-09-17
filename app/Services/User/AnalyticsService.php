@@ -28,6 +28,10 @@ class AnalyticsService
         $actUserUrn = user()->urn;
         $ownerUserUrn = $track->user?->urn ?? null;
 
+        if ($ipAddress == null) {
+            $ipAddress = request()->ip();
+        }
+
         if (!$actUserUrn || !$ownerUserUrn) {
             Log::info("Analytics recording skipped - missing user URN", [
                 'act_user_urn' => $actUserUrn,
@@ -58,6 +62,8 @@ class AnalyticsService
         $actionIdentifier = sprintf(
             '%s.%s.%s.%s.%s',
             $type,
+            $actionable->id ?? 0,
+            $actionable->getMorphClass() ?? 'N/A',
             $track->urn,
             $ownerUserUrn,
             $actUserUrn,
@@ -163,7 +169,7 @@ class AnalyticsService
         ?array $dateRange = null,
         ?array $genres = null,
         ?string $trackUrn = null,
-        ?int $actionType = null
+        ?string $actionableType = null
     ): array {
         $userUrn = user()->urn;
 
@@ -177,7 +183,7 @@ class AnalyticsService
             $periods['current']['end'],
             $genres,
             $trackUrn,
-            $actionType
+            $actionableType
         );
 
         // Separate current and previous period data
@@ -229,7 +235,7 @@ class AnalyticsService
         Carbon $endDate,
         ?array $genres = null,
         ?string $trackUrn = null,
-        ?int $actionType = null
+        ?string $actionableType = null
     ): Collection {
         $query = UserAnalytics::query();
 
@@ -245,8 +251,8 @@ class AnalyticsService
             $query->where('track_urn', $trackUrn);
         }
 
-        if ($actionType !== null) {
-            $query->where('type', $actionType);
+        if ($actionableType !== null) {
+            $query->where('actionable_type', $actionableType);
         }
 
         if ($genres) {
@@ -266,7 +272,7 @@ class AnalyticsService
         int $perPage = 10,
         int $page = 1,
         ?string $userUrn = null,
-        ?string $actionType = null
+        ?string $actionableType = null
     ): LengthAwarePaginator {
         $periods = $this->calculatePeriods($filter, $dateRange);
 
@@ -286,8 +292,8 @@ class AnalyticsService
             $query->where('owner_user_urn', $userUrn);
         }
 
-        if ($actionType !== null) {
-            $query->where('type', $actionType);
+        if ($actionableType !== null) {
+            $query->where('actionable_type', $actionableType);
         }
 
         $query->whereDate('created_at', '>=', $periods['current']['start']->format('Y-m-d'))
@@ -728,7 +734,7 @@ class AnalyticsService
         ?array $dateRange = null,
         ?array $genres = null,
         ?string $trackUrn = null,
-        ?int $actionType = null
+        ?string $actionableType = null
     ): array {
         $userUrn = user()->urn;
         $periods = $this->calculatePeriods($filter, $dateRange);
@@ -739,7 +745,7 @@ class AnalyticsService
             $periods['current']['end'],
             $genres,
             $trackUrn,
-            $actionType
+            $actionableType
         );
 
         // Group by date for chart

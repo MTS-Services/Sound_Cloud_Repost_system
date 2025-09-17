@@ -147,6 +147,7 @@
     }
 }">
     <x-slot name="page_slug">dashboard</x-slot>
+
     <div id="content-dashboard" class="page-content py-2 px-2">
         <div
             class="tablet:px-2 px-0.5 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 w-full">

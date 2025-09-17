@@ -4,7 +4,9 @@
     <!-- Header Section -->
     <div class="w-full mt-6 relative">
         <!-- Header Tabs & Button -->
-        <div x-data="{ activeMainTab: @entangle('activeMainTab').live }"
+        <div x-data="{
+            activeMainTab: @entangle('activeMainTab').live || 'recommended_pro'
+        }" x-init="$wire.setActiveMainTab('recommended_pro')"
             class="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-4 pt-3 border-b border-b-gray-200 dark:border-b-gray-700 gap-2 sm:gap-0">
             <div>
                 <nav class="-mb-px flex space-x-8">
@@ -15,10 +17,9 @@
                     $wire.setActiveMainTab('recommended_pro');
                     $nextTick(() => initializeSoundCloudWidgets());
                 "
-                        :class="activeMainTab === 'recommended_pro'
-                            ?
-                            'border-orange-500 text-orange-600 border-b-2' :
-                            'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                        :class="(typeof activeMainTab !== 'undefined' && activeMainTab === 'recommended_pro') ?
+                        'border-orange-500 text-orange-600 border-b-2' :
+                        'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
                         class="tab-button py-3 pb-1 px-2 text-md font-semibold transition-all duration-200 border-b-2">
                         {{ __('Recommended Pro') }}
                         <span class="text-xs ml-2 text-orange-500">{{ $totalRecommendedPro }}</span>
@@ -31,10 +32,9 @@
                     $wire.setActiveMainTab('recommended');
                     $nextTick(() => initializeSoundCloudWidgets());
                 "
-                        :class="activeMainTab === 'recommended'
-                            ?
-                            'border-orange-500 text-orange-600 border-b-2' :
-                            'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                        :class="(typeof activeMainTab !== 'undefined' && activeMainTab === 'recommended') ?
+                        'border-orange-500 text-orange-600 border-b-2' :
+                        'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
                         class="tab-button py-3 pb-1 px-2 text-md font-semibold transition-all duration-200 border-b-2">
                         {{ __('Recommended') }}
                         <span class="text-xs ml-2 text-orange-500">{{ $totalRecommended }}</span>
@@ -47,10 +47,9 @@
                     $wire.setActiveMainTab('all');
                     $nextTick(() => initializeSoundCloudWidgets());
                 "
-                        :class="activeMainTab === 'all'
-                            ?
-                            'border-orange-500 text-orange-600 border-b-2' :
-                            'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                        :class="(typeof activeMainTab !== 'undefined' && activeMainTab === 'all') ?
+                        'border-orange-500 text-orange-600 border-b-2' :
+                        'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
                         class="tab-button py-3 pb-1 px-2 text-md font-semibold transition-all duration-200 border-b-2">
                         {{ __('All') }}
                         <span class="text-xs ml-2 text-orange-500">{{ $totalCampaign }}</span>
@@ -68,7 +67,7 @@
 
     </div>
 
-    <div x-data="{ openFilterByTrack: false, openFilterByGenre: false }"
+    <div x-data="{ openFilterByTrack: false, openFilterByGenre: false }" wire:ignore.self
         class="flex flex-col sm:flex-row sm:items-center sm:justify-start gap-4 mt-4 mb-2 relative">
 
         <!-- Filters wrapper (track + genre side by side on mobile also) -->
@@ -77,7 +76,7 @@
             <div class="relative flex-1 sm:flex-none">
                 <button @click="openFilterByTrack = !openFilterByTrack , openFilterByGenre = false"
                     wire:click="getAllTrackTypes" @click.outside="openFilterByTrack = false"
-                    class="bg-orange-100 !hover:bg-orange-400 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer w-full sm:w-auto">
+                    class="bg-orange-100 hover:bg-orange-300 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer w-full sm:w-auto">
                     Filter by track type /{{ $searchMusicType }}
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -85,7 +84,7 @@
                     </svg>
                 </button>
 
-                <div x-show="openFilterByTrack" x-transition:enter="transition ease-out duration-100"
+                <div x-show="openFilterByTrack" x-cloak x-clock wire:ignore x-transition:enter="transition ease-out duration-100"
                     x-transition:enter-start="transform opacity-0 scale-95"
                     x-transition:enter-end="transform opacity-100 scale-100"
                     x-transition:leave="transition ease-in duration-75"
@@ -128,7 +127,7 @@
                     </svg>
                 </button>
 
-                <div x-show="openFilterByGenre" x-transition:enter="transition ease-out duration-100"
+                <div x-show="openFilterByGenre" x-cloak x-clock wire:ignore x-transition:enter="transition ease-out duration-100"
                     x-transition:enter-start="transform opacity-0 scale-95"
                     x-transition:enter-end="transform opacity-100 scale-100"
                     x-transition:leave="transition ease-in duration-75"
@@ -160,14 +159,13 @@
                         d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
 
-                <div x-data="{ showInput: false }"
-                    class="w-full relative flex items-center text-gray-600 dark:text-gray-400 rounded">
+                <div class="w-full relative flex items-center text-gray-600 dark:text-gray-400 rounded">
                     <div x-show="!showInput" @click="showInput = true" wire:click="getAllTags"
-                        class="pl-7 pr-2 py-2 cursor-pointer whitespace-nowrap dark:text-slate-300 w-full">
+                        class="pl-7 pr-2 py-2 cursor-pointer whitespace-nowrap dark:text-slate-300 w-full" >
                         <span>{{ $search ? $search : 'Type to search tags...' }}</span>
                     </div>
 
-                    <div x-show="showInput" x-cloak class="w-full">
+                    <div x-show="showInput" class="w-full">
                         <input type="text" wire:model.debounce.300ms="search"
                             wire:focus="$set('showSuggestions', true)" wire:blur="hideSuggestions"
                             placeholder="{{ $search ? $search : 'Type to search tags...' }}"
@@ -354,11 +352,10 @@
     {{-- ================================ Modals ================================ --}}
 
     {{-- Choose a track or playlist Modal --}}
-    <div x-data="{ showCampaignsModal: @entangle('showCampaignsModal').live }" x-show="(typeof showCampaignsModal !== 'undefined' && showCampaignsModal)" x-cloak
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-        x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100"
-        x-transition:leave-end="opacity-0 scale-95"
+    <div x-data="{ showCampaignsModal: @entangle('showCampaignsModal').live }" x-show="showCampaignsModal" x-cloak wire:ignore
+        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
         class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
 
         <div
@@ -553,9 +550,8 @@
     {{-- Create campaign (submit) Modal --}}
     @include('backend.user.includes.campaign-create-modal')
     {{-- Low Credit Warning Modal --}}
-    <div x-data="{ showLowCreditWarningModal: @entangle('showLowCreditWarningModal').live }" x-show="(typeof showLowCreditWarningModal !== 'undefined' && showLowCreditWarningModal)"x-cloak
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0 scale-95" x-transition:enter-start="opacity-0 scale-95"
+    <div x-data="{ showLowCreditWarningModal: @entangle('showLowCreditWarningModal').live }" x-show="showLowCreditWarningModal" x-cloak wire:ignore
+        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
         class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
