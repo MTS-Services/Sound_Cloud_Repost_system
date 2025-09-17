@@ -966,15 +966,10 @@ class Dashboard extends Component
     protected function processResolvedData($resolvedData)
     {
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
-            $this->allPlaylistTracks = collect($resolvedData);
-            $this->tracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
-            $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+            $this->tracks = $resolvedData;
         } else {
             if ($this->activeTab === 'tracks') {
-                $this->allTracks = collect($resolvedData);
-                $this->tracks = $this->allTracks->take($this->trackLimit);
-                dd($this->tracks, $resolvedData);
-                $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+                $this->tracks = $resolvedData;
             } elseif ($this->activeTab === 'playlists') {
                 $this->allPlaylists = collect($resolvedData);
                 $this->playlists = $this->allPlaylists->take($this->playlistLimit);
