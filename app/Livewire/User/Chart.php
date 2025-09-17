@@ -93,6 +93,11 @@ class Chart extends Component
                 return;
             }
 
+            if (UserAnalytics::where('act_user_urn', user()->urn)->where('track_urn', decrypt($encryptedTrackUrn))->exists()) {
+                $this->dispatch('alert', type: 'error', message: 'You have already liked this track.');
+                return;
+            }
+
             $soundcloudRepostId = null;
 
             $httpClient = Http::withHeaders([
