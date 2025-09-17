@@ -147,6 +147,10 @@
     }
 }">
     <x-slot name="page_slug">dashboard</x-slot>
+
+    <input type="text" wire:model="searchQuery"
+        class="py-2 px-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200">
+
     <div id="content-dashboard" class="page-content py-2 px-2">
         <div
             class="tablet:px-2 px-0.5 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 w-full">
