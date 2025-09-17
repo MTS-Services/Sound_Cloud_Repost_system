@@ -221,16 +221,17 @@ class Chart extends Component
             //     campaignId: $track['actionable_details']['id'],
             //     reposter: user()
             // );
+            // $repost = Repost::where('reposter_urn', user()->urn)->where('campaign_id', $track['actionable_details']['id'])->exists();
             // if ($reposted) {
             //     $track['repost'] = true;
             // }
             $track['like'] = false;
-            $like = UserAnalytics::where('act_user_urn', user()->urn)->where('track_urn', $track['track_details']['urn'])->exists();
-            if ($like) {
-                $track['like'] = true;
-            }
+            // $like = UserAnalytics::where('act_user_urn', user()->urn)->where('track_urn', $track['track_details']['urn'])->exists();
+            // if ($like) {
+            //     $track['like'] = true;
+            // }
 
-
+            // Calculate engagement metrics
             $avgTotal = ($totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers) / 5;
 
             // Engagement % (capped at 100)
