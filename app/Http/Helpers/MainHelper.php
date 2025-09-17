@@ -152,6 +152,7 @@ function storage_url($urlOrArray)
 
 function soundcloud_image($url)
 {
+    dd($url);
     $image = asset('default_img/no_img.jpg');
     return $url ? $url : $image;
 }
