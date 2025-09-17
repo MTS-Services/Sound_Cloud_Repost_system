@@ -399,12 +399,12 @@ class Dashboard extends Component
 
             // Validate search query
             // $this->validateSearchQuery();
-            
+            $this->resolveSoundcloudUrl();
+
             // Check if it's a SoundCloud URL
-            if ($this->isSoundCloudUrl($this->searchQuery)) {
-                $this->resolveSoundcloudUrl();
-                return;
-            }
+            // if ($this->isSoundCloudUrl($this->searchQuery)) {
+            //     return;
+            // }
 
             // Perform text-based search
             $this->performTextSearch();
@@ -901,33 +901,6 @@ class Dashboard extends Component
 
     protected function resolveSoundcloudUrl()
     {
-        $this->processSearchData();
-
-        // $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
-        // if ($response->successful()) {
-        //     $resolvedData['tracks'] = $response->json();
-        //     $this->soundCloudService->syncSelfTracks($resolvedData);
-        //     $this->processSearchData();
-        //     Log::info('SoundCloud link resolved successfully', [$resolvedData]);
-        // } else {
-        //     if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
-        //         $this->allPlaylistTracks = collect();
-        //         $this->tracks = collect();
-        //     } else {
-        //         if ($this->activeTab === 'tracks') {
-        //             $this->allTracks = collect();
-        //             $this->tracks = collect();
-        //         } elseif ($this->activeTab === 'playlists') {
-        //             $this->allPlaylists = collect();
-        //             $this->playlists = collect();
-        //         }
-        //     }
-        //     $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
-        // }
-    }
-
-    protected function processSearchData()
-    {
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                 ->where('permalink_url', $this->searchQuery)
@@ -947,6 +920,7 @@ class Dashboard extends Component
                     $this->allTracks = $tracksFromDb;
                     $this->tracks = $this->allTracks->take($this->trackLimit);
                     $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+                    dd($this->tracks, $this->allTracks, $this->hasMoreTracks);
                     return;
                 }
             }
@@ -962,6 +936,51 @@ class Dashboard extends Component
                     $this->hasMorePlaylists = $this->playlists->count() === $this->playlistLimit;
                     return;
                 }
+            }
+        }
+        // dd($this->searchQuery);
+
+        $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
+
+
+        if ($response->successful()) {
+            $resolvedData['tracks'] = $response->json();
+            // dd($resolvedData);
+            $this->soundCloudService->syncSelfTracks($resolvedData);
+            $this->processResolvedData($resolvedData);
+            Log::info('SoundCloud link resolved successfully', [$resolvedData]);
+        } else {
+            if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
+                $this->allPlaylistTracks = collect();
+                $this->tracks = collect();
+            } else {
+                if ($this->activeTab === 'tracks') {
+                    $this->allTracks = collect();
+                    $this->tracks = collect();
+                } elseif ($this->activeTab === 'playlists') {
+                    $this->allPlaylists = collect();
+                    $this->playlists = collect();
+                }
+            }
+            // $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
+        }
+    }
+
+    protected function processResolvedData($resolvedData)
+    {
+        if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
+            $this->allPlaylistTracks = collect($resolvedData);
+            $this->tracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
+            $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+        } else {
+            if ($this->activeTab === 'tracks') {
+                $this->allTracks = collect($resolvedData);
+                $this->tracks = $this->allTracks->take($this->trackLimit);
+                $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+            } elseif ($this->activeTab === 'playlists') {
+                $this->allPlaylists = collect($resolvedData);
+                $this->playlists = $this->allPlaylists->take($this->playlistLimit);
+                $this->hasMorePlaylists = $this->playlists->count() === $this->playlistLimit;
             }
         }
     }
