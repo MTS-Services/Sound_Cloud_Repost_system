@@ -207,7 +207,7 @@ class Analytics extends Component
                 genres: $this->selectedGenres,
                 perPage: $this->tracksPerPage,
                 page: $this->getPage(),
-                userUrn: user()->urn
+                userUrn: user()->urn,
             );
         } catch (\Exception $e) {
             logger()->error('Paginated track data loading failed', ['error' => $e->getMessage()]);
@@ -430,10 +430,10 @@ class Analytics extends Component
             $totalComments = $track['metrics']['total_comments']['current_total'];
             $totalFollowers = $track['metrics']['total_followers']['current_total'];
 
-            $totalEngagements = $totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers;
+            $avgTotal = ($totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers) / 5;
 
             // Engagement % (capped at 100)
-            $engagementRate = min(100, ($totalEngagements / max(1, $totalViews)) * 100);
+            $engagementRate = $totalViews > $avgTotal ? round(min(100, ($totalViews - $avgTotal) / (($totalViews + $avgTotal) / 2) * 100), 2) : 0;
 
             // Engagement Score (0–10 scale)
             $engagementScore = round(($engagementRate / 100) * 10, 1);
