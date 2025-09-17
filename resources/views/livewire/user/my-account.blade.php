@@ -901,7 +901,7 @@
                                                 class="bg-gray-200 mb-2 dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 sm:flex space-y-4 sm:space-y-0">
                                                 {{-- SoundCloud Player --}}
                                                 <div class="sm:w-1/2 w-full">
-                                                    @if ($repost->source)
+                                                    @if ($repost)
                                                         <div id="soundcloud-player-{{ $repost->source_id }}"
                                                             data-campaign-id="{{ $repost->source_id }}" wire:ignore>
                                                             <x-sound-cloud.sound-cloud-player :track="$repost->source"
