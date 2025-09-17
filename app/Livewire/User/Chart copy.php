@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Http;
 use Livewire\Attributes\Locked;
 use Throwable;
 
-class Chart extends Component
+class ChartCopy extends Component
 {
     use WithPagination;
 
