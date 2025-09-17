@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\DB;
 
-class UserAnalytics extends BaseModel
+class UserAnalyticsCopy extends BaseModel
 {
     protected $with = ['user', 'track', 'action'];
 

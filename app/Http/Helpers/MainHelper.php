@@ -152,7 +152,6 @@ function storage_url($urlOrArray)
 
 function soundcloud_image($url)
 {
-    dd($url);
     $image = asset('default_img/no_img.jpg');
     return $url ? $url : $image;
 }
@@ -851,9 +850,3 @@ if (! function_exists('number_shorten')) {
     }
 }
 
-// if (! function_exists('engagement_rate_calculate')) {
-//     function engagement_rate_calculate($total_avg, $views)
-//     {
-//         return (($views - $total_avg) / (($views + $total_avg) / 2)) * 100;
-//     }
-// }
