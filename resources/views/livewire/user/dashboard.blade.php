@@ -149,7 +149,7 @@
     <x-slot name="page_slug">dashboard</x-slot>
 
     {{-- <form wire:submit.prevent="search"> --}}
-    <input type="text" wire:model.live="searchQuery"
+    <input type="text" wire:model.lazy="searchQuery"
         class="py-2 px-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200">
 
     <p>{{ $searchQuery }}</p>
