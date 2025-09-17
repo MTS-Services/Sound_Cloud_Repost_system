@@ -238,8 +238,6 @@ class MyAccount extends Component
             ->sortByDesc('created_at')
             ->take(10);
 
-        dd($tracks);
-
         return view('livewire.user.my-account', [
             'user' => $user,
             'tracks' => $tracks,
