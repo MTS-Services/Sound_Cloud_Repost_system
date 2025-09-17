@@ -28,6 +28,10 @@ class AnalyticsService
         $actUserUrn = user()->urn;
         $ownerUserUrn = $track->user?->urn ?? null;
 
+        if ($ipAddress == null) {
+            $ipAddress = request()->ip();
+        }
+
         if (!$actUserUrn || !$ownerUserUrn) {
             Log::info("Analytics recording skipped - missing user URN", [
                 'act_user_urn' => $actUserUrn,

@@ -143,7 +143,9 @@ class Chart extends Component
                 return;
             }
 
-            if (Repost::where('reposter_urn', user()->urn)->where('campaign_id', $campaign->id)->exists()) {
+            $reposted = $this->campaignService->alreadyReposted(trackOwnerUrn: $campaign->music->user->urn, campaignId: $campaign->id, reposter: user());
+
+            if ($reposted) {
                 $this->dispatch('alert', type: 'error', message: 'You have already reposted this campaign.');
                 return;
             }
@@ -166,11 +168,6 @@ class Chart extends Component
                     $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
                     return;
             }
-            $data = [
-                'likeable' => false,
-                'comment' => false,
-                'follow' => false
-            ];
             if ($response->successful()) {
                 $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
                 if ($repostEmailPermission) {
@@ -185,7 +182,7 @@ class Chart extends Component
                     NotificationMailSent::dispatch($datas);
                 }
                 $soundcloudRepostId = $campaign->music->soundcloud_track_id;
-                $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
+                $this->campaignService->repostTrack($campaign, $soundcloudRepostId);
                 $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.');
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body());
@@ -219,8 +216,12 @@ class Chart extends Component
             $totalComments = $track['metrics']['total_comments']['current_total'];
             $totalFollowers = $track['metrics']['total_followers']['current_total'];
             $track['repost'] = false;
-            $repost = Repost::where('reposter_urn', user()->urn)->where('campaign_id', $track['actionable_details']['id'])->exists();
-            if ($repost) {
+            $reposted = $this->campaignService->alreadyReposted(
+                trackOwnerUrn: $track['track_details']['user_urn'],
+                campaignId: $track['actionable_details']['id'],
+                reposter: user()
+            );
+            if ($reposted) {
                 $track['repost'] = true;
             }
             $track['like'] = false;
