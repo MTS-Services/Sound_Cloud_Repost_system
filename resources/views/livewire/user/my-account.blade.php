@@ -922,9 +922,10 @@
                                                             <div class="flex flex-col items-start gap-2">
                                                                 {{-- Avatar --}}
                                                                 <div class="flex items-center gap-2">
-                                                                    <img src="{{ soundcloud_image($repost->source->artwork_url) }}"
+                                                                    @dd($repost->source)
+                                                                    {{-- <img src="{{ soundcloud_image($repost->source->artwork_url) }}"
                                                                         class="w-12 h-12 rounded-full object-cover"
-                                                                        alt="Track artwork" />
+                                                                        alt="Track artwork" /> --}}
                                                                     <div x-data="{ open: false }"
                                                                         class=" inline-block text-left">
                                                                         <div class="flex items-center gap-1 cursor-pointer"
