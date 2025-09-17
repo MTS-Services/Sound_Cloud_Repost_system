@@ -1049,7 +1049,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900 dark:text-white">
-                                        {{ $track['track_details']->created_at_formatted ?? 'Unknown' }}
+                                        {{ Carbon\Carbon::parse($track['track_details']->created_at_soundcloud)->format('d M, Y h:i A') ?? 'Unknown' }}
                                     </div>
                                 </td>
                             </tr>
