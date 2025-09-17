@@ -21,7 +21,7 @@ class Repost extends BaseModel
         'reposted_at',
 
         'like_count',
-        'comment_count',
+        // 'comment_count',
         'followers_count',
 
 

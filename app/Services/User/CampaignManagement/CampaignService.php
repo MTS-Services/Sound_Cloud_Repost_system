@@ -81,7 +81,7 @@ class CampaignService
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_COMMENT, $campaign->target_genre);
                     if ($response != false || $response != null) {
                         $campaign->increment('comment_count');
-                        $repost->increment('comment_count');
+                        // $repost->increment('comment_count');
                     }
                 }
                 if ($likeCommentAbleData['likeable']) {
