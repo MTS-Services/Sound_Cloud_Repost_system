@@ -945,7 +945,7 @@ class Dashboard extends Component
 
         if ($response->successful()) {
             $resolvedData['tracks'] = $response->json();
-            dd($resolvedData);
+            // dd($resolvedData);
             $this->soundCloudService->syncSelfTracks($resolvedData);
             $this->processResolvedData($resolvedData);
             Log::info('SoundCloud link resolved successfully', [$resolvedData]);
