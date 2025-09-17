@@ -355,7 +355,7 @@
 
     {{-- Choose a track or playlist Modal --}}
     <div x-data="{ showCampaignsModal: @entangle('showCampaignsModal').live }" x-show="showCampaignsModal" x-cloak
-        x-transition:enter="transition ease-out duration-300" wire:ignore
+        x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
         x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100"
         x-transition:leave-end="opacity-0 scale-95"
@@ -554,7 +554,7 @@
     @include('backend.user.includes.campaign-create-modal')
     {{-- Low Credit Warning Modal --}}
     <div x-data="{ showLowCreditWarningModal: @entangle('showLowCreditWarningModal').live }" x-show="showLowCreditWarningModal"x-cloak
-        x-transition:enter="transition ease-out duration-300" wire:ignore
+        x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0 scale-95" x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
