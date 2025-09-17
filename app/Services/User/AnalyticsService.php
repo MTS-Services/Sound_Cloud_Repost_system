@@ -757,7 +757,6 @@ class AnalyticsService
                 'total_followers' => $typeGroups->get(UserAnalytics::TYPE_FOLLOW, collect())->count(),
             ];
         })->values()->toArray();
-        dd($chartData);
         return $chartData;
     }
 
