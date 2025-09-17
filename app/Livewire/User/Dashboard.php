@@ -938,10 +938,12 @@ class Dashboard extends Component
             }
         }
 
-        $response = Http::get("{$this->soundcloudApiUrl}/resolve", [
+        $response = Http::get("https://api.soundcloud.com/resolve", [
             'url' => $this->searchQuery,
+            'client_id' => config('services.soundcloud.client_id'),
         ]);
-        dd($response);
+        dd($response->status(), $response->json());
+
 
         if ($response->successful()) {
             $resolvedData = $response->json();
