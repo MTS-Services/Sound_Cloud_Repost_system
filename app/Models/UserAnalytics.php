@@ -13,11 +13,11 @@ class UserAnalytics extends BaseModel
     use SoftDeletes;
 
     // Action type constants
-    public const TYPE_PLAY = 0;
-    public const TYPE_REPOST = 1;
+    public const TYPE_VIEW = 0;
+    public const TYPE_PLAY = 1;
     public const TYPE_LIKE = 2;
     public const TYPE_COMMENT = 3;
-    public const TYPE_VIEW = 4;
+    public const TYPE_REPOST = 4;
     public const TYPE_REQUEST = 5;
     public const TYPE_FOLLOW = 6;
 
