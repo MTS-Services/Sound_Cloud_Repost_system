@@ -973,6 +973,7 @@ class Dashboard extends Component
             if ($this->activeTab === 'tracks') {
                 $this->allTracks = collect($resolvedData);
                 $this->tracks = $this->allTracks->take($this->trackLimit);
+                dd($this->tracks, $resolvedData);
                 $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
             } elseif ($this->activeTab === 'playlists') {
                 $this->allPlaylists = collect($resolvedData);
