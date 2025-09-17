@@ -252,6 +252,8 @@
             // Initial setup
             this.setupCharts();
     
+            console.log(this.chartData);
+
             // Watch for data changes
             this.$watch('$wire.data', (newData, oldData) => {
                 if (JSON.stringify(newData) !== JSON.stringify(oldData)) {
