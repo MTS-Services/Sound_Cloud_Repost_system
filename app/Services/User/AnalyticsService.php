@@ -58,6 +58,8 @@ class AnalyticsService
         $actionIdentifier = sprintf(
             '%s.%s.%s.%s.%s',
             $type,
+            $actionable->id ?? 0,
+            $actionable->getMorphClass() ?? 'N/A',
             $track->urn,
             $ownerUserUrn,
             $actUserUrn,
