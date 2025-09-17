@@ -195,7 +195,7 @@
                             @forelse ($topTracks as $track)
                                 <div
                                     class="grid grid-cols-12 gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 border-b border-gray-300 dark:border-gray-700">
-                                    {{-- @dd($track); --}}
+
                                     @if (proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured)
                                         <div class="col-span-1 flex items-center">
                                             <div
@@ -453,8 +453,6 @@
                         <div class="space-y-3">
 
                             @forelse ($topTracks as $track)
-                             @dd($track);
-                                {{-- @dd($track); --}}
                                 <div
                                     class="relative border rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-900 dark:to-gray-800  shadow-lg {{ proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured
                                         ? 'shadow-orange-500/20 border-orange-300 dark:border-orange-500'

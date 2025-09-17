@@ -77,7 +77,7 @@ class CampaignService
                 }
 
                 if ($likeCommentAbleData['comment']) {
-                    Log::info("likeCommentAbleData", $likeCommentAbleData);
+                    // Log::info("likeCommentAbleData", $likeCommentAbleData);
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_COMMENT, $campaign->target_genre);
                     if ($response != false || $response != null) {
                         $campaign->increment('comment_count');
