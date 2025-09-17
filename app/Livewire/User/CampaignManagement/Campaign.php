@@ -825,14 +825,14 @@ class Campaign extends Component
      =========================================*/
     public function handleAudioPlay($campaignId)
     {
-        Log::info('handleAudioPlay Campaign ID: ' . $campaignId);
+        // Log::info('handleAudioPlay Campaign ID: ' . $campaignId);
         $this->playingCampaigns[$campaignId] = true;
         $this->playStartTimes[$campaignId] = now()->timestamp;
     }
 
     public function handleAudioPause($campaignId)
     {
-        Log::info('handleAudioPlay Campaign ID: ' . $campaignId);
+        // Log::info('handleAudioPlay Campaign ID: ' . $campaignId);
         $this->updatePlayTime($campaignId);
         unset($this->playingCampaigns[$campaignId]);
         unset($this->playStartTimes[$campaignId]);
@@ -881,7 +881,7 @@ class Campaign extends Component
 
     public function startPlaying($campaignId)
     {
-        Log::info('startPlaying campaignId: ' . $campaignId);
+        // Log::info('startPlaying campaignId: ' . $campaignId);
         // $this->reset([
         //     'playcount',
         //     'playedCampaigns',
@@ -898,13 +898,13 @@ class Campaign extends Component
 
     public function stopPlaying($campaignId)
     {
-        Log::info('stopPlaying campaignId: ' . $campaignId);
+        // Log::info('stopPlaying campaignId: ' . $campaignId);
         $this->handleAudioPause($campaignId);
     }
 
     public function simulateAudioProgress($campaignId, $seconds = 1)
     {
-        Log::info('simulateAudioProgress campaignId: ' . $campaignId);
+        // Log::info('simulateAudioProgress campaignId: ' . $campaignId);
         if (!isset($this->playTimes[$campaignId])) {
             $this->playTimes[$campaignId] = 0;
         }
@@ -919,7 +919,7 @@ class Campaign extends Component
 
     public function canRepost($campaignId): bool
     {
-        Log::info('canRepost campaignId: ' . $campaignId);
+        // Log::info('canRepost campaignId: ' . $campaignId);
         $canRepost = in_array($campaignId, $this->playedCampaigns) &&
             !in_array($campaignId, $this->repostedCampaigns);
 
@@ -936,7 +936,10 @@ class Campaign extends Component
             }
 
             $response = $this->analyticsService->recordAnalytics($this->track, $campaign, UserAnalytics::TYPE_PLAY, $campaign->target_genre);
+            Log:info('response: analytics: ');
             if ($response != false || $response != null) {
+
+
                 $campaign->increment('playback_count');
             }
 
@@ -957,13 +960,13 @@ class Campaign extends Component
 
     public function isPlaying($campaignId): bool
     {
-        Log::info('isPlaying campaignId: ' . $campaignId);
+        // Log::info('isPlaying campaignId: ' . $campaignId);
         return isset($this->playingCampaigns[$campaignId]) && $this->playingCampaigns[$campaignId] === true;
     }
 
     public function getPlayTime($campaignId): int
     {
-        Log::info('getPlayTime campaignId: ' . $campaignId);
+        // Log::info('getPlayTime campaignId: ' . $campaignId);
         $baseTime = $this->playTimes[$campaignId] ?? 0;
 
         if ($this->isPlaying($campaignId) && isset($this->playStartTimes[$campaignId])) {
@@ -976,7 +979,7 @@ class Campaign extends Component
 
     public function getRemainingTime($campaignId): int
     {
-        Log::info('getRemainingTime campaignId: ' . $campaignId);
+        // Log::info('getRemainingTime campaignId: ' . $campaignId);
         $playTime = $this->getPlayTime($campaignId);
         return max(0, 5 - $playTime);
     }
@@ -986,10 +989,10 @@ class Campaign extends Component
             $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
             return;
         }
-        Log::info('confirmRepost campaignId: ' . $campaignId);
+        // Log::info('confirmRepost campaignId: ' . $campaignId);
         $this->showRepostConfirmationModal = true;
         $this->campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
-        Log::info($this->campaign);
+        // Log::info($this->campaign);
     }
 
     public function repost($campaignId)
