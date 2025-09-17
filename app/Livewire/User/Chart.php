@@ -7,6 +7,7 @@ use App\Models\Campaign;
 use App\Models\Playlist;
 use App\Models\Repost;
 use App\Models\Track;
+use App\Models\UserAnalytics;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\User\AnalyticsService;
 use App\Services\User\CampaignManagement\CampaignService;
@@ -216,6 +217,11 @@ class Chart extends Component
             $repost = Repost::where('reposter_urn', user()->urn)->where('campaign_id', $track['actionable_details']['id'])->exists();
             if ($repost) {
                 $track['repost'] = true;
+            }
+            $track['like'] = false;
+            $like = UserAnalytics::where('act_user_urn', user()->urn)->where('track_urn', $track['track_details']['urn'])->exists();
+            if ($like) {
+                $track['like'] = true;
             }
 
 

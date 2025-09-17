@@ -118,7 +118,7 @@
                         </div>
                     </div>
                 </div>
-                <div x-data="{ activeTab: @entangle('activeTab').live, playing: @entangle('playing').live  }">
+                <div x-data="{ activeTab: @entangle('activeTab').live, playing: @entangle('playing').live }">
                     <div class="flex items-center justify-between mb-6">
                         <div class="flex items-center gap-4">
                             <h2 class="text-xl font-bold text-gray-800 dark:text-white">{{ $topTracks->count() }}
@@ -958,7 +958,7 @@
                                                     </button>
                                                     <button
                                                         wire:click="likeTrack('{{ encrypt($track['actionable_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
-                                                        class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
+                                                        class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 {{ $track['like'] ? 'bg-red-500 text-white shadow-lg' : '' }} hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
                                                         title="Like">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                             height="24" viewBox="0 0 24 24" fill="none"
