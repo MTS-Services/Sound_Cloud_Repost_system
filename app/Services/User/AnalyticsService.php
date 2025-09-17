@@ -741,8 +741,6 @@ class AnalyticsService
             $actionType
         );
 
-        dd($data->values()->all());
-
         // Group by date for chart
         $chartData = $data->groupBy(function ($item) {
             return Carbon::parse($item->created_at)->format('Y-m-d');
