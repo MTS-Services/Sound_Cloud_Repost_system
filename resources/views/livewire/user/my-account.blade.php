@@ -921,7 +921,7 @@
                                                             <div class="flex flex-col items-start gap-2">
                                                                 {{-- Avatar --}}
                                                                 <div class="flex items-center gap-2">
-                                                                    @dd($repost)
+                                                                    @dd($repost->source->artwork_url)
                                                                     {{-- <img src="{{ soundcloud_image($repost->source->artwork_url) }}"
                                                                         class="w-12 h-12 rounded-full object-cover"
                                                                         alt="Track artwork" /> --}}
