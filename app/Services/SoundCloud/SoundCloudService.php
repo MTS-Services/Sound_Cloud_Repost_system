@@ -280,10 +280,14 @@ class SoundCloudService
 
                 Log::info('Track Data:' . json_encode($commonTrackData));
 
-                $track = Track::updateOrCreate(
-                    ['soundcloud_track_id' => $trackData['id']],
-                    $commonTrackData
-                );
+                // $track = Track::updateOrCreate(
+                //     ['soundcloud_track_id' => $trackData['id']],
+                //     $commonTrackData
+                // );
+
+                $track = Track::firstOrNew(['soundcloud_track_id' => $trackData['id']]);
+                $track->fill($commonTrackData);
+                $track->save();
 
                 Log::info("Successfully synced track {$track->soundcloud_track_id} for user {$user->urn}.");
 
