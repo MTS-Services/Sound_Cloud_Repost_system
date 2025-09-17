@@ -143,7 +143,8 @@ class Chart extends Component
                 return;
             }
 
-            $reposted = $this->campaignService->alreadyReposted(trackOwnerUrn: $campaign->music->user->urn, campaignId: $campaign->id, reposter: user());
+            // $reposted = $this->campaignService->alreadyReposted(trackOwnerUrn: $campaign->music->user->urn, campaignId: $campaign->id, reposter: user());
+            $reposted = Repost::where('campaign_id', $campaign->id)->where('reposter_urn', user()->urn)->exists();
 
             if ($reposted) {
                 $this->dispatch('alert', type: 'error', message: 'You have already reposted this campaign.');
@@ -226,12 +227,12 @@ class Chart extends Component
             //     $track['repost'] = true;
             // }
             $track['like'] = false;
-            // $like = UserAnalytics::where('act_user_urn', user()->urn)->where('track_urn', $track['track_details']['urn'])->exists();
-            // if ($like) {
-            //     $track['like'] = true;
-            // }
+            $like = UserAnalytics::where('act_user_urn', user()->urn)->where('track_urn', $track['track_details']['urn'])->exists();
+            if ($like) {
+                $track['like'] = true;
+            }
 
-            // Calculate engagement metrics
+
             $avgTotal = ($totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers) / 5;
 
             // Engagement % (capped at 100)
