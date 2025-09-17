@@ -220,6 +220,8 @@ class SoundCloudService
                     $track_author->update(['status' => User::STATUS_INACTIVE]);
                 }
 
+                Log::info('SoundCloud sync started for playlist ' . $playlist_urn . ' for user ' . $userUrn);
+                Log::info('track Id:' . $trackData['id']);
                 $commonTrackData = [
                     'user_urn' => $trackData['user']['urn'] ?? null,
                     'kind' => $trackData['kind'] ?? null,
@@ -275,6 +277,8 @@ class SoundCloudService
                     'author_soundcloud_permalink' => $trackData['user']['permalink'] ?? null,
                     'author_soundcloud_uri' => $trackData['user']['uri'] ?? null,
                 ];
+
+                Log::info('Track Data:' . json_encode($commonTrackData));
 
                 $track = Track::updateOrCreate(
                     ['soundcloud_track_id' => $trackData['id']],
