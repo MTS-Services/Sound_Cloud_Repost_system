@@ -107,8 +107,8 @@ class AnalyticsService
                 'owner_user_urn' => $ownerUserUrn,
                 'act_user_urn' => $actUserUrn,
                 'track_urn' => $track->urn,
-                'actionable_id' => $actionable->id,
-                'actionable_type' => $actionable->getMorphClass(),
+                'actionable_id' => $actionable ? $actionable->id : null,
+                'actionable_type' => $actionable ? $actionable->getMorphClass() : null,
                 'ip_address' => request()->ip(),
                 'type' => $type,
 
