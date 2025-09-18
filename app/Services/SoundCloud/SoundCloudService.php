@@ -279,6 +279,14 @@ class SoundCloudService
 
                 Log::info('Track Data:' . json_encode($commonTrackData));
 
+                Log::info('Searching for existing track with SoundCloud ID: ' . $trackData['id']);
+
+
+                $track = Track::where('soundcloud_track_id', $trackData['id'])->first();
+
+                Log::info('Track:' . json_encode($track));
+
+
                 $track = Track::updateOrCreate(
                     [
                         'soundcloud_track_id' => $trackData['id'],
