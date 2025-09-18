@@ -1235,7 +1235,7 @@ class Campaign extends Component
             if ($this->activeTab === 'playlists') {
                 $resolvedPlaylists = $response->json();
                 if (isset($resolvedPlaylists['tracks']) && count($resolvedPlaylists['tracks']) > 0) {
-                    Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud Data: " . $resolvedPlaylists);
+                    Log::info('Resolved SoundCloud Playlist Data: ', $resolvedPlaylists);
                     $this->soundCloudService->unknownPlaylistAdd($resolvedPlaylists);
                 } else {
                     $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
