@@ -921,6 +921,7 @@ class Dashboard extends Component
                 }
             }
         }
+        $response = null;
         if (proUser()) {
             $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
         } else {
