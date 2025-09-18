@@ -1199,14 +1199,15 @@ class Campaign extends Component
 
 
         if ($response->successful()) {
-            $resolvedData['tracks'] = $response->json();
             if($this->activeTab === 'playlists'){
-                $resolvedData['tracks'] = $resolvedData['tracks']['tracks'];
-                // $playlistUrn = $resolvedData['tracks']['urn'];
-                dd($resolvedData, $resolvedData['tracks']);
-                $this->soundCloudService->syncSelfTracks($resolvedData, $playlistUrn);
+                $resolvedTracks= $response->json();
+                $resolvedPlaylistTracks['tracks'] = $resolvedTracks['tracks'];
+                $playlistUrn = $resolvedTracks['urn'];
+                dd($resolvedPlaylistTracks, $playlistUrn);
+                $this->soundCloudService->syncSelfTracks($resolvedPlaylistTracks, $playlistUrn);
             }else{
-                $this->soundCloudService->syncSelfTracks($resolvedData);
+                $resolvedTrack['tracks'] = $response->json();
+                $this->soundCloudService->syncSelfTracks($resolvedTrack);
             }
             $this->processSearchData();
             Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
