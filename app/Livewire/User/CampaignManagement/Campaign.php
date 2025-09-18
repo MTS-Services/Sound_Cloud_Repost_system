@@ -1202,8 +1202,8 @@ class Campaign extends Component
             $resolvedData['tracks'] = $response->json();
             if($this->activeTab === 'playlists'){
                 $resolvedData['tracks'] = $resolvedData['tracks']['tracks'];
-                $playlistUrn = $resolvedData['tracks']['urn'];
-                dd($resolvedData,$playlistUrn);
+                // $playlistUrn = $resolvedData['tracks']['urn'];
+                dd($resolvedData, $resolvedData['tracks']);
                 $this->soundCloudService->syncSelfTracks($resolvedData, $playlistUrn);
             }else{
                 $this->soundCloudService->syncSelfTracks($resolvedData);
