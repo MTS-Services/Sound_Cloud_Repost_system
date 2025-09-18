@@ -53,6 +53,7 @@ class TrackViewCount implements ShouldQueue
      */
     public function handle(): void
     {
+        Log::info('TrackViewCount Job is processing. total datas: ' . count($this->datas));
         foreach ($this->datas as $data) {
             switch ($this->type) {
                 case 'track':
@@ -73,6 +74,7 @@ class TrackViewCount implements ShouldQueue
                     $this->track = $data->track;
                     break;
             }
+            Log::info('TrackViewCount Job processing track urn: ' . $this->track->urn . ', genre: ' . $this->genre . ', actionable type: ' . ($this->actionable ? get_class($this->actionable) : 'null'));
             $this->analyticsService->recordAnalytics($this->track, $this->actionable, UserAnalytics::TYPE_VIEW, $this->genre);
         }
 
