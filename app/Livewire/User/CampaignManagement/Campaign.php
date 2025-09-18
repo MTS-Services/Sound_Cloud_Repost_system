@@ -196,9 +196,9 @@ class Campaign extends Component
     ################################loadmore########################################
 
     // Properties for "Load More"
-    public $tracksPage = 4;
-    public $playlistsPage = 4;
-    public $perPage = 4;
+    public $tracksPage = 1;
+    public $playlistsPage = 1;
+    public $perPage = 1;
     public $hasMoreTracks = false;
     public $hasMorePlaylists = false;
 
@@ -223,6 +223,9 @@ class Campaign extends Component
 
     public function mount()
     {
+        $this->soundCloudService->ensureSoundCloudConnection(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        
         $this->getAllTrackTypes();
         $this->totalCampaigns();
         $this->calculateFollowersLimit();
@@ -533,7 +536,7 @@ class Campaign extends Component
     public function fetchTracks()
     {
         try {
-            // $this->soundCloudService->syncSelfTracks([]);
+            $this->soundCloudService->syncSelfTracks([]);
 
             $this->tracksPage = 1;
             $this->tracks = Track::where('user_urn', user()->urn)
@@ -550,8 +553,7 @@ class Campaign extends Component
     public function loadMoreTracks()
     {
         $this->tracksPage++;
-        $newTracks = Track::where('user_urn', user()->urn)
-            ->latest()
+        $newTracks = Track::latest()
             ->skip(($this->tracksPage - 1) * $this->perPage)
             ->take($this->perPage)
             ->get();
@@ -563,8 +565,7 @@ class Campaign extends Component
     public function fetchPlaylists()
     {
         try {
-            // $this->soundCloudService-> ();
-
+            $this->soundCloudService->syncSelfPlaylists();
             $this->playlistsPage = 1;
             $this->playlists = Playlist::where('user_urn', user()->urn)
                 ->latest()
@@ -580,8 +581,7 @@ class Campaign extends Component
     public function loadMorePlaylists()
     {
         $this->playlistsPage++;
-        $newPlaylists = Playlist::where('user_urn', user()->urn)
-            ->latest()
+        $newPlaylists = Playlist::latest()
             ->skip(($this->playlistsPage - 1) * $this->perPage)
             ->take($this->perPage)
             ->get();
@@ -998,8 +998,6 @@ class Campaign extends Component
 
     public function repost($campaignId)
     {
-        $this->soundCloudService->ensureSoundCloudConnection(user());
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         try {
             if (!$this->canRepost($campaignId)) {
                 $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
@@ -1116,11 +1114,11 @@ class Campaign extends Component
     public $allTracks;
     public $users;
     public $allPlaylists;
-    public $playlistLimit = 4;
-    public $playlistTrackLimit = 4;
+    public $trackLimit = 1;
+    public $playlistLimit = 1;
+    public $playlistTrackLimit = 1;
     public $allPlaylistTracks;
     public $userinfo;
-    public $trackLimit = 4;
     private $soundcloudClientId = 'YOUR_SOUNDCLOUD_CLIENT_ID';
     private $soundcloudApiUrl = 'https://api-v2.soundcloud.com';
     public $playListTrackShow = false;
@@ -1156,7 +1154,11 @@ class Campaign extends Component
         }
 
         if (preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[a-zA-Z0-9\-_]+(\/[a-zA-Z0-9\-_]+)*(\/)?(\?.*)?$/i', $this->searchQuery)) {
-            $this->resolveSoundcloudUrl();
+            if (proUser()) {
+                $this->resolveSoundcloudUrl();
+            } else {
+                return $this->dispatch('alert', type: 'error', message: 'Please upgrade to a Pro User to use this feature.');
+            }
         } else {
             if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
                 $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
@@ -1191,6 +1193,7 @@ class Campaign extends Component
 
     protected function resolveSoundcloudUrl()
     {
+
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                 ->where('permalink_url', $this->searchQuery)
@@ -1228,16 +1231,15 @@ class Campaign extends Component
             }
         }
 
+        $response = null;
         $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
-
 
         if ($response->successful()) {
             if ($this->activeTab === 'playlists') {
-                $resolvedTracks = $response->json();
-                if (isset($resolvedTracks['tracks']) && count($resolvedTracks['tracks']) > 0) {
-                    $resolvedPlaylistTracks['tracks'] = $resolvedTracks['tracks'];
-                    $playlistUrn = $resolvedTracks['urn'];
-                    $this->soundCloudService->unknownPlaylistAdd($resolvedPlaylistTracks['tracks'], $playlistUrn);
+                $resolvedPlaylists = $response->json();
+                if (isset($resolvedPlaylists['tracks']) && count($resolvedPlaylists['tracks']) > 0) {
+                    Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
+                    $this->soundCloudService->unknownPlaylistAdd($resolvedPlaylists);
                 } else {
                     $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
                 }

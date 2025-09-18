@@ -186,6 +186,9 @@ class Dashboard extends Component
 
     public function mount()
     {
+        $this->soundCloudService->ensureSoundCloudConnection(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        
         $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers());
 
         $lastWeekFollowerPercentage = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers(), 'last_week');
@@ -402,19 +405,16 @@ class Dashboard extends Component
 
             // Check if it's a SoundCloud URL
             if ($this->isSoundCloudUrl($this->searchQuery)) {
-                $this->resolveSoundcloudUrl();
+                if (proUser()) {
+                    $this->resolveSoundcloudUrl();
+                } else {
+                    $this->dispatch('alert', type: 'error', message: 'Please upgrade to a Pro User to use this feature.');
+                }
                 return;
             }
 
             // Perform text-based search
             $this->performTextSearch();
-            // } catch (ValidationException $e) {
-            //     $this->dispatch('alert', type: 'error', message: $e->validator->errors()->first());
-            //     Log::warning('Search validation failed', [
-            //         'search_query' => $this->searchQuery,
-            //         'errors' => $e->validator->errors()->toArray(),
-            //         'user_urn' => user()->urn ?? 'unknown'
-            //     ]);
         } catch (\Exception $e) {
             $this->dispatch('alert', type: 'error', message: 'Search failed. Please try again.');
             Log::error('Search failed: ' . $e->getMessage(), [
@@ -885,11 +885,6 @@ class Dashboard extends Component
 
     protected function resolveSoundcloudUrl()
     {
-        $this->processSearchData();
-        if ($this->tracks->count() > 0) {
-            return;
-        }
-
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                 ->where('permalink_url', $this->searchQuery)
@@ -926,21 +921,21 @@ class Dashboard extends Component
                 }
             }
         }
-        
+        $response = null;
         $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
-
 
         if ($response->successful()) {
             if ($this->activeTab === 'playlists') {
-                $resolvedTracks = $response->json();
-                if (isset($resolvedTracks['tracks']) && count($resolvedTracks['tracks']) > 0) {
-                    $resolvedPlaylistTracks['tracks'] = $resolvedTracks['tracks'];
-                    $playlistUrn = $resolvedTracks['urn'];
-                    $this->soundCloudService->syncSelfTracks($resolvedPlaylistTracks, $playlistUrn);
+                $resolvedPlaylists = $response->json();
+                if (isset($resolvedPlaylists['tracks']) && count($resolvedPlaylists['tracks']) > 0) {
+                    $this->soundCloudService->unknownPlaylistAdd($resolvedPlaylists);
+                    Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
+                } else {
+                    $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
                 }
             } else {
-                $resolvedTrack['tracks'] = $response->json();
-                $this->soundCloudService->syncSelfTracks($resolvedTrack);
+                $resolvedTrack = $response->json();
+                $this->soundCloudService->unknownTrackAdd($resolvedTrack);
             }
             $this->processSearchData();
             Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
@@ -965,8 +960,9 @@ class Dashboard extends Component
     {
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
-                ->where('permalink_url', $this->searchQuery)
+                ->where('permalink_url', 'like', '%' . $this->searchQuery . '%')
                 ->get();
+
             if ($tracksFromDb->isNotEmpty()) {
                 $this->allPlaylistTracks = $tracksFromDb;
                 $this->tracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
@@ -975,8 +971,9 @@ class Dashboard extends Component
             }
         } else {
             if ($this->activeTab == 'tracks') {
-                $tracksFromDb = Track::where('permalink_url', $this->searchQuery)
+                $tracksFromDb = Track::where('permalink_url', 'like', '%' . $this->searchQuery . '%')
                     ->get();
+
                 if ($tracksFromDb->isNotEmpty()) {
                     $this->activeTab = 'tracks';
                     $this->allTracks = $tracksFromDb;
@@ -987,7 +984,7 @@ class Dashboard extends Component
             }
 
             if ($this->activeTab == 'playlists') {
-                $playlistsFromDb = Playlist::where('permalink_url', $this->searchQuery)
+                $playlistsFromDb = Playlist::where('permalink_url', 'like', '%' . $this->searchQuery . '%')
                     ->get();
 
                 if ($playlistsFromDb->isNotEmpty()) {

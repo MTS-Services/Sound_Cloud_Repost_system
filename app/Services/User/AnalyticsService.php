@@ -20,12 +20,11 @@ class AnalyticsService
      */
     public function syncUserAction(
         object $track,
-        ?object $actionable = null,
+        string $actUserUrn,
         int $type,
         ?string $ipAddress = null,
-    ) {
 
-        $actUserUrn = user()->urn;
+    ): bool|null {
         $ownerUserUrn = $track->user?->urn ?? null;
 
         if ($ipAddress == null) {
@@ -73,7 +72,7 @@ class AnalyticsService
 
         // Check if this action has already been logged for today.
         if (in_array($actionIdentifier, $updatedToday)) {
-            Log::info("User action update skipped for {$actUserUrn} on {$actionIdentifier} for source track urn:{$track->urn} and actionable id:{$actionable->id} type: {$actionable->getMorphClass()}. Already updated today.");
+            Log::info("User action update skipped for {$actUserUrn} on {$actionIdentifier} for source track urn:{$track->urn} . Already updated today.");
             return false;
         }
 
@@ -84,20 +83,20 @@ class AnalyticsService
         return true;
     }
 
-    public function recordAnalytics(object $track, ?object $actionable = null, int $type, string $genre): UserAnalytics|bool|null
+    public function recordAnalytics(object $track, ?object $actionable = null, int $type, string $genre, $actUserUrn = null): UserAnalytics|bool|null
     {
         // Get the owner's URN from the track model.
-        $ownerUserUrn = $actionable->user?->urn ?? $track->user?->urn ?? null;
-        $actUserUrn = user()->urn;
+        $ownerUserUrn = ($actionable ? $actionable?->user?->urn : $track?->user?->urn);
+        $actUserUrn = $actUserUrn ?? user()->urn;
 
         // If no user URN is found, log and exit early.
         if (!$ownerUserUrn) {
-            Log::info("User action update skipped for {$ownerUserUrn} on {$type} for track urn:{$track->id} and actionable id:{$actionable->id} type: {$actionable->getMorphClass()}. No user URN found.");
+            Log::info("User action update skipped for {$ownerUserUrn} on {$type} for track urn:{$track->id} No user URN found.");
             return null;
         }
-
+        Log::info("User action update for {$ownerUserUrn} on {$type} for track urn:{$track->urn} and actuser urn: {$actUserUrn}.");
         // Use the new reusable method to check if the update is allowed.
-        if (!$this->syncUserAction($track, $actionable, $type)) {
+        if (!$this->syncUserAction($track, $actUserUrn, $type)) {
             return false;
         }
 
@@ -107,8 +106,8 @@ class AnalyticsService
                 'owner_user_urn' => $ownerUserUrn,
                 'act_user_urn' => $actUserUrn,
                 'track_urn' => $track->urn,
-                'actionable_id' => $actionable->id,
-                'actionable_type' => $actionable->getMorphClass(),
+                'actionable_id' => $actionable ? $actionable->id : null,
+                'actionable_type' => $actionable ? $actionable->getMorphClass() : null,
                 'ip_address' => request()->ip(),
                 'type' => $type,
 
