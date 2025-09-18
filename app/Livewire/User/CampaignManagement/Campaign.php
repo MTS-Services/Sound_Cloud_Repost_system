@@ -1191,21 +1191,22 @@ class Campaign extends Component
 
     protected function resolveSoundcloudUrl()
     {
-       $this->processSearchData();
-        if($this->tracks->count() > 0){
+        $this->processSearchData();
+        if ($this->tracks->count() > 0) {
             return;
         }
         $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
 
 
         if ($response->successful()) {
-            if($this->activeTab === 'playlists'){
-                $resolvedTracks= $response->json();
-                $resolvedPlaylistTracks['tracks'] = $resolvedTracks['tracks'];
-                $playlistUrn = $resolvedTracks['urn'];
-                dd($resolvedPlaylistTracks, $playlistUrn);
-                $this->soundCloudService->syncSelfTracks($resolvedPlaylistTracks, $playlistUrn);
-            }else{
+            if ($this->activeTab === 'playlists') {
+                $resolvedTracks = $response->json();
+                if (isset($resolvedTracks['tracks']) && count($resolvedTracks['tracks']) > 0) {
+                    $resolvedPlaylistTracks['tracks'] = $resolvedTracks['tracks'];
+                    $playlistUrn = $resolvedTracks['urn'];
+                    $this->soundCloudService->syncSelfTracks($resolvedPlaylistTracks, $playlistUrn);
+                }
+            } else {
                 $resolvedTrack['tracks'] = $response->json();
                 $this->soundCloudService->syncSelfTracks($resolvedTrack);
             }
