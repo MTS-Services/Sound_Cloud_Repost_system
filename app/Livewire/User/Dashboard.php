@@ -447,7 +447,7 @@ class Dashboard extends Component
 
     private function isSoundCloudUrl(string $query): bool
     {
-        return preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[a-zA-Z0-9\-_\/]+(\?[^\s]*)?$/i', $query);
+        return preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[a-zA-Z0-9\-_]+(\/[a-zA-Z0-9\-_]+)*(\/)?(\?.*)?$/i', $query);
     }
 
     private function resetSearchToDefault(): void
