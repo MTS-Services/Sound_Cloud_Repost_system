@@ -196,9 +196,9 @@ class Campaign extends Component
     ################################loadmore########################################
 
     // Properties for "Load More"
-    public $tracksPage = 4;
-    public $playlistsPage = 4;
-    public $perPage = 4;
+    public $tracksPage = 1;
+    public $playlistsPage = 1;
+    public $perPage = 1;
     public $hasMoreTracks = false;
     public $hasMorePlaylists = false;
 
@@ -553,8 +553,7 @@ class Campaign extends Component
     public function loadMoreTracks()
     {
         $this->tracksPage++;
-        $newTracks = Track::where('user_urn', user()->urn)
-            ->latest()
+        $newTracks = Track::latest()
             ->skip(($this->tracksPage - 1) * $this->perPage)
             ->take($this->perPage)
             ->get();
@@ -582,8 +581,7 @@ class Campaign extends Component
     public function loadMorePlaylists()
     {
         $this->playlistsPage++;
-        $newPlaylists = Playlist::where('user_urn', user()->urn)
-            ->latest()
+        $newPlaylists = Playlist::latest()
             ->skip(($this->playlistsPage - 1) * $this->perPage)
             ->take($this->perPage)
             ->get();
