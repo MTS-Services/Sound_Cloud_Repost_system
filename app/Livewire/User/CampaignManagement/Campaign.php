@@ -1116,9 +1116,9 @@ class Campaign extends Component
     public $allTracks;
     public $users;
     public $allPlaylists;
-    public $trackLimit = 4;
-    public $playlistLimit = 4;
-    public $playlistTrackLimit = 4;
+    public $trackLimit = 1;
+    public $playlistLimit = 1;
+    public $playlistTrackLimit = 1;
     public $allPlaylistTracks;
     public $userinfo;
     private $soundcloudClientId = 'YOUR_SOUNDCLOUD_CLIENT_ID';
