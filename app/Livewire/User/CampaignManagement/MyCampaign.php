@@ -93,6 +93,9 @@ class MyCampaign extends Component
     public $showOptions = false;
     public $maxFollowerEnabled = false;
     public $repostPerDayEnabled = false;
+    public $trackLimit = 4;
+    public $playlistLimit = 4;
+    public $playlistTrackLimit = 4;
 
     // Form fields - Add Credit
     public $addCreditCampaignId = null;
@@ -651,8 +654,7 @@ class MyCampaign extends Component
             $this->tracks = $this->allPlaylistTracks->take($this->perPage);
             $this->hasMoreTracks = $this->allPlaylistTracks->count() > $this->perPage;
         } elseif ($this->activeModalTab === 'tracks') {
-            $this->allTracks = Track::self()
-                ->where(function ($q) {
+            $this->allTracks = Track::where(function ($q) {
                     $q->where('title', 'like', '%' . $this->searchQuery . '%')
                         ->orWhere('permalink_url', 'like', '%' . $this->searchQuery . '%');
                 })
@@ -660,8 +662,7 @@ class MyCampaign extends Component
             $this->tracks = $this->allTracks->take($this->perPage);
             $this->hasMoreTracks = $this->allTracks->count() > $this->perPage;
         } elseif ($this->activeModalTab === 'playlists') {
-            $this->allPlaylists = Playlist::self()
-                ->where(function ($q) {
+            $this->allPlaylists = Playlist::where(function ($q) {
                     $q->where('title', 'like', '%' . $this->searchQuery . '%')
                         ->orWhere('permalink_url', 'like', '%' . $this->searchQuery . '%');
                 })
@@ -984,7 +985,7 @@ class MyCampaign extends Component
     {
         $this->soundCloudService->ensureSoundCloudConnection(user());
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
-        
+
         $this->faqs = Faq::when($categoryId, function ($query) use ($categoryId) {
             $query->where('faq_category_id', $categoryId);
         })->get();

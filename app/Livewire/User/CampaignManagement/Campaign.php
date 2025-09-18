@@ -1116,11 +1116,11 @@ class Campaign extends Component
     public $allTracks;
     public $users;
     public $allPlaylists;
+    public $trackLimit = 4;
     public $playlistLimit = 4;
     public $playlistTrackLimit = 4;
     public $allPlaylistTracks;
     public $userinfo;
-    public $trackLimit = 4;
     private $soundcloudClientId = 'YOUR_SOUNDCLOUD_CLIENT_ID';
     private $soundcloudApiUrl = 'https://api-v2.soundcloud.com';
     public $playListTrackShow = false;
