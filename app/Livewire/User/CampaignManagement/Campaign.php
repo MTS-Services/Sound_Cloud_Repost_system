@@ -1237,12 +1237,12 @@ class Campaign extends Component
                 if (isset($resolvedTracks['tracks']) && count($resolvedTracks['tracks']) > 0) {
                     $resolvedPlaylistTracks['tracks'] = $resolvedTracks['tracks'];
                     $playlistUrn = $resolvedTracks['urn'];
-                    dd($resolvedPlaylistTracks, $playlistUrn);
                     $this->soundCloudService->unknownPlaylistAdd($resolvedPlaylistTracks, $playlistUrn);
+                }else{
+                    $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
                 }
             } else {
                 $resolvedTrack = $response->json();
-                dd($resolvedTrack);
                 $this->soundCloudService->unknownTrackAdd($resolvedTrack);
             }
             $this->processSearchData();
