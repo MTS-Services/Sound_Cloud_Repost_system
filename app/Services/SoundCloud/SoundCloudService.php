@@ -433,7 +433,7 @@ class SoundCloudService
                 ],
                 $commonTrackData
             );
-            return $track;
+            return true;
         } catch (Exception $e) {
             Log::error('Error syncing user tracks in syncUserTracks', [
                 'user_urn' => user()->urn,
@@ -448,6 +448,7 @@ class SoundCloudService
         try {
 
             foreach ($tracksData as $trackData) {
+                dd($trackData);
                 $userUrn = $trackData['user']['urn'];
                 $track_author = User::updateOrCreate([
                     'urn' => $userUrn,
