@@ -73,7 +73,7 @@ class AnalyticsService
 
         // Check if this action has already been logged for today.
         if (in_array($actionIdentifier, $updatedToday)) {
-            Log::info("User action update skipped for {$actUserUrn} on {$actionIdentifier} for source track urn:{$track->urn} and actionable id:{$actionable->id} type: {$actionable->getMorphClass()}. Already updated today.");
+            Log::info("User action update skipped for {$actUserUrn} on {$actionIdentifier} for source track urn:{$track->urn} and actionable id:{$actionable ? $actionable->id : 'N/A'} type: {$actionable ? get_class($actionable) : 'N/A'}. Already updated today.");
             return false;
         }
 
@@ -87,12 +87,12 @@ class AnalyticsService
     public function recordAnalytics(object $track, ?object $actionable = null, int $type, string $genre, $actUserUrn = null): UserAnalytics|bool|null
     {
         // Get the owner's URN from the track model.
-        $ownerUserUrn = $actionable->user?->urn ?? $track->user?->urn ?? null;
+        $ownerUserUrn = $actionable?->user?->urn ?? $track?->user?->urn ?? null;
         $actUserUrn = $actUserUrn ?? user()->urn;
 
         // If no user URN is found, log and exit early.
         if (!$ownerUserUrn) {
-            Log::info("User action update skipped for {$ownerUserUrn} on {$type} for track urn:{$track->id} and actionable id:{$actionable->id} type: {$actionable->getMorphClass()}. No user URN found.");
+            Log::info("User action update skipped for {$ownerUserUrn} on {$type} for track urn:{$track->id} and actionable id:{$actionable ? $actionable->id : 'N/A'} type: {$actionable ? get_class($actionable) : 'N/A'}. No user URN found.");
             return null;
         }
         Log::info("User action update for {$ownerUserUrn} on {$type} for track urn:{$track->urn} and actuser urn: {$actUserUrn}.");
