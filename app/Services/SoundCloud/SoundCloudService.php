@@ -202,7 +202,6 @@ class SoundCloudService
             $trackIdsInResponse = [];
 
             foreach ($tracksData as $trackData) {
-                // dd($trackData);
                 $trackIdsInResponse[] = $trackData['id'];
 
                 $userUrn = $trackData['user']['urn'];
@@ -326,7 +325,7 @@ class SoundCloudService
 
                 if ($tracksToDelete->isNotEmpty()) {
                     Track::destroy($tracksToDelete);
-                    Log::info("Successfully deleted " . count($tracksToDelete) . " tracks for user". user()->urn ."that are no longer present on SoundCloud.");
+                    Log::info("Successfully deleted " . count($tracksToDelete) . " tracks for user" . user()->urn . "that are no longer present on SoundCloud.");
                 }
             } else {
                 $tracksToDelete = PlaylistTrack::where('playlist_urn', $playlist_urn)
@@ -340,8 +339,148 @@ class SoundCloudService
                 }
             }
 
-            Log::info("Successfully synced {$syncedCount} tracks for user ". user()->urn .".");
+            Log::info("Successfully synced {$syncedCount} tracks for user " . user()->urn . ".");
             return $syncedCount;
+        } catch (Exception $e) {
+            Log::error('Error syncing user tracks in syncUserTracks', [
+                'user_urn' => user()->urn,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
+
+    private function mapCommonTrackData(array $trackData): array
+    {
+        return [
+            'user_urn' => $trackData['user']['urn'] ?? null,
+            'kind' => $trackData['kind'] ?? null,
+            'duration' => $trackData['duration'] ?? 0,
+            'commentable' => $trackData['commentable'] ?? false,
+            'comment_count' => $trackData['comment_count'] ?? 0,
+            'sharing' => $trackData['sharing'] ?? null,
+            'tag_list' => $trackData['tag_list'] ?? '',
+            'streamable' => $trackData['streamable'] ?? false,
+            'embeddable_by' => $trackData['embeddable_by'] ?? null,
+            'purchase_url' => $trackData['purchase_url'] ?? null,
+            'purchase_title' => $trackData['purchase_title'] ?? null,
+            'genre' => $trackData['genre'] ?? null,
+            'title' => $trackData['title'] ?? null,
+            'description' => $trackData['description'] ?? null,
+            'label_name' => $trackData['label_name'] ?? null,
+            'release' => $trackData['release'] ?? null,
+            'key_signature' => $trackData['key_signature'] ?? null,
+            'isrc' => $trackData['isrc'] ?? null,
+            'bpm' => $trackData['bpm'] ?? null,
+            'release_year' => $trackData['release_year'] ?? null,
+            'release_month' => $trackData['release_month'] ?? null,
+            'release_day' => $trackData['release_day'] ?? null,
+            'license' => $trackData['license'] ?? null,
+            'uri' => $trackData['uri'] ?? null,
+            'permalink_url' => $trackData['permalink_url'] ?? null,
+            'artwork_url' => $trackData['artwork_url'] ?? null,
+            'stream_url' => $trackData['stream_url'] ?? null,
+            'download_url' => $trackData['download_url'] ?? null,
+            'waveform_url' => $trackData['waveform_url'] ?? null,
+            'available_country_codes' => $trackData['available_country_codes'] ?? null,
+            'secret_uri' => $trackData['secret_uri'] ?? null,
+            'user_favorite' => $trackData['user_favorite'] ?? false,
+            'user_playback_count' => $trackData['user_playback_count'] ?? 0,
+            'playback_count' => $trackData['playback_count'] ?? 0,
+            'download_count' => $trackData['download_count'] ?? 0,
+            'favoritings_count' => $trackData['favoritings_count'] ?? 0,
+            'reposts_count' => $trackData['reposts_count'] ?? 0,
+            'downloadable' => $trackData['downloadable'] ?? false,
+            'access' => $trackData['access'] ?? null,
+            'policy' => $trackData['policy'] ?? null,
+            'monetization_model' => $trackData['monetization_model'] ?? null,
+            'metadata_artist' => $trackData['metadata_artist'] ?? null,
+            'created_at_soundcloud' => isset($trackData['created_at']) ? Carbon::parse($trackData['created_at'])->toDateTimeString() : null,
+            'type' => $trackData['type'] ?? null,
+            'last_sync_at' => now(),
+            'author_username' => $trackData['user']['username'] ?? null,
+            'author_soundcloud_id' => $trackData['user']['id'] ?? null,
+            'author_soundcloud_urn' => $trackData['user']['urn'] ?? null,
+            'author_soundcloud_kind' => $trackData['user']['kind'] ?? null,
+            'author_soundcloud_permalink_url' => $trackData['user']['permalink_url'] ?? null,
+            'author_soundcloud_permalink' => $trackData['user']['permalink'] ?? null,
+            'author_soundcloud_uri' => $trackData['user']['uri'] ?? null,
+        ];
+    }
+    public function unknownTrackAdd($trackData): int
+    {
+        try {
+            $userUrn = $trackData['user']['urn'];
+            $track_author = User::updateOrCreate([
+                'urn' => $userUrn,
+            ], [
+                'soundcloud_id' => $trackData['user']['id'],
+                'name' => $trackData['user']['username'],
+                'nickname' => $trackData['user']['username'],
+                'avatar' => $trackData['user']['avatar_url'],
+                'soundcloud_permalink_url' => $trackData['user']['permalink_url'],
+            ]);
+
+            if (is_null($track_author->last_synced_at)) {
+                $track_author->update(['status' => User::STATUS_INACTIVE]);
+            }
+            $commonTrackData = $this->mapCommonTrackData($trackData);
+            
+            $track = Track::updateOrCreate(
+                [
+                    'soundcloud_track_id' => $trackData['id'],
+                    'urn' => $trackData['urn']
+                ],
+                $commonTrackData
+            );
+            return $track;
+        } catch (Exception $e) {
+            Log::error('Error syncing user tracks in syncUserTracks', [
+                'user_urn' => user()->urn,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
+    public function unknownPlaylistAdd($tracksData, $playlist_urn = null): int
+    {
+        try {
+
+            foreach ($tracksData as $trackData) {
+                $userUrn = $trackData['user']['urn'];
+                $track_author = User::updateOrCreate([
+                    'urn' => $userUrn,
+                ], [
+                    'soundcloud_id' => $trackData['user']['id'],
+                    'name' => $trackData['user']['username'],
+                    'nickname' => $trackData['user']['username'],
+                    'avatar' => $trackData['user']['avatar_url'],
+                    'soundcloud_permalink_url' => $trackData['user']['permalink_url'],
+                ]);
+
+                if (is_null($track_author->last_synced_at)) {
+                    $track_author->update(['status' => User::STATUS_INACTIVE]);
+                }
+                $commonTrackData = $this->mapCommonTrackData($trackData);
+
+                $track = Track::updateOrCreate(
+                    [
+                        'soundcloud_track_id' => $trackData['id'],
+                        'urn' => $trackData['urn']
+                    ],
+                    $commonTrackData
+                );
+                if ($playlist_urn && $track->urn) {
+                    PlaylistTrack::updateOrCreate([
+                        'playlist_urn' => $playlist_urn,
+                        'track_urn' => $track->urn,
+                    ]);
+                }
+            }
+
+            return true;
         } catch (Exception $e) {
             Log::error('Error syncing user tracks in syncUserTracks', [
                 'user_urn' => user()->urn,
@@ -572,10 +711,10 @@ class SoundCloudService
         $httpClient = Http::withHeaders([
             'Authorization' => 'OAuth ' . $user->token,
         ])->attach(
-                'track[asset_data]',
-                file_get_contents($trackData['asset_data']->getRealPath()),
-                $trackData['asset_data']->getClientOriginalName()
-            );
+            'track[asset_data]',
+            file_get_contents($trackData['asset_data']->getRealPath()),
+            $trackData['asset_data']->getClientOriginalName()
+        );
 
         if ($trackData['artwork_data']) {
             $httpClient->attach(
