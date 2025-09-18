@@ -1237,8 +1237,8 @@ class Campaign extends Component
                 if (isset($resolvedTracks['tracks']) && count($resolvedTracks['tracks']) > 0) {
                     $resolvedPlaylistTracks['tracks'] = $resolvedTracks['tracks'];
                     $playlistUrn = $resolvedTracks['urn'];
-                    $this->soundCloudService->unknownPlaylistAdd($resolvedPlaylistTracks, $playlistUrn);
-                }else{
+                    $this->soundCloudService->unknownPlaylistAdd($resolvedPlaylistTracks['tracks'], $playlistUrn);
+                } else {
                     $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
                 }
             } else {
@@ -1268,8 +1268,9 @@ class Campaign extends Component
     {
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
-                ->where('permalink_url', $this->searchQuery)
+                ->where('permalink_url', 'like', '%' . $this->searchQuery . '%')
                 ->get();
+
             if ($tracksFromDb->isNotEmpty()) {
                 $this->allPlaylistTracks = $tracksFromDb;
                 $this->tracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
@@ -1278,8 +1279,9 @@ class Campaign extends Component
             }
         } else {
             if ($this->activeTab == 'tracks') {
-                $tracksFromDb = Track::where('permalink_url', $this->searchQuery)
+                $tracksFromDb = Track::where('permalink_url', 'like', '%' . $this->searchQuery . '%')
                     ->get();
+
                 if ($tracksFromDb->isNotEmpty()) {
                     $this->activeTab = 'tracks';
                     $this->allTracks = $tracksFromDb;
@@ -1290,7 +1292,7 @@ class Campaign extends Component
             }
 
             if ($this->activeTab == 'playlists') {
-                $playlistsFromDb = Playlist::where('permalink_url', $this->searchQuery)
+                $playlistsFromDb = Playlist::where('permalink_url', 'like', '%' . $this->searchQuery . '%')
                     ->get();
 
                 if ($playlistsFromDb->isNotEmpty()) {
