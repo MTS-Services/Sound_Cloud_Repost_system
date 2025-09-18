@@ -193,7 +193,7 @@ class SoundCloudService
     public function syncUserTracks(User $user, $tracksData, $playlist_urn = null): int
     {
         try {
-            $limit = 200;
+            $limit = 2000000000000;
             if (empty($tracksData)) {
                 $tracksData = $this->getUserTracks($user, $limit); // This call now handles the refresh
             }
@@ -297,21 +297,21 @@ class SoundCloudService
 
                 Log::info("Successfully synced track {$track->soundcloud_track_id} for user {$user->urn}.");
 
-                if ($track_author && $track_author->urn !== $user->urn && is_null($playlist_urn)) {
-                    Repost::create([
-                        'reposter_urn' => $user->urn,
-                        'track_owner_urn' => $track->user_urn,
-                        'track_id' => $track->id,
-                        'reposted_at' => $track->created_at_soundcloud
+                // if ($track_author && $track_author->urn !== $user->urn && is_null($playlist_urn)) {
+                //     Repost::create([
+                //         'reposter_urn' => $user->urn,
+                //         'track_owner_urn' => $track->user_urn,
+                //         'track_id' => $track->id,
+                //         'reposted_at' => $track->created_at_soundcloud
+                //     ]);
+                // } elseif ($playlist_urn) {
+                if ($playlist_urn && $track->urn) {
+                    PlaylistTrack::updateOrCreate([
+                        'playlist_urn' => $playlist_urn,
+                        'track_urn' => $track->urn,
                     ]);
-                } elseif ($playlist_urn) {
-                    if ($playlist_urn && $track->urn) {
-                        PlaylistTrack::updateOrCreate([
-                            'playlist_urn' => $playlist_urn,
-                            'track_urn' => $track->urn,
-                        ]);
-                    }
                 }
+                // }
 
                 if ($track->wasRecentlyCreated) {
                     $syncedCount++;
@@ -319,7 +319,7 @@ class SoundCloudService
             }
 
             if (is_null($playlist_urn)) {
-                $tracksToDelete = Track::where('user_urn', $user->urn)
+                $tracksToDelete = Track::where('author_soundcloud_urn', $user->urn)
                     ->whereNotIn('soundcloud_track_id', $trackIdsInResponse)
                     ->pluck('id');
 
@@ -571,10 +571,10 @@ class SoundCloudService
         $httpClient = Http::withHeaders([
             'Authorization' => 'OAuth ' . $user->token,
         ])->attach(
-            'track[asset_data]',
-            file_get_contents($trackData['asset_data']->getRealPath()),
-            $trackData['asset_data']->getClientOriginalName()
-        );
+                'track[asset_data]',
+                file_get_contents($trackData['asset_data']->getRealPath()),
+                $trackData['asset_data']->getClientOriginalName()
+            );
 
         if ($trackData['artwork_data']) {
             $httpClient->attach(
@@ -882,7 +882,7 @@ class SoundCloudService
 
             // 1. Resolve the track
             $resolve = Http::get("https://soundcloud.com/resolve", [
-                'url'       => $trackUrl,
+                'url' => $trackUrl,
                 'client_id' => $clientId,
             ]);
 
