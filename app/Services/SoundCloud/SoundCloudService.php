@@ -202,6 +202,7 @@ class SoundCloudService
             $trackIdsInResponse = [];
 
             foreach ($tracksData as $trackData) {
+                dd($trackData);
                 $trackIdsInResponse[] = $trackData['id'];
 
                 $userUrn = $trackData['user']['urn'];
