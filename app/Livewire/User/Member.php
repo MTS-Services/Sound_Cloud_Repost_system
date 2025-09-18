@@ -162,7 +162,7 @@ class Member extends Component
             $this->resetSearchData();
             return;
         }
-        // if (filter_var($this->searchQuery, FILTER_VALIDATE_URL) && preg_match('/^https?:\/\/(www\.)?soundcloud\.com\//', $this->searchQuery)) {
+        // if (filter_var($this->searchQuery, FILTER_VALIDATE_URL) && preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[a-zA-Z0-9\-_]+(\/[a-zA-Z0-9\-_]+)*(\/)?(\?.*)?$/i', $this->searchQuery)) {
         $this->performLocalSearch();
     }
     public $allPlaylistTracks;
@@ -186,7 +186,7 @@ class Member extends Component
                 });
 
             $this->allTracks = $query->with('user')->get();
-            if ($this->allTracks->isEmpty() && preg_match('/^https?:\/\/(www\.)?soundcloud\.com\//', $this->searchQuery)) {
+            if ($this->allTracks->isEmpty() && preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[a-zA-Z0-9\-_]+(\/[a-zA-Z0-9\-_]+)*(\/)?(\?.*)?$/i', $this->searchQuery)) {
                 $this->resolveSoundcloudUrl();
             }
             $this->tracks = $this->allTracks->take($this->trackLimit);
@@ -198,7 +198,7 @@ class Member extends Component
                 });
 
             $this->allPlaylists = $query->get();
-            if ($this->allPlaylists->isEmpty() && preg_match('/^https?:\/\/(www\.)?soundcloud\.com\//', $this->searchQuery)) {
+            if ($this->allPlaylists->isEmpty() && preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[a-zA-Z0-9\-_]+(\/[a-zA-Z0-9\-_]+)*(\/)?(\?.*)?$/i', $this->searchQuery)) {
                 $this->resolveSoundcloudUrl();
             }
             $this->playlists = $this->allPlaylists->take($this->playlistLimit);

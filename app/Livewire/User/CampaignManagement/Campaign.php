@@ -936,7 +936,8 @@ class Campaign extends Component
             }
 
             $response = $this->analyticsService->recordAnalytics($this->track, $campaign, UserAnalytics::TYPE_PLAY, $campaign->target_genre);
-            Log:info('response: analytics: ');
+            Log:
+            info('response: analytics: ');
             if ($response != false || $response != null) {
 
 
@@ -1154,7 +1155,7 @@ class Campaign extends Component
             return;
         }
 
-        if (preg_match('/^https?:\/\/(www\.)?soundcloud\.com\//', $this->searchQuery)) {
+        if (preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[a-zA-Z0-9\-_]+(\/[a-zA-Z0-9\-_]+)*(\/)?(\?.*)?$/i', $this->searchQuery)) {
             $this->resolveSoundcloudUrl();
         } else {
             if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
@@ -1189,53 +1190,19 @@ class Campaign extends Component
 
     protected function resolveSoundcloudUrl()
     {
-        if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
-            $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
-                ->where('permalink_url', $this->searchQuery)
-                ->get();
-            if ($tracksFromDb->isNotEmpty()) {
-                $this->allPlaylistTracks = $tracksFromDb;
-                $this->tracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
-                $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
-                return;
-            }
-        } else {
-            if ($this->activeTab == 'tracks') {
-                $tracksFromDb = Track::where('user_urn', user()->urn)
-                    ->where('permalink_url', $this->searchQuery)
-                    ->get();
-                if ($tracksFromDb->isNotEmpty()) {
-                    $this->activeTab = 'tracks';
-                    $this->allTracks = $tracksFromDb;
-                    $this->tracks = $this->allTracks->take($this->trackLimit);
-                    $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
-                    return;
-                }
-            }
-
-            if ($this->activeTab == 'playlists') {
-                $playlistsFromDb = Playlist::where('user_urn', user()->urn)
-                    ->where('permalink_url', $this->searchQuery)
-                    ->get();
-
-                if ($playlistsFromDb->isNotEmpty()) {
-                    $this->activeTab = 'playlists';
-                    $this->allPlaylists = $playlistsFromDb;
-                    $this->playlists = $this->allPlaylists->take($this->playlistLimit);
-                    $this->hasMorePlaylists = $this->playlists->count() === $this->playlistLimit;
-                    return;
-                }
-            }
+       $this->processSearchData();
+        if($this->tracks->count() > 0){
+            return;
         }
+        $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
 
-        $response = Http::get("{$this->soundcloudApiUrl}/resolve", [
-            'url' => $this->searchQuery,
-            'client_id' => $this->soundcloudClientId,
-        ]);
 
         if ($response->successful()) {
-            $resolvedData = $response->json();
-            $this->processResolvedData($resolvedData);
+            $resolvedData['tracks'] = $response->json();
+            dd($resolvedData);
+            $this->soundCloudService->syncSelfTracks($resolvedData);
+            $this->processSearchData();
+            Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
         } else {
             if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
                 $this->allPlaylistTracks = collect();
@@ -1253,33 +1220,43 @@ class Campaign extends Component
         }
     }
 
-    protected function processResolvedData($data)
+    protected function processSearchData()
     {
-        switch ($data['kind']) {
-            case 'track':
-                $this->activeTab = 'tracks';
-                if ($this->playListTrackShow && $this->selectedPlaylistId) {
-                    $playlistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()->get();
-                    $this->allPlaylistTracks = $playlistTracks->filter(function ($track) use ($data) {
-                        return $track->urn === $data['urn'];
-                    });
-                    $this->tracks = $this->allPlaylistTracks->take($this->trackLimit);
-                    $this->hasMoreTracks = false;
-                } else {
-                    $this->allTracks = collect([$data]);
+        if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
+            $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
+                ->where('permalink_url', $this->searchQuery)
+                ->get();
+            if ($tracksFromDb->isNotEmpty()) {
+                $this->allPlaylistTracks = $tracksFromDb;
+                $this->tracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
+                $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+                return;
+            }
+        } else {
+            if ($this->activeTab == 'tracks') {
+                $tracksFromDb = Track::where('permalink_url', $this->searchQuery)
+                    ->get();
+                if ($tracksFromDb->isNotEmpty()) {
+                    $this->activeTab = 'tracks';
+                    $this->allTracks = $tracksFromDb;
                     $this->tracks = $this->allTracks->take($this->trackLimit);
-                    $this->hasMoreTracks = false;
+                    $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+                    return;
                 }
-                break;
-            case 'user':
-                $this->activeTab = 'tracks';
-                $this->fetchUserTracks($data['id']);
-                break;
-            default:
-                $this->allTracks = collect();
-                $this->tracks = collect();
-                $this->dispatch('alert', type: 'error', message: 'The provided URL is not a track or playlist.');
-                break;
+            }
+
+            if ($this->activeTab == 'playlists') {
+                $playlistsFromDb = Playlist::where('permalink_url', $this->searchQuery)
+                    ->get();
+
+                if ($playlistsFromDb->isNotEmpty()) {
+                    $this->activeTab = 'playlists';
+                    $this->allPlaylists = $playlistsFromDb;
+                    $this->playlists = $this->allPlaylists->take($this->playlistLimit);
+                    $this->hasMorePlaylists = $this->playlists->count() === $this->playlistLimit;
+                    return;
+                }
+            }
         }
     }
 

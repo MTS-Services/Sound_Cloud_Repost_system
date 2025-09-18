@@ -902,6 +902,9 @@ class Dashboard extends Component
     protected function resolveSoundcloudUrl()
     {
         $this->processSearchData();
+        if($this->tracks->count() > 0){
+            return;
+        }
 
         $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
 
