@@ -20,12 +20,12 @@ class AnalyticsService
      */
     public function syncUserAction(
         object $track,
+        string $actUserUrn,
         ?object $actionable = null,
         int $type,
         ?string $ipAddress = null,
-    ) {
 
-        $actUserUrn = user()->urn;
+    ) {
         $ownerUserUrn = $track->user?->urn ?? null;
 
         if ($ipAddress == null) {
@@ -97,7 +97,7 @@ class AnalyticsService
         }
 
         // Use the new reusable method to check if the update is allowed.
-        if (!$this->syncUserAction($track, $actionable, $type)) {
+        if (!$this->syncUserAction($track, $actUserUrn, $actionable, $type)) {
             return false;
         }
 
