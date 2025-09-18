@@ -6,6 +6,7 @@ use App\Models\UserAnalytics;
 use App\Services\User\AnalyticsService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Log;
 
 class TrackViewCount implements ShouldQueue
 {
@@ -38,7 +39,9 @@ class TrackViewCount implements ShouldQueue
      */
     public function handle(): void
     {
+        Log::info('Processing TrackViewCount job for ' . count($this->tracksData) . ' tracks.');
         foreach ($this->tracksData as $data) {
+            Log::info('Recording view for track ID: ' . $data['track']->id);
             $genre = isset($data['genre']) && $data['genre'] ? $data['genre'] : $data['track']->genre;
             $this->analyticsService->recordAnalytics($data['track'], $data['actionable'], UserAnalytics::TYPE_VIEW, $genre);
         }
