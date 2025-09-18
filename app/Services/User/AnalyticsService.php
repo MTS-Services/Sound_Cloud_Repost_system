@@ -84,11 +84,11 @@ class AnalyticsService
         return true;
     }
 
-    public function recordAnalytics(object $track, ?object $actionable = null, int $type, string $genre): UserAnalytics|bool|null
+    public function recordAnalytics(object $track, ?object $actionable = null, int $type, string $genre, $actUserUrn = null): UserAnalytics|bool|null
     {
         // Get the owner's URN from the track model.
         $ownerUserUrn = $actionable->user?->urn ?? $track->user?->urn ?? null;
-        $actUserUrn = user()->urn;
+        $actUserUrn = $actUserUrn ?? user()->urn;
 
         // If no user URN is found, log and exit early.
         if (!$ownerUserUrn) {

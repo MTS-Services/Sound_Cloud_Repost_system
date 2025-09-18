@@ -243,7 +243,7 @@ class MyAccount extends Component
         $tracksData = $tracks;
 
         // View Count
-        Bus::dispatch(new TrackViewCount($tracksData));
+        Bus::dispatch(new TrackViewCount($tracksData, user()->urn, 'track'));
 
         return view('livewire.user.my-account', [
             'user' => $user,

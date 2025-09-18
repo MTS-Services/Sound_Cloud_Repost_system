@@ -38,14 +38,16 @@ class TrackViewCount implements ShouldQueue
     private $track;
     private $genre;
     private $actionable = null;
+    private $actUserUrn;
     /**
      * Create a new job instance.
      */
-    public function __construct($datas, $type = 'track', AnalyticsService $analyticsService = new AnalyticsService())
+    public function __construct($datas, $actuUserUrn, $type = 'track', AnalyticsService $analyticsService = new AnalyticsService())
     {
         $this->datas = $datas;
         $this->analyticsService = $analyticsService;
         $this->type = $type;
+        $this->actUserUrn = $actuUserUrn;
     }
 
     /**
@@ -75,7 +77,7 @@ class TrackViewCount implements ShouldQueue
                     break;
             }
             Log::info('TrackViewCount Job processing track urn: ' . $this->track->urn . ', genre: ' . $this->genre . ', actionable type: ' . ($this->actionable ? get_class($this->actionable) : 'null'));
-            $this->analyticsService->recordAnalytics($this->track, $this->actionable, UserAnalytics::TYPE_VIEW, $this->genre);
+            $this->analyticsService->recordAnalytics($this->track, $this->actionable, UserAnalytics::TYPE_VIEW, $this->genre, $this->actUserUrn);
         }
 
     }
