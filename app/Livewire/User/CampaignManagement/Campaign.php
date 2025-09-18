@@ -103,9 +103,9 @@ class Campaign extends Component
     public $allTracks;
     public $users;
     public $allPlaylists;
-    public $trackLimit = 1;
-    public $playlistLimit = 1;
-    public $playlistTrackLimit = 1;
+    public $trackLimit = 4;
+    public $playlistLimit = 4;
+    public $playlistTrackLimit = 4;
     public $allPlaylistTracks;
     public $userinfo;
     private $soundcloudClientId = 'YOUR_SOUNDCLOUD_CLIENT_ID';
@@ -199,9 +199,9 @@ class Campaign extends Component
     ################################loadmore########################################
 
     // Properties for "Load More"
-    public $tracksPage = 1;
-    public $playlistsPage = 1;
-    public $perPage = 1;
+    public $tracksPage = 4;
+    public $playlistsPage = 4;
+    public $perPage = 4;
     public $hasMoreTracks = false;
     public $hasMorePlaylists = false;
 
