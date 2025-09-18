@@ -536,7 +536,7 @@ class Campaign extends Component
     public function fetchTracks()
     {
         try {
-            // $this->soundCloudService->syncSelfTracks([]);
+            $this->soundCloudService->syncSelfTracks([]);
 
             $this->tracksPage = 1;
             $this->tracks = Track::where('user_urn', user()->urn)
@@ -566,8 +566,7 @@ class Campaign extends Component
     public function fetchPlaylists()
     {
         try {
-            // $this->soundCloudService-> ();
-
+            $this->soundCloudService->syncSelfPlaylists();
             $this->playlistsPage = 1;
             $this->playlists = Playlist::where('user_urn', user()->urn)
                 ->latest()
