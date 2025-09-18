@@ -563,7 +563,7 @@ class Campaign extends Component
     public function fetchPlaylists()
     {
         try {
-            // $this->soundCloudService->syncSelfPlaylists();
+            // $this->soundCloudService-> ();
 
             $this->playlistsPage = 1;
             $this->playlists = Playlist::where('user_urn', user()->urn)
@@ -1188,6 +1188,7 @@ class Campaign extends Component
         }
     }
 
+
     protected function resolveSoundcloudUrl()
     {
        $this->processSearchData();
@@ -1199,8 +1200,14 @@ class Campaign extends Component
 
         if ($response->successful()) {
             $resolvedData['tracks'] = $response->json();
-            dd($resolvedData);
-            $this->soundCloudService->syncSelfTracks($resolvedData);
+            if($this->activeTab === 'playlists'){
+                $resolvedData['tracks'] = $resolvedData['tracks']['tracks'];
+                $playlistUrn = $resolvedData['tracks']['urn'];
+                dd($resolvedData,$playlistUrn);
+                $this->soundCloudService->syncSelfTracks($resolvedData, $playlistUrn);
+            }else{
+                $this->soundCloudService->syncSelfTracks($resolvedData);
+            }
             $this->processSearchData();
             Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
         } else {
