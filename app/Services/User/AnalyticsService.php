@@ -20,7 +20,7 @@ class AnalyticsService
      */
     public function syncUserAction(
         object $track,
-        object $actionable,
+        ?object $actionable = null,
         int $type,
         ?string $ipAddress = null,
     ) {
@@ -60,10 +60,10 @@ class AnalyticsService
 
         // Define the unique identifier for the current action.
         $actionIdentifier = sprintf(
-            '%s.%s.%s.%s.%s',
+            '%s.%s.%s.%s.%s.%s',
             $type,
-            $actionable->id ?? 0,
-            $actionable->getMorphClass() ?? 'N/A',
+            // $actionable->id ?? 0,
+            // $actionable->getMorphClass() ?? 'N/A',
             $track->urn,
             $ownerUserUrn,
             $actUserUrn,
@@ -84,7 +84,7 @@ class AnalyticsService
         return true;
     }
 
-    public function recordAnalytics(object $track, object $actionable, int $type, string $genre): UserAnalytics|bool|null
+    public function recordAnalytics(object $track, ?object $actionable = null, int $type, string $genre): UserAnalytics|bool|null
     {
         // Get the owner's URN from the track model.
         $ownerUserUrn = $actionable->user?->urn ?? $track->user?->urn ?? null;
@@ -808,8 +808,8 @@ class AnalyticsService
 
                 // Apply the new engagement rate logic
                 $engagement_rate = 0;
-                if ($item->total_views > $avg_total) {
-                    $engagement_rate = round(min(100, (($item->total_views - $avg_total) / (($item->total_views + $avg_total) / 2)) * 100), 2);
+                if ($item->total_views >= $avg_total) {
+                    $engagement_rate = round(min(100, ($avg_total / $item->total_views) * 100), 2);
                 }
 
                 return [

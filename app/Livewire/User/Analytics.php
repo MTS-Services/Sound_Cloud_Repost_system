@@ -223,13 +223,13 @@ class Analytics extends Component
         $streams = $analyticsData['overall_metrics']['total_plays']['current_total'] ?? 0;
         $likes = $analyticsData['overall_metrics']['total_likes']['current_total'] ?? 0;
         $reposts = $analyticsData['overall_metrics']['total_reposts']['current_total'] ?? 0;
+        $followers = $analyticsData['overall_metrics']['total_followers']['current_total'] ?? 0;
+        $comments = $analyticsData['overall_metrics']['total_comments']['current_total'] ?? 0;
+        $views = $analyticsData['overall_metrics']['total_views']['current_total'] ?? 0;
 
         // Calculate engagement rate
-        $totalEngagements = $streams + $likes + $reposts + ($analyticsData['overall_metrics']['total_comments']['current_total'] ?? 0) + ($analyticsData['overall_metrics']['total_followers']['current_total'] ?? 0);
-        $avgEngagement = $totalEngagements > 0 ? $totalEngagements / 5 : 0;
-        $totalViews = $analyticsData['overall_metrics']['total_views']['current_total'] ?? 1;
-
-        $avgEngagementRate = $avgEngagement > 0 ? round((($totalViews - $avgEngagement) / (($totalViews + $avgEngagement) / 2)) * 100, 2) : 0;
+        $avgTotal = ($likes + $comments + $reposts + $streams + $followers) / 5;
+        $avgEngagementRate =  $views >= $avgTotal ? round(min(100, ($avgTotal / $views) * 100), 2) / $avgTotal : 0;
 
         return [
             'streams' => $this->formatNumber($streams),
