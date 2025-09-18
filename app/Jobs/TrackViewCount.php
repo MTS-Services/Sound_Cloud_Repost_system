@@ -41,7 +41,7 @@ class TrackViewCount implements ShouldQueue
     {
         Log::info('Processing TrackViewCount job for ' . count($this->tracksData) . ' tracks.');
         foreach ($this->tracksData as $data) {
-            Log::info('Recording view for track ID: ' . $data['track']->id);
+            Log::info('Recording view for track ID: ' . json_encode($data['track']));
             $genre = isset($data['genre']) && $data['genre'] ? $data['genre'] : $data['track']->genre;
             $this->analyticsService->recordAnalytics($data['track'], $data['actionable'], UserAnalytics::TYPE_VIEW, $genre);
         }
