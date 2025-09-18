@@ -1191,11 +1191,6 @@ class Campaign extends Component
 
     protected function resolveSoundcloudUrl()
     {
-        $this->processSearchData();
-        if ($this->tracks->count() > 0) {
-            return;
-        }
-
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                 ->where('permalink_url', $this->searchQuery)
