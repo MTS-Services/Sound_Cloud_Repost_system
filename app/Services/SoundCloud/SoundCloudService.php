@@ -319,13 +319,13 @@ class SoundCloudService
             }
 
             if (is_null($playlist_urn)) {
-                $tracksToDelete = Track::where('author_soundcloud_urn', user()->urn)
+                $tracksToDelete = Track::where('author_soundcloud_urn', $user->urn)
                     ->whereNotIn('soundcloud_track_id', $trackIdsInResponse)
                     ->pluck('id');
 
                 if ($tracksToDelete->isNotEmpty()) {
                     Track::destroy($tracksToDelete);
-                    Log::info("Successfully deleted " . count($tracksToDelete) . " tracks for user" . user()->urn . "that are no longer present on SoundCloud.");
+                    Log::info("Successfully deleted " . count($tracksToDelete) . " tracks for user {$user->urn} that are no longer present on SoundCloud.");
                 }
             } else {
                 $tracksToDelete = PlaylistTrack::where('playlist_urn', $playlist_urn)
@@ -339,17 +339,16 @@ class SoundCloudService
                 }
             }
 
-            Log::info("Successfully synced {$syncedCount} tracks for user " . user()->urn . ".");
+            Log::info("Successfully synced {$syncedCount} tracks for user {$user->urn}.");
             return $syncedCount;
         } catch (Exception $e) {
             Log::error('Error syncing user tracks in syncUserTracks', [
-                'user_urn' => user()->urn,
+                'user_urn' => $user->urn,
                 'error' => $e->getMessage(),
             ]);
             throw $e;
         }
     }
-
 
     private function mapCommonTrackData(array $trackData): array
     {
@@ -426,7 +425,7 @@ class SoundCloudService
                 $track_author->update(['status' => User::STATUS_INACTIVE]);
             }
             $commonTrackData = $this->mapCommonTrackData($trackData);
-            
+
             $track = Track::updateOrCreate(
                 [
                     'soundcloud_track_id' => $trackData['id'],
