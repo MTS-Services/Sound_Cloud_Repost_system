@@ -223,6 +223,9 @@ class Campaign extends Component
 
     public function mount()
     {
+        $this->soundCloudService->ensureSoundCloudConnection(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        
         $this->getAllTrackTypes();
         $this->totalCampaigns();
         $this->calculateFollowersLimit();
@@ -998,8 +1001,6 @@ class Campaign extends Component
 
     public function repost($campaignId)
     {
-        $this->soundCloudService->ensureSoundCloudConnection(user());
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         try {
             if (!$this->canRepost($campaignId)) {
                 $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
@@ -1156,7 +1157,11 @@ class Campaign extends Component
         }
 
         if (preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[a-zA-Z0-9\-_]+(\/[a-zA-Z0-9\-_]+)*(\/)?(\?.*)?$/i', $this->searchQuery)) {
-            $this->resolveSoundcloudUrl();
+            if (proUser()) {
+                $this->resolveSoundcloudUrl();
+            } else {
+                return $this->dispatch('alert', type: 'error', message: 'Please upgrade to a Pro User to use this feature.');
+            }
         } else {
             if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
                 $this->allPlaylistTracks = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
@@ -1191,6 +1196,7 @@ class Campaign extends Component
 
     protected function resolveSoundcloudUrl()
     {
+
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                 ->where('permalink_url', $this->searchQuery)
@@ -1229,12 +1235,8 @@ class Campaign extends Component
         }
 
         $response = null;
-        if (proUser()) {
-            $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
-        } else {
-            $this->dispatch('alert', type: 'error', message: 'Please upgrade to a Pro User to use this feature.');
-        }
-        
+        $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
+
         if ($response->successful()) {
             if ($this->activeTab === 'playlists') {
                 $resolvedPlaylists = $response->json();

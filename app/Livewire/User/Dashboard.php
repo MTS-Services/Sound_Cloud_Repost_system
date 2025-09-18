@@ -186,6 +186,9 @@ class Dashboard extends Component
 
     public function mount()
     {
+        $this->soundCloudService->ensureSoundCloudConnection(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        
         $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers());
 
         $lastWeekFollowerPercentage = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers(), 'last_week');
@@ -402,19 +405,16 @@ class Dashboard extends Component
 
             // Check if it's a SoundCloud URL
             if ($this->isSoundCloudUrl($this->searchQuery)) {
-                $this->resolveSoundcloudUrl();
+                if (proUser()) {
+                    $this->resolveSoundcloudUrl();
+                } else {
+                    $this->dispatch('alert', type: 'error', message: 'Please upgrade to a Pro User to use this feature.');
+                }
                 return;
             }
 
             // Perform text-based search
             $this->performTextSearch();
-            // } catch (ValidationException $e) {
-            //     $this->dispatch('alert', type: 'error', message: $e->validator->errors()->first());
-            //     Log::warning('Search validation failed', [
-            //         'search_query' => $this->searchQuery,
-            //         'errors' => $e->validator->errors()->toArray(),
-            //         'user_urn' => user()->urn ?? 'unknown'
-            //     ]);
         } catch (\Exception $e) {
             $this->dispatch('alert', type: 'error', message: 'Search failed. Please try again.');
             Log::error('Search failed: ' . $e->getMessage(), [
@@ -922,12 +922,7 @@ class Dashboard extends Component
             }
         }
         $response = null;
-        if (proUser()) {
-            $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
-        } else {
-            $this->dispatch('alert', type: 'error', message: 'Please upgrade to a Pro User to use this feature.');
-        }
-
+        $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
 
         if ($response->successful()) {
             if ($this->activeTab === 'playlists') {
