@@ -95,7 +95,7 @@ class AnalyticsService
             Log::info("User action update skipped for {$ownerUserUrn} on {$type} for track urn:{$track->id} and actionable id:{$actionable->id} type: {$actionable->getMorphClass()}. No user URN found.");
             return null;
         }
-
+        Log::info("User action update for {$ownerUserUrn} on {$type} for track urn:{$track->urn} and actuser urn: {$actUserUrn}.");
         // Use the new reusable method to check if the update is allowed.
         if (!$this->syncUserAction($track, $actUserUrn, $actionable, $type)) {
             return false;
