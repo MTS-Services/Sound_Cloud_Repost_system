@@ -240,11 +240,7 @@ class MyAccount extends Component
             ->sortByDesc('created_at')
             ->take(10);
 
-        $tracksData = [
-            'track' => $tracks,
-            'actionable' => null,
-            'genre' => null
-        ];
+        $tracksData = $tracks;
 
         // View Count
         Bus::dispatch(new TrackViewCount($tracksData));
