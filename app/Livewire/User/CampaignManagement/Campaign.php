@@ -1227,15 +1227,17 @@ class Campaign extends Component
                 }
             }
         }
-
-        $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
-
-
+        if (proUser()) {
+            $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
+        } else {
+            $this->dispatch('alert', type: 'error', message: 'Please upgrade to a Pro User to use this feature.');
+        }
+        
         if ($response->successful()) {
             if ($this->activeTab === 'playlists') {
                 $resolvedPlaylists = $response->json();
                 if (isset($resolvedPlaylists['tracks']) && count($resolvedPlaylists['tracks']) > 0) {
-                    Log::info('Resolved SoundCloud Playlist Data: ', $resolvedPlaylists);
+                    Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
                     $this->soundCloudService->unknownPlaylistAdd($resolvedPlaylists);
                 } else {
                     $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
