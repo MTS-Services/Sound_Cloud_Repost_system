@@ -21,11 +21,10 @@ class AnalyticsService
     public function syncUserAction(
         object $track,
         string $actUserUrn,
-        ?object $actionable = null,
         int $type,
         ?string $ipAddress = null,
 
-    ) {
+    ): bool|null {
         $ownerUserUrn = $track->user?->urn ?? null;
 
         if ($ipAddress == null) {
@@ -87,7 +86,7 @@ class AnalyticsService
     public function recordAnalytics(object $track, ?object $actionable = null, int $type, string $genre, $actUserUrn = null): UserAnalytics|bool|null
     {
         // Get the owner's URN from the track model.
-        $ownerUserUrn = $actionable?->user?->urn ?? $track?->user?->urn ?? null;
+        $ownerUserUrn = ($actionable ? $actionable?->user?->urn : $track?->user?->urn);
         $actUserUrn = $actUserUrn ?? user()->urn;
 
         // If no user URN is found, log and exit early.
@@ -97,7 +96,7 @@ class AnalyticsService
         }
         Log::info("User action update for {$ownerUserUrn} on {$type} for track urn:{$track->urn} and actuser urn: {$actUserUrn}.");
         // Use the new reusable method to check if the update is allowed.
-        if (!$this->syncUserAction($track, $actUserUrn, $actionable, $type)) {
+        if (!$this->syncUserAction($track, $actUserUrn, $type)) {
             return false;
         }
 
