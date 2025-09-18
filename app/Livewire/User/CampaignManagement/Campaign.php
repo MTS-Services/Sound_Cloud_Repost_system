@@ -97,24 +97,27 @@ class Campaign extends Component
         'audioTimeUpdate' => 'handleAudioTimeUpdate',
         'audioEnded' => 'handleAudioEnded',
     ];
-
-
-
-
-
-
-
-
+    
+ // Search and SoundCloud integration methods
+    public $searchQuery = '';
+    public $allTracks;
+    public $users;
+    public $allPlaylists;
+    public $trackLimit = 1;
+    public $playlistLimit = 1;
+    public $playlistTrackLimit = 1;
+    public $allPlaylistTracks;
+    public $userinfo;
+    private $soundcloudClientId = 'YOUR_SOUNDCLOUD_CLIENT_ID';
+    private $soundcloudApiUrl = 'https://api-v2.soundcloud.com';
+    public $playListTrackShow = false;
+    
     // Track which campaigns have been reposted
     public $repostedCampaigns = [];
-
-
-
+    
     // Constants
     private const ITEMS_PER_PAGE = 10;
-
-
-
+    
     protected $queryString = [
         'selectedGenres',
         'recommended_proPage' => ['except' => 1],
@@ -553,7 +556,10 @@ class Campaign extends Component
     public function loadMoreTracks()
     {
         $this->tracksPage++;
-        $newTracks = Track::latest()
+        if($this->playListTrackShow == true && $this->activeTab === 'tracks'){
+            $this->showPlaylistTracks($this->selectedPlaylistId);
+        }
+        $newTracks = Track::where('user_urn', user()->urn)->latest()
             ->skip(($this->tracksPage - 1) * $this->perPage)
             ->take($this->perPage)
             ->get();
@@ -1108,20 +1114,6 @@ class Campaign extends Component
             return;
         }
     }
-
-    // Search and SoundCloud integration methods
-    public $searchQuery = '';
-    public $allTracks;
-    public $users;
-    public $allPlaylists;
-    public $trackLimit = 1;
-    public $playlistLimit = 1;
-    public $playlistTrackLimit = 1;
-    public $allPlaylistTracks;
-    public $userinfo;
-    private $soundcloudClientId = 'YOUR_SOUNDCLOUD_CLIENT_ID';
-    private $soundcloudApiUrl = 'https://api-v2.soundcloud.com';
-    public $playListTrackShow = false;
 
     public function updatedactiveTab($tab)
     {
