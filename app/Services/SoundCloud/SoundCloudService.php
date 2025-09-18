@@ -448,7 +448,6 @@ class SoundCloudService
         try {
 
             foreach ($tracksData as $trackData) {
-                dd($trackData);
                 $userUrn = $trackData['user']['urn'];
                 $track_author = User::updateOrCreate([
                     'urn' => $userUrn,
