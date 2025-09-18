@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Models\Playlist;
+use App\Models\PlaylistTrack;
 use App\Models\UserAnalytics;
 use App\Services\User\AnalyticsService;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -23,15 +25,27 @@ class TrackViewCount implements ShouldQueue
      *      }
      *  ]
      */
-    private $tracksData = [];
+    private $datas;
+
+    /**
+     * Tracks data array
+     * @var string
+     * @example 'track' | 'campaign' | 'request'
+     */
+    private $type = 'track';
     protected AnalyticsService $analyticsService;
+
+    private $track;
+    private $genre;
+    private $actionable = null;
     /**
      * Create a new job instance.
      */
-    public function __construct($tracksData, AnalyticsService $analyticsService = new AnalyticsService())
+    public function __construct($datas, $type = 'track', AnalyticsService $analyticsService = new AnalyticsService())
     {
-        $this->tracksData = $tracksData;
+        $this->datas = $datas;
         $this->analyticsService = $analyticsService;
+        $this->type = $type;
     }
 
     /**
@@ -39,12 +53,27 @@ class TrackViewCount implements ShouldQueue
      */
     public function handle(): void
     {
-        Log::info('Processing TrackViewCount job for ' . count($this->tracksData) . ' tracks.');
-        foreach ($this->tracksData as $data) {
-            Log::info('Recording view for track ID: ' . json_encode($data['track']));
-            $genre = isset($data['genre']) && $data['genre'] ? $data['genre'] : $data['track']->genre;
-            $actionable = isset($data['actionable']) ? $data['actionable'] : null;
-            $this->analyticsService->recordAnalytics($data['track'], $actionable, UserAnalytics::TYPE_VIEW, $genre);
+        foreach ($this->datas as $data) {
+            switch ($this->type) {
+                case 'track':
+                    $this->genre = $data->genre;
+                    $this->actionable = null;
+                    $this->track = $data;
+                    break;
+                case 'campaign':
+                    $data->load('music');
+                    $this->genre = $data->target_genre;
+                    $this->actionable = $data;
+                    $this->track = $data->music;
+                    break;
+                case 'request':
+                    $data->load('track');
+                    $this->genre = $data->track->genre;
+                    $this->actionable = $data;
+                    $this->track = $data->track;
+                    break;
+            }
+            $this->analyticsService->recordAnalytics($this->track, $this->actionable, UserAnalytics::TYPE_VIEW, $this->genre);
         }
 
     }
