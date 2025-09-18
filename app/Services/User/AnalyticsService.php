@@ -73,7 +73,7 @@ class AnalyticsService
 
         // Check if this action has already been logged for today.
         if (in_array($actionIdentifier, $updatedToday)) {
-            Log::info("User action update skipped for {$actUserUrn} on {$actionIdentifier} for source track urn:{$track->urn} and actionable id:{$actionable ? $actionable->id : 'N/A'} type: {$actionable ? get_class($actionable) : 'N/A'}. Already updated today.");
+            Log::info("User action update skipped for {$actUserUrn} on {$actionIdentifier} for source track urn:{$track->urn} . Already updated today.");
             return false;
         }
 
@@ -92,7 +92,7 @@ class AnalyticsService
 
         // If no user URN is found, log and exit early.
         if (!$ownerUserUrn) {
-            Log::info("User action update skipped for {$ownerUserUrn} on {$type} for track urn:{$track->id} and actionable id:{$actionable ? $actionable->id : 'N/A'} type: {$actionable ? get_class($actionable) : 'N/A'}. No user URN found.");
+            Log::info("User action update skipped for {$ownerUserUrn} on {$type} for track urn:{$track->id} No user URN found.");
             return null;
         }
         Log::info("User action update for {$ownerUserUrn} on {$type} for track urn:{$track->urn} and actuser urn: {$actUserUrn}.");
