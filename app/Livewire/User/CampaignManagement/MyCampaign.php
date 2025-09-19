@@ -190,6 +190,7 @@ class MyCampaign extends Component
 
     public function updated($propertyName): void
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $budgetValidationFields = ['costPerRepost', 'targetReposts', 'editCostPerRepost', 'editTargetReposts'];
 
         if (in_array($propertyName, $budgetValidationFields)) {
@@ -1002,7 +1003,6 @@ class MyCampaign extends Component
 
     public function mount($categoryId = null)
     {
-        $this->soundCloudService->ensureSoundCloudConnection(user());
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
         $this->faqs = Faq::when($categoryId, function ($query) use ($categoryId) {

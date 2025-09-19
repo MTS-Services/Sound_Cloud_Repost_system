@@ -70,7 +70,6 @@ class Chart extends Component
 
     public function baseValidation($encryptedCampaignId, $encryptedTrackUrn)
     {
-        $this->soundCloudService->ensureSoundCloudConnection(user());
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
         if ($this->campaignService->getCampaigns()->where('id', decrypt($encryptedCampaignId))->where('user_urn', user()->urn)->exists()) {
             $this->dispatch('alert', type: 'error', message: 'You cannot act on your own campaign.');
@@ -202,6 +201,10 @@ class Chart extends Component
         }
     }
 
+    public function updated()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+    }
 
     public function render()
     {

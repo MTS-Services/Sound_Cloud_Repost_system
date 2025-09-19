@@ -70,6 +70,11 @@ class RepostRequest extends Component
         }
     }
 
+    public function updated()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+    }
+
     /**
      * Handle audio play event
      */
@@ -261,7 +266,6 @@ class RepostRequest extends Component
     }
     public function repost($requestId)
     {
-        $this->soundCloudService->ensureSoundCloudConnection(user());
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
         try {
             if (!$this->canRepost($requestId)) {
@@ -273,8 +277,8 @@ class RepostRequest extends Component
             // Check if the user has already reposted this specific request
             if (
                 Repost::where('reposter_urn', $currentUserUrn)
-                    ->where('repost_request_id', $requestId)
-                    ->exists()
+                ->where('repost_request_id', $requestId)
+                ->exists()
             ) {
 
                 $this->dispatch('alert', type: 'error', message: 'You have already reposted this request.');

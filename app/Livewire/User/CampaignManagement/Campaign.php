@@ -226,7 +226,6 @@ class Campaign extends Component
 
     public function mount()
     {
-        $this->soundCloudService->ensureSoundCloudConnection(user());
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
         $this->getAllTrackTypes();
@@ -244,6 +243,7 @@ class Campaign extends Component
     }
     public function updated($propertyName)
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
             $this->calculateFollowersLimit();
         }
@@ -745,8 +745,7 @@ class Campaign extends Component
     public function profeature($isChecked)
     {
         if (!proUser()) {
-            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
-            ;
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
         } elseif (($this->credit * 2) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;

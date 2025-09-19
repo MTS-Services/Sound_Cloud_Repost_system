@@ -48,10 +48,10 @@ class SoundCloudService
      */
     public function makeApiRequest(User $user, string $method, string $endpoint, array $options, string $errorMessage): array
     {
-        $this->ensureSoundCloudConnection($user);
+        // $this->ensureSoundCloudConnection($user);
 
-        // Before every API call, check if the token needs to be refreshed.
-        $this->refreshUserTokenIfNeeded($user);
+        // // Before every API call, check if the token needs to be refreshed.
+        // $this->refreshUserTokenIfNeeded($user);
 
         // Retrieve the refreshed user instance and token to ensure we have the latest data.
         $user->refresh();
@@ -93,6 +93,8 @@ class SoundCloudService
      */
     public function refreshUserTokenIfNeeded(User $user): void
     {
+        $this->ensureSoundCloudConnection($user);
+
         // Check if the token needs a refresh based on the stored `last_synced_at` and `expires_in`.
         $expirationTime = is_null($user->last_synced_at) ? null : $user->last_synced_at->addSeconds($user->expires_in);
 
@@ -170,6 +172,7 @@ class SoundCloudService
 
     public function getUserTracks(User $user, int $limit = 50, int $offset = 0): array
     {
+        $this->refreshUserTokenIfNeeded($user);
         return $this->makeApiRequest(
             $user,
             'get',
@@ -607,6 +610,7 @@ class SoundCloudService
 
     public function getUserPlaylists(User $user, int $limit = 50, int $offset = 0): array
     {
+        $this->refreshUserTokenIfNeeded($user);
         return $this->makeApiRequest(
             $user,
             'get',
@@ -755,7 +759,6 @@ class SoundCloudService
      */
     public function uploadTrack(User $user, array $trackData): array
     {
-        $this->ensureSoundCloudConnection($user);
         $this->refreshUserTokenIfNeeded($user);
         $user->refresh();
 

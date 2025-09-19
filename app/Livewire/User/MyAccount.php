@@ -74,6 +74,7 @@ class MyAccount extends Component
 
     public function mount($user_urn = null): void
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $followers = $this->soundCloudService->getAuthUserFollowers();
         $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($followers);
 
@@ -99,6 +100,11 @@ class MyAccount extends Component
             $this->showPlaylistTracks = true;
         }
         $this->socialLinks();
+    }
+
+    public function updated()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
     public function setActiveTab(string $tab): void

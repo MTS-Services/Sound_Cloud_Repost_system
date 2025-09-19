@@ -176,7 +176,6 @@ class TrackSubmit extends Component
 
     public function submit()
     {
-
         $this->validate();
 
         try {
