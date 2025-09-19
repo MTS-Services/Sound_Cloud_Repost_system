@@ -121,6 +121,7 @@ class Member extends Component
     {
         $this->genres = $this->getAvailableGenres();
         $this->userinfo = user()->userInfo;
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         // $this->creditSpent = repostPrice($this->user) + ($this->likeable ? 2 : 0) + ($this->commentable ? 2 : 0);
     }
 
