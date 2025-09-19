@@ -256,7 +256,7 @@ class Analytics extends Component
         $reposts = $analyticsData['overall_metrics']['total_reposts']['current_total'] ?? 0;
         $followers = $analyticsData['overall_metrics']['total_followers']['current_total'] ?? 0;
         $comments = $analyticsData['overall_metrics']['total_comments']['current_total'] ?? 0;
-        $views = $analyticsData['overall_metrics']['total_views']['current_total'] ?? 0;
+        $views = $analyticsData['overall_metrics']['total_views']['current_total'] ?? 1;
 
         // Calculate engagement rate
         $avgTotal = ($likes + $comments + $reposts + $streams + $followers) / 5;

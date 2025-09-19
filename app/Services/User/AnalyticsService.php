@@ -808,7 +808,7 @@ class AnalyticsService
                 // Apply the new engagement rate logic
                 $engagement_rate = 0;
                 if ($item->total_views >= $avg_total) {
-                    $engagement_rate = round(min(100, ($avg_total / $item->total_views) * 100), 2);
+                    $engagement_rate = round(min(100, ($avg_total / $item->total_views = 0 ? 1 : $item->total_views) * 100), 2);
                 }
 
                 return [
