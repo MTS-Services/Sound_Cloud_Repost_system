@@ -251,12 +251,12 @@ class Analytics extends Component
      */
     private function transformDataForUI(array $analyticsData): array
     {
-        $streams = $analyticsData['overall_metrics']['total_plays']['current_total'] ?? 0;
-        $likes = $analyticsData['overall_metrics']['total_likes']['current_total'] ?? 0;
-        $reposts = $analyticsData['overall_metrics']['total_reposts']['current_total'] ?? 0;
-        $followers = $analyticsData['overall_metrics']['total_followers']['current_total'] ?? 0;
-        $comments = $analyticsData['overall_metrics']['total_comments']['current_total'] ?? 0;
-        $views = $analyticsData['overall_metrics']['total_views']['current_total'] ?? 1;
+        $streams = $analyticsData['overall_metrics']['total_plays']['current_total'];
+        $likes = $analyticsData['overall_metrics']['total_likes']['current_total'];
+        $reposts = $analyticsData['overall_metrics']['total_reposts']['current_total'];
+        $followers = $analyticsData['overall_metrics']['total_followers']['current_total'];
+        $comments = $analyticsData['overall_metrics']['total_comments']['current_total'];
+        $views = $analyticsData['overall_metrics']['total_views']['current_total'] == 0 ? 1 : $analyticsData['overall_metrics']['total_views']['current_total'];
 
         // Calculate engagement rate
         $avgTotal = ($likes + $comments + $reposts + $streams + $followers) / 5;

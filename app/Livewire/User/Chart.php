@@ -212,12 +212,12 @@ class Chart extends Component
 
         // Map over items to calculate engagement score and rate
         $itemsWithMetrics = $items->map(function ($track) {
-            $totalViews = $track['metrics']['total_views']['current_total'] ?? 1;
-            $totalPlays = $track['metrics']['total_plays']['current_total'] ?? 0;
-            $totalReposts = $track['metrics']['total_reposts']['current_total'] ?? 0;
-            $totalLikes = $track['metrics']['total_likes']['current_total'] ?? 0;
-            $totalComments = $track['metrics']['total_comments']['current_total'] ?? 0;
-            $totalFollowers = $track['metrics']['total_followers']['current_total'] ?? 0;
+            $totalViews = $track['metrics']['total_views']['current_total'] == 0 ? 1 : $track['metrics']['total_views']['current_total'];
+            $totalPlays = $track['metrics']['total_plays']['current_total'];
+            $totalReposts = $track['metrics']['total_reposts']['current_total'];
+            $totalLikes = $track['metrics']['total_likes']['current_total'];
+            $totalComments = $track['metrics']['total_comments']['current_total'];
+            $totalFollowers = $track['metrics']['total_followers']['current_total'];
             $track['repost'] = false;
             $repost = Repost::where('reposter_urn', user()->urn)->where('campaign_id', $track['actionable_details']['id'])->exists();
             if ($repost) {
