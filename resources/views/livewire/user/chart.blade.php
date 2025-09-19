@@ -57,7 +57,7 @@
                             <div class="flex items-center gap-2">
                                 <button wire:click="refresh"
                                     class="flex items-center gap-2 bg-gray-200 hover:bg-white dark:bg-gray-800 dark:hover:bg-gray-700 px-4 py-2 rounded-xl transition-all duration-200 font-medium border dark:border-gray-700 text-gray-900 dark:text-white">
-                                    <span wire:loading.remove>
+                                    <span wire:loading.remove wire:target="refresh">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round"
@@ -68,7 +68,7 @@
                                             <path d="M8 16H3v5"></path>
                                         </svg>
                                     </span>
-                                    <span wire:loading class="animate-spin">
+                                    <span wire:loading wire:target="refresh" class="animate-spin">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round"
@@ -79,8 +79,10 @@
                                             <path d="M8 16H3v5"></path>
                                         </svg>
                                     </span>
-                                    <span class="hidden sm:inline" wire:loading.remove>Refresh</span>
-                                    <span class="hidden sm:inline" wire:loading>Refreshing...</span>
+                                    <span class="hidden sm:inline" wire:loading.remove
+                                        wire:target="refresh">Refresh</span>
+                                    <span class="hidden sm:inline" wire:loading
+                                        wire:target="refresh">Refreshing...</span>
 
                                 </button>
                                 <button
