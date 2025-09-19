@@ -514,7 +514,7 @@ class Member extends Component
     public function render()
     {
         $query = User::where('urn', '!=', user()->urn)
-            ->with('userInfo', 'genres')->active();
+            ->with(['userInfo', 'genres', 'tracks', 'reposts', 'playlists'])->active();
 
         if ($this->genreFilter) {
             $query->whereHas('tracks', function ($q) {
@@ -530,7 +530,6 @@ class Member extends Component
                     });
             });
         }
-        $query->with(['tracks', 'playlists', 'reposts']);
         $users = $query->paginate($this->perPage);
         
 
