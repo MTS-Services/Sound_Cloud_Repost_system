@@ -53,6 +53,7 @@ class SyncUserJob implements ShouldQueue
     public function handle(SoundCloudService $soundCloudService): void
     {
         DB::transaction(function () use ($soundCloudService) {
+            Log::info('SyncUserJob started for user ID: ' . $this->user->id . ', URN: ' . $this->user->urn . ', on login: ' . now());
             // Sync user information first, as other sync operations might depend on it
             $soundCloudService->syncUserInformation($this->user, $this->soundCloudUser);
             $soundCloudService->syncUserTracks($this->user, []);
