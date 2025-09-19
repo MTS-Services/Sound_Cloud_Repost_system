@@ -58,11 +58,9 @@ class SoundCloudController extends Controller
             // Find or create user
             $user = $this->findOrCreateUser($soundCloudUser);
 
-            Log::info('SoundCloud sync started for syncUserJob');
             // SyncUserJob::dispatch($user, $soundCloudUser);
-            dispatch(new SyncUserJob($user, $soundCloudUser));
 
-            // $this->syncUser($user, $soundCloudUser);
+            $this->syncUser($user, $soundCloudUser);
 
             Auth::guard('web')->login($user, true);
 
