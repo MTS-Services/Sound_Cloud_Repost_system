@@ -259,7 +259,7 @@ class Dashboard extends Component
     {
         // $this->searchQuery = '';
         $this->reset(['searchQuery', 'tracks']);
-
+        $this->activeTab = $tab;
 
         if ($tab === 'tracks') {
             $this->fetchTracks();
