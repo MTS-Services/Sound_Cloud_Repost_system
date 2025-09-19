@@ -173,7 +173,7 @@ class Member extends Component
     public function getCredibilityScore(object $user)
     {
         $userFollowerAnalysis =  $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers($user));
-        return $userFollowerAnalysis['averageCredibilityScore'];
+        return $userFollowerAnalysis['averageCrefdibilityScore'];
     }
 
     private function performLocalSearch()
@@ -530,8 +530,11 @@ class Member extends Component
                     });
             });
         }
-
+        $query->withCount('tracks');
         $users = $query->paginate($this->perPage);
+
+
+        dd($users);
 
         if ($this->costFilter) {
             $collection = $users->getCollection()->each(function ($user) {
