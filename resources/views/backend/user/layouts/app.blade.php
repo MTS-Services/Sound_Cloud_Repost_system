@@ -96,6 +96,38 @@
         });
     </script>
 
+    <style>
+        @keyframes bounce-dot {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        :root {
+            --livewire-progress_bar_color: var(--color-orange-normal);
+        }
+
+        #nprogress .bar {
+            background: var(--livewire-progress_bar_color) !important;
+        }
+
+        #nprogress .peg {
+            box-shadow: 0 0 10px var(--livewire-progress_bar_color), 0 0 5px var(--livewire-progress_bar_color) !important;
+        }
+
+        #nprogress .spinner-icon {
+            border-top-color: var(--livewire-progress_bar_color) !important;
+            border-left-color: var(--livewire-progress_bar_color) !important;
+        }
+    </style>
+
+
     @stack('cs')
     @livewireStyles()
 
@@ -173,13 +205,13 @@
     @endif
 
     <div id="navigation-loader" x-transition.opacity
-        class="fixed inset-0 z-50 flex items-center justify-center bg-accent-foreground/50 backdrop-blur-md">
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md">
         <div class="flex space-x-2">
-            <div class="w-4 h-4 rounded-full bg-orange-normal animate-[bounce-dot_1.2s_infinite]"
+            <div class="w-4 h-4 rounded-full bg-orange-500 animate-[bounce-dot_1.2s_infinite]"
                 style="animation-delay: -0.8s;"></div>
-            <div class="w-4 h-4 rounded-full bg-orange-normal animate-[bounce-dot_1.2s_infinite]"
+            <div class="w-4 h-4 rounded-full bg-orange-500 animate-[bounce-dot_1.2s_infinite]"
                 style="animation-delay: -0.4s;"></div>
-            <div class="w-4 h-4 rounded-full bg-orange-normal animate-[bounce-dot_1.2s_infinite]"></div>
+            <div class="w-4 h-4 rounded-full bg-orange-500 animate-[bounce-dot_1.2s_infinite]"></div>
         </div>
     </div>
 
