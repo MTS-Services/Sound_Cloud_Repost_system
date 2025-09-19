@@ -934,6 +934,7 @@ class Dashboard extends Component
 
         if ($response->successful()) {
             $resolvedData = $response->json();
+            dd($resolvedData);
             $urn = $resolvedData['urn'];
             if ($this->activeTab === 'playlists') {
                 if (isset($resolvedData['tracks']) && count($resolvedData['tracks']) > 0) {
