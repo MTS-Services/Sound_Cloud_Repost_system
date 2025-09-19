@@ -405,12 +405,11 @@ class Dashboard extends Component
 
             // Check if it's a SoundCloud URL
             if ($this->isSoundCloudUrl($this->searchQuery)) {
-            $this->processSearchData();
-                // if (proUser()) {
-                //     $this->resolveSoundcloudUrl();
-                // } else {
-                //     $this->dispatch('alert', type: 'error', message: 'Please upgrade to a Pro User to use this feature.');
-                // }
+                if (proUser()) {
+                    $this->resolveSoundcloudUrl();
+                } else {
+                    $this->dispatch('alert', type: 'error', message: 'Please upgrade to a Pro User to use this feature.');
+                }
                 return;
             }
 
