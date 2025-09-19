@@ -220,7 +220,6 @@ class MyCampaign extends Component
         $this->resetPage('allPage');
         $this->resetPage('activePage');
         $this->resetPage('completedPage');
-        $this->resetPagination();
     }
 
     private function validateCampaignBudget(): void
