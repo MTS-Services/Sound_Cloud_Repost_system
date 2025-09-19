@@ -69,11 +69,14 @@ class AnalyticsService
         $ownerUserUrn = ($actionable ? $actionable?->user?->urn : $track?->user?->urn);
         $actUserUrn = $actUserUrn ?? user()->urn;
 
+        Log::info('step 1');
+
         // If no user URN is found, log and exit early.
         if (!$ownerUserUrn) {
             Log::info("User action update skipped for {$ownerUserUrn} on {$type} for track urn:{$track->id} No user URN found.");
             return null;
         }
+        Log::info('step 2');
         // Use the new reusable method to check if the update is allowed.
         if (!$this->syncUserAction($track, $actUserUrn, $type)) {
             return false;
