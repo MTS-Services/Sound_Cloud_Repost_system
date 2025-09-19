@@ -257,6 +257,7 @@ class Dashboard extends Component
 
     public function selectModalTab($tab = 'tracks')
     {
+        $this->searchQuery = '';
         $this->activeTab = $tab;
 
         if ($tab === 'tracks') {
@@ -1025,9 +1026,7 @@ class Dashboard extends Component
         $this->activeTab = 'tracks';
         $this->playListTrackShow = true;
 
-        $this->reset([
-            'searchQuery',
-        ]);
+        $this->searchQuery = '';
     }
 
     public function directRepost($encryptedRequestId)
