@@ -25,6 +25,7 @@ use InvalidArgumentException;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Feature;
+use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
 
 class Member extends Component
