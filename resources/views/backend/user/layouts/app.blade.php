@@ -97,34 +97,16 @@
     </script>
 
     <style>
-        @keyframes infinity-animation {
-            0% {
-                transform: translate(0, 0);
-            }
+        @keyframes bounce-dot {
 
-            25% {
-                transform: translate(25px, 0);
+            0%,
+            100% {
+                transform: translateY(0);
             }
 
             50% {
-                transform: translate(0, 0);
+                transform: translateY(-20px);
             }
-
-            75% {
-                transform: translate(-25px, 0);
-            }
-
-            100% {
-                transform: translate(0, 0);
-            }
-        }
-
-        .animate-infinity {
-            animation: infinity-animation 4s ease-in-out infinite;
-        }
-
-        .animate-infinity .left-circle {
-            animation-delay: -2s;
         }
 
         /* :root {
@@ -156,20 +138,10 @@
     <div id="navigation-loader" x-transition.opacity
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-white/50 backdrop-blur-md">
 
-        <svg width="200" height="100" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg"
-            class="animate-infinity">
-            <g class="left-circle">
-                <path fill-rule="evenodd" clip-rule="evenodd"
-                    d="M50 0C22.3858 0 0 22.3858 0 50C0 77.6142 22.3858 100 50 100C77.6142 100 100 77.6142 100 50C100 22.3858 77.6142 0 50 0ZM50 25C36.1929 25 25 36.1929 25 50C25 63.8071 36.1929 75 50 75C63.8071 75 75 63.8071 75 50C75 36.1929 63.8071 25 50 25Z"
-                    fill="#FFFFFF" />
-                <path
-                    d="M50 0C22.3858 0 0 22.3858 0 50C0 77.6142 22.3858 100 50 100L50 75C36.1929 75 25 63.8071 25 50C25 36.1929 36.1929 25 50 25L50 0Z"
-                    fill="#FFFFFF" />
-            </g>
-            <path class="right-circle"
-                d="M150 0C122.386 0 100 22.3858 100 50C100 77.6142 122.386 100 150 100C177.614 100 200 77.6142 200 50C200 22.3858 177.614 0 150 0ZM150 25C136.193 25 125 36.1929 125 50C125 63.8071 136.193 75 150 75C163.807 75 175 63.8071 175 50C175 36.1929 163.807 25 150 25Z"
-                fill="#F97316" />
-        </svg>
+        <img src="{{ app_setting('app_logo') ? asset('storage/' . app_setting('app_logo')) : asset('assets/logo/rc-logo-black.png') }}"
+            alt="{{ config('app.name') }}" class="w-36 lg:w-48 dark:hidden animate-bounce" />
+        <img src="{{ app_setting('app_logo_dark') ? asset('storage/' . app_setting('app_logo_dark')) : asset('assets/logo/rc-logo-white.png') }}"
+            alt="{{ config('app.name') }}" class="w-36 lg:w-48 hidden dark:block animate-bounce" />
 
         {{-- <div class="flex space-x-2">
             <div class="w-4 h-4 rounded-full bg-orange-500 animate-[bounce-dot_1.2s_infinite]"
