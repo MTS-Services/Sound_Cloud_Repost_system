@@ -138,29 +138,10 @@
     <div id="navigation-loader" x-transition.opacity
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-white/50 backdrop-blur-md">
 
-        <div class="w-36 h-36 lg:w-48 lg:h-48 relative">
-            <!-- Main SVG for the infinity logo animation -->
-            <svg viewBox="0 0 100 50" class="w-full h-full absolute">
-                <style>
-                    @keyframes stroke-infinity {
-                        to {
-                            stroke-dashoffset: 0;
-                        }
-                    }
-                </style>
-
-                <path d="M 50,25 a 20,20 0 1,0 0,0.1 z M 50,25 a 20,20 0 1,1 0,-0.1 z" fill="none"
-                    class="stroke-orange-500 dark:stroke-white stroke-[5]"
-                    style="stroke-dasharray: 200; stroke-dashoffset: 200; animation: stroke-infinity 2s linear infinite;" />
-                <path d="M 50,25 a 20,20 0 1,0 0,0.1 z" fill="#f97316" class="dark:fill-orange-500" />
-                <path d="M 50,25 a 20,20 0 1,1 0,-0.1 z" fill="#fff" class="dark:fill-orange-500" />
-            </svg>
-        </div>
-
-        {{-- <img src="{{ app_setting('app_logo') ? asset('storage/' . app_setting('app_logo')) : asset('assets/logo/rc-logo-black.png') }}"
-            alt="{{ config('app.name') }}" class="w-36 lg:w-48 dark:hidden animate-bounce" />
+        <img src="{{ app_setting('app_logo') ? asset('storage/' . app_setting('app_logo')) : asset('assets/logo/rc-logo-black.png') }}"
+            alt="{{ config('app.name') }}" class="w-36 lg:w-48 dark:hidden animate-pulse" />
         <img src="{{ app_setting('app_logo_dark') ? asset('storage/' . app_setting('app_logo_dark')) : asset('assets/logo/rc-logo-white.png') }}"
-            alt="{{ config('app.name') }}" class="w-36 lg:w-48 hidden dark:block animate-bounce" /> --}}
+            alt="{{ config('app.name') }}" class="w-36 lg:w-48 hidden dark:block animate-pulse " />
 
         {{-- <div class="flex space-x-2">
             <div class="w-4 h-4 rounded-full bg-orange-500 animate-[bounce-dot_1.2s_infinite]"
