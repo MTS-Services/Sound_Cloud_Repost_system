@@ -61,47 +61,6 @@ class AnalyticsService
         }
 
         return true;
-
-
-        // First, check for and delete any old user action session data.
-        // This prevents the session from bloating with old, unused keys.
-        // $today = now()->toDateString();
-        // foreach (session()->all() as $key => $value) {
-        //     if (str_starts_with($key, 'auser_nalytics_update_') && !str_ends_with($key, $today)) {
-        //         session()->forget($key);
-        //     }
-        // }
-
-        // // Generate a unique session key for today's updates.
-        // $todayKey = 'user_analytics_update_.' . $today;
-
-        // // Retrieve the current day's updates or an empty array.
-        // $updatedToday = session()->get($todayKey, []);
-
-        // // Define the unique identifier for the current action.
-        // $actionIdentifier = sprintf(
-        //     '%s.%s.%s.%s.%s.%s',
-        //     $type,
-        //     // $actionable->id ?? 0,
-        //     // $actionable->getMorphClass() ?? 'N/A',
-        //     $track->urn,
-        //     $ownerUserUrn,
-        //     $actUserUrn,
-        //     $ipAddress ?? 'unknown',
-        //     $today
-        // );
-
-        // Check if this action has already been logged for today.
-        // if (in_array($actionIdentifier, $updatedToday)) {
-        //     Log::info("User action update skipped for {$actUserUrn} on {$actionIdentifier} for source track urn:{$track->urn} . Already updated today.");
-        //     return false;
-        // }
-
-        // If not in the session, add the action and save.
-        // $updatedToday[] = $actionIdentifier;
-        // session()->put($todayKey, $updatedToday);
-
-        // return true;
     }
 
     public function recordAnalytics(object $track, ?object $actionable = null, int $type, string $genre, $actUserUrn = null): UserAnalytics|bool|null
