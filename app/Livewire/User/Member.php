@@ -83,13 +83,15 @@ class Member extends Component
     protected PlaylistService $playlistService;
     protected RepostRequestService $repostRequestService;
     protected SoundCloudService $soundCloudService;
-    public function boot(TrackService $trackService, PlaylistService $playlistService, RepostRequestService $repostRequestService, SoundCloudService $soundCloudService)
+    protected FollowerAnalyzer $followerAnalyzer;
+    public function boot(TrackService $trackService, PlaylistService $playlistService, RepostRequestService $repostRequestService, SoundCloudService $soundCloudService, FollowerAnalyzer $followerAnalyzer)
     {
         $this->trackService = $trackService;
         $this->playlistService = $playlistService;
         $this->repostRequestService = $repostRequestService;
         $this->soundCloudService = $soundCloudService;
         $this->soundcloudClientId = config('services.soundcloud.client_id');
+        $this->followerAnalyzer = $followerAnalyzer;
     }
 
     public function rules()
@@ -166,6 +168,12 @@ class Member extends Component
         $this->performLocalSearch();
     }
     public $allPlaylistTracks;
+
+    public function getCredibilityScore(object $user)
+    {
+        $userFollowerAnalysis =  $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers($user));
+        return $userFollowerAnalysis['averageCredibilityScore'];
+    }
 
     private function performLocalSearch()
     {
