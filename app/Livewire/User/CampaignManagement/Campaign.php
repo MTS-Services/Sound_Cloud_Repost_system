@@ -1146,7 +1146,6 @@ class Campaign extends Component
         }
 
         if ( preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[a-zA-Z0-9\-_]+(\/[a-zA-Z0-9\-_]+)*(\/)?(\?.*)?$/i', $this->searchQuery)) {
-            dd($this->searchQuery);
             if (proUser()) {
                 $this->resolveSoundcloudUrl();
             } else {
@@ -1228,17 +1227,21 @@ class Campaign extends Component
         $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
 
         if ($response->successful()) {
+            $resolvedData = $response->json();
             if ($this->activeTab === 'playlists') {
-                $resolvedPlaylists = $response->json();
-                if (isset($resolvedPlaylists['tracks']) && count($resolvedPlaylists['tracks']) > 0) {
+                if (isset($resolvedData['tracks']) && count($resolvedData['tracks']) > 0) {
+                    $this->soundCloudService->unknownPlaylistAdd($resolvedData);
                     Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
-                    $this->soundCloudService->unknownPlaylistAdd($resolvedPlaylists);
                 } else {
                     $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
                 }
-            } else {
-                $resolvedTrack = $response->json();
-                $this->soundCloudService->unknownTrackAdd($resolvedTrack);
+            } elseif($this->activeTab === 'tracks') {
+                if (!isset($resolvedData['tracks'])) {
+                    $this->soundCloudService->unknownTrackAdd($resolvedData);
+                    Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
+                } else {
+                    $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
+                }
             }
             $this->processSearchData();
             Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
