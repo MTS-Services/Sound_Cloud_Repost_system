@@ -74,11 +74,11 @@ class AnalyticsService
             Log::info("User action update skipped for {$ownerUserUrn} on {$type} for track urn:{$track->id} No user URN found.");
             return null;
         }
-        Log::info("User action update for {$ownerUserUrn} on {$type} for track urn:{$track->urn} and actuser urn: {$actUserUrn}.");
         // Use the new reusable method to check if the update is allowed.
         if (!$this->syncUserAction($track, $actUserUrn, $type)) {
             return false;
         }
+        Log::info("Start User action update for {$ownerUserUrn} on {$type} for track urn:{$track->urn} and actuser urn: {$actUserUrn}.");
 
         // Find or create the UserAnalytics record based on the unique combination.
         $analytics = UserAnalytics::updateOrCreate(
@@ -97,6 +97,7 @@ class AnalyticsService
             ]
 
         );
+        Log::info("User action updated for {$ownerUserUrn} on {$type} for track urn:{$track->urn} and actuser urn: {$actUserUrn}.");
         // $analytics = UserAnalytics::firstOrNew(
         //     [
         //         'owner_user_urn' => $ownerUserUrn,
