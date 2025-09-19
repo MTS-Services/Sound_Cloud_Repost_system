@@ -675,7 +675,7 @@ class MyCampaign extends Component
     protected function resolveSoundcloudUrl()
     {
 
-        if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
+        if ($this->playListTrackShow == true && $this->activeModalTab === 'tracks') {
             $baseUrl = strtok($this->searchQuery, '?');
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                 ->whereRaw("SUBSTRING_INDEX(permalink_url, '?', 1) = ?", [$baseUrl])
@@ -687,13 +687,13 @@ class MyCampaign extends Component
                 return;
             }
         } else {
-            if ($this->activeTab == 'tracks') {
+            if ($this->activeModalTab == 'tracks') {
                 $baseUrl = strtok($this->searchQuery, '?');
                 $tracksFromDb = Track::whereRaw("SUBSTRING_INDEX(permalink_url, '?', 1) = ?", [$baseUrl])
                     ->get();
 
                 if ($tracksFromDb->isNotEmpty()) {
-                    $this->activeTab = 'tracks';
+                    $this->activeModalTab = 'tracks';
                     $this->allTracks = $tracksFromDb;
                     $this->tracks = $this->allTracks->take($this->trackLimit);
                     $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
@@ -701,13 +701,13 @@ class MyCampaign extends Component
                 }
             }
 
-            if ($this->activeTab == 'playlists') {
+            if ($this->activeModalTab == 'playlists') {
                 $baseUrl = strtok($this->searchQuery, '?');
                 $playlistsFromDb = Playlist::whereRaw("SUBSTRING_INDEX(permalink_url, '?', 1) = ?", [$baseUrl])
                     ->get();
 
                 if ($playlistsFromDb->isNotEmpty()) {
-                    $this->activeTab = 'playlists';
+                    $this->activeModalTab = 'playlists';
                     $this->allPlaylists = $playlistsFromDb;
                     $this->playlists = $this->allPlaylists->take($this->playlistLimit);
                     $this->hasMorePlaylists = $this->playlists->count() === $this->playlistLimit;
@@ -722,14 +722,14 @@ class MyCampaign extends Component
         if ($response->successful()) {
             $resolvedData = $response->json();
             $urn = $resolvedData['urn'];
-            if ($this->activeTab === 'playlists') {
+            if ($this->activeModalTab === 'playlists') {
                 if (isset($resolvedData['tracks']) && count($resolvedData['tracks']) > 0) {
                     $this->soundCloudService->unknownPlaylistAdd($resolvedData);
                     Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
                 } else {
                     $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
                 }
-            } elseif ($this->activeTab === 'tracks') {
+            } elseif ($this->activeModalTab === 'tracks') {
                 if (!isset($resolvedData['tracks'])) {
                     $this->soundCloudService->unknownTrackAdd($resolvedData);
                     Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
@@ -740,14 +740,14 @@ class MyCampaign extends Component
             $this->processSearchData($urn);
             Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
         } else {
-            if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
+            if ($this->playListTrackShow == true && $this->activeModalTab === 'tracks') {
                 $this->allPlaylistTracks = collect();
                 $this->tracks = collect();
             } else {
-                if ($this->activeTab === 'tracks') {
+                if ($this->activeModalTab === 'tracks') {
                     $this->allTracks = collect();
                     $this->tracks = collect();
-                } elseif ($this->activeTab === 'playlists') {
+                } elseif ($this->activeModalTab === 'playlists') {
                     $this->allPlaylists = collect();
                     $this->playlists = collect();
                 }
@@ -758,7 +758,7 @@ class MyCampaign extends Component
 
     protected function processSearchData($urn)
     {
-        if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
+        if ($this->playListTrackShow == true && $this->activeModalTab === 'tracks') {
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                 ->where('soundcloud_urn', $urn)
                 ->get();
@@ -770,12 +770,12 @@ class MyCampaign extends Component
                 return;
             }
         } else {
-            if ($this->activeTab == 'tracks') {
+            if ($this->activeModalTab == 'tracks') {
                 $tracksFromDb = Track::where('urn', $urn)
                     ->get();
 
                 if ($tracksFromDb->isNotEmpty()) {
-                    $this->activeTab = 'tracks';
+                    $this->activeModalTab = 'tracks';
                     $this->allTracks = $tracksFromDb;
                     $this->tracks = $this->allTracks->take($this->trackLimit);
                     $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
@@ -783,12 +783,12 @@ class MyCampaign extends Component
                 }
             }
 
-            if ($this->activeTab == 'playlists') {
+            if ($this->activeModalTab == 'playlists') {
                 $playlistsFromDb = Playlist::where('soundcloud_urn', $urn)
                     ->get();
 
                 if ($playlistsFromDb->isNotEmpty()) {
-                    $this->activeTab = 'playlists';
+                    $this->activeModalTab = 'playlists';
                     $this->allPlaylists = $playlistsFromDb;
                     $this->playlists = $this->allPlaylists->take($this->playlistLimit);
                     $this->hasMorePlaylists = $this->playlists->count() === $this->playlistLimit;
