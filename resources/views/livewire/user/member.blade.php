@@ -172,7 +172,7 @@
                         <div class="grid grid-cols-3 gap-4 mb-6">
                             <div class="text-center">
                                 <p class="text-text-gray text-xs mb-1 dark:text-white">Credibility</p>
-                                <p class="text-green-400 font-bold">{{ getCredibilityScore($user_) ?? 0 }}%</p>
+                                <p class="text-green-400 font-bold">{{ $this->getCredibilityScore($user_) ?? 0 }}%</p>
                             </div>
                             <div class="text-center">
                                 <p class="text-text-gray text-xs mb-1 dark:text-white">Response Rate</p>
