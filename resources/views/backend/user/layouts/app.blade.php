@@ -172,14 +172,36 @@
         @include('backend.user.layouts.partials.f_footer')
     @endif
 
+    <div id="navigation-loader" x-transition.opacity
+        class="fixed inset-0 z-50 flex items-center justify-center bg-accent-foreground/50 backdrop-blur-md">
+        <div class="flex space-x-2">
+            <div class="w-4 h-4 rounded-full bg-orange-normal animate-[bounce-dot_1.2s_infinite]"
+                style="animation-delay: -0.8s;"></div>
+            <div class="w-4 h-4 rounded-full bg-orange-normal animate-[bounce-dot_1.2s_infinite]"
+                style="animation-delay: -0.4s;"></div>
+            <div class="w-4 h-4 rounded-full bg-orange-normal animate-[bounce-dot_1.2s_infinite]"></div>
+        </div>
+    </div>
+
 
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
     <script src="https://w.soundcloud.com/player/api.js"></script>
     @livewireScripts()
     <script>
+        document.addEventListener('livewire:navigate', (event) => {
+            document.getElementById('navigation-loader').classList.remove('hidden');
+        });
+
+        document.addEventListener('livewire:navigating', () => {
+            document.getElementById('navigation-loader').classList.remove('hidden');
+        });
+
+        document.addEventListener('livewire:navigated', () => {
+            document.getElementById('navigation-loader').classList.add('hidden');
+        });
+
         document.addEventListener('livewire:initialized', () => {
             lucide.createIcons();
-
 
             window.Echo.channel('users')
                 .listen('.notification.sent', (e) => {
