@@ -451,7 +451,7 @@
 
                     </div>
                     @if ($activeTab === 'tracks' || $playListTrackShow == true)
-                        <div class="space-y-3">
+                        <div class="space-y-3" wire:loading.remove wire:target="searchSoundcloud">
                             @forelse ($tracks as $track_)
                                 <div wire:click="toggleSubmitModal('track', {{ $track_->id }})"
                                     class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
@@ -482,8 +482,7 @@
                                     </div>
                                 </div>
                             @empty
-                                <div wire:loading.remove wire:target="searchSoundcloud"
-                                    class="text-center py-16 text-gray-500 dark:text-gray-400">
+                                <div class="text-center py-16 text-gray-500 dark:text-gray-400">
                                     <div
                                         class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
                                         <x-lucide-music class="w-8 h-8 text-orange-500" />
@@ -494,22 +493,6 @@
                                     <p class="text-gray-500 dark:text-gray-400">
                                         {{ __('Add one to get started with campaigns.') }}
                                     </p>
-                                </div>
-                                <div wire:loading wire:target="searchSoundcloud"
-                                    class="w-full flex justify-center items-center">
-                                    <div class="text-center py-16 text-orange-600">
-                                        <div
-                                            class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-spin">
-                                            <svg class="w-8 h-8 text-orange-500" xmlns="http://www.w3.org/2000/svg"
-                                                fill="none" viewBox="0 0 24 24">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                    stroke="currentColor" stroke-width="4"></circle>
-                                                <path class="opacity-75" fill="currentColor"
-                                                    d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z" />
-                                            </svg>
-                                        </div>
-                                        <p class="text-sm font-medium">Searching Track...</p>
-                                    </div>
                                 </div>
                             @endforelse
 
@@ -528,8 +511,25 @@
                                 </div>
                             @endif
                         </div>
+
+                        <div wire:loading wire:target="searchSoundcloud"
+                            class="w-full flex justify-center items-center">
+                            <div class="text-center py-16 text-orange-600">
+                                <div
+                                    class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-spin">
+                                    <svg class="w-8 h-8 text-orange-500" xmlns="http://www.w3.org/2000/svg"
+                                        fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10"
+                                            stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z" />
+                                    </svg>
+                                </div>
+                                <p class="text-sm font-medium">Searching Track...</p>
+                            </div>
+                        </div>
                     @elseif($activeTab === 'playlists')
-                        <div class="space-y-3">
+                        <div class="space-y-3" wire:loading.remove wire:target="searchSoundcloud">
                             @forelse ($playlists as $playlist_)
                                 <div wire:click="showPlaylistTracks({{ $playlist_->id }})"
                                     class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
@@ -553,8 +553,7 @@
                                     </div>
                                 </div>
                             @empty
-                                <div wire:loading.remove wire:target="searchSoundcloud"
-                                    class="text-center py-16 text-gray-500 dark:text-gray-400">
+                                <div class="text-center py-16 text-gray-500 dark:text-gray-400">
                                     <div
                                         class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
                                         <x-lucide-list-music class="w-8 h-8 text-orange-500" />
@@ -565,22 +564,6 @@
                                     <p class="text-gray-500 dark:text-gray-400">
                                         {{ __('Add one to get started with campaigns.') }}
                                     </p>
-                                </div>
-                                <div wire:loading wire:target="searchSoundcloud"
-                                    class="w-full flex justify-center items-center">
-                                    <div class="text-center py-16 text-orange-600">
-                                        <div
-                                            class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-spin">
-                                            <svg class="w-8 h-8 text-orange-500" xmlns="http://www.w3.org/2000/svg"
-                                                fill="none" viewBox="0 0 24 24">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                    stroke="currentColor" stroke-width="4"></circle>
-                                                <path class="opacity-75" fill="currentColor"
-                                                    d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z" />
-                                            </svg>
-                                        </div>
-                                        <p class="text-sm font-medium">Searching Playlist...</p>
-                                    </div>
                                 </div>
                             @endforelse
 
@@ -598,6 +581,22 @@
                                     </button>
                                 </div>
                             @endif
+                        </div>
+                        <div wire:loading wire:target="searchSoundcloud"
+                            class="w-full flex justify-center items-center">
+                            <div class="text-center py-16 text-orange-600">
+                                <div
+                                    class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-spin">
+                                    <svg class="w-8 h-8 text-orange-500" xmlns="http://www.w3.org/2000/svg"
+                                        fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10"
+                                            stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z" />
+                                    </svg>
+                                </div>
+                                <p class="text-sm font-medium">Searching Playlist...</p>
+                            </div>
                         </div>
                     @endif
                 </div>
