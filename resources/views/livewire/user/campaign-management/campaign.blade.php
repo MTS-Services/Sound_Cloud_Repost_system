@@ -415,41 +415,21 @@
                                 Paste a SoundCloud playlist link
                             @endif
                         </label>
-                        <!-- Search Input + Button -->
                         <form wire:submit.prevent="searchSoundcloud">
                             <div class="flex w-full mt-2">
                                 <input wire:model="searchQuery" type="text" id="track-link-search"
                                     placeholder="{{ $activeTab === 'tracks' ? 'Paste a SoundCloud track link' : 'Paste a SoundCloud playlist link' }}"
                                     class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-orange-500 transition-colors duration-200 border-2 border-gray-300 dark:border-gray-600 ">
-
-                                <!-- Button content changes during loading -->
                                 <button type="submit"
-                                    class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200">
-
-                                    <span wire:loading.remove wire:target="searchSoundcloud">
-                                        <!-- Normal Search Icon -->
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                        </svg>
-                                    </span>
-
-                                    <span wire:loading wire:target="searchSoundcloud">
-                                        <!-- Loading Spinner -->
-                                        <svg class="animate-spin h-5 w-5 text-white"
-                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor"
-                                                d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z">
-                                            </path>
-                                        </svg>
-                                    </span>
+                                    class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200 ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
                                 </button>
                             </div>
                         </form>
-
                     </div>
                     @if ($activeTab === 'tracks' || $playListTrackShow == true)
                         <div class="space-y-3">
