@@ -260,7 +260,7 @@ class Analytics extends Component
 
         // Calculate engagement rate
         $avgTotal = ($likes + $comments + $reposts + $streams + $followers) / 5;
-        $avgEngagementRate =  $views >= $avgTotal ? round(min(100, ($avgTotal / $views) * 100), 2) / $avgTotal : 0;
+        $avgEngagementRate =  $views >= $avgTotal ? round(min(100, ($avgTotal / $views) * 100), 2) : 0;
 
         return [
             'streams' => $this->formatNumber($streams),
