@@ -1013,6 +1013,7 @@ class Dashboard extends Component
 
     public function showPlaylistTracks($playlistId)
     {
+        dd('Playlist Id: ' . $playlistId);
         $this->selectedPlaylistId = $playlistId;
         $playlist = Playlist::with('tracks')->find($playlistId);
         if ($playlist) {
