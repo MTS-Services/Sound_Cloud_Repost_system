@@ -1146,6 +1146,7 @@ class Campaign extends Component
         }
 
         if ( preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[a-zA-Z0-9\-_]+(\/[a-zA-Z0-9\-_]+)*(\/)?(\?.*)?$/i', $this->searchQuery)) {
+            dd($this->searchQuery);
             if (proUser()) {
                 $this->resolveSoundcloudUrl();
             } else {
