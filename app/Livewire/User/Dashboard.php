@@ -1015,10 +1015,10 @@ class Dashboard extends Component
     {
         $this->selectedPlaylistId = $playlistId;
         $playlist = Playlist::with('tracks')->find($playlistId);
-        dd($playlist);
         if ($playlist) {
             $this->allTracks = $playlist->tracks;
             $this->tracks = $this->allTracks->take($this->trackLimit);
+            dd($this->tracks);
             $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
         } else {
             $this->tracks = collect();
