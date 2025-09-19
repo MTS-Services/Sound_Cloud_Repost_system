@@ -108,6 +108,7 @@
                 transform: translateY(-20px);
             }
         }
+
         /* :root {
             --livewire-progress_bar_color: var(--color-orange-500);
         }
@@ -135,14 +136,20 @@
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-black overflow-x-hidden! relative" x-data="{ sidebarOpen: false, mobileSearchOpen: false, open: true }">
 
     <div id="navigation-loader" x-transition.opacity
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md">
-        <div class="flex space-x-2">
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-white/50 backdrop-blur-md">
+
+        <img src="{{ app_setting('app_logo') ? asset('storage/' . app_setting('app_logo')) : asset('assets/logo/rc-logo-black.png') }}"
+            alt="{{ config('app.name') }}" class="w-36 lg:w-48 dark:hidden" />
+        <img src="{{ app_setting('app_logo_dark') ? asset('storage/' . app_setting('app_logo_dark')) : asset('assets/logo/rc-logo-white.png') }}"
+            alt="{{ config('app.name') }}" class="w-36 lg:w-48 hidden dark:block" />
+
+        {{-- <div class="flex space-x-2">
             <div class="w-4 h-4 rounded-full bg-orange-500 animate-[bounce-dot_1.2s_infinite]"
                 style="animation-delay: -0.8s;"></div>
             <div class="w-4 h-4 rounded-full bg-orange-500 animate-[bounce-dot_1.2s_infinite]"
                 style="animation-delay: -0.4s;"></div>
             <div class="w-4 h-4 rounded-full bg-orange-500 animate-[bounce-dot_1.2s_infinite]"></div>
-        </div>
+        </div> --}}
     </div>
 
 
