@@ -530,9 +530,9 @@ class Member extends Component
                     });
             });
         }
-        $query->withCount(['tracks', 'reposts', 'playlists']);
+        $query->with(['tracks', 'playlists', 'reposts']);
         $users = $query->paginate($this->perPage);
-
+        
 
         dd($users);
 
