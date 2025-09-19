@@ -140,7 +140,7 @@
 
 
         <div
-            class="inline-flex items-center px-6 py-3 font-medium leading-6 text-sm shadow rounded-lg text-white bg-[#ff6b35] hover:bg-[#ff8c42] transition ease-in-out duration-150">
+            class="inline-flex items-center transition ease-in-out duration-150 animate-bounce">
             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
@@ -150,9 +150,9 @@
                 </path>
             </svg>
             <img src="{{ app_setting('app_logo') ? asset('storage/' . app_setting('app_logo')) : asset('assets/logo/rc-logo-black.png') }}"
-                alt="{{ config('app.name') }}" class="w-36 lg:w-48 dark:hidden animate-bounce" />
+                alt="{{ config('app.name') }}" class="w-36 lg:w-48 dark:hidden" />
             <img src="{{ app_setting('app_logo_dark') ? asset('storage/' . app_setting('app_logo_dark')) : asset('assets/logo/rc-logo-white.png') }}"
-                alt="{{ config('app.name') }}" class="w-36 lg:w-48 hidden dark:block animate-bounce" />
+                alt="{{ config('app.name') }}" class="w-36 lg:w-48 hidden dark:block" />
         </div>
 
         {{-- <div class="flex space-x-2">
