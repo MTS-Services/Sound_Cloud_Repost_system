@@ -762,10 +762,10 @@ class SoundCloudService
         $httpClient = Http::withHeaders([
             'Authorization' => 'OAuth ' . $user->token,
         ])->attach(
-                'track[asset_data]',
-                file_get_contents($trackData['asset_data']->getRealPath()),
-                $trackData['asset_data']->getClientOriginalName()
-            );
+            'track[asset_data]',
+            file_get_contents($trackData['asset_data']->getRealPath()),
+            $trackData['asset_data']->getClientOriginalName()
+        );
 
         if ($trackData['artwork_data']) {
             $httpClient->attach(
@@ -815,10 +815,13 @@ class SoundCloudService
     }
 
 
-    public function getAuthUserFollowers()
+    public function getAuthUserFollowers(?User $user = null)
     {
+        if (!$user) {
+            $user = user();
+        }
         $response = $this->makeApiRequest(
-            user(),
+            $user,
             'get',
             "/me/followers",
             [],
