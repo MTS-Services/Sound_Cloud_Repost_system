@@ -1013,9 +1013,9 @@ class Dashboard extends Component
 
     public function showPlaylistTracks($playlistId)
     {
-        dd('Playlist Id: ' . $playlistId);
         $this->selectedPlaylistId = $playlistId;
         $playlist = Playlist::with('tracks')->find($playlistId);
+        dd($playlist);
         if ($playlist) {
             $this->allTracks = $playlist->tracks;
             $this->tracks = $this->allTracks->take($this->trackLimit);
