@@ -97,8 +97,8 @@ class Campaign extends Component
         'audioTimeUpdate' => 'handleAudioTimeUpdate',
         'audioEnded' => 'handleAudioEnded',
     ];
-    
- // Search and SoundCloud integration methods
+
+    // Search and SoundCloud integration methods
     public $searchQuery = '';
     public $allTracks;
     public $users;
@@ -111,13 +111,13 @@ class Campaign extends Component
     private $soundcloudClientId = 'YOUR_SOUNDCLOUD_CLIENT_ID';
     private $soundcloudApiUrl = 'https://api-v2.soundcloud.com';
     public $playListTrackShow = false;
-    
+
     // Track which campaigns have been reposted
     public $repostedCampaigns = [];
-    
+
     // Constants
     private const ITEMS_PER_PAGE = 10;
-    
+
     protected $queryString = [
         'selectedGenres',
         'recommended_proPage' => ['except' => 1],
@@ -228,7 +228,7 @@ class Campaign extends Component
     {
         $this->soundCloudService->ensureSoundCloudConnection(user());
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
-        
+
         $this->getAllTrackTypes();
         $this->totalCampaigns();
         $this->calculateFollowersLimit();
@@ -556,7 +556,7 @@ class Campaign extends Component
     public function loadMoreTracks()
     {
         $this->tracksPage++;
-        if($this->playListTrackShow == true && $this->activeTab === 'tracks'){
+        if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
             $this->showPlaylistTracks($this->selectedPlaylistId);
         }
         $newTracks = Track::where('user_urn', user()->urn)->latest()
@@ -745,7 +745,8 @@ class Campaign extends Component
     public function profeature($isChecked)
     {
         if (!proUser()) {
-            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
+            ;
         } elseif (($this->credit * 2) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;
@@ -1145,7 +1146,7 @@ class Campaign extends Component
             return;
         }
 
-        if ( preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[a-zA-Z0-9\-_]+(\/[a-zA-Z0-9\-_]+)*(\/)?(\?.*)?$/i', $this->searchQuery)) {
+        if (preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[a-zA-Z0-9\-_]+(\/[a-zA-Z0-9\-_]+)*(\/)?(\?.*)?$/i', $this->searchQuery)) {
             if (proUser()) {
                 $this->resolveSoundcloudUrl();
             } else {
@@ -1228,6 +1229,7 @@ class Campaign extends Component
 
         if ($response->successful()) {
             $resolvedData = $response->json();
+            $urn = $resolvedData['urn'];
             if ($this->activeTab === 'playlists') {
                 if (isset($resolvedData['tracks']) && count($resolvedData['tracks']) > 0) {
                     $this->soundCloudService->unknownPlaylistAdd($resolvedData);
@@ -1235,7 +1237,7 @@ class Campaign extends Component
                 } else {
                     $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
                 }
-            } elseif($this->activeTab === 'tracks') {
+            } elseif ($this->activeTab === 'tracks') {
                 if (!isset($resolvedData['tracks'])) {
                     $this->soundCloudService->unknownTrackAdd($resolvedData);
                     Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
@@ -1243,7 +1245,7 @@ class Campaign extends Component
                     $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
                 }
             }
-            $this->processSearchData();
+            $this->processSearchData($urn);
             Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
         } else {
             if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
@@ -1262,11 +1264,11 @@ class Campaign extends Component
         }
     }
 
-    protected function processSearchData()
+    protected function processSearchData($urn)
     {
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
-                ->where('permalink_url', 'like', '%' . $this->searchQuery . '%')
+                ->where('soundcloud_urn', $urn)
                 ->get();
 
             if ($tracksFromDb->isNotEmpty()) {
@@ -1277,7 +1279,7 @@ class Campaign extends Component
             }
         } else {
             if ($this->activeTab == 'tracks') {
-                $tracksFromDb = Track::where('permalink_url', 'like', '%' . $this->searchQuery . '%')
+                $tracksFromDb = Track::where('urn', $urn)
                     ->get();
 
                 if ($tracksFromDb->isNotEmpty()) {
@@ -1290,7 +1292,7 @@ class Campaign extends Component
             }
 
             if ($this->activeTab == 'playlists') {
-                $playlistsFromDb = Playlist::where('permalink_url', 'like', '%' . $this->searchQuery . '%')
+                $playlistsFromDb = Playlist::where('soundcloud_urn', $urn)
                     ->get();
 
                 if ($playlistsFromDb->isNotEmpty()) {
