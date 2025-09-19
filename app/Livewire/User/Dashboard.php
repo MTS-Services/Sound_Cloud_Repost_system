@@ -931,6 +931,7 @@ class Dashboard extends Component
 
         $response = null;
         $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
+        Log::info('Resolved SoundCloud URL: ' . $this->searchQuery);
         if ($response->successful()) {
             $resolvedData = $response->json();
             Log::info('Resolved Data: ' . json_encode($resolvedData) . " Successfully resolved SoundCloud URL: " . $this->searchQuery);
@@ -954,6 +955,7 @@ class Dashboard extends Component
             $this->processSearchData($urn);
             Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
         } else {
+            Log::info('Data not resolved: ' . $this->searchQuery);
             if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
                 $this->allPlaylistTracks = collect();
                 $this->tracks = collect();
@@ -962,6 +964,7 @@ class Dashboard extends Component
                     $this->allTracks = collect();
                     $this->tracks = collect();
                 } elseif ($this->activeTab === 'playlists') {
+
                     $this->allPlaylists = collect();
                     $this->playlists = collect();
                 }
