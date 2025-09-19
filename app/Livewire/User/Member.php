@@ -533,8 +533,6 @@ class Member extends Component
         $users = $query->paginate($this->perPage);
         
 
-        dd($users);
-
         if ($this->costFilter) {
             $collection = $users->getCollection()->each(function ($user) {
                 $user->repost_cost = repostPrice($user);

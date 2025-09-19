@@ -180,7 +180,8 @@
                             </div>
                             <div class="text-center">
                                 <p class="text-text-gray text-xs mb-1 dark:text-white">Total Reposts</p>
-                                <p class="text-black font-bold dark:text-white">156</p>
+                                <p class="text-black font-bold dark:text-white">{{ $user_->reposts?->count() ?? 0 }}
+                                </p>
                             </div>
                         </div>
 
