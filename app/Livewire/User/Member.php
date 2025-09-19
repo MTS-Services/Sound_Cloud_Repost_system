@@ -173,7 +173,7 @@ class Member extends Component
     public function getCredibilityScore(object $user)
     {
         $userFollowerAnalysis =  $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers($user));
-        return $userFollowerAnalysis['averageCrefdibilityScore'];
+        return $userFollowerAnalysis['averageCredibilityScore'];
     }
 
     private function performLocalSearch()
