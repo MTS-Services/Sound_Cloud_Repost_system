@@ -219,8 +219,8 @@ class SoundCloudService
                     $track_author->update(['status' => User::STATUS_INACTIVE]);
                 }
 
-                Log::info('SoundCloud sync started for playlist ' . $playlist_urn . ' for user ' . $userUrn);
-                Log::info('track Id:' . $trackData['id']);
+                // Log::info('SoundCloud sync started for playlist ' . $playlist_urn . ' for user ' . $userUrn);
+                // Log::info('track Id:' . $trackData['id']);
                 $commonTrackData = [
                     'user_urn' => $trackData['user']['urn'] ?? null,
                     'kind' => $trackData['kind'] ?? null,
@@ -276,14 +276,14 @@ class SoundCloudService
                     'author_soundcloud_uri' => $trackData['user']['uri'] ?? null,
                 ];
 
-                Log::info('Track Data:' . json_encode($commonTrackData));
+                // Log::info('Track Data:' . json_encode($commonTrackData));
 
-                Log::info('Searching for existing track with SoundCloud ID: ' . $trackData['id']);
+                // Log::info('Searching for existing track with SoundCloud ID: ' . $trackData['id']);
 
 
-                $track = Track::where('soundcloud_track_id', $trackData['id'])->first();
+                // $track = Track::where('soundcloud_track_id', $trackData['id'])->first();
 
-                Log::info('Track:' . json_encode($track));
+                // Log::info('Track:' . json_encode($track));
 
 
                 $track = Track::updateOrCreate(
@@ -294,7 +294,7 @@ class SoundCloudService
                     $commonTrackData
                 );
 
-                Log::info("Successfully synced track {$track->soundcloud_track_id} for user {$user->urn}.");
+                // Log::info("Successfully synced track {$track->soundcloud_track_id} for user {$user->urn}.");
 
                 // if ($track_author && $track_author->urn !== $user->urn && is_null($playlist_urn)) {
                 //     Repost::create([
