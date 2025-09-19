@@ -214,6 +214,15 @@ class MyCampaign extends Component
         }
     }
 
+    public function setActiveTab($tab = 'all'): void
+    {
+        $this->activeMainTab = $tab;
+        $this->resetPage('allPage');
+        $this->resetPage('activePage');
+        $this->resetPage('completedPage');
+        $this->resetPagination();
+    }
+
     private function validateCampaignBudget(): void
     {
         $this->resetBudgetValidation();
