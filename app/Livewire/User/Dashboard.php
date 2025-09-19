@@ -933,6 +933,8 @@ class Dashboard extends Component
         $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
         if ($response->successful()) {
             $resolvedData = $response->json();
+            Log::info('Resolved Data: ' . json_encode($resolvedData) . " Successfully resolved SoundCloud URL: " . $this->searchQuery);
+            dd($resolvedData);
             $urn = $resolvedData['urn'];
             if ($this->activeTab === 'playlists') {
                 if (isset($resolvedData['tracks']) && count($resolvedData['tracks']) > 0) {
