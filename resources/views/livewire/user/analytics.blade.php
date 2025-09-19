@@ -2,7 +2,7 @@
     <x-slot name="page_slug">analytics</x-slot>
 
     <!-- Loading Overlay -->
-    <div x-data="{ isLoading: @entangle('isLoading') }" x-show="isLoading" x-transition:enter="transition ease-out duration-300"
+    {{-- <div x-data="{ isLoading: @entangle('isLoading') }" x-show="isLoading" x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
         x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
@@ -23,7 +23,7 @@
             </div>
             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Please wait while we update your data</p>
         </div>
-    </div>
+    </div> --}}
 
     <div x-data="{
         showGrowthTips: @entangle('showGrowthTips').live,
@@ -430,9 +430,9 @@
                     class="bg-gray-50 dark:bg-gray-700 rounded-lg p-5 shadow-sm border border-gray-100 dark:border-gray-600 hover:shadow-md transition-shadow">
                     <div class="flex items-start">
                         <div class="p-2 rounded-lg bg-[#ff6b35] text-white mr-4 flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-music h-5 w-5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-music h-5 w-5">
                                 <path d="M9 18V5l12-2v13"></path>
                                 <circle cx="6" cy="18" r="3"></circle>
                                 <circle cx="18" cy="16" r="3"></circle>
