@@ -258,7 +258,7 @@ class Dashboard extends Component
     public function selectModalTab($tab = 'tracks')
     {
         // $this->searchQuery = '';
-        $this->reset(['searchQuery', 'tracksPage', 'tracks', 'hasMoreTracks', 'searchResults']);
+        $this->reset(['searchQuery', 'tracks']);
 
 
         if ($tab === 'tracks') {
