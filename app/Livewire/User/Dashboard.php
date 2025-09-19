@@ -887,7 +887,7 @@ class Dashboard extends Component
 
     protected function resolveSoundcloudUrl()
     {
-
+        dd($this->searchQuery);
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
             $baseUrl = strtok($this->searchQuery, '?');
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
