@@ -138,11 +138,17 @@
     <div id="navigation-loader" x-transition.opacity
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-white/50 backdrop-blur-md">
 
-        <img src="{{ app_setting('app_logo') ? asset('storage/' . app_setting('app_logo')) : asset('assets/logo/rc-logo-black.png') }}"
-            alt="{{ config('app.name') }}" class="w-36 lg:w-48 dark:hidden animate-bounce" />
-        <img src="{{ app_setting('app_logo_dark') ? asset('storage/' . app_setting('app_logo_dark')) : asset('assets/logo/rc-logo-white.png') }}"
-            alt="{{ config('app.name') }}" class="w-36 lg:w-48 hidden dark:block animate-bounce" />
+        <div class="flex space-x-2">
+            {{-- Spin icon --}}
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 p-2">
+                <span class="w-2 h-2 bg-orange-500 rounded-full animate-ping"></span>
+            </div>
 
+            <img src="{{ app_setting('app_logo') ? asset('storage/' . app_setting('app_logo')) : asset('assets/logo/rc-logo-black.png') }}"
+                alt="{{ config('app.name') }}" class="w-36 lg:w-48 dark:hidden animate-bounce" />
+            <img src="{{ app_setting('app_logo_dark') ? asset('storage/' . app_setting('app_logo_dark')) : asset('assets/logo/rc-logo-white.png') }}"
+                alt="{{ config('app.name') }}" class="w-36 lg:w-48 hidden dark:block animate-bounce" />
+        </div>
         {{-- <div class="flex space-x-2">
             <div class="w-4 h-4 rounded-full bg-orange-500 animate-[bounce-dot_1.2s_infinite]"
                 style="animation-delay: -0.8s;"></div>
