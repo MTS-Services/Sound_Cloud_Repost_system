@@ -496,7 +496,7 @@
                                     </p>
                                 </div>
                                 <div wire:loading wire:target="searchSoundcloud"
-                                    class="flex justify-center items-center">
+                                    class="w-full flex justify-center items-center">
                                     <div class="text-center py-16 text-orange-600">
                                         <div
                                             class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-spin">
@@ -567,7 +567,7 @@
                                     </p>
                                 </div>
                                 <div wire:loading wire:target="searchSoundcloud"
-                                    class="flex justify-center items-center">
+                                    class="w-full flex justify-center items-center">
                                     <div class="text-center py-16 text-orange-600">
                                         <div
                                             class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-spin">
