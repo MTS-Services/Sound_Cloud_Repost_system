@@ -97,7 +97,7 @@ class AnalyticsService
             ]
 
         );
-        Log::info("User action updated for {$ownerUserUrn} on {$type} for track urn:{$track->urn} and actuser urn: {$actUserUrn}.");
+        Log::info("User action updated for {$ownerUserUrn} on {$type} for track urn:{$track->urn} and actuser urn: {$actUserUrn}. analytics:" . json_encode($analytics));
         // $analytics = UserAnalytics::firstOrNew(
         //     [
         //         'owner_user_urn' => $ownerUserUrn,
