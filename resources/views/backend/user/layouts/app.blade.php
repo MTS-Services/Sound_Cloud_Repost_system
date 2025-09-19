@@ -108,9 +108,8 @@
                 transform: translateY(-20px);
             }
         }
-
-        :root {
-            --livewire-progress_bar_color: var(--color-orange-normal);
+        /* :root {
+            --livewire-progress_bar_color: var(--color-orange-500);
         }
 
         #nprogress .bar {
@@ -124,7 +123,7 @@
         #nprogress .spinner-icon {
             border-top-color: var(--livewire-progress_bar_color) !important;
             border-left-color: var(--livewire-progress_bar_color) !important;
-        }
+        } */
     </style>
 
 
@@ -134,6 +133,19 @@
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-black overflow-x-hidden! relative" x-data="{ sidebarOpen: false, mobileSearchOpen: false, open: true }">
+
+    <div id="navigation-loader" x-transition.opacity
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md">
+        <div class="flex space-x-2">
+            <div class="w-4 h-4 rounded-full bg-orange-500 animate-[bounce-dot_1.2s_infinite]"
+                style="animation-delay: -0.8s;"></div>
+            <div class="w-4 h-4 rounded-full bg-orange-500 animate-[bounce-dot_1.2s_infinite]"
+                style="animation-delay: -0.4s;"></div>
+            <div class="w-4 h-4 rounded-full bg-orange-500 animate-[bounce-dot_1.2s_infinite]"></div>
+        </div>
+    </div>
+
+
     @auth
         <livewire:user-heartbeat />
     @endauth
@@ -203,18 +215,6 @@
     @else
         @include('backend.user.layouts.partials.f_footer')
     @endif
-
-    <div id="navigation-loader" x-transition.opacity
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md">
-        <div class="flex space-x-2">
-            <div class="w-4 h-4 rounded-full bg-orange-500 animate-[bounce-dot_1.2s_infinite]"
-                style="animation-delay: -0.8s;"></div>
-            <div class="w-4 h-4 rounded-full bg-orange-500 animate-[bounce-dot_1.2s_infinite]"
-                style="animation-delay: -0.4s;"></div>
-            <div class="w-4 h-4 rounded-full bg-orange-500 animate-[bounce-dot_1.2s_infinite]"></div>
-        </div>
-    </div>
-
 
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
     <script src="https://w.soundcloud.com/player/api.js"></script>
