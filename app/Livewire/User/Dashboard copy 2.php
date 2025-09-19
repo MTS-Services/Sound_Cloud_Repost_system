@@ -257,8 +257,7 @@ class Dashboard extends Component
 
     public function selectModalTab($tab = 'tracks')
     {
-        // $this->searchQuery = '';
-        $this->reset();
+        $this->searchQuery = '';
         $this->activeTab = $tab;
 
         if ($tab === 'tracks') {
@@ -749,7 +748,8 @@ class Dashboard extends Component
     public function profeature($isChecked)
     {
         if (!proUser()) {
-            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
+            ;
         } elseif (($this->credit * 1.5) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;

@@ -136,11 +136,9 @@
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-black overflow-x-hidden! relative" x-data="{ sidebarOpen: false, mobileSearchOpen: false, open: true }">
 
     <div id="navigation-loader" x-transition.opacity
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-white/50 backdrop-blur-md">
+        class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/50 dark:bg-white/50 backdrop-blur-md">
 
-
-        <div
-            class="inline-flex items-center transition ease-in-out duration-150 animate-bounce">
+        <div class="inline-flex items-center transition ease-in-out duration-150 animate-bounce">
             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24">
                 <circle cx="12" cy="12" r="10" stroke="#ea580c" stroke-width="4">
