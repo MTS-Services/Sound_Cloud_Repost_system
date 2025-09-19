@@ -44,12 +44,15 @@ class AnalyticsService
 
         // first check on datbase with created at time to check is updated on current or not
 
+        $today = Carbon::today();
+        Log::info("date: {$today} and start date: {$today->startOfDay()}");
+
         $response = UserAnalytics::where('act_user_urn', $actUserUrn)
             ->where('track_urn', $track->urn)
             ->where('owner_user_urn', $ownerUserUrn)
             ->where('type', $type)
             ->where('ip_address', $ipAddress)
-            ->whereDate('created_at', Carbon::today())
+            ->whereDate('created_at', '>=', $today->startOfDay())
             ->first();
 
         if ($response) {
