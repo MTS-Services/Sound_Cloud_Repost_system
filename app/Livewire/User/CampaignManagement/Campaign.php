@@ -240,18 +240,6 @@ class Campaign extends Component
 
         // $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
     }
-    // public function updated($propertyName)
-    // {
-    //     $this->soundCloudService->refreshUserTokenIfNeeded(user());
-    //     if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
-    //         $this->calculateFollowersLimit();
-    //     }
-    //     if (in_array($propertyName, ['activeMainTab', 'campaigns'])) {
-    //         $this->dispatch('soundcloud-widgets-reinitialize');
-    //     }
-    //     // $queryParams = $this->getQueryParams();
-    //     // $this->redirect(route('user.cm.campaigns', ['tab' => $this->activeMainTab]) . '?' . http_build_query($queryParams), navigate: true);
-    // }
     public function updated($propertyName)
     {
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
@@ -261,12 +249,8 @@ class Campaign extends Component
         if (in_array($propertyName, ['activeMainTab', 'campaigns'])) {
             $this->dispatch('soundcloud-widgets-reinitialize');
         }
-
-        // Only redirect for search or filter changes, not tab switches
-        if (in_array($propertyName, ['search', 'selectedGenres', 'searchMusicType'])) {
-            $queryParams = $this->getQueryParams();
-            $this->redirect(route('user.cm.campaigns', ['tab' => $this->activeMainTab]) . '?' . http_build_query($queryParams), navigate: true);
-        }
+        // $queryParams = $this->getQueryParams();
+        // $this->redirect(route('user.cm.campaigns', ['tab' => $this->activeMainTab]) . '?' . http_build_query($queryParams), navigate: true);
     }
     public function calculateFollowersLimit()
     {
