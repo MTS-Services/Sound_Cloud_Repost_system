@@ -1503,6 +1503,20 @@ class Campaign extends Component
     public function render()
     {
         try {
+            $queryParams = [
+                'tab' => $this->activeMainTab,
+                'selectedGenres' => $this->selectedGenres,
+            ];
+
+            // Remove empty parameters
+            $queryParams = array_filter($queryParams, function ($value) {
+                return !empty($value) || $value === '0';
+            });
+
+            $this->redirect(route('user.cm.campaigns') . '?' . http_build_query($queryParams), navigate: true);
+
+
+
             $baseQuery = $this->getCampaignsQuery();
             $baseQuery = $this->applyFilters($baseQuery);
             $campaigns = collect();
