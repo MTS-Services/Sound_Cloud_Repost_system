@@ -406,7 +406,7 @@
                     </button>
                 </div>
                 <div class="flex-grow overflow-y-auto">
-                    <div class="p-5 sticky top-0 bg-transparent">
+                    <div class="p-5 sticky top-0 bg-white dark:bg-slate-800">
                         <label for="track-link-search" class="text-xl font-semibold text-gray-700 dark:text-gray-200">
                             @if ($activeTab === 'tracks')
                                 Paste a SoundCloud track link
