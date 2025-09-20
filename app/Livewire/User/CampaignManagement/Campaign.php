@@ -242,7 +242,7 @@ class Campaign extends Component
 
 
         $currentUrl = request()->fullUrl();
-
+        dd(str_contains($currentUrl, 'cassi'));
         if (str_contains($currentUrl, 'cassi')) {
             dd('cassi');
             $queryParams = request()->query();
