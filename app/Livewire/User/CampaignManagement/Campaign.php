@@ -241,12 +241,11 @@ class Campaign extends Component
 
 
 
-        $currentUrl = url()->fullUrl();
+        $currentUrl = request()->fullUrl();
 
         if (str_contains($currentUrl, 'cassi')) {
             $queryParams = request()->query();
 
-            // Optional: Replace 'cassi' tab with your active tab
             if (isset($queryParams['tab']) && $queryParams['tab'] === 'cassi') {
                 $queryParams['tab'] = $this->activeMainTab;
             }
