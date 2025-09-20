@@ -258,7 +258,6 @@ class AnalyticsService
         ?string $actionableType = null
     ): LengthAwarePaginator {
         $periods = $this->calculatePeriods($filter, $dateRange);
-        dd($actionableType);
 
         // Get aggregated track data for current period
         $query = UserAnalytics::select([
@@ -279,6 +278,8 @@ class AnalyticsService
         if ($actionableType !== null) {
             $query->where('actionable_type', $actionableType);
         }
+
+        dd($query->toSql() ,$query->get());
 
         $query->whereDate('created_at', '>=', $periods['current']['start']->format('Y-m-d'))
             ->whereDate('created_at', '<=', $periods['current']['end']->format('Y-m-d'));
