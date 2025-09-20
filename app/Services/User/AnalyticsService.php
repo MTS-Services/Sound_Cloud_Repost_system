@@ -279,8 +279,6 @@ class AnalyticsService
             $query->where('actionable_type', $actionableType);
         }
 
-        dd($query->toSql() ,$query->gourpBy('track_urn')->get());
-
         $query->whereDate('created_at', '>=', $periods['current']['start']->format('Y-m-d'))
             ->whereDate('created_at', '<=', $periods['current']['end']->format('Y-m-d'));
 
@@ -292,6 +290,8 @@ class AnalyticsService
             ->orderByDesc('total_views')
             ->orderByDesc('total_reposts')
             ->get();
+
+        dd($trackData, $query->toSql());
 
         // Create paginator
         $total = $trackData->count();
