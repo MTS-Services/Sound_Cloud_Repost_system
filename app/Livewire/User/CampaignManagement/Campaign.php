@@ -237,9 +237,24 @@ class Campaign extends Component
             $this->selectedGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
         }
 
-
-
         // $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
+
+
+
+        $currentUrl = url()->fullUrl();
+
+        if (str_contains($currentUrl, 'cassi')) {
+            $queryParams = request()->query();
+
+            // Optional: Replace 'cassi' tab with your active tab
+            if (isset($queryParams['tab']) && $queryParams['tab'] === 'cassi') {
+                $queryParams['tab'] = $this->activeMainTab;
+            }
+
+            $targetUrl = route('user.cm.campaigns') . '?' . http_build_query($queryParams);
+
+            return redirect()->to($targetUrl);
+        }
     }
     public function updated($propertyName)
     {
@@ -250,7 +265,6 @@ class Campaign extends Component
         if (in_array($propertyName, ['activeMainTab', 'campaigns'])) {
             $this->dispatch('soundcloud-widgets-reinitialize');
         }
-
         // $queryParams = $this->getQueryParams();
         // $this->redirect(route('user.cm.campaigns', ['tab' => $this->activeMainTab]) . '?' . http_build_query($queryParams), navigate: true);
     }
