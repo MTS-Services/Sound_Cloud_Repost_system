@@ -251,8 +251,8 @@ class Campaign extends Component
             $this->dispatch('soundcloud-widgets-reinitialize');
         }
 
-        $queryParams = $this->queryString;
-        $this->redirect(route('user.cm.campaigns', ['tab' => $this->activeMainTab]) . '?' . http_build_query($queryParams), navigate: true);
+        // $queryParams = $this->getQueryParams();
+        // $this->redirect(route('user.cm.campaigns', ['tab' => $this->activeMainTab]) . '?' . http_build_query($queryParams), navigate: true);
     }
     public function calculateFollowersLimit()
     {
