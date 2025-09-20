@@ -242,14 +242,13 @@ class Campaign extends Component
 
 
 
-        $currentUrl = $request->has('tab') && $request->input('tab') === 'recommended_pro';
+        $currentUrl = $request->has('tab') && $request->input('tab') === $this->activeMainTab;
 
-        dd($currentUrl);
-        if ($request->has('tab') && $request->input('tab') === 'recommended_pro') {
-            dd('cassi');
+        if ($currentUrl) {
+            
             $queryParams = request()->query();
 
-            if (isset($queryParams['tab']) && $queryParams['tab'] === 'cassi') {
+            if (isset($queryParams['tab']) && $queryParams['tab'] === $this->activeMainTab) {
                 $queryParams['tab'] = $this->activeMainTab;
             }
 
