@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class SoundCloudService
 {
@@ -448,91 +449,92 @@ class SoundCloudService
     public function unknownPlaylistAdd($playlistData): int
     {
         try {
-            $playlistUserUrn = $playlistData['user']['urn'];
-            $track_author = User::updateOrCreate([
-                'urn' => $playlistUserUrn,
-            ], [
-                'soundcloud_id' => $playlistData['user']['id'],
-                'name' => $playlistData['user']['username'],
-                'nickname' => $playlistData['user']['username'],
-                'avatar' => $playlistData['user']['avatar_url'],
-                'soundcloud_permalink_url' => $playlistData['user']['permalink_url'],
-            ]);
-            $playlist = Playlist::updateOrCreate(
-                ['soundcloud_id' => $playlistData['id'] ?? null],
-                [
-                    'user_urn' => $playlistData['user']['urn'] ?? user()->urn,
-                    'soundcloud_urn' => $playlistData['urn'] ?? null,
-                    'soundcloud_kind' => $playlistData['kind'] ?? null,
-                    'title' => $playlistData['title'] ?? null,
-                    'duration' => $playlistData['duration'] ?? 0,
-                    'description' => $playlistData['description'] ?? null,
-                    'permalink' => $playlistData['permalink'] ?? null,
-                    'permalink_url' => $playlistData['permalink_url'] ?? null,
-                    'sharing' => $playlistData['sharing'] ?? null,
-                    'tag_list' => $playlistData['tag_list'] ?? '',
-                    'tags' => $playlistData['tag_list'] ?? '',
-                    'genre' => $playlistData['genre'] ?? null,
-                    'release' => $playlistData['release'] ?? null,
-                    'release_day' => $playlistData['release_day'] ?? null,
-                    'release_month' => $playlistData['release_month'] ?? null,
-                    'release_year' => $playlistData['release_year'] ?? null,
-                    'label_name' => $playlistData['label_name'] ?? null,
-                    'label' => $playlistData['label'] ?? null,
-                    'label_id' => $playlistData['label_id'] ?? null,
-                    'track_count' => $playlistData['track_count'] ?? 0,
-                    'likes_count' => $playlistData['likes_count'] ?? 0,
-                    'streamable' => $playlistData['streamable'] ?? true,
-                    'downloadable' => $playlistData['downloadable'] ?? false,
-                    'purchase_title' => $playlistData['purchase_title'] ?? null,
-                    'purchase_url' => $playlistData['purchase_url'] ?? null,
-                    'artwork_url' => $playlistData['artwork_url'] ?? null,
-                    'embeddable_by' => $playlistData['embeddable_by'] ?? null,
-                    'uri' => $playlistData['uri'] ?? null,
-                    'secret_uri' => $playlistData['secret_uri'] ?? null,
-                    'secret_token' => $playlistData['secret_token'] ?? null,
-                    'tracks_uri' => $playlistData['tracks_uri'] ?? null,
-                    'playlist_type' => $playlistData['playlist_type'] ?? null,
-                    'type' => $playlistData['type'] ?? null,
-                    'soundcloud_created_at' => isset($playlistData['created_at']) ? Carbon::parse($playlistData['created_at'])->toDateTimeString() : null,
-                    'last_modified' => isset($playlistData['last_modified']) ? Carbon::parse($playlistData['last_modified'])->toDateTimeString() : null,
-                ]
-            );
-            $playlist_urn = $playlist->soundcloud_urn;
-            $tracksData = $playlistData['tracks'];
-
-            foreach ($tracksData as $trackData) {
-                dd($trackData);
-                $userUrn = $trackData['user']['urn'];
+            DB::transaction(function () use ($playlistData) {
+                $playlistUserUrn = $playlistData['user']['urn'];
                 $track_author = User::updateOrCreate([
-                    'urn' => $userUrn,
+                    'urn' => $playlistUserUrn,
                 ], [
-                    'soundcloud_id' => $trackData['user']['id'],
-                    'name' => $trackData['user']['username'],
-                    'nickname' => $trackData['user']['username'],
-                    'avatar' => $trackData['user']['avatar_url'],
-                    'soundcloud_permalink_url' => $trackData['user']['permalink_url'],
+                    'soundcloud_id' => $playlistData['user']['id'],
+                    'name' => $playlistData['user']['username'],
+                    'nickname' => $playlistData['user']['username'],
+                    'avatar' => $playlistData['user']['avatar_url'],
+                    'soundcloud_permalink_url' => $playlistData['user']['permalink_url'],
                 ]);
-
-                if (is_null($track_author->last_synced_at)) {
-                    $track_author->update(['status' => User::STATUS_INACTIVE]);
-                }
-                $commonTrackData = $this->mapCommonTrackData($trackData);
-
-                $track = Track::updateOrCreate(
+                $playlist = Playlist::updateOrCreate(
+                    ['soundcloud_id' => $playlistData['id'] ?? null],
                     [
-                        'soundcloud_track_id' => $trackData['id'],
-                        'urn' => $trackData['urn']
-                    ],
-                    $commonTrackData
+                        'user_urn' => $playlistData['user']['urn'] ?? user()->urn,
+                        'soundcloud_urn' => $playlistData['urn'] ?? null,
+                        'soundcloud_kind' => $playlistData['kind'] ?? null,
+                        'title' => $playlistData['title'] ?? null,
+                        'duration' => $playlistData['duration'] ?? 0,
+                        'description' => $playlistData['description'] ?? null,
+                        'permalink' => $playlistData['permalink'] ?? null,
+                        'permalink_url' => $playlistData['permalink_url'] ?? null,
+                        'sharing' => $playlistData['sharing'] ?? null,
+                        'tag_list' => $playlistData['tag_list'] ?? '',
+                        'tags' => $playlistData['tag_list'] ?? '',
+                        'genre' => $playlistData['genre'] ?? null,
+                        'release' => $playlistData['release'] ?? null,
+                        'release_day' => $playlistData['release_day'] ?? null,
+                        'release_month' => $playlistData['release_month'] ?? null,
+                        'release_year' => $playlistData['release_year'] ?? null,
+                        'label_name' => $playlistData['label_name'] ?? null,
+                        'label' => $playlistData['label'] ?? null,
+                        'label_id' => $playlistData['label_id'] ?? null,
+                        'track_count' => $playlistData['track_count'] ?? 0,
+                        'likes_count' => $playlistData['likes_count'] ?? 0,
+                        'streamable' => $playlistData['streamable'] ?? true,
+                        'downloadable' => $playlistData['downloadable'] ?? false,
+                        'purchase_title' => $playlistData['purchase_title'] ?? null,
+                        'purchase_url' => $playlistData['purchase_url'] ?? null,
+                        'artwork_url' => $playlistData['artwork_url'] ?? null,
+                        'embeddable_by' => $playlistData['embeddable_by'] ?? null,
+                        'uri' => $playlistData['uri'] ?? null,
+                        'secret_uri' => $playlistData['secret_uri'] ?? null,
+                        'secret_token' => $playlistData['secret_token'] ?? null,
+                        'tracks_uri' => $playlistData['tracks_uri'] ?? null,
+                        'playlist_type' => $playlistData['playlist_type'] ?? null,
+                        'type' => $playlistData['type'] ?? null,
+                        'soundcloud_created_at' => isset($playlistData['created_at']) ? Carbon::parse($playlistData['created_at'])->toDateTimeString() : null,
+                        'last_modified' => isset($playlistData['last_modified']) ? Carbon::parse($playlistData['last_modified'])->toDateTimeString() : null,
+                    ]
                 );
-                if ($playlist_urn && $track->urn) {
-                    PlaylistTrack::updateOrCreate([
-                        'playlist_urn' => $playlist_urn,
-                        'track_urn' => $track->urn,
+                $playlist_urn = $playlist->soundcloud_urn;
+                $tracksData = $playlistData['tracks'];
+
+                foreach ($tracksData as $trackData) {
+                    $userUrn = $trackData['user']['urn'];
+                    $track_author = User::updateOrCreate([
+                        'urn' => $userUrn,
+                    ], [
+                        'soundcloud_id' => $trackData['user']['id'],
+                        'name' => $trackData['user']['username'],
+                        'nickname' => $trackData['user']['username'],
+                        'avatar' => $trackData['user']['avatar_url'],
+                        'soundcloud_permalink_url' => $trackData['user']['permalink_url'],
                     ]);
+
+                    if (is_null($track_author->last_synced_at)) {
+                        $track_author->update(['status' => User::STATUS_INACTIVE]);
+                    }
+                    $commonTrackData = $this->mapCommonTrackData($trackData);
+
+                    $track = Track::updateOrCreate(
+                        [
+                            'soundcloud_track_id' => $trackData['id'],
+                            'urn' => $trackData['urn']
+                        ],
+                        $commonTrackData
+                    );
+                    if ($playlist_urn && $track->urn) {
+                        PlaylistTrack::updateOrCreate([
+                            'playlist_urn' => $playlist_urn,
+                            'track_urn' => $track->urn,
+                        ]);
+                    }
                 }
-            }
+            });
 
             return true;
         } catch (Exception $e) {
