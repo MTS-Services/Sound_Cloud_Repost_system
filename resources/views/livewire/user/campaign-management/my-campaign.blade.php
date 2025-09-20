@@ -396,7 +396,7 @@
                 </div>
 
                 <div class="flex-grow overflow-y-auto p-4">
-                    <div class="p-1">
+                    <div class="p-1 sticky top-0 bg-black/60 backdrop-blur-sm">
                         <label for="track-link-search" class="text-xl font-semibold text-gray-700 dark:text-gray-200">
                             @if ($activeModalTab === 'tracks')
                                 Paste a SoundCloud track link

@@ -199,8 +199,8 @@ class Campaign extends Component
     ################################loadmore########################################
 
     // Properties for "Load More"
-    public $tracksPage = 4;
-    public $playlistsPage = 4;
+    public $tracksPage = 1;
+    public $playlistsPage = 1;
     public $perPage = 4;
     public $hasMoreTracks = false;
     public $hasMorePlaylists = false;
