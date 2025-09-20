@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\PlaylistTrack;
 use App\Models\UserAnalytics;
+use Illuminate\Http\Request;
 
 class Campaign extends Component
 {
@@ -224,7 +225,7 @@ class Campaign extends Component
         $this->myCampaignService = $myCampaignService;
     }
 
-    public function mount()
+    public function mount(Request $request)
     {
         // $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
@@ -241,9 +242,10 @@ class Campaign extends Component
 
 
 
-        $currentUrl = request()->fullUrl();
-        dd(str_contains($currentUrl, 'cassi'));
-        if (str_contains($currentUrl, 'cassi')) {
+        $currentUrl = $request->has('tab') && $request->input('tab') === 'recommended_pro';
+
+        dd($currentUrl);
+        if ($request->has('tab') && $request->input('tab') === 'recommended_pro') {
             dd('cassi');
             $queryParams = request()->query();
 
