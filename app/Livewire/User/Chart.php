@@ -223,7 +223,7 @@ class Chart extends Component
             $totalComments = $track['metrics']['total_comments']['current_total'];
             $totalFollowers = $track['metrics']['total_followers']['current_total'];
             $track['repost'] = false;
-            if ($track['actionable_details']['id'] != null) {
+            if ($track['actionable_details'] != null) {
                 $repost = Repost::where('reposter_urn', user()->urn)->where('campaign_id', $track['actionable_details']['id'])->exists();
                 if ($repost) {
                     $track['repost'] = true;
