@@ -212,9 +212,9 @@ class Dashboard extends Component
         }
 
         // Handle search query updates with debouncing
-        if ($propertyName === 'searchQuery') {
-            $this->searchSoundcloud();
-        }
+        // if ($propertyName === 'searchQuery') {
+        //     $this->searchSoundcloud();
+        // }
     }
 
     public function calculateFollowersLimit()
