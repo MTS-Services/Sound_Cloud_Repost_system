@@ -217,7 +217,7 @@ class User extends AuthBaseModel implements MustVerifyEmail
     }
     public function getStatusLabelAttribute()
     {
-        return isset($this->status) ? $this->getStatusList()[$this->status] : 'Unknown';
+        return self::statusList()[$this->status];
     }
 
     public function getStatusColorAttribute()
