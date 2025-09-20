@@ -27,7 +27,7 @@ return new class extends Migration
             $table->boolean('commentable')->default(false);
             $table->bigInteger('comment_count')->default(0);
             $table->string('sharing')->nullable()->comment('public, private');
-            $table->string('tag_list')->nullable()->index();
+            $table->text('tag_list')->nullable()->index();
             $table->boolean('streamable')->default(false)->index();
             $table->string('embeddable_by')->nullable()->comment('all')->index();
             $table->text('purchase_url')->nullable();
