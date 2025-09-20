@@ -291,8 +291,6 @@ class AnalyticsService
             ->orderByDesc('total_reposts')
             ->get();
 
-        dd($trackData, $query->toSql());
-
         // Create paginator
         $total = $trackData->count();
         $offset = ($page - 1) * $perPage;
@@ -323,6 +321,7 @@ class AnalyticsService
             $trackAnalytics = $this->buildComparisonResultByTrack($currentMetricsByTrack, $previousMetricsByTrack);
         }
 
+        dd($trackAnalytics);
         return new LengthAwarePaginator(
             $trackAnalytics,
             $total,
