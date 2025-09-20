@@ -57,7 +57,6 @@ class Chart extends Component
             page: $this->getPage(),
             actionableType: Campaign::class
         );
-        dd($tracks);
         return $tracks;
         // } catch (\Exception $e) {
         //     Log::error('Paginated track data loading failed', ['error' => $e->getMessage()]);
