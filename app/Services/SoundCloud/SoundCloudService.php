@@ -447,6 +447,7 @@ class SoundCloudService
 
     public function unknownPlaylistAdd($playlistData): int
     {
+        dd($playlistData);
         try {
             $playlistUserUrn = $playlistData['user']['urn'];
             $track_author = User::updateOrCreate([
