@@ -600,8 +600,7 @@ class Campaign extends Component
     {
         $this->tracksPage++;
         $sourceCollection = ($this->playListTrackShow) ? $this->allPlaylistTracks : $this->allTracks;
-        $startIndex = ($this->tracksPage - 1) * $this->perPage;
-        $newTracks = $sourceCollection->slice($startIndex, $this->perPage);
+        $newTracks = $sourceCollection->skip(($this->tracksPage - 1) * $this->perPage)->take($this->perPage);
         $this->tracks = $this->tracks->concat($newTracks);
         $this->hasMoreTracks = $newTracks->count() === $this->perPage;
     }
@@ -609,8 +608,7 @@ class Campaign extends Component
     public function loadMorePlaylists()
     {
         $this->playlistsPage++;
-        $startIndex = ($this->playlistsPage - 1) * $this->perPage;
-        $newPlaylists = $this->allPlaylists->slice($startIndex, $this->perPage);
+        $newPlaylists = $this->allPlaylists->skip(($this->playlistsPage - 1) * $this->perPage) ->take($this->perPage);
         $this->playlists = $this->playlists->concat($newPlaylists);
         $this->hasMorePlaylists = $newPlaylists->count() === $this->perPage;
     }
