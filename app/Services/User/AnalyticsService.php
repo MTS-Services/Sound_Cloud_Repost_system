@@ -279,7 +279,7 @@ class AnalyticsService
             $query->where('actionable_type', $actionableType);
         }
 
-        dd($query->toSql() ,$query->get());
+        dd($query->toSql() ,$query->gourpBy('track_urn')->get());
 
         $query->whereDate('created_at', '>=', $periods['current']['start']->format('Y-m-d'))
             ->whereDate('created_at', '<=', $periods['current']['end']->format('Y-m-d'));
