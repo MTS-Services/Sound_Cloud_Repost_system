@@ -244,6 +244,7 @@ class Campaign extends Component
         $currentUrl = request()->fullUrl();
 
         if (str_contains($currentUrl, 'cassi')) {
+            dd('cassi');
             $queryParams = request()->query();
 
             if (isset($queryParams['tab']) && $queryParams['tab'] === 'cassi') {
