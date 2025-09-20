@@ -450,7 +450,7 @@
                         </form>
 
                     </div>
-                    <div class="overflow-y-auto">
+                    <div class="flex-grow overflow-y-auto">
                         @if ($activeTab === 'tracks' || $playListTrackShow == true)
                             <div class="space-y-3" wire:loading.remove wire:target="searchSoundcloud">
                                 @forelse ($tracks as $track_)
