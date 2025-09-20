@@ -258,6 +258,7 @@ class AnalyticsService
         ?string $actionableType = null
     ): LengthAwarePaginator {
         $periods = $this->calculatePeriods($filter, $dateRange);
+        dd($actionableType);
 
         // Get aggregated track data for current period
         $query = UserAnalytics::select([
