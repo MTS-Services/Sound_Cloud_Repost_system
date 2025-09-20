@@ -887,29 +887,22 @@ class Dashboard extends Component
 
     protected function resolveSoundcloudUrl()
     {
-        Log::info('Resolving Soundcloud URL. Step 1.');
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
-            Log::info('Resolving Soundcloud URL. Step 2. on if playListTrackShow == true && activeTab === tracks');
             $baseUrl = strtok($this->searchQuery, '?');
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
                 ->whereRaw("SUBSTRING_INDEX(permalink_url, '?', 1) = ?", [$baseUrl])
                 ->get();
-            Log::info('Resolving Soundcloud URL. Step 3. on if playListTrackShow == true && activeTab === tracks . Data:' . json_encode($tracksFromDb));
             if ($tracksFromDb->isNotEmpty()) {
-                Log::info('Resolving Soundcloud URL. Step 4. on if playListTrackShow == true && activeTab === tracks && tracksFromDb->isNotEmpty()');
                 $this->allPlaylistTracks = $tracksFromDb;
                 $this->tracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
                 $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
                 return;
             }
         } else {
-            Log::info('Resolving Soundcloud URL. Step 5. on else if playListTrackShow == true && activeTab === tracks');
             if ($this->activeTab == 'tracks') {
-                Log::info('Resolving Soundcloud URL. Step 6. on if activeTab == tracks on else if playListTrackShow == true && activeTab === tracks');
                 $baseUrl = strtok($this->searchQuery, '?');
                 $tracksFromDb = Track::whereRaw("SUBSTRING_INDEX(permalink_url, '?', 1) = ?", [$baseUrl])
                     ->get();
-                Log::info('Resolving Soundcloud URL. Step 7. on if activeTab == tracks on else if playListTrackShow == true && activeTab === tracks. Data:' . json_encode($tracksFromDb));
 
                 if ($tracksFromDb->isNotEmpty()) {
                     Log::info('Resolving Soundcloud URL. Step 8. on if activeTab == tracks on else if playListTrackShow == true && activeTab === tracks && tracksFromDb->isNotEmpty()');
@@ -921,17 +914,12 @@ class Dashboard extends Component
                 }
             }
 
-            Log::info('Resolving Soundcloud URL. Step 9. on if activeTab == tracks on else if playListTrackShow == true && activeTab === tracks and End of if activeTab == tracks');
-
             if ($this->activeTab == 'playlists') {
-                Log::info('Resolving Soundcloud URL. Step 10. on if activeTab == playlists on else if playListTrackShow == true && activeTab === tracks and End of if activeTab == tracks');
                 $baseUrl = strtok($this->searchQuery, '?');
                 $playlistsFromDb = Playlist::whereRaw("SUBSTRING_INDEX(permalink_url, '?', 1) = ?", [$baseUrl])
                     ->get();
 
-                Log::info('Resolving Soundcloud URL. Step 11. on if activeTab == playlists on else if playListTrackShow == true && activeTab === tracks and End of if activeTab == tracks. Data:' . json_encode($playlistsFromDb));
                 if ($playlistsFromDb->isNotEmpty()) {
-                    Log::info('Resolving Soundcloud URL. Step 12. on if activeTab == playlists on else if playListTrackShow == true && activeTab === tracks && playlistsFromDb->isNotEmpty()');
                     $this->activeTab = 'playlists';
                     $this->allPlaylists = $playlistsFromDb;
                     $this->playlists = $this->allPlaylists->take($this->playlistLimit);
@@ -944,58 +932,42 @@ class Dashboard extends Component
         Log::info('Resolving Soundcloud URL. Step 13. end of if playListTrackShow == true && activeTab === tracks');
         $response = null;
         $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
-        Log::info('Resolving Soundcloud URL. Step 14. end of if playListTrackShow == true && activeTab === tracks. Response Data:' . json_encode($response));
         if ($response->successful()) {
-            Log::info('Resolving Soundcloud URL. Step 15. end of if playListTrackShow == true && activeTab === tracks and response is successful. Response Data:' . json_encode($response));
             $resolvedData = $response->json();
-            Log::info('Resolving Soundcloud URL. Step 16. end of if playListTrackShow == true && activeTab === tracks and response is successful. Response Data:' . json_encode($resolvedData));
             $urn = $resolvedData['urn'];
             if ($this->activeTab === 'playlists') {
-                Log::info('Resolving Soundcloud URL. Step 17. end of if playListTrackShow == true && activeTab === tracks and response is successful and activeTab === playlists. ');
                 if (isset($resolvedData['tracks']) && count($resolvedData['tracks']) > 0) {
-                    Log::info('Resolving Soundcloud URL. Step 18. end of if playListTrackShow == true && activeTab === tracks and response is successful and activeTab === playlists. and isset($resolvedData[\'tracks\']) && count($resolvedData[\'tracks\']) > 0');
                     $this->soundCloudService->unknownPlaylistAdd($resolvedData);
                     Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
                 } else {
-                    Log::info('Resolving Soundcloud URL. Step 19. end of if playListTrackShow == true && activeTab === tracks and response is successful and activeTab === playlists. and else isset($resolvedData[\'tracks\']) && count($resolvedData[\'tracks\']) > 0');
                     $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Playlist URL.');
                 }
             } elseif ($this->activeTab === 'tracks') {
-                Log::info('Resolving Soundcloud URL. Step 20. end of if playListTrackShow == true && activeTab === tracks and response is successful and activeTab === tracks. ');
                 if (!isset($resolvedData['tracks'])) {
-                    Log::info('Resolving Soundcloud URL. Step 21. end of if playListTrackShow == true && activeTab === tracks and response is successful and activeTab === tracks. and !isset($resolvedData[\'tracks\'])');
                     $this->soundCloudService->unknownTrackAdd($resolvedData);
                     Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
                 } else {
-                    Log::info('Resolving Soundcloud URL. Step 22. end of if playListTrackShow == true && activeTab === tracks and response is successful and activeTab === tracks. and else !isset($resolvedData[\'tracks\'])');
                     $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Track URL.');
                 }
             }
-            Log::info('Resolving Soundcloud URL. Step 23. end of if playListTrackShow == true && activeTab === tracks and response is successful and end of if activeTab === tracks');
             $this->processSearchData($urn);
             Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
         } else {
             Log::info('Resolving Soundcloud URL. Step 24. end of if playListTrackShow == true && activeTab === tracks and response is not successful');
             if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
-                Log::info('Resolving Soundcloud URL. Step 25. end of if playListTrackShow == true && activeTab === tracks and response is not successful and activeTab === tracks');
                 $this->allPlaylistTracks = collect();
                 $this->tracks = collect();
             } else {
-                Log::info('Resolving Soundcloud URL. Step 26. end of if playListTrackShow == true && activeTab === tracks and response is not successful and else activeTab === tracks');
                 if ($this->activeTab === 'tracks') {
-                    Log::info('Resolving Soundcloud URL. Step 27. end of if playListTrackShow == true && activeTab === tracks and response is not successful and else activeTab === tracks and activeTab === tracks');
                     $this->allTracks = collect();
                     $this->tracks = collect();
                 } elseif ($this->activeTab === 'playlists') {
-                    Log::info('Resolving Soundcloud URL. Step 28. end of if playListTrackShow == true && activeTab === tracks and response is not successful and else activeTab === tracks and activeTab === playlists');
                     $this->allPlaylists = collect();
                     $this->playlists = collect();
                 }
             }
-            Log::info('Resolving Soundcloud URL. Step 29. end of if playListTrackShow == true && activeTab === tracks and response is not successful and end of if activeTab === tracks');
             $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
         }
-        Log::info('Resolving Soundcloud URL. Step 30. end of resolveSoundcloudUrl()');
     }
 
     protected function processSearchData($urn)
