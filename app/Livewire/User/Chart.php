@@ -49,7 +49,7 @@ class Chart extends Component
     public function getTopTrackData(): LengthAwarePaginator
     {
         // try {
-        return $this->analyticsService->getPaginatedTrackAnalytics(
+        $tracks =  $this->analyticsService->getPaginatedTrackAnalytics(
             filter: 'last_week',
             dateRange: null,
             genres: [],
@@ -57,6 +57,8 @@ class Chart extends Component
             page: $this->getPage(),
             actionableType: Campaign::class
         );
+        dd($tracks);
+        return $tracks;
         // } catch (\Exception $e) {
         //     Log::error('Paginated track data loading failed', ['error' => $e->getMessage()]);
         //     return new LengthAwarePaginator([], 0, $this->tracksPerPage, $this->getPage());
@@ -222,9 +224,11 @@ class Chart extends Component
             $totalComments = $track['metrics']['total_comments']['current_total'];
             $totalFollowers = $track['metrics']['total_followers']['current_total'];
             $track['repost'] = false;
-            $repost = Repost::where('reposter_urn', user()->urn)->where('campaign_id', $track['actionable_details']['id'])->exists();
-            if ($repost) {
-                $track['repost'] = true;
+            if ($track['actionable_details']['id'] != null) {
+                $repost = Repost::where('reposter_urn', user()->urn)->where('campaign_id', $track['actionable_details']['id'])->exists();
+                if ($repost) {
+                    $track['repost'] = true;
+                }
             }
             $track['like'] = false;
             $like = UserAnalytics::where('act_user_urn', user()->urn)->where('track_urn', $track['track_details']['urn'])->exists();
