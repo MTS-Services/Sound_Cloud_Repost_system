@@ -264,7 +264,6 @@ class Campaign extends Component
 
         // Only redirect for search or filter changes, not tab switches
         if (in_array($propertyName, ['search', 'selectedGenres', 'searchMusicType'])) {
-            dd($this->search, $this->selectedGenres, $this->searchMusicType);
             $queryParams = $this->getQueryParams();
             $this->redirect(route('user.cm.campaigns', ['tab' => $this->activeMainTab]) . '?' . http_build_query($queryParams), navigate: true);
         }
