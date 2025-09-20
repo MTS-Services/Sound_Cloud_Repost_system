@@ -536,22 +536,22 @@ class Campaign extends Component
         $this->reset(['searchQuery']);
     }
 
-    public function fetchTracks()
-    {
-        try {
-            $this->soundCloudService->syncSelfTracks([]);
+    // public function fetchTracks()
+    // {
+    //     try {
+    //         $this->soundCloudService->syncSelfTracks([]);
 
-            $this->tracksPage = 1;
-            $this->tracks = Track::where('user_urn', user()->urn)
-                ->latest()
-                ->take($this->perPage)
-                ->get();
-            $this->hasMoreTracks = $this->tracks->count() === $this->perPage;
-        } catch (\Exception $e) {
-            $this->tracks = collect();
-            $this->dispatch('alert', type: 'error', message: 'Failed to load tracks: ' . $e->getMessage());
-        }
-    }
+    //         $this->tracksPage = 1;
+    //         $this->tracks = Track::where('user_urn', user()->urn)
+    //             ->latest()
+    //             ->take($this->perPage)
+    //             ->get();
+    //         $this->hasMoreTracks = $this->tracks->count() === $this->perPage;
+    //     } catch (\Exception $e) {
+    //         $this->tracks = collect();
+    //         $this->dispatch('alert', type: 'error', message: 'Failed to load tracks: ' . $e->getMessage());
+    //     }
+    // }
 
     // public function loadMoreTracks()
     // {
@@ -568,21 +568,21 @@ class Campaign extends Component
     //     $this->hasMoreTracks = $newTracks->count() === $this->perPage;
     // }
 
-    public function fetchPlaylists()
-    {
-        try {
-            $this->soundCloudService->syncSelfPlaylists();
-            $this->playlistsPage = 1;
-            $this->playlists = Playlist::where('user_urn', user()->urn)
-                ->latest()
-                ->take($this->perPage)
-                ->get();
-            $this->hasMorePlaylists = $this->playlists->count() === $this->perPage;
-        } catch (\Exception $e) {
-            $this->playlists = collect();
-            $this->dispatch('alert', type: 'error', message: 'Failed to load playlists: ' . $e->getMessage());
-        }
-    }
+    // public function fetchPlaylists()
+    // {
+    //     try {
+    //         $this->soundCloudService->syncSelfPlaylists();
+    //         $this->playlistsPage = 1;
+    //         $this->playlists = Playlist::where('user_urn', user()->urn)
+    //             ->latest()
+    //             ->take($this->perPage)
+    //             ->get();
+    //         $this->hasMorePlaylists = $this->playlists->count() === $this->perPage;
+    //     } catch (\Exception $e) {
+    //         $this->playlists = collect();
+    //         $this->dispatch('alert', type: 'error', message: 'Failed to load playlists: ' . $e->getMessage());
+    //     }
+    // }
 
     // public function loadMorePlaylists()
     // {
@@ -596,22 +596,22 @@ class Campaign extends Component
     //     $this->hasMorePlaylists = $newPlaylists->count() === $this->perPage;
     // }
 
-    public function loadMoreTracks()
-    {
-        $this->tracksPage++;
-        $sourceCollection = ($this->playListTrackShow) ? $this->allPlaylistTracks : $this->allTracks;
-        $newTracks = $sourceCollection->skip(($this->tracksPage - 1) * $this->perPage)->take($this->perPage);
-        $this->tracks = $this->tracks->concat($newTracks);
-        $this->hasMoreTracks = $newTracks->count() === $this->perPage;
-    }
+    // public function loadMoreTracks()
+    // {
+    //     $this->tracksPage++;
+    //     $sourceCollection = ($this->playListTrackShow) ? $this->allPlaylistTracks : $this->allTracks;
+    //     $newTracks = $sourceCollection->skip(($this->tracksPage - 1) * $this->perPage)->take($this->perPage);
+    //     $this->tracks = $this->tracks->concat($newTracks);
+    //     $this->hasMoreTracks = $newTracks->count() === $this->perPage;
+    // }
 
-    public function loadMorePlaylists()
-    {
-        $this->playlistsPage++;
-        $newPlaylists = $this->allPlaylists->skip(($this->playlistsPage - 1) * $this->perPage) ->take($this->perPage);
-        $this->playlists = $this->playlists->concat($newPlaylists);
-        $this->hasMorePlaylists = $newPlaylists->count() === $this->perPage;
-    }
+    // public function loadMorePlaylists()
+    // {
+    //     $this->playlistsPage++;
+    //     $newPlaylists = $this->allPlaylists->skip(($this->playlistsPage - 1) * $this->perPage)->take($this->perPage);
+    //     $this->playlists = $this->playlists->concat($newPlaylists);
+    //     $this->hasMorePlaylists = $newPlaylists->count() === $this->perPage;
+    // }
 
     public function fetchPlaylistTracks()
     {
@@ -1362,6 +1362,80 @@ class Campaign extends Component
         $this->playListTrackShow = true;
         $this->tracksPage = 1;
         $this->searchQuery = '';
+    }
+
+
+    // Replace the existing loadMoreTracks and loadMorePlaylists methods in Campaign component
+
+    public function loadMoreTracks()
+    {
+        $this->tracksPage++;
+
+        if ($this->playListTrackShow && $this->selectedPlaylistId) {
+            // For playlist tracks
+            $startIndex = ($this->tracksPage - 1) * $this->perPage;
+            $newTracks = $this->allPlaylistTracks->slice($startIndex, $this->perPage);
+            $this->tracks = $this->tracks->concat($newTracks);
+            $this->hasMoreTracks = $newTracks->count() === $this->perPage;
+        } else {
+            // For regular tracks
+            $startIndex = ($this->tracksPage - 1) * $this->perPage;
+            $newTracks = $this->allTracks->slice($startIndex, $this->perPage);
+            $this->tracks = $this->tracks->concat($newTracks);
+            $this->hasMoreTracks = $newTracks->count() === $this->perPage;
+        }
+    }
+
+    public function loadMorePlaylists()
+    {
+        $this->playlistsPage++;
+        $startIndex = ($this->playlistsPage - 1) * $this->perPage;
+        $newPlaylists = $this->allPlaylists->slice($startIndex, $this->perPage);
+        $this->playlists = $this->playlists->concat($newPlaylists);
+        $this->hasMorePlaylists = $newPlaylists->count() === $this->perPage;
+    }
+
+    // Also update fetchTracks method to properly set allTracks
+    public function fetchTracks()
+    {
+        try {
+            $this->soundCloudService->syncSelfTracks([]);
+
+            // Get all tracks first
+            $this->allTracks = Track::where('user_urn', user()->urn)
+                ->latest()
+                ->get();
+
+            $this->tracksPage = 1;
+            $this->tracks = $this->allTracks->take($this->perPage);
+            $this->hasMoreTracks = $this->allTracks->count() > $this->perPage;
+        } catch (\Exception $e) {
+            $this->tracks = collect();
+            $this->allTracks = collect();
+            $this->hasMoreTracks = false;
+            $this->dispatch('alert', type: 'error', message: 'Failed to load tracks: ' . $e->getMessage());
+        }
+    }
+
+    public function fetchPlaylists()
+    {
+        try {
+            $this->soundCloudService->syncSelfPlaylists();
+
+            // Get all playlists first
+            $this->allPlaylists = Playlist::where('user_urn', user()->urn)
+                ->latest()
+                ->get();
+
+            $this->playlistsPage = 1;
+            $this->playlists = $this->allPlaylists->take($this->perPage);
+            $this->hasMorePlaylists = $this->allPlaylists->count() > $this->perPage;
+        } catch (\Exception $e) {
+            $this->playlists = collect();
+            $this->allPlaylists = collect();
+            $this->hasMorePlaylists = false;
+            $this->dispatch('alert', type: 'error', message: 'Failed to load playlists: ' . $e->getMessage());
+        }
     }
     private function resetTrackCollections(): void
     {
