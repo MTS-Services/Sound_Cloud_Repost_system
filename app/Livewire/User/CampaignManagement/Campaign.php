@@ -553,20 +553,20 @@ class Campaign extends Component
         }
     }
 
-    public function loadMoreTracks()
-    {
-        $this->tracksPage++;
-        if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
-            $this->showPlaylistTracks($this->selectedPlaylistId);
-        }
-        $newTracks = Track::where('user_urn', user()->urn)->latest()
-            ->skip(($this->tracksPage - 1) * $this->perPage)
-            ->take($this->perPage)
-            ->get();
+    // public function loadMoreTracks()
+    // {
+    //     $this->tracksPage++;
+    //     if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
+    //         $this->showPlaylistTracks($this->selectedPlaylistId);
+    //     }
+    //     $newTracks = Track::where('user_urn', user()->urn)->latest()
+    //         ->skip(($this->tracksPage - 1) * $this->perPage)
+    //         ->take($this->perPage)
+    //         ->get();
 
-        $this->tracks = $this->tracks->concat($newTracks);
-        $this->hasMoreTracks = $newTracks->count() === $this->perPage;
-    }
+    //     $this->tracks = $this->tracks->concat($newTracks);
+    //     $this->hasMoreTracks = $newTracks->count() === $this->perPage;
+    // }
 
     public function fetchPlaylists()
     {
@@ -584,14 +584,33 @@ class Campaign extends Component
         }
     }
 
+    // public function loadMorePlaylists()
+    // {
+    //     $this->playlistsPage++;
+    //     $newPlaylists = Playlist::where('user_urn', user()->urn)->latest()
+    //         ->skip(($this->playlistsPage - 1) * $this->perPage)
+    //         ->take($this->perPage)
+    //         ->get();
+
+    //     $this->playlists = $this->playlists->concat($newPlaylists);
+    //     $this->hasMorePlaylists = $newPlaylists->count() === $this->perPage;
+    // }
+
+    public function loadMoreTracks()
+    {
+        $this->tracksPage++;
+        $sourceCollection = ($this->playListTrackShow) ? $this->allPlaylistTracks : $this->allTracks;
+        $startIndex = ($this->tracksPage - 1) * $this->perPage;
+        $newTracks = $sourceCollection->slice($startIndex, $this->perPage);
+        $this->tracks = $this->tracks->concat($newTracks);
+        $this->hasMoreTracks = $newTracks->count() === $this->perPage;
+    }
+
     public function loadMorePlaylists()
     {
         $this->playlistsPage++;
-        $newPlaylists = Playlist::where('user_urn', user()->urn)->latest()
-            ->skip(($this->playlistsPage - 1) * $this->perPage)
-            ->take($this->perPage)
-            ->get();
-
+        $startIndex = ($this->playlistsPage - 1) * $this->perPage;
+        $newPlaylists = $this->allPlaylists->slice($startIndex, $this->perPage);
         $this->playlists = $this->playlists->concat($newPlaylists);
         $this->hasMorePlaylists = $newPlaylists->count() === $this->perPage;
     }
