@@ -227,7 +227,7 @@ class Campaign extends Component
 
     public function mount(Request $request)
     {
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
         $this->getAllTrackTypes();
         $this->totalCampaigns();
@@ -239,23 +239,6 @@ class Campaign extends Component
         }
 
         // $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
-
-
-
-        $currentUrl = $request->has('tab') && $request->input('tab') === $this->activeMainTab;
-
-        if ($currentUrl) {
-            
-            $queryParams = request()->query();
-
-            if (isset($queryParams['tab']) && $queryParams['tab'] === $this->activeMainTab) {
-                $queryParams['tab'] = $this->activeMainTab;
-            }
-
-            $targetUrl = route('user.cm.campaigns') . '?' . http_build_query($queryParams);
-
-            return redirect()->to($targetUrl);
-        }
     }
     public function updated($propertyName)
     {
