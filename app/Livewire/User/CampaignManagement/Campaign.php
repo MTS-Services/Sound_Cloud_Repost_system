@@ -1328,24 +1328,48 @@ class Campaign extends Component
         }
     }
 
+    // public function showPlaylistTracks($playlistId)
+    // {
+    //     $this->selectedPlaylistId = $playlistId;
+    //     $playlist = Playlist::with('tracks')->find($playlistId);
+    //     if ($playlist) {
+    //         $this->allTracks = $playlist->tracks;
+    //         $this->tracks = $this->allTracks->take($this->trackLimit);
+    //         $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+    //     } else {
+    //         $this->tracks = collect();
+    //         $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+    //     }
+    //     $this->activeTab = 'tracks';
+    //     $this->playListTrackShow = true;
+
+    //     $this->reset([
+    //         'searchQuery',
+    //     ]);
+    // }
     public function showPlaylistTracks($playlistId)
     {
         $this->selectedPlaylistId = $playlistId;
         $playlist = Playlist::with('tracks')->find($playlistId);
+
         if ($playlist) {
-            $this->allTracks = $playlist->tracks;
-            $this->tracks = $this->allTracks->take($this->trackLimit);
-            $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+            $this->allPlaylistTracks = $playlist->tracks;
+            $this->tracks = $this->allPlaylistTracks->take($this->perPage);
+            $this->hasMoreTracks = $this->allPlaylistTracks->count() > $this->perPage;
         } else {
-            $this->tracks = collect();
-            $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+            $this->resetTrackCollections();
         }
+
         $this->activeTab = 'tracks';
         $this->playListTrackShow = true;
-
-        $this->reset([
-            'searchQuery',
-        ]);
+        $this->tracksPage = 1;
+        $this->searchQuery = '';
+    }
+    private function resetTrackCollections(): void
+    {
+        $this->tracks = collect();
+        $this->allTracks = collect();
+        $this->hasMoreTracks = false;
     }
 
     public function openRepostsModal($trackId)
