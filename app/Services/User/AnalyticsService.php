@@ -319,7 +319,7 @@ class AnalyticsService
             $currentMetricsByTrack = $this->calculateMetricsByTrack($currentData);
             $previousMetricsByTrack = $this->calculateMetricsByTrack($previousData);
             $trackAnalytics = $this->buildComparisonResultByTrack($currentMetricsByTrack, $previousMetricsByTrack);
-            dd($currentMetricsByTrack, $previousMetricsByTrack, $trackAnalytics, $currentData, $previousData);
+            dd($currentMetricsByTrack, $previousMetricsByTrack, $trackAnalytics, $currentData, $previousData, $paginatedTrackUrns);
         }
 
         dd($trackAnalytics);
