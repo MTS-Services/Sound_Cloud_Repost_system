@@ -554,6 +554,8 @@ class RepostRequest extends Component
                 $query->where('target_user_urn', user()->urn)->where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED);
                 break;
         }
+        // Order by created_at desc and paginate
+        return $this->repostRequests = $query->orderBy('status', 'asc')->take(10)->get();
     }
 
     public function render()
