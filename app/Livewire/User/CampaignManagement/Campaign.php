@@ -1028,6 +1028,7 @@ class Campaign extends Component
                     }
                     break;
                 case Playlist::class:
+                    dd($campaign->music);
                     $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$campaign->music->urn}");
                     if ($this->liked) {
                         $like_response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$campaign->music->urn}");
