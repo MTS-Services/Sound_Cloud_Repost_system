@@ -229,7 +229,7 @@ class Campaign extends Component
 
     public function mount(Request $request)
     {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
         $this->getAllTrackTypes();
         $this->totalCampaigns();
@@ -244,7 +244,7 @@ class Campaign extends Component
     }
     public function updated($propertyName)
     {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
         if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
             $this->calculateFollowersLimit();
         }
@@ -905,8 +905,8 @@ class Campaign extends Component
                 $this->track = $this->trackService->getTrack(encrypt($campaign->music_id));
             } elseif ($campaign->music_type == Playlist::class) {
                 $this->reset('track');
-                $playlist = PlaylistTrack::where('playlist_urn', $campaign->music_id)->with('track')->get();
-                $this->track = $playlist->track;
+                $playlist = Playlist::findOrFail($campaign->music_id);
+                $this->track = $playlist;
             }
 
             $response = $this->analyticsService->recordAnalytics($this->track, $campaign, UserAnalytics::TYPE_PLAY, $campaign->target_genre);
@@ -1350,7 +1350,7 @@ class Campaign extends Component
     public function fetchTracks()
     {
         try {
-            $this->soundCloudService->syncSelfTracks([]);
+            // $this->soundCloudService->syncSelfTracks([]);
 
             // Get all tracks first
             $this->allTracks = Track::where('user_urn', user()->urn)
@@ -1371,7 +1371,7 @@ class Campaign extends Component
     public function fetchPlaylists()
     {
         try {
-            $this->soundCloudService->syncSelfPlaylists();
+            // $this->soundCloudService->syncSelfPlaylists();
 
             // Get all playlists first
             $this->allPlaylists = Playlist::where('user_urn', user()->urn)
