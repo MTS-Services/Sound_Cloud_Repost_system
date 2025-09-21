@@ -90,7 +90,7 @@ class MyAccount extends Component
             $this->followerGrowth = 0; // Avoid division by zero
         }
 
-        $activeTab = request()->query('tab', $this->activeTab);
+        $this->activeTab = request()->query('tab', $this->activeTab);
 
         $this->user_urn = $user_urn ?? user()->urn;
 
