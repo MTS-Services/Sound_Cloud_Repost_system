@@ -1,9 +1,17 @@
-@props(['name', 'label' => '', 'options' => [], 'selected' => null, 'messages' => [], 'placeholder' => null])
+@props([
+    'name',
+    'label' => '',
+    'options' => [],
+    'selected' => null,
+    'messages' => [],
+    'placeholder' => null,
+    'event' => null,
+])
 
 @if (!empty($label))
     <p class="label">{{ $label }}</p>
 @endif
-<select name="{{ $name }}"
+<select name="{{ $name }}" @if ($event) {{ $event }} @endif
     class="input select select2 focus:outline-0 focus-within:outline-0 focus:ring-0 focus:border-border-active focus-within:border-border-active w-full"
     {{ $attributes->except(['class', 'name', 'label', 'options', 'selected', 'messages', 'placeholder']) }}>
     @if ($placeholder)

@@ -15,11 +15,15 @@
                 <div
                     class="w-10 h-10 glass-card shadow inset-shadow-lg bg-bg-white dark:bg-bg-black p-0 rounded-xl flex items-center justify-center">
                     @if (app_setting('favicon') && app_setting('favicon_dark'))
-                        <img src="{{ storage_url(app_setting('favicon')) }}" alt="{{ config('app.name') }}" class="w-full h-full dark:hidden">
-                        <img src="{{ storage_url(app_setting('favicon_dark')) }}" alt="{{ config('app.name') }}" class="w-full h-full hidden dark:block">
+                        <img src="{{ storage_url(app_setting('favicon')) }}" alt="{{ config('app.name') }}"
+                            class="w-full h-full dark:hidden">
+                        <img src="{{ storage_url(app_setting('favicon_dark')) }}" alt="{{ config('app.name') }}"
+                            class="w-full h-full hidden dark:block">
                     @else
-                        <img src="{{ asset('assets/favicons/fav icon 1.svg') }}" alt="{{ config('app.name') }}" class="w-full h-full dark:hidden">
-                        <img src="{{ asset('assets/favicons/fav icon 2 (1).svg') }}" alt="{{ config('app.name') }}" class="w-full h-full hidden dark:block">
+                        <img src="{{ asset('assets/favicons/fav icon 1.svg') }}" alt="{{ config('app.name') }}"
+                            class="w-full h-full dark:hidden">
+                        <img src="{{ asset('assets/favicons/fav icon 2 (1).svg') }}" alt="{{ config('app.name') }}"
+                            class="w-full h-full hidden dark:block">
                     @endif
                 </div>
                 <div x-show="(desktop && sidebar_expanded) || (!desktop && mobile_menu_open)"
@@ -214,6 +218,13 @@
                     'icon' => 'server',
                     'active' => 'app-smtp-settings',
                     'permission' => 'application-setting-smtp',
+                ],
+                [
+                    'name' => 'Payment Gateway Setup',
+                    'route' => route('app-settings.payment_setup'),
+                    'icon' => 'credit-card',
+                    'active' => 'app-payment-gateway-setup',
+                    'permission' => 'application-setting-payment-setup',
                 ],
             ]" />
         </nav>

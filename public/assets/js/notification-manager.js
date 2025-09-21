@@ -13,11 +13,11 @@ class NotificationManager {
             type: 'sidebar', // 'sidebar' or 'full-page'
             ...config
         };
-        
+
         this.container = null;
         this.isInitialized = false;
         this.echoChannels = [];
-        
+
         this.init();
     }
 
@@ -82,15 +82,15 @@ class NotificationManager {
     handleSidebarNotification(data, isRead) {
         // Create new notification card for sidebar
         const newNotificationCard = this.createSidebarNotificationCard(data, isRead);
-        
+
         if (this.config.animations) {
             newNotificationCard.style.opacity = '0';
             newNotificationCard.style.transform = 'translateY(-10px)';
         }
-        
+
         // Insert at the beginning
         this.container.insertBefore(newNotificationCard, this.container.firstChild);
-        
+
         if (this.config.animations) {
             requestAnimationFrame(() => {
                 newNotificationCard.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
@@ -119,13 +119,13 @@ class NotificationManager {
     createSidebarNotificationCard(data, isRead = false) {
         const cardElement = document.createElement('div');
         cardElement.className = 'notification-item';
-        
+
         const url = data.url || '#';
         const icon = data.icon || 'bell';
         const title = data.title || 'New Notification';
         const message = data.message || '';
         const timestamp = data.timestamp || 'Just now';
-        
+
         cardElement.innerHTML = `
             <a href="${url}" class="p-4">
                 <div class="flex items-start gap-3">
@@ -155,10 +155,10 @@ class NotificationManager {
         if (this.config.type !== 'sidebar') return;
 
         const notifications = this.container.querySelectorAll('.notification-item');
-        
+
         if (notifications.length > this.config.maxNotifications) {
             const excessCount = notifications.length - this.config.maxNotifications;
-            
+
             for (let i = notifications.length - 1; i >= notifications.length - excessCount; i--) {
                 const notification = notifications[i];
                 this.removeNotificationWithAnimation(notification);
@@ -176,13 +176,13 @@ class NotificationManager {
         element.style.opacity = '0';
         element.style.transform = 'translateX(-20px) scale(0.95)';
         element.style.maxHeight = element.offsetHeight + 'px';
-        
+
         setTimeout(() => {
             element.style.maxHeight = '0';
             element.style.padding = '0';
             element.style.margin = '0';
         }, 150);
-        
+
         setTimeout(() => {
             if (element.parentNode) {
                 element.parentNode.removeChild(element);
@@ -220,6 +220,7 @@ class NotificationManager {
 
         messageElement.textContent = message;
 
+        toast.classList.remove('hidden');
         toast.classList.remove('translate-x-full', 'opacity-0');
         toast.classList.add('translate-x-0', 'opacity-100');
 
@@ -230,7 +231,7 @@ class NotificationManager {
         // Handle close button
         const newCloseButton = closeButton.cloneNode(true);
         closeButton.parentNode.replaceChild(newCloseButton, closeButton);
-        
+
         newCloseButton.addEventListener('click', () => {
             clearTimeout(timeoutId);
             this.hideToast();
@@ -240,6 +241,7 @@ class NotificationManager {
     hideToast() {
         const toast = document.getElementById(this.config.toastId);
         if (toast) {
+            toast.classList.add('hidden');
             toast.classList.remove('translate-x-0', 'opacity-100');
             toast.classList.add('translate-x-full', 'opacity-0');
         }
@@ -257,19 +259,19 @@ class NotificationManager {
             type === 'warning' ? 'bg-yellow-500 text-white' :
             'bg-blue-500 text-white'
         }`;
-        
+
         toast.innerHTML = `
             <div class="flex items-center gap-3">
                 <span>${this.escapeHtml(message)}</span>
-                <button onclick="this.parentElement.parentElement.remove()" 
+                <button onclick="this.parentElement.parentElement.remove()"
                         class="ml-2 text-white hover:text-gray-200">
                     ✕
                 </button>
             </div>
         `;
-        
+
         document.body.appendChild(toast);
-        
+
         setTimeout(() => {
             toast.style.opacity = '0';
             toast.style.transform = 'translateX(100%)';
@@ -302,7 +304,7 @@ class NotificationManager {
 
         const unreadIndicators = this.container.querySelectorAll('.animate-ping');
         unreadIndicators.forEach(indicator => indicator.remove());
-        
+
         // Update badges
         const badges = document.querySelectorAll('.notification-badge, [data-notification-badge]');
         badges.forEach(badge => {
@@ -320,7 +322,7 @@ class NotificationManager {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
                 }
             });
-            
+
             const data = await response.json();
             if (data.success) {
                 this.markAllAsRead();
@@ -386,7 +388,7 @@ document.addEventListener('DOMContentLoaded', function() {
             containerId: 'notification-container'
         });
     }
-    
+
     // Initialize full-page notification manager if all-notifications container exists
     if (document.getElementById('all-notifications-container')) {
         window.allNotificationsManager = new NotificationManager({

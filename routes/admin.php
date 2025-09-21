@@ -24,7 +24,7 @@ use App\Http\Controllers\Backend\Admin\UserManagement\UserPlaneController;
 
 Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], function () {
 
-    // Button UI Route 
+    // Button UI Route
     Route::get('/button-ui', function () {
         return view('backend.admin.ui.buttons');
     })->name('button-ui');
@@ -225,11 +225,12 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         Route::delete('/delete', 'destroy')->name('destroy');
     });
 
-    // Application Settings 
+    // Application Settings
     Route::controller(ApplicationSettingController::class)->name('app-settings.')->prefix('application-settings')->group(function () {
         Route::post('/update-settings', 'updateSettings')->name('update-settings');
         Route::get('/', 'general')->name('general');
         Route::get('/database', 'database')->name('database');
         Route::get('/smtp', 'smtp')->name('smtp');
+        Route::get('/payment-setup', 'payment_setup')->name('payment_setup');
     });
 });
