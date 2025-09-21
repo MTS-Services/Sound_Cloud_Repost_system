@@ -261,7 +261,7 @@ class Campaign extends Component
         // dd($request->all());
 
         $params = [
-            'activeMainTab' => $this->activeMainTab,
+            'tab' => $this->activeMainTab,
         ];
         return $this->redirect(route('user.cm.campaigns') . '?' . http_build_query($params), navigate: true);
     }
