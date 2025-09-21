@@ -249,13 +249,16 @@ class Campaign extends Component
         if (in_array($propertyName, ['activeMainTab', 'campaigns'])) {
             $this->dispatch('soundcloud-widgets-reinitialize');
         }
-        dd($propertyName);
-        // $queryParams = $this->getQueryParams();
-        // $this->redirect(route('user.cm.campaigns', ['tab' => $this->activeMainTab]) . '?' . http_build_query($queryParams), navigate: true);
     }
+
     public function calculateFollowersLimit()
     {
         $this->followersLimit = ($this->credit - ($this->likeable ? 2 : 0) - ($this->commentable ? 2 : 0)) * 100;
+    }
+
+    public function navigatingAway(Request $request)
+    {
+        dd($request->all());
     }
 
     protected function rules()
@@ -291,6 +294,7 @@ class Campaign extends Component
     {
         $this->reset();
         $this->activeMainTab = $tab;
+        $this->navigatingAway(request());
 
         switch ($tab) {
             case 'recommended_pro':
