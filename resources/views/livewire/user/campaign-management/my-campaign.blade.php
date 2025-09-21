@@ -314,13 +314,13 @@
                                         {{ $featuredCampaign?->music?->title }}</p>
                                     <p class="text-gray-500 text-sm">{{ $featuredCampaign?->music?->genre }}</p>
                                     <div class="flex items-center gap-2 mt-2">
-                                        @if (!featuredAgain($campaign_->id) && $campaign_->is_featured)
+                                        @if (!featuredAgain($featuredCampaign->id) && $featuredCampaign->is_featured)
                                             <span
                                                 class="text-xs font-semibold mr-2 px-2.5 py-0.5 rounded bg-orange-500 text-white">
                                                 {{ !featuredAgain() ? 'Featured' : '' }}
                                             </span>
                                         @endif
-                                        @if (!boostAgain($campaign_->id) && $campaign_->is_boost)
+                                        @if (!boostAgain($featuredCampaign->id) && $featuredCampaign->is_boost)
                                             <span
                                                 class="text-xs font-semibold mr-2 px-2.5 py-0.5 rounded bg-orange-500 text-white">
                                                 {{ !boostAgain() ? 'Boosted' : '' }}
