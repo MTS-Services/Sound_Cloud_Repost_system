@@ -531,7 +531,7 @@
                         @elseif($activeTab === 'playlists')
                             <div class="space-y-3" wire:loading.remove wire:target="searchSoundcloud">
                                 @forelse ($playlists as $playlist_)
-                                    <div wire:click="showPlaylistTracks({{ $playlist_->id }})"
+                                    <div wire:click="toggleSubmitModal('playlist', {{ $playlist_->id }})"
                                         class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
                                         <div class="flex-shrink-0">
                                             <img class="h-14 w-14 rounded-xl object-cover shadow-md"

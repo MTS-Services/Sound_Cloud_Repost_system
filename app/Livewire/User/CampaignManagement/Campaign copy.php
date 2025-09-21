@@ -227,7 +227,7 @@ class Campaign extends Component
 
     public function mount(Request $request)
     {
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
         $this->getAllTrackTypes();
         $this->totalCampaigns();
@@ -242,28 +242,19 @@ class Campaign extends Component
     }
     public function updated($propertyName)
     {
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
             $this->calculateFollowersLimit();
         }
         if (in_array($propertyName, ['activeMainTab', 'campaigns'])) {
             $this->dispatch('soundcloud-widgets-reinitialize');
         }
+        // $queryParams = $this->getQueryParams();
+        // $this->redirect(route('user.cm.campaigns', ['tab' => $this->activeMainTab]) . '?' . http_build_query($queryParams), navigate: true);
     }
-
     public function calculateFollowersLimit()
     {
         $this->followersLimit = ($this->credit - ($this->likeable ? 2 : 0) - ($this->commentable ? 2 : 0)) * 100;
-    }
-
-    public function navigatingAway(Request $request)
-    {
-        // dd($request->all());
-
-        $params = [
-            'tab' => $this->activeMainTab,
-        ];
-        return $this->redirect(route('user.cm.campaigns') . '?' . http_build_query($params), navigate: true);
     }
 
     protected function rules()
@@ -299,7 +290,6 @@ class Campaign extends Component
     {
         $this->reset();
         $this->activeMainTab = $tab;
-        $this->navigatingAway(request());
 
         switch ($tab) {
             case 'recommended_pro':
@@ -547,6 +537,83 @@ class Campaign extends Component
         $this->reset(['searchQuery']);
     }
 
+    // public function fetchTracks()
+    // {
+    //     try {
+    //         $this->soundCloudService->syncSelfTracks([]);
+
+    //         $this->tracksPage = 1;
+    //         $this->tracks = Track::where('user_urn', user()->urn)
+    //             ->latest()
+    //             ->take($this->perPage)
+    //             ->get();
+    //         $this->hasMoreTracks = $this->tracks->count() === $this->perPage;
+    //     } catch (\Exception $e) {
+    //         $this->tracks = collect();
+    //         $this->dispatch('alert', type: 'error', message: 'Failed to load tracks: ' . $e->getMessage());
+    //     }
+    // }
+
+    // public function loadMoreTracks()
+    // {
+    //     $this->tracksPage++;
+    //     if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
+    //         $this->showPlaylistTracks($this->selectedPlaylistId);
+    //     }
+    //     $newTracks = Track::where('user_urn', user()->urn)->latest()
+    //         ->skip(($this->tracksPage - 1) * $this->perPage)
+    //         ->take($this->perPage)
+    //         ->get();
+
+    //     $this->tracks = $this->tracks->concat($newTracks);
+    //     $this->hasMoreTracks = $newTracks->count() === $this->perPage;
+    // }
+
+    // public function fetchPlaylists()
+    // {
+    //     try {
+    //         $this->soundCloudService->syncSelfPlaylists();
+    //         $this->playlistsPage = 1;
+    //         $this->playlists = Playlist::where('user_urn', user()->urn)
+    //             ->latest()
+    //             ->take($this->perPage)
+    //             ->get();
+    //         $this->hasMorePlaylists = $this->playlists->count() === $this->perPage;
+    //     } catch (\Exception $e) {
+    //         $this->playlists = collect();
+    //         $this->dispatch('alert', type: 'error', message: 'Failed to load playlists: ' . $e->getMessage());
+    //     }
+    // }
+
+    // public function loadMorePlaylists()
+    // {
+    //     $this->playlistsPage++;
+    //     $newPlaylists = Playlist::where('user_urn', user()->urn)->latest()
+    //         ->skip(($this->playlistsPage - 1) * $this->perPage)
+    //         ->take($this->perPage)
+    //         ->get();
+
+    //     $this->playlists = $this->playlists->concat($newPlaylists);
+    //     $this->hasMorePlaylists = $newPlaylists->count() === $this->perPage;
+    // }
+
+    // public function loadMoreTracks()
+    // {
+    //     $this->tracksPage++;
+    //     $sourceCollection = ($this->playListTrackShow) ? $this->allPlaylistTracks : $this->allTracks;
+    //     $newTracks = $sourceCollection->skip(($this->tracksPage - 1) * $this->perPage)->take($this->perPage);
+    //     $this->tracks = $this->tracks->concat($newTracks);
+    //     $this->hasMoreTracks = $newTracks->count() === $this->perPage;
+    // }
+
+    // public function loadMorePlaylists()
+    // {
+    //     $this->playlistsPage++;
+    //     $newPlaylists = $this->allPlaylists->skip(($this->playlistsPage - 1) * $this->perPage)->take($this->perPage);
+    //     $this->playlists = $this->playlists->concat($newPlaylists);
+    //     $this->hasMorePlaylists = $newPlaylists->count() === $this->perPage;
+    // }
+
     public function fetchPlaylistTracks()
     {
         if (!$this->playlistId) {
@@ -711,13 +778,12 @@ class Campaign extends Component
         $this->validate();
 
         try {
-            $musicId = $this->musicType === Track::class ? $this->musicId : $this->playlistId;
-            DB::transaction(function () use($musicId) {
+            DB::transaction(function () {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
                 $proFeatureEnabled = $this->proFeatureEnabled && proUser() ? 1 : 0;
                 $campaign = ModelsCampaign::create([
-                    'music_id' => $musicId,
+                    'music_id' => $this->musicId,
                     'music_type' => $this->musicType,
                     'title' => $this->title,
                     'description' => $this->description,
@@ -1334,7 +1400,7 @@ class Campaign extends Component
     public function fetchTracks()
     {
         try {
-            // $this->soundCloudService->syncSelfTracks([]);
+            $this->soundCloudService->syncSelfTracks([]);
 
             // Get all tracks first
             $this->allTracks = Track::where('user_urn', user()->urn)
@@ -1355,7 +1421,7 @@ class Campaign extends Component
     public function fetchPlaylists()
     {
         try {
-            // $this->soundCloudService->syncSelfPlaylists();
+            $this->soundCloudService->syncSelfPlaylists();
 
             // Get all playlists first
             $this->allPlaylists = Playlist::where('user_urn', user()->urn)
