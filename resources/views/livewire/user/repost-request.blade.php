@@ -131,7 +131,7 @@
                 <div class="w-full lg:w-1/2 p-3">
                     <div class="flex justify-between mb-2">
                         <div class="w-1/2 relative">
-                            <div class="flex flex-col items-start gap-0">
+                            <div class="flex flex-col items-start justify-between gap-0">
                                 <div class="flex items-center gap-2">
                                     <img class="w-12 h-12 rounded-full object-cover"
                                         src="{{ auth_storage_url($repostRequest->requester->avatar) }}"
