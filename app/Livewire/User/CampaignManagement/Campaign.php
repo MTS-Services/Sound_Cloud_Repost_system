@@ -259,9 +259,13 @@ class Campaign extends Component
     public function navigatingAway(Request $request)
     {
         // dd($request->all());
-
+        if (!empty($this->selectedGenres)) {
+            $selectedGenres = $this->selectedGenres;
+        }
         $params = [
             'tab' => $this->activeMainTab,
+            'selectedGenres' => $selectedGenres,
+
         ];
         return $this->redirect(route('user.cm.campaigns') . '?' . http_build_query($params), navigate: true);
     }
@@ -712,7 +716,7 @@ class Campaign extends Component
 
         try {
             $musicId = $this->musicType === Track::class ? $this->musicId : $this->playlistId;
-            DB::transaction(function () use($musicId) {
+            DB::transaction(function () use ($musicId) {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
                 $proFeatureEnabled = $this->proFeatureEnabled && proUser() ? 1 : 0;
