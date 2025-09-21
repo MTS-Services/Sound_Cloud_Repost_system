@@ -970,6 +970,7 @@ class Campaign extends Component
     public function repost($campaignId)
     {
         try {
+            $this->navigatingAway(request());
             if (!$this->canRepost($campaignId)) {
                 $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
                 return;
@@ -1082,7 +1083,6 @@ class Campaign extends Component
                 ]);
                 $this->dispatch('alert', type: 'error', message: 'Failed to repost campaign music to SoundCloud. Please try again.');
             }
-            $this->navigatingAway(request());
         } catch (Throwable $e) {
             Log::error("Error in repost method: " . $e->getMessage(), [
                 'exception' => $e,
