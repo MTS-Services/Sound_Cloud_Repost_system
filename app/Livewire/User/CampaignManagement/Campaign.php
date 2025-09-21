@@ -249,6 +249,7 @@ class Campaign extends Component
         if (in_array($propertyName, ['activeMainTab', 'campaigns'])) {
             $this->dispatch('soundcloud-widgets-reinitialize');
         }
+        dd($propertyName);
         // $queryParams = $this->getQueryParams();
         // $this->redirect(route('user.cm.campaigns', ['tab' => $this->activeMainTab]) . '?' . http_build_query($queryParams), navigate: true);
     }
