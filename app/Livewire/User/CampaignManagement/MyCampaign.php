@@ -48,7 +48,6 @@ class MyCampaign extends Component
     public ?int $completedPage = 1;
 
     // Main tab state
-    #[Url(as: 'tab', except: 'all')]
     public string $activeMainTab = 'all';
 
     // Modal states
@@ -224,9 +223,6 @@ class MyCampaign extends Component
     // }
     public function updatedActiveMainTab()
     {
-        $this->resetPage('allPage');
-        $this->resetPage('activePage');
-        $this->resetPage('completedPage');
         return $this->redirect(route('user.cm.my-campaigns') . '?tab=' . $this->activeMainTab, navigate: true);
     }
 
