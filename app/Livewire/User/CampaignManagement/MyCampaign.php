@@ -1007,6 +1007,10 @@ class MyCampaign extends Component
     public function mount($categoryId = null)
     {
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->activeMainTab = request()->query('tab', 'all');
+        $this->resetPage('allPage');
+        $this->resetPage('activePage');
+        $this->resetPage('completedPage');
 
         $this->faqs = Faq::when($categoryId, function ($query) use ($categoryId) {
             $query->where('faq_category_id', $categoryId);
