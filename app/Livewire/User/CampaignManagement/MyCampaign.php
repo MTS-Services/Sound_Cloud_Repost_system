@@ -340,17 +340,17 @@ class MyCampaign extends Component
         $this->canSubmit = false;
     }
 
-    public function setactiveModalTab(string $tab): void
-    {
-        $this->activeMainTab = $tab;
+    // public function setactiveModalTab(string $tab): void
+    // {
+    //     $this->activeMainTab = $tab;
 
-        match ($tab) {
-            'all' => $this->resetPage('allPage'),
-            'active' => $this->resetPage('activePage'),
-            'completed' => $this->resetPage('completedPage'),
-            default => $this->resetPage('allPage')
-        };
-    }
+    //     match ($tab) {
+    //         'all' => $this->resetPage('allPage'),
+    //         'active' => $this->resetPage('activePage'),
+    //         'completed' => $this->resetPage('completedPage'),
+    //         default => $this->resetPage('allPage')
+    //     };
+    // }
 
     public function toggleCampaignsModal()
     {

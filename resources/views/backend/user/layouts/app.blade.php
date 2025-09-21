@@ -288,7 +288,7 @@
                     console.error('Notification elements not found.');
                     return;
                 }
-
+   
                 // Set the message
                 messageElement.textContent = message;
 
