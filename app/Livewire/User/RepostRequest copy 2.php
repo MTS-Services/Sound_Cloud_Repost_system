@@ -17,7 +17,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Throwable;
 
-class RepostRequest extends Component
+class RepostRequestCopy extends Component
 {
     public $repostRequests;
     public $track;
