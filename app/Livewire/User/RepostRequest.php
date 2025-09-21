@@ -10,6 +10,7 @@ use App\Models\Track;
 use App\Models\UserSetting;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\User\UserSettingsService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
@@ -70,9 +71,10 @@ class RepostRequest extends Component
         }
     }
 
-    public function updated()
+    public function updated(Request $request)
     {
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        dd($request->all());
     }
 
     /**
