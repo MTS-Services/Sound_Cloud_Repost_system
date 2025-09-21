@@ -854,8 +854,8 @@ class Dashboard extends Component
                     'likeable' => $likeable,
                     'pro_feature' => $proFeatureEnabled,
                     'momentum_price' => $proFeatureEnabled == 1 ? $this->credit / 2 : 0,
-                    'max_repost_last_24_h' => $this->maxRepostLast24h,
                     'max_repost_per_day' => $this->repostPerDayEnabled ? $this->maxRepostsPerDay : 0,
+                    'max_repost_per_day' => $this->maxRepostsPerDay,
                     'target_genre' => $this->targetGenre,
                 ]);
 
@@ -879,24 +879,44 @@ class Dashboard extends Component
                 ]);
             });
 
-
+            $this->reset([
+                'musicId',
+                'title',
+                'description',
+                'playlistId',
+                'playlistTracks',
+                'activeTab',
+                'tracks',
+                'track',
+                'playlists',
+                'maxFollower',
+                'showBudgetWarning',
+                'budgetWarningMessage',
+                'canSubmit',
+                'commentable',
+                'likeable',
+                'proFeatureEnabled',
+                'maxRepostLast24h',
+                'maxRepostsPerDay',
+                'targetGenre',
+                'searchQuery',
+                'searchResults',
+            ]);
             $this->dispatch('alert', type: 'success', message: 'Campaign created successfully!');
-
-            // $this->dispatch('campaignCreated');
+            $this->dispatch('campaignCreated');
 
             $this->showCampaignsModal = false;
             $this->showSubmitModal = false;
-            $this->reset();
             $this->resetValidation();
             $this->resetErrorBag();
         } catch (\Exception $e) {
-            $this->dispatch('alert', type: 'error', message: 'Failed to create campaign: ' . $e->getMessage());
+            $this->dispatch('alert', type: 'error', message: 'Failed to create Campaign: ' . $e->getMessage());
 
             Log::error('Campaign creation error: ' . $e->getMessage(), [
                 'music_id' => $this->musicId,
                 'user_urn' => user()->urn ?? 'unknown',
                 'title' => $this->title,
-                'total_budget' => $totalBudget ?? 0,
+                'credit' => $this->credit,
             ]);
         }
     }
