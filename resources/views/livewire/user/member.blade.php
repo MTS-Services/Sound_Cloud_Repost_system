@@ -137,8 +137,10 @@
                                         <h3 class="font-semibold text-lg dark:text-white hover:underline">
                                             {{ $user_->name }}</h3>
                                     </a>
-                                    <span
-                                        class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName() }}</span>
+                                    @if (proUser())
+                                        <span
+                                            class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName() }}</span>
+                                    @endif
                                 </div>
                                 <p class="text-text-gray text-sm dark:text-white">
                                     {{ $user_->created_at->format('M d, Y') }}
