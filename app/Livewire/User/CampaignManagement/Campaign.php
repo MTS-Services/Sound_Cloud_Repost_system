@@ -906,17 +906,21 @@ class Campaign extends Component
             } elseif ($campaign->music_type == Playlist::class) {
                 $this->reset('track');
                 $playlist = Playlist::findOrFail($campaign->music_id);
+                $playlistTrack = $playlist->playlistTracks()->where('playlist_urn', $playlist->soundcloud_urn)->first();
+                if ($playlistTrack) {
+                    $this->track = $playlistTrack;
+                }
                 $this->track = $playlist;
             }
 
-            $response = $this->analyticsService->recordAnalytics($this->track, $campaign, UserAnalytics::TYPE_PLAY, $campaign->target_genre);
-            Log:
-            info('response: analytics: ');
-            if ($response != false || $response != null) {
+            // $response = $this->analyticsService->recordAnalytics($this->track, $campaign, UserAnalytics::TYPE_PLAY, $campaign->target_genre);
+            // Log:
+            // info('response: analytics: ');
+            // if ($response != false || $response != null) {
 
 
-                $campaign->increment('playback_count');
-            }
+            //     $campaign->increment('playback_count');
+            // }
 
             $this->playcount = true;
             // $this->reset([
