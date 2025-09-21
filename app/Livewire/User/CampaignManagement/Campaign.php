@@ -258,7 +258,7 @@ class Campaign extends Component
 
     public function navigatingAway(Request $request)
     {
-        dd($request->all());
+        dd($request->activeMainTab);
     }
 
     protected function rules()
