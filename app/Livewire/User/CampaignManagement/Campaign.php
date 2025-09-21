@@ -258,7 +258,12 @@ class Campaign extends Component
 
     public function navigatingAway(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
+
+        $params = [
+            'activeMainTab' => $this->activeMainTab,
+        ];
+        return $this->redirect(route('user.campaigns') . '?' . http_build_query($params), navigate: true);
     }
 
     protected function rules()
