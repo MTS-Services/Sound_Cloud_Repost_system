@@ -25,7 +25,6 @@ use Livewire\WithPagination;
 use Throwable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Builder;
-use App\Models\PlaylistTrack;
 use App\Models\UserAnalytics;
 use Illuminate\Http\Request;
 
@@ -1070,6 +1069,11 @@ class Campaign extends Component
                 $soundcloudRepostId = $campaign->music->soundcloud_track_id;
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
                 $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.');
+                $this->reset([
+                    'liked',
+                    'followed',
+                    'commented',
+                ]);
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [
                     'campaign_id' => $campaignId,
@@ -1078,6 +1082,7 @@ class Campaign extends Component
                 ]);
                 $this->dispatch('alert', type: 'error', message: 'Failed to repost campaign music to SoundCloud. Please try again.');
             }
+            $this->navigatingAway(request());
         } catch (Throwable $e) {
             Log::error("Error in repost method: " . $e->getMessage(), [
                 'exception' => $e,
