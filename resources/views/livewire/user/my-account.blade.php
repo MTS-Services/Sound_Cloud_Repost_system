@@ -221,50 +221,30 @@
                             {{-- Tab Navigation --}}
                             <div
                                 class="flex overflow-x-auto pb-1 sm:pb-0 space-x-4 sm:space-x-8 border-b border-gray-200 dark:border-slate-700">
-                                <button type="button"
-                                    x-on:click="activeTab = 'insights'"
-                                    class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors @if($activeTab === 'insights') text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400 @else text-gray-500 border-transparent dark:text-slate-400 @endif">
+                                <button type="button" x-on:click="activeTab = 'insights'"
+                                    class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors @if ($activeTab === 'insights') text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400 @else text-gray-500 border-transparent dark:text-slate-400 @endif">
                                     Insights
                                 </button>
 
-                                <button type="button"
-                                    :class="{
-                                        'text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400': activeTab === 'tracks',
-                                        'text-gray-500 border-transparent dark:text-slate-400': activeTab !== 'tracks'
-                                    }"
-                                    x-on:click="activeTab = 'tracks'"
-                                    class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors">
+                                <button type="button" x-on:click="activeTab = 'tracks'"
+                                    class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors @if ($activeTab === 'tracks') text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400 @else text-gray-500 border-transparent dark:text-slate-400 @endif">
                                     Tracks
                                 </button>
 
-                                <button type="button"
-                                    :class="{
-                                        'text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400': activeTab === 'playlists',
-                                        'text-gray-500 border-transparent dark:text-slate-400': activeTab !== 'playlists'
-                                    }"
+                                <button type="button" x-on:click="activeTab = 'playlists'"
                                     x-on:click="activeTab = 'playlists'"
-                                    class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors">
+                                    class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors @if ($activeTab === 'playlists') text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400 @else text-gray-500 border-transparent dark:text-slate-400 @endif">
                                     Playlists
                                 </button>
 
-                                <button type="button"
-                                    :class="{
-                                        'text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400': activeTab === 'reposts',
-                                        'text-gray-500 border-transparent dark:text-slate-400': activeTab !== 'reposts'
-                                    }"
-                                    x-on:click="activeTab = 'reposts'"
-                                    class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors">
+                                <button type="button" x-on:click="activeTab = 'reposts'"
+                                    class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors @if ($activeTab === 'reposts') text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400 @else text-gray-500 border-transparent dark:text-slate-400 @endif">
                                     Recent reposts
                                 </button>
 
                                 @if (user()->urn == $user->urn)
-                                    <button type="button"
-                                        :class="{
-                                            'text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400': activeTab === 'transaction',
-                                            'text-gray-500 border-transparent dark:text-slate-400': activeTab !== 'transaction'
-                                        }"
-                                        x-on:click="activeTab = 'transaction'"
-                                        class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors">
+                                    <button type="button" x-on:click="activeTab = 'transaction'"
+                                        class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors @if ($activeTab === 'transaction') text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400 @else text-gray-500 border-transparent dark:text-slate-400 @endif">
                                         Transaction
                                     </button>
                                 @endif
