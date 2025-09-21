@@ -970,7 +970,6 @@ class Campaign extends Component
     public function repost($campaignId)
     {
         try {
-            $this->navigatingAway(request());
             if (!$this->canRepost($campaignId)) {
                 $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
                 return;
