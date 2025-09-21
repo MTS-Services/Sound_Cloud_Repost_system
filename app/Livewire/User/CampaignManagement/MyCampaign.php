@@ -215,12 +215,19 @@ class MyCampaign extends Component
         }
     }
 
-    public function setActiveTab($tab = 'all'): void
+    // public function setActiveTab($tab = 'all'): void
+    // {
+    //     $this->activeMainTab = $tab;
+    //     $this->resetPage('allPage');
+    //     $this->resetPage('activePage');
+    //     $this->resetPage('completedPage');
+    // }
+    public function updatedActiveMainTab()
     {
-        $this->activeMainTab = $tab;
         $this->resetPage('allPage');
         $this->resetPage('activePage');
         $this->resetPage('completedPage');
+        return $this->redirect(route('user.cm.my-campaigns') . '?tab=' . $this->activeMainTab, navigate: true);
     }
 
     private function validateCampaignBudget(): void
