@@ -50,7 +50,7 @@
             localMaxFollower: @entangle('maxFollower').live,
             localMaxRepostsPerDay: @entangle('maxRepostsPerDay').live,
             init() {
-                if (this.userCreditLimit > 25000) this.userCreditLimit = 25000;
+                {{-- if (this.userCreditLimit > 25000) this.userCreditLimit = 25000; --}}
                 if (!this.localCredit) this.localCredit = 50;
                 if (!this.localTotalCredit) this.localTotalCredit = this.localCredit;
                 this.localMaxFollower = 100;
