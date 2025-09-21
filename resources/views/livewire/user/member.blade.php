@@ -137,7 +137,7 @@
                                         <h3 class="font-semibold text-lg dark:text-white hover:underline">
                                             {{ $user_->name }}</h3>
                                     </a>
-                                    @if (proUser())
+                                    @if (proUser($user_->urn))
                                         <span
                                             class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName() }}</span>
                                     @endif
