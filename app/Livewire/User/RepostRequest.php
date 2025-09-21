@@ -76,11 +76,8 @@ class RepostRequest extends Component
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
-
-    // dataLoad()
     public function updatedActiveMainTab()
     {
-        $this->dataLoad();
         return $this->redirect(route('user.reposts-request') . '?tab=' . $this->activeMainTab, navigate: true);
     }
     /**
@@ -520,23 +517,43 @@ class RepostRequest extends Component
     //         $this->dataLoad();
     //     }
     // }
+    // public function dataLoad()
+    // {
+    //     $query = ModelsRepostRequest::with(['track', 'targetUser']);
+
+    //     switch ($this->activeMainTab) {
+    //         case 'incoming_request':
+    //             $query->where('target_user_urn', user()->urn)->where('status', ModelsRepostRequest::STATUS_PENDING)->where('expired_at', '>', now());
+    //             break;
+    //         case 'outgoing_request':
+    //             $query->where('requester_urn', user()->urn)->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED);
+    //             break;
+    //         case 'previously_reposted' || 'accept_requests':
+    //             $query->where('target_user_urn', user()->urn)->Where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED);
+    //             break;
+    //     }
+    //     // Order by created_at desc and paginate
+    //     return $this->repostRequests = $query->orderBy('status', 'asc')->take(10)->get();
+    // }
+
     public function dataLoad()
     {
         $query = ModelsRepostRequest::with(['track', 'targetUser']);
+        $tab = request()->query('tab', $this->activeMainTab);
+        $this->activeMainTab = $tab;
 
-        switch ($this->activeMainTab) {
+        switch ($tab) {
             case 'incoming_request':
                 $query->where('target_user_urn', user()->urn)->where('status', ModelsRepostRequest::STATUS_PENDING)->where('expired_at', '>', now());
                 break;
             case 'outgoing_request':
                 $query->where('requester_urn', user()->urn)->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED);
                 break;
-            case 'previously_reposted' || 'accept_requests':
-                $query->where('target_user_urn', user()->urn)->Where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED);
+            case 'previously_reposted':
+            case 'accept_requests':
+                $query->where('target_user_urn', user()->urn)->where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED);
                 break;
         }
-        // Order by created_at desc and paginate
-        return $this->repostRequests = $query->orderBy('status', 'asc')->take(10)->get();
     }
 
     public function render()
