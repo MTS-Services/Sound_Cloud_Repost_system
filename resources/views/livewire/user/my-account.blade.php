@@ -236,7 +236,7 @@
                                         'text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400': activeTab === 'tracks',
                                         'text-gray-500 border-transparent dark:text-slate-400': activeTab !== 'tracks'
                                     }"
-                                    @click="activeTab = 'tracks'" wire:click="setActiveTab('tracks')"
+                                    x-on:click="activeTab = 'tracks'"
                                     class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors">
                                     Tracks
                                 </button>
@@ -246,7 +246,7 @@
                                         'text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400': activeTab === 'playlists',
                                         'text-gray-500 border-transparent dark:text-slate-400': activeTab !== 'playlists'
                                     }"
-                                    @click="activeTab = 'playlists'" wire:click="setActiveTab('playlists')"
+                                    x-on:click="activeTab = 'playlists'"
                                     class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors">
                                     Playlists
                                 </button>
@@ -256,7 +256,7 @@
                                         'text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400': activeTab === 'reposts',
                                         'text-gray-500 border-transparent dark:text-slate-400': activeTab !== 'reposts'
                                     }"
-                                    @click="activeTab = 'reposts'"
+                                    x-on:click="activeTab = 'reposts'"
                                     class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors">
                                     Recent reposts
                                 </button>
@@ -267,7 +267,7 @@
                                             'text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400': activeTab === 'transaction',
                                             'text-gray-500 border-transparent dark:text-slate-400': activeTab !== 'transaction'
                                         }"
-                                        @click="activeTab = 'transaction'"
+                                        x-on:click="activeTab = 'transaction'"
                                         class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors">
                                         Transaction
                                     </button>
