@@ -108,7 +108,7 @@ class MyAccount extends Component
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
-    public function updatingActiveTab()
+    public function updatedActiveTab()
     {
         return $this->redirect(route('user.my-account') . '?tab=' . $this->activeTab, navigate: true);
     }
