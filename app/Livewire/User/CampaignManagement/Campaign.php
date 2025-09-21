@@ -256,7 +256,7 @@ class Campaign extends Component
         $this->followersLimit = ($this->credit - ($this->likeable ? 2 : 0) - ($this->commentable ? 2 : 0)) * 100;
     }
 
-    public function navigatingAway()
+    public function navigatingAway(Request $request)
     {
         $params = [
             'tab' => $this->activeMainTab,
@@ -484,6 +484,7 @@ class Campaign extends Component
         } else {
             $this->selectedGenres[] = $genre;
         }
+        $this->navigatingAway(request());
         $this->totalCampaigns();
     }
 
