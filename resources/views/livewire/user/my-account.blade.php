@@ -507,11 +507,7 @@
                                         class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6">
                                         <h2
                                             class="text-gray-900 dark:text-white text-lg sm:text-xl font-semibold mb-2 sm:mb-0">
-                                            New & popular tracks from
-                                            <span
-                                                class="text-orange-500 dark:text-orange-400 hover:text-orange-400/90 dark:hover:text-orange-300">
-                                                {{ $user->name }}
-                                            </span>
+                                            New & popular tracks
                                         </h2>
                                         <a href="#"
                                             class="text-orange-500 dark:text-orange-400 hover:text-orange-400/90 dark:hover:text-orange-300 text-xs sm:text-sm flex items-center space-x-1">
@@ -560,11 +556,7 @@
                                             class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6">
                                             <h2
                                                 class="text-gray-900 dark:text-white text-lg sm:text-xl font-semibold mb-2 sm:mb-0">
-                                                New & popular playlists from
-                                                <span
-                                                    class="text-orange-500 dark:text-orange-400 hover:text-orange-400/90 dark:hover:text-orange-300">
-                                                    {{ $user->name }}
-                                                </span>
+                                                New & popular playlists
                                             </h2>
                                             <a href="#"
                                                 class="text-orange-500 dark:text-orange-400 hover:text-orange-400/90 dark:hover:text-orange-300 text-xs sm:text-sm flex items-center space-x-1">
@@ -745,7 +737,7 @@
                                 {{-- Reposts Tab --}}
                                 <div class="tab-panel mt-4" x-show="activeTab === 'reposts'" x-transition>
                                     <h2 class="text-gray-900 dark:text-white text-lg sm:text-xl font-semibold mb-4">
-                                        Your Recent Reposts
+                                        Recent Reposts
                                     </h2>
                                     @foreach ($reposts as $repost)
                                         <div
@@ -861,7 +853,7 @@
                                             <table
                                                 class="min-w-[900px] w-full table-fixed text-sm text-left divide-y divide-gray-200 dark:divide-gray-700">
                                                 <thead
-                                                    class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white text-xs sm:text-sm">
+                                                    class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white text-xs sm:text-sm rounded-t-sm">
                                                     <tr>
                                                         <th class="w-10 px-2 py-3">ID</th>
                                                         <th class="w-28 px-2 py-3">Sender Name</th>
@@ -871,9 +863,9 @@
                                                         <th class="w-20 px-2 py-3">Status</th>
                                                     </tr>
                                                 </thead>
-                                                @forelse ($transactions as $transaction)
-                                                    <tbody
-                                                        class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+                                                <tbody
+                                                    class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-b-sm">
+                                                    @forelse ($transactions as $transaction)
                                                         <tr class="border-b border-gray-200 dark:border-gray-700">
                                                             <td class="px-2 py-2">{{ $loop->iteration }}</td>
                                                             <td class="px-2 py-2">
@@ -890,18 +882,15 @@
                                                                     class="badge badge-soft badge-{{ $transaction->status_color }}">{{ $transaction->status_label }}</span>
                                                             </td>
                                                         </tr>
-                                                    </tbody>
-                                                @empty
-                                                    <tbody
-                                                        class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+                                                    @empty
                                                         <tr class="border-b border-gray-200 dark:border-gray-700">
                                                             <td colspan="6"
                                                                 class="px-2 py-2 text-center font-medium">
                                                                 No transactions found.
                                                             </td>
                                                         </tr>
-                                                    </tbody>
-                                                @endforelse
+                                                    @endforelse
+                                                </tbody>
                                             </table>
                                         </div>
                                     </div>
