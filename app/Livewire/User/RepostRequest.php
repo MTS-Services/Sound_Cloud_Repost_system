@@ -81,7 +81,7 @@ class RepostRequest extends Component
     public function updatedActiveMainTab()
     {
         $this->dataLoad();
-        dd($this->activeMainTab);
+        return $this->redirect(route('user.reposts-request') . '?tab=' . $this->activeMainTab, navigate: true);
     }
     /**
      * Handle audio play event
