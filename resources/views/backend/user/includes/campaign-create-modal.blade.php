@@ -154,10 +154,9 @@
                     @enderror
 
                     <input type="range" x-init="localCredit = @entangle('credit').defer || 50" x-model="localCredit" min="50" step="10"
-                        :max="proFeatureEnabled
-                            ?
-                            Math.min(25000, userCreditLimit - (localTotalCredit - localCredit)) :
-                            userCreditLimit"
+                        :max="!proFeatureEnabled
+                            ? Math.min(25000, userCreditLimit):
+                            Math.min(25000, userCreditLimit - (localTotalCredit - localCredit))"
                         class="w-full h-2 border-0 cursor-pointer outline-none transition-all duration-200">
 
                 </div>
