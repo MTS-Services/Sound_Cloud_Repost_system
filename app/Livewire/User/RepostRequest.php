@@ -71,10 +71,9 @@ class RepostRequest extends Component
         }
     }
 
-    public function updated(Request $request)
+    public function updated()
     {
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
-        dd($request->all());
     }
 
     /**
