@@ -476,18 +476,19 @@ class MyCampaign extends Component
         $this->validate();
 
         try {
+            $musicId = $this->musicType === Track::class ? $this->musicId : $this->playlistId;
             $oldBudget = 0;
             if ($this->isEditing) {
                 $oldBudget = $this->editingCampaign->budget_credits + $this->editingCampaign->momentum_price;
             }
-            DB::transaction(function () use ($oldBudget) {
+            DB::transaction(function () use ($oldBudget, $musicId) {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
                 $proFeatureEnabled = $this->proFeatureEnabled && proUser() ? 1 : 0;
                 $editingProFeature = $this->isEditing && $this->editingCampaign->pro_feature == 1 ? $this->editingCampaign->pro_feature : $proFeatureEnabled;
 
                 $campaignData = [
-                    'music_id' => $this->musicId,
+                    'music_id' => $musicId,
                     'music_type' => $this->musicType,
                     'title' => $this->title,
                     'description' => $this->description,
