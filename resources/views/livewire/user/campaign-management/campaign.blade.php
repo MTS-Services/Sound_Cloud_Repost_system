@@ -98,11 +98,11 @@
                                 class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                                 All
                             </button>
-                            <button wire:click="filterByTrackType('{{ App\Models\Track::class }}')"
+                            <button wire:click="filterByTrackType('{{ Track::class }}')"
                                 class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                                 Tracks
                             </button>
-                            <button wire:click="filterByTrackType('{{ App\Models\Playlist::class }}')"
+                            <button wire:click="filterByTrackType('{{ Playlist::class }}')"
                                 class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                                 Playlists
                             </button>

@@ -57,10 +57,12 @@ class Campaign extends Component
     #[Url(as: 'q', except: '')]
     public string $search = '';
 
+    #[Url(as: 'type', except: '')]
+    public $searchMusicType = 'all';
+
     public $selectedTags = [];
     public $selecteTags = [];
     public $selectedGenre = [];
-    public $searchMusicType = 'all';
     public $suggestedTags = [];
     public $showSuggestions = false;
     public $showSelectedTags = false;
@@ -264,6 +266,14 @@ class Campaign extends Component
 
         if (!empty($this->selectedGenres)) {
             $params['selectedGenres'] = $this->selectedGenres;
+        }
+
+        if (!empty($this->search)) {
+            $params['q'] = $this->search;
+        }
+
+        if (!empty($this->searchMusicType)) {
+            $params['type'] = $this->searchMusicType;
         }
 
         return $this->redirect(route('user.cm.campaigns') . '?' . http_build_query($params), navigate: true);
@@ -472,6 +482,7 @@ class Campaign extends Component
             $this->search = $tag;
             $this->suggestedTags = [];
             $this->showSuggestions = false;
+            $this->navigatingAway(request());
             $this->resetPage($this->getActivePageName());
         }
     }
@@ -491,6 +502,7 @@ class Campaign extends Component
     public function filterByTrackType($Type)
     {
         $this->searchMusicType = $Type;
+        $this->navigatingAway(request());
 
         $this->resetPage($this->getActivePageName());
     }
