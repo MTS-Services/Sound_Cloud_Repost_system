@@ -991,6 +991,14 @@ class Campaign extends Component
             }
 
             $campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
+            switch ($campaign->music_type) {
+                case Track::class:
+                    $musicUrn = $campaign->music->urn;
+                    break;
+                case Playlist::class:
+                    $musicUrn = $campaign->music->soundcloud_urn;
+                    break;
+            }
 
             if (!$campaign->music) {
                 $this->dispatch('alert', type: 'error', message: 'Track or Playlist not found for this campaign.');
@@ -1016,25 +1024,24 @@ class Campaign extends Component
 
             switch ($campaign->music_type) {
                 case Track::class:
-                    $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
+                    $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$musicUrn}");
                     if ($this->commented) {
-                        $comment_response = $httpClient->post("{$this->baseUrl}/tracks/{$campaign->music->urn}/comments", $commentSoundcloud);
+                        $comment_response = $httpClient->post("{$this->baseUrl}/tracks/{$musicUrn}/comments", $commentSoundcloud);
                     }
                     if ($this->liked) {
-                        $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$campaign->music->urn}");
+                        $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$musicUrn}");
                     }
                     if ($this->followed) {
                         $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
                     }
                     break;
                 case Playlist::class:
-                    dd($campaign->music);
-                    $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$campaign->music->urn}");
+                    $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$musicUrn}");
                     if ($this->liked) {
-                        $like_response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$campaign->music->urn}");
+                        $like_response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$musicUrn}");
                     }
                     if ($this->commented) {
-                        $comment_response = $httpClient->post("{$this->baseUrl}/playlists/{$campaign->music->urn}/comments", $commentSoundcloud);
+                        $comment_response = $httpClient->post("{$this->baseUrl}/playlists/{$musicUrn}/comments", $commentSoundcloud);
                     }
                     if ($this->followed) {
                         $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
