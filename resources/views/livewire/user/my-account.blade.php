@@ -226,7 +226,7 @@
                                         'text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400': activeTab === 'insights',
                                         'text-gray-500 border-transparent dark:text-slate-400': activeTab !== 'insights'
                                     }"
-                                    @click="activeTab = 'insights'"
+                                    x-on:click="activeTab = 'insights'"
                                     class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors">
                                     Insights
                                 </button>
@@ -851,9 +851,9 @@
                                     <div class="tab-panel mt-4" x-show="activeTab === 'transaction'" x-transition>
                                         <div class="w-full overflow-x-auto">
                                             <table
-                                                class="min-w-[900px] w-full table-fixed text-sm text-left divide-y divide-gray-200 dark:divide-gray-700">
+                                                class="min-w-[900px] w-full table-fixed text-sm text-left divide-y divide-gray-200 dark:divide-gray-700 rounded overflow-hidden">
                                                 <thead
-                                                    class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white text-xs sm:text-sm rounded-t-sm">
+                                                    class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white text-xs sm:text-sm">
                                                     <tr>
                                                         <th class="w-10 px-2 py-3">ID</th>
                                                         <th class="w-28 px-2 py-3">Sender Name</th>
@@ -864,7 +864,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody
-                                                    class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-b-sm">
+                                                    class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
                                                     @forelse ($transactions as $transaction)
                                                         <tr class="border-b border-gray-200 dark:border-gray-700">
                                                             <td class="px-2 py-2">{{ $loop->iteration }}</td>
