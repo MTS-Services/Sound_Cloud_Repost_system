@@ -964,10 +964,8 @@ class Campaign extends Component
             $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
             return;
         }
-        // Log::info('confirmRepost campaignId: ' . $campaignId);
         $this->showRepostConfirmationModal = true;
         $this->campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
-        // Log::info($this->campaign);
     }
 
     public function repost($campaignId)
@@ -1044,7 +1042,7 @@ class Campaign extends Component
                         $comment_response = $httpClient->post("{$this->baseUrl}/playlists/{$musicUrn}/comments", $commentSoundcloud);
                     }
                     if ($this->followed) {
-                        $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
+                        $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->music?->user?->urn}");
                     }
                     break;
                 default:

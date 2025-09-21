@@ -53,7 +53,7 @@
                             <input type="checkbox" wire:model.live="followed"
                                 class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                             <span class="text-sm text-gray-800 dark:text-gray-200">Follow <span
-                                    class="font-semibold text-orange-500">{{ $campaign->user?->name }}</span></span>
+                                    class="font-semibold text-orange-500">{{ $campaign->music?->user?->name }}</span></span>
                         </div>
                     </label>
                 </div>
@@ -69,15 +69,17 @@
                 </div>
 
                 <!-- Comment Plus -->
-                <div class="border-t pt-3 space-y-2 dark:border-gray-700">
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-800 dark:text-gray-200">Comment on this
-                            track (optional)</span>
-                        <span class="text-sm text-gray-700 dark:text-gray-300">+2 credits</span>
+                @if ($campaign->music_type == App\Models\Track::class)
+                    <div class="border-t pt-3 space-y-2 dark:border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-gray-800 dark:text-gray-200">Comment on this
+                                track (optional)</span>
+                            <span class="text-sm text-gray-700 dark:text-gray-300">+2 credits</span>
+                        </div>
+                        <textarea rows="3" placeholder="What did you like about the track?" wire:model.live="commented"
+                            class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"></textarea>
                     </div>
-                    <textarea rows="3" placeholder="What did you like about the track?" wire:model.live="commented"
-                        class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"></textarea>
-                </div>
+                @endif
 
                 <div class="flex justify-center gap-4">
                     <button @click="showRepostConfirmationModal = false" wire:click="repost('{{ $campaign->id }}')"
