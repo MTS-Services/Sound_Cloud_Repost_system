@@ -76,6 +76,13 @@ class RepostRequest extends Component
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
+
+    // dataLoad()
+    public function updatedActiveMainTab()
+    {
+        $this->dataLoad();
+        dd($this->activeMainTab);
+    }
     /**
      * Handle audio play event
      */
@@ -502,17 +509,17 @@ class RepostRequest extends Component
         $this->userSettingsService->createOrUpdate($userUrn, ['accept_repost' => $requestable]);
         $this->dataLoad();
     }
-    public function setActiveTab($tab)
-    {
-        if ($this->activeMainTab == 'accept_requests') {
-            $this->activeMainTab = 'incoming_request';
+    // public function setActiveTab($tab)
+    // {
+    //     if ($this->activeMainTab == 'accept_requests') {
+    //         $this->activeMainTab = 'incoming_request';
 
-            $this->dataLoad();
-        } else {
-            $this->activeMainTab = $tab;
-            $this->dataLoad();
-        }
-    }
+    //         $this->dataLoad();
+    //     } else {
+    //         $this->activeMainTab = $tab;
+    //         $this->dataLoad();
+    //     }
+    // }
     public function dataLoad()
     {
         $query = ModelsRepostRequest::with(['track', 'targetUser']);
