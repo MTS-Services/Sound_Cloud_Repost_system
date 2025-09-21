@@ -1039,7 +1039,6 @@ class Campaign extends Component
                     $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$musicUrn}");
                     if ($this->liked) {
                         $like_response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$musicUrn}");
-                        dd($like_response);
                     }
                     if ($this->commented) {
                         $comment_response = $httpClient->post("{$this->baseUrl}/playlists/{$musicUrn}/comments", $commentSoundcloud);
