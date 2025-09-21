@@ -906,10 +906,6 @@ class Campaign extends Component
             } elseif ($campaign->music_type == Playlist::class) {
                 $this->reset('track');
                 $playlist = Playlist::findOrFail($campaign->music_id);
-                $playlistTrack = $playlist->playlistTracks()->where('playlist_urn', $playlist->soundcloud_urn)->first();
-                if ($playlistTrack) {
-                    $this->track = $playlistTrack;
-                }
                 $this->track = $playlist;
             }
 
