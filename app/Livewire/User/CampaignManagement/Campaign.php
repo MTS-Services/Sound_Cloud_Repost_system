@@ -256,17 +256,16 @@ class Campaign extends Component
         $this->followersLimit = ($this->credit - ($this->likeable ? 2 : 0) - ($this->commentable ? 2 : 0)) * 100;
     }
 
-    public function navigatingAway(Request $request)
+    public function navigatingAway()
     {
-        // dd($request->all());
-        if (!empty($this->selectedGenres)) {
-            $selectedGenres = $this->selectedGenres;
-        }
         $params = [
             'tab' => $this->activeMainTab,
-            'selectedGenres' => $selectedGenres,
-
         ];
+
+        if (!empty($this->selectedGenres)) {
+            $params['selectedGenres'] = $this->selectedGenres;
+        }
+
         return $this->redirect(route('user.cm.campaigns') . '?' . http_build_query($params), navigate: true);
     }
 
