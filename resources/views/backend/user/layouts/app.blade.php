@@ -76,7 +76,7 @@
     </script>
 
     <script>
-        document.addEventListener('livewire:navigated', function() {
+        function sweetAlertFire() {
             @if (session('success'))
                 showAlert('success', "{!! session('success') !!}");
             @endif
@@ -93,6 +93,12 @@
                     showAlert(event.type, event.message);
                 });
             });
+        }
+        document.addEventListener('livewire:navigated', function() {
+            sweetAlertFire();
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            sweetAlertFire();
         });
     </script>
 
@@ -288,7 +294,7 @@
                     console.error('Notification elements not found.');
                     return;
                 }
-   
+
                 // Set the message
                 messageElement.textContent = message;
 
