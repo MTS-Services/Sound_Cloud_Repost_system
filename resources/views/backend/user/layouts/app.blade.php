@@ -76,7 +76,7 @@
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('livewire:navigated', function() {
             @if (session('success'))
                 showAlert('success', "{!! session('success') !!}");
             @endif
