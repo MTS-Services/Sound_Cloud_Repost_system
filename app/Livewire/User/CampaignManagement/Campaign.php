@@ -263,7 +263,7 @@ class Campaign extends Component
         $params = [
             'activeMainTab' => $this->activeMainTab,
         ];
-        return $this->redirect(route('user.campaigns') . '?' . http_build_query($params), navigate: true);
+        return $this->redirect(route('user.cm.campaigns') . '?' . http_build_query($params), navigate: true);
     }
 
     protected function rules()
