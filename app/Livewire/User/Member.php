@@ -27,6 +27,8 @@ use Livewire\WithPagination;
 use App\Models\Feature;
 use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
+use Illuminate\Http\Client\Request;
+use Livewire\Attributes\Url;
 
 class Member extends Component
 {
@@ -37,7 +39,8 @@ class Member extends Component
     public ?int $perPage = 9;
     public string $page_slug = 'members';
     public string $search = '';
-    public string $genreFilter = '';
+    #[Url(as: 'genre', except: '')]
+    public array $selectedGenres = [];
     public string $costFilter = '';
     public bool $showModal = false;
     public bool $showLowCreditWarningModal = false;
@@ -123,25 +126,34 @@ class Member extends Component
         $this->userinfo = user()->userInfo;
         // $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
-
-    private function getAvailableGenres(): Collection
-    {
-        return Track::where('user_urn', '!=', user()->urn)
-            ->distinct()
-            ->pluck('genre')
-            ->filter()
-            ->values();
-    }
-
     public function updatedSearch()
     {
         $this->resetPage();
+        // $this->navigatingAway();
+    }
+    public function navigatingAway()
+    {
+        $params = [];
+        if (!empty($this->selectedGenres)) {
+            $params['genre'] = $this->selectedGenres;
+        }
+
+        // if (!empty($this->search)) {
+        //     $params['q'] = $this->search;
+        // }
+
+        return $this->redirect(route('user.members') . '?' . http_build_query($params), navigate: true);
     }
 
     public function filterBygenre($genre)
     {
-        $this->genreFilter = $genre;
+        if (in_array($genre, $this->selectedGenres)) {
+            $this->selectedGenres = array_diff($this->selectedGenres, [$genre]);
+        } else {
+            $this->selectedGenres[] = $genre;
+        }
         $this->resetPage();
+        $this->navigatingAway();
     }
 
     // public function updatedCostFilter()
@@ -152,6 +164,7 @@ class Member extends Component
     {
         $this->costFilter = $filterBy;
         $this->resetPage();
+        $this->navigatingAway();
     }
 
     public function updatedSearchQuery()
@@ -516,9 +529,12 @@ class Member extends Component
         $query = User::where('urn', '!=', user()->urn)
             ->with(['userInfo', 'genres', 'tracks', 'reposts', 'playlists'])->active();
 
-        if ($this->genreFilter) {
+        if ($this->selectedGenres) {
             $query->whereHas('tracks', function ($q) {
-                $q->where('genre', 'like', '%' . $this->genreFilter . '%');
+                if (!empty($this->selectedGenres)) {
+                    $q->whereIn('genre', $this->selectedGenres);
+                }
+                // $q->where('genre', 'like', '%' . $this->selectedGenres . '%');
             });
         }
 
@@ -531,7 +547,7 @@ class Member extends Component
             });
         }
         $users = $query->paginate($this->perPage);
-        
+
 
         if ($this->costFilter) {
             $collection = $users->getCollection()->each(function ($user) {
