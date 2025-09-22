@@ -265,7 +265,7 @@
                                             target="_blank" class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                             SoundCloud
                                             Profile</a>
-                                        <a href="{{ route('user.my-account', $campaign_->user_urn) }}" wire:navigate
+                                        <a href="{{ route('user.my-account', $campaign_->user?->name) }}" wire:navigate
                                             class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                             RepostChain Profile</a>
                                         {{-- <button

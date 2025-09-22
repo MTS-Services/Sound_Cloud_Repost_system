@@ -57,7 +57,7 @@
                     <!-- Profile Header -->
                     <div class="flex items-center gap-3 mb-6">
                         <div class="relative">
-                            <a class="cursor-pointer" wire:navigate href="{{ route('user.my-account', $user_->urn) }}">
+                            <a class="cursor-pointer" wire:navigate href="{{ route('user.my-account', $user_->name) }}">
                                 <img src="{{ auth_storage_url($user_->avatar) }}" alt="{{ $user_->name }}"
                                     class="w-12 h-12 rounded-full">
                                 @if ($user_->isOnline())
@@ -73,7 +73,7 @@
                             </a>
                         </div>
                         <div>
-                            <a class="cursor-pointer" wire:navigate href="{{ route('user.my-account', $user_->urn) }}">
+                            <a class="cursor-pointer" wire:navigate href="{{ route('user.my-account', $user_->name) }}">
                                 <h3 class="font-semibold text-lg dark:text-white hover:underline">
                                     {{ $user_->name }}</h3>
                             </a>

@@ -756,12 +756,17 @@ if (!function_exists('boostAgain')) {
     }
 
     if (!function_exists('userPlanName')) {
-        function userPlanName()
+        function userPlanName($userUrn = null)
         {
-            if (empty(user()->activePlan()) || user()->activePlan()->price == 0) {
+            if ($userUrn) {
+                $user = User::where('urn', $userUrn)->first();
+            } else {
+                $user = user();
+            }
+            if (empty($user->activePlan()) || $user->activePlan()->price == 0) {
                 return 'Free Plan';
             } else {
-                return user()->activePlan()->plan?->name;
+                return $user->activePlan()->plan?->name;
             }
         }
     }
