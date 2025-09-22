@@ -27,9 +27,7 @@ use Throwable;
 
 class SoundCloudController extends Controller
 {
-    public function __construct(protected SoundCloudService $soundCloudService)
-    {
-    }
+    public function __construct(protected SoundCloudService $soundCloudService) {}
 
     public function redirect(): RedirectResponse
     {
@@ -56,7 +54,6 @@ class SoundCloudController extends Controller
 
         try {
             $soundCloudUser = Socialite::driver('soundcloud')->user();
-            // dd($soundCloudUser);
             // Find or create user
             $user = $this->findOrCreateUser($soundCloudUser);
 
@@ -121,9 +118,13 @@ class SoundCloudController extends Controller
     {
         try {
             DB::transaction(function () use ($user, $soundCloudUser) {
+                Log::info('SoundCloud sync started for syncUserTracks');
                 $this->soundCloudService->syncUserTracks($user, []);
+                Log::info('SoundCloud sync started for syncUserProductsAndSubscriptions');
                 $this->soundCloudService->syncUserProductsAndSubscriptions($user, $soundCloudUser);
+                Log::info('SoundCloud sync started for syncUserPlaylists');
                 $this->soundCloudService->syncUserPlaylists($user);
+                Log::info('SoundCloud sync started for syncUserInformation');
                 $this->soundCloudService->syncUserInformation($user, $soundCloudUser);
             });
         } catch (Throwable $e) {
@@ -194,5 +195,3 @@ class SoundCloudController extends Controller
         }
     }
 }
-
-

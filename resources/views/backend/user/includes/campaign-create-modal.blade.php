@@ -1,5 +1,5 @@
-<div x-data="{ showSubmitModal: @entangle('showSubmitModal').live }" x-show="showSubmitModal" x-cloak x-transition:enter="transition ease-out duration-300" wire:ignore
-    x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+<div x-data="{ showSubmitModal: @entangle('showSubmitModal').live }" x-show="showSubmitModal" x-cloak x-transition:enter="transition ease-out duration-300"
+    wire:ignore x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
     x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100"
     x-transition:leave-end="opacity-0 scale-95"
     class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -50,6 +50,7 @@
             localMaxFollower: @entangle('maxFollower').live,
             localMaxRepostsPerDay: @entangle('maxRepostsPerDay').live,
             init() {
+                {{-- if (this.userCreditLimit > 25000) this.userCreditLimit = 25000; --}}
                 if (!this.localCredit) this.localCredit = 50;
                 if (!this.localTotalCredit) this.localTotalCredit = this.localCredit;
                 this.localMaxFollower = 100;
@@ -152,12 +153,12 @@
                         <p class="text-xs text-red-500 mb-4">{{ $message }}</p>
                     @enderror
 
-                    <div class="relative">
-                        <input type="range" x-init="localCredit = @entangle('credit').defer || 50" x-model="localCredit" min="50"
-                            step="10"
-                            :max="!proFeatureEnabled ? userCreditLimit : (userCreditLimit - (localTotalCredit - localCredit))"
-                            class="w-full h-2 border-0 cursor-pointer outline-none transition-all duration-200">
-                    </div>
+                    <input type="range" x-init="localCredit = @entangle('credit').defer || 50" x-model="localCredit" min="50" step="10"
+                        :max="!proFeatureEnabled
+                            ? Math.min(25000, userCreditLimit):
+                            Math.min(25000, userCreditLimit - (localTotalCredit - localCredit))"
+                        class="w-full h-2 border-0 cursor-pointer outline-none transition-all duration-200">
+
                 </div>
 
                 <!-- Campaign Settings -->
@@ -274,15 +275,15 @@
                                 <div class="flex justify-between items-center gap-4">
                                     <div class="w-full relative">
                                         <input type="range" x-data :disabled="!momentumEnabled"
-                                            x-init="localMaxRepostsPerDay = @entangle('maxRepostsPerDay').defer || 100" x-model="localMaxRepostsPerDay"
-                                            min="0" max="100" value="{{ $maxRepostsPerDay }}"
+                                            x-init="localMaxRepostsPerDay = @entangle('maxRepostsPerDay').defer || 100" x-model="localMaxRepostsPerDay" min="0"
+                                            max="100" value="{{ $maxRepostsPerDay }}"
                                             class="w-full h-2  cursor-pointer"
                                             :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                     </div>
                                     <div
                                         class="min-w-[80px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
-                                        <span
-                                            class="text-sm font-medium text-gray-900 dark:text-white" x-text="localMaxRepostsPerDay"></span>
+                                        <span class="text-sm font-medium text-gray-900 dark:text-white"
+                                            x-text="localMaxRepostsPerDay"></span>
                                     </div>
                                     @error('maxRepostsPerDay')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>

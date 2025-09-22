@@ -151,6 +151,7 @@ class Dashboard extends Component
 
     public function mount()
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers());
 
         $lastWeekFollowerPercentage = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers(), 'last_week');
@@ -168,6 +169,7 @@ class Dashboard extends Component
     }
     public function updated($propertyName)
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
             $this->calculateFollowersLimit();
         }
@@ -604,7 +606,7 @@ class Dashboard extends Component
             ]);
         }
     }
-    
+
     public function directRepost($encryptedRequestId)
     {
         try {

@@ -1,5 +1,30 @@
 <div>
     <x-slot name="page_slug">analytics</x-slot>
+
+    <!-- Loading Overlay -->
+    {{-- <div x-data="{ isLoading: @entangle('isLoading') }" x-show="isLoading" x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm z-50 flex items-center justify-center"
+        style="display: none;">
+        <div class="text-center">
+            <div
+                class="inline-flex items-center px-6 py-3 font-medium leading-6 text-sm shadow rounded-lg text-white bg-[#ff6b35] hover:bg-[#ff8c42] transition ease-in-out duration-150">
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                    fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                        stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                </svg>
+                Refreshing Analytics...
+            </div>
+            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Please wait while we update your data</p>
+        </div>
+    </div> --}}
+
     <div x-data="{
         showGrowthTips: @entangle('showGrowthTips').live,
         showFilters: @entangle('showFilters').live,
@@ -8,6 +33,7 @@
         displayedData: null,
         chartData: {{ Js::from($this->getChartData()) }},
         genreBreakdown: {{ Js::from($genreBreakdown) }},
+        isLoading: @entangle('isLoading'),
     
         // Chart instances
         performanceChart: null,
@@ -248,6 +274,17 @@
             this.initializeCharts();
         },
     
+        // Handle page refresh animations
+        handlePageRefresh() {
+            // Add a slight fade effect during refresh
+            document.body.style.transition = 'opacity 0.2s ease-in-out';
+            document.body.style.opacity = '0.8';
+    
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 300);
+        },
+    
         init() {
             // Initial setup
             this.setupCharts();
@@ -260,8 +297,24 @@
                 }
             });
     
+            // Listen for loading start
+            Livewire.on('startLoading', () => {
+                this.isLoading = true;
+            });
+    
+            // Listen for complete refresh
+            Livewire.on('completeRefresh', () => {
+                this.handlePageRefresh();
+                this.chartData = $wire.getChartData();
+                this.genreBreakdown = $wire.genreBreakdown;
+    
+                this.$nextTick(() => {
+                    this.setupCharts();
+                });
+            });
+    
             // Listen for data updates
-            Livewire.on('dataUpdated', () => {
+            Livewire.on('initialized', () => {
                 this.chartData = $wire.getChartData();
                 this.genreBreakdown = $wire.genreBreakdown;
     
@@ -310,7 +363,8 @@
                         </button>
 
                         <select wire:model.live="filter"
-                            class="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm font-medium focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35] w-full sm:w-auto">
+                            class="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm font-medium focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35] w-full sm:w-auto transition-all duration-200"
+                            x-bind:disabled="isLoading">
                             <option value="daily">Today</option>
                             <option value="last_week" selected>Last 7 Days</option>
                             <option value="last_month">Last 30 Days</option>
@@ -462,14 +516,16 @@
                     <div class="space-y-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-1 lg:grid-cols-2">
                         <label class="flex items-center">
                             <input type="checkbox" name="genre" wire:model="selectedGenres" value="Any Genre"
-                                class="checkbox border-orange-600 bg-transparent checked:border-orange-500 checked:bg-transparent checked:text-orange-600 rounded-full w-5 h-5">
+                                class="checkbox border-orange-600 bg-transparent checked:border-orange-500 checked:bg-transparent checked:text-orange-600 rounded-full w-5 h-5"
+                                x-bind:disabled="isLoading">
                             <span class="ml-2 text-sm text-gray-700 dark:text-gray-300 capitalize">Any Genre</span>
                         </label>
                         @foreach ($userGenres as $genre)
                             <label class="flex items-center">
                                 <input type="checkbox" name="genre" wire:model="selectedGenres"
                                     value="{{ $genre }}"
-                                    class="checkbox border-orange-600 bg-transparent checked:border-orange-500 checked:bg-transparent checked:text-orange-600 rounded-full w-5 h-5">
+                                    class="checkbox border-orange-600 bg-transparent checked:border-orange-500 checked:bg-transparent checked:text-orange-600 rounded-full w-5 h-5"
+                                    x-bind:disabled="isLoading">
                                 <span
                                     class="ml-2 text-sm text-gray-700 dark:text-gray-300 capitalize">{{ $genre }}</span>
                             </label>
@@ -485,12 +541,14 @@
                         <label for="start-date" class="flex-1">
                             <span class="label text-sm">Start Date</span>
                             <input type="date" wire:model="startDate"
-                                class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35]">
+                                class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35] transition-all duration-200"
+                                x-bind:disabled="isLoading">
                         </label>
                         <label for="end-date" class="flex-1">
                             <span class="label text-sm">End Date</span>
                             <input type="date" wire:model="endDate"
-                                class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35]">
+                                class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35] transition-all duration-200"
+                                x-bind:disabled="isLoading">
                         </label>
                     </div>
                     @error('dateRange')
@@ -500,15 +558,45 @@
             </div>
             <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-600">
                 <button wire:click="resetFilters"
-                    class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">Reset</button>
+                    class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                    x-bind:disabled="isLoading">
+                    <span x-show="!isLoading">Reset</span>
+                    <span x-show="isLoading" class="flex items-center">
+                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                        Resetting...
+                    </span>
+                </button>
                 <button wire:click="applyFilters"
-                    class="px-4 py-2 bg-[#ff6b35] text-white rounded-lg text-sm font-medium hover:bg-[#ff8c42] transition-colors">Apply
-                    Filters</button>
+                    class="px-4 py-2 bg-[#ff6b35] text-white rounded-lg text-sm font-medium hover:bg-[#ff8c42] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    x-bind:disabled="isLoading">
+                    <span x-show="!isLoading">Apply Filters</span>
+                    <span x-show="isLoading" class="flex items-center">
+                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                        Applying...
+                    </span>
+                </button>
             </div>
         </div>
 
         {{-- Analytics Cards --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+            x-transition:enter="transition ease-out duration-500"
+            x-transition:enter-start="transform opacity-0 translate-y-4"
+            x-transition:enter-end="transform opacity-100 translate-y-0">
             <!-- Total Streams Card -->
             <div
                 class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow duration-200">
@@ -611,15 +699,7 @@
                 class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow duration-200">
                 <div class="flex items-center justify-between mb-4">
                     <div class="p-3 rounded-lg bg-[#ff6b35] text-white">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" class="lucide lucide-share2 h-6 w-6">
-                            <circle cx="18" cy="5" r="3"></circle>
-                            <circle cx="6" cy="12" r="3"></circle>
-                            <circle cx="18" cy="19" r="3"></circle>
-                            <line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line>
-                            <line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line>
-                        </svg>
+                        <x-heroicon-s-arrow-path-rounded-square class="w-6 h-6" />
                     </div>
                     <div class="text-right">
                         @if (isset($data['reposts_change']))

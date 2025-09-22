@@ -124,9 +124,9 @@ class Dashboard extends Component
     public $isSearching = false;
     public $searchResults = [];
 
-    public $tracksPage = null;
+    public $tracksPage = 1;
     public $playlistsPage = 1;
-    public $perPage = 5;
+    public $perPage = 4;
     public $hasMoreTracks = false;
     public $hasMorePlaylists = false;
     public $playListTrackShow = false;
@@ -186,6 +186,8 @@ class Dashboard extends Component
 
     public function mount()
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+
         $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers());
 
         $lastWeekFollowerPercentage = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers(), 'last_week');
@@ -204,13 +206,9 @@ class Dashboard extends Component
 
     public function updated($propertyName)
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
             $this->calculateFollowersLimit();
-        }
-
-        // Handle search query updates with debouncing
-        if ($propertyName === 'searchQuery') {
-            $this->searchSoundcloud();
         }
     }
 
@@ -254,6 +252,8 @@ class Dashboard extends Component
 
     public function selectModalTab($tab = 'tracks')
     {
+        // $this->searchQuery = '';
+        $this->reset(['searchQuery', 'tracks']);
         $this->activeTab = $tab;
 
         if ($tab === 'tracks') {
@@ -267,64 +267,139 @@ class Dashboard extends Component
         }
     }
 
-    public function fetchTracks()
-    {
-        try {
-            $this->soundCloudService->syncSelfTracks([]);
+    // public function fetchTracks()
+    // {
+    //     try {
+    //         $this->soundCloudService->syncSelfTracks([]);
 
-            $this->tracksPage = 1;
-            $this->tracks = Track::where('user_urn', user()->urn)
-                ->latest()
-                ->take($this->perPage)
-                ->get();
-            $this->hasMoreTracks = $this->tracks->count() === $this->perPage;
-        } catch (\Exception $e) {
-            $this->tracks = collect();
-            $this->dispatch('alert', type: 'error', message: 'Failed to load tracks: ' . $e->getMessage());
-        }
-    }
+    //         $this->tracksPage = 1;
+    //         $this->tracks = Track::where('user_urn', user()->urn)
+    //             ->latest()
+    //             ->take($this->perPage)
+    //             ->get();
+    //         $this->hasMoreTracks = $this->tracks->count() === $this->perPage;
+    //     } catch (\Exception $e) {
+    //         $this->tracks = collect();
+    //         $this->dispatch('alert', type: 'error', message: 'Failed to load tracks: ' . $e->getMessage());
+    //     }
+    // }
+
+    // public function loadMoreTracks()
+    // {
+    //     $this->tracksPage++;
+    //     $newTracks = Track::where('user_urn', user()->urn)
+    //         ->latest()
+    //         ->skip(($this->tracksPage - 1) * $this->perPage)
+    //         ->take($this->perPage)
+    //         ->get();
+
+    //     $this->tracks = $this->tracks->concat($newTracks);
+    //     $this->hasMoreTracks = $newTracks->count() === $this->perPage;
+    // }
+
+    // public function fetchPlaylists()
+    // {
+    //     try {
+    //         $this->soundCloudService->syncSelfPlaylists();
+
+    //         $this->playlistsPage = 1;
+    //         $this->playlists = Playlist::where('user_urn', user()->urn)
+    //             ->latest()
+    //             ->take($this->perPage)
+    //             ->get();
+    //         $this->hasMorePlaylists = $this->playlists->count() === $this->perPage;
+    //     } catch (\Exception $e) {
+    //         $this->playlists = collect();
+    //         $this->dispatch('alert', type: 'error', message: 'Failed to load playlists: ' . $e->getMessage());
+    //     }
+    // }
+
+    // public function loadMorePlaylists()
+    // {
+    //     $this->playlistsPage++;
+    //     $newPlaylists = Playlist::where('user_urn', user()->urn)
+    //         ->latest()
+    //         ->skip(($this->playlistsPage - 1) * $this->perPage)
+    //         ->take($this->perPage)
+    //         ->get();
+
+    //     $this->playlists = $this->playlists->concat($newPlaylists);
+    //     $this->hasMorePlaylists = $newPlaylists->count() === $this->perPage;
+    // }
+
+
+    // Replace the existing loadMoreTracks and loadMorePlaylists methods in Campaign component
 
     public function loadMoreTracks()
     {
         $this->tracksPage++;
-        $newTracks = Track::where('user_urn', user()->urn)
-            ->latest()
-            ->skip(($this->tracksPage - 1) * $this->perPage)
-            ->take($this->perPage)
-            ->get();
 
-        $this->tracks = $this->tracks->concat($newTracks);
-        $this->hasMoreTracks = $newTracks->count() === $this->perPage;
-    }
-
-    public function fetchPlaylists()
-    {
-        try {
-            $this->soundCloudService->syncSelfPlaylists();
-
-            $this->playlistsPage = 1;
-            $this->playlists = Playlist::where('user_urn', user()->urn)
-                ->latest()
-                ->take($this->perPage)
-                ->get();
-            $this->hasMorePlaylists = $this->playlists->count() === $this->perPage;
-        } catch (\Exception $e) {
-            $this->playlists = collect();
-            $this->dispatch('alert', type: 'error', message: 'Failed to load playlists: ' . $e->getMessage());
+        if ($this->playListTrackShow && $this->selectedPlaylistId) {
+            // For playlist tracks
+            $startIndex = ($this->tracksPage - 1) * $this->perPage;
+            $newTracks = $this->allPlaylistTracks->slice($startIndex, $this->perPage);
+            $this->tracks = $this->tracks->concat($newTracks);
+            $this->hasMoreTracks = $newTracks->count() === $this->perPage;
+        } else {
+            // For regular tracks
+            $startIndex = ($this->tracksPage - 1) * $this->perPage;
+            $newTracks = $this->allTracks->slice($startIndex, $this->perPage);
+            $this->tracks = $this->tracks->concat($newTracks);
+            $this->hasMoreTracks = $newTracks->count() === $this->perPage;
         }
     }
 
     public function loadMorePlaylists()
     {
         $this->playlistsPage++;
-        $newPlaylists = Playlist::where('user_urn', user()->urn)
-            ->latest()
-            ->skip(($this->playlistsPage - 1) * $this->perPage)
-            ->take($this->perPage)
-            ->get();
-
+        $startIndex = ($this->playlistsPage - 1) * $this->perPage;
+        $newPlaylists = $this->allPlaylists->slice($startIndex, $this->perPage);
         $this->playlists = $this->playlists->concat($newPlaylists);
         $this->hasMorePlaylists = $newPlaylists->count() === $this->perPage;
+    }
+
+    // Also update fetchTracks method to properly set allTracks
+    public function fetchTracks()
+    {
+        try {
+            $this->soundCloudService->syncSelfTracks([]);
+
+            // Get all tracks first
+            $this->allTracks = Track::where('user_urn', user()->urn)
+                ->latest()
+                ->get();
+
+            $this->tracksPage = 1;
+            $this->tracks = $this->allTracks->take($this->perPage);
+            $this->hasMoreTracks = $this->allTracks->count() > $this->perPage;
+        } catch (\Exception $e) {
+            $this->tracks = collect();
+            $this->allTracks = collect();
+            $this->hasMoreTracks = false;
+            $this->dispatch('alert', type: 'error', message: 'Failed to load tracks: ' . $e->getMessage());
+        }
+    }
+
+    // Also update fetchPlaylists method to properly set allPlaylists
+    public function fetchPlaylists()
+    {
+        try {
+            $this->soundCloudService->syncSelfPlaylists();
+
+            // Get all playlists first
+            $this->allPlaylists = Playlist::where('user_urn', user()->urn)
+                ->latest()
+                ->get();
+
+            $this->playlistsPage = 1;
+            $this->playlists = $this->allPlaylists->take($this->perPage);
+            $this->hasMorePlaylists = $this->allPlaylists->count() > $this->perPage;
+        } catch (\Exception $e) {
+            $this->playlists = collect();
+            $this->allPlaylists = collect();
+            $this->hasMorePlaylists = false;
+            $this->dispatch('alert', type: 'error', message: 'Failed to load playlists: ' . $e->getMessage());
+        }
     }
 
     public function fetchPlaylistTracks()
@@ -399,22 +474,19 @@ class Dashboard extends Component
 
             // Validate search query
             // $this->validateSearchQuery();
-            
+
             // Check if it's a SoundCloud URL
             if ($this->isSoundCloudUrl($this->searchQuery)) {
-                $this->resolveSoundcloudUrl();
+                if (proUser()) {
+                    $this->resolveSoundcloudUrl();
+                } else {
+                    $this->dispatch('alert', type: 'error', message: 'Please upgrade to a Pro User to use this feature.');
+                }
                 return;
             }
 
             // Perform text-based search
             $this->performTextSearch();
-            // } catch (ValidationException $e) {
-            //     $this->dispatch('alert', type: 'error', message: $e->validator->errors()->first());
-            //     Log::warning('Search validation failed', [
-            //         'search_query' => $this->searchQuery,
-            //         'errors' => $e->validator->errors()->toArray(),
-            //         'user_urn' => user()->urn ?? 'unknown'
-            //     ]);
         } catch (\Exception $e) {
             $this->dispatch('alert', type: 'error', message: 'Search failed. Please try again.');
             Log::error('Search failed: ' . $e->getMessage(), [
@@ -427,11 +499,6 @@ class Dashboard extends Component
         }
     }
 
-    /**
-     * Validate search query input
-     *
-     * @throws ValidationException
-     */
     private function validateSearchQuery(): void
     {
         $this->validate([
@@ -450,22 +517,11 @@ class Dashboard extends Component
         ]);
     }
 
-    /**
-     * Check if the search query is a SoundCloud URL
-     *
-     * @param string $query
-     * @return bool
-     */
     private function isSoundCloudUrl(string $query): bool
     {
-        return preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[\w\-\.\/]+(\?.*)?$/i', $query);
+        return preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[a-zA-Z0-9\-_]+(\/[a-zA-Z0-9\-_]+)*(\/)?(\?.*)?$/i', $query);
     }
 
-    /**
-     * Reset search to show default content based on current context
-     *
-     * @return void
-     */
     private function resetSearchToDefault(): void
     {
         try {
@@ -773,52 +829,18 @@ class Dashboard extends Component
         }
     }
 
-    // public function profeature($isChecked)
-    // {
-    //     // 1. Only pro users can use this
-    //     if (!proUser()) {
-    //         $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
-    //         $this->proFeatureEnabled = false;
-    //         $this->proFeatureValue = 0;
-    //         $this->totalCredit = $this->credit;
-    //         return;
-    //     }
-
-    //     // 2. Calculate required credits if PRO is enabled
-    //     $requiredCredits = $this->credit * 1.5;
-
-    //     if ($isChecked) {
-    //         if ($requiredCredits > userCredits()) {
-    //             // Not enough credits → keep it off
-    //             $this->dispatch('alert', type: 'error', message: 'Not enough credits for Momentum+');
-    //             $this->proFeatureEnabled = false;
-    //             $this->proFeatureValue = 0;
-    //             $this->totalCredit = $this->credit;
-    //         } else {
-    //             // Enable successfully
-    //             $this->proFeatureEnabled = true;
-    //             $this->proFeatureValue = 1;
-    //             $this->totalCredit = $requiredCredits;
-    //         }
-    //     } else {
-    //         // Feature disabled manually
-    //         $this->proFeatureEnabled = false;
-    //         $this->proFeatureValue = 0;
-    //         $this->totalCredit = $this->credit;
-    //     }
-    // }
-
     public function createCampaign()
     {
         $this->validate();
 
         try {
-            DB::transaction(function () {
+            $musicId = $this->musicType === Track::class ? $this->musicId : $this->playlistId;
+            DB::transaction(function () use ($musicId) {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
                 $proFeatureEnabled = $this->proFeatureEnabled && proUser() ? 1 : 0;
                 $campaign = ModelsCampaign::create([
-                    'music_id' => $this->musicId,
+                    'music_id' => $musicId,
                     'music_type' => $this->musicType,
                     'title' => $this->title,
                     'description' => $this->description,
@@ -901,36 +923,10 @@ class Dashboard extends Component
 
     protected function resolveSoundcloudUrl()
     {
-        $this->processSearchData();
-
-        // $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
-        // if ($response->successful()) {
-        //     $resolvedData['tracks'] = $response->json();
-        //     $this->soundCloudService->syncSelfTracks($resolvedData);
-        //     $this->processSearchData();
-        //     Log::info('SoundCloud link resolved successfully', [$resolvedData]);
-        // } else {
-        //     if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
-        //         $this->allPlaylistTracks = collect();
-        //         $this->tracks = collect();
-        //     } else {
-        //         if ($this->activeTab === 'tracks') {
-        //             $this->allTracks = collect();
-        //             $this->tracks = collect();
-        //         } elseif ($this->activeTab === 'playlists') {
-        //             $this->allPlaylists = collect();
-        //             $this->playlists = collect();
-        //         }
-        //     }
-        //     $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
-        // }
-    }
-
-    protected function processSearchData()
-    {
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
+            $baseUrl = strtok($this->searchQuery, '?');
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
-                ->where('permalink_url', $this->searchQuery)
+                ->whereRaw("SUBSTRING_INDEX(permalink_url, '?', 1) = ?", [$baseUrl])
                 ->get();
             if ($tracksFromDb->isNotEmpty()) {
                 $this->allPlaylistTracks = $tracksFromDb;
@@ -940,8 +936,94 @@ class Dashboard extends Component
             }
         } else {
             if ($this->activeTab == 'tracks') {
-                $tracksFromDb = Track::where('permalink_url', $this->searchQuery)
+                $baseUrl = strtok($this->searchQuery, '?');
+                $tracksFromDb = Track::whereRaw("SUBSTRING_INDEX(permalink_url, '?', 1) = ?", [$baseUrl])
                     ->get();
+
+                if ($tracksFromDb->isNotEmpty()) {
+                    Log::info('Resolving Soundcloud URL. Step 8. on if activeTab == tracks on else if playListTrackShow == true && activeTab === tracks && tracksFromDb->isNotEmpty()');
+                    $this->activeTab = 'tracks';
+                    $this->allTracks = $tracksFromDb;
+                    $this->tracks = $this->allTracks->take($this->trackLimit);
+                    $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+                    return;
+                }
+            }
+
+            if ($this->activeTab == 'playlists') {
+                $baseUrl = strtok($this->searchQuery, '?');
+                $playlistsFromDb = Playlist::whereRaw("SUBSTRING_INDEX(permalink_url, '?', 1) = ?", [$baseUrl])
+                    ->get();
+
+                if ($playlistsFromDb->isNotEmpty()) {
+                    $this->activeTab = 'playlists';
+                    $this->allPlaylists = $playlistsFromDb;
+                    $this->playlists = $this->allPlaylists->take($this->playlistLimit);
+                    $this->hasMorePlaylists = $this->playlists->count() === $this->playlistLimit;
+                    return;
+                }
+            }
+        }
+
+        Log::info('Resolving Soundcloud URL. Step 13. end of if playListTrackShow == true && activeTab === tracks');
+        $response = null;
+        $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
+        if ($response->successful()) {
+            $resolvedData = $response->json();
+            $urn = $resolvedData['urn'];
+            if ($this->activeTab === 'playlists') {
+                if (isset($resolvedData['tracks']) && count($resolvedData['tracks']) > 0) {
+                    $this->soundCloudService->unknownPlaylistAdd($resolvedData);
+                    Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
+                } else {
+                    $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Playlist URL.');
+                }
+            } elseif ($this->activeTab === 'tracks') {
+                if (!isset($resolvedData['tracks'])) {
+                    $this->soundCloudService->unknownTrackAdd($resolvedData);
+                    Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
+                } else {
+                    $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Track URL.');
+                }
+            }
+            $this->processSearchData($urn);
+            Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
+        } else {
+            Log::info('Resolving Soundcloud URL. Step 24. end of if playListTrackShow == true && activeTab === tracks and response is not successful');
+            if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
+                $this->allPlaylistTracks = collect();
+                $this->tracks = collect();
+            } else {
+                if ($this->activeTab === 'tracks') {
+                    $this->allTracks = collect();
+                    $this->tracks = collect();
+                } elseif ($this->activeTab === 'playlists') {
+                    $this->allPlaylists = collect();
+                    $this->playlists = collect();
+                }
+            }
+            $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
+        }
+    }
+
+    protected function processSearchData($urn)
+    {
+        if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
+            $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
+                ->where('soundcloud_urn', $urn)
+                ->get();
+
+            if ($tracksFromDb->isNotEmpty()) {
+                $this->allPlaylistTracks = $tracksFromDb;
+                $this->tracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
+                $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+                return;
+            }
+        } else {
+            if ($this->activeTab == 'tracks') {
+                $tracksFromDb = Track::where('urn', $urn)
+                    ->get();
+
                 if ($tracksFromDb->isNotEmpty()) {
                     $this->activeTab = 'tracks';
                     $this->allTracks = $tracksFromDb;
@@ -952,7 +1034,7 @@ class Dashboard extends Component
             }
 
             if ($this->activeTab == 'playlists') {
-                $playlistsFromDb = Playlist::where('permalink_url', $this->searchQuery)
+                $playlistsFromDb = Playlist::where('soundcloud_urn', $urn)
                     ->get();
 
                 if ($playlistsFromDb->isNotEmpty()) {
@@ -966,24 +1048,43 @@ class Dashboard extends Component
         }
     }
 
+    // public function showPlaylistTracks($playlistId)
+    // {
+    //     $this->selectedPlaylistId = $playlistId;
+    //     $playlist = Playlist::with('tracks')->find($playlistId);
+    //     if ($playlist) {
+    //         $this->allTracks = $playlist->tracks;
+    //         $this->tracks = $this->allTracks->take($this->trackLimit);
+    //         $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+    //     } else {
+    //         $this->tracks = collect();
+    //         $this->allTracks = collect();
+    //         $this->hasMoreTracks = false;
+    //     }
+    //     $this->activeTab = 'tracks';
+    //     $this->playListTrackShow = true;
+
+    //     $this->searchQuery = '';
+    // }
     public function showPlaylistTracks($playlistId)
     {
         $this->selectedPlaylistId = $playlistId;
         $playlist = Playlist::with('tracks')->find($playlistId);
+
         if ($playlist) {
-            $this->allTracks = $playlist->tracks;
-            $this->tracks = $this->allTracks->take($this->trackLimit);
-            $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+            $this->allPlaylistTracks = $playlist->tracks;
+            $this->tracks = $this->allPlaylistTracks->take($this->perPage);
+            $this->hasMoreTracks = $this->allPlaylistTracks->count() > $this->perPage;
         } else {
             $this->tracks = collect();
-            $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+            $this->allTracks = collect();
+            $this->hasMoreTracks = false;
         }
+
         $this->activeTab = 'tracks';
         $this->playListTrackShow = true;
-
-        $this->reset([
-            'searchQuery',
-        ]);
+        $this->tracksPage = 1;
+        $this->searchQuery = '';
     }
 
     public function directRepost($encryptedRequestId)

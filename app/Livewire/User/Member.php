@@ -25,6 +25,7 @@ use InvalidArgumentException;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Feature;
+use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
 
 class Member extends Component
@@ -83,13 +84,15 @@ class Member extends Component
     protected PlaylistService $playlistService;
     protected RepostRequestService $repostRequestService;
     protected SoundCloudService $soundCloudService;
-    public function boot(TrackService $trackService, PlaylistService $playlistService, RepostRequestService $repostRequestService, SoundCloudService $soundCloudService)
+    protected FollowerAnalyzer $followerAnalyzer;
+    public function boot(TrackService $trackService, PlaylistService $playlistService, RepostRequestService $repostRequestService, SoundCloudService $soundCloudService, FollowerAnalyzer $followerAnalyzer)
     {
         $this->trackService = $trackService;
         $this->playlistService = $playlistService;
         $this->repostRequestService = $repostRequestService;
         $this->soundCloudService = $soundCloudService;
         $this->soundcloudClientId = config('services.soundcloud.client_id');
+        $this->followerAnalyzer = $followerAnalyzer;
     }
 
     public function rules()
@@ -118,7 +121,7 @@ class Member extends Component
     {
         $this->genres = $this->getAvailableGenres();
         $this->userinfo = user()->userInfo;
-        // $this->creditSpent = repostPrice($this->user) + ($this->likeable ? 2 : 0) + ($this->commentable ? 2 : 0);
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
     private function getAvailableGenres(): Collection
@@ -162,10 +165,16 @@ class Member extends Component
             $this->resetSearchData();
             return;
         }
-        // if (filter_var($this->searchQuery, FILTER_VALIDATE_URL) && preg_match('/^https?:\/\/(www\.)?soundcloud\.com\//', $this->searchQuery)) {
+        // if (filter_var($this->searchQuery, FILTER_VALIDATE_URL) && preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[a-zA-Z0-9\-_]+(\/[a-zA-Z0-9\-_]+)*(\/)?(\?.*)?$/i', $this->searchQuery)) {
         $this->performLocalSearch();
     }
     public $allPlaylistTracks;
+
+    public function getCredibilityScore(object $user)
+    {
+        $userFollowerAnalysis =  $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers($user));
+        return $userFollowerAnalysis['averageCredibilityScore'];
+    }
 
     private function performLocalSearch()
     {
@@ -186,7 +195,7 @@ class Member extends Component
                 });
 
             $this->allTracks = $query->with('user')->get();
-            if ($this->allTracks->isEmpty() && preg_match('/^https?:\/\/(www\.)?soundcloud\.com\//', $this->searchQuery)) {
+            if ($this->allTracks->isEmpty() && preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[a-zA-Z0-9\-_]+(\/[a-zA-Z0-9\-_]+)*(\/)?(\?.*)?$/i', $this->searchQuery)) {
                 $this->resolveSoundcloudUrl();
             }
             $this->tracks = $this->allTracks->take($this->trackLimit);
@@ -198,7 +207,7 @@ class Member extends Component
                 });
 
             $this->allPlaylists = $query->get();
-            if ($this->allPlaylists->isEmpty() && preg_match('/^https?:\/\/(www\.)?soundcloud\.com\//', $this->searchQuery)) {
+            if ($this->allPlaylists->isEmpty() && preg_match('/^https?:\/\/(www\.)?soundcloud\.com\/[a-zA-Z0-9\-_]+(\/[a-zA-Z0-9\-_]+)*(\/)?(\?.*)?$/i', $this->searchQuery)) {
                 $this->resolveSoundcloudUrl();
             }
             $this->playlists = $this->allPlaylists->take($this->playlistLimit);
@@ -505,7 +514,7 @@ class Member extends Component
     public function render()
     {
         $query = User::where('urn', '!=', user()->urn)
-            ->with('userInfo', 'genres')->active();
+            ->with(['userInfo', 'genres', 'tracks', 'reposts', 'playlists'])->active();
 
         if ($this->genreFilter) {
             $query->whereHas('tracks', function ($q) {
@@ -521,8 +530,8 @@ class Member extends Component
                     });
             });
         }
-
         $users = $query->paginate($this->perPage);
+        
 
         if ($this->costFilter) {
             $collection = $users->getCollection()->each(function ($user) {

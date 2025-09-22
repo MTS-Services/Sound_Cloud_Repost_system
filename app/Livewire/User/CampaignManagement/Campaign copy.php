@@ -25,6 +25,7 @@ use Livewire\WithPagination;
 use Throwable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\PlaylistTrack;
 use App\Models\UserAnalytics;
 use Illuminate\Http\Request;
 
@@ -56,12 +57,10 @@ class Campaign extends Component
     #[Url(as: 'q', except: '')]
     public string $search = '';
 
-    #[Url(as: 'type', except: '')]
-    public $searchMusicType = 'all';
-
     public $selectedTags = [];
     public $selecteTags = [];
     public $selectedGenre = [];
+    public $searchMusicType = 'all';
     public $suggestedTags = [];
     public $showSuggestions = false;
     public $showSelectedTags = false;
@@ -228,7 +227,7 @@ class Campaign extends Component
 
     public function mount(Request $request)
     {
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
         $this->getAllTrackTypes();
         $this->totalCampaigns();
@@ -243,39 +242,19 @@ class Campaign extends Component
     }
     public function updated($propertyName)
     {
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
             $this->calculateFollowersLimit();
         }
         if (in_array($propertyName, ['activeMainTab', 'campaigns'])) {
             $this->dispatch('soundcloud-widgets-reinitialize');
         }
+        // $queryParams = $this->getQueryParams();
+        // $this->redirect(route('user.cm.campaigns', ['tab' => $this->activeMainTab]) . '?' . http_build_query($queryParams), navigate: true);
     }
-
     public function calculateFollowersLimit()
     {
         $this->followersLimit = ($this->credit - ($this->likeable ? 2 : 0) - ($this->commentable ? 2 : 0)) * 100;
-    }
-
-    public function navigatingAway(Request $request)
-    {
-        $params = [
-            'tab' => $this->activeMainTab,
-        ];
-
-        if (!empty($this->selectedGenres)) {
-            $params['selectedGenres'] = $this->selectedGenres;
-        }
-
-        if (!empty($this->search)) {
-            $params['q'] = $this->search;
-        }
-
-        if (!empty($this->searchMusicType)) {
-            $params['type'] = $this->searchMusicType;
-        }
-
-        return $this->redirect(route('user.cm.campaigns') . '?' . http_build_query($params), navigate: true);
     }
 
     protected function rules()
@@ -311,7 +290,6 @@ class Campaign extends Component
     {
         $this->reset();
         $this->activeMainTab = $tab;
-        $this->navigatingAway(request());
 
         switch ($tab) {
             case 'recommended_pro':
@@ -481,7 +459,6 @@ class Campaign extends Component
             $this->search = $tag;
             $this->suggestedTags = [];
             $this->showSuggestions = false;
-            $this->navigatingAway(request());
             $this->resetPage($this->getActivePageName());
         }
     }
@@ -494,14 +471,12 @@ class Campaign extends Component
         } else {
             $this->selectedGenres[] = $genre;
         }
-        $this->navigatingAway(request());
         $this->totalCampaigns();
     }
 
     public function filterByTrackType($Type)
     {
         $this->searchMusicType = $Type;
-        $this->navigatingAway(request());
 
         $this->resetPage($this->getActivePageName());
     }
@@ -561,6 +536,83 @@ class Campaign extends Component
 
         $this->reset(['searchQuery']);
     }
+
+    // public function fetchTracks()
+    // {
+    //     try {
+    //         $this->soundCloudService->syncSelfTracks([]);
+
+    //         $this->tracksPage = 1;
+    //         $this->tracks = Track::where('user_urn', user()->urn)
+    //             ->latest()
+    //             ->take($this->perPage)
+    //             ->get();
+    //         $this->hasMoreTracks = $this->tracks->count() === $this->perPage;
+    //     } catch (\Exception $e) {
+    //         $this->tracks = collect();
+    //         $this->dispatch('alert', type: 'error', message: 'Failed to load tracks: ' . $e->getMessage());
+    //     }
+    // }
+
+    // public function loadMoreTracks()
+    // {
+    //     $this->tracksPage++;
+    //     if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
+    //         $this->showPlaylistTracks($this->selectedPlaylistId);
+    //     }
+    //     $newTracks = Track::where('user_urn', user()->urn)->latest()
+    //         ->skip(($this->tracksPage - 1) * $this->perPage)
+    //         ->take($this->perPage)
+    //         ->get();
+
+    //     $this->tracks = $this->tracks->concat($newTracks);
+    //     $this->hasMoreTracks = $newTracks->count() === $this->perPage;
+    // }
+
+    // public function fetchPlaylists()
+    // {
+    //     try {
+    //         $this->soundCloudService->syncSelfPlaylists();
+    //         $this->playlistsPage = 1;
+    //         $this->playlists = Playlist::where('user_urn', user()->urn)
+    //             ->latest()
+    //             ->take($this->perPage)
+    //             ->get();
+    //         $this->hasMorePlaylists = $this->playlists->count() === $this->perPage;
+    //     } catch (\Exception $e) {
+    //         $this->playlists = collect();
+    //         $this->dispatch('alert', type: 'error', message: 'Failed to load playlists: ' . $e->getMessage());
+    //     }
+    // }
+
+    // public function loadMorePlaylists()
+    // {
+    //     $this->playlistsPage++;
+    //     $newPlaylists = Playlist::where('user_urn', user()->urn)->latest()
+    //         ->skip(($this->playlistsPage - 1) * $this->perPage)
+    //         ->take($this->perPage)
+    //         ->get();
+
+    //     $this->playlists = $this->playlists->concat($newPlaylists);
+    //     $this->hasMorePlaylists = $newPlaylists->count() === $this->perPage;
+    // }
+
+    // public function loadMoreTracks()
+    // {
+    //     $this->tracksPage++;
+    //     $sourceCollection = ($this->playListTrackShow) ? $this->allPlaylistTracks : $this->allTracks;
+    //     $newTracks = $sourceCollection->skip(($this->tracksPage - 1) * $this->perPage)->take($this->perPage);
+    //     $this->tracks = $this->tracks->concat($newTracks);
+    //     $this->hasMoreTracks = $newTracks->count() === $this->perPage;
+    // }
+
+    // public function loadMorePlaylists()
+    // {
+    //     $this->playlistsPage++;
+    //     $newPlaylists = $this->allPlaylists->skip(($this->playlistsPage - 1) * $this->perPage)->take($this->perPage);
+    //     $this->playlists = $this->playlists->concat($newPlaylists);
+    //     $this->hasMorePlaylists = $newPlaylists->count() === $this->perPage;
+    // }
 
     public function fetchPlaylistTracks()
     {
@@ -726,13 +778,12 @@ class Campaign extends Component
         $this->validate();
 
         try {
-            $musicId = $this->musicType === Track::class ? $this->musicId : $this->playlistId;
-            DB::transaction(function () use ($musicId) {
+            DB::transaction(function () {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
                 $proFeatureEnabled = $this->proFeatureEnabled && proUser() ? 1 : 0;
                 $campaign = ModelsCampaign::create([
-                    'music_id' => $musicId,
+                    'music_id' => $this->musicId,
                     'music_type' => $this->musicType,
                     'title' => $this->title,
                     'description' => $this->description,
@@ -904,18 +955,18 @@ class Campaign extends Component
                 $this->track = $this->trackService->getTrack(encrypt($campaign->music_id));
             } elseif ($campaign->music_type == Playlist::class) {
                 $this->reset('track');
-                $playlist = Playlist::findOrFail($campaign->music_id);
-                $this->track = $playlist;
+                $playlist = PlaylistTrack::where('playlist_urn', $campaign->music_id)->with('track')->get();
+                $this->track = $playlist->track;
             }
 
-            // $response = $this->analyticsService->recordAnalytics($this->track, $campaign, UserAnalytics::TYPE_PLAY, $campaign->target_genre);
-            // Log:
-            // info('response: analytics: ');
-            // if ($response != false || $response != null) {
+            $response = $this->analyticsService->recordAnalytics($this->track, $campaign, UserAnalytics::TYPE_PLAY, $campaign->target_genre);
+            Log:
+            info('response: analytics: ');
+            if ($response != false || $response != null) {
 
 
-            //     $campaign->increment('playback_count');
-            // }
+                $campaign->increment('playback_count');
+            }
 
             $this->playcount = true;
             // $this->reset([
@@ -963,8 +1014,10 @@ class Campaign extends Component
             $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
             return;
         }
+        // Log::info('confirmRepost campaignId: ' . $campaignId);
         $this->showRepostConfirmationModal = true;
         $this->campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
+        // Log::info($this->campaign);
     }
 
     public function repost($campaignId)
@@ -988,14 +1041,6 @@ class Campaign extends Component
             }
 
             $campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
-            switch ($campaign->music_type) {
-                case Track::class:
-                    $musicUrn = $campaign->music->urn;
-                    break;
-                case Playlist::class:
-                    $musicUrn = $campaign->music->soundcloud_urn;
-                    break;
-            }
 
             if (!$campaign->music) {
                 $this->dispatch('alert', type: 'error', message: 'Track or Playlist not found for this campaign.');
@@ -1021,27 +1066,27 @@ class Campaign extends Component
 
             switch ($campaign->music_type) {
                 case Track::class:
-                    $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$musicUrn}");
+                    $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
                     if ($this->commented) {
-                        $comment_response = $httpClient->post("{$this->baseUrl}/tracks/{$musicUrn}/comments", $commentSoundcloud);
+                        $comment_response = $httpClient->post("{$this->baseUrl}/tracks/{$campaign->music->urn}/comments", $commentSoundcloud);
                     }
                     if ($this->liked) {
-                        $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$musicUrn}");
+                        $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$campaign->music->urn}");
                     }
                     if ($this->followed) {
                         $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
                     }
                     break;
                 case Playlist::class:
-                    $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$musicUrn}");
+                    $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$campaign->music->urn}");
                     if ($this->liked) {
-                        $like_response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$musicUrn}");
+                        $like_response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$campaign->music->urn}");
                     }
                     if ($this->commented) {
-                        $comment_response = $httpClient->post("{$this->baseUrl}/playlists/{$musicUrn}/comments", $commentSoundcloud);
+                        $comment_response = $httpClient->post("{$this->baseUrl}/playlists/{$campaign->music->urn}/comments", $commentSoundcloud);
                     }
                     if ($this->followed) {
-                        $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->music?->user?->urn}");
+                        $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
                     }
                     break;
                 default:
@@ -1069,11 +1114,6 @@ class Campaign extends Component
                 $soundcloudRepostId = $campaign->music->soundcloud_track_id;
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
                 $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.');
-                $this->reset([
-                    'liked',
-                    'followed',
-                    'commented',
-                ]);
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [
                     'campaign_id' => $campaignId,
@@ -1360,7 +1400,7 @@ class Campaign extends Component
     public function fetchTracks()
     {
         try {
-            // $this->soundCloudService->syncSelfTracks([]);
+            $this->soundCloudService->syncSelfTracks([]);
 
             // Get all tracks first
             $this->allTracks = Track::where('user_urn', user()->urn)
@@ -1381,7 +1421,7 @@ class Campaign extends Component
     public function fetchPlaylists()
     {
         try {
-            // $this->soundCloudService->syncSelfPlaylists();
+            $this->soundCloudService->syncSelfPlaylists();
 
             // Get all playlists first
             $this->allPlaylists = Playlist::where('user_urn', user()->urn)

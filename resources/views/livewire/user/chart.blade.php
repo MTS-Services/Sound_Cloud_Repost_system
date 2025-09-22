@@ -57,7 +57,7 @@
                             <div class="flex items-center gap-2">
                                 <button wire:click="refresh"
                                     class="flex items-center gap-2 bg-gray-200 hover:bg-white dark:bg-gray-800 dark:hover:bg-gray-700 px-4 py-2 rounded-xl transition-all duration-200 font-medium border dark:border-gray-700 text-gray-900 dark:text-white">
-                                    <span wire:loading.remove>
+                                    <span wire:loading.remove wire:target="refresh">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round"
@@ -68,7 +68,7 @@
                                             <path d="M8 16H3v5"></path>
                                         </svg>
                                     </span>
-                                    <span wire:loading class="animate-spin">
+                                    <span wire:loading wire:target="refresh" class="animate-spin">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round"
@@ -79,8 +79,10 @@
                                             <path d="M8 16H3v5"></path>
                                         </svg>
                                     </span>
-                                    <span class="hidden sm:inline" wire:loading.remove>Refresh</span>
-                                    <span class="hidden sm:inline" wire:loading>Refreshing...</span>
+                                    <span class="hidden sm:inline" wire:loading.remove
+                                        wire:target="refresh">Refresh</span>
+                                    <span class="hidden sm:inline" wire:loading
+                                        wire:target="refresh">Refreshing...</span>
 
                                 </button>
                                 <button
@@ -195,7 +197,7 @@
                             @forelse ($topTracks as $track)
                                 <div
                                     class="grid grid-cols-12 gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 border-b border-gray-300 dark:border-gray-700">
-                                    {{-- @dd($track); --}}
+
                                     @if (proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured)
                                         <div class="col-span-1 flex items-center">
                                             <div
@@ -453,8 +455,6 @@
                         <div class="space-y-3">
 
                             @forelse ($topTracks as $track)
-                             @dd($track);
-                                {{-- @dd($track); --}}
                                 <div
                                     class="relative border rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-900 dark:to-gray-800  shadow-lg {{ proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured
                                         ? 'shadow-orange-500/20 border-orange-300 dark:border-orange-500'

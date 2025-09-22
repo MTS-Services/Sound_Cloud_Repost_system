@@ -17,7 +17,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Throwable;
 
-class RepostRequest extends Component
+class RepostRequestCopy extends Component
 {
     public $repostRequests;
     public $track;
@@ -51,6 +51,11 @@ class RepostRequest extends Component
         $this->dataLoad();
     }
 
+    public function updated()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+    }
+
     public function confirmRepost($requestId)
     {
         $this->showRepostConfirmationModal = true;
@@ -59,15 +64,14 @@ class RepostRequest extends Component
 
     public function repost($requestId)
     {
-        $this->soundCloudService->ensureSoundCloudConnection(user());
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
         try {
             $currentUserUrn = user()->urn;
             // Check if the user has already reposted this specific request
             if (
                 Repost::where('reposter_urn', $currentUserUrn)
-                    ->where('repost_request_id', $requestId)
-                    ->exists()
+                ->where('repost_request_id', $requestId)
+                ->exists()
             ) {
                 $this->dispatch('alert', type: 'error', message: 'You have already reposted this request.');
                 return;

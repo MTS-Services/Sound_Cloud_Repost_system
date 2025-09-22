@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Repost extends BaseModel
 {
+
+    protected $with = ['request', 'reposter', 'trackOwner', 'user'];
+
     protected $fillable = [
         'sort_order',
         'repost_request_id',
@@ -18,7 +21,7 @@ class Repost extends BaseModel
         'reposted_at',
 
         'like_count',
-        'comment_count',
+        // 'comment_count',
         'followers_count',
 
 
@@ -52,7 +55,7 @@ class Repost extends BaseModel
     {
         return $this->belongsTo(User::class, 'track_owner_urn', 'urn');
     }
-    
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'track_owner_urn', 'urn');
@@ -62,10 +65,7 @@ class Repost extends BaseModel
     {
         return $this->belongsTo(Campaign::class, 'campaign_id', 'id');
     }
-    public function track()
-    {
-        return $this->belongsTo(Track::class, 'track_id');
-    }
+
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
@@ -83,5 +83,4 @@ class Repost extends BaseModel
     {
         return $this->repost_request_id === null ? 'Campaign Repost' : 'Direct Repost';
     }
-
 }

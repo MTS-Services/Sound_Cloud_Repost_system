@@ -4,27 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Events\UserNotificationSent;
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Mail\EmailVerificationMail;
-use App\Models\Credit;
 use App\Models\CreditTransaction;
 use App\Models\CustomNotification;
 use App\Models\RepostRequest as ModelsRepostRequest;
 use App\Models\User;
 use App\Models\UserGenre;
-use App\Models\UserInformation;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\Admin\RepostManagement\RepostRequestService;
 use App\Services\Admin\RepostManagement\RepostService;
 use App\Services\ProfileService;
 use App\Services\TrackService;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use Illuminate\Support\Str;
 
 class ProfileController extends Controller
 {

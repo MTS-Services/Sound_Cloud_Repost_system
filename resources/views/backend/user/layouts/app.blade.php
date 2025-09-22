@@ -76,7 +76,7 @@
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        function sweetAlertFire() {
             @if (session('success'))
                 showAlert('success', "{!! session('success') !!}");
             @endif
@@ -93,8 +93,46 @@
                     showAlert(event.type, event.message);
                 });
             });
+        }
+        document.addEventListener('livewire:navigated', function() {
+            sweetAlertFire();
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            sweetAlertFire();
         });
     </script>
+
+    <style>
+        @keyframes bounce-dot {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* :root {
+            --livewire-progress_bar_color: var(--color-orange-500);
+        }
+
+        #nprogress .bar {
+            background: var(--livewire-progress_bar_color) !important;
+        }
+
+        #nprogress .peg {
+            box-shadow: 0 0 10px var(--livewire-progress_bar_color), 0 0 5px var(--livewire-progress_bar_color) !important;
+        }
+
+        #nprogress .spinner-icon {
+            border-top-color: var(--livewire-progress_bar_color) !important;
+            border-left-color: var(--livewire-progress_bar_color) !important;
+        } */
+    </style>
+
 
     @stack('cs')
     @livewireStyles()
@@ -102,6 +140,45 @@
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-black overflow-x-hidden! relative" x-data="{ sidebarOpen: false, mobileSearchOpen: false, open: true }">
+
+    <div id="navigation-loader" x-transition.opacity
+        class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/50 dark:bg-white/50 backdrop-blur-md">
+
+        {{-- <div class="inline-flex items-center transition ease-in-out duration-150 animate-bounce">
+            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke="#ea580c" stroke-width="4">
+                </circle>
+                <path fill="#fed7aa"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
+            </svg>
+            <img src="{{ app_setting('app_logo') ? asset('storage/' . app_setting('app_logo')) : asset('assets/logo/rc-logo-black.png') }}"
+                alt="{{ config('app.name') }}" class="w-36 lg:w-48 dark:hidden" />
+            <img src="{{ app_setting('app_logo_dark') ? asset('storage/' . app_setting('app_logo_dark')) : asset('assets/logo/rc-logo-white.png') }}"
+                alt="{{ config('app.name') }}" class="w-36 lg:w-48 hidden dark:block" />
+        </div> --}}
+
+        {{-- <div class="flex space-x-2">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 p-2">
+                <span class="w-2 h-2 bg-orange-500 rounded-full animate-ping"></span>
+            </div>
+
+            <img src="{{ app_setting('app_logo') ? asset('storage/' . app_setting('app_logo')) : asset('assets/logo/rc-logo-black.png') }}"
+                alt="{{ config('app.name') }}" class="w-36 lg:w-48 dark:hidden animate-bounce" />
+            <img src="{{ app_setting('app_logo_dark') ? asset('storage/' . app_setting('app_logo_dark')) : asset('assets/logo/rc-logo-white.png') }}"
+                alt="{{ config('app.name') }}" class="w-36 lg:w-48 hidden dark:block animate-bounce" />
+        </div> --}}
+        <div class="flex space-x-2">
+            <div class="w-4 h-4 rounded-full bg-orange-500 animate-[bounce-dot_1.2s_infinite]"
+                style="animation-delay: -0.8s;"></div>
+            <div class="w-4 h-4 rounded-full bg-orange-500 animate-[bounce-dot_1.2s_infinite]"
+                style="animation-delay: -0.4s;"></div>
+            <div class="w-4 h-4 rounded-full bg-orange-500 animate-[bounce-dot_1.2s_infinite]"></div>
+        </div>
+    </div>
+
+
     @auth
         <livewire:user-heartbeat />
     @endauth
@@ -172,14 +249,24 @@
         @include('backend.user.layouts.partials.f_footer')
     @endif
 
-
     <script src="{{ asset('assets/js/lucide-icon.js') }}"></script>
     <script src="https://w.soundcloud.com/player/api.js"></script>
     @livewireScripts()
     <script>
+        document.addEventListener('livewire:navigate', (event) => {
+            document.getElementById('navigation-loader').classList.remove('hidden');
+        });
+
+        document.addEventListener('livewire:navigating', () => {
+            document.getElementById('navigation-loader').classList.remove('hidden');
+        });
+
+        document.addEventListener('livewire:navigated', () => {
+            document.getElementById('navigation-loader').classList.add('hidden');
+        });
+
         document.addEventListener('livewire:initialized', () => {
             lucide.createIcons();
-
 
             window.Echo.channel('users')
                 .listen('.notification.sent', (e) => {

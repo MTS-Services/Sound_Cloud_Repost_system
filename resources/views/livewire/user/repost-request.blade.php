@@ -1,4 +1,4 @@
-<div>
+<div x-data="{ activeMainTab: @entangle('activeMainTab').live }">
     <x-slot name="page_slug">request</x-slot>
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-5 space-y-3 sm:space-y-0">
         <div>
@@ -19,17 +19,17 @@
                 <!-- Incoming Request Tab Button -->
                 <button
                     class="tab-button @if ($activeMainTab === 'incoming_request' || $activeMainTab === 'accept_requests') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                    wire:click="setActiveTab('incoming_request')">
+                    x-on:click="activeMainTab = 'incoming_request'">
                     {{ __('Incoming requests') }}
                 </button>
                 <button
                     class="tab-button @if ($activeMainTab === 'outgoing_request') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                    wire:click="setActiveTab('outgoing_request')">
+                    x-on:click="activeMainTab = 'outgoing_request'">
                     {{ __('Outgoing request') }}
                 </button>
                 <button
                     class="tab-button @if ($activeMainTab === 'previously_reposted') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                    wire:click="setActiveTab('previously_reposted')">
+                    x-on:click="activeMainTab = 'previously_reposted'">
                     {{ __('Previously Reposted') }}
                 </button>
 
@@ -129,9 +129,9 @@
 
                 <!-- Right Column - Request Info -->
                 <div class="w-full lg:w-1/2 p-3">
-                    <div class="flex justify-between mb-2">
+                    <div class="flex justify-between h-full">
                         <div class="w-1/2 relative">
-                            <div class="flex flex-col items-start gap-0">
+                            <div class="flex flex-col items-start justify-between gap-0 h-full">
                                 <div class="flex items-center gap-2">
                                     <img class="w-12 h-12 rounded-full object-cover"
                                         src="{{ auth_storage_url($repostRequest->requester->avatar) }}"
@@ -173,14 +173,14 @@
                                     </div>
                                 </div>
                                 <!-- Track Info -->
-                                <div class="mb-2">
+                                {{-- <div class="mb-2">
                                     <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">
                                         {{ $repostRequest->track->title ?? 'Unknown Track' }}
                                     </h3>
                                     <p class="text-sm text-gray-600 dark:text-gray-400">
                                         {{ Str::limit($repostRequest->track->description ?? 'No description available', 100) }}
                                     </p>
-                                </div>
+                                </div> --}}
                                 <div class="flex items-center gap-2">
                                     <span
                                         class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
@@ -189,7 +189,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="w-1/2">
+                        <div class="w-1/2 h-fit">
                             @if ($activeMainTab == 'incoming_request' || $activeMainTab == 'previously_reposted')
                                 <div class="flex flex-col items-end gap-2 h-full">
                                     <div class="flex flex-col justify-between h-full">

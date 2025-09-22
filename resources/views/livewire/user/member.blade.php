@@ -137,8 +137,10 @@
                                         <h3 class="font-semibold text-lg dark:text-white hover:underline">
                                             {{ $user_->name }}</h3>
                                     </a>
-                                    <span
-                                        class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName() }}</span>
+                                    @if (proUser($user_->urn))
+                                        <span
+                                            class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName() }}</span>
+                                    @endif
                                 </div>
                                 <p class="text-text-gray text-sm dark:text-white">
                                     {{ $user_->created_at->format('M d, Y') }}
@@ -172,7 +174,7 @@
                         <div class="grid grid-cols-3 gap-4 mb-6">
                             <div class="text-center">
                                 <p class="text-text-gray text-xs mb-1 dark:text-white">Credibility</p>
-                                <p class="text-green-400 font-bold">83%</p>
+                                <p class="text-green-400 font-bold">{{ $this->getCredibilityScore($user_) ?? 0 }}%</p>
                             </div>
                             <div class="text-center">
                                 <p class="text-text-gray text-xs mb-1 dark:text-white">Response Rate</p>
@@ -180,7 +182,8 @@
                             </div>
                             <div class="text-center">
                                 <p class="text-text-gray text-xs mb-1 dark:text-white">Total Reposts</p>
-                                <p class="text-black font-bold dark:text-white">156</p>
+                                <p class="text-black font-bold dark:text-white">{{ $user_->reposts?->count() ?? 0 }}
+                                </p>
                             </div>
                         </div>
 

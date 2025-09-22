@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User;
 
+use App\Jobs\TrackViewCount;
 use App\Models\CreditTransaction;
 use App\Models\Playlist;
 use App\Models\Repost;
@@ -13,6 +14,7 @@ use App\Services\PlaylistService;
 use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\TrackService;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -25,7 +27,7 @@ class MyAccount extends Component
     protected string $baseUrl = 'https://api.soundcloud.com';
 
     // UI state
-    #[Url(as: 'tab', except: 'insights')]
+    // #[Url(as: 'tab', except: 'insights')]
     public string $activeTab = 'insights';
 
     public bool $showEditProfileModal = false;
@@ -72,6 +74,7 @@ class MyAccount extends Component
 
     public function mount($user_urn = null): void
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $followers = $this->soundCloudService->getAuthUserFollowers();
         $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($followers);
 
@@ -87,6 +90,7 @@ class MyAccount extends Component
             $this->followerGrowth = 0; // Avoid division by zero
         }
 
+        $this->activeTab = request()->query('tab', $this->activeTab);
 
         $this->user_urn = $user_urn ?? user()->urn;
 
@@ -99,23 +103,33 @@ class MyAccount extends Component
         $this->socialLinks();
     }
 
-    public function setActiveTab(string $tab): void
+    public function updated()
     {
-        $this->activeTab = $tab;
-
-        if ($tab !== 'playlists') {
-            $this->resetPlaylistView();
-        }
-
-        // Reset the relevant pager when switching tabs
-        if ($tab === 'tracks') {
-            $this->syncTracks();
-            $this->resetPage('tracksPage');
-        } elseif ($tab === 'playlists') {
-            $this->syncPlaylists();
-            $this->resetPage('playlistsPage');
-        }
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
+
+    public function updatedActiveTab()
+    {
+        return $this->redirect(route('user.my-account') . '?tab=' . $this->activeTab, navigate: true);
+    }
+
+    // public function setActiveTab(string $tab): void
+    // {
+    //     $this->activeTab = $tab;
+
+    //     if ($tab !== 'playlists') {
+    //         $this->resetPlaylistView();
+    //     }
+
+    //     // Reset the relevant pager when switching tabs
+    //     if ($tab === 'tracks') {
+    //         $this->syncTracks();
+    //         $this->resetPage('tracksPage');
+    //     } elseif ($tab === 'playlists') {
+    //         $this->syncPlaylists();
+    //         $this->resetPage('playlistsPage');
+    //     }
+    // }
 
     public function selectPlaylist(int $playlistId): void
     {
@@ -237,6 +251,11 @@ class MyAccount extends Component
             ->where('status', CreditTransaction::STATUS_SUCCEEDED)
             ->sortByDesc('created_at')
             ->take(10);
+
+        $tracksData = $tracks;
+
+        // View Count
+        Bus::dispatch(new TrackViewCount($tracksData, user()->urn, 'track'));
 
         return view('livewire.user.my-account', [
             'user' => $user,

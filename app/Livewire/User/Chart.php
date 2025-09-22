@@ -49,7 +49,7 @@ class Chart extends Component
     public function getTopTrackData(): LengthAwarePaginator
     {
         // try {
-        return $this->analyticsService->getPaginatedTrackAnalytics(
+        $tracks =  $this->analyticsService->getPaginatedTrackAnalytics(
             filter: 'last_week',
             dateRange: null,
             genres: [],
@@ -57,6 +57,7 @@ class Chart extends Component
             page: $this->getPage(),
             actionableType: Campaign::class
         );
+        return $tracks;
         // } catch (\Exception $e) {
         //     Log::error('Paginated track data loading failed', ['error' => $e->getMessage()]);
         //     return new LengthAwarePaginator([], 0, $this->tracksPerPage, $this->getPage());
@@ -70,7 +71,6 @@ class Chart extends Component
 
     public function baseValidation($encryptedCampaignId, $encryptedTrackUrn)
     {
-        $this->soundCloudService->ensureSoundCloudConnection(user());
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
         if ($this->campaignService->getCampaigns()->where('id', decrypt($encryptedCampaignId))->where('user_urn', user()->urn)->exists()) {
             $this->dispatch('alert', type: 'error', message: 'You cannot act on your own campaign.');
@@ -202,6 +202,10 @@ class Chart extends Component
         }
     }
 
+    public function updated()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+    }
 
     public function render()
     {
@@ -212,16 +216,18 @@ class Chart extends Component
 
         // Map over items to calculate engagement score and rate
         $itemsWithMetrics = $items->map(function ($track) {
-            $totalViews = $track['metrics']['total_views']['current_total'];
+            $totalViews = $track['metrics']['total_views']['current_total'] == 0 ? 1 : $track['metrics']['total_views']['current_total'];
             $totalPlays = $track['metrics']['total_plays']['current_total'];
             $totalReposts = $track['metrics']['total_reposts']['current_total'];
             $totalLikes = $track['metrics']['total_likes']['current_total'];
             $totalComments = $track['metrics']['total_comments']['current_total'];
             $totalFollowers = $track['metrics']['total_followers']['current_total'];
             $track['repost'] = false;
-            $repost = Repost::where('reposter_urn', user()->urn)->where('campaign_id', $track['actionable_details']['id'])->exists();
-            if ($repost) {
-                $track['repost'] = true;
+            if ($track['actionable_details'] != null) {
+                $repost = Repost::where('reposter_urn', user()->urn)->where('campaign_id', $track['actionable_details']['id'])->exists();
+                if ($repost) {
+                    $track['repost'] = true;
+                }
             }
             $track['like'] = false;
             $like = UserAnalytics::where('act_user_urn', user()->urn)->where('track_urn', $track['track_details']['urn'])->exists();
@@ -233,7 +239,7 @@ class Chart extends Component
             $avgTotal = ($totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers) / 5;
 
             // Engagement % (capped at 100)
-            $engagementRate = $totalViews > $avgTotal ? min(100, ($totalViews - $avgTotal) / (($totalViews + $avgTotal) / 2) * 100) : 0;
+            $engagementRate = $totalViews >= $avgTotal ? min(100, ($avgTotal / $totalViews) * 100) : 0;
 
             // Engagement Score (0–10 scale)
             $engagementScore = round(($engagementRate / 100) * 10, 1);

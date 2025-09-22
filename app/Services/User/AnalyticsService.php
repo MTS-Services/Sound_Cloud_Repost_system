@@ -20,12 +20,11 @@ class AnalyticsService
      */
     public function syncUserAction(
         object $track,
-        object $actionable,
+        string $actUserUrn,
         int $type,
         ?string $ipAddress = null,
-    ) {
 
-        $actUserUrn = user()->urn;
+    ): bool|null {
         $ownerUserUrn = $track->user?->urn ?? null;
 
         if ($ipAddress == null) {
@@ -43,63 +42,46 @@ class AnalyticsService
             return null;
         }
 
-        // First, check for and delete any old user action session data.
-        // This prevents the session from bloating with old, unused keys.
-        $today = now()->toDateString();
-        foreach (session()->all() as $key => $value) {
-            if (str_starts_with($key, 'auser_nalytics_update_') && !str_ends_with($key, $today)) {
-                session()->forget($key);
-            }
-        }
+        // first check on datbase with created at time to check is updated on current or not
 
-        // Generate a unique session key for today's updates.
-        $todayKey = 'user_analytics_update_.' . $today;
+        $today = Carbon::today();
+        Log::info("date: {$today} and start date: {$today->startOfDay()}");
 
-        // Retrieve the current day's updates or an empty array.
-        $updatedToday = session()->get($todayKey, []);
+        $response = UserAnalytics::where('act_user_urn', $actUserUrn)
+            ->where('track_urn', $track->urn)
+            ->where('owner_user_urn', $ownerUserUrn)
+            ->where('type', $type)
+            ->where('ip_address', $ipAddress)
+            ->whereDate('created_at', '>=', $today->startOfDay())
+            ->first();
 
-        // Define the unique identifier for the current action.
-        $actionIdentifier = sprintf(
-            '%s.%s.%s.%s.%s',
-            $type,
-            $actionable->id ?? 0,
-            $actionable->getMorphClass() ?? 'N/A',
-            $track->urn,
-            $ownerUserUrn,
-            $actUserUrn,
-            $ipAddress ?? 'unknown',
-            $today
-        );
-
-        // Check if this action has already been logged for today.
-        if (in_array($actionIdentifier, $updatedToday)) {
-            Log::info("User action update skipped for {$actUserUrn} on {$actionIdentifier} for source track urn:{$track->urn} and actionable id:{$actionable->id} type: {$actionable->getMorphClass()}. Already updated today.");
+        if ($response) {
+            Log::info("User action update skipped for user: {$actUserUrn} on type: {$type} for track urn:{$track->urn} . Already updated today.");
             return false;
         }
-
-        // If not in the session, add the action and save.
-        $updatedToday[] = $actionIdentifier;
-        session()->put($todayKey, $updatedToday);
 
         return true;
     }
 
-    public function recordAnalytics(object $track, object $actionable, int $type, string $genre): UserAnalytics|bool|null
+    public function recordAnalytics(object $track, ?object $actionable = null, int $type, string $genre, $actUserUrn = null): UserAnalytics|bool|null
     {
         // Get the owner's URN from the track model.
-        $ownerUserUrn = $actionable->user?->urn ?? $track->user?->urn ?? null;
-        $actUserUrn = user()->urn;
+        $ownerUserUrn = ($actionable ? $actionable?->user?->urn : $track?->user?->urn);
+        $actUserUrn = $actUserUrn ?? user()->urn;
+
+        Log::info('step 1');
 
         // If no user URN is found, log and exit early.
         if (!$ownerUserUrn) {
-            Log::info("User action update skipped for {$ownerUserUrn} on {$type} for track urn:{$track->id} and actionable id:{$actionable->id} type: {$actionable->getMorphClass()}. No user URN found.");
+            Log::info("User action update skipped for {$ownerUserUrn} on {$type} for track urn:{$track->id} No user URN found.");
             return null;
         }
-
+        Log::info('step 2');
         // Use the new reusable method to check if the update is allowed.
-        if (!$this->syncUserAction($track, $actionable, $type)) {
+        if (!$this->syncUserAction($track, $actUserUrn, $type)) {
             return false;
         }
+        Log::info("Start User action update for {$ownerUserUrn} on {$type} for track urn:{$track->urn} and actuser urn: {$actUserUrn}.");
 
         // Find or create the UserAnalytics record based on the unique combination.
         $analytics = UserAnalytics::updateOrCreate(
@@ -107,8 +89,8 @@ class AnalyticsService
                 'owner_user_urn' => $ownerUserUrn,
                 'act_user_urn' => $actUserUrn,
                 'track_urn' => $track->urn,
-                'actionable_id' => $actionable->id,
-                'actionable_type' => $actionable->getMorphClass(),
+                'actionable_id' => $actionable ? $actionable->id : null,
+                'actionable_type' => $actionable ? $actionable->getMorphClass() : null,
                 'ip_address' => request()->ip(),
                 'type' => $type,
 
@@ -118,6 +100,7 @@ class AnalyticsService
             ]
 
         );
+        Log::info("User action updated for {$ownerUserUrn} on {$type} for track urn:{$track->urn} and actuser urn: {$actUserUrn}. analytics:" . json_encode($analytics));
         // $analytics = UserAnalytics::firstOrNew(
         //     [
         //         'owner_user_urn' => $ownerUserUrn,
@@ -808,8 +791,8 @@ class AnalyticsService
 
                 // Apply the new engagement rate logic
                 $engagement_rate = 0;
-                if ($item->total_views > $avg_total) {
-                    $engagement_rate = round(min(100, (($item->total_views - $avg_total) / (($item->total_views + $avg_total) / 2)) * 100), 2);
+                if ($item->total_views >= $avg_total) {
+                    $engagement_rate = round(min(100, ($avg_total / $item->total_views = 0 ? 1 : $item->total_views) * 100), 2);
                 }
 
                 return [
