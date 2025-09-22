@@ -7,11 +7,18 @@ use App\Services\SoundCloud\SoundCloudService;
 
 trait UserModificationTrait
 {
-
-
-    public function userRepostPrice(FollowerAnalyzer $followerAnalyzer, SoundCloudService $soundCloudService)
+    protected FollowerAnalyzer $followerAnalyzer;
+    protected SoundCloudService $soundCloudService;
+    public function __construct(FollowerAnalyzer $followerAnalyzer, SoundCloudService $soundCloudService)
     {
-        $realFollowers = $followerAnalyzer->separateFollowers($soundCloudService->getAuthUserFollowers($this));
+        $this->followerAnalyzer = $followerAnalyzer;
+        $this->soundCloudService = $soundCloudService;
+    }
+
+
+    public function userRepostPrice($user)
+    {
+        $realFollowers = $this->followerAnalyzer->separateFollowers($this->soundCloudService->getAuthUserFollowers($user));
 
         $realFollowers = $realFollowers['counts']['real'];
         if ($realFollowers === null) {
@@ -20,9 +27,9 @@ trait UserModificationTrait
         return ceil($realFollowers / 100) ?: 1; // Ensure at least 1 credit
     }
 
-    public function userRealFollowers(FollowerAnalyzer $followerAnalyzer, SoundCloudService $soundCloudService)
+    public function userRealFollowers($user)
     {
-        $realFollowers = $followerAnalyzer->separateFollowers($soundCloudService->getAuthUserFollowers($this));
+        $realFollowers = $this->followerAnalyzer->separateFollowers($this->soundCloudService->getAuthUserFollowers($user));
         return $realFollowers['counts']['real'] ?: 0;
     }
 }
