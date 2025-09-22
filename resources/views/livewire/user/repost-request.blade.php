@@ -17,21 +17,18 @@
         <div class="border-b border-gray-200 dark:border-gray-700">
             <nav class="-mb-px flex space-x-8">
                 <!-- Incoming Request Tab Button -->
-                <button
-                    class="tab-button @if ($activeMainTab === 'incoming_request' || $activeMainTab === 'accept_requests') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                    x-on:click="activeMainTab = 'incoming_request'">
+                <a href="{{ route('user.reposts-request') }}?tab=incoming_request" wire:navigate
+                    class="tab-button @if ($activeMainTab === 'incoming_request' || $activeMainTab === 'accept_requests') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200">
                     {{ __('Incoming requests') }}
-                </button>
-                <button
-                    class="tab-button @if ($activeMainTab === 'outgoing_request') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                    x-on:click="activeMainTab = 'outgoing_request'">
+                </a>
+                <a href="{{ route('user.reposts-request') }}?tab=outgoing_request" wire:navigate
+                    class="tab-button @if ($activeMainTab === 'outgoing_request') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200">
                     {{ __('Outgoing request') }}
-                </button>
-                <button
-                    class="tab-button @if ($activeMainTab === 'previously_reposted') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                    x-on:click="activeMainTab = 'previously_reposted'">
+                </a>
+                <a href="{{ route('user.reposts-request') }}?tab=previously_reposted" wire:navigate
+                    class="tab-button @if ($activeMainTab === 'previously_reposted') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200">
                     {{ __('Previously Reposted') }}
-                </button>
+                </a>
 
             </nav>
         </div>
@@ -166,7 +163,7 @@
                                             <a href="{{ $repostRequest->requester->soundcloud_url ?? '#' }}"
                                                 target="_blank" class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                 SoundCloud Profile</a>
-                                            <a href="{{ route('user.my-account', $repostRequest->requester->urn) }}"
+                                            <a href="{{ route('user.my-account', $repostRequest->requester->name) }}"
                                                 wire:navigate class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                 RepostChain Profile</a>
                                         </div>
@@ -281,7 +278,7 @@
                                     @if ($activeMainTab == 'outgoing_request')
                                         <div class="flex flex-col sm:flex-row justify-end gap-3">
                                             <a class="cursor-pointer" wire:navigate
-                                                href="{{ route('user.my-account', $repostRequest->targetUser->urn) }}">
+                                                href="{{ route('user.my-account', $repostRequest->targetUser->name) }}">
                                                 <img class="w-10 h-10 rounded-full object-cover"
                                                     src="{{ auth_storage_url($repostRequest->targetUser->avatar) }}"
                                                     alt="{{ $repostRequest->targetUser->name }} avatar">
@@ -290,7 +287,7 @@
                                                 <div class="flex items-center gap-1 cursor-pointer">
                                                     <a class="text-slate-700 dark:text-gray-300 font-medium cursor-pointer hover:underline"
                                                         wire:navigate
-                                                        href="{{ route('user.my-account', $repostRequest->targetUser->urn) }}">
+                                                        href="{{ route('user.my-account', $repostRequest->targetUser->name) }}">
                                                         {{ $repostRequest->targetUser->name }}
                                                     </a>
                                                 </div>

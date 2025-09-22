@@ -24,7 +24,7 @@ use App\Http\Controllers\Backend\Admin\UserManagement\UserPlaneController;
 
 Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], function () {
 
-    // Button UI Route 
+    // Button UI Route
     Route::get('/button-ui', function () {
         return view('backend.admin.ui.buttons');
     })->name('button-ui');
@@ -70,7 +70,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
     Route::group(['as' => 'pm.', 'prefix' => 'package-management'], function () {
         // Feature Routes
         Route::resource('feature', FeatureController::class);
-        Route::controller(FeatureController::class)->name('feature.')->prefix('feature')->group(function () {});
+        Route::controller(FeatureController::class)->name('feature.')->prefix('feature')->group(function () { });
         Route::get('status/{feature}', [FeatureController::class, 'status'])->name('feature.status');
         // Plan Routes
         Route::resource('plan', PlanController::class);
@@ -225,11 +225,13 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         Route::delete('/delete', 'destroy')->name('destroy');
     });
 
-    // Application Settings 
+    // Application Settings
     Route::controller(ApplicationSettingController::class)->name('app-settings.')->prefix('application-settings')->group(function () {
         Route::post('/update-settings', 'updateSettings')->name('update-settings');
         Route::get('/', 'general')->name('general');
         Route::get('/database', 'database')->name('database');
         Route::get('/smtp', 'smtp')->name('smtp');
+        Route::get('/payment-setup', 'payment_setup')->name('payment_setup');
+        Route::get('/push-notification', 'push_notification')->name('push_notification');
     });
 });

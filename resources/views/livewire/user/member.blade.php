@@ -115,7 +115,7 @@
                         <div class="flex items-center gap-3 mb-6">
                             <div class="relative">
                                 <a class="cursor-pointer" wire:navigate
-                                    href="{{ route('user.my-account', $user_->urn) }}">
+                                    href="{{ route('user.my-account', $user_->name) }}">
                                     <img src="{{ auth_storage_url($user_->avatar) }}" alt="{{ $user_->name }}"
                                         class="w-12 h-12 rounded-full">
                                     @if ($user_->isOnline())
@@ -133,13 +133,16 @@
                             <div>
                                 <div class="flex items-center gap-2">
                                     <a class="cursor-pointer" wire:navigate
-                                        href="{{ route('user.my-account', $user_->urn) }}">
+                                        href="{{ route('user.my-account', $user_->name) }}">
                                         <h3 class="font-semibold text-lg dark:text-white hover:underline">
                                             {{ $user_->name }}</h3>
                                     </a>
                                     @if (proUser($user_->urn))
                                         <span
-                                            class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName() }}</span>
+                                            class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName($user_->urn) }}</span>
+                                    @else
+                                        <span
+                                            class="inline-flex items-center rounded-full bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 inset-ring inset-ring-gray-400/20">{{ userPlanName($user_->urn) }}</span>
                                     @endif
                                 </div>
                                 <p class="text-text-gray text-sm dark:text-white">

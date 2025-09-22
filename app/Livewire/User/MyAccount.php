@@ -7,6 +7,7 @@ use App\Models\CreditTransaction;
 use App\Models\Playlist;
 use App\Models\Repost;
 use App\Models\Track;
+use App\Models\User;
 use App\Models\UserSocialInformation;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\Admin\UserManagement\UserService;
@@ -27,7 +28,7 @@ class MyAccount extends Component
     protected string $baseUrl = 'https://api.soundcloud.com';
 
     // UI state
-    // #[Url(as: 'tab', except: 'insights')]
+    #[Url(as: 'tab', except: 'insights')]
     public string $activeTab = 'insights';
 
     public bool $showEditProfileModal = false;
@@ -72,7 +73,7 @@ class MyAccount extends Component
         $this->followerAnalyzer = $followerAnalyzer;
     }
 
-    public function mount($user_urn = null): void
+    public function mount($user_name = null): void
     {
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $followers = $this->soundCloudService->getAuthUserFollowers();
@@ -91,9 +92,9 @@ class MyAccount extends Component
         }
 
         $this->activeTab = request()->query('tab', $this->activeTab);
-
-        $this->user_urn = $user_urn ?? user()->urn;
-
+        
+        $userUrn = User::where('name', $user_name)->first()?->urn;
+        $this->user_urn = $userUrn ?? user()->urn;
         Log::info('MyAccount mount', ['user_urn' => $this->user_urn]);
         // If a playlist is in the URL, ensure we land on the right tab/view
         if ($this->selectedPlaylistId) {
@@ -110,26 +111,13 @@ class MyAccount extends Component
 
     public function updatedActiveTab()
     {
-        return $this->redirect(route('user.my-account') . '?tab=' . $this->activeTab, navigate: true);
+        return $this->redirect(route('user.my-account', $this->user_urn) . '?tab=' . $this->activeTab, navigate: true);
     }
 
-    // public function setActiveTab(string $tab): void
-    // {
-    //     $this->activeTab = $tab;
-
-    //     if ($tab !== 'playlists') {
-    //         $this->resetPlaylistView();
-    //     }
-
-    //     // Reset the relevant pager when switching tabs
-    //     if ($tab === 'tracks') {
-    //         $this->syncTracks();
-    //         $this->resetPage('tracksPage');
-    //     } elseif ($tab === 'playlists') {
-    //         $this->syncPlaylists();
-    //         $this->resetPage('playlistsPage');
-    //     }
-    // }
+    public function setActiveTab(string $tab): void
+    {
+        $this->activeTab = $tab;
+    }
 
     public function selectPlaylist(int $playlistId): void
     {

@@ -247,7 +247,7 @@
                                                 class="font-semibold text-gray-900 dark:text-white truncate cursor-pointer hover:text-orange-400 transition-colors block w-full">
                                                 {{ Str::limit($track['track_details']->title, 30, '...') }}
                                             </a>
-                                            <a href="{{ route('user.my-account', $track['track_details']->user->urn) }}"
+                                            <a href="{{ route('user.my-account', $track['track_details']->user->name) }}"
                                                 class="text-sm text-gray-600 dark:text-gray-400 truncate hover:text-orange-400 transition-colors block">
                                                 {{ $track['track_details']->user->name }}</a>
                                         </div>
@@ -368,7 +368,7 @@
                                         <a href="{{ $track['track_details']->permalink_url }}" target="_blank"
                                             class="font-bold text-black dark:text-white mb-1 cursor-pointer hover:text-orange-400 transition-colors truncate block w-full">
                                             {{ Str::limit($track['track_details']->title, 20, '...') }}</a>
-                                        <a href="{{ route('user.my-account', $track['track_details']->user->urn) }}"
+                                        <a href="{{ route('user.my-account', $track['track_details']->user->name) }}"
                                             class="text-gray-600 dark:text-gray-300 text-sm mb-2 truncate">
                                             {{ $track['track_details']->user?->name }}</a>
                                         <span
@@ -514,7 +514,7 @@
                                                         class="font-bold text-black dark:text-white truncate text-lg hover:text-orange-400 transition-colors cursor-pointer block w-full">
                                                         {{ Str::limit($track['track_details']->title, 30, '...') }}
                                                     </a>
-                                                    <a href="{{ route('user.my-account', $track['track_details']->user->urn) }}"
+                                                    <a href="{{ route('user.my-account', $track['track_details']->user->name) }}"
                                                         class="text-gray-600 dark:text-gray-300 truncate">
                                                         {{ $track['track_details']->user->name }}</a>
                                                     <span
