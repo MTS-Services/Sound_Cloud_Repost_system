@@ -12,20 +12,20 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class AnalyticsService
+class AnalyticsServiceCopy
 {
     /**
      * Checks if an action update is allowed for a given action, user, and source today.
      * If allowed, it sets a session flag to prevent subsequent updates for the day.
      */
     public function syncUserAction(
-        object $source,
+        object $track,
         string $actUserUrn,
         int $type,
         ?string $ipAddress = null,
 
     ): bool|null {
-        $ownerUserUrn = $source->user?->urn ?? null;
+        $ownerUserUrn = $track->user?->urn ?? null;
 
         if ($ipAddress == null) {
             $ipAddress = request()->ip();
@@ -35,8 +35,7 @@ class AnalyticsService
             Log::info("Analytics recording skipped - missing user URN", [
                 'act_user_urn' => $actUserUrn,
                 'owner_user_urn' => $ownerUserUrn,
-                'source_id' => $source->id,
-                'source_type' => $source->getMorphClass(),
+                'track_urn' => $track->urn,
                 'type' => $type,
                 'ip_address' => $ipAddress
             ]);
@@ -49,8 +48,7 @@ class AnalyticsService
         Log::info("date: {$today} and start date: {$today->startOfDay()}");
 
         $response = UserAnalytics::where('act_user_urn', $actUserUrn)
-            ->where('source_id', $source->id)
-            ->where('source_type', $source->getMorphClass())
+            ->where('track_urn', $track->urn)
             ->where('owner_user_urn', $ownerUserUrn)
             ->where('type', $type)
             ->where('ip_address', $ipAddress)
@@ -58,37 +56,39 @@ class AnalyticsService
             ->first();
 
         if ($response) {
-            Log::info("User action update skipped for user: {$actUserUrn} on type: {$type} for source id:{$source->id} and type:{$source->getMorphClass()} for ip address: {$ipAddress}. Already updated today.");
+            Log::info("User action update skipped for user: {$actUserUrn} on type: {$type} for track urn:{$track->urn} . Already updated today.");
             return false;
         }
 
         return true;
     }
 
-    public function recordAnalytics(object $source, ?object $actionable = null, int $type, string $genre, $actUserUrn = null): UserAnalytics|bool|null
+    public function recordAnalytics(object $track, ?object $actionable = null, int $type, string $genre, $actUserUrn = null): UserAnalytics|bool|null
     {
         // Get the owner's URN from the track model.
-        $ownerUserUrn = ($actionable ? $actionable?->user?->urn : $source?->user?->urn);
+        $ownerUserUrn = ($actionable ? $actionable?->user?->urn : $track?->user?->urn);
         $actUserUrn = $actUserUrn ?? user()->urn;
+
+        Log::info('step 1');
 
         // If no user URN is found, log and exit early.
         if (!$ownerUserUrn) {
-            Log::info("User action update skipped for {$ownerUserUrn} on {$type} for source id:{$source->id} and type:{$source->getMorphClass()}. No user URN found.");
+            Log::info("User action update skipped for {$ownerUserUrn} on {$type} for track urn:{$track->id} No user URN found.");
             return null;
         }
+        Log::info('step 2');
         // Use the new reusable method to check if the update is allowed.
-        if (!$this->syncUserAction($source, $actUserUrn, $type)) {
+        if (!$this->syncUserAction($track, $actUserUrn, $type)) {
             return false;
         }
-        Log::info("Start User action update for {$ownerUserUrn} on {$type} for source id:{$source->id} and type:{$source->getMorphClass()} and actuser urn: {$actUserUrn}.");
+        Log::info("Start User action update for {$ownerUserUrn} on {$type} for track urn:{$track->urn} and actuser urn: {$actUserUrn}.");
 
         // Find or create the UserAnalytics record based on the unique combination.
         $analytics = UserAnalytics::updateOrCreate(
             [
                 'owner_user_urn' => $ownerUserUrn,
                 'act_user_urn' => $actUserUrn,
-                'source_id' => $source->id,
-                'source_type' => $source->getMorphClass(),
+                'track_urn' => $track->urn,
                 'actionable_id' => $actionable ? $actionable->id : null,
                 'actionable_type' => $actionable ? $actionable->getMorphClass() : null,
                 'ip_address' => request()->ip(),
@@ -100,7 +100,21 @@ class AnalyticsService
             ]
 
         );
-        Log::info("User action updated for {$ownerUserUrn} on {$type} for source id:{$source->id} and actuser urn: {$actUserUrn}. analytics:" . json_encode($analytics));
+        Log::info("User action updated for {$ownerUserUrn} on {$type} for track urn:{$track->urn} and actuser urn: {$actUserUrn}. analytics:" . json_encode($analytics));
+        // $analytics = UserAnalytics::firstOrNew(
+        //     [
+        //         'owner_user_urn' => $ownerUserUrn,
+        //         'act_user_urn' => $actUserUrn,
+        //         'track_urn' => $track->urn,
+        //         'actionable_id' => $actionable->id,
+        //         'actionable_type' => $actionable->getMorphClass(),
+        //         'ip_address' => request()->ip(),
+        //         'genre' => $genre,
+        //     ]
+        // );
+        // $analytics->genre = $genre;
+        // $analytics->save();
+        // $analytics->increment($column, $increment);
 
         return $analytics;
     }
@@ -137,7 +151,7 @@ class AnalyticsService
         string $filter = 'last_week',
         ?array $dateRange = null,
         ?array $genres = null,
-        ?object $source = null,
+        ?string $trackUrn = null,
         ?string $actionableType = null
     ): array {
         $userUrn = user()->urn;
@@ -151,7 +165,7 @@ class AnalyticsService
             $periods['previous']['start'],
             $periods['current']['end'],
             $genres,
-            $source,
+            $trackUrn,
             $actionableType
         );
 
@@ -172,13 +186,13 @@ class AnalyticsService
         $overallAnalytics = $this->buildComparisonResult($currentMetrics, $previousMetrics);
 
         // Calculate track-specific metrics
-        $currentSourceMetrics = $this->calculateMetricsBySource($currentData);
-        $previousSourceMetrics = $this->calculateMetricsBySource($previousData);
-        // $sourceAnalytics = $this->buildComparisonResultBySource($currentSourceMetrics, $previousSourceMetrics);
+        $currentTrackMetrics = $this->calculateMetricsByTrack($currentData);
+        $previousTrackMetrics = $this->calculateMetricsByTrack($previousData);
+        $trackAnalytics = $this->buildComparisonResultByTrack($currentTrackMetrics, $previousTrackMetrics);
 
         return [
             'overall_metrics' => $overallAnalytics,
-            // 'metrics' => $sourceAnalytics,
+            'track_metrics' => $trackAnalytics,
             'period_info' => [
                 'filter' => $filter,
                 'current_period' => [
@@ -203,7 +217,7 @@ class AnalyticsService
         Carbon $startDate,
         Carbon $endDate,
         ?array $genres = null,
-        ?object $source = null,
+        ?string $trackUrn = null,
         ?string $actionableType = null
     ): Collection {
         $query = UserAnalytics::query();
@@ -212,12 +226,12 @@ class AnalyticsService
             $query->where('owner_user_urn', $userUrn);
         }
 
+
         $query->whereDate('created_at', '>=', $startDate->format('Y-m-d'))
             ->whereDate('created_at', '<=', $endDate->format('Y-m-d'));
 
-        if ($source !== null) {
-            $query->where('source_id', $source->id)
-                ->where('source_type', $source->getMorphClass());
+        if ($trackUrn) {
+            $query->where('track_urn', $trackUrn);
         }
 
         if ($actionableType !== null) {
@@ -228,13 +242,13 @@ class AnalyticsService
             $query->forGenres($genres);
         }
 
-        return $query->get();
+        return $query->with(['track'])->get();
     }
 
     /**
      * Get paginated track analytics data
      */
-    public function getPaginatedAnalytics(
+    public function getPaginatedTrackAnalytics(
         string $filter = 'last_week',
         ?array $dateRange = null,
         ?array $genres = null,
@@ -247,7 +261,7 @@ class AnalyticsService
 
         // Get aggregated track data for current period
         $query = UserAnalytics::select([
-            'source_id',
+            'track_urn',
             DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 END) as total_views'),
             DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_plays'),
             DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_likes'),
@@ -272,20 +286,20 @@ class AnalyticsService
             $query->forGenres($genres);
         }
 
-        $sourceData = $query->groupBy('source_id')
+        $trackData = $query->groupBy('track_urn')
             ->orderByDesc('total_views')
             ->orderByDesc('total_reposts')
             ->get();
 
         // Create paginator
-        $total = $sourceData->count();
+        $total = $trackData->count();
         $offset = ($page - 1) * $perPage;
-        $paginatedSourceIds = $sourceData->slice($offset, $perPage);
+        $paginatedTrackUrns = $trackData->slice($offset, $perPage);
 
-        // Get detailed analytics for paginated sources
-        $analytics = [];
-        if ($paginatedSourceIds->isNotEmpty()) {
-            $sourceIdsList = $paginatedSourceIds->pluck('source_id')->toArray();
+        // Get detailed analytics for paginated tracks
+        $trackAnalytics = [];
+        if ($paginatedTrackUrns->isNotEmpty()) {
+            $trackUrnsList = $paginatedTrackUrns->pluck('track_urn')->toArray();
 
             // Fetch current and previous period data
             $currentData = $this->fetchAnalyticsData(
@@ -293,28 +307,28 @@ class AnalyticsService
                 $periods['current']['start'],
                 $periods['current']['end'],
                 $genres
-            )->whereIn('source_id', $sourceIdsList);
+            )->whereIn('track_urn', $trackUrnsList);
 
             $previousData = $this->fetchAnalyticsData(
                 $userUrn,
                 $periods['previous']['start'],
                 $periods['previous']['end'],
                 $genres
-            )->whereIn('source_id', $sourceIdsList);
+            )->whereIn('track_urn', $trackUrnsList);
 
-            $currentMetricsBySource = $this->calculateMetricsBySource($currentData);
-            $previousMetricsBySource = $this->calculateMetricsBySource($previousData);
-            $analytics = $this->buildComparisonResultBySource($currentMetricsBySource, $previousMetricsBySource);
+            $currentMetricsByTrack = $this->calculateMetricsByTrack($currentData);
+            $previousMetricsByTrack = $this->calculateMetricsByTrack($previousData);
+            $trackAnalytics = $this->buildComparisonResultByTrack($currentMetricsByTrack, $previousMetricsByTrack);
         }
 
         return new LengthAwarePaginator(
-            $analytics,
+            $trackAnalytics,
             $total,
             $perPage,
             $page,
             [
                 'path' => request()->url(),
-                'pageName' => 'top_sources',
+                'pageName' => 'top_tracks',
             ]
         );
     }
@@ -400,29 +414,31 @@ class AnalyticsService
     }
 
     /**
-     * Calculate metrics from analytics data, grouped by source
+     * Calculate metrics from analytics data, grouped by track
      */
-    private function calculateMetricsBySource(Collection $data): array
+    private function calculateMetricsByTrack(Collection $data): array
     {
-        $metricsBySource = [];
+        $metricsByTrack = [];
 
-        $data->groupBy('source')->each(function ($sourceGroup, $source) use (&$metricsBySource) {
+        $data->groupBy('track_urn')->each(function ($trackGroup, $trackUrn) use (&$metricsByTrack) {
+            $track = $trackGroup->first()->track;
+            $trackName = $track ? $track->title : 'Unknown Track';
+            $trackDetails = $track ? $track : null;
+            $actionableDetails = $trackGroup->first()->actionable ?? null;
 
-
-            $sourceDetails = $sourceGroup->first()->source;
-            $actionableDetails = $sourceGroup->first()->actionable ?? null;
-            if ($sourceDetails && method_exists($sourceDetails, 'format')) {
-                $sourceDetails['created_at_formatted'] = $sourceDetails->created_at->format('M d, Y');
+            if ($trackDetails && $track->created_at) {
+                $trackDetails['created_at_formatted'] = $track->created_at->format('M d, Y');
             }
+
             if ($actionableDetails && method_exists($actionableDetails, 'format')) {
                 $actionableDetails['created_at_formatted'] = $actionableDetails->created_at->format('M d, Y');
             }
 
             // Group by action type and count
-            $typeGroups = $sourceGroup->groupBy('type');
+            $typeGroups = $trackGroup->groupBy('type');
 
             $metrics = [
-                'total_plays' => $typeGroups->get(UserAnalytics::TYPE_PLAY, collect())->count(),
+                'total_plays' => $typeGroups->get(UserAnalytics::TYPE_VIEW, collect())->count(),
                 'total_likes' => $typeGroups->get(UserAnalytics::TYPE_LIKE, collect())->count(),
                 'total_comments' => $typeGroups->get(UserAnalytics::TYPE_COMMENT, collect())->count(),
                 'total_views' => $typeGroups->get(UserAnalytics::TYPE_VIEW, collect())->count(),
@@ -431,91 +447,59 @@ class AnalyticsService
                 'total_followers' => $typeGroups->get(UserAnalytics::TYPE_FOLLOW, collect())->count(),
             ];
 
-            $metricsBySource[$source] = [
-                'source_type' => $sourceGroup->first()->source_type,
-                'source_details' => $sourceDetails,
+            $metricsByTrack[$trackUrn] = [
+                'track_urn' => $trackUrn,
+                'track_name' => $trackName,
+                'track_details' => $trackDetails,
                 'actionable_details' => $actionableDetails,
                 'metrics' => $metrics
             ];
         });
 
-        return $metricsBySource;
+        return $metricsByTrack;
     }
 
     /**
      * Compare and build final result, grouped by track
      */
-    // private function buildComparisonResultByTrack(array $currentMetrics, array $previousMetrics): array
-    // {
-    //     $result = [];
-    //     $allTrackUrns = array_unique(array_merge(array_keys($currentMetrics), array_keys($previousMetrics)));
-
-    //     foreach ($allTrackUrns as $trackUrn) {
-    //         $current = $currentMetrics[$trackUrn] ?? null;
-    //         $previous = $previousMetrics[$trackUrn] ?? null;
-
-    //         $trackName = $current['track_name'] ?? $previous['track_name'] ?? 'Unknown Track';
-    //         $trackDetails = $current['track_details'] ?? $previous['track_details'] ?? null;
-    //         $actionDetails = $current['actionable_details'] ?? $previous['actionable_details'] ?? null;
-
-    //         $trackResult = [
-    //             'track_urn' => $trackUrn,
-    //             'track_name' => $trackName,
-    //             'track_details' => $trackDetails,
-    //             'actionable_details' => $actionDetails
-    //         ];
-
-    //         $metrics = ['total_plays', 'total_likes', 'total_comments', 'total_views', 'total_requests', 'total_reposts', 'total_followers'];
-
-    //         foreach ($metrics as $metric) {
-    //             $currentTotal = $current['metrics'][$metric] ?? 0;
-    //             $previousTotal = $previous['metrics'][$metric] ?? 0;
-
-    //             $trackResult['metrics'][$metric] = [
-    //                 'current_total' => $currentTotal,
-    //                 'previous_total' => $previousTotal,
-    //                 'change_rate' => $this->calculatePercentageChange($currentTotal, $previousTotal)
-    //             ];
-    //         }
-    //         $result[] = $trackResult;
-    //     }
-
-    //     return $result;
-    // }
-
-    private function buildComparisonResultBySource(array $currentMetrics, array $previousMetrics): array
+    private function buildComparisonResultByTrack(array $currentMetrics, array $previousMetrics): array
     {
         $result = [];
-        $allSources = array_unique(array_merge(array_keys($currentMetrics), array_keys($previousMetrics)));
+        $allTrackUrns = array_unique(array_merge(array_keys($currentMetrics), array_keys($previousMetrics)));
 
-        foreach ($allSources as $source) {
-            $current = $currentMetrics[$source] ?? null;
-            $previous = $previousMetrics[$source] ?? null;
+        foreach ($allTrackUrns as $trackUrn) {
+            $current = $currentMetrics[$trackUrn] ?? null;
+            $previous = $previousMetrics[$trackUrn] ?? null;
 
-            $sourceDetails = $current['source_details'] ?? $previous['source_details'] ?? null;
+            $trackName = $current['track_name'] ?? $previous['track_name'] ?? 'Unknown Track';
+            $trackDetails = $current['track_details'] ?? $previous['track_details'] ?? null;
             $actionDetails = $current['actionable_details'] ?? $previous['actionable_details'] ?? null;
 
-            $sourceResult = [
-                'source_type' => $current['source_type'] ?? $previous['source_type'] ?? 'Unknown',
-                'source_details' => $sourceDetails,
+            $trackResult = [
+                'track_urn' => $trackUrn,
+                'track_name' => $trackName,
+                'track_details' => $trackDetails,
                 'actionable_details' => $actionDetails
             ];
 
-            foreach (self::METRICS as $metric) {
+            $metrics = ['total_plays', 'total_likes', 'total_comments', 'total_views', 'total_requests', 'total_reposts', 'total_followers'];
+
+            foreach ($metrics as $metric) {
                 $currentTotal = $current['metrics'][$metric] ?? 0;
                 $previousTotal = $previous['metrics'][$metric] ?? 0;
 
-                $sourceResult['metrics'][$metric] = [
+                $trackResult['metrics'][$metric] = [
                     'current_total' => $currentTotal,
                     'previous_total' => $previousTotal,
                     'change_rate' => $this->calculatePercentageChange($currentTotal, $previousTotal)
                 ];
             }
-            $result[] = $sourceResult;
+            $result[] = $trackResult;
         }
 
         return $result;
     }
+
 
     /**
      * Calculate metrics from analytics data
@@ -576,8 +560,60 @@ class AnalyticsService
         return $metrics;
     }
 
+    // private function calculateMetrics(Collection $data): array
+    // {
+    //     if ($data->isEmpty()) {
+    //         return $this->getEmptyMetrics();
+    //     }
+
+    //     // Group by date and sum daily totals
+    //     $dailyData = $data->groupBy('date')->map(function ($group) {
+    //         $dailyMetrics = [];
+    //         foreach (self::METRICS as $metric) {
+    //             $dailyMetrics[$metric] = $group->sum($metric);
+    //         }
+    //         return $dailyMetrics;
+    //     });
+
+    //     // Calculate totals and averages
+    //     $metrics = [];
+    //     $totalDays = $dailyData->count();
+
+    //     foreach (self::METRICS as $metric) {
+    //         $total = $dailyData->sum($metric);
+    //         $average = $totalDays > 0 ? $total / $totalDays : 0;
+
+    //         $metrics[$metric] = [
+    //             'total' => $total,
+    //             'average' => $average
+    //         ];
+    //     }
+
+    //     // Calculate rates (percentages based on views)
+    //     $totalViews = $metrics['total_views']['total'];
+    //     $avgViews = $metrics['total_views']['average'];
+
+    //     foreach (self::METRICS as $metric) {
+    //         if ($metric === 'total_views')
+    //             continue;
+
+    //         $metrics[$metric]['total_percent'] = $totalViews > 0
+    //             ? ($metrics[$metric]['total'] / $totalViews) * 100
+    //             : 0;
+
+    //         $metrics[$metric]['avg_percent'] = $avgViews > 0
+    //             ? ($metrics[$metric]['average'] / $avgViews) * 100
+    //             : 0;
+    //     }
+
+    //     // Views percent is always 100% of itself
+    //     $metrics['total_views']['total_percent'] = 100;
+    //     $metrics['total_views']['avg_percent'] = 100;
+    //     return $metrics;
+    // }
+
     /**
-     * Return empty metrics structure
+     * Get empty metrics structure
      */
     private function getEmptyMetrics(): array
     {
@@ -680,7 +716,7 @@ class AnalyticsService
         string $filter = 'last_week',
         ?array $dateRange = null,
         ?array $genres = null,
-        ?object $source = null,
+        ?string $trackUrn = null,
         ?string $actionableType = null
     ): array {
         $userUrn = user()->urn;
@@ -691,7 +727,7 @@ class AnalyticsService
             $periods['current']['start'],
             $periods['current']['end'],
             $genres,
-            $source,
+            $trackUrn,
             $actionableType
         );
 
@@ -702,7 +738,7 @@ class AnalyticsService
             $typeGroups = $group->groupBy('type');
             return [
                 'date' => $date,
-                'total_plays' => $typeGroups->get(UserAnalytics::TYPE_PLAY, collect())->count(),
+                'total_plays' => $typeGroups->get(UserAnalytics::TYPE_VIEW, collect())->count(),
                 'total_likes' => $typeGroups->get(UserAnalytics::TYPE_LIKE, collect())->count(),
                 'total_comments' => $typeGroups->get(UserAnalytics::TYPE_COMMENT, collect())->count(),
                 'total_views' => $typeGroups->get(UserAnalytics::TYPE_VIEW, collect())->count(),
@@ -715,9 +751,9 @@ class AnalyticsService
     }
 
     /**
-     * Get top performing sources
+     * Get top performing tracks
      */
-    public function getTopSources(int $limit = 20, ?string $userUrn = null, ?string $filter = 'last_week', ?array $dateRange = null): array
+    public function getTopTracks(int $limit = 20, ?string $userUrn = null, ?string $filter = 'last_week', ?array $dateRange = null): array
     {
         $periods = $this->calculatePeriods($filter, $dateRange);
 
@@ -731,7 +767,7 @@ class AnalyticsService
         $topTracks = $query->whereDate('created_at', '>=', $periods['current']['start']->format('Y-m-d'))
             ->whereDate('created_at', '<=', $periods['current']['end']->format('Y-m-d'))
             ->select([
-                'source_id',
+                'track_urn',
                 DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 END) as total_views'),
                 DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_PLAY . ' THEN 1 END) as total_streams'),
                 DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_likes'),
@@ -739,7 +775,7 @@ class AnalyticsService
                 DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 END) as total_reposts'),
                 DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 END) as total_followers'),
             ])
-            ->groupBy('source_id')
+            ->groupBy('track_urn')
             ->orderByDesc('total_views')
             ->orderByDesc('total_streams')
             ->orderByDesc('total_likes')
@@ -760,8 +796,7 @@ class AnalyticsService
                 }
 
                 return [
-                    'source' => $item->source,
-                    'source_type' => $item->source_type,
+                    'track' => $item->track ? $item->track->toArray() : null,
                     'views' => (int) $item->total_views,
                     'streams' => (int) $item->total_streams,
                     'likes' => (int) $item->total_likes,
@@ -791,37 +826,20 @@ class AnalyticsService
             ->where('type', UserAnalytics::TYPE_VIEW)
             ->select([
                 'genre',
-                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 END) as total_views'),
-                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_PLAY . ' THEN 1 END) as total_streams'),
-                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_likes'),
-                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_COMMENT . ' THEN 1 END) as total_comments'),
-                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 END) as total_reposts'),
-                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 END) as total_followers'),
+                DB::raw('COUNT(*) as total_streams')
             ])
             ->whereNotNull('genre')
             ->groupBy('genre')
-            ->orderByDesc('total_views')
             ->orderByDesc('total_streams')
-            ->orderByDesc('total_likes')
-            ->orderByDesc('total_reposts')
-            ->orderByDesc('total_followers')
-            ->orderByDesc('total_requests')
             ->get();
 
-        $totalViews = $genreData->sum('total_views');
         $totalStreams = $genreData->sum('total_streams');
-        $totalLikes = $genreData->sum('total_likes');
-        $totalReposts = $genreData->sum('total_reposts');
-        $totalFollowers = $genreData->sum('total_followers');
-        $totalComments = $genreData->sum('total_comments');
 
-        $avgTotal = ($totalLikes + $totalReposts + $totalFollowers + $totalStreams + $totalComments) / 5;
-
-        return $genreData->map(function ($item) use ($totalViews, $avgTotal) {
+        return $genreData->map(function ($item) use ($totalStreams) {
             return [
                 'genre' => $item->genre,
                 'streams' => $item->total_streams,
-                'percentage' => $totalViews >= $avgTotal ? round(($avgTotal / ($totalViews == 0 ? 1 : $totalViews)) * 100, 2) : 0,
+                'percentage' => $totalStreams > 0 ? round(($item->total_streams / $totalStreams) * 100, 1) : 0
             ];
         })->toArray();
     }
