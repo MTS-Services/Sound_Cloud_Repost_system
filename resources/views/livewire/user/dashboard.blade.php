@@ -311,7 +311,8 @@
                     </a>
                 </div>
                 <div>
-                    <canvas id="campaignChart" width="1000" height="384"></canvas>
+                    <canvas id="campaignChart" width="1000" style="height: 384px; width: 1000px;"
+                        height="384"></canvas>
                 </div>
             </div>
 
