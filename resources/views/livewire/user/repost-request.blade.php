@@ -1,4 +1,4 @@
-<div>
+<div x-data="{ activeMainTab: @entangle('activeMainTab').live }">
     <x-slot name="page_slug">request</x-slot>
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-5 space-y-3 sm:space-y-0">
         <div>
@@ -17,21 +17,18 @@
         <div class="border-b border-gray-200 dark:border-gray-700">
             <nav class="-mb-px flex space-x-8">
                 <!-- Incoming Request Tab Button -->
-                <button
-                    class="tab-button @if ($activeMainTab === 'incoming_request' || $activeMainTab === 'accept_requests') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                    wire:click="setActiveTab('incoming_request')">
+                <a href="{{ route('user.reposts-request') }}?tab=incoming_request" wire:navigate
+                    class="tab-button @if ($activeMainTab === 'incoming_request' || $activeMainTab === 'accept_requests') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200">
                     {{ __('Incoming requests') }}
-                </button>
-                <button
-                    class="tab-button @if ($activeMainTab === 'outgoing_request') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                    wire:click="setActiveTab('outgoing_request')">
+                </a>
+                <a href="{{ route('user.reposts-request') }}?tab=outgoing_request" wire:navigate
+                    class="tab-button @if ($activeMainTab === 'outgoing_request') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200">
                     {{ __('Outgoing request') }}
-                </button>
-                <button
-                    class="tab-button @if ($activeMainTab === 'previously_reposted') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                    wire:click="setActiveTab('previously_reposted')">
+                </a>
+                <a href="{{ route('user.reposts-request') }}?tab=previously_reposted" wire:navigate
+                    class="tab-button @if ($activeMainTab === 'previously_reposted') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200">
                     {{ __('Previously Reposted') }}
-                </button>
+                </a>
 
             </nav>
         </div>
@@ -129,9 +126,9 @@
 
                 <!-- Right Column - Request Info -->
                 <div class="w-full lg:w-1/2 p-3">
-                    <div class="flex justify-between mb-2">
+                    <div class="flex justify-between h-full">
                         <div class="w-1/2 relative">
-                            <div class="flex flex-col items-start gap-0">
+                            <div class="flex flex-col items-start justify-between gap-0 h-full">
                                 <div class="flex items-center gap-2">
                                     <img class="w-12 h-12 rounded-full object-cover"
                                         src="{{ auth_storage_url($repostRequest->requester->avatar) }}"
@@ -166,21 +163,21 @@
                                             <a href="{{ $repostRequest->requester->soundcloud_url ?? '#' }}"
                                                 target="_blank" class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                 SoundCloud Profile</a>
-                                            <a href="{{ route('user.my-account', $repostRequest->requester->urn) }}"
+                                            <a href="{{ route('user.my-account', $repostRequest->requester->name) }}"
                                                 wire:navigate class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                 RepostChain Profile</a>
                                         </div>
                                     </div>
                                 </div>
                                 <!-- Track Info -->
-                                <div class="mb-2">
+                                {{-- <div class="mb-2">
                                     <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">
                                         {{ $repostRequest->track->title ?? 'Unknown Track' }}
                                     </h3>
                                     <p class="text-sm text-gray-600 dark:text-gray-400">
                                         {{ Str::limit($repostRequest->track->description ?? 'No description available', 100) }}
                                     </p>
-                                </div>
+                                </div> --}}
                                 <div class="flex items-center gap-2">
                                     <span
                                         class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
@@ -189,7 +186,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="w-1/2">
+                        <div class="w-1/2 h-fit">
                             @if ($activeMainTab == 'incoming_request' || $activeMainTab == 'previously_reposted')
                                 <div class="flex flex-col items-end gap-2 h-full">
                                     <div class="flex flex-col justify-between h-full">
@@ -281,7 +278,7 @@
                                     @if ($activeMainTab == 'outgoing_request')
                                         <div class="flex flex-col sm:flex-row justify-end gap-3">
                                             <a class="cursor-pointer" wire:navigate
-                                                href="{{ route('user.my-account', $repostRequest->targetUser->urn) }}">
+                                                href="{{ route('user.my-account', $repostRequest->targetUser->name) }}">
                                                 <img class="w-10 h-10 rounded-full object-cover"
                                                     src="{{ auth_storage_url($repostRequest->targetUser->avatar) }}"
                                                     alt="{{ $repostRequest->targetUser->name }} avatar">
@@ -290,7 +287,7 @@
                                                 <div class="flex items-center gap-1 cursor-pointer">
                                                     <a class="text-slate-700 dark:text-gray-300 font-medium cursor-pointer hover:underline"
                                                         wire:navigate
-                                                        href="{{ route('user.my-account', $repostRequest->targetUser->urn) }}">
+                                                        href="{{ route('user.my-account', $repostRequest->targetUser->name) }}">
                                                         {{ $repostRequest->targetUser->name }}
                                                     </a>
                                                 </div>

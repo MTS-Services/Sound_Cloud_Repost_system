@@ -7,6 +7,7 @@ use App\Models\CreditTransaction;
 use App\Models\Playlist;
 use App\Models\Repost;
 use App\Models\Track;
+use App\Models\User;
 use App\Models\UserSocialInformation;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\Admin\UserManagement\UserService;
@@ -72,7 +73,7 @@ class MyAccount extends Component
         $this->followerAnalyzer = $followerAnalyzer;
     }
 
-    public function mount($user_urn = null): void
+    public function mount($user_name = null): void
     {
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $followers = $this->soundCloudService->getAuthUserFollowers();
@@ -90,9 +91,10 @@ class MyAccount extends Component
             $this->followerGrowth = 0; // Avoid division by zero
         }
 
-
-        $this->user_urn = $user_urn ?? user()->urn;
-
+        $this->activeTab = request()->query('tab', $this->activeTab);
+        
+        $userUrn = User::where('name', $user_name)->first()?->urn;
+        $this->user_urn = $userUrn ?? user()->urn;
         Log::info('MyAccount mount', ['user_urn' => $this->user_urn]);
         // If a playlist is in the URL, ensure we land on the right tab/view
         if ($this->selectedPlaylistId) {
@@ -107,22 +109,14 @@ class MyAccount extends Component
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
+    public function updatedActiveTab()
+    {
+        return $this->redirect(route('user.my-account', $this->user_urn) . '?tab=' . $this->activeTab, navigate: true);
+    }
+
     public function setActiveTab(string $tab): void
     {
         $this->activeTab = $tab;
-
-        if ($tab !== 'playlists') {
-            $this->resetPlaylistView();
-        }
-
-        // Reset the relevant pager when switching tabs
-        if ($tab === 'tracks') {
-            $this->syncTracks();
-            $this->resetPage('tracksPage');
-        } elseif ($tab === 'playlists') {
-            $this->syncPlaylists();
-            $this->resetPage('playlistsPage');
-        }
     }
 
     public function selectPlaylist(int $playlistId): void

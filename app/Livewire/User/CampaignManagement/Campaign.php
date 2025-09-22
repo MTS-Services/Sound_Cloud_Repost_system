@@ -25,7 +25,6 @@ use Livewire\WithPagination;
 use Throwable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Builder;
-use App\Models\PlaylistTrack;
 use App\Models\UserAnalytics;
 use Illuminate\Http\Request;
 
@@ -906,10 +905,6 @@ class Campaign extends Component
             } elseif ($campaign->music_type == Playlist::class) {
                 $this->reset('track');
                 $playlist = Playlist::findOrFail($campaign->music_id);
-                $playlistTrack = $playlist->playlistTracks()->where('playlist_urn', $playlist->soundcloud_urn)->first();
-                if ($playlistTrack) {
-                    $this->track = $playlistTrack;
-                }
                 $this->track = $playlist;
             }
 
@@ -968,10 +963,8 @@ class Campaign extends Component
             $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
             return;
         }
-        // Log::info('confirmRepost campaignId: ' . $campaignId);
         $this->showRepostConfirmationModal = true;
         $this->campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
-        // Log::info($this->campaign);
     }
 
     public function repost($campaignId)
@@ -995,6 +988,14 @@ class Campaign extends Component
             }
 
             $campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
+            switch ($campaign->music_type) {
+                case Track::class:
+                    $musicUrn = $campaign->music->urn;
+                    break;
+                case Playlist::class:
+                    $musicUrn = $campaign->music->soundcloud_urn;
+                    break;
+            }
 
             if (!$campaign->music) {
                 $this->dispatch('alert', type: 'error', message: 'Track or Playlist not found for this campaign.');
@@ -1020,27 +1021,27 @@ class Campaign extends Component
 
             switch ($campaign->music_type) {
                 case Track::class:
-                    $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
+                    $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$musicUrn}");
                     if ($this->commented) {
-                        $comment_response = $httpClient->post("{$this->baseUrl}/tracks/{$campaign->music->urn}/comments", $commentSoundcloud);
+                        $comment_response = $httpClient->post("{$this->baseUrl}/tracks/{$musicUrn}/comments", $commentSoundcloud);
                     }
                     if ($this->liked) {
-                        $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$campaign->music->urn}");
+                        $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$musicUrn}");
                     }
                     if ($this->followed) {
                         $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
                     }
                     break;
                 case Playlist::class:
-                    $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$campaign->music->urn}");
+                    $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$musicUrn}");
                     if ($this->liked) {
-                        $like_response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$campaign->music->urn}");
+                        $like_response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$musicUrn}");
                     }
                     if ($this->commented) {
-                        $comment_response = $httpClient->post("{$this->baseUrl}/playlists/{$campaign->music->urn}/comments", $commentSoundcloud);
+                        $comment_response = $httpClient->post("{$this->baseUrl}/playlists/{$musicUrn}/comments", $commentSoundcloud);
                     }
                     if ($this->followed) {
-                        $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
+                        $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->music?->user?->urn}");
                     }
                     break;
                 default:
@@ -1068,6 +1069,11 @@ class Campaign extends Component
                 $soundcloudRepostId = $campaign->music->soundcloud_track_id;
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
                 $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.');
+                $this->reset([
+                    'liked',
+                    'followed',
+                    'commented',
+                ]);
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [
                     'campaign_id' => $campaignId,

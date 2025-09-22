@@ -1,4 +1,4 @@
-<section>
+<section x-data="{ $activeMainTab: @entangle('activeMainTab').live }">
 
     <x-slot name="page_slug">campaigns</x-slot>
 
@@ -22,21 +22,28 @@
         <div class="mb-8">
             <div class="border-b border-gray-200 dark:border-gray-700">
                 <nav class="-mb-px flex space-x-8">
-                    <button
+                    <a href="{{ route('user.cm.my-campaigns') }}?tab=all" wire:navigate
+                        class="tab-button @if ($activeMainTab === 'all') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200">ALL
+                        Campaigns</a>
+                    <a href="{{ route('user.cm.my-campaigns') }}?tab=active" wire:navigate
+                        class="tab-button @if ($activeMainTab === 'active') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200">Active</a>
+                    <a href="{{ route('user.cm.my-campaigns') }}?tab=completed" wire:navigate
+                        class="tab-button @if ($activeMainTab === 'completed') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200">Completed</a>
+                    {{-- <button
                         class="tab-button @if ($activeMainTab === 'all') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                        wire:click="setActiveTab('all')">
+                        x-on:click="$activeMainTab = 'all'">
                         {{ __('All Campaigns') }}
-                    </button>
-                    <button
+                    </button> --}}
+                    {{-- <button
                         class="tab-button @if ($activeMainTab === 'active') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                        wire:click="setActiveTab('active')">
+                        x-on:click="$activeMainTab = 'active'">
                         {{ __('Active') }}
                     </button>
                     <button
                         class="tab-button @if ($activeMainTab === 'completed') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                        wire:click="setActiveTab('completed')">
+                        x-on:click="$activeMainTab = 'completed'">
                         {{ __('Completed') }}
-                    </button>
+                    </button> --}}
                 </nav>
             </div>
         </div>
@@ -307,13 +314,13 @@
                                         {{ $featuredCampaign?->music?->title }}</p>
                                     <p class="text-gray-500 text-sm">{{ $featuredCampaign?->music?->genre }}</p>
                                     <div class="flex items-center gap-2 mt-2">
-                                        @if (!featuredAgain($campaign_->id) && $campaign_->is_featured)
+                                        @if (!featuredAgain($featuredCampaign->id) && $featuredCampaign->is_featured)
                                             <span
                                                 class="text-xs font-semibold mr-2 px-2.5 py-0.5 rounded bg-orange-500 text-white">
                                                 {{ !featuredAgain() ? 'Featured' : '' }}
                                             </span>
                                         @endif
-                                        @if (!boostAgain($campaign_->id) && $campaign_->is_boost)
+                                        @if (!boostAgain($featuredCampaign->id) && $featuredCampaign->is_boost)
                                             <span
                                                 class="text-xs font-semibold mr-2 px-2.5 py-0.5 rounded bg-orange-500 text-white">
                                                 {{ !boostAgain() ? 'Boosted' : '' }}
@@ -515,7 +522,7 @@
                         @elseif($activeModalTab === 'playlists')
                             <div class="space-y-3" wire:loading.remove wire:target="searchSoundcloud">
                                 @forelse ($playlists as $playlist_)
-                                    <div wire:click="showPlaylistTracks({{ $playlist_->id }})"
+                                    <div wire:click="toggleSubmitModal('playlist', {{ $playlist_->id }})"
                                         class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
                                         <div class="flex-shrink-0">
                                             <img class="h-14 w-14 rounded-xl object-cover shadow-md"
