@@ -126,7 +126,7 @@
             }
         });
     },
-
+    {{--
     init() {
         // Initialize charts after DOM is ready
         this.$nextTick(() => {
@@ -144,7 +144,7 @@
                 checkChart();
             }
         });
-    }
+    } --}}
 }">
     <x-slot name="page_slug">dashboard</x-slot>
 
@@ -710,11 +710,6 @@
                 <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
                     {{ __('Please add more credits to your account to proceed with campaign creation.') }}
                 </p>
-                {{-- <a href="{{ route('user.add-credits') }}" wire:navigate
-                    class="inline-flex items-center justify-center w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                    <x-lucide-plus class="w-5 h-5 inline mr-2" />
-                    {{ __('Buy Credits Now') }}
-                </a> --}}
                 <x-gbutton :full-width="true" variant="primary" wire:navigate href="{{ route('user.add-credits') }}"
                     class="mb-2">{{ __('Buy Credits Now') }}</x-gbutton>
             </div>
@@ -725,104 +720,12 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
 
-    {{-- <script>
-        // Define a function to create the chart
-        function createCampaignChart() {
-            const ctx = document.getElementById('campaignChart');
-
-            // Check if the canvas element exists before trying to create a chart
-            if (ctx) {
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                        datasets: [{
-                            label: 'Performance',
-                            data: [950, 1700, 2300, 2850, 2700, 3800],
-                            borderColor: '#f97316',
-                            backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                            pointBackgroundColor: '#f97316',
-                            pointBorderColor: '#ffffff',
-                            pointHoverRadius: 7,
-                            pointHoverBorderWidth: 2,
-                            pointRadius: 5,
-                            borderWidth: 2.5,
-                            tension: 0.4,
-                            fill: true,
-                        }, {
-                            label: 'Baseline',
-                            data: [100, 150, 120, 180, 250, 200],
-                            borderColor: '#22c55e',
-                            backgroundColor: 'transparent',
-                            pointBackgroundColor: '#22c55e',
-                            borderWidth: 2,
-                            pointRadius: 5,
-                            tension: 0.4,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    color: '#94a3b8',
-                                    font: {
-                                        size: 10
-                                    }
-                                },
-                                grid: {
-                                    color: '#334155',
-                                    drawBorder: false,
-                                },
-                            },
-                            x: {
-                                ticks: {
-                                    color: '#94a3b8',
-                                    font: {
-                                        size: 10
-                                    }
-                                },
-                                grid: {
-                                    display: false,
-                                },
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                                align: 'end',
-                                labels: {
-                                    color: '#e2e8f0',
-                                    boxWidth: 12,
-                                    font: {
-                                        size: 12
-                                    }
-                                }
-                            },
-                            tooltip: {
-                                backgroundColor: '#0f172a',
-                                titleColor: '#ffffff',
-                                bodyColor: '#cbd5e1',
-                                borderColor: '#334155',
-                                borderWidth: 1,
-                                padding: 12,
-                                cornerRadius: 8,
-                            }
-                        },
-                        interaction: {
-                            intersect: false,
-                            mode: 'index',
-                        },
-                    }
-                });
-            }
-        }
-
-        // Listen for the livewire:navigated event to re-initialize the chart
-        document.addEventListener('livewire:navigated', () => {
-            createCampaignChart();
-        });
-    </script> --}}
+    <script>
+        document.addEventListener('livewire:initialized', function() {
+            initPerformanceChart();
+        })
+        document.addEventListener('livewire:navigated', function() {
+            initPerformanceChart();
+        })
+    </script>
 </div>
