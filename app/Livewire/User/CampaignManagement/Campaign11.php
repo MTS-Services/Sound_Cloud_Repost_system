@@ -359,7 +359,8 @@ class Campaign extends Component
      */
     private function getCampaignsQuery(): Builder
     {
-        $allowedTargetCredits = repostPrice(user(), true);
+        // $allowedTargetCredits = repostPrice(user(), true);
+        $allowedTargetCredits = user()->repost_price;
 
         // return $this->campaignService->getCampaigns()
         //     ->where('budget_credits', '>=', $allowedTargetCredits)

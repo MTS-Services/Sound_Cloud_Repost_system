@@ -37,12 +37,12 @@
                             x-transition:leave="transition ease-in duration-75"
                             x-transition:leave-start="transform opacity-100 scale-100"
                             x-transition:leave-end="transform opacity-0 scale-95"
-                            class="absolute left-0 mt-2 w-56 rounded-md shadow-lg z-100">
-                            <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 max-h-96 overflow-y-auto">
+                            class="absolute left-0 mt-2 w-56 rounded-md shadow-lg z-100 overflow-hidden">
+                            <div class="bg-white dark:bg-slate-800 max-h-96 overflow-y-auto">
                                 <div class="py-1">
                                     @forelse ($genres as $genre)
                                         <button wire:click="filterBygenre('{{ $genre }}')"
-                                            class="block px-4 py-2 text-sm  border-b border-gray-100 dark:border-gray-700 w-full text-left {{ $genreFilter == $genre ? 'bg-orange-500 hover:bg-orange-500 text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300' }}">
+                                            class="block px-4 py-2 text-sm  border-b border-gray-100 dark:border-gray-700 w-full text-left {{ in_array($genre, $selectedGenres) ? 'bg-orange-500 hover:bg-orange-500 text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300' }}">
                                             {{ $genre }}
                                         </button>
                                     @empty
@@ -76,11 +76,13 @@
                             class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
                             <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
                                 <div class="py-1">
-                                    <a href="{{ route('user.members') }}" wire:navigate wire:click="filterByCost('low_to_high')"
+                                    <a href="{{ route('user.members') }}" wire:navigate
+                                        wire:click="filterByCost('low_to_high')"
                                         class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                                         {{ __('High to Low') }}
                                     </a>
-                                    <a href="{{ route('user.members') }}" wire:navigate wire:click="filterByCost('high_to_low')"
+                                    <a href="{{ route('user.members') }}" wire:navigate
+                                        wire:click="filterByCost('high_to_low')"
                                         class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                                         {{ __('Low to High') }}
                                     </a>
@@ -169,7 +171,8 @@
                         <div class="flex justify-between items-center w-full mb-4">
                             <p class="text-text-gray text-sm dark:text-white">Repost price:</p>
                             <p class="text-sm font-medium dark:text-white">
-                                {{ repostPrice($user_) }} Credit{{ repostPrice($user_) > 1 ? 's' : '' }}
+                                {{-- {{ repostPrice($user_) }} Credit{{ repostPrice($user_) > 1 ? 's' : '' }} --}}
+                                {{ $user_->repost_price }} Credit{{ $user_->repost_price > 1 ? 's' : '' }}
                             </p>
                         </div>
 
@@ -223,7 +226,7 @@
                 </div>
             </div>
             @if ($users->hasPages())
-                <div class="mt-6">
+                <div wire:loading.remove wire:target="search" class="mt-6">
                     {{ $users->links('components.pagination.wire-navigate') }}
                 </div>
             @endif
@@ -513,8 +516,10 @@
                                     <div class="flex items-center justify-between mt-4">
                                         <span class="dark:text-white font-medium">Cost</span>
                                         <div class="flex items-center gap-2 ml-1">
+                                            {{-- <span
+                                                class="text-gray-800 dark:text-orange-400 font-bold">{{ repostPrice($user) > 1 ? repostPrice($user) . ' Credits' : repostPrice($user) . ' Credit' }}</span> --}}
                                             <span
-                                                class="text-gray-800 dark:text-orange-400 font-bold">{{ repostPrice($user) > 1 ? repostPrice($user) . ' Credits' : repostPrice($user) . ' Credit' }}</span>
+                                                class="text-gray-800 dark:text-orange-400 font-bold">{{ $user->repost_price > 1 ? $user->repost_price . ' Credits' : $user->repost_price . ' Credit' }}</span>
                                         </div>
                                     </div>
 
@@ -642,8 +647,8 @@
                                                         stroke="currentColor" stroke-width="2" />
                                                 </svg>
                                             </span>
-                                            <span
-                                                class="px-2">{{ repostPrice($user) + ($likeable ? 2 : 0) + ($commentable ? 2 : 0) }}</span>
+                                            <span {{-- class="px-2">{{ repostPrice($user) + ($likeable ? 2 : 0) + ($commentable ? 2 : 0) }}</span> --}}
+                                                class="px-2">{{ repostPrice($user->repost_price, $commentable, $likeable) }}</span>
                                             Send Request</x-gbutton>
                                     @endif
                                 </div>
