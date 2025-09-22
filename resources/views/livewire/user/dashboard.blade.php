@@ -719,13 +719,4 @@
     {{-- JavaScript for Chart --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
-
-    <script>
-        document.addEventListener('livewire:initialized', function() {
-            initPerformanceChart();
-        })
-        document.addEventListener('livewire:navigated', function() {
-            initPerformanceChart();
-        })
-    </script>
 </div>
