@@ -325,7 +325,8 @@ class Campaign extends Component
      */
     private function getCampaignsQuery(): Builder
     {
-        $allowedTargetCredits = repostPrice(user(), true);
+        // $allowedTargetCredits = repostPrice(user(), true);
+        $allowedTargetCredits = user()->repost_price;
         return ModelsCampaign::where('budget_credits', '>=', $allowedTargetCredits)
             ->withoutSelf()
             ->with(['music.user.userInfo', 'reposts'])

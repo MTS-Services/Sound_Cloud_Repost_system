@@ -207,7 +207,7 @@ class Analytics extends Component
                 return;
             }
 
-            $this->topTracks = $this->analyticsService->getTopTracks(
+            $this->topTracks = $this->analyticsService->getTopSources(
                 userUrn: user()->urn,
                 limit: 5,
                 filter: $this->filter,
@@ -232,7 +232,7 @@ class Analytics extends Component
                 return new LengthAwarePaginator([], 0, $this->tracksPerPage, $this->getPage());
             }
 
-            return $this->analyticsService->getPaginatedTrackAnalytics(
+            return $this->analyticsService->getPaginatedAnalytics(
                 filter: $this->filter,
                 dateRange: $dateRange,
                 genres: $this->selectedGenres,

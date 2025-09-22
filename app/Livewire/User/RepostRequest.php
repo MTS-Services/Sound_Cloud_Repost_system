@@ -371,7 +371,8 @@ class RepostRequest extends Component
                         'soundcloud_repost_id' => $soundcloudRepostId,
                         'track_owner_urn' => $trackOwnerUrn,
                         'reposted_at' => now(),
-                        'credits_earned' => (float) repostPrice(user()),
+                        // 'credits_earned' => (float) repostPrice(user()),
+                        'credits_earned' => (float) user()->repost_price,
                         // Add other necessary fields based on your Repost model
                     ]);
                     if ($this->commented) {
@@ -400,7 +401,8 @@ class RepostRequest extends Component
                         'status' => CreditTransaction::STATUS_SUCCEEDED,
                         'transaction_type' => CreditTransaction::TYPE_EARN,
                         'amount' => 0,
-                        'credits' => (float) repostPrice(user()) + ($this->commented ? 2 : 0) + ($this->liked ? 2 : 0),
+                        // 'credits' => (float) repostPrice(user()) + ($this->commented ? 2 : 0) + ($this->liked ? 2 : 0),
+                        'credits' => (float) repostPrice(user()->repost_price, $this->commented, $this->liked),
                         'description' => "Repost From Direct Request",
                         'metadata' => [
                             'repost_id' => $repost->id,

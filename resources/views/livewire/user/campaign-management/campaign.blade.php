@@ -265,8 +265,8 @@
                                             target="_blank" class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                             SoundCloud
                                             Profile</a>
-                                        <a href="{{ route('user.my-account', $campaign_->user?->name) }}" wire:navigate
-                                            class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
+                                        <a href="{{ route('user.my-account', $campaign_->user?->name) }}"
+                                            wire:navigate class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                             RepostChain Profile</a>
                                         {{-- <button
                                                 class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
@@ -312,7 +312,9 @@
                                             <circle cx="8" cy="9" r="3" fill="none"
                                                 stroke="currentColor" stroke-width="2" />
                                         </svg>
-                                        <span>{{ repostPrice() }}
+                                        {{-- <span>{{ repostPrice() }}
+                                            Repost</span> --}}
+                                        <span>{{ user()->repost_price }}
                                             Repost</span>
                                     </button>
                                     @if (in_array($campaign_->id, $this->repostedCampaigns))
@@ -420,11 +422,11 @@
                                 <input wire:model="searchQuery" type="text" id="track-link-search"
                                     placeholder="{{ $activeTab === 'tracks' ? 'Paste a SoundCloud track link' : 'Paste a SoundCloud playlist link' }}"
                                     class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400  dark:placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-orange-500 transition-colors duration-200 border-2 border-gray-300 dark:border-gray-600">
-    
+
                                 <!-- Button content changes during loading -->
                                 <button type="submit"
                                     class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200">
-    
+
                                     <span wire:loading.remove wire:target="searchSoundcloud">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -432,11 +434,11 @@
                                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                         </svg>
                                     </span>
-    
+
                                     <span wire:loading wire:target="searchSoundcloud">
                                         <!-- Loading Spinner -->
-                                        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
-                                            fill="none" viewBox="0 0 24 24">
+                                        <svg class="animate-spin h-5 w-5 text-white"
+                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                             <circle class="opacity-25" cx="12" cy="12" r="10"
                                                 stroke="currentColor" stroke-width="4"></circle>
                                             <path class="opacity-75" fill="currentColor"
@@ -447,7 +449,7 @@
                                 </button>
                             </div>
                         </form>
-    
+
                     </div>
                     <div class="flex-grow overflow-y-auto p-4">
                         @if ($activeTab === 'tracks' || $playListTrackShow == true)
@@ -495,7 +497,7 @@
                                         </p>
                                     </div>
                                 @endforelse
-    
+
                                 {{-- Load More Button for Tracks --}}
                                 @if ($hasMoreTracks)
                                     <div class="text-center mt-4">
@@ -511,7 +513,7 @@
                                     </div>
                                 @endif
                             </div>
-    
+
                             <div wire:loading wire:target="searchSoundcloud"
                                 class="w-full flex justify-center items-center">
                                 <div class="text-center py-16 text-orange-600">
@@ -566,7 +568,7 @@
                                         </p>
                                     </div>
                                 @endforelse
-    
+
                                 {{-- Load More Button for Playlists --}}
                                 @if ($hasMorePlaylists)
                                     <div class="text-center mt-4">

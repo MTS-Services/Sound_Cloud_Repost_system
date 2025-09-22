@@ -100,7 +100,8 @@
                     <div class="flex justify-between items-center w-full mb-4">
                         <p class="text-text-gray text-sm dark:text-white">Repost price:</p>
                         <p class="text-sm font-medium dark:text-white">
-                            {{ repostPrice($user_) }} Credit{{ repostPrice($user_) > 1 ? 's' : '' }}
+                            <!-- {{ repostPrice($user_) }} Credit{{ repostPrice($user_) > 1 ? 's' : '' }} -->
+                            {{ $user_->repost_price }} Credit{{ $user_->repost_price > 1 ? 's' : '' }}
                         </p>
                     </div>
 

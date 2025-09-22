@@ -34,7 +34,7 @@
         chartData: {{ Js::from($this->getChartData()) }},
         genreBreakdown: {{ Js::from($genreBreakdown) }},
         isLoading: @entangle('isLoading'),
-    
+
         // Chart instances
         performanceChart: null,
         genreChart: null,
@@ -57,7 +57,6 @@
                         total_views: { current_total: 'Loading...', change_rate: null },
                         total_followers: { current_total: 'Loading...', change_rate: null },
                     },
-                    track_metrics: []
                 };
             }
     
@@ -814,37 +813,13 @@
                 </div>
             </div>
 
-            <!-- Legend -->
-            {{-- <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm mb-4 items-center">
-            <div class="flex items-end">
-                <div class="w-3 h-3 bg-[#E9E294] rounded-full mr-2"></div>
-                <span class="text-gray-600 dark:text-gray-300">Views</span>
-            </div>
-            <div class="flex items-end">
-                <div class="w-3 h-3 bg-[#ff6b35] rounded-full mr-2"></div>
-                <span class="text-gray-600 dark:text-gray-300">Streams</span>
-            </div>
-            <div class="flex items-end">
-                <div class="w-3 h-3 bg-[#10b981] rounded-full mr-2"></div>
-                <span class="text-gray-600 dark:text-gray-300">Likes</span>
-            </div>
-            <div class="flex items-end">
-                <div class="w-3 h-3 bg-[#8b5cf6] rounded-full mr-2"></div>
-                <span class="text-gray-600 dark:text-gray-300">Reposts</span>
-            </div>
-            <div class="flex items-end">
-                <div class="w-3 h-3 bg-[#f59e0b] rounded-full mr-2"></div>
-                <span class="text-gray-600 dark:text-gray-300">Comments</span>
-            </div>
-        </div> --}}
-
             <!-- Chart -->
             <div class="relative overflow-x-auto" style="height: 250px;">
                 <canvas id="performanceChart"></canvas>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        {{-- <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
             <!-- Top Performing Tracks -->
             <div>
                 <div
@@ -984,10 +959,10 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <!-- Track Performance Table with Pagination -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+        {{-- <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
             <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Your Tracks Performance</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Detailed analytics for all your released
@@ -1201,7 +1176,7 @@
                     </div>
                 </div>
             @endif
-        </div>
+        </div> --}}
 
         @push('js')
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
