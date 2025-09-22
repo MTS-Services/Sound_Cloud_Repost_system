@@ -783,29 +783,36 @@ class AnalyticsService
     /**
      * Get genre performance breakdown
      */
-    public function getGenreBreakdown(): array
+    public function getGenreBreakdown(?string $filter = 'last_week', ?array $dateRange = null, ?array $genres = null): array
     {
         $userUrn = user()->urn;
 
-        $genreData = UserAnalytics::where('owner_user_urn', $userUrn)
-            ->where('type', UserAnalytics::TYPE_VIEW)
-            ->select([
-                'genre',
-                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 END) as total_views'),
-                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_PLAY . ' THEN 1 END) as total_streams'),
-                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_likes'),
-                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_COMMENT . ' THEN 1 END) as total_comments'),
-                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 END) as total_reposts'),
-                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 END) as total_followers'),
-            ])
-            ->whereNotNull('genre')
+        $periods = $this->calculatePeriods($filter, $dateRange);
+
+        $query = UserAnalytics::where('owner_user_urn', $userUrn)
+            ->whereDate('created_at', '>=', $periods['current']['start']->format('Y-m-d'))
+            ->whereDate('created_at', '<=', $periods['current']['end']->format('Y-m-d'))
+            ->where('type', UserAnalytics::TYPE_VIEW);
+
+        if ($genres && !in_array('Any Genre', $genres)) {
+            $query->forGenres($genres);
+        }
+        $genreData = $query->select([
+            'genre',
+            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 END) as total_views'),
+            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_PLAY . ' THEN 1 END) as total_streams'),
+            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_likes'),
+            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_COMMENT . ' THEN 1 END) as total_comments'),
+            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 END) as total_reposts'),
+            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 END) as total_followers'),
+        ])
             ->groupBy('genre')
+            ->whereNotNull('genre')
             ->orderByDesc('total_views')
             ->orderByDesc('total_streams')
             ->orderByDesc('total_likes')
             ->orderByDesc('total_reposts')
             ->orderByDesc('total_followers')
-            ->orderByDesc('total_requests')
             ->get();
 
         $totalViews = $genreData->sum('total_views');

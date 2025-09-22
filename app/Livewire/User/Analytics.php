@@ -133,7 +133,7 @@ class Analytics extends Component
     public function loadData()
     {
         $dateRange = $this->getDateRange();
-        // try {
+        try {
             if ($dateRange === false) {
                 return;
             }
@@ -153,10 +153,10 @@ class Analytics extends Component
             $this->dataCache[$cacheKey] = $this->data;
 
             $this->dispatch('dataUpdated');
-        // } catch (\Exception $e) {
-        //     $this->addError('general', 'Failed to load analytics data. Please try again.');
-        //     logger()->error('Analytics data loading failed', ['error' => $e->getMessage()]);
-        // }
+        } catch (\Exception $e) {
+            $this->addError('general', 'Failed to load analytics data. Please try again.');
+            logger()->error('Analytics data loading failed', ['error' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -197,7 +197,7 @@ class Analytics extends Component
      */
     private function loadAdditionalData()
     {
-        // try {
+        try {
             $dateRange = $this->getDateRange();
 
             if ($dateRange === false) {
@@ -211,10 +211,10 @@ class Analytics extends Component
                 dateRange: $dateRange
             );
 
-            // $this->genreBreakdown = $this->analyticsService->getGenreBreakdown();
-        // } catch (\Exception $e) {
-        //     logger()->error('Additional data loading failed', ['error' => $e->getMessage()]);
-        // }
+            $this->genreBreakdown = $this->analyticsService->getGenreBreakdown($this->filter, $dateRange, $this->selectedGenres);
+        } catch (\Exception $e) {
+            logger()->error('Additional data loading failed', ['error' => $e->getMessage()]);
+        }
     }
 
     /**
