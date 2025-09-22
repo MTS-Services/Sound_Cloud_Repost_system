@@ -27,7 +27,7 @@ class MyAccount extends Component
     protected string $baseUrl = 'https://api.soundcloud.com';
 
     // UI state
-    #[Url(as: 'tab', except: 'insights')]
+    // #[Url(as: 'tab', except: 'insights')]
     public string $activeTab = 'insights';
 
     public bool $showEditProfileModal = false;
@@ -90,6 +90,7 @@ class MyAccount extends Component
             $this->followerGrowth = 0; // Avoid division by zero
         }
 
+        $this->activeTab = request()->query('tab', $this->activeTab);
 
         $this->user_urn = $user_urn ?? user()->urn;
 
@@ -107,23 +108,28 @@ class MyAccount extends Component
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
-    public function setActiveTab(string $tab): void
+    public function updatedActiveTab()
     {
-        $this->activeTab = $tab;
-
-        if ($tab !== 'playlists') {
-            $this->resetPlaylistView();
-        }
-
-        // Reset the relevant pager when switching tabs
-        if ($tab === 'tracks') {
-            $this->syncTracks();
-            $this->resetPage('tracksPage');
-        } elseif ($tab === 'playlists') {
-            $this->syncPlaylists();
-            $this->resetPage('playlistsPage');
-        }
+        return $this->redirect(route('user.my-account') . '?tab=' . $this->activeTab, navigate: true);
     }
+
+    // public function setActiveTab(string $tab): void
+    // {
+    //     $this->activeTab = $tab;
+
+    //     if ($tab !== 'playlists') {
+    //         $this->resetPlaylistView();
+    //     }
+
+    //     // Reset the relevant pager when switching tabs
+    //     if ($tab === 'tracks') {
+    //         $this->syncTracks();
+    //         $this->resetPage('tracksPage');
+    //     } elseif ($tab === 'playlists') {
+    //         $this->syncPlaylists();
+    //         $this->resetPage('playlistsPage');
+    //     }
+    // }
 
     public function selectPlaylist(int $playlistId): void
     {

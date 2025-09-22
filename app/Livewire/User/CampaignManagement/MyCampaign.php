@@ -48,7 +48,6 @@ class MyCampaign extends Component
     public ?int $completedPage = 1;
 
     // Main tab state
-    #[Url(as: 'tab', except: 'all')]
     public string $activeMainTab = 'all';
 
     // Modal states
@@ -215,12 +214,16 @@ class MyCampaign extends Component
         }
     }
 
-    public function setActiveTab($tab = 'all'): void
+    // public function setActiveTab($tab = 'all'): void
+    // {
+    //     $this->activeMainTab = $tab;
+    //     $this->resetPage('allPage');
+    //     $this->resetPage('activePage');
+    //     $this->resetPage('completedPage');
+    // }
+    public function updatedActiveMainTab()
     {
-        $this->activeMainTab = $tab;
-        $this->resetPage('allPage');
-        $this->resetPage('activePage');
-        $this->resetPage('completedPage');
+        return $this->redirect(route('user.cm.my-campaigns') . '?tab=' . $this->activeMainTab, navigate: true);
     }
 
     private function validateCampaignBudget(): void
@@ -333,17 +336,17 @@ class MyCampaign extends Component
         $this->canSubmit = false;
     }
 
-    public function setactiveModalTab(string $tab): void
-    {
-        $this->activeMainTab = $tab;
+    // public function setactiveModalTab(string $tab): void
+    // {
+    //     $this->activeMainTab = $tab;
 
-        match ($tab) {
-            'all' => $this->resetPage('allPage'),
-            'active' => $this->resetPage('activePage'),
-            'completed' => $this->resetPage('completedPage'),
-            default => $this->resetPage('allPage')
-        };
-    }
+    //     match ($tab) {
+    //         'all' => $this->resetPage('allPage'),
+    //         'active' => $this->resetPage('activePage'),
+    //         'completed' => $this->resetPage('completedPage'),
+    //         default => $this->resetPage('allPage')
+    //     };
+    // }
 
     public function toggleCampaignsModal()
     {
@@ -473,18 +476,19 @@ class MyCampaign extends Component
         $this->validate();
 
         try {
+            $musicId = $this->musicType === Track::class ? $this->musicId : $this->playlistId;
             $oldBudget = 0;
             if ($this->isEditing) {
                 $oldBudget = $this->editingCampaign->budget_credits + $this->editingCampaign->momentum_price;
             }
-            DB::transaction(function () use ($oldBudget) {
+            DB::transaction(function () use ($oldBudget, $musicId) {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
                 $proFeatureEnabled = $this->proFeatureEnabled && proUser() ? 1 : 0;
                 $editingProFeature = $this->isEditing && $this->editingCampaign->pro_feature == 1 ? $this->editingCampaign->pro_feature : $proFeatureEnabled;
 
                 $campaignData = [
-                    'music_id' => $this->musicId,
+                    'music_id' => $musicId,
                     'music_type' => $this->musicType,
                     'title' => $this->title,
                     'description' => $this->description,
@@ -1004,6 +1008,10 @@ class MyCampaign extends Component
     public function mount($categoryId = null)
     {
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->activeMainTab = request()->query('tab', 'all');
+        $this->resetPage('allPage');
+        $this->resetPage('activePage');
+        $this->resetPage('completedPage');
 
         $this->faqs = Faq::when($categoryId, function ($query) use ($categoryId) {
             $query->where('faq_category_id', $categoryId);

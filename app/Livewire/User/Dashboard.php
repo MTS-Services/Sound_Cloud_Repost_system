@@ -834,12 +834,13 @@ class Dashboard extends Component
         $this->validate();
 
         try {
-            DB::transaction(function () {
+            $musicId = $this->musicType === Track::class ? $this->musicId : $this->playlistId;
+            DB::transaction(function () use ($musicId) {
                 $commentable = $this->commentable ? 1 : 0;
                 $likeable = $this->likeable ? 1 : 0;
                 $proFeatureEnabled = $this->proFeatureEnabled && proUser() ? 1 : 0;
                 $campaign = ModelsCampaign::create([
-                    'music_id' => $this->musicId,
+                    'music_id' => $musicId,
                     'music_type' => $this->musicType,
                     'title' => $this->title,
                     'description' => $this->description,
