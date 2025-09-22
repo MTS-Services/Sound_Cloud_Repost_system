@@ -67,6 +67,14 @@ class ApplicationSettingRequest extends FormRequest
             'smtp_from_address' => 'sometimes|nullable|string',
             'smtp_from_name' => 'sometimes|nullable|string',
             'plan_yearly_save_persentage' => 'sometimes|nullable|numeric|min:0|max:100',
+            'paypal_mode' => 'sometimes|required|string',
+            Rule::in([App::PAYMENT_GATEWAY_LIVE, App::PAYMENT_GATEWAY_SANDBOX]),
+            'paypal_key' => 'sometimes|required|string',
+            'paypal_secret' => 'sometimes|required|string',
+            'stripe_mode' => 'sometimes|required|string',
+            Rule::in([App::PAYMENT_GATEWAY_LIVE, App::PAYMENT_GATEWAY_SANDBOX]),
+            'stripe_key' => 'sometimes|required|string',
+            'stripe_secret' => 'sometimes|required|string',
         ];
     }
 
@@ -107,6 +115,13 @@ class ApplicationSettingRequest extends FormRequest
             'smtp_from_address' => 'SMTP From Address',
             'smtp_from_name' => 'SMTP From Name',
             'plan_yearly_save_persentage' => 'Plan Yearly Save Persentage',
+
+            'paypal_mode' => 'Paypal Mode',
+            'paypal_key' => 'Paypal Key',
+            'paypal_secret' => 'Paypal Secret',
+            'stripe_mode' => 'Stripe Mode',
+            'stripe_key' => 'Stripe Key',
+            'stripe_secret' => 'Stripe Secret',
         ];
     }
 }
