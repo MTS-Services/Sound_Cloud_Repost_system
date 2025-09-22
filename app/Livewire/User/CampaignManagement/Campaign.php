@@ -352,7 +352,7 @@ class Campaign extends Component
         $allowedTargetCredits = repostPrice(user(), true);
         return ModelsCampaign::where('budget_credits', '>=', $allowedTargetCredits)
             ->withoutSelf()
-            ->with(['music.user.userInfo', 'reposts'])
+            ->with(['music.user.userInfo', 'reposts','user'])
             ->whereDoesntHave('reposts', function ($query) {
                 $query->where('reposter_urn', user()->urn);
             })
