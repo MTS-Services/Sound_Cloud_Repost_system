@@ -223,7 +223,7 @@
                 </div>
             </div>
             @if ($users->hasPages())
-                <div class="mt-6">
+                <div wire:loading.remove wire:target="search" class="mt-6">
                     {{ $users->links('components.pagination.wire-navigate') }}
                 </div>
             @endif
