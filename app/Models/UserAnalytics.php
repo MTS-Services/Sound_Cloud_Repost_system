@@ -37,7 +37,8 @@ class UserAnalytics extends BaseModel
     protected $fillable = [
         'owner_user_urn',
         'act_user_urn',
-        'track_urn',
+        'source_id',
+        'source_type',
         'actionable_id',
         'actionable_type',
         'type',
