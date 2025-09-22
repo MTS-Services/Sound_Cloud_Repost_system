@@ -174,11 +174,11 @@ class AnalyticsService
         // Calculate track-specific metrics
         $currentSourceMetrics = $this->calculateMetricsBySource($currentData);
         $previousSourceMetrics = $this->calculateMetricsBySource($previousData);
-        $sourceAnalytics = $this->buildComparisonResultBySource($currentSourceMetrics, $previousSourceMetrics);
+        // $sourceAnalytics = $this->buildComparisonResultBySource($currentSourceMetrics, $previousSourceMetrics);
 
         return [
             'overall_metrics' => $overallAnalytics,
-            'metrics' => $sourceAnalytics,
+            // 'metrics' => $sourceAnalytics,
             'period_info' => [
                 'filter' => $filter,
                 'current_period' => [
@@ -228,7 +228,7 @@ class AnalyticsService
             $query->forGenres($genres);
         }
 
-        return $query->with(['track'])->get();
+        return $query->get();
     }
 
     /**
@@ -408,6 +408,7 @@ class AnalyticsService
 
         $data->groupBy('source')->each(function ($sourceGroup, $source) use (&$metricsBySource) {
 
+
             $sourceDetails = $sourceGroup->first()->source;
             $actionableDetails = $sourceGroup->first()->actionable ?? null;
             if ($sourceDetails && method_exists($sourceDetails, 'format')) {
@@ -431,7 +432,7 @@ class AnalyticsService
             ];
 
             $metricsBySource[$source] = [
-                'source' => $source,
+                'source_type' => $sourceGroup->first()->source_type,
                 'source_details' => $sourceDetails,
                 'actionable_details' => $actionableDetails,
                 'metrics' => $metrics
@@ -495,7 +496,7 @@ class AnalyticsService
             $actionDetails = $current['actionable_details'] ?? $previous['actionable_details'] ?? null;
 
             $sourceResult = [
-                'source' => $source,
+                'source_type' => $current['source_type'] ?? $previous['source_type'] ?? 'Unknown',
                 'source_details' => $sourceDetails,
                 'actionable_details' => $actionDetails
             ];
@@ -701,7 +702,7 @@ class AnalyticsService
             $typeGroups = $group->groupBy('type');
             return [
                 'date' => $date,
-                'total_plays' => $typeGroups->get(UserAnalytics::TYPE_VIEW, collect())->count(),
+                'total_plays' => $typeGroups->get(UserAnalytics::TYPE_PLAY, collect())->count(),
                 'total_likes' => $typeGroups->get(UserAnalytics::TYPE_LIKE, collect())->count(),
                 'total_comments' => $typeGroups->get(UserAnalytics::TYPE_COMMENT, collect())->count(),
                 'total_views' => $typeGroups->get(UserAnalytics::TYPE_VIEW, collect())->count(),
