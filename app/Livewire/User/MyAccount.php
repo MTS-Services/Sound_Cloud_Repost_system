@@ -75,29 +75,26 @@ class MyAccount extends Component
 
     public function mount($user_name = null): void
     {
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
-        // $followers = $this->soundCloudService->getAuthUserFollowers();
-        // $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($followers);
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $followers = $this->soundCloudService->getAuthUserFollowers();
+        $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($followers);
 
-        // $currentWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'this_month');
-        // $lastWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'last_month');
+        $currentWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'this_month');
+        $lastWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'last_month');
 
-        // $currentWeekFollowers = $currentWeekStats['totalFollowers'];
-        // $lastWeekFollowers = $lastWeekStats['totalFollowers'];
+        $currentWeekFollowers = $currentWeekStats['totalFollowers'];
+        $lastWeekFollowers = $lastWeekStats['totalFollowers'];
 
-        // if ($lastWeekFollowers > 0) {
-        //     $this->followerGrowth = ((($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100) > 0 ? ((($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100) : 0;
-        // } else {
-        //     $this->followerGrowth = 0; // Avoid division by zero
-        // }
+        if ($lastWeekFollowers > 0) {
+            $this->followerGrowth = ((($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100) > 0 ? ((($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100) : 0;
+        } else {
+            $this->followerGrowth = 0; // Avoid division by zero
+        }
 
         $this->activeTab = request()->query('tab', $this->activeTab);
         
         $userUrn = User::where('name', $user_name)->first()?->urn;
         $this->user_urn = $userUrn ?? user()->urn;
-if ($this->activeTab == 'insights') {
-            dd($userUrn);
-        }
         Log::info('MyAccount mount', ['user_urn' => $this->user_urn]);
         // If a playlist is in the URL, ensure we land on the right tab/view
         if ($this->selectedPlaylistId) {
@@ -109,7 +106,7 @@ if ($this->activeTab == 'insights') {
 
     public function updated()
     {
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
     public function updatedActiveTab()
@@ -159,13 +156,13 @@ if ($this->activeTab == 'insights') {
 
     public function syncTracks()
     {
-        // $this->soundCloudService->syncSelfTracks([]);
+        $this->soundCloudService->syncSelfTracks([]);
         // SyncedTracks::dispatch(user()->urn);
         // return back()->with('success', 'Track sync started in background. Please check later.');
     }
     public function syncPlaylists()
     {
-        // $this->soundCloudService->syncSelfPlaylists();
+        $this->soundCloudService->syncSelfPlaylists();
         // SyncedPlaylists::dispatch(user()->urn);
         // return back()->with('success', 'Playlist sync started in background.');
     }
