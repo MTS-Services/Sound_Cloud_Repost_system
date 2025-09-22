@@ -100,7 +100,7 @@
                 plugins: {
                     legend: {
                         position: 'top',
-                        align: 'end',
+                        align: 'center',
                         labels: {
                             {{-- color: '#e2e8f0', --}}
                             boxWidth: 12,
@@ -138,7 +138,7 @@
                     if (typeof Chart !== 'undefined') {
                         this.initPerformanceChart();
                     } else {
-                        setTimeout(checkChart, 100);
+                        checkChart();
                     }
                 };
                 checkChart();
@@ -310,8 +310,9 @@
                         View all →
                     </a>
                 </div>
-                <div class="h-80 sm:h-96">
-                    <canvas id="campaignChart" width="961" height="384"></canvas>
+                <div>
+                    <canvas id="campaignChart" width="1000" style="height: 384px; width: 1000px;"
+                        height="384"></canvas>
                 </div>
             </div>
 
@@ -491,7 +492,7 @@
                                     class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-orange-500 transition-colors duration-200 border-2 border-gray-300 dark:border-gray-600 ">
                                 <button type="submit"
                                     class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200">
-    
+
                                     <span wire:loading.remove wire:target="searchSoundcloud">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -499,11 +500,11 @@
                                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                         </svg>
                                     </span>
-    
+
                                     <span wire:loading wire:target="searchSoundcloud">
                                         <!-- Loading Spinner -->
-                                        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
-                                            fill="none" viewBox="0 0 24 24">
+                                        <svg class="animate-spin h-5 w-5 text-white"
+                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                             <circle class="opacity-25" cx="12" cy="12" r="10"
                                                 stroke="currentColor" stroke-width="4"></circle>
                                             <path class="opacity-75" fill="currentColor"
@@ -561,7 +562,7 @@
                                         </p>
                                     </div>
                                 @endforelse
-    
+
                                 {{-- Load More Button for Tracks --}}
                                 @if ($hasMoreTracks)
                                     <div class="text-center mt-4">
@@ -577,7 +578,7 @@
                                     </div>
                                 @endif
                             </div>
-    
+
                             <div wire:loading wire:target="searchSoundcloud"
                                 class="w-full flex justify-center items-center">
                                 <div class="text-center py-16 text-orange-600">
@@ -632,7 +633,7 @@
                                         </p>
                                     </div>
                                 @endforelse
-    
+
                                 {{-- Load More Button for Playlists --}}
                                 @if ($hasMorePlaylists)
                                     <div class="text-center mt-4">
@@ -648,7 +649,7 @@
                                     </div>
                                 @endif
                             </div>
-    
+
                             <div wire:loading wire:target="searchSoundcloud"
                                 class="w-full flex justify-center items-center">
                                 <div class="text-center py-16 text-orange-600">
@@ -709,11 +710,6 @@
                 <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
                     {{ __('Please add more credits to your account to proceed with campaign creation.') }}
                 </p>
-                {{-- <a href="{{ route('user.add-credits') }}" wire:navigate
-                    class="inline-flex items-center justify-center w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                    <x-lucide-plus class="w-5 h-5 inline mr-2" />
-                    {{ __('Buy Credits Now') }}
-                </a> --}}
                 <x-gbutton :full-width="true" variant="primary" wire:navigate href="{{ route('user.add-credits') }}"
                     class="mb-2">{{ __('Buy Credits Now') }}</x-gbutton>
             </div>
@@ -723,105 +719,4 @@
     {{-- JavaScript for Chart --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
-
-    {{-- <script>
-        // Define a function to create the chart
-        function createCampaignChart() {
-            const ctx = document.getElementById('campaignChart');
-
-            // Check if the canvas element exists before trying to create a chart
-            if (ctx) {
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                        datasets: [{
-                            label: 'Performance',
-                            data: [950, 1700, 2300, 2850, 2700, 3800],
-                            borderColor: '#f97316',
-                            backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                            pointBackgroundColor: '#f97316',
-                            pointBorderColor: '#ffffff',
-                            pointHoverRadius: 7,
-                            pointHoverBorderWidth: 2,
-                            pointRadius: 5,
-                            borderWidth: 2.5,
-                            tension: 0.4,
-                            fill: true,
-                        }, {
-                            label: 'Baseline',
-                            data: [100, 150, 120, 180, 250, 200],
-                            borderColor: '#22c55e',
-                            backgroundColor: 'transparent',
-                            pointBackgroundColor: '#22c55e',
-                            borderWidth: 2,
-                            pointRadius: 5,
-                            tension: 0.4,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    color: '#94a3b8',
-                                    font: {
-                                        size: 10
-                                    }
-                                },
-                                grid: {
-                                    color: '#334155',
-                                    drawBorder: false,
-                                },
-                            },
-                            x: {
-                                ticks: {
-                                    color: '#94a3b8',
-                                    font: {
-                                        size: 10
-                                    }
-                                },
-                                grid: {
-                                    display: false,
-                                },
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                                align: 'end',
-                                labels: {
-                                    color: '#e2e8f0',
-                                    boxWidth: 12,
-                                    font: {
-                                        size: 12
-                                    }
-                                }
-                            },
-                            tooltip: {
-                                backgroundColor: '#0f172a',
-                                titleColor: '#ffffff',
-                                bodyColor: '#cbd5e1',
-                                borderColor: '#334155',
-                                borderWidth: 1,
-                                padding: 12,
-                                cornerRadius: 8,
-                            }
-                        },
-                        interaction: {
-                            intersect: false,
-                            mode: 'index',
-                        },
-                    }
-                });
-            }
-        }
-
-        // Listen for the livewire:navigated event to re-initialize the chart
-        document.addEventListener('livewire:navigated', () => {
-            createCampaignChart();
-        });
-    </script> --}}
 </div>
