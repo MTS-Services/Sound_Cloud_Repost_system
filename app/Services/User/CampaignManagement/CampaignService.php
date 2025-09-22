@@ -40,7 +40,8 @@ class CampaignService
 
                 $trackOwnerUrn = $campaign->music->user?->urn ?? $campaign->user_urn;
                 $trackOwnerName = $campaign->music->user?->name ?? $campaign->user?->name;
-                $totalCredits = repostPrice() + ($likeCommentAbleData['comment'] ? 2 : 0) + ($likeCommentAbleData['likeable'] ? 2 : 0);
+                // $totalCredits = repostPrice() + ($likeCommentAbleData['comment'] ? 2 : 0) + ($likeCommentAbleData['likeable'] ? 2 : 0);
+                $totalCredits = repostPrice(user()->repost_price, $likeCommentAbleData['comment'], $likeCommentAbleData['likeable']);
 
                 // Create the Repost record
                 $repost = Repost::updateOrCreate(
@@ -73,9 +74,9 @@ class CampaignService
                 }
 
                 // ######################################
-                        $campaign->increment('comment_count');
-                        $campaign->increment('like_count');
-                        $campaign->increment('followowers_count');
+                $campaign->increment('comment_count');
+                $campaign->increment('like_count');
+                $campaign->increment('followowers_count');
 
                 // ######################################
 
@@ -141,7 +142,8 @@ class CampaignService
                         'additional_data' => [
                             'Track Title' => $campaign->music->title,
                             'Track Artist' => $trackOwnerName,
-                            'Earned Credits' => (float) repostPrice($reposter),
+                            // 'Earned Credits' => (float) repostPrice($reposter),
+                            'Earned Credits' => (float) $reposter->repost_price,
                         ]
                     ]
                 ]);
@@ -158,7 +160,8 @@ class CampaignService
                         'additional_data' => [
                             'Track Title' => $campaign->music->title,
                             'Track Artist' => $trackOwnerName,
-                            'Spent Credits' => (float) repostPrice($reposter),
+                            // 'Spent Credits' => (float) repostPrice($reposter),
+                            'Spent Credits' => (float) $reposter->repost_price,
                         ]
                     ]
                 ]);

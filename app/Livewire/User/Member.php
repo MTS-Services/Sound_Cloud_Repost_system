@@ -110,9 +110,9 @@ class Member extends Component
     {
         $this->validateOnly($propertyName);
 
-        $this->creditSpent = repostPrice($this->user)
-            + ($this->likeable ? 2 : 0)
-            + ($this->commentable ? 2 : 0);
+        $this->creditSpent = repostPrice($this->user->repost_price, $this->commentable, $this->likeable);
+        // + ($this->likeable ? 2 : 0)
+        // + ($this->commentable ? 2 : 0);
 
         if (userCredits() < $this->creditSpent) {
             $this->addError('credits', 'Your credits are not enough.');
@@ -321,7 +321,8 @@ class Member extends Component
         // }
         $this->selectedUserUrn = $userUrn;
         $this->user = User::with('userInfo')->where('urn', $this->selectedUserUrn)->first();
-        if (userCredits() < repostPrice($this->user)) {
+        // if (userCredits() < repostPrice($this->user)) {
+        if (userCredits() < $this->user->repost_price) {
             $this->showLowCreditWarningModal = true;
             $this->showModal = false;
             return;
@@ -408,8 +409,10 @@ class Member extends Component
             }
         }
         try {
-            $credit_spent = repostPrice($this->user);
-            $transaction_credits = repostPrice($this->user) + ($this->likeable ? 2 : 0) + ($this->commentable ? 2 : 0);
+            // $credit_spent = repostPrice($this->user);
+            // $transaction_credits = repostPrice($this->user) + ($this->likeable ? 2 : 0) + ($this->commentable ? 2 : 0);
+            $credit_spent = $this->user->repost_price;
+            $transaction_credits = repostPrice($this->user->repost_price, $this->commentable, $this->likeable);
 
             DB::transaction(function () use ($requester, $credit_spent, $transaction_credits) {
                 $repostRequest = RepostRequest::create([
@@ -551,7 +554,8 @@ class Member extends Component
 
         if ($this->costFilter) {
             $collection = $users->getCollection()->each(function ($user) {
-                $user->repost_cost = repostPrice($user);
+                // $user->repost_cost = repostPrice($user);
+                $user->repost_cost = $user->repost_price;
             });
 
             if ($this->costFilter === 'low_to_high') {

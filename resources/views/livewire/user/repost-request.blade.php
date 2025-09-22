@@ -220,7 +220,9 @@
                                                                 stroke-width="2" />
                                                         </svg>
 
-                                                        <span>{{ repostPrice($repostRequest->requester) }}
+                                                        {{-- <span>{{ repostPrice($repostRequest->requester) }}
+                                                            Repost</span> --}}
+                                                        <span>{{ $repostRequest->requester?->repost_price }}
                                                             Repost</span>
                                                     </button>
 
@@ -390,7 +392,10 @@
                 <div class="px-6 py-4 space-y-5">
                     <div class="flex items-start justify-between">
                         <h3 class="text-lg font-medium uppercase text-gray-900 dark:text-white">Repost</h3>
-                        <span class="text-sm text-gray-700 dark:text-gray-300">{{ repostPrice($request->requester) }}
+                        {{-- <span class="text-sm text-gray-700 dark:text-gray-300">{{ repostPrice($request->requester) }}
+                            Credits</span> --}}
+                        <span
+                            class="text-sm text-gray-700 dark:text-gray-300">{{ $request->requester?->repost_price }}
                             Credits</span>
                     </div>
                     <div
@@ -453,7 +458,9 @@
                                 <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
                                     stroke-width="2" />
                             </svg>
-                            <span>{{ repostPrice() + ($liked ? 2 : 0) + ($commented ? 2 : 0) }}</span>
+                            {{-- <span>{{ repostPrice() + ($liked ? 2 : 0) + ($commented ? 2 : 0) }}</span>
+                            {{ __('Repost') }} --}}
+                            <span>{{ repostPrice(user()->repost_price, $commented, $liked) }}</span>
                             {{ __('Repost') }}
                         </button>
                     </div>
