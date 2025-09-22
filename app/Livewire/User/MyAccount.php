@@ -92,7 +92,7 @@ class MyAccount extends Component
         }
 
         $this->activeTab = request()->query('tab', $this->activeTab);
-        
+
         $userUrn = User::where('name', $user_name)->first()?->urn;
         $this->user_urn = $userUrn ?? user()->urn;
         Log::info('MyAccount mount', ['user_urn' => $this->user_urn]);
@@ -240,10 +240,12 @@ class MyAccount extends Component
             ->sortByDesc('created_at')
             ->take(10);
 
-        $tracksData = $tracks;
-
         // View Count
-        Bus::dispatch(new TrackViewCount($tracksData, user()->urn, 'track'));
+        Bus::chain([
+            new TrackViewCount($tracks, user()->urn, 'track'),
+            new TrackViewCount($playlists, user()->urn, 'playlist'),
+        ])->dispatch();
+
 
         return view('livewire.user.my-account', [
             'user' => $user,

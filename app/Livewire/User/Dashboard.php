@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User;
 
+use App\Jobs\TrackViewCount;
 use App\Livewire\User\RepostRequest as RepostRequestComponent;
 use App\Models\Campaign as ModelsCampaign;
 use App\Models\CreditTransaction;
@@ -13,6 +14,7 @@ use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\User\CampaignManagement\MyCampaignService;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -248,6 +250,11 @@ class Dashboard extends Component
 
         // Repost Request Percentage
         $this->repostRequestPercentage = $this->creditTransactionService->getWeeklyRepostRequestChange($userId);
+
+        Bus::chain([
+            new TrackViewCount($this->repostRequests, user()->urn, 'request'),
+            new TrackViewCount($this->recentTracks, user()->urn, 'track'),
+        ])->dispatch();
     }
 
     public function selectModalTab($tab = 'tracks')
@@ -713,6 +720,10 @@ class Dashboard extends Component
 
     public function toggleCampaignsModal()
     {
+        if (!is_email_verified()) {
+            $this->dispatch('alert', type: 'error', message: 'Please verify your email to create a campaign.');
+            return;
+        }
         $this->reset([
             'title',
             'description',
@@ -819,7 +830,8 @@ class Dashboard extends Component
     public function profeature($isChecked)
     {
         if (!proUser()) {
-            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
+            ;
         } elseif (($this->credit * 1.5) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;

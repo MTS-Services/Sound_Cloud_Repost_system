@@ -855,3 +855,15 @@ if (! function_exists('number_shorten')) {
     }
 }
 
+if (!function_exists('is_email_verified')) {
+    function is_email_verified($userUrn = null)
+    {
+        $user = $userUrn ? User::where('urn', $userUrn)->first() : user();
+        return $user->hasVerifiedEmail();
+    }
+
+}
+
+
+
+
