@@ -129,7 +129,7 @@ class Member extends Component
     public function updatedSearch()
     {
         $this->resetPage();
-        $this->navigatingAway();
+        // $this->navigatingAway();
     }
     public function navigatingAway()
     {
@@ -138,9 +138,9 @@ class Member extends Component
             $params['genre'] = $this->selectedGenres;
         }
 
-        if (!empty($this->search)) {
-            $params['q'] = $this->search;
-        }
+        // if (!empty($this->search)) {
+        //     $params['q'] = $this->search;
+        // }
 
         return $this->redirect(route('user.members') . '?' . http_build_query($params), navigate: true);
     }
