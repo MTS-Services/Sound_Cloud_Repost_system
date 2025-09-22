@@ -18,22 +18,22 @@ class PlaylistTrackSeeder extends Seeder
         // // Clear existing data if needed
         // DB::table('playlist_tracks')->truncate();
 
-        // // Get some playlists and tracks
-        // $playlists = Playlist::limit(20)->pluck('soundcloud_urn');
-        // $tracks = Track::limit(50)->pluck('urn');
+        // Get some playlists and tracks
+        $playlists = Playlist::all()->pluck('soundcloud_urn');
+        $tracks = Track::all()->pluck('urn');
 
-        // // For demo: assign first 2 tracks to each playlist
-        // foreach ($playlists as $playlistUrn) {
-        //     foreach ($tracks->take(2) as $trackUrn) {
-        //         DB::table('playlist_tracks')->insert([
-        //             'playlist_urn' => $playlistUrn,
-        //             'track_urn' => $trackUrn,
-        //             'created_at' => now(),
-        //             'updated_at' => now(),
-        //         ]);
-        //     }
-        //     // Rotate tracks so next playlist gets next 2 tracks
-        //     $tracks->push($tracks->shift());
-        // }
+        // For demo: assign first 2 tracks to each playlist
+        foreach ($playlists as $playlistUrn) {
+            foreach ($tracks->take(2) as $trackUrn) {
+                DB::table('playlist_tracks')->insert([
+                    'playlist_urn' => $playlistUrn,
+                    'track_urn' => $trackUrn,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+            // Rotate tracks so next playlist gets next 2 tracks
+            $tracks->push($tracks->shift());
+        }
     }
 }
