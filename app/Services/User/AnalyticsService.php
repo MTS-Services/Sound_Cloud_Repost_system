@@ -19,13 +19,13 @@ class AnalyticsService
      * If allowed, it sets a session flag to prevent subsequent updates for the day.
      */
     public function syncUserAction(
-        object $track,
+        object $source,
         string $actUserUrn,
         int $type,
         ?string $ipAddress = null,
 
     ): bool|null {
-        $ownerUserUrn = $track->user?->urn ?? null;
+        $ownerUserUrn = $source->user?->urn ?? null;
 
         if ($ipAddress == null) {
             $ipAddress = request()->ip();
@@ -35,7 +35,8 @@ class AnalyticsService
             Log::info("Analytics recording skipped - missing user URN", [
                 'act_user_urn' => $actUserUrn,
                 'owner_user_urn' => $ownerUserUrn,
-                'track_urn' => $track->urn,
+                'source_id' => $source->id,
+                'source_type' => $source->getMorphClass(),
                 'type' => $type,
                 'ip_address' => $ipAddress
             ]);
@@ -48,7 +49,8 @@ class AnalyticsService
         Log::info("date: {$today} and start date: {$today->startOfDay()}");
 
         $response = UserAnalytics::where('act_user_urn', $actUserUrn)
-            ->where('track_urn', $track->urn)
+            ->where('source_id', $source->id)
+            ->where('source_type', $source->getMorphClass())
             ->where('owner_user_urn', $ownerUserUrn)
             ->where('type', $type)
             ->where('ip_address', $ipAddress)
@@ -56,39 +58,37 @@ class AnalyticsService
             ->first();
 
         if ($response) {
-            Log::info("User action update skipped for user: {$actUserUrn} on type: {$type} for track urn:{$track->urn} . Already updated today.");
+            Log::info("User action update skipped for user: {$actUserUrn} on type: {$type} for source id:{$source->id} and type:{$source->getMorphClass()} for ip address: {$ipAddress}. Already updated today.");
             return false;
         }
 
         return true;
     }
 
-    public function recordAnalytics(object $track, ?object $actionable = null, int $type, string $genre, $actUserUrn = null): UserAnalytics|bool|null
+    public function recordAnalytics(object $source, ?object $actionable = null, int $type, string $genre, $actUserUrn = null): UserAnalytics|bool|null
     {
         // Get the owner's URN from the track model.
-        $ownerUserUrn = ($actionable ? $actionable?->user?->urn : $track?->user?->urn);
+        $ownerUserUrn = ($actionable ? $actionable?->user?->urn : $source?->user?->urn);
         $actUserUrn = $actUserUrn ?? user()->urn;
-
-        Log::info('step 1');
 
         // If no user URN is found, log and exit early.
         if (!$ownerUserUrn) {
-            Log::info("User action update skipped for {$ownerUserUrn} on {$type} for track urn:{$track->id} No user URN found.");
+            Log::info("User action update skipped for {$ownerUserUrn} on {$type} for source id:{$source->id} and type:{$source->getMorphClass()}. No user URN found.");
             return null;
         }
-        Log::info('step 2');
         // Use the new reusable method to check if the update is allowed.
-        if (!$this->syncUserAction($track, $actUserUrn, $type)) {
+        if (!$this->syncUserAction($source, $actUserUrn, $type)) {
             return false;
         }
-        Log::info("Start User action update for {$ownerUserUrn} on {$type} for track urn:{$track->urn} and actuser urn: {$actUserUrn}.");
+        Log::info("Start User action update for {$ownerUserUrn} on {$type} for source id:{$source->id} and type:{$source->getMorphClass()} and actuser urn: {$actUserUrn}.");
 
         // Find or create the UserAnalytics record based on the unique combination.
         $analytics = UserAnalytics::updateOrCreate(
             [
                 'owner_user_urn' => $ownerUserUrn,
                 'act_user_urn' => $actUserUrn,
-                'track_urn' => $track->urn,
+                'source_id' => $source->id,
+                'source_type' => $source->getMorphClass(),
                 'actionable_id' => $actionable ? $actionable->id : null,
                 'actionable_type' => $actionable ? $actionable->getMorphClass() : null,
                 'ip_address' => request()->ip(),
@@ -100,21 +100,7 @@ class AnalyticsService
             ]
 
         );
-        Log::info("User action updated for {$ownerUserUrn} on {$type} for track urn:{$track->urn} and actuser urn: {$actUserUrn}. analytics:" . json_encode($analytics));
-        // $analytics = UserAnalytics::firstOrNew(
-        //     [
-        //         'owner_user_urn' => $ownerUserUrn,
-        //         'act_user_urn' => $actUserUrn,
-        //         'track_urn' => $track->urn,
-        //         'actionable_id' => $actionable->id,
-        //         'actionable_type' => $actionable->getMorphClass(),
-        //         'ip_address' => request()->ip(),
-        //         'genre' => $genre,
-        //     ]
-        // );
-        // $analytics->genre = $genre;
-        // $analytics->save();
-        // $analytics->increment($column, $increment);
+        Log::info("User action updated for {$ownerUserUrn} on {$type} for source id:{$source->id} and actuser urn: {$actUserUrn}. analytics:" . json_encode($analytics));
 
         return $analytics;
     }
