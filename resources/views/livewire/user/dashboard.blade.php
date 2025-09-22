@@ -126,7 +126,7 @@
             }
         });
     },
-    {{--
+
     init() {
         // Initialize charts after DOM is ready
         this.$nextTick(() => {
@@ -138,13 +138,13 @@
                     if (typeof Chart !== 'undefined') {
                         this.initPerformanceChart();
                     } else {
-                        setTimeout(checkChart, 100);
+                        checkChart();
                     }
                 };
                 checkChart();
             }
         });
-    } --}}
+    }
 }">
     <x-slot name="page_slug">dashboard</x-slot>
 
