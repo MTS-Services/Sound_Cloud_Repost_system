@@ -8,13 +8,31 @@ use App\Models\CustomNotificationStatus;
 use App\Models\NotificationStatus;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\View\View;
 
-class NotificationController extends Controller
+class NotificationController extends Controller implements HasMiddleware
 {
     /**
      * Display all notifications page with filtering and custom pagination
      */
+      public static function middleware(): array
+    {
+        return [
+            'auth:admin', // Applies 'auth:admin' to all methods
+
+            // Permission middlewares using the Middleware class
+            new Middleware('permission:notification-list', only: ['index']),
+            new Middleware('permission:notification-details', only: ['show']),
+            new Middleware('permission:notification-mark-as-read', only: ['markAsRead']),
+            new Middleware('permission:notification-mark-all-as-read', only: ['markAllAsRead']),
+            new Middleware('permission:notification-delete', only: ['destroy']),
+            new Middleware('permission:notification-get-unread-count', only: ['getUnreadCount']),
+            //add more permissions if needed
+        ];
+    }
+
     public function index(Request $request): View
     {
         $filterType = $request->get('filter', 'all');
@@ -31,6 +49,7 @@ class NotificationController extends Controller
 
         // Preserve filter in pagination links
         $notifications->appends($request->all());
+        
 
         $unreadCount = $this->getNotificationsQuery()
             ->whereDoesntHave('statuses', function ($query) {

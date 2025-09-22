@@ -12,15 +12,35 @@ use App\Models\User;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\Admin\OrderManagement\PaymentService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Yajra\DataTables\Facades\DataTables;
 
 
-class CreditTransactionController extends Controller
+class CreditTransactionController extends Controller  implements HasMiddleware
 {
     protected CreditTransactionService $creditTransactionService;
     protected PaymentService $paymentService;
 
+ public static function middleware(): array
+    {
+        return [
+            'auth:admin', // Applies 'auth:admin' to all methods
 
+            // Permission middlewares using the Middleware class
+            new Middleware('permission:credit-transaction-list', only: ['index']),
+            new Middleware('permission:credit-transaction-details', only: ['show']),
+            new Middleware('permission:credit-transaction-edit', only: ['edit', 'update']),
+            new Middleware('permission:credit-transaction-delete', only: ['destroy']),
+            new Middleware('permission:credit-transaction-trash', only: ['trash']),
+            new Middleware('permission:credit-transaction-restore', only: ['restore']),
+            new Middleware('permission:credit-transaction-purchase', only: ['purchase']),
+            new Middleware('permission:credit-transaction-status', only: ['status']),
+            new Middleware('permission:credit-transaction-payment', only: ['payments']),         
+            new Middleware('permission:credit-transaction-permanent-delete', only: ['permanentDelete']),
+            //add more permissions if needed
+        ];
+    }
     public function __construct(CreditTransactionService $creditTransactionService, PaymentService $paymentService)
     {
         $this->creditTransactionService = $creditTransactionService;

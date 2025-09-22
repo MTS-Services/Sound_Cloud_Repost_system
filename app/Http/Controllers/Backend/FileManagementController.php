@@ -5,9 +5,22 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class FileManagementController extends Controller
+class FileManagementController extends Controller implements HasMiddleware
 {
+
+      public static function middleware(): array
+    {
+        return [
+            'auth:admin', // Applies 'auth:admin' to all methods
+
+            // Permission middlewares using the Middleware class
+            new Middleware('permission:feature-upload', only: ['contentImageUpload']),
+          
+        ];
+    }
     public function contentImageUpload(Request $request): JsonResponse
     {
         $request->validate([

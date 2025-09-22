@@ -16,18 +16,33 @@ use App\Services\ProfileService;
 use App\Services\TrackService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
-class ProfileController extends Controller
+class ProfileController extends Controller implements HasMiddleware
 {
     protected TrackService $trackService;
     protected RepostService $repostService;
     protected RepostRequestService $RepostRequestService;
     protected CreditTransactionService $creditTransactionService;
     protected ProfileService $profileService; // Declare the ProfileService property
+  public static function middleware(): array
+    {
+        return [
+            'auth:admin', // Applies 'auth:admin' to all methods
 
+            // Permission middlewares using the Middleware class
+            
+            new Middleware('permission:profile-edit', only: ['edit', 'update']),
+            new Middleware('permission:profile-delete', only: ['destroy']),
+            new Middleware('permission:profile-profile', only: ['profile']),
+            new Middleware('permission:profile-email-add', only: ['emailAdd', 'emailStore']),
+            new Middleware('permission:profile-resend-email-verification', only: ['resendEmailVerification']),
+        ];
+    }
     public function __construct(
         TrackService $trackService,
         RepostService $repostService,

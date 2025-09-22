@@ -5,11 +5,25 @@ namespace App\Http\Controllers\Backend\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AdminProfileRequest; 
 use App\Services\Admin\Profile\AdminProfileService;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class AdminProfileController extends Controller
+class AdminProfileController extends Controller implements HasMiddleware
 {
     protected $adminProfileService;
+public static function middleware(): array
+    {
+        return [
+            'auth:admin', // Applies 'auth:admin' to all methods
 
+            // Permission middlewares using the Middleware class
+            new Middleware('permission:admin-profile-list', only: ['index']),
+            new Middleware('permission:admin-profile-create', only: ['create', 'store']),
+          
+ 
+            //add more permissions if needed
+        ];
+    }
     public function __construct(AdminProfileService $adminProfileService)
     {
         $this->adminProfileService = $adminProfileService;
