@@ -21,16 +21,12 @@
                                 <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
                                     {{ $user->name ?? 'name' }}
                                 </h1>
-                                {{-- <span
-                                    class="px-3 py-1 bg-orange-500 dark:bg-orange-400 text-white dark:text-gray-900 text-sm font-medium rounded-full self-center">
-                                    {{ userPlanName($user->urn) }}
-                                </span> --}}
                                 @if (proUser($user->urn))
                                     <span
                                         class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName($user->urn) }}</span>
                                 @else
                                     <span
-                                        class="inline-flex items-center rounded-full bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 inset-ring inset-ring-gray-400/20">{{ userPlanName($user->urn) }}</span>
+                                        class="text-sm badge badge-soft badge-info rounded-full font-semibold">{{ userPlanName($user->urn) }}</span>
                                 @endif
                             </div>
                             <p class="text-lg sm:text-xl text-gray-600 dark:text-slate-200 mb-4">

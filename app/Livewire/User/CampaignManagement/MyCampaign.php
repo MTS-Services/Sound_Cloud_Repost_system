@@ -350,6 +350,10 @@ class MyCampaign extends Component
 
     public function toggleCampaignsModal()
     {
+        if (!is_email_verified()) {
+            $this->dispatch('alert', type: 'error', message: 'Please verify your email to create a campaign.');
+            return;
+        }
         // $this->resetAllFormData();
         if ($this->myCampaignService->thisMonthCampaignsCount() >= (int) userFeatures()[Feature::KEY_SIMULTANEOUS_CAMPAIGNS]) {
             return $this->dispatch('alert', type: 'error', message: 'You have reached the maximum number of campaigns for this month.');

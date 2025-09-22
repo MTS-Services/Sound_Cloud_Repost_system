@@ -72,7 +72,7 @@ class Member extends Component
     public Collection $allPlaylists;
     public int $playlistTrackLimit = 4;
 
-    public Collection $genres;
+    public array $genres = [];
     public Collection $trackTypes;
 
     private $soundcloudClientId;
@@ -119,9 +119,9 @@ class Member extends Component
 
     public function mount()
     {
-        $this->genres = $this->getAvailableGenres();
+        $this->genres = AllGenres();
         $this->userinfo = user()->userInfo;
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
     private function getAvailableGenres(): Collection
@@ -172,8 +172,8 @@ class Member extends Component
 
     public function getCredibilityScore(object $user)
     {
-        $userFollowerAnalysis =  $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers($user));
-        return $userFollowerAnalysis['averageCredibilityScore'];
+        // $userFollowerAnalysis =  $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers($user));
+        // return $userFollowerAnalysis['averageCredibilityScore'];
     }
 
     private function performLocalSearch()
@@ -373,8 +373,8 @@ class Member extends Component
     public function createRepostsRequest()
     {
         $this->validate();
-        $this->soundCloudService->ensureSoundCloudConnection(user());
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $this->soundCloudService->ensureSoundCloudConnection(user());
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $requester = user();
 
         if (!$this->user || !$this->track) {

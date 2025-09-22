@@ -3,6 +3,7 @@
 namespace App\Livewire\User;
 
 use App\Jobs\NotificationMailSent;
+use App\Jobs\TrackViewCount;
 use App\Models\CreditTransaction;
 use App\Models\RepostRequest as ModelsRepostRequest;
 use App\Models\Repost;
@@ -11,6 +12,7 @@ use App\Models\UserSetting;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\User\UserSettingsService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
@@ -282,8 +284,8 @@ class RepostRequest extends Component
             // Check if the user has already reposted this specific request
             if (
                 Repost::where('reposter_urn', $currentUserUrn)
-                ->where('repost_request_id', $requestId)
-                ->exists()
+                    ->where('repost_request_id', $requestId)
+                    ->exists()
             ) {
 
                 $this->dispatch('alert', type: 'error', message: 'You have already reposted this request.');
@@ -555,7 +557,10 @@ class RepostRequest extends Component
                 break;
         }
         // Order by created_at desc and paginate
-        return $this->repostRequests = $query->orderBy('status', 'asc')->take(10)->get();
+        $this->repostRequests = $query->orderBy('status', 'asc')->take(10)->get();
+        Bus::dispatch(new TrackViewCount($this->repostRequests, user()->urn, 'request'));
+
+        return $this->repostRequests;
     }
 
     public function render()

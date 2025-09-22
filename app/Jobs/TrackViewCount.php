@@ -30,18 +30,20 @@ class TrackViewCount implements ShouldQueue
     /**
      * Tracks data array
      * @var string
-     * @example 'track' | 'campaign' | 'request'
+     * @example 'track' | 'campaign' | 'request' | 'playlist'
      */
     private $type = 'track';
     protected AnalyticsService $analyticsService;
 
-    private $track;
+    private $source;
     private $genre;
     private $actionable = null;
     private $actUserUrn;
     /**
      * Create a new job instance.
      */
+
+    //   public function recordAnalytics(object $source, ?object $actionable = null, int $type, string $genre, $actUserUrn = null): UserAnalytics|bool|null
     public function __construct($datas, $actuUserUrn, $type = 'track', AnalyticsService $analyticsService = new AnalyticsService())
     {
         $this->datas = $datas;
@@ -61,23 +63,28 @@ class TrackViewCount implements ShouldQueue
                 case 'track':
                     $this->genre = $data->genre;
                     $this->actionable = null;
-                    $this->track = $data;
+                    $this->source = $data;
                     break;
                 case 'campaign':
                     $data->load('music');
                     $this->genre = $data->target_genre;
                     $this->actionable = $data;
-                    $this->track = $data->music;
+                    $this->source = $data->music;
                     break;
                 case 'request':
                     $data->load('track');
                     $this->genre = $data->track->genre;
                     $this->actionable = $data;
-                    $this->track = $data->track;
+                    $this->source = $data->track;
+                    break;
+                case 'playlist':
+                    $this->genre = $data->genre;
+                    $this->actionable = null;
+                    $this->source = $data;
                     break;
             }
-            Log::info('TrackViewCount Job processing track urn: ' . $this->track->urn . ', genre: ' . $this->genre . ', actionable type: ' . ($this->actionable ? get_class($this->actionable) : 'null'));
-            $this->analyticsService->recordAnalytics($this->track, $this->actionable, UserAnalytics::TYPE_VIEW, $this->genre, $this->actUserUrn);
+            Log::info('TrackViewCount Job processing track urn: ' . $this->source->urn . ', genre: ' . $this->genre . ', actionable type: ' . ($this->actionable ? get_class($this->actionable) : 'null'));
+            $this->analyticsService->recordAnalytics($this->source, $this->actionable, UserAnalytics::TYPE_VIEW, $this->genre, $this->actUserUrn);
         }
 
     }
