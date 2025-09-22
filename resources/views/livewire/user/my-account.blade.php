@@ -26,7 +26,7 @@
                                         class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName($user->urn) }}</span>
                                 @else
                                     <span
-                                        class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName($user->urn) }}</span>
+                                        class="text-sm badge badge-soft badge-info rounded-full font-semibold">{{ userPlanName($user->urn) }}</span>
                                 @endif
                             </div>
                             <p class="text-lg sm:text-xl text-gray-600 dark:text-slate-200 mb-4">
