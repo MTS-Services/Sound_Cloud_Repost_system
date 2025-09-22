@@ -237,6 +237,12 @@ class User extends AuthBaseModel implements MustVerifyEmail
         ]);
     }
 
+    protected function bootUserModificationTrait(FollowerAnalyzer $followerAnalyzer, SoundCloudService $soundCloudService)
+    {
+        $this->followerAnalyzer = $followerAnalyzer;
+        $this->soundCloudService = $soundCloudService;
+    }
+
     public const STATUS_ACTIVE = 1;
     public const STATUS_INACTIVE = 0;
 
