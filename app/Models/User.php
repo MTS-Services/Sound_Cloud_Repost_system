@@ -10,11 +10,12 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
+use App\Http\Traits\UserModificationTrait;
 
 class User extends AuthBaseModel implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, UserModificationTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -202,6 +203,8 @@ class User extends AuthBaseModel implements MustVerifyEmail
 
             'modified_image',
             'is_pro',
+            'repost_price',
+            'real_followers',
         ]);
     }
 
@@ -302,5 +305,16 @@ class User extends AuthBaseModel implements MustVerifyEmail
 
         // Calculate response rate
         return round(($respondedWithin24Hours / $totalRequests) * 100, 2);
+    }
+
+
+    public function getRepostPriceAttribute()
+    {
+        return $this->userRepostPrice($this);
+    }
+
+    public function getRealFollowersAttribute()
+    {
+        return $this->userRealFollowers($this);
     }
 }

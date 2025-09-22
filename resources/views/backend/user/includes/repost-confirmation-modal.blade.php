@@ -34,7 +34,7 @@
             <div class="px-6 py-4 space-y-5">
                 <div class="flex items-start justify-between">
                     <h3 class="text-lg font-medium uppercase text-gray-900 dark:text-white">Repost</h3>
-                    <span class="text-sm text-gray-700 dark:text-gray-300">{{ repostPrice() }}
+                    <span class="text-sm text-gray-700 dark:text-gray-300">{{ user()->repost_price }}
                         Credits</span>
                 </div>
                 <div class="flex items-center space-x-3 p-2 border border-gray-200 dark:border-gray-600 rounded-md">
@@ -91,7 +91,8 @@
                             <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
                                 stroke-width="2" />
                         </svg>
-                        <span>{{ repostPrice() + ($liked ? 2 : 0) + ($commented ? 2 : 0) }}</span>
+                        {{-- <span>{{ repostPrice() + ($liked ? 2 : 0) + ($commented ? 2 : 0) }}</span> --}}
+                        <span>{{ repostPrice(user()->repost_price, $commented, $liked) }}</span>
                         {{ __('Repost') }}
                     </button>
                 </div>
