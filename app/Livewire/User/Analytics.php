@@ -33,7 +33,7 @@ class Analytics extends Component
     public array $data = [];
     public array $dataCache = [];
     public array $filterOptions = [];
-    public array $topTracks = [];
+    public array $topSources = [];
     public array $genreBreakdown = [];
 
     protected AnalyticsService $analyticsService;
@@ -133,8 +133,7 @@ class Analytics extends Component
     public function loadData()
     {
         $dateRange = $this->getDateRange();
-
-        try {
+        // try {
             if ($dateRange === false) {
                 return;
             }
@@ -147,19 +146,17 @@ class Analytics extends Component
                 null,
                 null
             );
-
             // Transform data for UI
             $this->data = $this->transformDataForUI($freshData);
-
             // Store in cache
             $cacheKey = $this->getCacheKey($dateRange);
             $this->dataCache[$cacheKey] = $this->data;
 
             $this->dispatch('dataUpdated');
-        } catch (\Exception $e) {
-            $this->addError('general', 'Failed to load analytics data. Please try again.');
-            logger()->error('Analytics data loading failed', ['error' => $e->getMessage()]);
-        }
+        // } catch (\Exception $e) {
+        //     $this->addError('general', 'Failed to load analytics data. Please try again.');
+        //     logger()->error('Analytics data loading failed', ['error' => $e->getMessage()]);
+        // }
     }
 
     /**
@@ -200,24 +197,24 @@ class Analytics extends Component
      */
     private function loadAdditionalData()
     {
-        try {
+        // try {
             $dateRange = $this->getDateRange();
 
             if ($dateRange === false) {
                 return;
             }
 
-            $this->topTracks = $this->analyticsService->getTopSources(
+            $this->topSources = $this->analyticsService->getTopSources(
                 userUrn: user()->urn,
                 limit: 5,
                 filter: $this->filter,
                 dateRange: $dateRange
             );
 
-            $this->genreBreakdown = $this->analyticsService->getGenreBreakdown();
-        } catch (\Exception $e) {
-            logger()->error('Additional data loading failed', ['error' => $e->getMessage()]);
-        }
+            // $this->genreBreakdown = $this->analyticsService->getGenreBreakdown();
+        // } catch (\Exception $e) {
+        //     logger()->error('Additional data loading failed', ['error' => $e->getMessage()]);
+        // }
     }
 
     /**
