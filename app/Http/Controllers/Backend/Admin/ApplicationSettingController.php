@@ -64,6 +64,13 @@ class ApplicationSettingController extends Controller implements HasMiddleware
         return view('backend.admin.application-settings.payment_gateway', $data);
     }
 
+    public function push_notification(): View
+    {
+        $data['push_nf_settings'] = ApplicationSetting::whereIn('key', ['pusher_id', 'pusher_key', 'pusher_secret', 'pusher_cluster', 'pusher_port', 'pusher_host', 'pusher_scheme', 'pusher_encrypted'])->pluck('value', 'key')->all();
+        return view('backend.admin.application-settings.push_notification', $data);
+    }
+
+
     public function updateSettings(ApplicationSettingRequest $request): RedirectResponse
     {
         try {
@@ -72,7 +79,7 @@ class ApplicationSettingController extends Controller implements HasMiddleware
             $env = file($envPath);
 
             foreach ($validated as $key => $value) {
-                if ($key == 'app_logo' || $key == 'favicon' ||$key == 'app_logo_dark' || $key == 'favicon_dark') {
+                if ($key == 'app_logo' || $key == 'favicon' || $key == 'app_logo_dark' || $key == 'favicon_dark') {
                     $value = $this->handleFileUpload($value, 'app_settings', $key);
                 }
 

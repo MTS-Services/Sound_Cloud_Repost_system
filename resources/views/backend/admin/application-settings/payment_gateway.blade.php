@@ -12,7 +12,7 @@
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-4 h-fit items-end justify-center"
                         x-data="{ mode: '{{ $payment_settings['stripe_mode'] ?? 'sandbox' }}' }">
                         <div class="space-y-2 sm:col-span-1">
-                            <x-inputs.select name="stripe_mode" label="{{ __('Stripe Mode') }}" :options="['sandbox' => 'Sandbox', 'live' => 'Live']"
+                            <x-inputs.select name="stripe_mode" label="{{ __('Stripe Mode') }}" :options="App\Models\ApplicationSetting::PAYMENT_GATEWAY_MODES"
                                 :event="'x-on:change=mode=$event.target.value'" selected="{{ $payment_settings['stripe_mode'] ?? 'sandbox' }}"
                                 :messages="$errors->get('stripe_mode')" />
                         </div>
@@ -57,7 +57,7 @@
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-4 h-fit items-end justify-center"
                         x-data="{ mode: '{{ $payment_settings['paypal_mode'] ?? 'sandbox' }}' }">
                         <div class="space-y-2 sm:col-span-1">
-                            <x-inputs.select name="paypal_mode" label="{{ __('Paypal Mode') }}" :options="['sandbox' => 'Sandbox', 'live' => 'Live']"
+                            <x-inputs.select name="paypal_mode" label="{{ __('Paypal Mode') }}" :options="App\Models\ApplicationSetting::PAYMENT_GATEWAY_MODES"
                                 :event="'x-on:change=mode=$event.target.value'" selected="{{ $payment_settings['paypal_mode'] ?? 'sandbox' }}"
                                 :messages="$errors->get('paypal_mode')" />
                         </div>

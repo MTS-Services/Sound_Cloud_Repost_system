@@ -226,6 +226,13 @@
                     'active' => 'app-payment-gateway-setup',
                     'permission' => 'application-setting-payment-setup',
                 ],
+                [
+                    'name' => 'Push Notification Settings',
+                    'route' => route('app-settings.push_notification'),
+                    'icon' => 'bell',
+                    'active' => 'app-push-notification-settings',
+                    'permission' => 'application-setting-push-notification',
+                ],
             ]" />
         </nav>
     </div>

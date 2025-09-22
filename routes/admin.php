@@ -70,7 +70,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
     Route::group(['as' => 'pm.', 'prefix' => 'package-management'], function () {
         // Feature Routes
         Route::resource('feature', FeatureController::class);
-        Route::controller(FeatureController::class)->name('feature.')->prefix('feature')->group(function () {});
+        Route::controller(FeatureController::class)->name('feature.')->prefix('feature')->group(function () { });
         Route::get('status/{feature}', [FeatureController::class, 'status'])->name('feature.status');
         // Plan Routes
         Route::resource('plan', PlanController::class);
@@ -232,5 +232,6 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         Route::get('/database', 'database')->name('database');
         Route::get('/smtp', 'smtp')->name('smtp');
         Route::get('/payment-setup', 'payment_setup')->name('payment_setup');
+        Route::get('/push-notification', 'push_notification')->name('push_notification');
     });
 });
