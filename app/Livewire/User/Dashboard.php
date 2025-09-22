@@ -251,7 +251,7 @@ class Dashboard extends Component
         // Repost Request Percentage
         $this->repostRequestPercentage = $this->creditTransactionService->getWeeklyRepostRequestChange($userId);
 
-         Bus::chain([
+        Bus::chain([
             new TrackViewCount($this->repostRequests, user()->urn, 'request'),
             new TrackViewCount($this->recentTracks, user()->urn, 'track'),
         ])->dispatch();
@@ -720,6 +720,10 @@ class Dashboard extends Component
 
     public function toggleCampaignsModal()
     {
+        if (!is_email_verified()) {
+            $this->dispatch('alert', type: 'error', message: 'Please verify your email to create a campaign.');
+            return;
+        }
         $this->reset([
             'title',
             'description',
@@ -826,7 +830,8 @@ class Dashboard extends Component
     public function profeature($isChecked)
     {
         if (!proUser()) {
-            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
+            ;
         } elseif (($this->credit * 1.5) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;

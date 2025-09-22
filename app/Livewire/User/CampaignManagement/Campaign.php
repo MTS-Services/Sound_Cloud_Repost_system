@@ -617,6 +617,10 @@ class Campaign extends Component
 
     public function toggleCampaignsModal()
     {
+        if (!is_email_verified()) {
+            $this->dispatch('alert', type: 'error', message: 'Please verify your email to create a campaign.');
+            return;
+        }
         $this->reset();
 
         if ($this->myCampaignService->thisMonthCampaignsCount() >= (int) userFeatures()[Feature::KEY_SIMULTANEOUS_CAMPAIGNS]) {

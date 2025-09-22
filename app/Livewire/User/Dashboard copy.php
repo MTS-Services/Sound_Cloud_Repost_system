@@ -351,6 +351,10 @@ class Dashboard extends Component
     }
     public function toggleCampaignsModal()
     {
+        if(!is_email_verified()) {
+            $this->dispatch('alert', type: 'error', message: 'Please verify your email to create a campaign.');
+            return;
+        }
         $this->reset([
             'title',
             'description',
