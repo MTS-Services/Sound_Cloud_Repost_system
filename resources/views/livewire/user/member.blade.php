@@ -194,14 +194,14 @@
                         </div>
 
                         <!-- Request Button -->
-                        <x-gbutton variant="primary" :full-width="true"
-                            wire:click="openModal('{{ $user_->urn }}')">Request</x-gbutton>
-                        {{-- @if (requestReceiveable($user_->urn))
+                        @if (requestReceiveable($user_->urn))
+                            <x-gbutton variant="primary" :full-width="true"
+                                wire:click="openModal('{{ $user_->urn }}')">Request</x-gbutton>
                         @else
                             <x-gbutton variant="primary" :full-width="true" disabled
                                 class="!cursor-not-allowed !py-3">Request
                                 Later</x-gbutton>
-                        @endif --}}
+                        @endif
 
                     </div>
                 @empty

@@ -327,7 +327,7 @@ class Member extends Component
             $this->showModal = false;
             return;
         }
-        if (!requestReceiveable($this->user->urn)) {
+        if (requestReceiveable($this->user->urn)) {
             $this->showModal = true;
             $this->activeTab = 'tracks';
 
@@ -383,7 +383,7 @@ class Member extends Component
             $this->selectedMusicId = $musicId;
             $this->music = Track::find($musicId);
         }
-        
+
         $this->showRepostsModal = true;
     }
 
