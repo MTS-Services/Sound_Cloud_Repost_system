@@ -39,7 +39,8 @@ class FeatureController extends Controller implements HasMiddleware
             new Middleware('permission:feature-list', only: ['index']),
             new Middleware('permission:feature-create', only: ['create', 'store']),
             new Middleware('permission:feature-edit', only: ['edit', 'update']),
-            new Middleware('permission:feature-permanent-delete', only: ['permanentDelete']),
+            new Middleware('permission:feature-delete', only: ['destroy']),
+            new Middleware('permission:feature-status', only: ['status']),
         ];
     }
 

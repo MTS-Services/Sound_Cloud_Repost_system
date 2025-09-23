@@ -7,9 +7,22 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DatatableOrderRequest;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class DatatableController extends Controller
+class DatatableController extends Controller implements HasMiddleware
 {
+
+      public static function middleware(): array
+    {
+        return [
+            'auth:admin', // Applies 'auth:admin' to all methods
+
+            // Permission middlewares using the Middleware class
+            new Middleware('permission:feature-edit', only: ['updateSortOrder']),
+         
+        ];
+    }
     public function updateSortOrder(DatatableOrderRequest $request): JsonResponse
     {
         try {

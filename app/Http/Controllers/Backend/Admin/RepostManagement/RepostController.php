@@ -43,12 +43,6 @@ class RepostController extends Controller implements HasMiddleware
             // Permission middlewares using the Middleware class
             new Middleware('permission:repost-list', only: ['index']),
             new Middleware('permission:repost-details', only: ['show']),
-            new Middleware('permission:repost-create', only: ['create', 'store']),
-            new Middleware('permission:repost-edit', only: ['edit', 'update']),
-            new Middleware('permission:repost-delete', only: ['destroy']),
-            new Middleware('permission:repost-trash', only: ['trash']),
-            new Middleware('permission:repost-restore', only: ['restore']),
-            new Middleware('permission:repost-permanent-delete', only: ['permanentDelete']),
             //add more permissions if needed
         ];
     }

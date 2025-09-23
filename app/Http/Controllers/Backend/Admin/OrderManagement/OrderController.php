@@ -8,12 +8,26 @@ use App\Models\Order;
 use App\Services\Admin\OrderManagement\OrderService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Yajra\DataTables\Facades\DataTables;
 
-class OrderController extends Controller
+class OrderController extends Controller  implements HasMiddleware
 {
     protected OrderService $orderService;
 
+    public static function middleware(): array
+    {
+        return [
+            'auth:admin', // Applies 'auth:admin' to all methods
+
+            // Permission middlewares using the Middleware class
+            new Middleware('permission:order-list', only: ['index']),
+            new Middleware('permission:order-details', only: ['show']),      
+            new Middleware('permission:order-status', only: ['status']),  
+            //add more permissions if needed
+        ];
+    }
     public function __construct(OrderService $orderService)
     {
         $this->orderService = $orderService;

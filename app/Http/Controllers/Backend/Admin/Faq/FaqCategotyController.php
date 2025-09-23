@@ -47,14 +47,14 @@ class FaqCategotyController extends Controller implements HasMiddleware
             'auth:admin', // Applies 'auth:admin' to all methods
 
             // Permission middlewares using the Middleware class
-            new Middleware('permission:FaqCategory-list', only: ['index']),
-            new Middleware('permission:FaqCategory-details', only: ['show']),
-            new Middleware('permission:FaqCategory-create', only: ['create', 'store']),
-            new Middleware('permission:FaqCategory-edit', only: ['edit', 'update']),
-            new Middleware('permission:FaqCategory-delete', only: ['destroy']),
-            new Middleware('permission:FaqCategory-trash', only: ['trash']),
-            new Middleware('permission:FaqCategory-restore', only: ['restore']),
-            new Middleware('permission:FaqCategory-permanent-delete', only: ['permanentDelete']),
+            new Middleware('permission:faqCategory-list', only: ['index']),
+            new Middleware('permission:faqCategory-details', only: ['show']),
+            new Middleware('permission:faqCategory-create', only: ['create', 'store']),
+            new Middleware('permission:faqCategory-edit', only: ['edit', 'update']),
+            new Middleware('permission:faqCategory-delete', only: ['destroy']),
+            new Middleware('permission:faqCategory-trash', only: ['trash']),
+            new Middleware('permission:faqCategory-restore', only: ['restore']),
+            new Middleware('permission:faqCategory-permanent-delete', only: ['permanentDelete']),
             //add more permissions if needed
         ];
     }
@@ -100,7 +100,7 @@ class FaqCategotyController extends Controller implements HasMiddleware
                 'data-id' => encrypt($model->id),
                 'className' => 'view',
                 'label' => 'Details',
-                'permissions' => ['permission-list', 'permission-delete', 'permission-status']
+                'permissions' => ['permission-details']
             ],
             [
                 'routeName' => 'fm.faq-category.edit',
