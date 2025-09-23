@@ -327,7 +327,7 @@ class Member extends Component
             $this->showModal = false;
             return;
         }
-        if ($this->user->request_receiveable) {
+        if (requestReceiveable($this->user->urn)) {
             $this->showModal = true;
             $this->activeTab = 'tracks';
 
