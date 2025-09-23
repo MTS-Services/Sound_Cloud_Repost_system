@@ -205,7 +205,7 @@ class PaymentController extends Controller
             return view('backend.admin.payments.success', compact('payment', 'paymentIntent'));
         } catch (\Exception $e) {
             Log::error('Payment success handling failed: ' . $e->getMessage());
-            return redirect()->route('user.payment.form')->with('error', 'Payment verification failed');
+            return redirect()->route('user.payment.form', $order->id)->with('error', 'Payment verification failed');
         }
     }
 
