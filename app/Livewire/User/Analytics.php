@@ -50,7 +50,7 @@ class Analytics extends Component
     {
         $this->filterOptions = $this->analyticsService->getFilterOptions();
         $this->userGenres = $this->fetchUserGenres();
-        $this->selectedGenres = request()->query('selectedGenres', 'Any Genre');
+        $this->selectedGenres = request()->has('selectedGenres') ? request()->query('selectedGenres', $this->userGenres) : 'Any Genre';
         $this->loadData();
         $this->loadAdditionalData();
         $this->getChartData();
