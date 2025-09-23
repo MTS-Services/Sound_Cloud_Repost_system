@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             // PlaylistSeeder::class,
             // CampaignSeeder::class,
             // RepostRequestSeeder::class,
-            // CreditSeeder::class,
+            CreditSeeder::class,
             // UserInformationSeeder::class,
             // RepostSeeder::class,
             FaqCategorySeeder::class,
