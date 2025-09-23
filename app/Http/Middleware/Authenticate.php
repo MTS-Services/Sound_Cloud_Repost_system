@@ -45,7 +45,7 @@ class Authenticate extends Middleware
 
             if ($user->genres()->count() == 0) {
                 // return redirect()->route('user.genre.add');
-                if (!$request->routeIs('user.email.add') && !$request->routeIs('user.email.store') && $request->routeIs('user.dashboard')) {
+                if (!$request->routeIs('user.email.add') && !$request->routeIs('user.email.store') || $request->routeIs('user.dashboard')) {
                     return redirect()->route('user.email.add');
                 }
             }
