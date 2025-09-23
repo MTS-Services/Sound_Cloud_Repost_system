@@ -100,7 +100,7 @@ class FaqCategotyController extends Controller implements HasMiddleware
                 'data-id' => encrypt($model->id),
                 'className' => 'view',
                 'label' => 'Details',
-                'permissions' => ['permission-list', 'permission-delete', 'permission-status']
+                'permissions' => ['permission-details']
             ],
             [
                 'routeName' => 'fm.faq-category.edit',

@@ -9,10 +9,10 @@
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Faq Category List') }}</h2>
                 <div class="flex items-center gap-2">
                     <x-button href="{{ route('fm.faq-category.trash') }}" icon="trash-2" type='secondary'
-                        permission="Faq-trash">
+                        permission="faqCategory-trash">
                         {{ __('Trash') }}
                     </x-button>
-                    <x-button href="{{ route('fm.faq-category.create') }}" icon="plus" permission="faq_category-create">
+                    <x-button href="{{ route('fm.faq-category.create') }}" icon="plus" permission="faqCategory-create">
                         {{ __('Add') }}
                     </x-button>
                 </div>
