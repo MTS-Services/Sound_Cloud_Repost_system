@@ -67,8 +67,6 @@ class SoundCloudController extends Controller
 
             Auth::guard('web')->login($user, true);
 
-            $this->followerAnalyzer->syncUserRealFollowers($this->soundCloudService->getAuthUserFollowers(), $user);
-
             return redirect()->intended(route('user.my-account', absolute: false))
                 ->with('success', 'Successfully connected to SoundCloud!');
         } catch (\Exception $e) {

@@ -82,6 +82,7 @@ class MyAccount extends Component
 
         $currentWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'this_month');
         $lastWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'last_month');
+        $this->followerAnalyzer->syncUserRealFollowers($followers, $user);
 
         $currentWeekFollowers = $currentWeekStats['totalFollowers'];
         $lastWeekFollowers = $lastWeekStats['totalFollowers'];
@@ -103,6 +104,8 @@ class MyAccount extends Component
             $this->showPlaylistTracks = true;
         }
         $this->socialLinks();
+
+
     }
 
     public function updated()
