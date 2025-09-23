@@ -349,6 +349,11 @@ class AnalyticsService
 
         $query->select([
             'source_id',
+            'source_type',
+            'actionable_id',
+            'actionable_type',
+            'act_user_urn',
+            'owner_user_urn',
             DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 END) as total_views'),
             DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_plays'),
             DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_likes'),
@@ -359,7 +364,7 @@ class AnalyticsService
         ]);
 
         // Apply groupBy and orderBy, then paginate directly from the query builder
-        $paginatedSourceData = $query->groupBy('source_id')
+        $paginatedSourceData = $query->groupBy('source_id', 'source_type', 'actionable_id', 'actionable_type', 'act_user_urn', 'owner_user_urn')
             ->orderByDesc('total_views')
             ->orderByDesc('total_reposts')
             ->paginate($perPage, ['*'], $pageName, $page);
