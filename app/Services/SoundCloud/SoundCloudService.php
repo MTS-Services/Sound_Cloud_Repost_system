@@ -824,8 +824,9 @@ class SoundCloudService
     {
         $response = null;
         if (!$user) {
+            $user = user();
             $response = $this->makeApiRequest(
-                user(),
+                $user,
                 'get',
                 "/me/followers",
                 [],

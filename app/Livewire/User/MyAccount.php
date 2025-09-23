@@ -76,22 +76,22 @@ class MyAccount extends Component
     public function mount($user_name = null): void
     {
         $user = $user_name ? User::where('name', $user_name)->first() : user(); //User::where('name', $user_name)->first()
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
-        $followers = $this->soundCloudService->getAuthUserFollowers($user);
-        $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($followers);
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $followers = $this->soundCloudService->getAuthUserFollowers($user);
+        // $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($followers);
 
-        $currentWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'this_month');
-        $lastWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'last_month');
-        // $this->followerAnalyzer->syncUserRealFollowers($followers, $user);
+        // $currentWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'this_month');
+        // $lastWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'last_month');
+        // // $this->followerAnalyzer->syncUserRealFollowers($followers, $user);
 
-        $currentWeekFollowers = $currentWeekStats['totalFollowers'];
-        $lastWeekFollowers = $lastWeekStats['totalFollowers'];
+        // $currentWeekFollowers = $currentWeekStats['totalFollowers'];
+        // $lastWeekFollowers = $lastWeekStats['totalFollowers'];
 
-        if ($lastWeekFollowers > 0) {
-            $this->followerGrowth = ((($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100) > 0 ? ((($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100) : 0;
-        } else {
-            $this->followerGrowth = 0; // Avoid division by zero
-        }
+        // if ($lastWeekFollowers > 0) {
+        //     $this->followerGrowth = ((($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100) > 0 ? ((($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100) : 0;
+        // } else {
+        //     $this->followerGrowth = 0; // Avoid division by zero
+        // }
 
         $this->activeTab = request()->query('tab', $this->activeTab);
 
