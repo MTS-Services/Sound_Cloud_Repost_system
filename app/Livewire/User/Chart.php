@@ -47,7 +47,7 @@ class Chart extends Component
 
     public function getPaginatedSourceData(): LengthAwarePaginator
     {
-        try {
+        // try {
             $sources =  $this->analyticsService->getPaginatedAnalytics(
                 filter: 'last_week',
                 dateRange: null,
@@ -57,10 +57,10 @@ class Chart extends Component
                 actionableType: Campaign::class
             );
             return $sources;
-        } catch (\Throwable $e) {
-            Log::error('Paginated source data loading failed', ['error' => $e->getMessage()]);
-            return new LengthAwarePaginator([], 0, $this->sourcesPerPage, $this->getPage());
-        }
+        // } catch (\Throwable $e) {
+        //     Log::error('Paginated source data loading failed', ['error' => $e->getMessage()]);
+        //     return new LengthAwarePaginator([], 0, $this->sourcesPerPage, $this->getPage());
+        // }
     }
 
     public function setActiveTab($tab)
