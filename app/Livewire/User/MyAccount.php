@@ -75,6 +75,7 @@ class MyAccount extends Component
 
     public function mount($user_name = null): void
     {
+        dd('my account. user:', user());
         $user = $user_name ? User::where('name', $user_name)->first() : user();
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $followers = $this->soundCloudService->getAuthUserFollowers();
