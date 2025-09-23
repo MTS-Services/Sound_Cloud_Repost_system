@@ -110,7 +110,6 @@ class ProfileController extends Controller
 
     public function emailAdd(): View
     {
-        dd(user());
         $user = user()->load('userInfo');
         return view('backend.user.profile.email-add', compact('user'));
     }
