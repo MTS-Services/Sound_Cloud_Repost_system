@@ -132,7 +132,7 @@ class Dashboard extends Component
     // Confirmation Repost
     public $request = null;
     public bool $liked = false;
-    public bool $commented = false;
+    public string $commented = '';
     public bool $followed = true;
 
     // Search configuration

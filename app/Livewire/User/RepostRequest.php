@@ -40,7 +40,7 @@ class RepostRequest extends Component
     public $totalRepostPrice = 0;
     public $request = null;
     public $liked = false;
-    public $commented = false;
+    public string $commented = '';
     public $followed = true;
 
 

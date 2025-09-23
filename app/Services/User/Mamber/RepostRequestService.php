@@ -52,7 +52,7 @@ class RepostRequestService
         return RepostRequest::self()->whereMonth('created_at', now()->month)->whereNull('campaign_id')->count();
     }
 
-    public function handleRepost(int $requestId, bool $commented, bool $liked, bool $followed): array
+    public function handleRepost(int $requestId, string $commented, bool $liked, bool $followed): array
     {
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
@@ -84,35 +84,23 @@ class RepostRequestService
 
             $commentSoundcloud = [
                 'comment' => [
-                    'body' => $commented ? 'Auto comment' : '',
+                    'body' => $commented,
                     'timestamp' => time()
                 ]
             ];
 
             // Send SoundCloud actions
             if ($request->music_type == Track::class) {
-                $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$request->$musicUrn}");
-                $comment_response = $commented
-                    ? $httpClient->post("{$this->baseUrl}/tracks/{$request->$musicUrn}/comments", $commentSoundcloud)
-                    : null;
-
-                $like_response = $liked
-                    ? $httpClient->post("{$this->baseUrl}/likes/tracks/{$request->$musicUrn}")
-                    : null;
+                $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$musicUrn}");
+                $comment_response = $commented ? $httpClient->post("{$this->baseUrl}/tracks/{$musicUrn}/comments", $commentSoundcloud) : null;
+                $like_response = $liked ? $httpClient->post("{$this->baseUrl}/likes/tracks/{$musicUrn}") : null;
             } elseif ($request->music_type == Playlist::class) {
-                $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$request->$musicUrn}");
-                $comment_response = $commented
-                    ? $httpClient->post("{$this->baseUrl}/playlists/{$request->$musicUrn}/comments", $commentSoundcloud)
-                    : null;
-
-                $like_response = $liked
-                    ? $httpClient->post("{$this->baseUrl}/likes/playlists/{$request->$musicUrn}")
-                    : null;
+                $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$musicUrn}");
+                $comment_response = $commented ? $httpClient->post("{$this->baseUrl}/playlists/{$musicUrn}/comments", $commentSoundcloud) : null;
+                $like_response = $liked ? $httpClient->post("{$this->baseUrl}/likes/playlists/{$musicUrn}") : null;
             }
 
-            $follow_response = $followed
-                ? $httpClient->put("{$this->baseUrl}/me/followings/{$request->requester_urn}")
-                : null;
+            $follow_response = $followed ? $httpClient->put("{$this->baseUrl}/me/followings/{$request->requester_urn}") : null;
 
             if (!$response->successful()) {
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [
