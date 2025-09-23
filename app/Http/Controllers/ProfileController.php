@@ -125,8 +125,8 @@ class ProfileController extends Controller implements HasMiddleware
 
     public function emailAdd(): View
     {
+        dd(user());
         $user = user()->load('userInfo');
-        dd($user);
         return view('backend.user.profile.email-add', compact('user'));
     }
 
