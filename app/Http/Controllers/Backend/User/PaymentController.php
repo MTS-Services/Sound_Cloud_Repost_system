@@ -171,7 +171,7 @@ class PaymentController extends Controller
                     'description' => 'Purchased ' . $order->credits . ' credits for ' . $order->amount . ' ' . $payment->currency,
                     'creater_id' => $order->creater_id,
                     'creater_type' => $order->creater_type,
-
+                    'status' => CreditTransaction::STATUS_SUCCEEDED,
                 ]);
 
                 $userNotification = CustomNotification::create([
