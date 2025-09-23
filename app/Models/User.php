@@ -42,7 +42,9 @@ class User extends AuthBaseModel implements MustVerifyEmail
         'email',
         'last_seen_at',
 
-
+        'real_followers',
+        'real_followers_percentage',
+        
         'creater_id',
         'creater_type',
         'updater_id',
