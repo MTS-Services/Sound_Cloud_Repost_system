@@ -54,5 +54,7 @@ class Authenticate extends Middleware
             return parent::handle($request, $next, ...$guards);
         }
         Log::info('User authenticated');
+
+        return $next($request);
     }
 }
