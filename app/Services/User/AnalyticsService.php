@@ -783,7 +783,7 @@ class AnalyticsService
     /**
      * Get genre performance breakdown
      */
-    public function getGenreBreakdown(?string $filter = 'last_week', ?array $dateRange = null, ?array $genres = null): array
+    public function   getGenreBreakdown(?string $filter = 'last_week', ?array $dateRange = null, ?array $genres = null): array
     {
         $userUrn = user()->urn;
 
