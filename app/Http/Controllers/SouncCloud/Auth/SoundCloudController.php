@@ -22,12 +22,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
+use App\Services\SoundCloud\FollowerAnalyzer;
+
 
 use Throwable;
 
 class SoundCloudController extends Controller
 {
-    public function __construct(protected SoundCloudService $soundCloudService) {}
+    public function __construct(protected SoundCloudService $soundCloudService, protected FollowerAnalyzer $followerAnalyzer)
+    {
+    }
 
     public function redirect(): RedirectResponse
     {
@@ -126,6 +130,8 @@ class SoundCloudController extends Controller
                 $this->soundCloudService->syncUserPlaylists($user);
                 Log::info('SoundCloud sync started for syncUserInformation');
                 $this->soundCloudService->syncUserInformation($user, $soundCloudUser);
+                Log::info('SoundCloud sync started for analyzeFollowers');
+                $this->followerAnalyzer->syncUserRealFollowers($this->soundCloudService->getAuthUserFollowers($user), $user);
             });
         } catch (Throwable $e) {
             Log::error('SoundCloud sync error', [

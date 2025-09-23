@@ -677,4 +677,30 @@ class FollowerAnalyzer
         $this->weights = array_merge($this->weights, $weights);
         return $this;
     }
+
+
+    public function syncUserRealFollowers($followers, $user)
+    {
+        // Fetch followers from SoundCloud API
+
+
+        if (empty($followers)) {
+            $user->real_followers = 0;
+            $user->real_followers_percentage = 100;
+            $user->save();
+            return;
+        }
+
+        // Analyze and separate followers
+        $followers = $this->separateFollowers($followers);
+
+        // Update user with real follower count
+        $user->real_followers = $followers['counts']['real'];
+        $user->real_followers_percentage = $followers['counts']['realPercentage'];
+        $user->save();
+
+        // Optionally, store detailed analysis in a related table or cache
+        // For simplicity, we'll just log the summary here
+        \Log::info('Follower analysis summary for user ' . $user->id, $followers['counts']);
+    }
 }

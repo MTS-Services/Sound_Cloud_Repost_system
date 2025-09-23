@@ -44,7 +44,7 @@ class User extends AuthBaseModel implements MustVerifyEmail
 
         'real_followers',
         'real_followers_percentage',
-        
+
         'creater_id',
         'creater_type',
         'updater_id',
@@ -209,41 +209,7 @@ class User extends AuthBaseModel implements MustVerifyEmail
             'modified_image',
             'is_pro',
             'repost_price',
-            'real_followers',
         ]);
-    }
-
-    // public function __construct(array $attributes = [], FollowerAnalyzer $followerAnalyzer = null, SoundCloudService $soundCloudService = null)
-    // {
-    //     parent::__construct($attributes);
-
-    //     // Check if dependencies were injected via the container
-    //     if ($followerAnalyzer === null) {
-    //         $followerAnalyzer = app(FollowerAnalyzer::class);
-    //     }
-    //     if ($soundCloudService === null) {
-    //         $soundCloudService = app(SoundCloudService::class);
-    //     }
-
-    //     // Call the trait's constructor to initialize the properties
-    //     $this->bootUserModificationTrait($followerAnalyzer, $soundCloudService);
-
-    //     $this->appends = array_merge(parent::getAppends(), [
-    //         'status_label',
-    //         'status_color',
-    //         'status_btn_label',
-    //         'status_btn_color',
-    //         'modified_image',
-    //         'is_pro',
-    //         'repost_price',
-    //         'real_followers',
-    //     ]);
-    // }
-
-    protected function bootUserModificationTrait(FollowerAnalyzer $followerAnalyzer, SoundCloudService $soundCloudService)
-    {
-        $this->followerAnalyzer = $followerAnalyzer;
-        $this->soundCloudService = $soundCloudService;
     }
 
     public const STATUS_ACTIVE = 1;
@@ -348,13 +314,6 @@ class User extends AuthBaseModel implements MustVerifyEmail
 
     public function getRepostPriceAttribute()
     {
-        // return $this->userRepostPrice($this);
-        return 1;
-    }
-
-    public function getRealFollowersAttribute()
-    {
-        // return $this->userRealFollowers($this);
-        return 10;
+        return $this->real_followers && ceil($this->real_followers / 100) > 0 ? ceil($this->real_followers / 100) : 1;
     }
 }
