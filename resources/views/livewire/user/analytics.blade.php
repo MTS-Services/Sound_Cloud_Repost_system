@@ -841,7 +841,9 @@
                                             class="text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-[#ff6b35] transition-colors">
                                             {{ $source['source']['title'] }}
                                         </p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">You</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate capitalize">
+                                            {{ $source['source_type'] == App\Models\Track::class ? 'Track' : 'Playlist' }}
+                                        </p>
                                     </div>
                                     <div class="flex items-center ml-4">
                                         <span
@@ -1019,11 +1021,12 @@
         </div>
 
         <!-- Track Performance Table with Pagination -->
-        {{-- <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
             <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Your Tracks Performance</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Detailed analytics for all your released
-                    tracks
+                    tracks and playlists over <span
+                        class="font-medium text-gray-900 dark:text-white">{{ $this->getFilterText() }} period.</span>
                 </p>
             </div>
             <div class="overflow-x-auto">
@@ -1061,7 +1064,7 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                        @forelse($paginatedTracks as $track)
+                        @forelse($paginatedSources as $source)
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
@@ -1070,23 +1073,25 @@
                                         </div>
                                         <div>
                                             <div class="text-sm font-medium text-gray-900 dark:text-white">
-                                                {{ $track['track_details']->title ?? 'Unknown Track' }}
+                                                {{ $source['source_details']->title ?? 'Unknown Track' }}
                                             </div>
                                             <div class="text-sm text-gray-500 dark:text-gray-400">
-                                                {{ $track['track_details']->genre ?? 'Unknown' }} • You
+                                                {{ $source['source_details']->genre ?? 'Unknown' }} •
+                                                <span
+                                                    class="capitalize text-xs text-gray-500 dark:text-gray-400">{{ $source['source_type'] == App\Models\Track::class ? 'Track' : 'Playlist' }}</span>
                                             </div>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-bold text-gray-900 dark:text-white">
-                                        {{ number_shorten($track['metrics']['total_views']['current_total']) }}
+                                        {{ number_shorten($source['metrics']['total_views']['current_total']) }}
                                     </div>
                                     <div class="text-xs text-gray-500 dark:text-gray-400">streams</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @php
-                                        $changeRate = $track['metrics']['total_views']['change_rate'];
+                                        $changeRate = $source['metrics']['total_views']['change_rate'];
                                         $changeClass = $this->getChangeClass($changeRate);
                                         $changeIcon = $this->getChangeIcon($changeRate);
                                     @endphp
@@ -1122,23 +1127,23 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div class="text-sm font-bold text-gray-900 dark:text-white">
-                                            {{ number_format($track['engagement_rate'], 2) }}%
+                                            {{ number_format($source['engagement_rate'], 2) }}%
                                         </div>
                                         <div class="ml-2 w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                                             <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] h-2 rounded-full transition-all duration-300 max-w-full"
-                                                style="width: {{ $track['engagement_rate'] }}%;"></div>
+                                                style="width: {{ $source['engagement_rate'] }}%;"></div>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                    {{ number_shorten($track['metrics']['total_likes']['current_total']) }}
+                                    {{ number_shorten($source['metrics']['total_likes']['current_total']) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                    {{ number_shorten($track['metrics']['total_reposts']['current_total']) }}
+                                    {{ number_shorten($source['metrics']['total_reposts']['current_total']) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900 dark:text-white">
-                                        {{ Carbon\Carbon::parse($track['track_details']->created_at_soundcloud)->format('d M, Y h:i A') ?? 'Unknown' }}
+                                        {{ Carbon\Carbon::parse($source['source_type'] == App\Models\Track::class ? $source['source_details']->created_at_soundcloud : $source['source_details']->soundcloud_created_at)->format('d M, Y h:i A') ?? 'Unknown' }}
                                     </div>
                                 </td>
                             </tr>
@@ -1151,8 +1156,9 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M9 19V6l12-2v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-2c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-2" />
                                         </svg>
-                                        <p class="text-lg font-medium">No tracks found</p>
-                                        <p class="text-sm mt-2">Upload your first track to start tracking performance!
+                                        <p class="text-lg font-medium">No tracks or playlists found</p>
+                                        <p class="text-sm mt-2">Upload your first track or playlist to start tracking
+                                            performance!
                                         </p>
                                     </div>
                                 </td>
@@ -1162,33 +1168,32 @@
                 </table>
             </div>
 
-            @if ($paginatedTracks instanceof \Illuminate\Pagination\LengthAwarePaginator && $paginatedTracks->hasPages())
+            @if ($paginatedSources instanceof \Illuminate\Pagination\LengthAwarePaginator && $paginatedSources->hasPages())
                 <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                            Showing {{ $paginatedTracks->firstItem() ?? 0 }} to
-                            {{ $paginatedTracks->lastItem() ?? 0 }}
-                            of {{ $paginatedTracks->total() }} tracks
+                            Showing {{ $paginatedSources->firstItem() ?? 0 }} to
+                            {{ $paginatedSources->lastItem() ?? 0 }}
+                            of {{ $paginatedSources->total() }} source
                         </div>
                         <div class="flex items-center space-x-2">
-                            @if ($paginatedTracks->onFirstPage())
+                            @if ($paginatedSources->onFirstPage())
                                 <span
                                     class="px-3 py-2 text-sm text-gray-400 dark:text-gray-500 cursor-not-allowed">Previous</span>
                             @else
-                                <button wire:click="previousPage"
+                                <button wire:click="previousPage('{{ $pageName }}')"
                                     class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                     Previous
                                 </button>
                             @endif
-
                             <div class="flex items-center space-x-1">
                                 @php
-                                    $start = max(1, $paginatedTracks->currentPage() - 2);
-                                    $end = min($paginatedTracks->lastPage(), $paginatedTracks->currentPage() + 2);
+                                    $start = max(1, $paginatedSources->currentPage() - 2);
+                                    $end = min($paginatedSources->lastPage(), $paginatedSources->currentPage() + 2);
                                 @endphp
 
                                 @if ($start > 1)
-                                    <button wire:click="gotoPage(1)"
+                                    <button wire:click="gotoPage(1, '{{ $pageName }}')"
                                         class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                         1
                                     </button>
@@ -1198,30 +1203,30 @@
                                 @endif
 
                                 @for ($page = $start; $page <= $end; $page++)
-                                    @if ($page == $paginatedTracks->currentPage())
+                                    @if ($page == $paginatedSources->currentPage())
                                         <span
                                             class="px-3 py-2 text-sm bg-[#ff6b35] text-white rounded-lg">{{ $page }}</span>
                                     @else
-                                        <button wire:click="gotoPage({{ $page }})"
+                                        <button wire:click="gotoPage({{ $page }}, '{{ $pageName }}')"
                                             class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                             {{ $page }}
                                         </button>
                                     @endif
                                 @endfor
 
-                                @if ($end < $paginatedTracks->lastPage())
-                                    @if ($end < $paginatedTracks->lastPage() - 1)
+                                @if ($end < $paginatedSources->lastPage())
+                                    @if ($end < $paginatedSources->lastPage() - 1)
                                         <span class="px-2 text-gray-400">...</span>
                                     @endif
-                                    <button wire:click="gotoPage({{ $paginatedTracks->lastPage() }})"
+                                    <button wire:click="gotoPage({{ $paginatedSources->lastPage() }}, '{{ $pageName }}')"
                                         class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                                        {{ $paginatedTracks->lastPage() }}
+                                        {{ $paginatedSources->lastPage() }}
                                     </button>
                                 @endif
                             </div>
 
-                            @if ($paginatedTracks->hasMorePages())
-                                <button wire:click="nextPage"
+                            @if ($paginatedSources->hasMorePages())
+                                <button wire:click="nextPage('{{ $pageName }}')"
                                     class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                     Next
                                 </button>
@@ -1233,7 +1238,7 @@
                     </div>
                 </div>
             @endif
-        </div> --}}
+        </div>
 
         @push('js')
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
