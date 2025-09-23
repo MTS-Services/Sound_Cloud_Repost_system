@@ -368,7 +368,6 @@ class AnalyticsService
             ->orderByDesc('total_views')
             ->orderByDesc('total_reposts')
             ->paginate($perPage, ['*'], $pageName, $page);
-        dd($paginatedSourceData);
         // Get the list of source IDs for the current page
         $sourceIdsList = $paginatedSourceData->pluck('source_id')->toArray();
 
