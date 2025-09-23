@@ -121,7 +121,6 @@ class MyAccount extends Component
         }
         Log::info('MyAccount mount. step 20');
         $this->socialLinks();
-        dd($this->socialLinks(), 'user:', user());
     }
 
     public function updated()
