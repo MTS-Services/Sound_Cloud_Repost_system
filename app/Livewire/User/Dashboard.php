@@ -402,8 +402,7 @@ class Dashboard extends Component
     {
         try {
             $this->soundCloudService->syncSelfPlaylists();
-
-            // Get all playlists first
+            
             $this->allPlaylists = Playlist::where('user_urn', user()->urn)
                 ->latest()
                 ->get();
