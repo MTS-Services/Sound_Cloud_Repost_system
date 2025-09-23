@@ -36,6 +36,9 @@ return new class extends Migration {
             $table->bigInteger('expires_in')->nullable()->index();
             $table->string('urn')->unique();
 
+            $table->unsignedBigInteger('real_followers')->default(0);
+            $table->unsignedBigInteger('real_followers_percentage')->default(0);
+
             $table->timestamp('last_synced_at')->nullable()->index();
             $table->rememberToken();
             $table->timestamps();
