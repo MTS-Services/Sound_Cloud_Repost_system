@@ -124,7 +124,7 @@ user-plane-status,admin,UserPlan
 feature-edit,admin,Feature
 
 payment-create,admin,Payment
-payment-details,admin,Payment
+payment-show,admin,Payment
 payment-success,admin,Payment
 payment-cancel,admin,Payment
 
