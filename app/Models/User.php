@@ -42,7 +42,9 @@ class User extends AuthBaseModel implements MustVerifyEmail
         'email',
         'last_seen_at',
 
-
+        'real_followers',
+        'real_followers_percentage',
+        
         'creater_id',
         'creater_type',
         'updater_id',
@@ -149,20 +151,20 @@ class User extends AuthBaseModel implements MustVerifyEmail
     }
     public function debitTransactions(): HasMany
     {
-        return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn')->where('calculation_type', CreditTransaction::CALCULATION_TYPE_DEBIT);
+        return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn')->where('calculation_type', CreditTransaction::CALCULATION_TYPE_DEBIT)->succeeded();
     }
     public function creditTransactions(): HasMany
     {
-        return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn')->where('calculation_type', CreditTransaction::CALCULATION_TYPE_CREDIT);
+        return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn')->where('calculation_type', CreditTransaction::CALCULATION_TYPE_CREDIT)->succeeded();
     }
     public function succedDebitTransactions()
     {
-        return $this->debitTransactions()->succeeded();
+        return $this->debitTransactions();
     }
 
     public function succedCreditTransactions()
     {
-        return $this->creditTransactions()->succeeded();
+        return $this->creditTransactions();
     }
 
 
