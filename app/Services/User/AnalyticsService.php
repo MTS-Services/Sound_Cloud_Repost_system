@@ -329,16 +329,7 @@ class AnalyticsService
         $periods = $this->calculatePeriods($filter, $dateRange);
 
         // Build the base query for aggregated track data
-        $query = UserAnalytics::select([
-            'source_id',
-            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 END) as total_views'),
-            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_plays'),
-            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_likes'),
-            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 END) as total_reposts'),
-            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_COMMENT . ' THEN 1 END) as total_comments'),
-            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REQUEST . ' THEN 1 END) as total_requests'),
-            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 END) as total_followers'),
-        ]);
+        $query = UserAnalytics::query();
 
         if ($userUrn !== null) {
             $query->where('owner_user_urn', $userUrn);
@@ -354,6 +345,17 @@ class AnalyticsService
         if ($genres) {
             $query->forGenres($genres);
         }
+
+        $query->select([
+            'source_id',
+            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 END) as total_views'),
+            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_plays'),
+            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_likes'),
+            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 END) as total_reposts'),
+            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_COMMENT . ' THEN 1 END) as total_comments'),
+            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REQUEST . ' THEN 1 END) as total_requests'),
+            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 END) as total_followers'),
+        ]);
 
         // Apply groupBy and orderBy, then paginate directly from the query builder
         $paginatedSourceData = $query->groupBy('source_id')
@@ -394,7 +396,7 @@ class AnalyticsService
         })->toArray();
 
         $analytics = $this->buildComparisonResultBySource($currentMetricsBySource, $previousMetricsBySource);
- 
+
         return new LengthAwarePaginator(
             $analytics,
             $paginatedSourceData->total(),
