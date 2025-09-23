@@ -167,7 +167,7 @@ class PaymentController extends Controller
                     'source_id' => $order->id,
                     'source_type' => Order::class,
                     'amount' => $order->amount,
-                    'credits' => $order->credits,
+                    'credits' => $order->credits ?? 0,
                     'description' => 'Purchased ' . $order->credits . ' credits for ' . $order->amount . ' ' . $payment->currency,
                     'creater_id' => $order->creater_id,
                     'creater_type' => $order->creater_type,
