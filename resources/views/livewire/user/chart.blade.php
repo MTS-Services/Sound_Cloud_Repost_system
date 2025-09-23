@@ -283,7 +283,6 @@
                                                     <polygon points="5 3 19 12 5 21 5 3"></polygon>
                                                 </svg>
                                             </button>
-                                            @dd($source)
                                             <button
                                                 wire:click="likeSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']->id) }}')"
                                                 class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white {{ $source['like'] ? 'bg-red-500 text-white shadow-lg' : '' }}"><svg
