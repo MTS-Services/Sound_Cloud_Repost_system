@@ -32,7 +32,7 @@ class UserAnalytics extends BaseModel
         self::TYPE_FOLLOW => 'Follow',
     ];
 
-    protected $with = ['ownerUser', 'actUser', 'source'];
+    protected $with = ['ownerUser', 'actUser', 'source', 'actionable'];
 
     protected $fillable = [
         'owner_user_urn',
