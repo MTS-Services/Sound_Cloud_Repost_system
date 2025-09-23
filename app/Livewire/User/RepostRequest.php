@@ -375,15 +375,15 @@ class RepostRequest extends Component
                         'credits_earned' => (float) user()->repost_price,
                         // Add other necessary fields based on your Repost model
                     ]);
-                    if ($this->commented) {
-                        $repost->increment('comment_count', 1);
-                    }
-                    if ($this->liked) {
-                        $repost->increment('like_count', 1);
-                    }
-                    if ($this->followed) {
-                        $repost->increment('followowers_count', 1);
-                    }
+                    // if ($this->commented) {
+                    //     $repost->increment('comment_count', 1);
+                    // }
+                    // if ($this->liked) {
+                    //     $repost->increment('like_count', 1);
+                    // }
+                    // if ($this->followed) {
+                    //     $repost->increment('followowers_count', 1);
+                    // }
 
                     $request->update([
                         'status' => ModelsRepostRequest::STATUS_APPROVED,
