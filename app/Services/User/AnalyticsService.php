@@ -96,7 +96,7 @@ class AnalyticsService
 
             ],
             [
-                'genre' => $genre,
+                'genre' => $genre == '' ? 'anyGenre' : $genre,
             ]
 
         );
