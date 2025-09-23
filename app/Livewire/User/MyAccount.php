@@ -75,15 +75,23 @@ class MyAccount extends Component
 
     public function mount($user_name = null): void
     {
-        dd('my account. user:', user());
+        Log::info('MyAccount mount. step 1');
         $user = $user_name ? User::where('name', $user_name)->first() : user();
+        Log::info('MyAccount mount. step 2');
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        Log::info('MyAccount mount. step 3');
         $followers = $this->soundCloudService->getAuthUserFollowers();
+        Log::info('MyAccount mount. step 4');
         $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($followers);
+        Log::info('MyAccount mount. step 5');
 
+        Log::info('MyAccount mount. step 6');
         $currentWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'this_month');
+        Log::info('MyAccount mount. step 7');
         $lastWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'last_month');
-        $this->followerAnalyzer->syncUserRealFollowers($followers, $user);
+        Log::info('MyAccount mount. step 8');
+        $analyze = $this->followerAnalyzer->syncUserRealFollowers($followers, $user);
+        dd('my account. user:', user(), 'followers:', $followers, 'currentWeekStats:', $currentWeekStats, 'lastWeekStats:', $lastWeekStats, 'followerGrowth:', $this->followerGrowth, 'analyze:', $analyze);
 
         $currentWeekFollowers = $currentWeekStats['totalFollowers'];
         $lastWeekFollowers = $lastWeekStats['totalFollowers'];
@@ -105,8 +113,6 @@ class MyAccount extends Component
             $this->showPlaylistTracks = true;
         }
         $this->socialLinks();
-
-
     }
 
     public function updated()
