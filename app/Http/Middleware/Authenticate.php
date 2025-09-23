@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class Authenticate extends Middleware
@@ -44,13 +45,15 @@ class Authenticate extends Middleware
 
             if ($user->genres()->count() == 0) {
                 // return redirect()->route('user.genre.add');
-                if (!$request->routeIs('user.email.add') && !$request->routeIs('user.email.store')) {
+                if (!$request->routeIs('user.email.add') && !$request->routeIs('user.email.store') && $request->routeIs('user.dashboard')) {
                     dd($user);
                     return redirect()->route('user.email.add');
                 }
             }
+        } else {
+            Log::info('User not authenticated');
+            return parent::handle($request, $next, ...$guards);
         }
-
-        return parent::handle($request, $next, ...$guards);
+        Log::info('User authenticated');
     }
 }
