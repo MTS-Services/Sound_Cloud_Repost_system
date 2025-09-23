@@ -57,7 +57,7 @@
                             <div class="flex items-center gap-2">
                                 <a href="{{ route('user.charts') }}" wire:navigate
                                     class="flex items-center gap-2 bg-gray-200 hover:bg-white dark:bg-gray-800 dark:hover:bg-gray-700 px-4 py-2 rounded-xl transition-all duration-200 font-medium border dark:border-gray-700 text-gray-900 dark:text-white">
-                                  
+
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round"
@@ -66,10 +66,10 @@
                                             <path d="M21 3v5h-5"></path>
                                             <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
                                             <path d="M8 16H3v5"></path>
-                                        </svg>                               
+                                        </svg>
                                     <span class="hidden sm:inline" wire:loading.remove
                                         wire:target="refresh">Refresh</span>
-                                   
+
 
                                 </a>
                                 <button
@@ -256,7 +256,7 @@
 
                                     <div class="col-span-1 flex items-center justify-center">
                                         <div class="flex items-center gap-1">
-                                            <button @click="playing('{{ $source['source_details']->urn }}')"
+                                            {{-- <button @click="playing('{{ $source['source_details']->urn }}')"
                                                 class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white play-btn"
                                                 :class="{ 'bg-orange-500 text-white': playing === '{{ $source['source_details']->urn }}' }"
                                                 data-title="{{ $source['source_details']->title }}"
@@ -269,7 +269,7 @@
                                                     class="lucide lucide-play w-3 h-3 ml-0.5">
                                                     <polygon points="5 3 19 12 5 21 5 3"></polygon>
                                                 </svg>
-                                            </button>
+                                            </button> --}}
                                             <button
                                                 wire:click="likeSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']->id) }}')"
                                                 class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white {{ $source['like'] ? 'bg-red-500 text-white shadow-lg' : '' }}"><svg
