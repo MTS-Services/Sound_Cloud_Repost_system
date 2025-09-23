@@ -14,33 +14,16 @@ use App\Models\User;
 use App\Services\Admin\OrderManagement\OrderService;
 use App\Services\Payments\StripeService;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use Illuminate\Support\Str;
 
-class PaymentController extends Controller implements HasMiddleware
+class PaymentController extends Controller
 {
     protected StripeService $stripeService;
     protected OrderService $orderService;
- 
-      public static function middleware(): array
-    {
-        return [
-            'auth:admin', // Applies 'auth:admin' to all methods
-
-            // Permission middlewares using the Middleware class
-            new Middleware('ermission:payment-create', only: ['createPaymentIntent']),
-            new Middleware('permission:payment-show', only: ['show']),
-            new Middleware('permission:payment-success', only: ['paymentSuccess']),
-            new Middleware('permission:payment-cancel', only: ['paymentCancel']),
-
-         
-        ];
-    }
 
     public function __construct(StripeService $stripeService, OrderService $orderService)
     {

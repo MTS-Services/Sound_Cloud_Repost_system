@@ -184,7 +184,8 @@ class SoundCloudController extends Controller
                     'refresh_token' => $soundCloudUser->refreshToken,
                     'expires_in' => $soundCloudUser->expiresIn,
                     'last_synced_at' => now(),
-                    'urn' => $soundCloudUser->user['urn']
+                    'urn' => $soundCloudUser->user['urn'],
+                    'status' => User::STATUS_ACTIVE
                 ]
             );
         } catch (Throwable $e) {
