@@ -346,7 +346,7 @@ class AnalyticsService
             $query->forGenres($genres);
         }
 
-        dd($query->get());
+
         $query->select([
             'source_id',
             DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 END) as total_views'),
@@ -363,7 +363,7 @@ class AnalyticsService
             ->orderByDesc('total_views')
             ->orderByDesc('total_reposts')
             ->paginate($perPage, ['*'], $pageName, $page);
-
+        dd($paginatedSourceData);
         // Get the list of source IDs for the current page
         $sourceIdsList = $paginatedSourceData->pluck('source_id')->toArray();
 
