@@ -19,6 +19,16 @@ class ApplicationSetting extends BaseModel
         ];
     }
 
+
+
+    public const PAYMENT_GATEWAY_SANDBOX = 'sandbox';
+    public const PAYMENT_GATEWAY_LIVE = 'live';
+
+    public const PAYMENT_GATEWAY_MODES = [
+        self::PAYMENT_GATEWAY_SANDBOX => 'Sandbox',
+        self::PAYMENT_GATEWAY_LIVE => 'Live',
+    ];
+
     // public function getPublicRegistrationLabelAttribute()
     // {
     //     return $this->key == 'public_registration' ? self::getPublicRegistrationInfos()[$this->value] : 'Unknown';
@@ -82,6 +92,50 @@ class ApplicationSetting extends BaseModel
             self::ENABLE_DEBUGBAR => 'True',
         ];
     }
+
+    public const PUSHER_CLUSTER_AP1 = 'ap1';
+    public const PUSHER_CLUSTER_AP2 = 'ap2';
+    public const PUSHER_CLUSTER_AP3 = 'ap3';
+    public const PUSHER_CLUSTER_AP4 = 'ap4';
+    public const PUSHER_CLUSTER_EU = 'eu';
+    public const PUSHER_CLUSTER_EU_WEST_1 = 'eu-west-1';
+    public const PUSHER_CLUSTER_MT1 = 'mt1';
+    public const PUSHER_CLUSTER_SA1 = 'sa1';
+    public const PUSHER_CLUSTER_US2 = 'us2';
+    public const PUSHER_CLUSTER_US3 = 'us3';
+
+
+    public const PUSHER_CLUSTERS = [
+        self::PUSHER_CLUSTER_AP1 => 'Asia Pacific 1 (ap1)',
+        self::PUSHER_CLUSTER_AP2 => 'Asia Pacific 2 (ap2)',
+        self::PUSHER_CLUSTER_AP3 => 'Asia Pacific 3 (ap3)',
+        self::PUSHER_CLUSTER_AP4 => 'Asia Pacific 4 (ap4)',
+        self::PUSHER_CLUSTER_EU => 'Europe (eu)',
+        self::PUSHER_CLUSTER_EU_WEST_1 => 'Europe West 1 (eu-west-1)',
+        self::PUSHER_CLUSTER_MT1 => 'Montreal (mt1)',
+        self::PUSHER_CLUSTER_SA1 => 'South America 1 (sa1)',
+        self::PUSHER_CLUSTER_US2 => 'US East 2 (us2)',
+        self::PUSHER_CLUSTER_US3 => 'US East 3 (us3)',
+    ];
+
+    public const PUSHER_ENCRYPTION_TLS = 'tls';
+    public const PUSHER_ENCRYPTION_SSL = 'ssl';
+    public const PUSHER_ENCRYPTION_NONE = 'none';
+
+    public const PUSHER_ENCRYPTIONS = [
+        self::PUSHER_ENCRYPTION_TLS => 'TLS',
+        self::PUSHER_ENCRYPTION_SSL => 'SSL',
+        self::PUSHER_ENCRYPTION_NONE => 'None',
+    ];
+
+    public const PUSHER_SCHEME_HTTP = 'http';
+    public const PUSHER_SCHEME_HTTPS = 'https';
+    public const PUSHER_SCHEMES = [
+        self::PUSHER_SCHEME_HTTP => 'HTTP',
+        self::PUSHER_SCHEME_HTTPS => 'HTTPS',
+    ];
+
+
 
     // public function getDebugbarLabelAttribute()
     // {

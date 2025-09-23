@@ -40,7 +40,8 @@ class CampaignService
 
                 $trackOwnerUrn = $campaign->music->user?->urn ?? $campaign->user_urn;
                 $trackOwnerName = $campaign->music->user?->name ?? $campaign->user?->name;
-                $totalCredits = repostPrice() + ($likeCommentAbleData['comment'] ? 2 : 0) + ($likeCommentAbleData['likeable'] ? 2 : 0);
+                // $totalCredits = repostPrice() + ($likeCommentAbleData['comment'] ? 2 : 0) + ($likeCommentAbleData['likeable'] ? 2 : 0);
+                $totalCredits = repostPrice(user()->repost_price, $likeCommentAbleData['comment'], $likeCommentAbleData['likeable']);
 
                 // Create the Repost record
                 $repost = Repost::updateOrCreate(
@@ -73,38 +74,38 @@ class CampaignService
                 }
 
                 // ######################################
-                        $campaign->increment('comment_count');
-                        $campaign->increment('like_count');
-                        $campaign->increment('followowers_count');
+                $campaign->increment('comment_count');
+                $campaign->increment('like_count');
+                $campaign->increment('followowers_count');
 
                 // ######################################
 
-                // if ($repost != null) {
-                //     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_REPOST, $campaign->target_genre);
-                // }
+                if ($repost != null) {
+                    $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_REPOST, $campaign->target_genre);
+                }
 
-                // if ($likeCommentAbleData['comment']) {
-                //     // Log::info("likeCommentAbleData", $likeCommentAbleData);
-                //     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_COMMENT, $campaign->target_genre);
-                //     if ($response != false || $response != null) {
-                //         $campaign->increment('comment_count');
-                //         // $repost->increment('comment_count');
-                //     }
-                // }
-                // if ($likeCommentAbleData['likeable']) {
-                //     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_LIKE, $campaign->target_genre);
-                //     if ($response != false || $response != null) {
-                //         $campaign->increment('like_count');
-                //         // $repost->increment('like_count');
-                //     }
-                // }
-                // if ($likeCommentAbleData['follow']) {
-                //     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_FOLLOW, $campaign->target_genre);
-                //     if ($response != false || $response != null) {
-                //         $campaign->increment('followowers_count');
-                //         // $repost->increment('followowers_count');
-                //     }
-                // }
+                if ($likeCommentAbleData['comment']) {
+                    // Log::info("likeCommentAbleData", $likeCommentAbleData);
+                    $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_COMMENT, $campaign->target_genre);
+                    if ($response != false || $response != null) {
+                        $campaign->increment('comment_count');
+                        // $repost->increment('comment_count');
+                    }
+                }
+                if ($likeCommentAbleData['likeable']) {
+                    $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_LIKE, $campaign->target_genre);
+                    if ($response != false || $response != null) {
+                        $campaign->increment('like_count');
+                        // $repost->increment('like_count');
+                    }
+                }
+                if ($likeCommentAbleData['follow']) {
+                    $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_FOLLOW, $campaign->target_genre);
+                    if ($response != false || $response != null) {
+                        $campaign->increment('followowers_count');
+                        // $repost->increment('followowers_count');
+                    }
+                }
                 if ($campaign->budget_credits == $campaign->credits_spent) {
                     $campaign->update(['status' => Campaign::STATUS_COMPLETED]);
                 }
@@ -141,7 +142,8 @@ class CampaignService
                         'additional_data' => [
                             'Track Title' => $campaign->music->title,
                             'Track Artist' => $trackOwnerName,
-                            'Earned Credits' => (float) repostPrice($reposter),
+                            // 'Earned Credits' => (float) repostPrice($reposter),
+                            'Earned Credits' => (float) $reposter->repost_price,
                         ]
                     ]
                 ]);
@@ -158,7 +160,8 @@ class CampaignService
                         'additional_data' => [
                             'Track Title' => $campaign->music->title,
                             'Track Artist' => $trackOwnerName,
-                            'Spent Credits' => (float) repostPrice($reposter),
+                            // 'Spent Credits' => (float) repostPrice($reposter),
+                            'Spent Credits' => (float) $reposter->repost_price,
                         ]
                     ]
                 ]);

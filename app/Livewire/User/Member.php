@@ -27,6 +27,8 @@ use Livewire\WithPagination;
 use App\Models\Feature;
 use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
+use Illuminate\Http\Client\Request;
+use Livewire\Attributes\Url;
 
 class Member extends Component
 {
@@ -37,7 +39,8 @@ class Member extends Component
     public ?int $perPage = 9;
     public string $page_slug = 'members';
     public string $search = '';
-    public string $genreFilter = '';
+    #[Url(as: 'genre', except: '')]
+    public array $selectedGenres = [];
     public string $costFilter = '';
     public bool $showModal = false;
     public bool $showLowCreditWarningModal = false;
@@ -72,7 +75,7 @@ class Member extends Component
     public Collection $allPlaylists;
     public int $playlistTrackLimit = 4;
 
-    public Collection $genres;
+    public array $genres = [];
     public Collection $trackTypes;
 
     private $soundcloudClientId;
@@ -107,9 +110,9 @@ class Member extends Component
     {
         $this->validateOnly($propertyName);
 
-        $this->creditSpent = repostPrice($this->user)
-            + ($this->likeable ? 2 : 0)
-            + ($this->commentable ? 2 : 0);
+        $this->creditSpent = repostPrice($this->user->repost_price, $this->commentable, $this->likeable);
+        // + ($this->likeable ? 2 : 0)
+        // + ($this->commentable ? 2 : 0);
 
         if (userCredits() < $this->creditSpent) {
             $this->addError('credits', 'Your credits are not enough.');
@@ -119,29 +122,38 @@ class Member extends Component
 
     public function mount()
     {
-        $this->genres = $this->getAvailableGenres();
+        $this->genres = AllGenres();
         $this->userinfo = user()->userInfo;
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
-
-    private function getAvailableGenres(): Collection
-    {
-        return Track::where('user_urn', '!=', user()->urn)
-            ->distinct()
-            ->pluck('genre')
-            ->filter()
-            ->values();
-    }
-
     public function updatedSearch()
     {
         $this->resetPage();
+        // $this->navigatingAway();
+    }
+    public function navigatingAway()
+    {
+        $params = [];
+        if (!empty($this->selectedGenres)) {
+            $params['genre'] = $this->selectedGenres;
+        }
+
+        // if (!empty($this->search)) {
+        //     $params['q'] = $this->search;
+        // }
+
+        return $this->redirect(route('user.members') . '?' . http_build_query($params), navigate: true);
     }
 
     public function filterBygenre($genre)
     {
-        $this->genreFilter = $genre;
+        if (in_array($genre, $this->selectedGenres)) {
+            $this->selectedGenres = array_diff($this->selectedGenres, [$genre]);
+        } else {
+            $this->selectedGenres[] = $genre;
+        }
         $this->resetPage();
+        $this->navigatingAway();
     }
 
     // public function updatedCostFilter()
@@ -152,6 +164,7 @@ class Member extends Component
     {
         $this->costFilter = $filterBy;
         $this->resetPage();
+        $this->navigatingAway();
     }
 
     public function updatedSearchQuery()
@@ -172,8 +185,8 @@ class Member extends Component
 
     public function getCredibilityScore(object $user)
     {
-        $userFollowerAnalysis =  $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers($user));
-        return $userFollowerAnalysis['averageCredibilityScore'];
+        // $userFollowerAnalysis =  $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers($user));
+        // return $userFollowerAnalysis['averageCredibilityScore'];
     }
 
     private function performLocalSearch()
@@ -308,12 +321,13 @@ class Member extends Component
         // }
         $this->selectedUserUrn = $userUrn;
         $this->user = User::with('userInfo')->where('urn', $this->selectedUserUrn)->first();
-        if (userCredits() < repostPrice($this->user)) {
+        // if (userCredits() < repostPrice($this->user)) {
+        if (userCredits() < $this->user->repost_price) {
             $this->showLowCreditWarningModal = true;
             $this->showModal = false;
             return;
         }
-        if ($this->user->request_receiveable) {
+        if (requestReceiveable($this->user->urn)) {
             $this->showModal = true;
             $this->activeTab = 'tracks';
 
@@ -323,7 +337,7 @@ class Member extends Component
             $this->allPlaylists = Playlist::self()->get();
             $this->playlists = $this->allPlaylists->take($this->playlistLimit);
         } else {
-            return redirect()->back()->with('error', 'User is Not Request Receiveable');
+            $this->dispatch('alert', type: 'error', message: 'User is Not Request Receiveable');
         }
     }
 
@@ -355,10 +369,8 @@ class Member extends Component
     public function openRepostsModal(int $trackId)
     {
         $this->blockMismatchGenre = UserSetting::where('user_urn', $this->user->urn)->value('block_mismatch_genre');
-        // dd($this->blockMismatchGenre);
         $trackGenre = $this->trackService->getTrack(encrypt($trackId))->genre;
         $this->userMismatchGenre = UserGenre::where('user_urn', $this->user->urn)->where('genre', $trackGenre)->first();
-        // dd($trackGenre, $this->userMismatchGenre);
         $this->reset(['track']);
         $this->selectedTrackId = $trackId;
         $this->track = Track::find($trackId);
@@ -373,8 +385,8 @@ class Member extends Component
     public function createRepostsRequest()
     {
         $this->validate();
-        $this->soundCloudService->ensureSoundCloudConnection(user());
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $this->soundCloudService->ensureSoundCloudConnection(user());
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $requester = user();
 
         if (!$this->user || !$this->track) {
@@ -395,8 +407,10 @@ class Member extends Component
             }
         }
         try {
-            $credit_spent = repostPrice($this->user);
-            $transaction_credits = repostPrice($this->user) + ($this->likeable ? 2 : 0) + ($this->commentable ? 2 : 0);
+            // $credit_spent = repostPrice($this->user);
+            // $transaction_credits = repostPrice($this->user) + ($this->likeable ? 2 : 0) + ($this->commentable ? 2 : 0);
+            $credit_spent = $this->user->repost_price;
+            $transaction_credits = repostPrice($this->user->repost_price, $this->commentable, $this->likeable);
 
             DB::transaction(function () use ($requester, $credit_spent, $transaction_credits) {
                 $repostRequest = RepostRequest::create([
@@ -516,9 +530,12 @@ class Member extends Component
         $query = User::where('urn', '!=', user()->urn)
             ->with(['userInfo', 'genres', 'tracks', 'reposts', 'playlists'])->active();
 
-        if ($this->genreFilter) {
+        if ($this->selectedGenres) {
             $query->whereHas('tracks', function ($q) {
-                $q->where('genre', 'like', '%' . $this->genreFilter . '%');
+                if (!empty($this->selectedGenres)) {
+                    $q->whereIn('genre', $this->selectedGenres);
+                }
+                // $q->where('genre', 'like', '%' . $this->selectedGenres . '%');
             });
         }
 
@@ -531,11 +548,12 @@ class Member extends Component
             });
         }
         $users = $query->paginate($this->perPage);
-        
+
 
         if ($this->costFilter) {
             $collection = $users->getCollection()->each(function ($user) {
-                $user->repost_cost = repostPrice($user);
+                // $user->repost_cost = repostPrice($user);
+                $user->repost_cost = $user->repost_price;
             });
 
             if ($this->costFilter === 'low_to_high') {

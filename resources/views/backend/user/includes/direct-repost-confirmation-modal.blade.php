@@ -1,9 +1,9 @@
-<div x-data="{ showRepostConfirmationModal: @entangle('showRepostConfirmationModal').live }" x-show="(typeof showRepostConfirmationModal !== 'undefined' && showRepostConfirmationModal)"
-    x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
+<div x-data="{ showRepostConfirmationModal: @entangle('showRepostConfirmationModal').live }" x-show="showRepostConfirmationModal" x-cloak
+    x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
     x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
     class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-    @if ($campaign)
+    @if ($request)
         <div
             class="w-full max-w-md mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
             <div
@@ -34,42 +34,49 @@
             <div class="px-6 py-4 space-y-5">
                 <div class="flex items-start justify-between">
                     <h3 class="text-lg font-medium uppercase text-gray-900 dark:text-white">Repost</h3>
-                    <span class="text-sm text-gray-700 dark:text-gray-300">{{ user()->repost_price }}
+                    {{-- <span class="text-sm text-gray-700 dark:text-gray-300">{{ repostPrice($request->requester) }}
+                            Credits</span> --}}
+                    <span class="text-sm text-gray-700 dark:text-gray-300">{{ $request->requester?->repost_price }}
                         Credits</span>
                 </div>
                 <div class="flex items-center space-x-3 p-2 border border-gray-200 dark:border-gray-600 rounded-md">
-                    <img src="{{ soundcloud_image($campaign->music->artwork_url) }}" alt="Track Cover"
+                    <img src="{{ soundcloud_image($request->track->artwork_url) }}" alt="Track Cover"
                         class="w-12 h-12 rounded-md object-cover">
                     <div>
                         <p class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                            {{ $campaign->music->type }} -
-                            {{ $campaign->music->author_username }}</p>
-                        <p class="text-xs text-gray-500">{{ $campaign->music?->title }}</p>
+                            {{ $request->track->type }} - {{ $request->track->author_username }}</p>
+                        <p class="text-xs text-gray-500">{{ $request->track->title }}</p>
                     </div>
                 </div>
+                <p
+                    class="text-sm capitalize text-gray-700 dark:text-gray-300 {{ $request->description ? '' : 'hidden' }}">
+                    {{ $request->description }}</p>
+                <!-- Follow Options -->
                 <div class="space-y-2">
                     <label class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
-                            <input type="checkbox" wire:model.live="followed"
+                            <input type="checkbox" checked
                                 class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                             <span class="text-sm text-gray-800 dark:text-gray-200">Follow <span
-                                    class="font-semibold text-orange-500">{{ $campaign->music?->user?->name }}</span></span>
+                                    class="font-semibold text-orange-500">{{ $request->requester?->name }}</span></span>
                         </div>
                     </label>
                 </div>
 
                 <!-- Like Plus -->
-                <div class="flex items-center justify-between border-t pt-3 dark:border-gray-700">
-                    <label class="flex items-center space-x-2">
-                        <input type="checkbox" wire:model.live="liked"
-                            class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                        <span class="text-sm text-gray-800 dark:text-gray-200">{{ __('Activate HeartPush') }}</span>
-                    </label>
-                    <span class="text-sm text-gray-700 dark:text-gray-300">+2 credits</span>
-                </div>
-
+                @if ($request->likeable)
+                    <div class="flex items-center justify-between border-t pt-3 dark:border-gray-700">
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" wire:model.live="liked"
+                                class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                            <span
+                                class="text-sm text-gray-800 dark:text-gray-200">{{ __('Activate HeartPush') }}</span>
+                        </label>
+                        <span class="text-sm text-gray-700 dark:text-gray-300">+2 credits</span>
+                    </div>
+                @endif
                 <!-- Comment Plus -->
-                @if ($campaign->music_type == App\Models\Track::class)
+                @if ($request->commentable)
                     <div class="border-t pt-3 space-y-2 dark:border-gray-700">
                         <div class="flex items-center justify-between">
                             <span class="text-sm font-medium text-gray-800 dark:text-gray-200">Comment on this
@@ -80,9 +87,8 @@
                             class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"></textarea>
                     </div>
                 @endif
-
                 <div class="flex justify-center gap-4">
-                    <button @click="showRepostConfirmationModal = false" wire:click="repost('{{ $campaign->id }}')"
+                    <button @click="showRepostConfirmationModal = false" wire:click="repost('{{ $request->id }}')"
                         class="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-xl transition-all duration-200">
                         <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
@@ -91,7 +97,8 @@
                             <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
                                 stroke-width="2" />
                         </svg>
-                        {{-- <span>{{ repostPrice() + ($liked ? 2 : 0) + ($commented ? 2 : 0) }}</span> --}}
+                        {{-- <span>{{ repostPrice() + ($liked ? 2 : 0) + ($commented ? 2 : 0) }}</span>
+                            {{ __('Repost') }} --}}
                         <span>{{ repostPrice(user()->repost_price, $commented, $liked) }}</span>
                         {{ __('Repost') }}
                     </button>

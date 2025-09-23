@@ -21,10 +21,13 @@
                                 <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
                                     {{ $user->name ?? 'name' }}
                                 </h1>
-                                <span
-                                    class="px-3 py-1 bg-orange-500 dark:bg-orange-400 text-white dark:text-gray-900 text-sm font-medium rounded-full self-center">
-                                    {{ userPlanName() }}
-                                </span>
+                                @if (proUser($user->urn))
+                                    <span
+                                        class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName($user->urn) }}</span>
+                                @else
+                                    <span
+                                        class="text-sm badge badge-soft badge-info rounded-full font-semibold">{{ userPlanName($user->urn) }}</span>
+                                @endif
                             </div>
                             <p class="text-lg sm:text-xl text-gray-600 dark:text-slate-200 mb-4">
                                 {{ $user->userInfo->followers_count ?? '150' }} Followers
@@ -221,32 +224,31 @@
                             {{-- Tab Navigation --}}
                             <div
                                 class="flex overflow-x-auto pb-1 sm:pb-0 space-x-4 sm:space-x-8 border-b border-gray-200 dark:border-slate-700">
-                                <button type="button" x-on:click="activeTab = 'insights'"
+                                <a href="{{ route('user.my-account', $user->name ) }}?tab=insights" wire:navigate
                                     class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors @if ($activeTab === 'insights') text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400 @else text-gray-500 border-transparent dark:text-slate-400 @endif">
                                     Insights
-                                </button>
+                                </a>
 
-                                <button type="button" x-on:click="activeTab = 'tracks'"
+                                <a href="{{ route('user.my-account', $user->name)}}?tab=tracks" wire:navigate
                                     class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors @if ($activeTab === 'tracks') text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400 @else text-gray-500 border-transparent dark:text-slate-400 @endif">
                                     Tracks
-                                </button>
+                                </a>
 
-                                <button type="button" x-on:click="activeTab = 'playlists'"
-                                    x-on:click="activeTab = 'playlists'"
+                                <a href="{{ route('user.my-account', $user->name ) }}?tab=playlists" wire:navigate
                                     class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors @if ($activeTab === 'playlists') text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400 @else text-gray-500 border-transparent dark:text-slate-400 @endif">
                                     Playlists
-                                </button>
+                                </a>
 
-                                <button type="button" x-on:click="activeTab = 'reposts'"
+                                <a href="{{ route('user.my-account', $user->name ) }}?tab=reposts" wire:navigate
                                     class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors @if ($activeTab === 'reposts') text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400 @else text-gray-500 border-transparent dark:text-slate-400 @endif">
                                     Recent reposts
-                                </button>
+                                </a>
 
                                 @if (user()->urn == $user->urn)
-                                    <button type="button" x-on:click="activeTab = 'transaction'"
+                                    <a href="{{ route('user.my-account', $user->name ) }}?tab=transaction" wire:navigate
                                         class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors @if ($activeTab === 'transaction') text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400 @else text-gray-500 border-transparent dark:text-slate-400 @endif">
                                         Transaction
-                                    </button>
+                                    </a>
                                 @endif
                             </div>
 

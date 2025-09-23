@@ -70,24 +70,6 @@ class PaymentController extends Controller
             ]);
 
             DB::transaction(function () use ($request, $order, $paymentIntent) {
-
-                // if ($order->source_type == Credit::class) {
-                //     CreditTransaction::create([
-                //         'receiver_urn' => $order->user_urn,
-                //         'transaction_type' => CreditTransaction::TYPE_PURCHASE,
-                //         'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
-                //         'source_id' => $order->id,
-                //         'source_type' => Order::class,
-                //         'amount' => $order->amount,
-                //         'credits' => $order->credits,
-                //         'description' => 'Purchased ' . $order->credits . ' credits for ' . $order->amount . ' ' . $request->currency,
-                //         'creater_id' => $order->creater_id,
-                //         'creater_type' => $order->creater_type,
-
-                //     ]);
-                // }
-
-
                 Payment::create([
                     'name' => $request->name,
                     'email_address' => $request->email_address,
@@ -178,7 +160,6 @@ class PaymentController extends Controller
                 }
 
                 $order = Order::findOrFail($payment->order_id);
-
                 if ($order->source_type == Credit::class) {
                     CreditTransaction::create([
                         'receiver_urn' => $order->user_urn,
@@ -191,10 +172,9 @@ class PaymentController extends Controller
                         'description' => 'Purchased ' . $order->credits . ' credits for ' . $order->amount . ' ' . $payment->currency,
                         'creater_id' => $order->creater_id,
                         'creater_type' => $order->creater_type,
-
+                        'status' => CreditTransaction::STATUS_SUCCEEDED,
                     ]);
                 }
-
                 $userNotification = CustomNotification::create([
                     'receiver_id' => user()->id,
                     'receiver_type' => User::class,

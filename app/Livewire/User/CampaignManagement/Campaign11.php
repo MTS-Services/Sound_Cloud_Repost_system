@@ -359,7 +359,8 @@ class Campaign extends Component
      */
     private function getCampaignsQuery(): Builder
     {
-        $allowedTargetCredits = repostPrice(user(), true);
+        // $allowedTargetCredits = repostPrice(user(), true);
+        $allowedTargetCredits = user()->repost_price;
 
         // return $this->campaignService->getCampaigns()
         //     ->where('budget_credits', '>=', $allowedTargetCredits)
@@ -704,6 +705,10 @@ class Campaign extends Component
 
     public function toggleCampaignsModal()
     {
+        if (!is_email_verified()) {
+            $this->dispatch('alert', type: 'error', message: 'Please verify your email to create a campaign.');
+            return;
+        }
         $this->reset();
 
         if ($this->myCampaignService->thisMonthCampaignsCount() >= (int) userFeatures()[Feature::KEY_SIMULTANEOUS_CAMPAIGNS]) {
@@ -800,11 +805,12 @@ class Campaign extends Component
     public function profeature($isChecked)
     {
         Log::info($this->all());
-        if(!proUser()){
-            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
-        }elseif(($this->credit * 2) > userCredits()){
+        if (!proUser()) {
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
+            ;
+        } elseif (($this->credit * 2) > userCredits()) {
             return $this->dispatch('alert', type: 'error', message: 'You do not have enough credits to use this feature');
-        }else{
+        } else {
             $this->proFeatureEnabled = $isChecked ? false : true;
             $this->proFeatureValue = $isChecked ? 0 : 1;
         }

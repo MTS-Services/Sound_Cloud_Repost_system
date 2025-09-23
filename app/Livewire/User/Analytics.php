@@ -33,7 +33,7 @@ class Analytics extends Component
     public array $data = [];
     public array $dataCache = [];
     public array $filterOptions = [];
-    public array $topTracks = [];
+    public array $topSources = [];
     public array $genreBreakdown = [];
 
     protected AnalyticsService $analyticsService;
@@ -133,7 +133,6 @@ class Analytics extends Component
     public function loadData()
     {
         $dateRange = $this->getDateRange();
-
         try {
             if ($dateRange === false) {
                 return;
@@ -147,10 +146,8 @@ class Analytics extends Component
                 null,
                 null
             );
-
             // Transform data for UI
             $this->data = $this->transformDataForUI($freshData);
-
             // Store in cache
             $cacheKey = $this->getCacheKey($dateRange);
             $this->dataCache[$cacheKey] = $this->data;
@@ -207,14 +204,14 @@ class Analytics extends Component
                 return;
             }
 
-            $this->topTracks = $this->analyticsService->getTopTracks(
+            $this->topSources = $this->analyticsService->getTopSources(
                 userUrn: user()->urn,
                 limit: 5,
                 filter: $this->filter,
                 dateRange: $dateRange
             );
 
-            $this->genreBreakdown = $this->analyticsService->getGenreBreakdown();
+            $this->genreBreakdown = $this->analyticsService->getGenreBreakdown($this->filter, $dateRange, $this->selectedGenres);
         } catch (\Exception $e) {
             logger()->error('Additional data loading failed', ['error' => $e->getMessage()]);
         }
@@ -232,7 +229,7 @@ class Analytics extends Component
                 return new LengthAwarePaginator([], 0, $this->tracksPerPage, $this->getPage());
             }
 
-            return $this->analyticsService->getPaginatedTrackAnalytics(
+            return $this->analyticsService->getPaginatedAnalytics(
                 filter: $this->filter,
                 dateRange: $dateRange,
                 genres: $this->selectedGenres,

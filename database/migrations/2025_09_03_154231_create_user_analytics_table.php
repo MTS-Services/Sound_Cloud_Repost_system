@@ -23,8 +23,8 @@ return new class extends Migration
             $table->string('act_user_urn');
             $table->foreign('act_user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->string('track_urn');
-            $table->foreign('track_urn')->references('urn')->on('tracks')->onDelete('cascade')->onUpdate('cascade');
+            $table->unsignedBigInteger('source_id');
+            $table->string('source_type');
 
             $table->unsignedBigInteger('actionable_id')->index()->nullable();
             $table->string('actionable_type')->index()->nullable();

@@ -57,7 +57,7 @@
                     <!-- Profile Header -->
                     <div class="flex items-center gap-3 mb-6">
                         <div class="relative">
-                            <a class="cursor-pointer" wire:navigate href="{{ route('user.my-account', $user_->urn) }}">
+                            <a class="cursor-pointer" wire:navigate href="{{ route('user.my-account', $user_->name) }}">
                                 <img src="{{ auth_storage_url($user_->avatar) }}" alt="{{ $user_->name }}"
                                     class="w-12 h-12 rounded-full">
                                 @if ($user_->isOnline())
@@ -73,7 +73,7 @@
                             </a>
                         </div>
                         <div>
-                            <a class="cursor-pointer" wire:navigate href="{{ route('user.my-account', $user_->urn) }}">
+                            <a class="cursor-pointer" wire:navigate href="{{ route('user.my-account', $user_->name) }}">
                                 <h3 class="font-semibold text-lg dark:text-white hover:underline">
                                     {{ $user_->name }}</h3>
                             </a>
@@ -100,7 +100,8 @@
                     <div class="flex justify-between items-center w-full mb-4">
                         <p class="text-text-gray text-sm dark:text-white">Repost price:</p>
                         <p class="text-sm font-medium dark:text-white">
-                            {{ repostPrice($user_) }} Credit{{ repostPrice($user_) > 1 ? 's' : '' }}
+                            <!-- {{ repostPrice($user_) }} Credit{{ repostPrice($user_) > 1 ? 's' : '' }} -->
+                            {{ $user_->repost_price }} Credit{{ $user_->repost_price > 1 ? 's' : '' }}
                         </p>
                     </div>
 

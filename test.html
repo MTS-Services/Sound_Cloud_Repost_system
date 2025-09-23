@@ -1,82 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Chart with Bottom Player</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .player-hidden { transform: translateY(100%); }
-        .player-visible { transform: translateY(0); }
-        .progress-bar { transition: width 0.1s ease-out; }
-        .volume-slider { background: linear-gradient(to right, #f97316 0%, #f97316 var(--volume), #374151 var(--volume), #374151 100%); }
+        .player-hidden {
+            transform: translateY(100%);
+        }
+
+        .player-visible {
+            transform: translateY(0);
+        }
+
+        .progress-bar {
+            transition: width 0.1s ease-out;
+        }
+
+        .volume-slider {
+            background: linear-gradient(to right, #f97316 0%, #f97316 var(--volume), #374151 var(--volume), #374151 100%);
+        }
     </style>
 </head>
+
 <body class="bg-gray-900 text-white pb-20">
+    <div wire:loading wire:target="searchSoundcloud" class="w-full flex justify-center items-center">
+        <div class="text-center py-16 text-orange-600">
+            <div
+                class="w-32 h-32 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-spin">
+                <svg class="w-16 h-16 text-orange-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z" />
+                </svg>
+            </div>
+            <p class="text-md font-medium">Searching...</p>
+        </div>
+    </div>
     <!-- Sample track list (simplified version of your template) -->
     <div class="container mx-auto px-4 py-8">
         <h1 class="text-3xl font-bold mb-8 text-center">Weekly Top Tracks</h1>
-        
+
         <div class="space-y-4">
             <!-- Track 1 -->
-            <div class="bg-gray-800 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors">
+            <div
+                class="bg-gray-800 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors">
                 <div class="flex items-center gap-4">
-                    <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=center" 
-                         alt="Midnight Dreams" class="w-16 h-16 rounded-lg object-cover">
+                    <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=center"
+                        alt="Midnight Dreams" class="w-16 h-16 rounded-lg object-cover">
                     <div>
                         <h3 class="font-bold">Midnight Dreams</h3>
                         <p class="text-gray-400">Luna Waves</p>
                     </div>
                 </div>
-                <button class="play-btn bg-orange-500 hover:bg-orange-600 p-3 rounded-full transition-colors" 
-                        data-title="Midnight Dreams" 
-                        data-artist="Luna Waves" 
-                        data-cover="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=center"
-                        data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
+                <button class="play-btn bg-orange-500 hover:bg-orange-600 p-3 rounded-full transition-colors"
+                    data-title="Midnight Dreams" data-artist="Luna Waves"
+                    data-cover="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=center"
+                    data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z"/>
+                        <path d="M8 5v14l11-7z" />
                     </svg>
                 </button>
             </div>
 
             <!-- Track 2 -->
-            <div class="bg-gray-800 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors">
+            <div
+                class="bg-gray-800 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors">
                 <div class="flex items-center gap-4">
-                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop&crop=center" 
-                         alt="Urban Pulse" class="w-16 h-16 rounded-lg object-cover">
+                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop&crop=center"
+                        alt="Urban Pulse" class="w-16 h-16 rounded-lg object-cover">
                     <div>
                         <h3 class="font-bold">Urban Pulse</h3>
                         <p class="text-gray-400">Metro Vibes</p>
                     </div>
                 </div>
                 <button class="play-btn bg-orange-500 hover:bg-orange-600 p-3 rounded-full transition-colors"
-                        data-title="Urban Pulse" 
-                        data-artist="Metro Vibes" 
-                        data-cover="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop&crop=center"
-                        data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">
+                    data-title="Urban Pulse" data-artist="Metro Vibes"
+                    data-cover="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop&crop=center"
+                    data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z"/>
+                        <path d="M8 5v14l11-7z" />
                     </svg>
                 </button>
             </div>
 
             <!-- Track 3 -->
-            <div class="bg-gray-800 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors">
+            <div
+                class="bg-gray-800 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors">
                 <div class="flex items-center gap-4">
-                    <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop&crop=center" 
-                         alt="Cosmic Flow" class="w-16 h-16 rounded-lg object-cover">
+                    <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop&crop=center"
+                        alt="Cosmic Flow" class="w-16 h-16 rounded-lg object-cover">
                     <div>
                         <h3 class="font-bold">Cosmic Flow</h3>
                         <p class="text-gray-400">Stellar Sound</p>
                     </div>
                 </div>
                 <button class="play-btn bg-orange-500 hover:bg-orange-600 p-3 rounded-full transition-colors"
-                        data-title="Cosmic Flow" 
-                        data-artist="Stellar Sound" 
-                        data-cover="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop&crop=center"
-                        data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3">
+                    data-title="Cosmic Flow" data-artist="Stellar Sound"
+                    data-cover="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop&crop=center"
+                    data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z"/>
+                        <path d="M8 5v14l11-7z" />
                     </svg>
                 </button>
             </div>
@@ -84,7 +111,8 @@
     </div>
 
     <!-- Bottom Music Player -->
-    <div id="bottomPlayer" class="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 px-4 py-3 transform transition-transform duration-300 player-hidden z-50">
+    <div id="bottomPlayer"
+        class="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 px-4 py-3 transform transition-transform duration-300 player-hidden z-50">
         <div class="flex items-center justify-between max-w-7xl mx-auto">
             <!-- Track Info -->
             <div class="flex items-center gap-3 min-w-0 flex-1">
@@ -110,20 +138,21 @@
                     </button> -->
                     <button id="prevBtn" class="text-gray-400 hover:text-white transition-colors">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+                            <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
                         </svg>
                     </button>
-                    <button id="playPauseBtn" class="bg-white text-black p-2 rounded-full hover:scale-105 transition-transform">
+                    <button id="playPauseBtn"
+                        class="bg-white text-black p-2 rounded-full hover:scale-105 transition-transform">
                         <svg id="playIcon" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z"/>
+                            <path d="M8 5v14l11-7z" />
                         </svg>
                         <svg id="pauseIcon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
                         </svg>
                     </button>
                     <button id="nextBtn" class="text-gray-400 hover:text-white transition-colors">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+                            <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
                         </svg>
                     </button>
                     <!-- <button id="repeatBtn" class="text-gray-400 hover:text-white transition-colors">
@@ -137,7 +166,8 @@
                 <div class="flex items-center gap-2 w-full">
                     <span id="currentTime" class="text-xs text-gray-400 w-10">0:00</span>
                     <div class="flex-1 bg-gray-600 rounded-full h-1 cursor-pointer" id="progressContainer">
-                        <div id="progressBar" class="bg-orange-500 h-1 rounded-full progress-bar" style="width: 0%"></div>
+                        <div id="progressBar" class="bg-orange-500 h-1 rounded-full progress-bar" style="width: 0%">
+                        </div>
                     </div>
                     <span id="totalTime" class="text-xs text-gray-400 w-10">0:00</span>
                 </div>
@@ -147,18 +177,23 @@
             <div class="flex items-center gap-3 flex-1 justify-end">
                 <button class="text-gray-400 hover:text-white transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                        </path>
                     </svg>
                 </button>
                 <div class="flex items-center gap-2">
                     <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                        <path
+                            d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
                     </svg>
-                    <input type="range" id="volumeSlider" min="0" max="100" value="50" class="w-24 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer volume-slider">
+                    <input type="range" id="volumeSlider" min="0" max="100" value="50"
+                        class="w-24 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer volume-slider">
                 </div>
                 <button id="closeBtn" class="text-gray-400 hover:text-white transition-colors ml-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
                     </svg>
                 </button>
             </div>
@@ -187,7 +222,7 @@
 
                 this.currentTrack = null;
                 this.isPlaying = false;
-                
+
                 this.initEventListeners();
                 this.setVolume(0.5);
             }
@@ -251,7 +286,7 @@
                 this.playerCover.src = track.cover;
                 this.playerTitle.textContent = track.title;
                 this.playerArtist.textContent = track.artist;
-                
+
                 this.showPlayer();
                 this.play();
             }
@@ -327,4 +362,5 @@
         });
     </script>
 </body>
+
 </html>

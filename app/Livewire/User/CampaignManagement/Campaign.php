@@ -3,6 +3,7 @@
 namespace App\Livewire\User\CampaignManagement;
 
 use App\Jobs\NotificationMailSent;
+use App\Jobs\TrackViewCount;
 use App\Models\Campaign as ModelsCampaign;
 use App\Models\CreditTransaction;
 use App\Models\Feature;
@@ -16,6 +17,7 @@ use App\Services\TrackService;
 use App\Services\User\AnalyticsService;
 use App\Services\User\CampaignManagement\CampaignService;
 use App\Services\User\CampaignManagement\MyCampaignService;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Locked;
@@ -347,10 +349,11 @@ class Campaign extends Component
      */
     private function getCampaignsQuery(): Builder
     {
-        $allowedTargetCredits = repostPrice(user(), true);
+        // $allowedTargetCredits = repostPrice(user(), true);
+        $allowedTargetCredits = user()->repost_price;
         return ModelsCampaign::where('budget_credits', '>=', $allowedTargetCredits)
             ->withoutSelf()
-            ->with(['music.user.userInfo', 'reposts'])
+            ->with(['music.user.userInfo', 'reposts', 'user'])
             ->whereDoesntHave('reposts', function ($query) {
                 $query->where('reposter_urn', user()->urn);
             })
@@ -615,6 +618,10 @@ class Campaign extends Component
 
     public function toggleCampaignsModal()
     {
+        if (!is_email_verified()) {
+            $this->dispatch('alert', type: 'error', message: 'Please verify your email to create a campaign.');
+            return;
+        }
         $this->reset();
 
         if ($this->myCampaignService->thisMonthCampaignsCount() >= (int) userFeatures()[Feature::KEY_SIMULTANEOUS_CAMPAIGNS]) {
@@ -908,14 +915,10 @@ class Campaign extends Component
                 $this->track = $playlist;
             }
 
-            // $response = $this->analyticsService->recordAnalytics($this->track, $campaign, UserAnalytics::TYPE_PLAY, $campaign->target_genre);
-            // Log:
-            // info('response: analytics: ');
-            // if ($response != false || $response != null) {
-
-
-            //     $campaign->increment('playback_count');
-            // }
+            $response = $this->analyticsService->recordAnalytics(source: $this->track, actionable: $campaign, type: UserAnalytics::TYPE_PLAY, genre: $campaign->target_genre);
+            if ($response != false || $response != null) {
+                $campaign->increment('playback_count');
+            }
 
             $this->playcount = true;
             // $this->reset([
@@ -1512,6 +1515,10 @@ class Campaign extends Component
 
                     break;
             }
+
+            // View Count Tracking
+            Bus::dispatch(new TrackViewCount($campaigns, user()->urn, 'campaign'));
+
 
             return view('livewire.user.campaign-management.campaign', [
                 'campaigns' => $campaigns

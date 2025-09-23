@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User;
 
+use App\Jobs\TrackViewCount;
 use App\Livewire\User\RepostRequest as RepostRequestComponent;
 use App\Models\Campaign as ModelsCampaign;
 use App\Models\CreditTransaction;
@@ -13,27 +14,22 @@ use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\User\CampaignManagement\MyCampaignService;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Throwable;
 use App\Models\Feature;
+use App\Models\Repost;
 use App\Services\User\AnalyticsService;
+use App\Services\User\Mamber\RepostRequestService;
 use Illuminate\Validation\ValidationException;
 
 use function PHPSTORM_META\type;
 
 class Dashboard extends Component
 {
-    protected CreditTransactionService $creditTransactionService;
-    protected SoundCloudService $soundCloudService;
-
-    protected MyCampaignService $myCampaignService;
-    protected AnalyticsService $analyticsService;
-
-    protected FollowerAnalyzer $followerAnalyzer;
-
     protected $soundcloudApiUrl = 'https://api.soundcloud.com';
 
     public $total_credits;
@@ -133,6 +129,12 @@ class Dashboard extends Component
     public $allPlaylistTracks = null;
     public $selectedPlaylistId = null;
 
+    // Confirmation Repost
+    public $request = null;
+    public bool $liked = false;
+    public bool $commented = false;
+    public bool $followed = true;
+
     // Search configuration
     private const MAX_SEARCH_LENGTH = 255;
     private const MIN_SEARCH_LENGTH = 2;
@@ -175,12 +177,21 @@ class Dashboard extends Component
         ];
     }
 
-    public function boot(CreditTransactionService $creditTransactionService, SoundCloudService $soundCloudService, MyCampaignService $myCampaignService, AnalyticsService $analyticsService, FollowerAnalyzer $followerAnalyzer)
+    protected CreditTransactionService $creditTransactionService;
+    protected SoundCloudService $soundCloudService;
+    protected MyCampaignService $myCampaignService;
+    protected AnalyticsService $analyticsService;
+    protected RepostRequestService $repostRequestService;
+
+    protected FollowerAnalyzer $followerAnalyzer;
+
+    public function boot(CreditTransactionService $creditTransactionService, SoundCloudService $soundCloudService, MyCampaignService $myCampaignService, AnalyticsService $analyticsService, RepostRequestService $repostRequestService, FollowerAnalyzer $followerAnalyzer)
     {
         $this->creditTransactionService = $creditTransactionService;
         $this->soundCloudService = $soundCloudService;
         $this->myCampaignService = $myCampaignService;
         $this->analyticsService = $analyticsService;
+        $this->repostRequestService = $repostRequestService;
         $this->followerAnalyzer = $followerAnalyzer;
     }
 
@@ -248,6 +259,11 @@ class Dashboard extends Component
 
         // Repost Request Percentage
         $this->repostRequestPercentage = $this->creditTransactionService->getWeeklyRepostRequestChange($userId);
+
+        Bus::chain([
+            new TrackViewCount($this->repostRequests, user()->urn, 'request'),
+            new TrackViewCount($this->recentTracks, user()->urn, 'track'),
+        ])->dispatch();
     }
 
     public function selectModalTab($tab = 'tracks')
@@ -713,6 +729,10 @@ class Dashboard extends Component
 
     public function toggleCampaignsModal()
     {
+        if (!is_email_verified()) {
+            $this->dispatch('alert', type: 'error', message: 'Please verify your email to create a campaign.');
+            return;
+        }
         $this->reset([
             'title',
             'description',
@@ -1107,6 +1127,27 @@ class Dashboard extends Component
 
             $this->dispatch('alert', type: 'error', message: 'Failed to send repost request. Please try again.');
         }
+    }
+    public function confirmRepost($requestId)
+    {
+        if (!$this->canRepost($requestId)) {
+            $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
+            return;
+        }
+        $this->showRepostConfirmationModal = true;
+        $this->request = RepostRequest::findOrFail($requestId)->load('track', 'requester');
+    }
+    public function repost($requestId)
+    {
+        $result = $this->repostRequestService->handleRepost($requestId, $this->commented, $this->liked, $this->followed);
+
+        if ($result['status'] === 'success') {
+            $this->loadDashboardData();
+            $this->dispatch('alert', type: 'success', message: 'Repost request sent successfully.');
+        }
+        $this->showRepostConfirmationModal = false;
+
+        $this->dispatch('alert', type: $result['status'], message: $result['message']);
     }
 
     public function declineRepost($encryptedRequestId)

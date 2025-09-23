@@ -32,12 +32,13 @@ class UserAnalytics extends BaseModel
         self::TYPE_FOLLOW => 'Follow',
     ];
 
-    protected $with = ['ownerUser', 'actUser', 'track'];
+    protected $with = ['ownerUser', 'actUser', 'source'];
 
     protected $fillable = [
         'owner_user_urn',
         'act_user_urn',
-        'track_urn',
+        'source_id',
+        'source_type',
         'actionable_id',
         'actionable_type',
         'type',
@@ -96,9 +97,9 @@ class UserAnalytics extends BaseModel
     /**
      * Track relationship
      */
-    public function track(): BelongsTo
+    public function source(): MorphTo
     {
-        return $this->belongsTo(Track::class, 'track_urn', 'urn');
+        return $this->morphTo();
     }
 
     /**

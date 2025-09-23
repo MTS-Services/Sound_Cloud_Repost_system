@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Services\SoundCloud\FollowerAnalyzer;
+use App\Services\SoundCloud\SoundCloudService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\AuthBaseModel;
@@ -10,10 +12,12 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
+use App\Http\Traits\UserModificationTrait;
 
 class User extends AuthBaseModel implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
+    // use HasFactory, Notifiable, UserModificationTrait;
     use HasFactory, Notifiable;
 
     /**
@@ -38,7 +42,9 @@ class User extends AuthBaseModel implements MustVerifyEmail
         'email',
         'last_seen_at',
 
-
+        'real_followers',
+        'real_followers_percentage',
+        
         'creater_id',
         'creater_type',
         'updater_id',
@@ -145,20 +151,20 @@ class User extends AuthBaseModel implements MustVerifyEmail
     }
     public function debitTransactions(): HasMany
     {
-        return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn')->where('calculation_type', CreditTransaction::CALCULATION_TYPE_DEBIT);
+        return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn')->where('calculation_type', CreditTransaction::CALCULATION_TYPE_DEBIT)->succeeded();
     }
     public function creditTransactions(): HasMany
     {
-        return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn')->where('calculation_type', CreditTransaction::CALCULATION_TYPE_CREDIT);
+        return $this->hasMany(CreditTransaction::class, 'receiver_urn', 'urn')->where('calculation_type', CreditTransaction::CALCULATION_TYPE_CREDIT)->succeeded();
     }
     public function succedDebitTransactions()
     {
-        return $this->debitTransactions()->succeeded();
+        return $this->debitTransactions();
     }
 
     public function succedCreditTransactions()
     {
-        return $this->creditTransactions()->succeeded();
+        return $this->creditTransactions();
     }
 
 
@@ -202,7 +208,42 @@ class User extends AuthBaseModel implements MustVerifyEmail
 
             'modified_image',
             'is_pro',
+            'repost_price',
+            'real_followers',
         ]);
+    }
+
+    // public function __construct(array $attributes = [], FollowerAnalyzer $followerAnalyzer = null, SoundCloudService $soundCloudService = null)
+    // {
+    //     parent::__construct($attributes);
+
+    //     // Check if dependencies were injected via the container
+    //     if ($followerAnalyzer === null) {
+    //         $followerAnalyzer = app(FollowerAnalyzer::class);
+    //     }
+    //     if ($soundCloudService === null) {
+    //         $soundCloudService = app(SoundCloudService::class);
+    //     }
+
+    //     // Call the trait's constructor to initialize the properties
+    //     $this->bootUserModificationTrait($followerAnalyzer, $soundCloudService);
+
+    //     $this->appends = array_merge(parent::getAppends(), [
+    //         'status_label',
+    //         'status_color',
+    //         'status_btn_label',
+    //         'status_btn_color',
+    //         'modified_image',
+    //         'is_pro',
+    //         'repost_price',
+    //         'real_followers',
+    //     ]);
+    // }
+
+    protected function bootUserModificationTrait(FollowerAnalyzer $followerAnalyzer, SoundCloudService $soundCloudService)
+    {
+        $this->followerAnalyzer = $followerAnalyzer;
+        $this->soundCloudService = $soundCloudService;
     }
 
     public const STATUS_ACTIVE = 1;
@@ -302,5 +343,18 @@ class User extends AuthBaseModel implements MustVerifyEmail
 
         // Calculate response rate
         return round(($respondedWithin24Hours / $totalRequests) * 100, 2);
+    }
+
+
+    public function getRepostPriceAttribute()
+    {
+        // return $this->userRepostPrice($this);
+        return 1;
+    }
+
+    public function getRealFollowersAttribute()
+    {
+        // return $this->userRealFollowers($this);
+        return 10;
     }
 }

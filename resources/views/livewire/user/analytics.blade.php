@@ -57,7 +57,6 @@
                         total_views: { current_total: 'Loading...', change_rate: null },
                         total_followers: { current_total: 'Loading...', change_rate: null },
                     },
-                    track_metrics: []
                 };
             }
     
@@ -215,13 +214,18 @@
             const ctx = document.getElementById('genreChart');
             if (!ctx) return;
     
+            // Check if there's any data with a percentage greater than 0
+            const hasData = this.genreBreakdown.some(item => item.percentage > 0);
+    
+            const displayedGenres = hasData ? this.genreBreakdown.filter(item => item.percentage > 0) : [{ genre: 'No Data', percentage: 100 }];
+    
             this.genreChart = new Chart(ctx.getContext('2d'), {
                 type: 'pie',
                 data: {
-                    labels: this.genreBreakdown.length > 0 ? this.genreBreakdown.map((item) => item.genre) : ['No Data'],
+                    labels: displayedGenres.map(item => item.genre),
                     datasets: [{
-                        data: this.genreBreakdown.length > 0 ? this.genreBreakdown.map((item) => item.percentage) : [100],
-                        backgroundColor: this.genreBreakdown.length > 0 ? ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'].slice(0, this.genreBreakdown.length) : ['#9ca3af'],
+                        data: displayedGenres.map(item => item.percentage),
+                        backgroundColor: hasData ? ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'].slice(0, displayedGenres.length) : ['#9ca3af'],
                         borderColor: '#1f2937',
                         borderWidth: 2,
                     }]
@@ -288,6 +292,7 @@
         init() {
             // Initial setup
             this.setupCharts();
+            console.log('Genre Breakdown:', this.genreBreakdown);
     
             // Watch for data changes
             this.$watch('$wire.data', (newData, oldData) => {
@@ -814,30 +819,6 @@
                 </div>
             </div>
 
-            <!-- Legend -->
-            {{-- <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm mb-4 items-center">
-            <div class="flex items-end">
-                <div class="w-3 h-3 bg-[#E9E294] rounded-full mr-2"></div>
-                <span class="text-gray-600 dark:text-gray-300">Views</span>
-            </div>
-            <div class="flex items-end">
-                <div class="w-3 h-3 bg-[#ff6b35] rounded-full mr-2"></div>
-                <span class="text-gray-600 dark:text-gray-300">Streams</span>
-            </div>
-            <div class="flex items-end">
-                <div class="w-3 h-3 bg-[#10b981] rounded-full mr-2"></div>
-                <span class="text-gray-600 dark:text-gray-300">Likes</span>
-            </div>
-            <div class="flex items-end">
-                <div class="w-3 h-3 bg-[#8b5cf6] rounded-full mr-2"></div>
-                <span class="text-gray-600 dark:text-gray-300">Reposts</span>
-            </div>
-            <div class="flex items-end">
-                <div class="w-3 h-3 bg-[#f59e0b] rounded-full mr-2"></div>
-                <span class="text-gray-600 dark:text-gray-300">Comments</span>
-            </div>
-        </div> --}}
-
             <!-- Chart -->
             <div class="relative overflow-x-auto" style="height: 250px;">
                 <canvas id="performanceChart"></canvas>
@@ -849,27 +830,28 @@
             <div>
                 <div
                     class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Top Performing Tracks</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Top Performing Tracks or
+                        Playlists</h3>
                     <div class="space-y-4">
-                        @forelse($topTracks as $track)
+                        @forelse($topSources as $source)
                             <div class="group">
                                 <div class="flex items-center justify-between mb-2">
                                     <div class="flex-1 min-w-0">
                                         <p
                                             class="text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-[#ff6b35] transition-colors">
-                                            {{ $track['track']['title'] }}
+                                            {{ $source['source']['title'] }}
                                         </p>
                                         <p class="text-xs text-gray-500 dark:text-gray-400 truncate">You</p>
                                     </div>
                                     <div class="flex items-center ml-4">
                                         <span
-                                            class="text-xs text-gray-900 dark:text-white font-medium">{{ number_shorten($track['streams']) }}</span>
+                                            class="text-xs text-gray-900 dark:text-white font-medium">{{ number_shorten($source['streams']) }}</span>
                                         <span class="text-xs text-gray-500 dark:text-gray-400 ml-1">streams</span>
                                     </div>
                                 </div>
                                 <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
                                     <div class="h-2 rounded-full transition-all duration-300"
-                                        style="width: {{ $track['engagement_rate'] }}%; background: linear-gradient(90deg, #ff6b35, #ff6b35cc);">
+                                        style="width: {{ $source['engagement_rate'] }}%; background: linear-gradient(90deg, #ff6b35, #ff6b35cc);">
                                     </div>
                                 </div>
                             </div>
@@ -920,7 +902,7 @@
             </div>
 
             <!-- Quick Stats -->
-            <div class="space-y-6">
+            {{-- <div class="space-y-6">
                 <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] rounded-xl p-6 text-white">
                     <div class="flex items-center justify-between">
                         <div>
@@ -983,11 +965,11 @@
                         @endif
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
 
         <!-- Track Performance Table with Pagination -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+        {{-- <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
             <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Your Tracks Performance</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Detailed analytics for all your released
@@ -1201,7 +1183,7 @@
                     </div>
                 </div>
             @endif
-        </div>
+        </div> --}}
 
         @push('js')
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

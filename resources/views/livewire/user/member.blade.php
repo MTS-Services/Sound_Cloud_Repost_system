@@ -21,7 +21,7 @@
                 <!-- Filter Buttons -->
                 <div class="flex flex-col sm:flex-row gap-4">
                     <div class="relative">
-                        <button @click="openByGenre = !openByGenre" @click.outside="openByGenre = false"
+                        <button @click="openByGenre = !openByGenre"
                             class="bg-orange-100 !hover:bg-orange-400 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer">
                             {{ __('Filter by genre') }}
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
@@ -32,17 +32,17 @@
                         </button>
 
                         <div x-show="openByGenre" x-transition:enter="transition ease-out duration-100"
-                            x-transition:enter-start="transform opacity-0 scale-95"
+                            @click.outside="openByGenre = false" x-transition:enter-start="transform opacity-0 scale-95"
                             x-transition:enter-end="transform opacity-100 scale-100"
                             x-transition:leave="transition ease-in duration-75"
                             x-transition:leave-start="transform opacity-100 scale-100"
                             x-transition:leave-end="transform opacity-0 scale-95"
-                            class="absolute left-0 mt-2 w-56 rounded-md shadow-lg z-100">
-                            <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
+                            class="absolute left-0 mt-2 w-56 rounded-md shadow-lg z-100 overflow-hidden">
+                            <div class="bg-white dark:bg-slate-800 max-h-96 overflow-y-auto">
                                 <div class="py-1">
                                     @forelse ($genres as $genre)
                                         <button wire:click="filterBygenre('{{ $genre }}')"
-                                            class="block px-4 py-2 text-sm  border-b border-gray-100 dark:border-gray-700 w-full text-left {{ $genreFilter == $genre ? 'bg-orange-500 hover:bg-orange-500 text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300' }}">
+                                            class="block px-4 py-2 text-sm  border-b border-gray-100 dark:border-gray-700 w-full text-left {{ in_array($genre, $selectedGenres) ? 'bg-orange-500 hover:bg-orange-500 text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300' }}">
                                             {{ $genre }}
                                         </button>
                                     @empty
@@ -76,14 +76,16 @@
                             class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
                             <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
                                 <div class="py-1">
-                                    <button wire:click="filterByCost('low_to_high')"
+                                    <a href="{{ route('user.members') }}" wire:navigate
+                                        wire:click="filterByCost('low_to_high')"
                                         class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                                         {{ __('High to Low') }}
-                                    </button>
-                                    <button wire:click="filterByCost('high_to_low')"
+                                    </a>
+                                    <a href="{{ route('user.members') }}" wire:navigate
+                                        wire:click="filterByCost('high_to_low')"
                                         class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                                         {{ __('Low to High') }}
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -109,13 +111,13 @@
             <!-- Member Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-3 gap-6">
                 @forelse ($users as $user_)
-                    <div
+                    <div wire:loading.remove wire:target="search"
                         class="bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
                         <!-- Profile Header -->
                         <div class="flex items-center gap-3 mb-6">
                             <div class="relative">
                                 <a class="cursor-pointer" wire:navigate
-                                    href="{{ route('user.my-account', $user_->urn) }}">
+                                    href="{{ route('user.my-account', $user_->name) }}">
                                     <img src="{{ auth_storage_url($user_->avatar) }}" alt="{{ $user_->name }}"
                                         class="w-12 h-12 rounded-full">
                                     @if ($user_->isOnline())
@@ -133,13 +135,16 @@
                             <div>
                                 <div class="flex items-center gap-2">
                                     <a class="cursor-pointer" wire:navigate
-                                        href="{{ route('user.my-account', $user_->urn) }}">
+                                        href="{{ route('user.my-account', $user_->name) }}">
                                         <h3 class="font-semibold text-lg dark:text-white hover:underline">
                                             {{ $user_->name }}</h3>
                                     </a>
                                     @if (proUser($user_->urn))
                                         <span
-                                            class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName() }}</span>
+                                            class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName($user_->urn) }}</span>
+                                    @else
+                                        <span
+                                            class="text-sm badge badge-soft badge-info rounded-full font-semibold">{{ userPlanName($user_->urn) }}</span>
                                     @endif
                                 </div>
                                 <p class="text-text-gray text-sm dark:text-white">
@@ -166,7 +171,8 @@
                         <div class="flex justify-between items-center w-full mb-4">
                             <p class="text-text-gray text-sm dark:text-white">Repost price:</p>
                             <p class="text-sm font-medium dark:text-white">
-                                {{ repostPrice($user_) }} Credit{{ repostPrice($user_) > 1 ? 's' : '' }}
+                                {{-- {{ repostPrice($user_) }} Credit{{ repostPrice($user_) > 1 ? 's' : '' }} --}}
+                                {{ $user_->repost_price }} Credit{{ $user_->repost_price > 1 ? 's' : '' }}
                             </p>
                         </div>
 
@@ -199,14 +205,28 @@
 
                     </div>
                 @empty
-                    <div class="col-span-full text-center py-8">
+                    <div wire:loading.remove wire:target="search" class="col-span-full text-center py-8">
                         <p class="text-text-gray dark:text-white">No members found.</p>
                     </div>
                 @endforelse
-
+            </div>
+            <div wire:loading wire:target="search" class="w-full flex justify-center items-center">
+                <div class="text-center py-16 text-orange-600">
+                    <div
+                        class="w-32 h-32 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-spin">
+                        <svg class="w-16 h-16 text-orange-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z" />
+                        </svg>
+                    </div>
+                    <p class="text-md font-medium">Searching...</p>
+                </div>
             </div>
             @if ($users->hasPages())
-                <div class="mt-6">
+                <div wire:loading.remove wire:target="search" class="mt-6">
                     {{ $users->links('components.pagination.wire-navigate') }}
                 </div>
             @endif
@@ -496,8 +516,10 @@
                                     <div class="flex items-center justify-between mt-4">
                                         <span class="dark:text-white font-medium">Cost</span>
                                         <div class="flex items-center gap-2 ml-1">
+                                            {{-- <span
+                                                class="text-gray-800 dark:text-orange-400 font-bold">{{ repostPrice($user) > 1 ? repostPrice($user) . ' Credits' : repostPrice($user) . ' Credit' }}</span> --}}
                                             <span
-                                                class="text-gray-800 dark:text-orange-400 font-bold">{{ repostPrice($user) > 1 ? repostPrice($user) . ' Credits' : repostPrice($user) . ' Credit' }}</span>
+                                                class="text-gray-800 dark:text-orange-400 font-bold">{{ $user->repost_price > 1 ? $user->repost_price . ' Credits' : $user->repost_price . ' Credit' }}</span>
                                         </div>
                                     </div>
 
@@ -625,8 +647,8 @@
                                                         stroke="currentColor" stroke-width="2" />
                                                 </svg>
                                             </span>
-                                            <span
-                                                class="px-2">{{ repostPrice($user) + ($likeable ? 2 : 0) + ($commentable ? 2 : 0) }}</span>
+                                            <span {{-- class="px-2">{{ repostPrice($user) + ($likeable ? 2 : 0) + ($commentable ? 2 : 0) }}</span> --}}
+                                                class="px-2">{{ repostPrice($user->repost_price, $commentable, $likeable) }}</span>
                                             Send Request</x-gbutton>
                                     @endif
                                 </div>
