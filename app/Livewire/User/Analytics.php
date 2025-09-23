@@ -2,7 +2,6 @@
 
 namespace App\Livewire\User;
 
-use App\Models\Track;
 use App\Models\UserGenre;
 use Livewire\Component;
 use App\Services\User\AnalyticsService;
@@ -38,8 +37,9 @@ class Analytics extends Component
 
     protected AnalyticsService $analyticsService;
 
-    // Track performance pagination
-    public int $tracksPerPage = 10;
+    // For performance pagination
+    public int $sourcesPerPage = 10;
+    public string $pageName = 'sourcePage';
 
     public function boot(AnalyticsService $analyticsService)
     {
@@ -50,7 +50,7 @@ class Analytics extends Component
     {
         $this->filterOptions = $this->analyticsService->getFilterOptions();
         $this->userGenres = $this->fetchUserGenres();
-        $this->selectedGenres = ['Any Genre'];
+        $this->selectedGenres = request()->query('selectedGenres', 'Any Genre');
         $this->loadData();
         $this->loadAdditionalData();
         $this->getChartData();
@@ -193,7 +193,7 @@ class Analytics extends Component
     }
 
     /**
-     * Load additional data (top tracks, genre breakdown)
+     * Load additional data (top sources, genre breakdown)
      */
     private function loadAdditionalData()
     {
@@ -218,28 +218,31 @@ class Analytics extends Component
     }
 
     /**
-     * Get paginated track performance data
+     * Get paginated source performance data
      */
-    public function getPaginatedTrackData(): LengthAwarePaginator
+    public function getPaginatedSourceData(): LengthAwarePaginator
     {
         try {
             $dateRange = $this->getDateRange();
 
             if ($dateRange === false) {
-                return new LengthAwarePaginator([], 0, $this->tracksPerPage, $this->getPage());
+                return new LengthAwarePaginator([], 0, $this->sourcesPerPage, $this->getPage($this->pageName));
             }
 
-            return $this->analyticsService->getPaginatedAnalytics(
+            $data = $this->analyticsService->getPaginatedAnalytics(
                 filter: $this->filter,
                 dateRange: $dateRange,
                 genres: $this->selectedGenres,
-                perPage: $this->tracksPerPage,
-                page: $this->getPage(),
+                perPage: $this->sourcesPerPage,
+                page: $this->getPage($this->pageName),
+                pageName: $this->pageName,
                 userUrn: user()->urn,
             );
+
+            return $data;
         } catch (\Exception $e) {
-            logger()->error('Paginated track data loading failed', ['error' => $e->getMessage()]);
-            return new LengthAwarePaginator([], 0, $this->tracksPerPage, $this->getPage());
+            logger()->error('Paginated source data loading failed', ['error' => $e->getMessage()]);
+            return new LengthAwarePaginator([], 0, $this->sourcesPerPage, $this->getPage($this->pageName));
         }
     }
 
@@ -248,6 +251,7 @@ class Analytics extends Component
      */
     private function transformDataForUI(array $analyticsData): array
     {
+
         $streams = $analyticsData['overall_metrics']['total_plays']['current_total'];
         $likes = $analyticsData['overall_metrics']['total_likes']['current_total'];
         $reposts = $analyticsData['overall_metrics']['total_reposts']['current_total'];
@@ -259,6 +263,7 @@ class Analytics extends Component
         $avgTotal = ($likes + $comments + $reposts + $streams + $followers) / 5;
         $avgEngagementRate =  $views >= $avgTotal ? round(min(100, ($avgTotal / $views) * 100), 2) : 0;
 
+        $avgGrowth =  $this->calculateGrowthMetrics($analyticsData);
         return [
             'streams' => $this->formatNumber($streams),
             'likes' => $this->formatNumber($likes),
@@ -269,6 +274,34 @@ class Analytics extends Component
             'likes_change' => $analyticsData['overall_metrics']['total_likes']['change_rate'] ?? 0,
             'reposts_change' => $analyticsData['overall_metrics']['total_reposts']['change_rate'] ?? 0,
             'engagement_change' => $this->calculateEngagementRateChange($analyticsData),
+            'growth' => $avgGrowth
+        ];
+    }
+
+    private function calculateGrowthMetrics(array $analyticsData): array
+    {
+        $streamsGrowth = $analyticsData['overall_metrics']['total_plays']['change_rate'];
+        $likesGrowth = $analyticsData['overall_metrics']['total_likes']['change_rate'];
+        $repostsGrowth = $analyticsData['overall_metrics']['total_reposts']['change_rate'];
+        $followersGrowth = $analyticsData['overall_metrics']['total_followers']['change_rate'];
+        $commentsGrowth = $analyticsData['overall_metrics']['total_comments']['change_rate'];
+        $viewsGrowth = $analyticsData['overall_metrics']['total_views']['change_rate'];
+
+        // Calculate the number of metrics that have growth.
+        $totalGrowth = $streamsGrowth + $likesGrowth + $repostsGrowth + $followersGrowth + $commentsGrowth + $viewsGrowth;
+        $numberOfMetrics = count(array_filter([$streamsGrowth, $likesGrowth, $repostsGrowth, $followersGrowth, $commentsGrowth, $viewsGrowth]));
+
+        // Calculate and round the average growth to two decimal places.
+        // Ensure you don't divide by zero if you change the number of metrics.
+        $avgGrowth = $numberOfMetrics > 0 ? round($totalGrowth / $numberOfMetrics, 2) : 0;
+
+        return [
+            'streamsGrowth' => $streamsGrowth,
+            'likesGrowth' => $likesGrowth,
+            'repostsGrowth' => $repostsGrowth,
+            'followersGrowth' => $followersGrowth,
+            'commentsGrowth' => $commentsGrowth,
+            'avgGrowth' => $avgGrowth,
         ];
     }
 
@@ -444,19 +477,18 @@ class Analytics extends Component
     public function render()
     {
         $this->getChartData();
-        $paginated = $this->getPaginatedTrackData();
+        $paginated = $this->getPaginatedSourceData();
 
         // Get the collection from paginator
         $items = $paginated->getCollection();
-
         // Map over items to calculate engagement score and rate
-        $itemsWithMetrics = $items->map(function ($track) {
-            $totalViews = $track['metrics']['total_views']['current_total'];
-            $totalPlays = $track['metrics']['total_plays']['current_total'];
-            $totalReposts = $track['metrics']['total_reposts']['current_total'];
-            $totalLikes = $track['metrics']['total_likes']['current_total'];
-            $totalComments = $track['metrics']['total_comments']['current_total'];
-            $totalFollowers = $track['metrics']['total_followers']['current_total'];
+        $itemsWithMetrics = $items->map(function ($source) {
+            $totalViews = $source['metrics']['total_views']['current_total'];
+            $totalPlays = $source['metrics']['total_plays']['current_total'];
+            $totalReposts = $source['metrics']['total_reposts']['current_total'];
+            $totalLikes = $source['metrics']['total_likes']['current_total'];
+            $totalComments = $source['metrics']['total_comments']['current_total'];
+            $totalFollowers = $source['metrics']['total_followers']['current_total'];
 
             $avgTotal = ($totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers) / 5;
 
@@ -466,11 +498,11 @@ class Analytics extends Component
             // Engagement Score (0â€“10 scale)
             $engagementScore = round(($engagementRate / 100) * 10, 1);
 
-            // Add score and rate to track array
-            $track['engagement_score'] = $engagementScore;
-            $track['engagement_rate'] = round($engagementRate, 2); // optional rounding
+            // Add score and rate to source array
+            $source['engagement_score'] = $engagementScore;
+            $source['engagement_rate'] = round($engagementRate, 2); // optional rounding
 
-            return $track;
+            return $source;
         });
 
         // Sort by engagement score descending
@@ -479,7 +511,7 @@ class Analytics extends Component
         // Update paginator collection
         $paginated->setCollection($sorted);
         return view('livewire.user.analytics', [
-            'paginatedTracks' => $paginated
+            'paginatedSources' => $paginated
         ]);
     }
 }
