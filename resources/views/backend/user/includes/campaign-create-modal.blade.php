@@ -1,11 +1,13 @@
 <div x-data="{ showSubmitModal: @entangle('showSubmitModal').live }" x-show="showSubmitModal" x-cloak x-transition:enter="transition ease-out duration-300"
-    x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+    wire:ignore x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
     x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100"
     x-transition:leave-end="opacity-0 scale-95"
     class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
 
     <div
         class="w-full max-w-4xl mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col max-h-[85vh] overflow-hidden">
+
+        <!-- Header -->
         <div
             class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
             <div class="flex items-center gap-3">
@@ -32,7 +34,76 @@
             </button>
         </div>
 
-        <div x-data="{ momentumEnabled: @js(proUser()), showGenreRadios: false, showRepostPerDay: false, showOptions: false }" class="flex-grow overflow-y-auto p-6">
+        <!-- Body -->
+        <div class="p-6 overflow-y-auto" x-data="{
+            momentumEnabled: @js(proUser()),
+            userCreditLimit: {{ userCredits() }},
+            proFeatureEnabled: @entangle('proFeatureEnabled').live,
+            showError: false,
+            errorMessage: '',
+            proFeatureValid: false,
+            showGenreRadios: false,
+            showRepostPerDay: false,
+            showOptions: false,
+            localTotalCredit: @entangle('totalCredit').live,
+            localCredit: @entangle('credit').live,
+            localMaxFollower: @entangle('maxFollower').live,
+            localMaxRepostsPerDay: @entangle('maxRepostsPerDay').live,
+            init() {
+                {{-- if (this.userCreditLimit > 25000) this.userCreditLimit = 25000; --}}
+                if (!this.localCredit) this.localCredit = 50;
+                if (!this.localTotalCredit) this.localTotalCredit = this.localCredit;
+                this.localMaxFollower = 100;
+                $wire.set('credit', this.localCredit);
+                $wire.set('maxFollower', this.localMaxFollower);
+        
+                $watch('localCredit', value => {
+                    $wire.set('credit', value);
+                    let requiredCredit = Math.floor(value * 1.5);
+                    if (requiredCredit < this.userCreditLimit) {
+                        this.showError = true;
+                        this.errorMessage = '';
+                    }
+                    if (this.proFeatureEnabled) {
+                        this.localTotalCredit = value * 1.5;
+                    } else {
+                        this.localTotalCredit = value;
+                    }
+                    if (this.localMaxFollower > (value * 100)) {
+                        this.localMaxFollower = value * 100;
+                        $wire.set('maxFollower', this.localMaxFollower);
+                    }
+                });
+        
+                $watch('localMaxRepostsPerDay', value => {
+                    $wire.set('maxRepostsPerDay', value);
+                });
+                $watch('proFeatureValid', value => {
+                    if (value) {
+                        let requiredCredit = Math.floor(this.localCredit * 1.5);
+        
+                        if (requiredCredit > this.userCreditLimit) {
+                            this.showError = true;
+                            this.proFeatureValid = false;
+                            this.errorMessage = 'Credit exceeds your available credits.';
+                            this.proFeatureEnabled = false;
+                        } else {
+                            this.showError = false;
+                            this.errorMessage = '';
+                            this.localTotalCredit = this.localCredit;
+                        }
+                        this.localTotalCredit = Math.round(this.localCredit * 1.5);
+                        this.proFeatureEnabled = false;
+                    } else {
+                        this.localTotalCredit = this.localCredit;
+                        this.proFeatureEnabled = true;
+                    }
+        
+                });
+        
+            }
+        }">
+
             <!-- Selected Track -->
             @if ($track)
                 <div>
@@ -42,33 +113,31 @@
                             class="bg-gray-100 dark:bg-slate-700 py-1.5 px-3 rounded-xl text-orange-500 text-sm font-medium hover:text-orange-600">Edit</button>
                     </div>
                     <div
-                        class="p-4 flex items-center space-x-4 dark:bg-slate-700 rounded-xl transition-all duration-200 border  border-orange-200 ">
-                        @if ($track)
-                            <img src="{{ soundcloud_image($track->artwork_url) }}" alt="Album cover"
-                                class="w-12 h-12 rounded">
-                        @endif
+                        class="p-4 flex items-center space-x-4 dark:bg-slate-700 rounded-xl transition-all duration-200 border border-orange-200">
+                        <img src="{{ soundcloud_image($track->artwork_url) }}" alt="Album cover"
+                            class="w-12 h-12 rounded">
                         <div>
                             <p class="text-sm text-gray-600 dark:text-white">{{ $track->type }} -
                                 {{ $track->author_username }}</p>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $track->title }}
-                            </p>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $track->title }}</p>
                         </div>
                     </div>
                 </div>
             @endif
+
+            <!-- Form -->
             <form wire:submit.prevent="createCampaign" class="space-y-6">
-                <!-- Set Budget -->
+                <!-- Budget -->
                 <div class="mt-4">
                     <div class="flex items-center space-x-2 mb-2">
                         <h3 class="text-sm font-medium text-gray-900 dark:text-white">Set budget</h3>
-                        <div class="w-4 h-4 bg-gray-400 rounded-full  flex items-center justify-center">
+                        <div class="w-4 h-4 bg-gray-400 rounded-full flex items-center justify-center">
                             <span class="text-white text-xs">i</span>
                         </div>
                     </div>
                     <p class="text-xs text-gray-700 dark:text-gray-400 mb-4">A potential 10,000 people reached per
                         campaign</p>
 
-                    <!-- Budget Display -->
                     <div class="flex items-center justify-center space-x-2 mb-4">
                         <svg class="w-8 h-8 text-orange-500" width="26" height="18" viewBox="0 0 26 18"
                             fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -77,76 +146,65 @@
                             <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
                                 stroke-width="2" />
                         </svg>
-                        <span class="text-2xl font-bold text-orange-500">{{ $credit }}</span>
+                        <span class="text-2xl font-bold text-orange-500" x-text="localCredit"></span>
                     </div>
-                    {{-- Error Message --}}
-                    @if ($errors->has('credit'))
-                        <p class="text-xs text-red-500 mb-4">
-                            {{ $errors->first('credit') }}
-                        </p>
-                    @endif
 
-                    <!-- Slider -->
-                    <div class="relative">
-                        <input type="range" x-data x-on:input="$wire.set('credit', $event.target.value)"
-                            min="50" step="10" max="{{ userCredits() }}" value="{{ $credit }}"
-                            class="w-full h-2 border-0 cursor-pointer outline-none transition-all duration-200">
-                    </div>
+                    @error('credit')
+                        <p class="text-xs text-red-500 mb-4">{{ $message }}</p>
+                    @enderror
+
+                    <input type="range" x-init="localCredit = @entangle('credit').defer || 50" x-model="localCredit" min="50" step="10"
+                        :max="!proFeatureEnabled
+                            ? Math.min(25000, userCreditLimit):
+                            Math.min(25000, userCreditLimit - (localTotalCredit - localCredit))"
+                        class="w-full h-2 border-0 cursor-pointer outline-none transition-all duration-200">
+
                 </div>
 
-                <!-- Enable CommentPlus -->
+                <!-- Campaign Settings -->
                 <div>
                     <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mt-4">Campaign Settings</h2>
-                    <p class="text-sm text-gray-700 dark:text-gray-400 mb-4 mt-2">Select amount of credits to be
-                        spent</p>
+                    <p class="text-sm text-gray-700 dark:text-gray-400 mb-4 mt-2">Select amount of credits to be spent
+                    </p>
                     <div class="flex items-start space-x-3">
                         <input type="checkbox" wire:model="commentable" checked
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                         <div>
                             <h4 class="text-sm font-medium text-gray-900 dark:text-white">Activate Feedback</h4>
-                            <p class="text-xs text-gray-700 dark:text-gray-400">Encourage listeners to comment on
-                                your track (2
-                                credits
-                                per comment).</p>
+                            <p class="text-xs text-gray-700 dark:text-gray-400">Encourage listeners to comment (2
+                                credits per comment).</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Enable LikePlus -->
                 <div class="flex items-start space-x-3">
                     <input type="checkbox" wire:model="likeable" checked
                         class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                     <div>
                         <h4 class="text-sm font-medium text-gray-900 dark:text-white">Activate HeartPush</h4>
-                        <p class="text-xs text-gray-700 dark:text-gray-400">Motivate real users to like your track
-                            (2 credits per
-                            like).</p>
+                        <p class="text-xs text-gray-700 dark:text-gray-400">Motivate users to like your track (2 credits
+                            per like).</p>
                     </div>
                 </div>
-                <!-- Max Follower Limit -->
-                <div x-data="{ showOptions: false }" class="flex flex-col space-y-2">
+
+                <!-- Max Follower -->
+                <div class="flex flex-col space-y-2">
                     <div class="flex items-start space-x-3">
-                        <input type="checkbox" @change="showOptions = !showOptions"
-                            {{ $maxFollower > 100 ? 'checked' : '' }}
+                        <input type="checkbox" @change="showOptions = !showOptions" wire:model="maxFollowerEnabled"
                             class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-sm font-medium text-gray-900 dark:text-white">Limit to users with
-                                max follower
-                                count</span>
-                        </div>
+                        <span class="text-sm font-medium text-gray-900 dark:text-white">Limit to users with max follower
+                            count</span>
                     </div>
                     <div x-show="showOptions" x-transition class="p-3">
                         <div class="flex justify-between items-center gap-4">
                             <div class="w-full relative">
-                                <input type="range" x-data x-on:input="$wire.set('maxFollower', $event.target.value)"
-                                    min="100" max="{{ $followersLimit }}"
-                                    value="{{ $followersLimit < $maxFollower ? $followersLimit : $maxFollower }}"
-                                    class="w-full h-2 cursor-pointer">
+                                <input type="range" x-init="localMaxFollower = @entangle('maxFollower').defer || 100" x-model="localMaxFollower"
+                                    min="100" :max="localCredit * 100" class="w-full h-2 cursor-pointer">
                             </div>
                             <div
-                                class="full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
-                                <span
-                                    class="text-sm font-medium text-gray-900 dark:text-white">{{ $maxFollower > $followersLimit ? $followersLimit : $maxFollower }}</span>
+                                class="min-w-[90px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
+                                <span class="text-sm font-medium text-gray-900 dark:text-white"
+                                    x-text="localMaxFollower"></span>
                             </div>
                         </div>
                         @error('maxFollower')
@@ -155,10 +213,10 @@
                     </div>
                 </div>
 
-                <!-- Enable Campaign Accelerator -->
+                <!-- PRO Features, Audience Filtering, Genres (unchanged)... -->
                 <div class="flex items-start space-x-3 {{ !proUser() ? 'opacity-30' : '' }}">
                     <input type="checkbox" wire:click="profeature( {{ $proFeatureValue }} )"
-                        {{ !proUser() ? 'disabled' : '' }}
+                        x-model="proFeatureValid" {{ !proUser() ? 'disabled' : '' }}
                         class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ !proUser() ? 'cursor-not-allowed' : 'cursor-pointer' }}">
                     <div>
                         <div class="flex items-center space-x-2">
@@ -171,11 +229,11 @@
                                 <span class="text-white text-xs">i</span>
                             </div>
                         </div>
-                        <p class="text-xs text-gray-700 dark:text-gray-400">Use Campaign Accelerator (+50 credits)
-                        </p>
+                        <p class="text-xs text-gray-700 dark:text-gray-400"
+                            x-text="'Use Campaign Accelerator (+ ' + (localCredit * 0.5) + ' credits)'"></p>
                     </div>
                 </div>
-
+                <p x-show="errorMessage" class="text-red-500 text-xs mt-1" x-text="errorMessage"></p>
 
                 <!-- Campaign Targeting -->
                 <div class="border border-gray-200 dark:border-gray-700 bg-gray-200 dark:bg-gray-900 rounded-lg p-4"
@@ -190,7 +248,7 @@
                     <div class="space-y-3 ml-4">
                         <div class="flex flex-col space-y-2">
                             <div class="flex items-start space-x-3">
-                                <input type="checkbox" :disabled="!momentumEnabled"
+                                <input type="checkbox" :disabled="!momentumEnabled" wire:model="repostPerDayEnabled"
                                     class="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
                                     :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                 <div class="flex items-center space-x-2">
@@ -217,14 +275,15 @@
                                 <div class="flex justify-between items-center gap-4">
                                     <div class="w-full relative">
                                         <input type="range" x-data :disabled="!momentumEnabled"
-                                            x-on:input="$wire.set('maxRepostsPerDay', $event.target.value)"
-                                            min="0" max="100" value="{{ $maxRepostsPerDay }}"
+                                            x-init="localMaxRepostsPerDay = @entangle('maxRepostsPerDay').defer || 100" x-model="localMaxRepostsPerDay" min="0"
+                                            max="100" value="{{ $maxRepostsPerDay }}"
                                             class="w-full h-2  cursor-pointer"
                                             :class="momentumEnabled ? 'cursor-pointer' : 'cursor-not-allowed'">
                                     </div>
                                     <div
-                                        class="w-14 h-8 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
-                                        <span>{{ $maxRepostsPerDay }}</span>
+                                        class="min-w-[80px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">
+                                        <span class="text-sm font-medium text-gray-900 dark:text-white"
+                                            x-text="localMaxRepostsPerDay"></span>
                                     </div>
                                     @error('maxRepostsPerDay')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -291,7 +350,7 @@
                     </div>
                 </div>
 
-                {{-- submit button here --}}
+                <!-- Submit -->
                 <div class="pt-4">
                     <button type="submit"
                         class="w-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-bold py-2 px-4 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg {{ !$canSubmit ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' }}">
@@ -304,14 +363,10 @@
                                     stroke-width="2" />
                             </svg>
                         </span>
-
-                        <span>{{ $proFeatureEnabled ? $credit * 1.5 : $credit }}</span>
-                        <span wire:loading.remove wire:target="createCampaign">
-                            {{ __('Create Campaign') }}
-                        </span>
-                        <span wire:loading wire:target="createCampaign">
-                            {{ __('Creating...') }}
-                        </span>
+                        {{-- <span>{{ $proFeatureEnabled ? $credit * 1.5 : $credit }}</span> --}}
+                        <span x-text="localTotalCredit"></span>
+                        <span wire:loading.remove wire:target="createCampaign">{{ __('Create Campaign') }}</span>
+                        <span wire:loading wire:target="createCampaign">{{ __('Creating...') }}</span>
                     </button>
                 </div>
             </form>

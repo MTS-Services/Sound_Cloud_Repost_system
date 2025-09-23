@@ -194,7 +194,7 @@ function isImage($path)
     return in_array($extension, $imageExtensions);
 }
 
-function repostPrice($user = null, $commentend = false, $liked = false)
+function repostPrice($repost_price, $commentend = false, $liked = false)
 {
 
     $commentPrice = 0;
@@ -208,15 +208,17 @@ function repostPrice($user = null, $commentend = false, $liked = false)
     }
 
     $total = $commentPrice + $likePrice;
-    if (!$user) {
-        $user = user();
-    }
-    $user->load('userInfo');
-    $followers_count = $user?->userInfo?->followers_count;
-    if ($followers_count === null) {
-        return 1 + $total; // Default to 1 if followers count is not available
-    }
-    return ceil($followers_count / 100) ?: 1 + $total; // Ensure at least 1 credit
+
+    return $repost_price + $total;
+    // if (!$user) {
+    //     $user = user();
+    // }
+    // $user->load('userInfo');
+    // $followers_count = $user?->userInfo?->followers_count;
+    // if ($followers_count === null) {
+    //     return 1 + $total; // Default to 1 if followers count is not available
+    // }
+    // return ceil($followers_count / 100) ?: 1 + $total; // Ensure at least 1 credit
 }
 
 function userCredits($user = null)
@@ -756,12 +758,17 @@ if (!function_exists('boostAgain')) {
     }
 
     if (!function_exists('userPlanName')) {
-        function userPlanName()
+        function userPlanName($userUrn = null)
         {
-            if (empty(user()->activePlan()) || user()->activePlan()->price == 0) {
+            if ($userUrn) {
+                $user = User::where('urn', $userUrn)->first();
+            } else {
+                $user = user();
+            }
+            if (empty($user->activePlan()) || $user->activePlan()->price == 0) {
                 return 'Free Plan';
             } else {
-                return user()->activePlan()->plan?->name;
+                return $user->activePlan()->plan?->name;
             }
         }
     }
@@ -815,7 +822,7 @@ function app_setting($key)
 }
 // function logos()
 
-if (! function_exists('number_shorten')) {
+if (!function_exists('number_shorten')) {
     function number_shorten($number, $precision = 1)
     {
         if ($number < 900) {
@@ -849,4 +856,16 @@ if (! function_exists('number_shorten')) {
         return $number_format . $suffix;
     }
 }
+
+if (!function_exists('is_email_verified')) {
+    function is_email_verified($userUrn = null)
+    {
+        $user = $userUrn ? User::where('urn', $userUrn)->first() : user();
+        return $user->hasVerifiedEmail();
+    }
+
+}
+
+
+
 

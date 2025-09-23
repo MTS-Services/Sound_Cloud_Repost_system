@@ -52,13 +52,16 @@ class SyncUserJob implements ShouldQueue
      */
     public function handle(SoundCloudService $soundCloudService): void
     {
+        Log::info('SyncUserJob started for user ID: ' . $this->user->id . ', URN: ' . $this->user->urn . ', on login: ' . now());
         DB::transaction(function () use ($soundCloudService) {
-            // Sync user information first, as other sync operations might depend on it
+            Log::info('Start User Information Sync');
             $soundCloudService->syncUserInformation($this->user, $this->soundCloudUser);
+            Log::info('Start User Tracks Sync');
             $soundCloudService->syncUserTracks($this->user, []);
+            Log::info('Start User Playlists Sync');
             $soundCloudService->syncUserPlaylists($this->user);
+            Log::info('Start User Products and Subscriptions Sync');
             $soundCloudService->syncUserProductsAndSubscriptions($this->user, $this->soundCloudUser);
-
             // You might want to update a 'last_synced_at' timestamp on the User model here
             $this->user->update(['last_synced_at' => now()]);
         });

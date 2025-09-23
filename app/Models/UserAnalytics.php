@@ -5,28 +5,45 @@ namespace App\Models;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
 class UserAnalytics extends BaseModel
 {
-    protected $with = ['user', 'track', 'action'];
+    use SoftDeletes;
+
+    // Action type constants
+    public const TYPE_VIEW = 0;
+    public const TYPE_PLAY = 1;
+    public const TYPE_LIKE = 2;
+    public const TYPE_COMMENT = 3;
+    public const TYPE_REPOST = 4;
+    public const TYPE_REQUEST = 5;
+    public const TYPE_FOLLOW = 6;
+
+    // Type labels for display
+    public const TYPE_LABELS = [
+        self::TYPE_PLAY => 'Play',
+        self::TYPE_REPOST => 'Repost',
+        self::TYPE_LIKE => 'Like',
+        self::TYPE_COMMENT => 'Comment',
+        self::TYPE_VIEW => 'View',
+        self::TYPE_REQUEST => 'Request',
+        self::TYPE_FOLLOW => 'Follow',
+    ];
+
+    protected $with = ['ownerUser', 'actUser', 'source'];
 
     protected $fillable = [
-        'user_urn',
-        'track_urn',
-        'action_id',
-        'action_type',
-        'date',
+        'owner_user_urn',
+        'act_user_urn',
+        'source_id',
+        'source_type',
+        'actionable_id',
+        'actionable_type',
+        'type',
+        'ip_address',
         'genre',
-
-        'total_requests',
-        'total_plays',
-        'total_followers',
-        'total_likes',
-        'total_reposts',
-        'total_comments',
-        'total_views',
-
         'creater_id',
         'updater_id',
         'deleter_id',
@@ -45,17 +62,14 @@ class UserAnalytics extends BaseModel
     ];
 
     protected $casts = [
-        'total_requests' => 'integer',
-        'total_plays' => 'integer',
-        'total_followers' => 'integer',
-        'total_likes' => 'integer',
-        'total_reposts' => 'integer',
-        'total_comments' => 'integer',
-        'total_views' => 'integer',
+        'type' => 'integer',
+        'actionable_id' => 'integer',
         'creater_id' => 'integer',
         'updater_id' => 'integer',
         'deleter_id' => 'integer',
-        'date' => 'date',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
@@ -63,26 +77,35 @@ class UserAnalytics extends BaseModel
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
     /**
-     * User relationship with optimized select
+     * Owner user relationship (track owner)
      */
-    public function user(): BelongsTo
+    public function ownerUser(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_urn', 'urn')
+        return $this->belongsTo(User::class, 'owner_user_urn', 'urn')
             ->select(['urn', 'name', 'email']);
     }
 
     /**
-     * Track relationship with optimized select for analytics
+     * Acting user relationship (user who performed the action)
      */
-    public function track(): BelongsTo
+    public function actUser(): BelongsTo
     {
-        return $this->belongsTo(Track::class, 'track_urn', 'urn');
+        return $this->belongsTo(User::class, 'act_user_urn', 'urn')
+            ->select(['urn', 'name', 'email']);
     }
 
     /**
-     * Polymorphic action relationship
+     * Track relationship
      */
-    public function action(): MorphTo
+    public function source(): MorphTo
+    {
+        return $this->morphTo();
+    }
+
+    /**
+     * Polymorphic actionable relationship
+     */
+    public function actionable(): MorphTo
     {
         return $this->morphTo();
     }
@@ -96,11 +119,19 @@ class UserAnalytics extends BaseModel
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
     /**
-     * Scope for specific user
+     * Scope for specific owner user
      */
-    public function scopeForUser($query, string $userUrn)
+    public function scopeForOwnerUser($query, string $userUrn)
     {
-        return $query->where('user_urn', $userUrn);
+        return $query->where('owner_user_urn', $userUrn);
+    }
+
+    /**
+     * Scope for specific acting user
+     */
+    public function scopeForActUser($query, string $userUrn)
+    {
+        return $query->where('act_user_urn', $userUrn);
     }
 
     /**
@@ -108,8 +139,8 @@ class UserAnalytics extends BaseModel
      */
     public function scopeDateRange($query, $startDate, $endDate)
     {
-        return $query->whereDate('date', '>=', $startDate)
-            ->whereDate('date', '<=', $endDate);
+        return $query->whereDate('created_at', '>=', $startDate)
+            ->whereDate('created_at', '<=', $endDate);
     }
 
     /**
@@ -118,6 +149,14 @@ class UserAnalytics extends BaseModel
     public function scopeForTrack($query, string $trackUrn)
     {
         return $query->where('track_urn', $trackUrn);
+    }
+
+    /**
+     * Scope for specific action type
+     */
+    public function scopeForType($query, int $type)
+    {
+        return $query->where('type', $type);
     }
 
     /**
@@ -137,20 +176,34 @@ class UserAnalytics extends BaseModel
     }
 
     /**
-     * Scope for aggregated track analytics
+     * Scope for aggregated analytics by type
      */
-    public function scopeTrackAggregated($query, $startDate, $endDate)
+    public function scopeAggregatedByType($query, $startDate, $endDate)
     {
         return $query->select([
+            'type',
             'track_urn',
-            DB::raw('SUM(total_views) as total_views'),
-            DB::raw('SUM(total_plays) as total_streams'),
-            DB::raw('SUM(total_likes) as total_likes'),
-            DB::raw('SUM(total_reposts) as total_reposts'),
-            DB::raw('SUM(total_comments) as total_comments')
+            DB::raw('COUNT(*) as total_count'),
+            DB::raw('COUNT(DISTINCT act_user_urn) as unique_users'),
         ])
             ->dateRange($startDate, $endDate)
-            ->groupBy('track_urn');
+            ->groupBy(['type', 'track_urn']);
+    }
+
+    /**
+     * Scope for daily aggregation
+     */
+    public function scopeDailyAggregation($query, $startDate, $endDate)
+    {
+        return $query->select([
+            DB::raw('DATE(created_at) as date'),
+            'type',
+            'track_urn',
+            DB::raw('COUNT(*) as total_count'),
+            DB::raw('COUNT(DISTINCT act_user_urn) as unique_users'),
+        ])
+            ->dateRange($startDate, $endDate)
+            ->groupBy([DB::raw('DATE(created_at)'), 'type', 'track_urn']);
     }
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
@@ -162,31 +215,27 @@ class UserAnalytics extends BaseModel
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
     /**
-     * Get formatted date attribute
+     * Get formatted created_at date attribute
      */
     public function getFormattedDateAttribute(): string
     {
-        return $this->date->format('M d, Y');
+        return $this->created_at->format('M d, Y');
     }
 
     /**
-     * Get total engagement (likes + reposts + comments)
+     * Get type label attribute
      */
-    public function getTotalEngagementAttribute(): int
+    public function getTypeLabelAttribute(): string
     {
-        return $this->total_likes + $this->total_reposts + $this->total_comments;
+        return self::TYPE_LABELS[$this->type] ?? 'Unknown';
     }
 
     /**
-     * Get engagement rate percentage
+     * Check if action is engagement type (like, comment, repost)
      */
-    public function getEngagementRateAttribute(): float
+    public function getIsEngagementAttribute(): bool
     {
-        if ($this->total_views == 0) {
-            return 0.0;
-        }
-
-        return round(($this->total_engagement / $this->total_views) * 100, 2);
+        return in_array($this->type, [self::TYPE_LIKE, self::TYPE_COMMENT, self::TYPE_REPOST]);
     }
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
@@ -194,46 +243,81 @@ class UserAnalytics extends BaseModel
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
     /**
-     * Boot method for model events
+     * Get analytics summary for a collection grouped by type
      */
-    public static function boot()
-    {
-        parent::boot();
-
-        // Auto-set date if not provided
-        static::creating(function ($model) {
-            if (!$model->date) {
-                $model->date = now()->toDateString();
-            }
-        });
-    }
-
-    /**
-     * Get metrics summary for a collection
-     */
-    public static function getMetricsSummary($collection): array
+    public static function getAnalyticsSummary($collection): array
     {
         if ($collection->isEmpty()) {
             return [
                 'total_views' => 0,
-                'total_plays' => 0,
                 'total_likes' => 0,
                 'total_reposts' => 0,
                 'total_comments' => 0,
                 'total_requests' => 0,
                 'total_followers' => 0,
+                'unique_users' => 0,
             ];
         }
 
+        $grouped = $collection->groupBy('type');
+
         return [
-            'total_views' => $collection->sum('total_views'),
-            'total_plays' => $collection->sum('total_plays'),
-            'total_likes' => $collection->sum('total_likes'),
-            'total_reposts' => $collection->sum('total_reposts'),
-            'total_comments' => $collection->sum('total_comments'),
-            'total_requests' => $collection->sum('total_requests'),
-            'total_followers' => $collection->sum('total_followers'),
+            'total_views' => $grouped->get(self::TYPE_VIEW, collect())->count(),
+            'total_likes' => $grouped->get(self::TYPE_LIKE, collect())->count(),
+            'total_reposts' => $grouped->get(self::TYPE_REPOST, collect())->count(),
+            'total_comments' => $grouped->get(self::TYPE_COMMENT, collect())->count(),
+            'total_requests' => $grouped->get(self::TYPE_REQUEST, collect())->count(),
+            'total_followers' => $grouped->get(self::TYPE_FOLLOW, collect())->count(),
+            'unique_users' => $collection->pluck('act_user_urn')->unique()->count(),
         ];
+    }
+
+    /**
+     * Check if a specific action already exists for the user and track
+     */
+    public static function actionExists(string $actUserUrn, string $trackUrn, int $type, string $ipAddress = null): bool
+    {
+        $query = self::where('act_user_urn', $actUserUrn)
+            ->where('track_urn', $trackUrn)
+            ->where('type', $type);
+
+        if ($ipAddress) {
+            $query->where('ip_address', $ipAddress);
+        }
+
+        return $query->exists();
+    }
+
+    /**
+     * Create or update analytics record
+     */
+    public static function recordAction(
+        string $ownerUserUrn,
+        string $actUserUrn,
+        string $trackUrn,
+        int $type,
+        $actionableId = null,
+        string $actionableType = null,
+        string $ipAddress = null,
+        string $genre = null
+    ): ?self {
+        // For unique actions, check if already exists
+        if (in_array($type, [self::TYPE_LIKE, self::TYPE_REPOST, self::TYPE_FOLLOW])) {
+            if (self::actionExists($actUserUrn, $trackUrn, $type, $ipAddress)) {
+                return null; // Action already recorded
+            }
+        }
+
+        return self::create([
+            'owner_user_urn' => $ownerUserUrn,
+            'act_user_urn' => $actUserUrn,
+            'track_urn' => $trackUrn,
+            'actionable_id' => $actionableId,
+            'actionable_type' => $actionableType,
+            'type' => $type,
+            'ip_address' => $ipAddress,
+            'genre' => $genre,
+        ]);
     }
 
     public function __construct(array $attributes = [])
@@ -241,8 +325,8 @@ class UserAnalytics extends BaseModel
         parent::__construct($attributes);
         $this->appends = array_merge(parent::getAppends(), [
             'formatted_date',
-            'total_engagement',
-            'engagement_rate'
+            'type_label',
+            'is_engagement'
         ]);
     }
 }

@@ -57,7 +57,7 @@
                             <div class="flex items-center gap-2">
                                 <button wire:click="refresh"
                                     class="flex items-center gap-2 bg-gray-200 hover:bg-white dark:bg-gray-800 dark:hover:bg-gray-700 px-4 py-2 rounded-xl transition-all duration-200 font-medium border dark:border-gray-700 text-gray-900 dark:text-white">
-                                    <span wire:loading.remove>
+                                    <span wire:loading.remove wire:target="refresh">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round"
@@ -68,7 +68,7 @@
                                             <path d="M8 16H3v5"></path>
                                         </svg>
                                     </span>
-                                    <span wire:loading class="animate-spin">
+                                    <span wire:loading wire:target="refresh" class="animate-spin">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round"
@@ -79,8 +79,10 @@
                                             <path d="M8 16H3v5"></path>
                                         </svg>
                                     </span>
-                                    <span class="hidden sm:inline" wire:loading.remove>Refresh</span>
-                                    <span class="hidden sm:inline" wire:loading>Refreshing...</span>
+                                    <span class="hidden sm:inline" wire:loading.remove
+                                        wire:target="refresh">Refresh</span>
+                                    <span class="hidden sm:inline" wire:loading
+                                        wire:target="refresh">Refreshing...</span>
 
                                 </button>
                                 <button
@@ -118,7 +120,7 @@
                         </div>
                     </div>
                 </div>
-                <div x-data="{ activeTab: @entangle('activeTab').live, playing: @entangle('playing').live  }">
+                <div x-data="{ activeTab: @entangle('activeTab').live, playing: @entangle('playing').live }">
                     <div class="flex items-center justify-between mb-6">
                         <div class="flex items-center gap-4">
                             <h2 class="text-xl font-bold text-gray-800 dark:text-white">{{ $topTracks->count() }}
@@ -195,8 +197,8 @@
                             @forelse ($topTracks as $track)
                                 <div
                                     class="grid grid-cols-12 gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 border-b border-gray-300 dark:border-gray-700">
-                                    {{-- @dd($track); --}}
-                                    @if (proUser($track['track_details']->user_urn) && $track['action_details']->is_featured)
+
+                                    @if (proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured)
                                         <div class="col-span-1 flex items-center">
                                             <div
                                                 class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gradient-to-br from-orange-400 to-orange-600 text-white">
@@ -245,7 +247,7 @@
                                                 class="font-semibold text-gray-900 dark:text-white truncate cursor-pointer hover:text-orange-400 transition-colors block w-full">
                                                 {{ Str::limit($track['track_details']->title, 30, '...') }}
                                             </a>
-                                            <a href="{{ route('user.my-account', $track['track_details']->user->urn) }}"
+                                            <a href="{{ route('user.my-account', $track['track_details']->user->name) }}"
                                                 class="text-sm text-gray-600 dark:text-gray-400 truncate hover:text-orange-400 transition-colors block">
                                                 {{ $track['track_details']->user->name }}</a>
                                         </div>
@@ -282,8 +284,8 @@
                                                 </svg>
                                             </button>
                                             <button
-                                                wire:click="likeTrack('{{ encrypt($track['action_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
-                                                class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white"><svg
+                                                wire:click="likeTrack('{{ encrypt($track['actionable_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
+                                                class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white {{ $track['like'] ? 'bg-red-500 text-white shadow-lg' : '' }}"><svg
                                                     xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -294,7 +296,7 @@
                                                 </svg>
                                             </button>
                                             <button
-                                                wire:click="repostTrack('{{ encrypt($track['action_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
+                                                wire:click="repostTrack('{{ encrypt($track['actionable_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
                                                 class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 {{ $track['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white "><svg
                                                     xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -310,369 +312,6 @@
                             @empty
                                 <p class="text-center text-gray-500 dark:text-gray-400 py-8">No tracks found.</p>
                             @endforelse
-
-
-                            {{-- <div
-                            class="grid grid-cols-12 gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 border-b border-gray-300 dark:border-gray-700">
-                            <div class="col-span-1 flex items-center">
-                                <div
-                                    class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gradient-to-br from-orange-400 to-orange-600 text-white">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="lucide lucide-crown w-3 h-3">
-                                        <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="col-span-4 flex items-center gap-3">
-                                <div class="relative group cursor-pointer"><img
-                                        src="https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=300"
-                                        alt="Midnight Dreams"
-                                        class="w-12 h-12 rounded-lg object-cover transition-transform duration-300 group-hover:scale-105">
-                                    <div
-                                        class="absolute inset-0 bg-gray-950 bg-gray-950/0 group-hover:bg-gray-950/30 rounded-lg transition-all duration-300 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-external-link w-3 h-3 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                            <path d="M15 3h6v6"></path>
-                                            <path d="M10 14 21 3"></path>
-                                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <h3
-                                        class="font-semibold text-gray-900 dark:text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
-                                        Midnight Dreams</h3>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 truncate">Luna Waves</p>
-                                </div>
-                            </div>
-                            <div
-                                class="col-span-2 flex items-center justify-center cursor-pointer hover:text-orange-400 transition-colors">
-                                <span class="font-bold text-orange-400">10/10</span>
-                            </div>
-                            <div class="col-span-2 flex items-center justify-center"><span
-                                    class="text-gray-500 dark:text-gray-300">3.2K</span></div>
-                            <div class="col-span-2 flex items-center justify-center"><span
-                                    class="text-gray-500 dark:text-gray-300">1.3K</span></div>
-                            <div class="col-span-1 flex items-center justify-center">
-                                <div class="flex items-center gap-1">
-                                    <button
-                                        class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-play w-3 h-3 ml-0.5">
-                                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                        </svg>
-                                    </button>
-                                    <button
-                                        class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-heart w-3 h-3 ">
-                                            <path
-                                                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
-                                            </path>
-                                        </svg>
-                                    </button>
-                                    <button
-                                        class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-green-500 hover:text-white"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-rotate-ccw w-3 h-3">
-                                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                                            <path d="M3 3v5h5"></path>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div
-                            class="grid grid-cols-12 gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 border-b border-gray-300 dark:border-gray-700">
-                            <div class="col-span-1 flex items-center">
-                                <div
-                                    class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gradient-to-br from-gray-400 to-gray-600 text-white">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="lucide lucide-crown w-3 h-3">
-                                        <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="col-span-4 flex items-center gap-3">
-                                <div class="relative group cursor-pointer"><img
-                                        src="https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=300"
-                                        alt="Urban Pulse"
-                                        class="w-12 h-12 rounded-lg object-cover transition-transform duration-300 group-hover:scale-105">
-                                    <div
-                                        class="absolute inset-0 bg-gray-950 bg-gray-950/0 group-hover:bg-gray-950/30 rounded-lg transition-all duration-300 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-external-link w-3 h-3 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                            <path d="M15 3h6v6"></path>
-                                            <path d="M10 14 21 3"></path>
-                                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <h3
-                                        class="font-semibold text-gray-900 dark:text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
-                                        Urban Pulse</h3>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 truncate">Metro Vibes</p>
-                                </div>
-                            </div>
-                            <div
-                                class="col-span-2 flex items-center justify-center cursor-pointer hover:text-orange-400 transition-colors">
-                                <span class="font-bold text-orange-400">9.4/10</span>
-                            </div>
-                            <div class="col-span-2 flex items-center justify-center"><span
-                                    class="text-gray-500 dark:text-gray-300">2.9K</span></div>
-                            <div class="col-span-2 flex items-center justify-center"><span
-                                    class="text-gray-500 dark:text-gray-300">1.2K</span></div>
-                            <div class="col-span-1 flex items-center justify-center">
-                                <div class="flex items-center gap-1"><button
-                                        class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-play w-3 h-3 ml-0.5">
-                                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                        </svg></button><button
-                                        class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-red-500 text-white"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-heart w-3 h-3 fill-current">
-                                            <path
-                                                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
-                                            </path>
-                                        </svg></button><button
-                                        class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-green-500 hover:text-white"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-rotate-ccw w-3 h-3">
-                                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                                            <path d="M3 3v5h5"></path>
-                                        </svg></button></div>
-                            </div>
-                        </div>
-                        <div
-                            class="grid grid-cols-12 gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 border-b border-gray-300 dark:border-gray-700">
-                            <div class="col-span-1 flex items-center">
-                                <div
-                                    class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gradient-to-br from-orange-300 to-orange-500 text-white">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="lucide lucide-crown w-3 h-3">
-                                        <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="col-span-4 flex items-center gap-3">
-                                <div class="relative group cursor-pointer"><img
-                                        src="https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=300"
-                                        alt="Cosmic Flow"
-                                        class="w-12 h-12 rounded-lg object-cover transition-transform duration-300 group-hover:scale-105">
-                                    <div
-                                        class="absolute inset-0 bg-gray-950 bg-gray-950/0 group-hover:bg-gray-950/30 rounded-lg transition-all duration-300 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-external-link w-3 h-3 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                            <path d="M15 3h6v6"></path>
-                                            <path d="M10 14 21 3"></path>
-                                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <h3
-                                        class="font-semibold text-gray-900 dark:text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
-                                        Cosmic Flow</h3>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 truncate">Stellar Sound</p>
-                                </div>
-                            </div>
-                            <div
-                                class="col-span-2 flex items-center justify-center cursor-pointer hover:text-orange-400 transition-colors">
-                                <span class="font-bold text-orange-400">9.1/10</span>
-                            </div>
-                            <div class="col-span-2 flex items-center justify-center"><span
-                                    class="text-gray-500 dark:text-gray-300">2.6K</span></div>
-                            <div class="col-span-2 flex items-center justify-center"><span
-                                    class="text-gray-500 dark:text-gray-300">1.1K</span></div>
-                            <div class="col-span-1 flex items-center justify-center">
-                                <div class="flex items-center gap-1"><button
-                                        class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-play w-3 h-3 ml-0.5">
-                                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                        </svg></button><button
-                                        class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-heart w-3 h-3 ">
-                                            <path
-                                                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
-                                            </path>
-                                        </svg></button><button
-                                        class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-green-500 text-white"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-rotate-ccw w-3 h-3">
-                                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                                            <path d="M3 3v5h5"></path>
-                                        </svg></button></div>
-                            </div>
-                        </div>
-                        <div
-                            class="grid grid-cols-12 gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 border-b border-gray-300 dark:border-gray-700">
-                            <div class="col-span-1 flex items-center">
-                                <div
-                                    class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gray-700 text-gray-300">
-                                    4</div>
-                            </div>
-                            <div class="col-span-4 flex items-center gap-3">
-                                <div class="relative group cursor-pointer"><img
-                                        src="https://images.pexels.com/photos/1629236/pexels-photo-1629236.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=300"
-                                        alt="Neon Nights"
-                                        class="w-12 h-12 rounded-lg object-cover transition-transform duration-300 group-hover:scale-105">
-                                    <div
-                                        class="absolute inset-0 bg-gray-950 bg-gray-950/0 group-hover:bg-gray-950/30 rounded-lg transition-all duration-300 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-external-link w-3 h-3 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                            <path d="M15 3h6v6"></path>
-                                            <path d="M10 14 21 3"></path>
-                                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <h3
-                                        class="font-semibold text-gray-900 dark:text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
-                                        Neon Nights</h3>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 truncate">Synth Paradise</p>
-                                </div>
-                            </div>
-                            <div
-                                class="col-span-2 flex items-center justify-center cursor-pointer hover:text-orange-400 transition-colors">
-                                <span class="font-bold text-orange-400">8.3/10</span>
-                            </div>
-                            <div class="col-span-2 flex items-center justify-center"><span
-                                    class="text-gray-500 dark:text-gray-300">2.3K</span></div>
-                            <div class="col-span-2 flex items-center justify-center"><span
-                                    class="text-gray-500 dark:text-gray-300">920</span></div>
-                            <div class="col-span-1 flex items-center justify-center">
-                                <div class="flex items-center gap-1"><button
-                                        class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-play w-3 h-3 ml-0.5">
-                                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                        </svg></button><button
-                                        class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-heart w-3 h-3 ">
-                                            <path
-                                                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
-                                            </path>
-                                        </svg></button><button
-                                        class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-green-500 hover:text-white"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-rotate-ccw w-3 h-3">
-                                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                                            <path d="M3 3v5h5"></path>
-                                        </svg></button></div>
-                            </div>
-                        </div>
-                        <div
-                            class="grid grid-cols-12 gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 border-b border-gray-300 dark:border-gray-700">
-                            <div class="col-span-1 flex items-center">
-                                <div
-                                    class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gray-700 text-gray-300">
-                                    5</div>
-                            </div>
-                            <div class="col-span-4 flex items-center gap-3">
-                                <div class="relative group cursor-pointer"><img
-                                        src="https://images.pexels.com/photos/1671325/pexels-photo-1671325.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=300"
-                                        alt="Ocean Breeze"
-                                        class="w-12 h-12 rounded-lg object-cover transition-transform duration-300 group-hover:scale-105">
-                                    <div
-                                        class="absolute inset-0 bg-gray-950 bg-gray-950/0 group-hover:bg-gray-950/30 rounded-lg transition-all duration-300 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-external-link w-3 h-3 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                            <path d="M15 3h6v6"></path>
-                                            <path d="M10 14 21 3"></path>
-                                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <h3
-                                        class="font-semibold text-gray-900 dark:text-white truncate cursor-pointer hover:text-orange-400 transition-colors">
-                                        Ocean Breeze</h3>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 truncate">Coastal Harmony</p>
-                                </div>
-                            </div>
-                            <div
-                                class="col-span-2 flex items-center justify-center cursor-pointer hover:text-orange-400 transition-colors">
-                                <span class="font-bold text-orange-400">8/10</span>
-                            </div>
-                            <div class="col-span-2 flex items-center justify-center"><span
-                                    class="text-gray-500 dark:text-gray-300">2.1K</span></div>
-                            <div class="col-span-2 flex items-center justify-center"><span
-                                    class="text-gray-500 dark:text-gray-300">850</span></div>
-                            <div class="col-span-1 flex items-center justify-center">
-                                <div class="flex items-center gap-1"><button
-                                        class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-play w-3 h-3 ml-0.5">
-                                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                        </svg></button><button
-                                        class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-red-500 text-white"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-heart w-3 h-3 fill-current">
-                                            <path
-                                                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
-                                            </path>
-                                        </svg></button><button
-                                        class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-green-500 text-white"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-rotate-ccw w-3 h-3">
-                                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                                            <path d="M3 3v5h5"></path>
-                                        </svg></button></div>
-                            </div>
-                        </div> --}}
-
                         </div>
                     </div>
                     {{-- Grid view --}}
@@ -680,14 +319,14 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             @forelse ($topTracks as $track)
                                 <div
-                                    class="bg-gray-200 dark:bg-gray-800 rounded-2xl p-4 border transition-all duration-300 hover:scale-105 hover:shadow-xl shadow-lg {{ proUser($track['track_details']->user_urn) && $track['action_details']->is_featured
+                                    class="bg-gray-200 dark:bg-gray-800 rounded-2xl p-4 border transition-all duration-300 hover:scale-105 hover:shadow-xl shadow-lg {{ proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured
                                         ? 'shadow-orange-500/20 border-orange-300 dark:border-orange-500'
                                         : (proUser($track['track_details']->user_urn)
                                             ? 'shadow-gray-500/20 border-gray-500'
                                             : 'shadow-gray-700/20 border-gray-300 dark:border-gray-700') }}">
                                     <div class="relative mb-4">
 
-                                        @if (proUser($track['track_details']->user_urn) && $track['action_details']->is_featured)
+                                        @if (proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured)
                                             <div
                                                 class="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold z-10 bg-gradient-to-br from-orange-400 to-orange-600 text-white">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -729,7 +368,7 @@
                                         <a href="{{ $track['track_details']->permalink_url }}" target="_blank"
                                             class="font-bold text-black dark:text-white mb-1 cursor-pointer hover:text-orange-400 transition-colors truncate block w-full">
                                             {{ Str::limit($track['track_details']->title, 20, '...') }}</a>
-                                        <a href="{{ route('user.my-account', $track['track_details']->user->urn) }}"
+                                        <a href="{{ route('user.my-account', $track['track_details']->user->name) }}"
                                             class="text-gray-600 dark:text-gray-300 text-sm mb-2 truncate">
                                             {{ $track['track_details']->user?->name }}</a>
                                         <span
@@ -782,8 +421,8 @@
                                             </svg>
                                         </button>
                                         <button
-                                            wire:click="likeTrack('{{ encrypt($track['action_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
-                                            class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-600">
+                                            wire:click="likeTrack('{{ encrypt($track['actionable_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
+                                            class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-600 {{ $track['like'] ? 'bg-red-500 text-white shadow-lg' : '' }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -794,7 +433,7 @@
                                             </svg>
                                         </button>
                                         <button
-                                            wire:click="repostTrack('{{ encrypt($track['action_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
+                                            wire:click="repostTrack('{{ encrypt($track['actionable_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
                                             class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 {{ $track['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-600"><svg
                                                 xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -816,15 +455,14 @@
                         <div class="space-y-3">
 
                             @forelse ($topTracks as $track)
-                                {{-- @dd($track); --}}
                                 <div
-                                    class="relative border rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-900 dark:to-gray-800  shadow-lg {{ proUser($track['track_details']->user_urn) && $track['action_details']->is_featured
+                                    class="relative border rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-900 dark:to-gray-800  shadow-lg {{ proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured
                                         ? 'shadow-orange-500/20 border-orange-300 dark:border-orange-500'
                                         : (proUser($track['track_details']->user_urn)
                                             ? 'shadow-gray-500/20 border-gray-500'
                                             : 'shadow-gray-700/20 border-gray-300 dark:border-gray-700') }}">
 
-                                    @if (proUser($track['track_details']->user_urn) && $track['action_details']->is_featured)
+                                    @if (proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured)
                                         <div class="absolute -top-2 -right-2 z-10">
                                             <div
                                                 class="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-br from-orange-400 to-orange-600 text-white shadow-lg">
@@ -851,7 +489,7 @@
                                     @endif
                                     <div class="flex items-center gap-4">
                                         <div
-                                            class="w-12 h-12 rounded-full flex items-center justify-center font-bold bg-gradient-to-br shadow-lg text-2xl {{ proUser($track['track_details']->user_urn) && $track['action_details']->is_featured
+                                            class="w-12 h-12 rounded-full flex items-center justify-center font-bold bg-gradient-to-br shadow-lg text-2xl {{ proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured
                                                 ? 'from-orange-400 to-orange-600 text-white'
                                                 : (proUser($track['track_details']->user_urn)
                                                     ? 'from-gray-400 to-gray-600 text-white'
@@ -876,11 +514,11 @@
                                                         class="font-bold text-black dark:text-white truncate text-lg hover:text-orange-400 transition-colors cursor-pointer block w-full">
                                                         {{ Str::limit($track['track_details']->title, 30, '...') }}
                                                     </a>
-                                                    <a href="{{ route('user.my-account', $track['track_details']->user->urn) }}"
+                                                    <a href="{{ route('user.my-account', $track['track_details']->user->name) }}"
                                                         class="text-gray-600 dark:text-gray-300 truncate">
                                                         {{ $track['track_details']->user->name }}</a>
                                                     <span
-                                                        class="inline-block mt-1 bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-600 dark:text-gray-700 border border-gray-300 dark:border-gray-600">{{ $track['track_details']->genre ?? 'Unknown' }}</span>
+                                                        class="inline-block mt-1 bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600">{{ $track['track_details']->genre ?? 'Unknown' }}</span>
                                                 </div>
                                                 <div class="text-right cursor-pointer">
                                                     <div class="text-lg font-bold text-black dark:text-white">
@@ -889,7 +527,7 @@
                                                 </div>
                                             </div>
                                             <div class="flex flex-wrap gap-1 mt-2">
-                                                @if ($track['action_details']->is_featured)
+                                                @if ($track['actionable_details']->is_featured)
                                                     <span
                                                         class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border bg-orange-900 text-orange-300 border-orange-700"><svg
                                                             xmlns="http://www.w3.org/2000/svg" width="24"
@@ -957,8 +595,8 @@
                                                         </svg>
                                                     </button>
                                                     <button
-                                                        wire:click="likeTrack('{{ encrypt($track['action_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
-                                                        class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
+                                                        wire:click="likeTrack('{{ encrypt($track['actionable_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
+                                                        class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 {{ $track['like'] ? 'bg-red-500 text-white shadow-lg' : '' }} hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
                                                         title="Like">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                             height="24" viewBox="0 0 24 24" fill="none"
@@ -971,7 +609,7 @@
                                                         </svg>
                                                     </button>
                                                     <button
-                                                        wire:click="repostTrack('{{ encrypt($track['action_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
+                                                        wire:click="repostTrack('{{ encrypt($track['actionable_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
                                                         class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 {{ $track['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }}  hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
                                                         title="Repost">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
@@ -1057,80 +695,6 @@
             background: linear-gradient(to right, #f97316 0%, #f97316 var(--volume), #374151 var(--volume), #374151 100%);
         }
     </style>
-
-    {{-- <!-- Sample track list (simplified version of your template) -->
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold mb-8 text-center">Weekly Top Tracks</h1>
-
-        <div class="space-y-4">
-            <!-- Track 1 -->
-            <div
-                class="bg-gray-800 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors">
-                <div class="flex items-center gap-4">
-                    <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=center"
-                        alt="Midnight Dreams" class="w-16 h-16 rounded-lg object-cover">
-                    <div>
-                        <h3 class="font-bold">Midnight Dreams</h3>
-                        <p class="text-gray-400">Luna Waves</p>
-                    </div>
-                </div>
-                <button class="play-btn bg-orange-500 hover:bg-orange-600 p-3 rounded-full transition-colors"
-                    data-title="Midnight Dreams" data-artist="Luna Waves"
-                    data-cover="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=center"
-                    data-src="https://api-v2.soundcloud.com/media/soundcloud:tracks:1252113682/0622321d-02e6-4b77-86aa-a54b4fc4d82d/stream/hls">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z" />
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Track 2 -->
-            <div
-                class="bg-gray-800 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors">
-                <div class="flex items-center gap-4">
-                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop&crop=center"
-                        alt="Urban Pulse" class="w-16 h-16 rounded-lg object-cover">
-                    <div>
-                        <h3 class="font-bold">Urban Pulse</h3>
-                        <p class="text-gray-400">Metro Vibes</p>
-                    </div>
-                </div>
-                <button class="play-btn bg-orange-500 hover:bg-orange-600 p-3 rounded-full transition-colors"
-                    data-title="Urban Pulse" data-artist="Metro Vibes"
-                    data-cover="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop&crop=center"
-                    data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z" />
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Track 3 -->
-            <div
-                class="bg-gray-800 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors">
-                <div class="flex items-center gap-4">
-                    <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop&crop=center"
-                        alt="Cosmic Flow" class="w-16 h-16 rounded-lg object-cover">
-                    <div>
-                        <h3 class="font-bold">Cosmic Flow</h3>
-                        <p class="text-gray-400">Stellar Sound</p>
-                    </div>
-                </div>
-                <button class="play-btn bg-orange-500 hover:bg-orange-600 p-3 rounded-full transition-colors"
-                    data-title="Cosmic Flow" data-artist="Stellar Sound"
-                    data-cover="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop&crop=center"
-                    data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div> --}}
-
-    <!-- Bottom Music Player -->
-
-    </div>
     <div id="bottomPlayer"
         class="sticky bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700  py-3 transform transition-transform duration-300 player-hidden z-50">
         <div class="flex items-center justify-between max-w-7xl mx-auto">

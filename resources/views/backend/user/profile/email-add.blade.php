@@ -5,8 +5,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RepostChain Registration Flow</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
@@ -164,7 +164,7 @@
                                         'bg-orange-500 text-white shadow-md': step === currentStep,
                                         'bg-orange-500 text-white border-2 border-orange-500': step < currentStep,
                                         'bg-gray-200 text-gray-600': step > currentStep
-                                    
+
                                     }">
                                     <template x-if="step < currentStep">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
@@ -299,7 +299,7 @@
 
                                 <!-- Next Button -->
                                 <button @click="goToStep(2)" :disabled="!isStep1Valid" :aria-disabled="!isStep1Valid"
-                                    class="w-full font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg px-4 !py-2 text-base inline-flex items-center justify-center bg-orange-600 text-white hover:bg-orange-500 active:bg-orange-700 disabled:bg-orange-500 disabled:text-gray-50 disabled:cursor-not-allowed disabled:lg:px-3 disabled:lg:py-6 h-auto">
+                                    class="w-full font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg px-4 !py-2 text-base inline-flex items-center justify-center bg-orange-600 text-white hover:bg-orange-500 active:bg-orange-700 disabled:bg-orange-500 disabled:text-gray-50 disabled:cursor-not-allowed h-auto">
                                     <span>Continue</span>
                                     <x-heroicon-o-arrow-right class="h-4 w-4" />
                                 </button>
@@ -436,7 +436,7 @@
                             <div>
                                 <button @click="goToStep(3)" :disabled="!canContinueGenres"
                                     :aria-disabled="!canContinueGenres" {{-- disabled condition --}}
-                                    class="font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg px-4 py-2 text-base inline-flex items-center justify-center bg-orange-600 text-white hover:bg-orange-500 active:bg-orange-700 disabled:bg-orange-500 disabled:text-gray-50 disabled:cursor-not-allowed disabled:lg:px-3 disabled:lg:py-6 h-auto">
+                                    class="font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg px-4 py-2 text-base inline-flex items-center justify-center bg-orange-600 text-white hover:bg-orange-500 active:bg-orange-700 disabled:bg-orange-500 disabled:text-gray-50 disabled:cursor-not-allowed h-auto">
                                     <span>Continue</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
                                         fill="currentColor">

@@ -100,7 +100,7 @@
                 plugins: {
                     legend: {
                         position: 'top',
-                        align: 'end',
+                        align: 'center',
                         labels: {
                             {{-- color: '#e2e8f0', --}}
                             boxWidth: 12,
@@ -138,7 +138,7 @@
                     if (typeof Chart !== 'undefined') {
                         this.initPerformanceChart();
                     } else {
-                        setTimeout(checkChart, 100);
+                        checkChart();
                     }
                 };
                 checkChart();
@@ -147,6 +147,7 @@
     }
 }">
     <x-slot name="page_slug">dashboard</x-slot>
+
     <div id="content-dashboard" class="page-content py-2 px-2">
         <div
             class="tablet:px-2 px-0.5 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 w-full">
@@ -309,8 +310,9 @@
                         View all →
                     </a>
                 </div>
-                <div class="h-80 sm:h-96">
-                    <canvas id="campaignChart" width="961" height="384"></canvas>
+                <div>
+                    <canvas id="campaignChart" width="1000" style="height: 384px; width: 1000px;"
+                        height="384"></canvas>
                 </div>
             </div>
 
@@ -387,6 +389,13 @@
                 @foreach ($repostRequests as $request)
                     <div class="space-y-4">
                         <div class="shadow-sm rounded-lg p-4">
+                            <div class="flex justify-between text-sm mb-3">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-orange-500 font-bold">#{{ $loop->iteration }}</span>
+                                    <span class="text-sm max-w-[200px] truncate">{{ $request?->track?->title }}</span>
+                                </div>
+                                <span class="text-slate-400">{{ $request?->track?->genre }}</span>
+                            </div>
                             <div class="flex items-start space-x-3 mb-3">
                                 <img src="https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg"
                                     class="w-8 h-8 rounded-full" alt="">
@@ -401,7 +410,7 @@
                             <div class="flex space-x-2">
                                 <div class="flex-1">
                                     <x-gbutton variant="secondary" full-width="true"
-                                         wire:click="declineRepost('{{ encrypt($request->id) }}')">Decline</x-gbutton>
+                                        wire:click="declineRepost('{{ encrypt($request->id) }}')">Decline</x-gbutton>
                                 </div>
                                 <div class="flex-1">
                                     <x-gbutton variant="primary" full-width="true"
@@ -410,37 +419,7 @@
                             </div>
                         </div>
                     </div>
-                     @endforeach
-                    <div class="mt-6 pt-6  p-2">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-orange-500"
-                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
-                                    <polyline points="16 7 22 7 22 13" />
-                                </svg>
-                                <span class="text-sm font-medium">Trending</span>
-                            </div>
-                            <a class="text-orange-500 hover:text-orange-400 text-sm" href="{{ route('user.charts') }}">View
-                                charts</a>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="flex justify-between text-sm">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-orange-500 font-bold">#1</span>
-                                    <span class="text-sm">Why Do I?</span>
-                                </div>
-                                <span class="text-slate-400">{{ $request?->track?->embeddable_by }}</span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-slate-400 font-bold">#2</span>
-                                    <span class="text-slate-400 text-sm">The Strength Of Love</span>
-                                </div>
-                                <span class="text-slate-400">Constellation Lyra</span>
-                            </div>
-                        </div>
-                    </div>
+                @endforeach
             </div>
         </div>
     </div>
@@ -497,9 +476,8 @@
                         </div>
                     </button>
                 </div>
-
-                <div class="flex-grow overflow-y-auto p-4">
-                    <div class="p-1">
+                <div class="flex-grow overflow-y-auto">
+                    <div class="p-5 sticky top-0 bg-white dark:bg-slate-800">
                         <label for="track-link-search" class="text-xl font-semibold text-gray-700 dark:text-gray-200">
                             @if ($activeTab === 'tracks')
                                 Paste a SoundCloud track link
@@ -507,136 +485,189 @@
                                 Paste a SoundCloud playlist link
                             @endif
                         </label>
-                        <div class="flex w-full mt-2">
-                            <input wire:model="searchQuery" type="text" id="track-link-search"
-                                placeholder="{{ $activeTab === 'tracks' ? 'Paste a SoundCloud track link' : 'Paste a SoundCloud playlist link' }}"
-                                class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 border border-gray-300 dark:border-gray-600 ">
-                            <button wire:click="searchSoundcloud" type="button"
-                                class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200 ">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
-                            </button>
-                        </div>
+                        <form wire:submit.prevent="searchSoundcloud">
+                            <div class="flex w-full mt-2">
+                                <input wire:model="searchQuery" type="text" id="track-link-search"
+                                    placeholder="{{ $activeTab === 'tracks' ? 'Paste a SoundCloud track link' : 'Paste a SoundCloud playlist link' }}"
+                                    class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-orange-500 transition-colors duration-200 border-2 border-gray-300 dark:border-gray-600 ">
+                                <button type="submit"
+                                    class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200">
+
+                                    <span wire:loading.remove wire:target="searchSoundcloud">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                        </svg>
+                                    </span>
+
+                                    <span wire:loading wire:target="searchSoundcloud">
+                                        <!-- Loading Spinner -->
+                                        <svg class="animate-spin h-5 w-5 text-white"
+                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z">
+                                            </path>
+                                        </svg>
+                                    </span>
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                    @if ($activeTab === 'tracks' || $playListTrackShow == true)
-                        <div class="space-y-3">
-                            @forelse ($tracks as $track_)
-                                <div wire:click="toggleSubmitModal('track', {{ $track_->id }})"
-                                    class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
-                                    <div class="flex-shrink-0">
-                                        <img class="h-14 w-14 rounded-xl object-cover shadow-md"
-                                            src="{{ soundcloud_image($track_->artwork_url) }}"
-                                            alt="{{ $track_->title }}" />
+                    <div class="p-4">
+                        @if ($activeTab === 'tracks' || $playListTrackShow == true)
+                            <div class="space-y-3" wire:loading.remove wire:target="searchSoundcloud">
+                                @forelse ($tracks as $track_)
+                                    <div wire:click="toggleSubmitModal('track', {{ $track_->id }})"
+                                        class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
+                                        <div class="flex-shrink-0">
+                                            <img class="h-14 w-14 rounded-xl object-cover shadow-md"
+                                                src="{{ soundcloud_image($track_->artwork_url) }}"
+                                                alt="{{ $track_->title }}" />
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p
+                                                class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                                {{ $track_->title }}
+                                            </p>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                                {{ __('by') }}
+                                                <strong
+                                                    class="text-orange-600 dark:text-orange-400">{{ $track_->author_username }}</strong>
+                                                <span class="ml-2 text-xs text-gray-400">{{ $track_->genre }}</span>
+                                            </p>
+                                            <span
+                                                class="bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono flex items-start justify-center w-fit gap-3">
+                                                <x-lucide-audio-lines class="w-4 h-4" />
+                                                {{ $track_->playback_count }}</span>
+                                        </div>
+                                        <div class="flex-shrink-0">
+                                            <x-lucide-chevron-right
+                                                class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors" />
+                                        </div>
                                     </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p
-                                            class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                                            {{ $track_->title }}
+                                @empty
+                                    <div class="text-center py-16 text-gray-500 dark:text-gray-400">
+                                        <div
+                                            class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <x-lucide-music class="w-8 h-8 text-orange-500" />
+                                        </div>
+                                        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                            {{ __('No tracks found') }}
+                                        </h3>
+                                        <p class="text-gray-500 dark:text-gray-400">
+                                            {{ __('Add one to get started with campaigns.') }}
                                         </p>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                            {{ __('by') }}
-                                            <strong
-                                                class="text-orange-600 dark:text-orange-400">{{ $track_->author_username }}</strong>
-                                            <span class="ml-2 text-xs text-gray-400">{{ $track_->genre }}</span>
-                                        </p>
-                                        <span
-                                            class="bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono flex items-start justify-center w-fit gap-3">
-                                            <x-lucide-audio-lines class="w-4 h-4" />
-                                            {{ $track_->playback_count }}</span>
                                     </div>
-                                    <div class="flex-shrink-0">
-                                        <x-lucide-chevron-right
-                                            class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors" />
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="text-center py-16 text-gray-500 dark:text-gray-400">
-                                    <div
-                                        class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <x-lucide-music class="w-8 h-8 text-orange-500" />
-                                    </div>
-                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                        {{ __('No tracks found') }}
-                                    </h3>
-                                    <p class="text-gray-500 dark:text-gray-400">
-                                        {{ __('Add one to get started with campaigns.') }}
-                                    </p>
-                                </div>
-                            @endforelse
+                                @endforelse
 
-                            {{-- Load More Button for Tracks --}}
-                            @if ($hasMoreTracks)
-                                <div class="text-center mt-4">
-                                    <button wire:click="loadMoreTracks" wire:loading.attr="disabled"
-                                        class="bg-orange-500 text-white font-semibold px-3 py-1.5 text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 hover:bg-orange-600 transition-colors duration-200 disabled:bg-orange-300 disabled:cursor-not-allowed">
-                                        <span wire:loading.remove wire:target="loadMoreTracks">
-                                            Load More
-                                        </span>
-                                        <span wire:loading wire:target="loadMoreTracks">
-                                            Loading...
-                                        </span>
-                                    </button>
-                                </div>
-                            @endif
-                        </div>
-                    @elseif($activeTab === 'playlists')
-                        <div class="space-y-3">
-                            @forelse ($playlists as $playlist_)
-                                <div wire:click="showPlaylistTracks({{ $playlist_->id }})"
-                                    class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
-                                    <div class="flex-shrink-0">
-                                        <img class="h-14 w-14 rounded-xl object-cover shadow-md"
-                                            src="{{ soundcloud_image($playlist_->artwork_url) }}"
-                                            alt="{{ $playlist_->title }}" />
+                                {{-- Load More Button for Tracks --}}
+                                @if ($hasMoreTracks)
+                                    <div class="text-center mt-4">
+                                        <button wire:click="loadMoreTracks" wire:loading.attr="disabled"
+                                            class="bg-orange-500 text-white font-semibold px-3 py-1.5 text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 hover:bg-orange-600 transition-colors duration-200 disabled:bg-orange-300 disabled:cursor-not-allowed">
+                                            <span wire:loading.remove wire:target="loadMoreTracks">
+                                                Load More
+                                            </span>
+                                            <span wire:loading wire:target="loadMoreTracks">
+                                                Loading...
+                                            </span>
+                                        </button>
                                     </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p
-                                            class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                                            {{ $playlist_->title }}
-                                        </p>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                            {{ $playlist_->track_count }} {{ __('tracks') }}
-                                        </p>
-                                    </div>
-                                    <div class="flex-shrink-0">
-                                        <x-lucide-chevron-right
-                                            class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors" />
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="text-center py-16 text-gray-500 dark:text-gray-400">
-                                    <div
-                                        class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <x-lucide-list-music class="w-8 h-8 text-orange-500" />
-                                    </div>
-                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                        {{ __('No playlists found') }}
-                                    </h3>
-                                    <p class="text-gray-500 dark:text-gray-400">
-                                        {{ __('Add one to get started with campaigns.') }}
-                                    </p>
-                                </div>
-                            @endforelse
+                                @endif
+                            </div>
 
-                            {{-- Load More Button for Playlists --}}
-                            @if ($hasMorePlaylists)
-                                <div class="text-center mt-4">
-                                    <button wire:click="loadMorePlaylists" wire:loading.attr="disabled"
-                                        class="bg-orange-500 text-white font-semibold px-3 py-1.5 text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 hover:bg-orange-600 transition-colors duration-200 disabled:bg-orange-300 disabled:cursor-not-allowed">
-                                        <span wire:loading.remove wire:target="loadMorePlaylists">
-                                            Load More
-                                        </span>
-                                        <span wire:loading wire:target="loadMorePlaylists">
-                                            Loading...
-                                        </span>
-                                    </button>
+                            <div wire:loading wire:target="searchSoundcloud"
+                                class="w-full flex justify-center items-center">
+                                <div class="text-center py-16 text-orange-600">
+                                    <div
+                                        class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-spin">
+                                        <svg class="w-8 h-8 text-orange-500" xmlns="http://www.w3.org/2000/svg"
+                                            fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z" />
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm font-medium">Searching Track...</p>
                                 </div>
-                            @endif
-                        </div>
-                    @endif
+                            </div>
+                        @elseif($activeTab === 'playlists')
+                            <div class="space-y-3" wire:loading.remove wire:target="searchSoundcloud">
+                                @forelse ($playlists as $playlist_)
+                                    <div wire:click="toggleSubmitModal('playlist', {{ $playlist_->id }})"
+                                        class="p-4 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group">
+                                        <div class="flex-shrink-0">
+                                            <img class="h-14 w-14 rounded-xl object-cover shadow-md"
+                                                src="{{ soundcloud_image($playlist_->artwork_url) }}"
+                                                alt="{{ $playlist_->title }}" />
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p
+                                                class="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                                {{ $playlist_->title }}
+                                            </p>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                                {{ $playlist_->track_count }} {{ __('tracks') }}
+                                            </p>
+                                        </div>
+                                        <div class="flex-shrink-0">
+                                            <x-lucide-chevron-right
+                                                class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors" />
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="text-center py-16 text-gray-500 dark:text-gray-400">
+                                        <div
+                                            class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <x-lucide-list-music class="w-8 h-8 text-orange-500" />
+                                        </div>
+                                        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                            {{ __('No playlists found') }}
+                                        </h3>
+                                        <p class="text-gray-500 dark:text-gray-400">
+                                            {{ __('Add one to get started with campaigns.') }}
+                                        </p>
+                                    </div>
+                                @endforelse
+
+                                {{-- Load More Button for Playlists --}}
+                                @if ($hasMorePlaylists)
+                                    <div class="text-center mt-4">
+                                        <button wire:click="loadMorePlaylists" wire:loading.attr="disabled"
+                                            class="bg-orange-500 text-white font-semibold px-3 py-1.5 text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 hover:bg-orange-600 transition-colors duration-200 disabled:bg-orange-300 disabled:cursor-not-allowed">
+                                            <span wire:loading.remove wire:target="loadMorePlaylists">
+                                                Load More
+                                            </span>
+                                            <span wire:loading wire:target="loadMorePlaylists">
+                                                Loading...
+                                            </span>
+                                        </button>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div wire:loading wire:target="searchSoundcloud"
+                                class="w-full flex justify-center items-center">
+                                <div class="text-center py-16 text-orange-600">
+                                    <div
+                                        class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-spin">
+                                        <svg class="w-8 h-8 text-orange-500" xmlns="http://www.w3.org/2000/svg"
+                                            fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z" />
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm font-medium">Searching Playlist...</p>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             @endif
         </div>
@@ -679,11 +710,6 @@
                 <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
                     {{ __('Please add more credits to your account to proceed with campaign creation.') }}
                 </p>
-                {{-- <a href="{{ route('user.add-credits') }}" wire:navigate
-                    class="inline-flex items-center justify-center w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                    <x-lucide-plus class="w-5 h-5 inline mr-2" />
-                    {{ __('Buy Credits Now') }}
-                </a> --}}
                 <x-gbutton :full-width="true" variant="primary" wire:navigate href="{{ route('user.add-credits') }}"
                     class="mb-2">{{ __('Buy Credits Now') }}</x-gbutton>
             </div>
@@ -693,105 +719,4 @@
     {{-- JavaScript for Chart --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
-
-    {{-- <script>
-        // Define a function to create the chart
-        function createCampaignChart() {
-            const ctx = document.getElementById('campaignChart');
-
-            // Check if the canvas element exists before trying to create a chart
-            if (ctx) {
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                        datasets: [{
-                            label: 'Performance',
-                            data: [950, 1700, 2300, 2850, 2700, 3800],
-                            borderColor: '#f97316',
-                            backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                            pointBackgroundColor: '#f97316',
-                            pointBorderColor: '#ffffff',
-                            pointHoverRadius: 7,
-                            pointHoverBorderWidth: 2,
-                            pointRadius: 5,
-                            borderWidth: 2.5,
-                            tension: 0.4,
-                            fill: true,
-                        }, {
-                            label: 'Baseline',
-                            data: [100, 150, 120, 180, 250, 200],
-                            borderColor: '#22c55e',
-                            backgroundColor: 'transparent',
-                            pointBackgroundColor: '#22c55e',
-                            borderWidth: 2,
-                            pointRadius: 5,
-                            tension: 0.4,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    color: '#94a3b8',
-                                    font: {
-                                        size: 10
-                                    }
-                                },
-                                grid: {
-                                    color: '#334155',
-                                    drawBorder: false,
-                                },
-                            },
-                            x: {
-                                ticks: {
-                                    color: '#94a3b8',
-                                    font: {
-                                        size: 10
-                                    }
-                                },
-                                grid: {
-                                    display: false,
-                                },
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                                align: 'end',
-                                labels: {
-                                    color: '#e2e8f0',
-                                    boxWidth: 12,
-                                    font: {
-                                        size: 12
-                                    }
-                                }
-                            },
-                            tooltip: {
-                                backgroundColor: '#0f172a',
-                                titleColor: '#ffffff',
-                                bodyColor: '#cbd5e1',
-                                borderColor: '#334155',
-                                borderWidth: 1,
-                                padding: 12,
-                                cornerRadius: 8,
-                            }
-                        },
-                        interaction: {
-                            intersect: false,
-                            mode: 'index',
-                        },
-                    }
-                });
-            }
-        }
-
-        // Listen for the livewire:navigated event to re-initialize the chart
-        document.addEventListener('livewire:navigated', () => {
-            createCampaignChart();
-        });
-    </script> --}}
 </div>

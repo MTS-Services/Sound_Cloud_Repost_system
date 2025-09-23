@@ -7,6 +7,7 @@ use App\Models\Campaign;
 use App\Models\Playlist;
 use App\Models\Repost;
 use App\Models\Track;
+use App\Models\UserAnalytics;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\User\AnalyticsService;
 use App\Services\User\CampaignManagement\CampaignService;
@@ -48,14 +49,15 @@ class Chart extends Component
     public function getTopTrackData(): LengthAwarePaginator
     {
         // try {
-        return $this->analyticsService->getPaginatedTrackAnalytics(
+        $tracks =  $this->analyticsService->getPaginatedTrackAnalytics(
             filter: 'last_week',
             dateRange: null,
             genres: [],
             perPage: $this->tracksPerPage,
             page: $this->getPage(),
-            actionType: Campaign::class
+            actionableType: Campaign::class
         );
+        return $tracks;
         // } catch (\Exception $e) {
         //     Log::error('Paginated track data loading failed', ['error' => $e->getMessage()]);
         //     return new LengthAwarePaginator([], 0, $this->tracksPerPage, $this->getPage());
@@ -69,7 +71,6 @@ class Chart extends Component
 
     public function baseValidation($encryptedCampaignId, $encryptedTrackUrn)
     {
-        $this->soundCloudService->ensureSoundCloudConnection(user());
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
         if ($this->campaignService->getCampaigns()->where('id', decrypt($encryptedCampaignId))->where('user_urn', user()->urn)->exists()) {
             $this->dispatch('alert', type: 'error', message: 'You cannot act on your own campaign.');
@@ -92,6 +93,11 @@ class Chart extends Component
                 return;
             }
 
+            if (UserAnalytics::where('act_user_urn', user()->urn)->where('track_urn', decrypt($encryptedTrackUrn))->exists()) {
+                $this->dispatch('alert', type: 'error', message: 'You have already liked this track.');
+                return;
+            }
+
             $soundcloudRepostId = null;
 
             $httpClient = Http::withHeaders([
@@ -110,14 +116,9 @@ class Chart extends Component
                     $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
                     return;
             }
-            $data = [
-                'likeable' => $response ? true : false,
-                'comment' => false,
-                'follow' => false
-            ];
             if ($response->successful()) {
                 $soundcloudRepostId = $campaign->music->soundcloud_track_id;
-                $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
+                $this->campaignService->likeCampaign($campaign, user());
                 $this->dispatch('alert', type: 'success', message: 'Like successful.');
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body());
@@ -200,382 +201,45 @@ class Chart extends Component
             return;
         }
     }
-    // // Music Functionality
-    // public $songs = [];
-    // public $currentIndex = null;
-    // public $isPlaying = false;
 
-    // public function mount()
-    // {
-    //     $this->songs = [
-    //         ['title' => 'Feel Alone', 'artist' => 'Dilip Wannigamage', 'duration' => '2:19'],
-    //         ['title' => 'Midnight Dreams', 'artist' => 'Luna Artist', 'duration' => '3:45'],
-    //         ['title' => 'Ocean Waves', 'artist' => 'Nature Sounds', 'duration' => '4:12'],
-    //         ['title' => 'City Lights', 'artist' => 'Urban Beats', 'duration' => '3:28'],
-    //     ];
-    // }
-
-    // public function playSong($index)
-    // {
-    //     $this->currentIndex = $index;
-    //     $this->isPlaying = true;
-    // }
-
-    // public function togglePlay()
-    // {
-    //     if ($this->currentIndex === null) {
-    //         $this->playSong(0);
-    //     } else {
-    //         $this->isPlaying = !$this->isPlaying;
-    //     }
-    // }
-
-    // public function nextSong()
-    // {
-    //     if ($this->currentIndex === null) {
-    //         $this->playSong(0);
-    //         return;
-    //     }
-
-    //     $this->currentIndex = ($this->currentIndex + 1) % count($this->songs);
-    //     $this->isPlaying = true;
-    // }
-
-    // public function prevSong()
-    // {
-    //     if ($this->currentIndex === null) {
-    //         $this->playSong(0);
-    //         return;
-    //     }
-
-    //     $this->currentIndex = ($this->currentIndex - 1 + count($this->songs)) % count($this->songs);
-    //     $this->isPlaying = true;
-    // }
-
-
-    // public $currentSong = null;
-    // public $isPlaying = false;
-    // public $currentIndex = 0;
-    // public $currentTime = 0;
-    // public $duration = 0;
-    // public $volume = 70;
-    // public $progressPercent = 0;
-
-    // public $songs = [
-    //     [
-    //         'id' => 1,
-    //         'title' => 'Feel Alone',
-    //         'artist' => 'Dilip Wannigamage',
-    //         'duration' => '2:19'
-    //     ],
-    //     [
-    //         'id' => 2,
-    //         'title' => 'Midnight Dreams',
-    //         'artist' => 'Luna Artist',
-    //         'duration' => '3:45'
-    //     ],
-    //     [
-    //         'id' => 3,
-    //         'title' => 'Ocean Waves',
-    //         'artist' => 'Nature Sounds',
-    //         'duration' => '4:12'
-    //     ],
-    //     [
-    //         'id' => 4,
-    //         'title' => 'City Lights',
-    //         'artist' => 'Urban Beats',
-    //         'duration' => '3:28'
-    //     ],
-    //     [
-    //         'id' => 5,
-    //         'title' => 'Peaceful Mind',
-    //         'artist' => 'Meditation Music',
-    //         'duration' => '5:30'
-    //     ],
-    //     [
-    //         'id' => 6,
-    //         'title' => 'Summer Vibes',
-    //         'artist' => 'Chill Collective',
-    //         'duration' => '3:55'
-    //     ]
-    // ];
-
-    // public function mount()
-    // {
-    //     // Initialize with first song data but not playing
-    //     $this->currentSong = $this->songs[0];
-    //     $this->duration = $this->parseTime($this->currentSong['duration']);
-    // }
-
-    // public function playSong($index)
-    // {
-    //     $this->currentIndex = $index;
-    //     $this->currentSong = $this->songs[$index];
-    //     $this->isPlaying = true;
-    //     $this->currentTime = 0;
-    //     $this->progressPercent = 0;
-    //     $this->duration = $this->parseTime($this->currentSong['duration']);
-
-    //     $this->dispatch('song-changed', [
-    //         'song' => $this->currentSong,
-    //         'isPlaying' => $this->isPlaying
-    //     ]);
-    // }
-
-    // public function togglePlay()
-    // {
-    //     if (!$this->currentSong) {
-    //         $this->playSong(0);
-    //         return;
-    //     }
-
-    //     $this->isPlaying = !$this->isPlaying;
-
-    //     $this->dispatch('play-toggled', [
-    //         'isPlaying' => $this->isPlaying
-    //     ]);
-    // }
-
-    // public function previousSong()
-    // {
-    //     $newIndex = $this->currentIndex > 0 ? $this->currentIndex - 1 : count($this->songs) - 1;
-    //     $this->playSong($newIndex);
-    // }
-
-    // public function nextSong()
-    // {
-    //     $newIndex = $this->currentIndex < count($this->songs) - 1 ? $this->currentIndex + 1 : 0;
-    //     $this->playSong($newIndex);
-    // }
-
-    // public function seekTo($percent)
-    // {
-    //     $this->progressPercent = max(0, min(100, $percent));
-    //     $this->currentTime = floor(($this->duration * $this->progressPercent) / 100);
-
-    //     $this->dispatch('seek-to', [
-    //         'percent' => $this->progressPercent,
-    //         'currentTime' => $this->currentTime
-    //     ]);
-    // }
-
-    // public function setVolume($volume)
-    // {
-    //     $this->volume = max(0, min(100, $volume));
-
-    //     $this->dispatch('volume-changed', [
-    //         'volume' => $this->volume
-    //     ]);
-    // }
-
-    // public function updateProgress()
-    // {
-    //     if ($this->isPlaying && $this->duration > 0) {
-    //         $this->currentTime++;
-    //         $this->progressPercent = ($this->currentTime / $this->duration) * 100;
-
-    //         if ($this->currentTime >= $this->duration) {
-    //             $this->nextSong();
-    //         }
-    //     }
-    // }
-
-    // private function parseTime($timeString)
-    // {
-    //     [$minutes, $seconds] = explode(':', $timeString);
-    //     return (int)$minutes * 60 + (int)$seconds;
-    // }
-
-    // public function formatTime($seconds)
-    // {
-    //     $mins = floor($seconds / 60);
-    //     $secs = $seconds % 60;
-    //     return sprintf('%d:%02d', $mins, $secs);
-    // }
-
-
-
-
-
-
-
-
-
-
-    // public $currentSong = null;
-    // public $isPlaying = false;
-    // public $currentIndex = 0;
-    // public $currentTime = 0;
-    // public $duration = 0;
-    // public $volume = 70;
-    // public $progressPercent = 0;
-
-    // public $songs = [
-    //     [
-    //         'id' => 1,
-    //         'title' => 'Feel Alone',
-    //         'artist' => 'Dilip Wannigamage',
-    //         'duration' => '2:19',
-    //         'url' => 'https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3'
-    //     ],
-    //     [
-    //         'id' => 2,
-    //         'title' => 'Midnight Dreams',
-    //         'artist' => 'Luna Artist',
-    //         'duration' => '3:45',
-    //         'url' => 'https://www.soundjay.com/buttons/sounds/button-09.mp3'
-    //     ],
-    //     [
-    //         'id' => 3,
-    //         'title' => 'Ocean Waves',
-    //         'artist' => 'Nature Sounds',
-    //         'duration' => '4:12',
-    //         'url' => 'https://www.soundjay.com/buttons/sounds/button-10.mp3'
-    //     ],
-    //     [
-    //         'id' => 4,
-    //         'title' => 'City Lights',
-    //         'artist' => 'Urban Beats',
-    //         'duration' => '3:28',
-    //         'url' => 'https://www.soundjay.com/buttons/sounds/button-3.mp3'
-    //     ],
-    //     [
-    //         'id' => 5,
-    //         'title' => 'Peaceful Mind',
-    //         'artist' => 'Meditation Music',
-    //         'duration' => '5:30',
-    //         'url' => 'https://www.soundjay.com/buttons/sounds/button-4.mp3'
-    //     ],
-    //     [
-    //         'id' => 6,
-    //         'title' => 'Summer Vibes',
-    //         'artist' => 'Chill Collective',
-    //         'duration' => '3:55',
-    //         'url' => 'https://www.soundjay.com/buttons/sounds/button-5.mp3'
-    //     ]
-    // ];
-
-    // public function mount()
-    // {
-    //     // Initialize with first song data but not playing
-    //     $this->currentSong = $this->songs[0];
-    //     $this->duration = $this->parseTime($this->currentSong['duration']);
-    // }
-
-    // public function playSong($index)
-    // {
-    //     $this->currentIndex = $index;
-    //     $this->currentSong = $this->songs[$index];
-    //     $this->isPlaying = true;
-    //     $this->currentTime = 0;
-    //     $this->progressPercent = 0;
-    //     $this->duration = $this->parseTime($this->currentSong['duration']);
-
-    //     $this->dispatch('song-changed', [
-    //         'song' => $this->currentSong,
-    //         'isPlaying' => $this->isPlaying
-    //     ]);
-    // }
-
-    // public function togglePlay()
-    // {
-    //     if (!$this->currentSong) {
-    //         $this->playSong(0);
-    //         return;
-    //     }
-
-    //     $this->isPlaying = !$this->isPlaying;
-
-    //     $this->dispatch('play-toggled', [
-    //         'isPlaying' => $this->isPlaying
-    //     ]);
-    // }
-
-    // public function previousSong()
-    // {
-    //     $newIndex = $this->currentIndex > 0 ? $this->currentIndex - 1 : count($this->songs) - 1;
-    //     $this->playSong($newIndex);
-    // }
-
-    // public function nextSong()
-    // {
-    //     $newIndex = $this->currentIndex < count($this->songs) - 1 ? $this->currentIndex + 1 : 0;
-    //     $this->playSong($newIndex);
-    // }
-
-    // public function seekTo($percent)
-    // {
-    //     $this->progressPercent = max(0, min(100, $percent));
-    //     $this->currentTime = floor(($this->duration * $this->progressPercent) / 100);
-
-    //     $this->dispatch('seek-to', [
-    //         'percent' => $this->progressPercent,
-    //         'currentTime' => $this->currentTime
-    //     ]);
-    // }
-
-    // public function setVolume($volume)
-    // {
-    //     $this->volume = max(0, min(100, $volume));
-
-    //     $this->dispatch('volume-changed', [
-    //         'volume' => $this->volume
-    //     ]);
-    // }
-
-    // public function updateProgress()
-    // {
-    //     if ($this->isPlaying && $this->duration > 0) {
-    //         $this->currentTime++;
-    //         $this->progressPercent = ($this->currentTime / $this->duration) * 100;
-
-    //         if ($this->currentTime >= $this->duration) {
-    //             $this->nextSong();
-    //         }
-    //     }
-    // }
-
-    // private function parseTime($timeString)
-    // {
-    //     [$minutes, $seconds] = explode(':', $timeString);
-    //     return (int)$minutes * 60 + (int)$seconds;
-    // }
-
-    // public function formatTime($seconds)
-    // {
-    //     $mins = floor($seconds / 60);
-    //     $secs = $seconds % 60;
-    //     return sprintf('%d:%02d', $mins, $secs);
-    // }
-
+    public function updated()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+    }
 
     public function render()
     {
 
         $paginated = $this->getTopTrackData();
-
         // Get the collection from paginator
         $items = $paginated->getCollection();
 
         // Map over items to calculate engagement score and rate
         $itemsWithMetrics = $items->map(function ($track) {
-            $totalViews = $track['metrics']['total_views']['current_total'];
+            $totalViews = $track['metrics']['total_views']['current_total'] == 0 ? 1 : $track['metrics']['total_views']['current_total'];
             $totalPlays = $track['metrics']['total_plays']['current_total'];
             $totalReposts = $track['metrics']['total_reposts']['current_total'];
             $totalLikes = $track['metrics']['total_likes']['current_total'];
             $totalComments = $track['metrics']['total_comments']['current_total'];
             $totalFollowers = $track['metrics']['total_followers']['current_total'];
             $track['repost'] = false;
-            $repost = Repost::where('reposter_urn', user()->urn)->where('campaign_id', $track['action_details']['id'])->exists();
-            if ($repost) {
-                $track['repost'] = true;
+            if ($track['actionable_details'] != null) {
+                $repost = Repost::where('reposter_urn', user()->urn)->where('campaign_id', $track['actionable_details']['id'])->exists();
+                if ($repost) {
+                    $track['repost'] = true;
+                }
+            }
+            $track['like'] = false;
+            $like = UserAnalytics::where('act_user_urn', user()->urn)->where('track_urn', $track['track_details']['urn'])->exists();
+            if ($like) {
+                $track['like'] = true;
             }
 
 
-            $totalEngagements = $totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers;
+            $avgTotal = ($totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers) / 5;
 
             // Engagement % (capped at 100)
-            $engagementRate = min(100, ($totalEngagements / max(1, $totalViews)) * 100);
+            $engagementRate = $totalViews >= $avgTotal ? min(100, ($avgTotal / $totalViews) * 100) : 0;
 
             // Engagement Score (0–10 scale)
             $engagementScore = round(($engagementRate / 100) * 10, 1);

@@ -10,6 +10,7 @@ use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Livewire\Attributes\Url;
 
 class Analytics extends Component
 {
@@ -17,21 +18,22 @@ class Analytics extends Component
 
     public bool $showGrowthTips = false;
     public bool $showFilters = false;
+    public bool $isLoading = false;
 
+    #[Url]
     public string $filter = 'last_week';
-
-    // Date range properties
+    #[Url]
     public string $startDate = '';
+    #[Url]
     public string $endDate = '';
-
-    // Filter properties
+    #[Url]
     public array $selectedGenres = [];
-    public array $userGenres = [];
 
+    public array $userGenres = [];
     public array $data = [];
     public array $dataCache = [];
     public array $filterOptions = [];
-    public array $topTracks = [];
+    public array $topSources = [];
     public array $genreBreakdown = [];
 
     protected AnalyticsService $analyticsService;
@@ -68,32 +70,61 @@ class Analytics extends Component
 
     public function updatedFilter()
     {
-        $this->resetErrorBag();
-        $this->resetPage(); // Reset pagination when filter changes
-
-        if ($this->filter === 'date_range') {
-            $this->showFilters = true;
-        }
-        $this->loadData();
-        $this->loadAdditionalData();
+        $this->handleFilterChange();
     }
 
     public function updatedStartDate()
     {
         if ($this->filter === 'date_range') {
-            $this->resetPage();
-            $this->loadData();
-            $this->loadAdditionalData();
+            $this->handleFilterChange();
         }
     }
 
     public function updatedEndDate()
     {
         if ($this->filter === 'date_range') {
-            $this->resetPage();
-            $this->loadData();
-            $this->loadAdditionalData();
+            $this->handleFilterChange();
         }
+    }
+
+    /**
+     * Handle filter changes with full page reload effect
+     */
+    private function handleFilterChange()
+    {
+        $this->resetErrorBag();
+        $this->resetPage();
+
+        if ($this->filter === 'date_range') {
+            $this->showFilters = true;
+        }
+
+        // Start loading state
+        $this->isLoading = true;
+        $this->dispatch('startLoading');
+
+
+        $this->loadData();
+        $this->loadAdditionalData();
+
+        // End loading state and trigger full refresh
+        $this->isLoading = false;
+        $this->dispatch('completeRefresh');
+
+        // Navigate to same page with updated query parameters
+        $queryParams = [
+            'filter' => $this->filter,
+            'startDate' => $this->startDate,
+            'endDate' => $this->endDate,
+            'selectedGenres' => $this->selectedGenres,
+        ];
+
+        // Remove empty parameters
+        $queryParams = array_filter($queryParams, function ($value) {
+            return !empty($value) || $value === '0';
+        });
+
+        $this->redirect(route('user.analytics') . '?' . http_build_query($queryParams), navigate: true);
     }
 
     /**
@@ -101,9 +132,8 @@ class Analytics extends Component
      */
     public function loadData()
     {
+        $dateRange = $this->getDateRange();
         try {
-            $dateRange = $this->getDateRange();
-
             if ($dateRange === false) {
                 return;
             }
@@ -116,10 +146,8 @@ class Analytics extends Component
                 null,
                 null
             );
-
             // Transform data for UI
             $this->data = $this->transformDataForUI($freshData);
-
             // Store in cache
             $cacheKey = $this->getCacheKey($dateRange);
             $this->dataCache[$cacheKey] = $this->data;
@@ -176,14 +204,14 @@ class Analytics extends Component
                 return;
             }
 
-            $this->topTracks = $this->analyticsService->getTopTracks(
+            $this->topSources = $this->analyticsService->getTopSources(
                 userUrn: user()->urn,
                 limit: 5,
                 filter: $this->filter,
                 dateRange: $dateRange
             );
 
-            $this->genreBreakdown = $this->analyticsService->getGenreBreakdown();
+            $this->genreBreakdown = $this->analyticsService->getGenreBreakdown($this->filter, $dateRange, $this->selectedGenres);
         } catch (\Exception $e) {
             logger()->error('Additional data loading failed', ['error' => $e->getMessage()]);
         }
@@ -201,13 +229,13 @@ class Analytics extends Component
                 return new LengthAwarePaginator([], 0, $this->tracksPerPage, $this->getPage());
             }
 
-            return $this->analyticsService->getPaginatedTrackAnalytics(
+            return $this->analyticsService->getPaginatedAnalytics(
                 filter: $this->filter,
                 dateRange: $dateRange,
                 genres: $this->selectedGenres,
                 perPage: $this->tracksPerPage,
                 page: $this->getPage(),
-                userUrn: user()->urn
+                userUrn: user()->urn,
             );
         } catch (\Exception $e) {
             logger()->error('Paginated track data loading failed', ['error' => $e->getMessage()]);
@@ -220,14 +248,16 @@ class Analytics extends Component
      */
     private function transformDataForUI(array $analyticsData): array
     {
-        $streams = $analyticsData['overall_metrics']['total_plays']['current_total'] ?? 0;
-        $likes = $analyticsData['overall_metrics']['total_likes']['current_total'] ?? 0;
-        $reposts = $analyticsData['overall_metrics']['total_reposts']['current_total'] ?? 0;
+        $streams = $analyticsData['overall_metrics']['total_plays']['current_total'];
+        $likes = $analyticsData['overall_metrics']['total_likes']['current_total'];
+        $reposts = $analyticsData['overall_metrics']['total_reposts']['current_total'];
+        $followers = $analyticsData['overall_metrics']['total_followers']['current_total'];
+        $comments = $analyticsData['overall_metrics']['total_comments']['current_total'];
+        $views = $analyticsData['overall_metrics']['total_views']['current_total'] == 0 ? 1 : $analyticsData['overall_metrics']['total_views']['current_total'];
 
         // Calculate engagement rate
-        $totalEngagements = $streams + $likes + $reposts + ($analyticsData['overall_metrics']['total_comments']['current_total'] ?? 0);
-        $totalViews = $analyticsData['overall_metrics']['total_views']['current_total'] ?? 1;
-        $avgEngagementRate = $totalViews > 0 ? round(($totalEngagements / $totalViews) * 100, 1) : 0;
+        $avgTotal = ($likes + $comments + $reposts + $streams + $followers) / 5;
+        $avgEngagementRate =  $views >= $avgTotal ? round(min(100, ($avgTotal / $views) * 100), 2) : 0;
 
         return [
             'streams' => $this->formatNumber($streams),
@@ -253,12 +283,14 @@ class Analytics extends Component
         $currentEngagements = ($analyticsData['overall_metrics']['total_likes']['current_total'] ?? 0) +
             ($analyticsData['overall_metrics']['total_reposts']['current_total'] ?? 0) +
             ($analyticsData['overall_metrics']['total_comments']['current_total'] ?? 0) +
-            ($analyticsData['overall_metrics']['total_plays']['current_total'] ?? 0);
+            ($analyticsData['overall_metrics']['total_plays']['current_total'] ?? 0) +
+            ($analyticsData['overall_metrics']['total_followers']['current_total'] ?? 0);
 
         $previousEngagements = ($analyticsData['overall_metrics']['total_likes']['previous_total'] ?? 0) +
             ($analyticsData['overall_metrics']['total_reposts']['previous_total'] ?? 0) +
             ($analyticsData['overall_metrics']['total_comments']['previous_total'] ?? 0) +
-            ($analyticsData['overall_metrics']['total_plays']['previous_total'] ?? 0);
+            ($analyticsData['overall_metrics']['total_plays']['previous_total'] ?? 0) +
+            ($analyticsData['overall_metrics']['total_followers']['previous_total'] ?? 0);
 
         $currentRate = $currentViews > 0 ? ($currentEngagements / $currentViews) * 100 : 0;
         $previousRate = $previousViews > 0 ? ($previousEngagements / $previousViews) * 100 : 0;
@@ -267,8 +299,10 @@ class Analytics extends Component
             return $currentRate > 0 ? 100.0 : 0.0;
         }
 
-        $changeRate = (($currentRate - $previousRate) / $previousRate) * 100;
-        return round(max(-100, min(100, $changeRate)), 1);
+        // calculate the change rate in percentage
+        $changeRate = $previousRate > 0 ? (($currentRate - $previousRate) / $previousRate * 100) : 0;
+        $changeRate = max(-100, min(100, $changeRate));
+        return round($changeRate, 1);
     }
 
     /**
@@ -336,7 +370,7 @@ class Analytics extends Component
     }
 
     /**
-     * Apply advanced filters
+     * Apply advanced filters with full page reload
      */
     public function applyFilters()
     {
@@ -345,14 +379,14 @@ class Analytics extends Component
         }
 
         $this->resetPage();
-        $this->loadData();
-        $this->loadAdditionalData();
-        $this->getChartData();
         $this->showFilters = false;
+
+        // Trigger the same reload mechanism
+        $this->handleFilterChange();
     }
 
     /**
-     * Reset all filters
+     * Reset all filters with full page reload
      */
     public function resetFilters()
     {
@@ -361,9 +395,9 @@ class Analytics extends Component
         $this->startDate = '';
         $this->endDate = '';
         $this->resetPage();
-        $this->loadData();
-        $this->getChartData();
-        $this->loadAdditionalData();
+
+        // Trigger the same reload mechanism
+        $this->handleFilterChange();
     }
 
     /**
@@ -424,12 +458,12 @@ class Analytics extends Component
             $totalComments = $track['metrics']['total_comments']['current_total'];
             $totalFollowers = $track['metrics']['total_followers']['current_total'];
 
-            $totalEngagements = $totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers;
+            $avgTotal = ($totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers) / 5;
 
             // Engagement % (capped at 100)
-            $engagementRate = min(100, ($totalEngagements / max(1, $totalViews)) * 100);
+            $engagementRate = $totalViews > $avgTotal ? round(min(100, ($totalViews - $avgTotal) / (($totalViews + $avgTotal) / 2) * 100), 2) : 0;
 
-            // Engagement Score (0–10 scale)
+            // Engagement Score (0â€“10 scale)
             $engagementScore = round(($engagementRate / 100) * 10, 1);
 
             // Add score and rate to track array

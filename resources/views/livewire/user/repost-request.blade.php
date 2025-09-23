@@ -1,4 +1,4 @@
-<div>
+<div x-data="{ activeMainTab: @entangle('activeMainTab').live }">
     <x-slot name="page_slug">request</x-slot>
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-5 space-y-3 sm:space-y-0">
         <div>
@@ -16,28 +16,19 @@
     <div class="mb-8">
         <div class="border-b border-gray-200 dark:border-gray-700">
             <nav class="-mb-px flex space-x-8">
-                <div>
-
-                    <!-- Incoming Request Tab Button -->
-                    <button
-                        class="tab-button @if ($activeMainTab === 'incoming_request' || $activeMainTab === 'accept_requests') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                        wire:click="setActiveTab('incoming_request')">
-                        {{ __('Incoming requests') }}
-                    </button>
-
-
-                </div>
-
-                <button
-                    class="tab-button @if ($activeMainTab === 'outgoing_request') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                    wire:click="setActiveTab('outgoing_request')">
+                <!-- Incoming Request Tab Button -->
+                <a href="{{ route('user.reposts-request') }}?tab=incoming_request" wire:navigate
+                    class="tab-button @if ($activeMainTab === 'incoming_request' || $activeMainTab === 'accept_requests') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200">
+                    {{ __('Incoming requests') }}
+                </a>
+                <a href="{{ route('user.reposts-request') }}?tab=outgoing_request" wire:navigate
+                    class="tab-button @if ($activeMainTab === 'outgoing_request') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200">
                     {{ __('Outgoing request') }}
-                </button>
-                <button
-                    class="tab-button @if ($activeMainTab === 'previously_reposted') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                    wire:click="setActiveTab('previously_reposted')">
+                </a>
+                <a href="{{ route('user.reposts-request') }}?tab=previously_reposted" wire:navigate
+                    class="tab-button @if ($activeMainTab === 'previously_reposted') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200">
                     {{ __('Previously Reposted') }}
-                </button>
+                </a>
 
             </nav>
         </div>
@@ -135,9 +126,9 @@
 
                 <!-- Right Column - Request Info -->
                 <div class="w-full lg:w-1/2 p-3">
-                    <div class="flex justify-between mb-2">
+                    <div class="flex justify-between h-full">
                         <div class="w-1/2 relative">
-                            <div class="flex flex-col items-start gap-0">
+                            <div class="flex flex-col items-start justify-between gap-0 h-full">
                                 <div class="flex items-center gap-2">
                                     <img class="w-12 h-12 rounded-full object-cover"
                                         src="{{ auth_storage_url($repostRequest->requester->avatar) }}"
@@ -172,21 +163,21 @@
                                             <a href="{{ $repostRequest->requester->soundcloud_url ?? '#' }}"
                                                 target="_blank" class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                 SoundCloud Profile</a>
-                                            <a href="{{ route('user.my-account', $repostRequest->requester->urn) }}"
+                                            <a href="{{ route('user.my-account', $repostRequest->requester->name) }}"
                                                 wire:navigate class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                 RepostChain Profile</a>
                                         </div>
                                     </div>
                                 </div>
                                 <!-- Track Info -->
-                                <div class="mb-2">
+                                {{-- <div class="mb-2">
                                     <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">
                                         {{ $repostRequest->track->title ?? 'Unknown Track' }}
                                     </h3>
                                     <p class="text-sm text-gray-600 dark:text-gray-400">
                                         {{ Str::limit($repostRequest->track->description ?? 'No description available', 100) }}
                                     </p>
-                                </div>
+                                </div> --}}
                                 <div class="flex items-center gap-2">
                                     <span
                                         class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
@@ -195,7 +186,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="w-1/2">
+                        <div class="w-1/2 h-fit">
                             @if ($activeMainTab == 'incoming_request' || $activeMainTab == 'previously_reposted')
                                 <div class="flex flex-col items-end gap-2 h-full">
                                     <div class="flex flex-col justify-between h-full">
@@ -229,7 +220,9 @@
                                                                 stroke-width="2" />
                                                         </svg>
 
-                                                        <span>{{ repostPrice($repostRequest->requester) }}
+                                                        {{-- <span>{{ repostPrice($repostRequest->requester) }}
+                                                            Repost</span> --}}
+                                                        <span>{{ $repostRequest->requester?->repost_price }}
                                                             Repost</span>
                                                     </button>
 
@@ -245,7 +238,8 @@
 
                                         </div>
                                         <!-- Status Badge -->
-                                        <div class="text-right">
+
+                                        <div class="text-right my-2">
                                             <span @class([
                                                 'inline-block text-xs font-medium px-2 py-1 rounded-full',
                                                 'bg-yellow-100 text-yellow-800' =>
@@ -254,13 +248,21 @@
                                                     $repostRequest->status == App\Models\RepostRequest::STATUS_APPROVED,
                                                 'bg-blue-100 text-blue-800' =>
                                                     $repostRequest->status == App\Models\RepostRequest::STATUS_APPROVED,
-                                                // 'bg-red-100 text-red-800' => $repostRequest->status == App\Models\RepostRequest::STATUS_REJECTED,
+                                                'bg-red-100 text-red-800' =>
+                                                    $repostRequest->status == App\Models\RepostRequest::STATUS_DECLINE,
                                                 'bg-gray-100 text-gray-800' =>
                                                     $repostRequest->status == App\Models\RepostRequest::STATUS_EXPIRED,
                                             ])>
                                                 {{ $repostRequest->status_label }}
                                             </span>
                                         </div>
+                                        @if ($repostRequest->status == App\Models\RepostRequest::STATUS_PENDING && $activeMainTab == 'incoming_request')
+                                            <div class="text-right">
+
+                                                <x-gbutton variant="primary" size="sm"
+                                                    wire:click="declineRepostRequest({{ $repostRequest->id }})">Decline</x-gbutton>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             @elseif ($activeMainTab == 'outgoing_request')
@@ -278,7 +280,7 @@
                                     @if ($activeMainTab == 'outgoing_request')
                                         <div class="flex flex-col sm:flex-row justify-end gap-3">
                                             <a class="cursor-pointer" wire:navigate
-                                                href="{{ route('user.my-account', $repostRequest->targetUser->urn) }}">
+                                                href="{{ route('user.my-account', $repostRequest->targetUser->name) }}">
                                                 <img class="w-10 h-10 rounded-full object-cover"
                                                     src="{{ auth_storage_url($repostRequest->targetUser->avatar) }}"
                                                     alt="{{ $repostRequest->targetUser->name }} avatar">
@@ -287,7 +289,7 @@
                                                 <div class="flex items-center gap-1 cursor-pointer">
                                                     <a class="text-slate-700 dark:text-gray-300 font-medium cursor-pointer hover:underline"
                                                         wire:navigate
-                                                        href="{{ route('user.my-account', $repostRequest->targetUser->urn) }}">
+                                                        href="{{ route('user.my-account', $repostRequest->targetUser->name) }}">
                                                         {{ $repostRequest->targetUser->name }}
                                                     </a>
                                                 </div>
@@ -324,16 +326,14 @@
                                         </span>
                                     </div>
                                     <div class="text-right">
-                                        @if ($activeMainTab == 'outgoing_request' && $repostRequest->status !== App\Models\RepostRequest::STATUS_APPROVED)
+                                        @if (
+                                            $repostRequest->status !== App\Models\RepostRequest::STATUS_APPROVED &&
+                                                $repostRequest->status !== App\Models\RepostRequest::STATUS_EXPIRED &&
+                                                $repostRequest->status !== App\Models\RepostRequest::STATUS_DECLINE)
                                             {{-- <button wire:click="cancleRepostRequest({{ $repostRequest->id }})"
                                                 class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Cancle</button> --}}
                                             <x-gbutton variant="primary" size="sm"
                                                 wire:click="cancleRepostRequest({{ $repostRequest->id }})">Cancle</x-gbutton>
-                                        @else
-                                            @if ($repostRequest->status == App\Models\RepostRequest::STATUS_PENDING && $activeMainTab == 'incoming_request')
-                                                <button wire:click="declineRepostRequest({{ $repostRequest->id }})"
-                                                    class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">{{ $repostRequest->pending_to_declined }}</button>
-                                            @endif
                                         @endif
                                     </div>
                                 </div>
@@ -392,7 +392,10 @@
                 <div class="px-6 py-4 space-y-5">
                     <div class="flex items-start justify-between">
                         <h3 class="text-lg font-medium uppercase text-gray-900 dark:text-white">Repost</h3>
-                        <span class="text-sm text-gray-700 dark:text-gray-300">{{ repostPrice($request->requester) }}
+                        {{-- <span class="text-sm text-gray-700 dark:text-gray-300">{{ repostPrice($request->requester) }}
+                            Credits</span> --}}
+                        <span
+                            class="text-sm text-gray-700 dark:text-gray-300">{{ $request->requester?->repost_price }}
                             Credits</span>
                     </div>
                     <div
@@ -455,7 +458,9 @@
                                 <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
                                     stroke-width="2" />
                             </svg>
-                            <span>{{ repostPrice() + ($liked ? 2 : 0) + ($commented ? 2 : 0) }}</span>
+                            {{-- <span>{{ repostPrice() + ($liked ? 2 : 0) + ($commented ? 2 : 0) }}</span>
+                            {{ __('Repost') }} --}}
+                            <span>{{ repostPrice(user()->repost_price, $commented, $liked) }}</span>
                             {{ __('Repost') }}
                         </button>
                     </div>
@@ -467,50 +472,65 @@
 
     <!--Previously Reposted Requests-->
 
-    
+
 </div>
 
 <script>
-    document.addEventListener('livewire:initialized', function() {
-        // Audio event handling for SoundCloud players
-        document.querySelectorAll('[id^="soundcloud-player-"]').forEach(player => {
-            const requestId = player.dataset.requestId;
-            const iframe = player.querySelector('iframe');
+    // Replace the existing script section in your repost request blade with this complete tracking system
+    function initializeSoundCloudWidgets() {
+        if (typeof SC === 'undefined') {
+            setTimeout(initializeSoundCloudWidgets, 500);
+            return;
+        }
 
-            if (iframe) {
-                iframe.addEventListener('load', function() {
+        const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
 
-                    // Simulate audio events for now
-                    const widget = SC.Widget(iframe);
+        playerContainers.forEach(container => {
+            const requestId = container.dataset.requestId;
+            const iframe = container.querySelector('iframe');
 
-                    widget.bind(SC.Widget.Events.PLAY, function() {
-                        @this.call('handleAudioPlay', requestId);
-                    });
+            if (iframe && requestId) {
+                const widget = SC.Widget(iframe);
 
-                    widget.bind(SC.Widget.Events.PAUSE, function() {
-                        @this.call('handleAudioPause', requestId);
-                    });
+                widget.bind(SC.Widget.Events.PLAY, () => {
+                    @this.call('handleAudioPlay', requestId);
+                });
 
-                    widget.bind(SC.Widget.Events.PLAY_PROGRESS, function(data) {
-                        @this.call('handleAudioTimeUpdate', requestId, data
-                            .currentPosition / 1000);
-                    });
+                widget.bind(SC.Widget.Events.PAUSE, () => {
+                    @this.call('handleAudioPause', requestId);
+                });
 
-                    widget.bind(SC.Widget.Events.FINISH, function() {
-                        @this.call('handleAudioEnded', requestId);
-                    });
+                widget.bind(SC.Widget.Events.FINISH, () => {
+                    @this.call('handleAudioEnded', requestId);
+                });
+
+                widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+                    const currentTime = data.currentPosition / 1000;
+                    @this.call('handleAudioTimeUpdate', requestId, currentTime);
                 });
             }
         });
+    }
 
-        // Listen for Livewire events
-        Livewire.on('requestPlayedEnough', (requestId) => {
-            console.log('Request played for 5+ seconds:', requestId);
-            // You can add visual feedback here
-        });
+    document.addEventListener('livewire:initialized', function() {
+        initializeSoundCloudWidgets();
     });
 
-    // Polling for play time updates (optional)
+    document.addEventListener('livewire:navigated', function() {
+        initializeSoundCloudWidgets();
+    });
+
+    document.addEventListener('livewire:load', function() {
+        initializeSoundCloudWidgets();
+    });
+    document.addEventListener('livewire:updated', function() {
+        initializeSoundCloudWidgets();
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeSoundCloudWidgets();
+    });
+    // Polling for play time updates (matches campaign feed polling)
     setInterval(() => {
         @this.call('updatePlayingTimes');
     }, 1000);

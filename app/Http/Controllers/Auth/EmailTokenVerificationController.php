@@ -93,6 +93,8 @@ class EmailTokenVerificationController extends Controller
                 'em_mystery_box',
                 'em_discussions',
                 'em_competitions',
+
+                'accept_repost',
             ];
 
             $data = array_merge(

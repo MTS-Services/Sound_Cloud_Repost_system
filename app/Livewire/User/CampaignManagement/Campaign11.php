@@ -26,6 +26,7 @@ use Throwable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\PlaylistTrack;
+use App\Models\UserAnalytics;
 
 class Campaign extends Component
 {
@@ -130,6 +131,7 @@ class Campaign extends Component
     public $maxRepostsPerDay = 0;
     public $targetGenre = 'anyGenre';
     public $user = null;
+    public $showOptions = false;
 
     public $musicId = null;
     public $musicType = null;
@@ -259,10 +261,10 @@ class Campaign extends Component
 
             if ($track) {
                 // Update analytics in database
-                $response = $this->analyticsService->updateAnalytics(
+                $response = $this->analyticsService->recordAnalytics(
                     $track,
                     $campaign,
-                    'total_plays',
+                    UserAnalytics::TYPE_PLAY,
                     $campaign->target_genre
                 );
 
@@ -357,7 +359,8 @@ class Campaign extends Component
      */
     private function getCampaignsQuery(): Builder
     {
-        $allowedTargetCredits = repostPrice(user(), true);
+        // $allowedTargetCredits = repostPrice(user(), true);
+        $allowedTargetCredits = user()->repost_price;
 
         // return $this->campaignService->getCampaigns()
         //     ->where('budget_credits', '>=', $allowedTargetCredits)
@@ -702,6 +705,10 @@ class Campaign extends Component
 
     public function toggleCampaignsModal()
     {
+        if (!is_email_verified()) {
+            $this->dispatch('alert', type: 'error', message: 'Please verify your email to create a campaign.');
+            return;
+        }
         $this->reset();
 
         if ($this->myCampaignService->thisMonthCampaignsCount() >= (int) userFeatures()[Feature::KEY_SIMULTANEOUS_CAMPAIGNS]) {
@@ -797,8 +804,16 @@ class Campaign extends Component
 
     public function profeature($isChecked)
     {
-        $this->proFeatureEnabled = $isChecked ? false : true;
-        $this->proFeatureValue = $isChecked ? 0 : 1;
+        Log::info($this->all());
+        if (!proUser()) {
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
+            ;
+        } elseif (($this->credit * 2) > userCredits()) {
+            return $this->dispatch('alert', type: 'error', message: 'You do not have enough credits to use this feature');
+        } else {
+            $this->proFeatureEnabled = $isChecked ? false : true;
+            $this->proFeatureValue = $isChecked ? 0 : 1;
+        }
     }
 
     public function createCampaign()

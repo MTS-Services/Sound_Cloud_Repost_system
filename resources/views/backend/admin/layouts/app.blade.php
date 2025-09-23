@@ -15,11 +15,11 @@
                 "{{ app_setting('favicon_dark') ? storage_url(app_setting('favicon_dark')) : asset('assets/favicons/fav icon 2 (1).svg') }}" :
                 "{{ app_setting('favicon') ? storage_url(app_setting('favicon')) : asset('assets/favicons/fav icon 1.svg') }}";
         }
-        
+
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             setFavicon(true);
         }
-        
+
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
             setFavicon(e.matches);
         });
@@ -119,7 +119,7 @@
     </div>
 
     <div id="notification-toast"
-        class="absolute top-5 right-5 w-72 z-[100] rounded-2xl shadow-2xl bg-white text-black transition-all duration-500 ease-in-out transform translate-x-full opacity-0">
+        class="absolute top-5 right-5 w-72 z-[100] rounded-2xl shadow-2xl bg-white text-black transition-all duration-500 ease-in-out transform translate-x-full opacity-0 ">
         <div class="p-4 flex items-center justify-between gap-4">
             <div class="flex items-center gap-3 flex-grow">
                 <x-heroicon-o-information-circle class="w-6 h-6 text-blue-500 flex-shrink-0" />

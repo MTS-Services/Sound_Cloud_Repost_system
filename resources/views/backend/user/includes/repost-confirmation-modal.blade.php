@@ -1,5 +1,5 @@
-<div x-data="{ showRepostConfirmationModal: @entangle('showRepostConfirmationModal').live }" x-show="showRepostConfirmationModal" x-cloak
-    x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
+<div x-data="{ showRepostConfirmationModal: @entangle('showRepostConfirmationModal').live }" x-show="(typeof showRepostConfirmationModal !== 'undefined' && showRepostConfirmationModal)"
+    x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
     x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
     class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -34,7 +34,7 @@
             <div class="px-6 py-4 space-y-5">
                 <div class="flex items-start justify-between">
                     <h3 class="text-lg font-medium uppercase text-gray-900 dark:text-white">Repost</h3>
-                    <span class="text-sm text-gray-700 dark:text-gray-300">{{ repostPrice($campaign->user) }}
+                    <span class="text-sm text-gray-700 dark:text-gray-300">{{ user()->repost_price }}
                         Credits</span>
                 </div>
                 <div class="flex items-center space-x-3 p-2 border border-gray-200 dark:border-gray-600 rounded-md">
@@ -53,7 +53,7 @@
                             <input type="checkbox" wire:model.live="followed"
                                 class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                             <span class="text-sm text-gray-800 dark:text-gray-200">Follow <span
-                                    class="font-semibold text-orange-500">{{ $campaign->user?->name }}</span></span>
+                                    class="font-semibold text-orange-500">{{ $campaign->music?->user?->name }}</span></span>
                         </div>
                     </label>
                 </div>
@@ -69,15 +69,17 @@
                 </div>
 
                 <!-- Comment Plus -->
-                <div class="border-t pt-3 space-y-2 dark:border-gray-700">
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-800 dark:text-gray-200">Comment on this
-                            track (optional)</span>
-                        <span class="text-sm text-gray-700 dark:text-gray-300">+2 credits</span>
+                @if ($campaign->music_type == App\Models\Track::class)
+                    <div class="border-t pt-3 space-y-2 dark:border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-gray-800 dark:text-gray-200">Comment on this
+                                track (optional)</span>
+                            <span class="text-sm text-gray-700 dark:text-gray-300">+2 credits</span>
+                        </div>
+                        <textarea rows="3" placeholder="What did you like about the track?" wire:model.live="commented"
+                            class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"></textarea>
                     </div>
-                    <textarea rows="3" placeholder="What did you like about the track?" wire:model.live="commented"
-                        class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"></textarea>
-                </div>
+                @endif
 
                 <div class="flex justify-center gap-4">
                     <button @click="showRepostConfirmationModal = false" wire:click="repost('{{ $campaign->id }}')"
@@ -89,7 +91,8 @@
                             <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
                                 stroke-width="2" />
                         </svg>
-                        <span>{{ repostPrice() + ($liked ? 2 : 0) + ($commented ? 2 : 0) }}</span>
+                        {{-- <span>{{ repostPrice() + ($liked ? 2 : 0) + ($commented ? 2 : 0) }}</span> --}}
+                        <span>{{ repostPrice(user()->repost_price, $commented, $liked) }}</span>
                         {{ __('Repost') }}
                     </button>
                 </div>

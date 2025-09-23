@@ -3,6 +3,7 @@
 namespace App\Livewire\User;
 
 use App\Jobs\NotificationMailSent;
+use App\Jobs\TrackViewCount;
 use App\Models\CreditTransaction;
 use App\Models\RepostRequest as ModelsRepostRequest;
 use App\Models\Repost;
@@ -10,6 +11,8 @@ use App\Models\Track;
 use App\Models\UserSetting;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\User\UserSettingsService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
@@ -70,6 +73,15 @@ class RepostRequest extends Component
         }
     }
 
+    public function updated()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+    }
+
+    public function updatedActiveMainTab()
+    {
+        return $this->redirect(route('user.reposts-request') . '?tab=' . $this->activeMainTab, navigate: true);
+    }
     /**
      * Handle audio play event
      */
@@ -252,12 +264,15 @@ class RepostRequest extends Component
 
     public function confirmRepost($requestId)
     {
+        if (!$this->canRepost($requestId)) {
+            $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
+            return;
+        }
         $this->showRepostConfirmationModal = true;
         $this->request = ModelsRepostRequest::findOrFail($requestId)->load('track', 'requester');
     }
     public function repost($requestId)
     {
-        $this->soundCloudService->ensureSoundCloudConnection(user());
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
         try {
             if (!$this->canRepost($requestId)) {
@@ -269,8 +284,8 @@ class RepostRequest extends Component
             // Check if the user has already reposted this specific request
             if (
                 Repost::where('reposter_urn', $currentUserUrn)
-                ->where('repost_request_id', $requestId)
-                ->exists()
+                    ->where('repost_request_id', $requestId)
+                    ->exists()
             ) {
 
                 $this->dispatch('alert', type: 'error', message: 'You have already reposted this request.');
@@ -356,7 +371,8 @@ class RepostRequest extends Component
                         'soundcloud_repost_id' => $soundcloudRepostId,
                         'track_owner_urn' => $trackOwnerUrn,
                         'reposted_at' => now(),
-                        'credits_earned' => (float) repostPrice(user()),
+                        // 'credits_earned' => (float) repostPrice(user()),
+                        'credits_earned' => (float) user()->repost_price,
                         // Add other necessary fields based on your Repost model
                     ]);
                     if ($this->commented) {
@@ -385,7 +401,8 @@ class RepostRequest extends Component
                         'status' => CreditTransaction::STATUS_SUCCEEDED,
                         'transaction_type' => CreditTransaction::TYPE_EARN,
                         'amount' => 0,
-                        'credits' => (float) repostPrice(user()) + ($this->commented ? 2 : 0) + ($this->liked ? 2 : 0),
+                        // 'credits' => (float) repostPrice(user()) + ($this->commented ? 2 : 0) + ($this->liked ? 2 : 0),
+                        'credits' => (float) repostPrice(user()->repost_price, $this->commented, $this->liked),
                         'description' => "Repost From Direct Request",
                         'metadata' => [
                             'repost_id' => $repost->id,
@@ -493,34 +510,59 @@ class RepostRequest extends Component
         $this->userSettingsService->createOrUpdate($userUrn, ['accept_repost' => $requestable]);
         $this->dataLoad();
     }
-    public function setActiveTab($tab)
-    {
-        if ($this->activeMainTab == 'accept_requests') {
-            $this->activeMainTab = 'incoming_request';
-            
-            $this->dataLoad();
-        } else {
-            $this->activeMainTab = $tab;
-            $this->dataLoad();
-        }
-    }
+    // public function setActiveTab($tab)
+    // {
+    //     if ($this->activeMainTab == 'accept_requests') {
+    //         $this->activeMainTab = 'incoming_request';
+
+    //         $this->dataLoad();
+    //     } else {
+    //         $this->activeMainTab = $tab;
+    //         $this->dataLoad();
+    //     }
+    // }
+    // public function dataLoad()
+    // {
+    //     $query = ModelsRepostRequest::with(['track', 'targetUser']);
+
+    //     switch ($this->activeMainTab) {
+    //         case 'incoming_request':
+    //             $query->where('target_user_urn', user()->urn)->where('status', ModelsRepostRequest::STATUS_PENDING)->where('expired_at', '>', now());
+    //             break;
+    //         case 'outgoing_request':
+    //             $query->where('requester_urn', user()->urn)->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED);
+    //             break;
+    //         case 'previously_reposted' || 'accept_requests':
+    //             $query->where('target_user_urn', user()->urn)->Where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED);
+    //             break;
+    //     }
+    //     // Order by created_at desc and paginate
+    //     return $this->repostRequests = $query->orderBy('status', 'asc')->take(10)->get();
+    // }
+
     public function dataLoad()
     {
         $query = ModelsRepostRequest::with(['track', 'targetUser']);
+        $tab = request()->query('tab', $this->activeMainTab);
+        $this->activeMainTab = $tab;
 
-        switch ($this->activeMainTab) {
+        switch ($tab) {
             case 'incoming_request':
-                $query->where('target_user_urn', user()->urn)->where('status', ModelsRepostRequest::STATUS_PENDING);
+                $query->where('target_user_urn', user()->urn)->where('status', ModelsRepostRequest::STATUS_PENDING)->where('expired_at', '>', now());
                 break;
             case 'outgoing_request':
-                $query->where('requester_urn', user()->urn)->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED)->where('status', '!=', ModelsRepostRequest::STATUS_DECLINE);
+                $query->where('requester_urn', user()->urn)->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED);
                 break;
-            case 'previously_reposted' || 'accept_requests':
-                $query->where('target_user_urn', user()->urn)->Where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED);
+            case 'previously_reposted':
+            case 'accept_requests':
+                $query->where('target_user_urn', user()->urn)->where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED);
                 break;
         }
         // Order by created_at desc and paginate
-        return $this->repostRequests = $query->orderBy('status', 'asc')->take(10)->get();
+        $this->repostRequests = $query->orderBy('status', 'asc')->take(10)->get();
+        Bus::dispatch(new TrackViewCount($this->repostRequests, user()->urn, 'request'));
+
+        return $this->repostRequests;
     }
 
     public function render()

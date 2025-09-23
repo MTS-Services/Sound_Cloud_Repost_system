@@ -47,6 +47,25 @@ class ApplicationSettingSeeder extends Seeder
             ['key' => 'smtp_password', 'value' => '123', 'env_key' => 'MAIL_PASSWORD'],
             ['key' => 'smtp_from_address', 'value' => 'superadmin@gmail.com', 'env_key' => 'MAIL_FROM_ADDRESS'],
             ['key' => 'smtp_from_name', 'value' => 'Super Admin', 'env_key' => 'MAIL_FROM_NAME'],
+
+            // Payment Gateway Setup
+            ['key' => 'paypal_mode', 'value' => 'sandbox', 'env_key' => 'PAYPAL_MODE'],
+            ['key' => 'paypal_key', 'value' => 'AdUa_Fvt0tf9rYbd1412hS_ChPoSbTP9fGj1PblIXwwOsBzLTyD8I2xnRDmT6eNgdBRMtiAAl9yVYYjW', 'env_key' => 'PAYPAL_SANDBOX_CLIENT_ID'],
+            ['key' => 'paypal_secret', 'value' => 'ELmbYAx_lItW-Ic1loIHQq7PmXVY2OkwbBTJKQq-GJ58n8WcLn5awnRhN_v9tJP58ULO3hSvzmQ2jDEh', 'env_key' => 'PAYPAL_SANDBOX_CLIENT_SECRET'],
+            ['key' => 'stripe_mode', 'value' => 'sandbox', 'env_key' => 'STRIPE_MODE'],
+            ['key' => 'stripe_key', 'value' => 'pk_test_51RpQw7ISIl8QzoFfXw1fwhUTinGRkt0zak7gkeNkOLlcr8MUPKKGh7mK7yJVideMMfVXSOSqfT5pZCrWlYOjE5dh008ykGM5Yx', 'env_key' => 'STRIPE_KEY'],
+            ['key' => 'stripe_secret', 'value' => 'sk_test_51RpQw7ISIl8QzoFf8r7wCZtb1Oauyo05c4kf7eLfoET3edbVwHVoBH4UeViPTii9V5GfosbnlYInMS1CArx77fMS00zK935gJx', 'env_key' => 'STRIPE_SECRET'],
+
+
+            // Payment Gateway Setup
+            ['key' => 'pusher_id', 'value' => '2034531', 'env_key' => 'PUSHER_APP_ID'],
+            ['key' => 'pusher_key', 'value' => '8eb5c7620f85b5d5b6ab', 'env_key' => 'PUSHER_APP_KEY'],
+            ['key' => 'pusher_secret', 'value' => '6118a200dbd605240508', 'env_key' => 'PUSHER_APP_SECRET'],
+            ['key' => 'pusher_cluster', 'value' => 'ap2', 'env_key' => 'PUSHER_APP_CLUSTER'],
+            ['key' => 'pusher_port', 'value' => '443', 'env_key' => 'PUSHER_PORT'],
+            ['key' => 'pusher_host', 'value' => '', 'env_key' => 'PUSHER_HOST'],
+            ['key' => 'pusher_scheme', 'value' => 'http', 'env_key' => 'PUSHER_SCHEME'],
+            ['key' => 'pusher_encrypted', 'value' => 'tls', 'env_key' => 'PUSHER_ENCRYPTED'],
         ];
 
         foreach ($settings as $setting) {
