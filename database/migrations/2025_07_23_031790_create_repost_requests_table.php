@@ -22,7 +22,8 @@ return new class extends Migration
             $table->string('requester_urn')->index();
             $table->string('target_user_urn')->index();
             $table->unsignedBigInteger('campaign_id')->nullable()->index();
-            $table->string('track_urn')->nullable()->index();
+            $table->unsignedBigInteger('music_id')->index();
+            $table->string('music_type')->index();
 
             $table->decimal('credits_spent', 10, 2)->default(0.00);
             $table->tinyInteger('status')->default(RepostRequest::STATUS_PENDING)->index();
@@ -36,11 +37,10 @@ return new class extends Migration
             $table->boolean('following')->default(false);
             $table->boolean('commentable')->nullable();
             $table->boolean('likeable')->default(false);
-            
+
             $table->foreign('target_user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('requester_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('campaign_id')->references('id')->on('campaigns')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('track_urn')->references('urn')->on('tracks')->onDelete('cascade')->onUpdate('cascade');
 
 
             $table->timestamps();

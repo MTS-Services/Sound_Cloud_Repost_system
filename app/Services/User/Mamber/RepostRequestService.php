@@ -4,6 +4,7 @@ namespace App\Services\User\Mamber;
 
 use App\Jobs\NotificationMailSent;
 use App\Models\CreditTransaction;
+use App\Models\Playlist;
 use App\Models\Repost;
 use App\Models\RepostRequest;
 use App\Models\Track;
@@ -16,7 +17,7 @@ use Throwable;
 
 class RepostRequestService
 {
-     protected SoundCloudService $soundCloudService;
+    protected SoundCloudService $soundCloudService;
 
     protected string $baseUrl = 'https://api.soundcloud.com';
 
@@ -24,7 +25,7 @@ class RepostRequestService
     {
         $this->soundCloudService = $soundCloudService;
     }
-    
+
     // public function getReportRequests($orderBy = 'sort_order', $order = 'asc')
     // {
     //     $reportRequests = RepostRequest::orderBy($orderBy, $order)->latest();
@@ -66,10 +67,15 @@ class RepostRequestService
                 return ['status' => 'error', 'message' => 'You have already reposted this request.'];
             }
 
-            $request = RepostRequest::findOrFail($requestId)->load('track', 'requester');
+            $request = RepostRequest::findOrFail($requestId)->load('music', 'requester');
+            if ($request->music_type == Track::class) {
+                $musicUrn = $request->music->urn;
+            } elseif ($request->music_type == Playlist::class) {
+                $musicUrn = $request->music->soundcloud_urn;
+            }
 
-            if (!$request->track) {
-                return ['status' => 'error', 'message' => 'Track not found for this request.'];
+            if (!$request->music) {
+                return ['status' => 'error', 'message' => 'Music not found for this request.'];
             }
 
             $httpClient = Http::withHeaders([
@@ -84,14 +90,25 @@ class RepostRequestService
             ];
 
             // Send SoundCloud actions
-            $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$request->track_urn}");
-            $comment_response = $commented
-                ? $httpClient->post("{$this->baseUrl}/tracks/{$request->track_urn}/comments", $commentSoundcloud)
-                : null;
+            if ($request->music_type == Track::class) {
+                $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$request->$musicUrn}");
+                $comment_response = $commented
+                    ? $httpClient->post("{$this->baseUrl}/tracks/{$request->$musicUrn}/comments", $commentSoundcloud)
+                    : null;
 
-            $like_response = $liked
-                ? $httpClient->post("{$this->baseUrl}/likes/tracks/{$request->track_urn}")
-                : null;
+                $like_response = $liked
+                    ? $httpClient->post("{$this->baseUrl}/likes/tracks/{$request->$musicUrn}")
+                    : null;
+            } elseif ($request->music_type == Playlist::class) {
+                $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$request->$musicUrn}");
+                $comment_response = $commented
+                    ? $httpClient->post("{$this->baseUrl}/playlists/{$request->$musicUrn}/comments", $commentSoundcloud)
+                    : null;
+
+                $like_response = $liked
+                    ? $httpClient->post("{$this->baseUrl}/likes/playlists/{$request->$musicUrn}")
+                    : null;
+            }
 
             $follow_response = $followed
                 ? $httpClient->put("{$this->baseUrl}/me/followings/{$request->requester_urn}")
@@ -129,15 +146,15 @@ class RepostRequestService
                 $commented,
                 $liked
             ) {
-                $trackOwnerUrn = $request->track->user?->urn ?? $request->user?->urn;
-                $trackOwnerName = $request->track->user?->name ?? $request->user?->name;
+                $trackOwnerUrn = $request->music->user?->urn ?? $request->user?->urn;
+                $trackOwnerName = $request->music->user?->name ?? $request->user?->name;
 
                 $repost = Repost::create([
                     'reposter_urn' => $currentUserUrn,
                     'repost_request_id' => $requestId,
                     'campaign_id' => $request->campaign_id,
-                    'music_id' => $request->track->id,
-                    'music_type' => Track::class,
+                    'music_id' => $request->music_id,
+                    'music_type' => $request->music_type,
                     'soundcloud_repost_id' => $soundcloudRepostId,
                     'track_owner_urn' => $trackOwnerUrn,
                     'reposted_at' => now(),

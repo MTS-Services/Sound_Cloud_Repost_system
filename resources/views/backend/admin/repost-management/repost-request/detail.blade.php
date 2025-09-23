@@ -84,7 +84,7 @@
                                 <div class="ml-4">
                                     <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Track URN</h4>
                                     <p class="text-lg font-semibold text-gray-900 dark:text-white break-all">
-                                        {{ $requests->track_urn }}</p>
+                                        {{ $requests->music_id ?? 'N/A' }}</p>
                                 </div>
                             </div>
                         </div>

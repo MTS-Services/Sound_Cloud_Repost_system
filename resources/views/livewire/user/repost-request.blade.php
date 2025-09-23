@@ -101,7 +101,7 @@
                             <!-- SoundCloud Player with Audio Events -->
                             <div id="soundcloud-player-{{ $repostRequest->id }}"
                                 data-request-id="{{ $repostRequest->id }}" wire:ignore>
-                                <x-sound-cloud.sound-cloud-player :track="$repostRequest->track" :visual="false" />
+                                <x-sound-cloud.sound-cloud-player :track="$repostRequest->music" :visual="false" />
                             </div>
 
                             {{-- <!-- Play Time Display -->
@@ -181,7 +181,7 @@
                                 <div class="flex items-center gap-2">
                                     <span
                                         class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
-                                        {{ $repostRequest->track->genre ?? 'Unknown Genre' }}
+                                        {{ $repostRequest->music->genre ?? 'Unknown Genre' }}
                                     </span>
                                 </div>
                             </div>
