@@ -91,28 +91,37 @@ class MyAccount extends Component
         $lastWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'last_month');
         Log::info('MyAccount mount. step 8');
         $analyze = $this->followerAnalyzer->syncUserRealFollowers($followers, $user);
-        dd('my account. user:', user(), 'followers:', $followers, 'currentWeekStats:', $currentWeekStats, 'lastWeekStats:', $lastWeekStats, 'followerGrowth:', $this->followerGrowth, 'analyze:', $analyze);
+        Log::info('MyAccount mount. step 9');
 
         $currentWeekFollowers = $currentWeekStats['totalFollowers'];
+        Log::info('MyAccount mount. step 10');
         $lastWeekFollowers = $lastWeekStats['totalFollowers'];
-
+        Log::info('MyAccount mount. step 11');
         if ($lastWeekFollowers > 0) {
+            Log::info('MyAccount mount. step 12');
             $this->followerGrowth = ((($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100) > 0 ? ((($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100) : 0;
         } else {
+            Log::info('MyAccount mount. step 13');
             $this->followerGrowth = 0; // Avoid division by zero
         }
-
+        Log::info('MyAccount mount. step 14');
         $this->activeTab = request()->query('tab', $this->activeTab);
+        Log::info('MyAccount mount. step 15');
 
         $userUrn = $user->urn ?? user()->urn;
+        Log::info('MyAccount mount. step 16');
         $this->user_urn = $userUrn;
+        Log::info('MyAccount mount. step 17');
         Log::info('MyAccount mount', ['user_urn' => $this->user_urn]);
-        // If a playlist is in the URL, ensure we land on the right tab/view
+        Log::info('MyAccount mount. step 18');
         if ($this->selectedPlaylistId) {
+            Log::info('MyAccount mount. step 19');
             $this->activeTab = 'playlists';
             $this->showPlaylistTracks = true;
         }
+        Log::info('MyAccount mount. step 20');
         $this->socialLinks();
+        dd($this->socialLinks(), 'user:', user());
     }
 
     public function updated()
