@@ -82,7 +82,7 @@ class MyAccount extends Component
 
         $currentWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'this_month');
         $lastWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'last_month');
-        $this->followerAnalyzer->syncUserRealFollowers($followers, $user);
+        // $this->followerAnalyzer->syncUserRealFollowers($followers, $user);
 
         $currentWeekFollowers = $currentWeekStats['totalFollowers'];
         $lastWeekFollowers = $lastWeekStats['totalFollowers'];
