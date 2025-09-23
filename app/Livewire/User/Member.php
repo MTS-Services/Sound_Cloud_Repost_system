@@ -185,7 +185,7 @@ class Member extends Component
 
     public function getCredibilityScore(object $user)
     {
-        $userFollowerAnalysis =  $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers($user));
+        $userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers($user));
         return $userFollowerAnalysis['averageCredibilityScore'];
     }
 
@@ -303,6 +303,10 @@ class Member extends Component
 
     public function openModal(string $userUrn)
     {
+        if (!is_email_verified()) {
+            $this->dispatch('alert', type: 'error', message: 'Please verify your email to send a request.');
+            return;
+        }
         $this->soundCloudService->syncSelfTracks([]);
         $this->soundCloudService->syncSelfPlaylists();
 
