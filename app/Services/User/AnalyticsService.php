@@ -391,7 +391,6 @@ class AnalyticsService
 
         $currentMetricsBySource = $this->calculateMetricsBySource($currentData);
         $previousMetricsBySource = $this->calculateMetricsBySource($previousData);
-        dd($previousMetricsBySource, $currentMetricsBySource, $previousData, $currentData);
 
         // Re-key the arrays with the correct source_id to avoid "Undefined array key" errors
         $currentMetricsBySource = collect($currentMetricsBySource)->mapWithKeys(function ($value, $key) {
