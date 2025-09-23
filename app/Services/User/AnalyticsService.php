@@ -376,14 +376,16 @@ class AnalyticsService
             $periods['current']['start'],
             $periods['current']['end'],
             $genres
-        )->whereIn('source_id', $sourceIdsList)->with('actionable');
+        )->whereIn('source_id', $sourceIdsList);
+        $currentData->load(['source', 'actionable']);
 
         $previousData = $this->fetchAnalyticsData(
             $userUrn,
             $periods['previous']['start'],
             $periods['previous']['end'],
             $genres
-        )->whereIn('source_id', $sourceIdsList)->with('actionable');
+        )->whereIn('source_id', $sourceIdsList);
+        $previousData->load(['source', 'actionable']);
 
         $currentMetricsBySource = $this->calculateMetricsBySource($currentData);
         $previousMetricsBySource = $this->calculateMetricsBySource($previousData);

@@ -56,6 +56,7 @@ class Chart extends Component
                 page: $this->getPage(),
                 actionableType: Campaign::class
             );
+            dd($sources);
             return $sources;
         // } catch (\Throwable $e) {
         //     Log::error('Paginated source data loading failed', ['error' => $e->getMessage()]);
