@@ -54,7 +54,7 @@ class ProfileController extends Controller
         $data['total_erned_credits'] = $data['credit_transactions']->whereIn('transaction_type', [CreditTransaction::TYPE_EARN,CreditTransaction::TYPE_MANUAL, CreditTransaction::TYPE_BONUS,CreditTransaction::TYPE_PENALTY])->sum('credits');
         $data['completed_reposts'] = $this->RepostRequestService->getRepostRequests()->where('requester_urn', $user_urn)->where('status', [ModelsRepostRequest::STATUS_APPROVED])->count();
         $data['reposted_genres'] = $this->trackService->getTracks()->where('user_urn', $user_urn)->pluck('genre')->unique()->values()->count();
-        $data['repost_requests'] = ModelsRepostRequest::with(['track', 'targetUser'])->where('requester_urn', $user_urn)->Where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED)->orderBy('sort_order', 'asc')->take(10)->get();
+        $data['repost_requests'] = ModelsRepostRequest::with(['music', 'targetUser'])->where('requester_urn', $user_urn)->Where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED)->orderBy('sort_order', 'asc')->take(10)->get();
         $data['user'] = User::where('urn', $user_urn)->with('userInfo', 'genres')->first();
         // dd($data['user']);
         return view('backend.user.profile.profile', $data);

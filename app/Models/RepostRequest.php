@@ -6,6 +6,7 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class RepostRequest extends BaseModel
 {
@@ -14,7 +15,8 @@ class RepostRequest extends BaseModel
         'requester_urn',
         'target_user_urn',
         'campaign_id',
-        'track_urn',
+        'music_id',
+        'music_type',
         'credits_spent',
         'status',
         'rejection_reason',
@@ -40,6 +42,10 @@ class RepostRequest extends BaseModel
                 Start of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
+     public function music(): MorphTo
+    {
+        return $this->morphTo();
+    }
     public function requester(): BelongsTo
     {
         return $this->belongsTo(User::class, 'requester_urn', 'urn');
@@ -53,11 +59,6 @@ class RepostRequest extends BaseModel
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
-    }
-
-    public function track(): BelongsTo
-    {
-        return $this->belongsTo(Track::class, 'track_urn', 'urn', 'soundcloud_urn');
     }
 
     public function reposts(): HasMany

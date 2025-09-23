@@ -392,9 +392,9 @@
                             <div class="flex justify-between text-sm mb-3">
                                 <div class="flex items-center space-x-2">
                                     <span class="text-orange-500 font-bold">#{{ $loop->iteration }}</span>
-                                    <span class="text-sm max-w-[200px] truncate">{{ $request?->track?->title }}</span>
+                                    <span class="text-sm max-w-[200px] truncate">{{ $request?->music?->title }}</span>
                                 </div>
-                                <span class="text-slate-400">{{ $request?->track?->genre }}</span>
+                                <span class="text-slate-400">{{ $request?->music?->genre }}</span>
                             </div>
                             <div class="flex items-start space-x-3 mb-3">
                                 <img src="https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg"

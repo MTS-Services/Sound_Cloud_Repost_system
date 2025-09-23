@@ -7,16 +7,13 @@ use App\Jobs\TrackViewCount;
 use App\Models\CreditTransaction;
 use App\Models\RepostRequest as ModelsRepostRequest;
 use App\Models\Repost;
-use App\Models\Track;
 use App\Models\UserSetting;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\User\Mamber\RepostRequestService;
 use App\Services\User\UserSettingsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Throwable;
@@ -272,7 +269,7 @@ class RepostRequest extends Component
             return;
         }
         $this->showRepostConfirmationModal = true;
-        $this->request = ModelsRepostRequest::findOrFail($requestId)->load('track', 'requester');
+        $this->request = ModelsRepostRequest::findOrFail($requestId)->load('music', 'requester');
     }
     public function repost($requestId)
     {
@@ -365,39 +362,10 @@ class RepostRequest extends Component
         $this->userSettingsService->createOrUpdate($userUrn, ['accept_repost' => $requestable]);
         $this->dataLoad();
     }
-    // public function setActiveTab($tab)
-    // {
-    //     if ($this->activeMainTab == 'accept_requests') {
-    //         $this->activeMainTab = 'incoming_request';
-
-    //         $this->dataLoad();
-    //     } else {
-    //         $this->activeMainTab = $tab;
-    //         $this->dataLoad();
-    //     }
-    // }
-    // public function dataLoad()
-    // {
-    //     $query = ModelsRepostRequest::with(['track', 'targetUser']);
-
-    //     switch ($this->activeMainTab) {
-    //         case 'incoming_request':
-    //             $query->where('target_user_urn', user()->urn)->where('status', ModelsRepostRequest::STATUS_PENDING)->where('expired_at', '>', now());
-    //             break;
-    //         case 'outgoing_request':
-    //             $query->where('requester_urn', user()->urn)->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED);
-    //             break;
-    //         case 'previously_reposted' || 'accept_requests':
-    //             $query->where('target_user_urn', user()->urn)->Where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED);
-    //             break;
-    //     }
-    //     // Order by created_at desc and paginate
-    //     return $this->repostRequests = $query->orderBy('status', 'asc')->take(10)->get();
-    // }
 
     public function dataLoad()
     {
-        $query = ModelsRepostRequest::with(['track', 'targetUser']);
+        $query = ModelsRepostRequest::with(['music', 'targetUser']);
         $tab = request()->query('tab', $this->activeMainTab);
         $this->activeMainTab = $tab;
 

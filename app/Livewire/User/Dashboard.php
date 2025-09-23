@@ -240,7 +240,7 @@ class Dashboard extends Component
 
         $this->repostRequests = RepostRequest::where('target_user_urn', user()->urn)->where('status', RepostRequest::STATUS_PENDING)
             ->where('expired_at', '>', now())
-            ->with(['track', 'requester'])
+            ->with(['music', 'requester'])
             ->latest()
             ->take(5)
             ->get();
@@ -1132,7 +1132,7 @@ class Dashboard extends Component
     public function confirmRepost($requestId)
     {
         $this->showRepostConfirmationModal = true;
-        $this->request = RepostRequest::findOrFail($requestId)->load('track', 'requester');
+        $this->request = RepostRequest::findOrFail($requestId)->load('music', 'requester');
     }
     public function repost($requestId)
     {
