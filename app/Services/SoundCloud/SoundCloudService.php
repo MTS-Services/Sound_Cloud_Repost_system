@@ -767,10 +767,10 @@ class SoundCloudService
         $httpClient = Http::withHeaders([
             'Authorization' => 'OAuth ' . $user->token,
         ])->attach(
-            'track[asset_data]',
-            file_get_contents($trackData['asset_data']->getRealPath()),
-            $trackData['asset_data']->getClientOriginalName()
-        );
+                'track[asset_data]',
+                file_get_contents($trackData['asset_data']->getRealPath()),
+                $trackData['asset_data']->getClientOriginalName()
+            );
 
         if ($trackData['artwork_data']) {
             $httpClient->attach(
@@ -841,7 +841,9 @@ class SoundCloudService
             [],
             'Failed to fetch urn:' . $user->urn . ' followers from SoundCloud API.'
         );
-
+        if (empty($response['collection'])) {
+            return collect([]);
+        }
         return collect($response['collection']);
     }
 

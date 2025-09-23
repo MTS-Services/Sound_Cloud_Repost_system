@@ -75,8 +75,9 @@ class MyAccount extends Component
 
     public function mount($user_name = null): void
     {
+        $user = $user_name ? User::where('name', $user_name)->first() : user(); //User::where('name', $user_name)->first()
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
-        $followers = $this->soundCloudService->getAuthUserFollowers();
+        $followers = $this->soundCloudService->getAuthUserFollowers($user);
         $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($followers);
 
         $currentWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'this_month');
@@ -93,8 +94,8 @@ class MyAccount extends Component
 
         $this->activeTab = request()->query('tab', $this->activeTab);
 
-        $userUrn = User::where('name', $user_name)->first()?->urn;
-        $this->user_urn = $userUrn ?? user()->urn;
+        $userUrn = $user->urn;
+        $this->user_urn = $userUrn;
         Log::info('MyAccount mount', ['user_urn' => $this->user_urn]);
         // If a playlist is in the URL, ensure we land on the right tab/view
         if ($this->selectedPlaylistId) {
