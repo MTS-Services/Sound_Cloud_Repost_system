@@ -337,6 +337,7 @@ class AnalyticsService
 
         if ($actionableType !== null) {
             $query->where('actionable_type', $actionableType);
+            dd($query->get());
         }
 
         $query->whereDate('created_at', '>=', $periods['current']['start']->format('Y-m-d'))
@@ -377,7 +378,6 @@ class AnalyticsService
             $periods['current']['end'],
             $genres
         )->whereIn('source_id', $sourceIdsList);
-        $currentData->load(['source', 'actionable']);
 
         $previousData = $this->fetchAnalyticsData(
             $userUrn,
@@ -385,7 +385,6 @@ class AnalyticsService
             $periods['previous']['end'],
             $genres
         )->whereIn('source_id', $sourceIdsList);
-        $previousData->load(['source', 'actionable']);
 
         $currentMetricsBySource = $this->calculateMetricsBySource($currentData);
         $previousMetricsBySource = $this->calculateMetricsBySource($previousData);
