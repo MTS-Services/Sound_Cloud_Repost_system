@@ -219,7 +219,7 @@ class MyAccount extends Component
         }
 
         // Recent reposts (not paginated here)
-        $reposts = Repost::with(['campaign.music', 'request.track'])
+        $reposts = Repost::with(['campaign.music', 'request.music'])
             ->where('reposter_urn', $this->user_urn)->where(function ($query) {
                 $query->whereNotNull('campaign_id')->orWhereNotNull('repost_request_id');
             })
@@ -227,7 +227,7 @@ class MyAccount extends Component
             ->take(10)
             ->get()
             ->map(function ($repost) {
-                $source = $repost->campaign?->music ?? $repost->request?->track;
+                $source = $repost->campaign?->music ?? $repost->request?->music;
                 $repost->source = $source;
                 $repost->source_id = $repost->campaign?->id ?? $repost->request?->id;
                 $repost->source_type = $repost->campaign ? '📢 From Campaign' : ($repost->request ? '🤝 From Request' : '');
