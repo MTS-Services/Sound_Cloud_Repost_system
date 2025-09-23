@@ -131,7 +131,7 @@ class SoundCloudController extends Controller
                 Log::info('SoundCloud sync started for syncUserInformation');
                 $this->soundCloudService->syncUserInformation($user, $soundCloudUser);
                 Log::info('SoundCloud sync started for analyzeFollowers');
-                $this->followerAnalyzer->syncUserRealFollowers($this->soundCloudService->getAuthUserFollowers($user), $user);
+                $this->followerAnalyzer->syncUserRealFollowers($this->soundCloudService->getAuthUserFollowers(), $user);
             });
         } catch (Throwable $e) {
             Log::error('SoundCloud sync error', [
