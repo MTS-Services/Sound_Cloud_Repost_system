@@ -77,7 +77,7 @@ class MyAccount extends Component
     {
         $user = $user_name ? User::where('name', $user_name)->first() : user(); //User::where('name', $user_name)->first()
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
-        $followers = $this->soundCloudService->getAuthUserFollowers($user);
+        $followers = $this->soundCloudService->getAuthUserFollowers();
         $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($followers);
 
         $currentWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'this_month');
