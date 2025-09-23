@@ -34,7 +34,7 @@
         chartData: {{ Js::from($this->getChartData()) }},
         genreBreakdown: {{ Js::from($genreBreakdown) }},
         isLoading: @entangle('isLoading'),
-
+    
         // Chart instances
         performanceChart: null,
         genreChart: null,
@@ -214,13 +214,18 @@
             const ctx = document.getElementById('genreChart');
             if (!ctx) return;
     
+            // Check if there's any data with a percentage greater than 0
+            const hasData = this.genreBreakdown.some(item => item.percentage > 0);
+    
+            const displayedGenres = hasData ? this.genreBreakdown.filter(item => item.percentage > 0) : [{ genre: 'No Data', percentage: 100 }];
+    
             this.genreChart = new Chart(ctx.getContext('2d'), {
                 type: 'pie',
                 data: {
-                    labels: this.genreBreakdown.length > 0 ? this.genreBreakdown.map((item) => item.genre) : ['No Data'],
+                    labels: displayedGenres.map(item => item.genre),
                     datasets: [{
-                        data: this.genreBreakdown.length > 0 ? this.genreBreakdown.map((item) => item.percentage) : [100],
-                        backgroundColor: this.genreBreakdown.length > 0 ? ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'].slice(0, this.genreBreakdown.length) : ['#9ca3af'],
+                        data: displayedGenres.map(item => item.percentage),
+                        backgroundColor: hasData ? ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'].slice(0, displayedGenres.length) : ['#9ca3af'],
                         borderColor: '#1f2937',
                         borderWidth: 2,
                     }]
@@ -820,12 +825,13 @@
             </div>
         </div>
 
-         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
             <!-- Top Performing Tracks -->
             <div>
                 <div
                     class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Top Performing Tracks or Playlists</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Top Performing Tracks or
+                        Playlists</h3>
                     <div class="space-y-4">
                         @forelse($topSources as $source)
                             <div class="group">
