@@ -353,7 +353,7 @@ class Campaign extends Component
         $allowedTargetCredits = user()->repost_price;
         return ModelsCampaign::where('budget_credits', '>=', $allowedTargetCredits)
             ->withoutSelf()
-            ->with(['music.user.userInfo', 'reposts','user'])
+            ->with(['music.user.userInfo', 'reposts', 'user'])
             ->whereDoesntHave('reposts', function ($query) {
                 $query->where('reposter_urn', user()->urn);
             })
@@ -718,8 +718,7 @@ class Campaign extends Component
     public function profeature($isChecked)
     {
         if (!proUser()) {
-            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
-            ;
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
         } elseif (($this->credit * 2) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;
@@ -916,14 +915,10 @@ class Campaign extends Component
                 $this->track = $playlist;
             }
 
-            // $response = $this->analyticsService->recordAnalytics($this->track, $campaign, UserAnalytics::TYPE_PLAY, $campaign->target_genre);
-            // Log:
-            // info('response: analytics: ');
-            // if ($response != false || $response != null) {
-
-
-            //     $campaign->increment('playback_count');
-            // }
+            $response = $this->analyticsService->recordAnalytics(source: $this->track, actionable: $campaign, type: UserAnalytics::TYPE_PLAY, genre: $campaign->target_genre);
+            if ($response != false || $response != null) {
+                $campaign->increment('playback_count');
+            }
 
             $this->playcount = true;
             // $this->reset([
