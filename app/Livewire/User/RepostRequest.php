@@ -54,8 +54,8 @@ class RepostRequest extends Component
         'audioEnded' => 'handleAudioEnded'
     ];
 
-    protected SoundCloudService $soundCloudService;
-    protected UserSettingsService $userSettingsService;
+    private SoundCloudService $soundCloudService;
+    private UserSettingsService $userSettingsService;
 
     public function boot(SoundCloudService $soundCloudService, UserSettingsService $userSettingsService)
     {
