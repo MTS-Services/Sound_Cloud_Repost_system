@@ -210,6 +210,7 @@ class Analytics extends Component
                 filter: $this->filter,
                 dateRange: $dateRange
             );
+            dd($this->topSources);
 
             $this->genreBreakdown = $this->analyticsService->getGenreBreakdown($this->filter, $dateRange, $this->selectedGenres);
         } catch (\Exception $e) {
