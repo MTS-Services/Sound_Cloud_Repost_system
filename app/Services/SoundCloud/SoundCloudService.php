@@ -835,7 +835,7 @@ class SoundCloudService
             return collect($response['collection']);
         }
         $response = $this->makeApiRequest(
-            user(),
+            $user,
             'get',
             "/users/" . $user->urn . "/followers",
             [],
