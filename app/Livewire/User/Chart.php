@@ -29,10 +29,9 @@ class Chart extends Component
     #[Locked]
     protected string $baseUrl = 'https://api.soundcloud.com';
 
-    public $tracksPerPage = 20;
+    public $sourcesPerPage = 20;
     public $activeTab = 'listView';
     public $playing = null;
-    // public $topTracks = [];
 
     public function boot(AnalyticsService $analyticsService, CampaignService $campaignService, SoundCloudService $soundCloudService)
     {
@@ -43,25 +42,25 @@ class Chart extends Component
 
     public function refresh()
     {
-        $this->getTopTrackData();
+        $this->getPaginatedSourceData();
     }
 
-    public function getTopTrackData(): LengthAwarePaginator
+    public function getPaginatedSourceData(): LengthAwarePaginator
     {
-        // try {
-        $tracks =  $this->analyticsService->getPaginatedTrackAnalytics(
-            filter: 'last_week',
-            dateRange: null,
-            genres: [],
-            perPage: $this->tracksPerPage,
-            page: $this->getPage(),
-            actionableType: Campaign::class
-        );
-        return $tracks;
-        // } catch (\Exception $e) {
-        //     Log::error('Paginated track data loading failed', ['error' => $e->getMessage()]);
-        //     return new LengthAwarePaginator([], 0, $this->tracksPerPage, $this->getPage());
-        // }
+        try {
+            $sources =  $this->analyticsService->getPaginatedAnalytics(
+                filter: 'last_week',
+                dateRange: null,
+                genres: [],
+                perPage: $this->sourcesPerPage,
+                page: $this->getPage(),
+                actionableType: Campaign::class
+            );
+            return $sources;
+        } catch (\Throwable $e) {
+            Log::error('Paginated source data loading failed', ['error' => $e->getMessage()]);
+            return new LengthAwarePaginator([], 0, $this->sourcesPerPage, $this->getPage());
+        }
     }
 
     public function setActiveTab($tab)
@@ -69,32 +68,32 @@ class Chart extends Component
         $this->activeTab = $tab;
     }
 
-    public function baseValidation($encryptedCampaignId, $encryptedTrackUrn)
+    public function baseValidation($encryptedCampaignId, $encryptedSourceId)
     {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         if ($this->campaignService->getCampaigns()->where('id', decrypt($encryptedCampaignId))->where('user_urn', user()->urn)->exists()) {
             $this->dispatch('alert', type: 'error', message: 'You cannot act on your own campaign.');
             return null;
         }
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $campaign = $this->campaignService->getCampaign($encryptedCampaignId);
         $campaign->load('music.user');
-        if (decrypt($encryptedTrackUrn) != $campaign->music->urn) {
+        if (decrypt($encryptedSourceId) != $campaign->music->id) {
             $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
             return null;
         }
         return $campaign;
     }
 
-    public function likeTrack($encryptedCampaignId, $encryptedTrackUrn)
+    public function likeSource($encryptedCampaignId, $encryptedSourceId)
     {
         try {
-            $campaign = $this->baseValidation($encryptedCampaignId, $encryptedTrackUrn);
+            $campaign = $this->baseValidation($encryptedCampaignId, $encryptedSourceId);
             if (!$campaign) {
                 return;
             }
 
-            if (UserAnalytics::where('act_user_urn', user()->urn)->where('track_urn', decrypt($encryptedTrackUrn))->exists()) {
-                $this->dispatch('alert', type: 'error', message: 'You have already liked this track.');
+            if (UserAnalytics::where('act_user_urn', user()->urn)->where('source_id', decrypt($encryptedSourceId))->exists()) {
+                $this->dispatch('alert', type: 'error', message: 'You have already liked this campaign.');
                 return;
             }
 
@@ -117,7 +116,6 @@ class Chart extends Component
                     return;
             }
             if ($response->successful()) {
-                $soundcloudRepostId = $campaign->music->soundcloud_track_id;
                 $this->campaignService->likeCampaign($campaign, user());
                 $this->dispatch('alert', type: 'success', message: 'Like successful.');
             } else {
@@ -134,10 +132,10 @@ class Chart extends Component
             return;
         }
     }
-    public function repostTrack($encryptedCampaignId, $encryptedTrackUrn)
+    public function repostSource($encryptedCampaignId, $encryptedSourceId)
     {
         try {
-            $campaign = $this->baseValidation($encryptedCampaignId, $encryptedTrackUrn);
+            $campaign = $this->baseValidation($encryptedCampaignId, $encryptedSourceId);
 
             if (!$campaign) {
                 return;
@@ -166,11 +164,6 @@ class Chart extends Component
                     $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
                     return;
             }
-            $data = [
-                'likeable' => false,
-                'comment' => false,
-                'follow' => false
-            ];
             if ($response->successful()) {
                 $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
                 if ($repostEmailPermission) {
@@ -184,8 +177,8 @@ class Chart extends Component
                     ];
                     NotificationMailSent::dispatch($datas);
                 }
-                $soundcloudRepostId = $campaign->music->soundcloud_track_id;
-                $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
+                $soundcloudRepostId = $campaign->music_type == Track::class ? $campaign->music->soundcloud_track_id : $campaign->music->soundcloud_id;
+                $this->campaignService->repostSource($campaign, $soundcloudRepostId, user());
                 $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.');
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body());
@@ -210,29 +203,29 @@ class Chart extends Component
     public function render()
     {
 
-        $paginated = $this->getTopTrackData();
+        $paginated = $this->getPaginatedSourceData();
         // Get the collection from paginator
         $items = $paginated->getCollection();
 
         // Map over items to calculate engagement score and rate
-        $itemsWithMetrics = $items->map(function ($track) {
-            $totalViews = $track['metrics']['total_views']['current_total'] == 0 ? 1 : $track['metrics']['total_views']['current_total'];
-            $totalPlays = $track['metrics']['total_plays']['current_total'];
-            $totalReposts = $track['metrics']['total_reposts']['current_total'];
-            $totalLikes = $track['metrics']['total_likes']['current_total'];
-            $totalComments = $track['metrics']['total_comments']['current_total'];
-            $totalFollowers = $track['metrics']['total_followers']['current_total'];
-            $track['repost'] = false;
-            if ($track['actionable_details'] != null) {
-                $repost = Repost::where('reposter_urn', user()->urn)->where('campaign_id', $track['actionable_details']['id'])->exists();
+        $itemsWithMetrics = $items->map(function ($source) {
+            $totalViews = $source['metrics']['total_views']['current_total'] == 0 ? 1 : $source['metrics']['total_views']['current_total'];
+            $totalPlays = $source['metrics']['total_plays']['current_total'];
+            $totalReposts = $source['metrics']['total_reposts']['current_total'];
+            $totalLikes = $source['metrics']['total_likes']['current_total'];
+            $totalComments = $source['metrics']['total_comments']['current_total'];
+            $totalFollowers = $source['metrics']['total_followers']['current_total'];
+            $source['repost'] = false;
+            if ($source['actionable_details'] != null) {
+                $repost = Repost::where('reposter_urn', user()->urn)->where('campaign_id', $source['actionable_details']['id'])->exists();
                 if ($repost) {
-                    $track['repost'] = true;
+                    $source['repost'] = true;
                 }
             }
-            $track['like'] = false;
-            $like = UserAnalytics::where('act_user_urn', user()->urn)->where('track_urn', $track['track_details']['urn'])->exists();
+            $source['like'] = false;
+            $like = UserAnalytics::where('act_user_urn', user()->urn)->where('source_id', $source['source_details']['id'])->exists();
             if ($like) {
-                $track['like'] = true;
+                $source['like'] = true;
             }
 
 
@@ -243,14 +236,13 @@ class Chart extends Component
 
             // Engagement Score (0–10 scale)
             $engagementScore = round(($engagementRate / 100) * 10, 1);
-            $track['getMusicSrc'] = $this->soundCloudService->getMusicSrc($track['track_details']['urn']);
+            $source['getMusicSrc'] = $this->soundCloudService->getMusicSrc($source['source_details']['id']);
 
+            // Add score and rate to source array
+            $source['engagement_score'] = $engagementScore;
+            $source['engagement_rate'] = round($engagementRate, 2); // optional rounding
 
-            // Add score and rate to track array
-            $track['engagement_score'] = $engagementScore;
-            $track['engagement_rate'] = round($engagementRate, 2); // optional rounding
-
-            return $track;
+            return $source;
         });
 
         // Sort by engagement score descending
@@ -261,7 +253,7 @@ class Chart extends Component
         return view(
             'livewire.user.chart',
             [
-                'topTracks' => $paginated
+                'topSources' => $paginated
             ]
         );
     }

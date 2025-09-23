@@ -26,15 +26,15 @@
     </div> --}}
 
     <div x-data="{
-        showGrowthTips: @entangle('showGrowthTips').live,
-        showFilters: @entangle('showFilters').live,
+        showGrowthTips: false,
+        showFilters: false,
         selectedFilter: '{{ $filter }}',
         dataCache: {{ Js::from($dataCache) }},
         displayedData: null,
         chartData: {{ Js::from($this->getChartData()) }},
         genreBreakdown: {{ Js::from($genreBreakdown) }},
         isLoading: @entangle('isLoading'),
-
+    
         // Chart instances
         performanceChart: null,
         genreChart: null,
@@ -214,13 +214,18 @@
             const ctx = document.getElementById('genreChart');
             if (!ctx) return;
     
+            // Check if there's any data with a percentage greater than 0
+            const hasData = this.genreBreakdown.some(item => item.percentage > 0);
+    
+            const displayedGenres = hasData ? this.genreBreakdown.filter(item => item.percentage > 0) : [{ genre: 'No Data', percentage: 100 }];
+    
             this.genreChart = new Chart(ctx.getContext('2d'), {
                 type: 'pie',
                 data: {
-                    labels: this.genreBreakdown.length > 0 ? this.genreBreakdown.map((item) => item.genre) : ['No Data'],
+                    labels: displayedGenres.map(item => item.genre),
                     datasets: [{
-                        data: this.genreBreakdown.length > 0 ? this.genreBreakdown.map((item) => item.percentage) : [100],
-                        backgroundColor: this.genreBreakdown.length > 0 ? ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'].slice(0, this.genreBreakdown.length) : ['#9ca3af'],
+                        data: displayedGenres.map(item => item.percentage),
+                        backgroundColor: hasData ? ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'].slice(0, displayedGenres.length) : ['#9ca3af'],
                         borderColor: '#1f2937',
                         borderWidth: 2,
                     }]
@@ -342,7 +347,7 @@
 
                     <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
                         <x-gbutton variant="outline"
-                            class="hover:!bg-[#ff6b35] hover:!text-white bg-white border-gray-300 dark:border-gray-600 w-full"
+                            class="hover:!bg-[#ff6b35] hover:!text-white bg-white border-gray-300 dark:border-gray-600 w-full text-nowrap"
                             x-bind:class="showGrowthTips
                                 ?
                                 '!bg-[#ff6b35] !text-white' :
@@ -362,7 +367,7 @@
                             Filters
                         </button>
 
-                        <select wire:model.live="filter"
+                        {{-- <select wire:model.live="filter"
                             class="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm font-medium focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35] w-full sm:w-auto transition-all duration-200"
                             x-bind:disabled="isLoading">
                             <option value="daily">Today</option>
@@ -371,7 +376,85 @@
                             <option value="last_90_days">Last 90 Days</option>
                             <option value="last_year">Last Year</option>
                             <option value="date_range">Custom Range</option>
-                        </select>
+                        </select> --}}
+                        <div x-data="{
+                            open: false,
+                            filter: @entangle('filter'),
+                            options: {
+                                'daily': 'Today',
+                                'last_week': 'Last 7 Days',
+                                'last_month': 'Last 30 Days',
+                                'last_90_days': 'Last 90 Days',
+                                'last_year': 'Last Year',
+                                'date_range': 'Custom Range'
+                            }
+                        }" class="relative w-full">
+
+                            <!-- Dropdown button -->
+                            <button @click="open = !open" :disabled="isLoading"
+                                class="w-full sm:w-auto px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm font-medium focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35] transition-all duration-200 flex justify-between items-center space-x-2 text-nowrap">
+                                <span x-text="options[filter] || 'Select an option'"></span>
+                                <!-- Dropdown arrow icon -->
+                                <svg class="w-4 h-4 text-gray-400 transform transition-transform duration-200"
+                                    :class="{ 'rotate-180': open }" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+
+
+                            <!-- Dropdown menu -->
+                            <div x-show="open" @click.outside="open = false"
+                                x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 scale-95"
+                                x-transition:enter-end="opacity-100 scale-100"
+                                x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-100 scale-100"
+                                x-transition:leave-end="opacity-0 scale-95"
+                                class="absolute z-10 mt-2 w-40 right-0 rounded-md shadow-lg bg-white dark:bg-gray-800 focus:outline-none">
+                                <div class="py-1" role="menu" aria-orientation="vertical"
+                                    aria-labelledby="options-menu">
+                                    <!-- Dropdown options -->
+
+                                    {{-- form request() if the current url have any query then set the query and if have filter query then replace ir or set the filter --}}
+                                    <a href="{{ request()->fullUrlWithQuery(['filter' => 'daily']) }}" wire:navigate
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md text-nowrap"
+                                        role="menuitem" @click="filter = 'daily'; open = false;">
+                                        Today
+                                    </a>
+                                    <a href="{{ request()->fullUrlWithQuery(['filter' => 'last_week']) }}" wire:navigate
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md text-nowrap"
+                                        role="menuitem" @click="filter = 'last_week'; open = false;">
+                                        Last 7 Days
+                                    </a>
+                                    <a href="{{ request()->fullUrlWithQuery(['filter' => 'last_month']) }}"
+                                        wire:navigate
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md text-nowrap"
+                                        role="menuitem" @click="filter = 'last_month'; open = false;">
+                                        Last 30 Days
+                                    </a>
+                                    <a href="{{ request()->fullUrlWithQuery(['filter' => 'last_90_days']) }}"
+                                        wire:navigate
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md text-nowrap"
+                                        role="menuitem" @click="filter = 'last_90_days'; open = false;">
+                                        Last 90 Days
+                                    </a>
+                                    <a href="{{ request()->fullUrlWithQuery(['filter' => 'last_year']) }}" wire:navigate
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md text-nowrap"
+                                        role="menuitem" @click="filter = 'last_year'; open = false;">
+                                        Last Year
+                                    </a>
+                                    <button
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md"
+                                        role="menuitem"
+                                        @click="filter = 'date_range'; open = false; showFilters = true; showGrowthTips = false">
+                                        Custom Range
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -430,9 +513,9 @@
                     class="bg-gray-50 dark:bg-gray-700 rounded-lg p-5 shadow-sm border border-gray-100 dark:border-gray-600 hover:shadow-md transition-shadow">
                     <div class="flex items-start">
                         <div class="p-2 rounded-lg bg-[#ff6b35] text-white mr-4 flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="lucide lucide-music h-5 w-5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-music h-5 w-5">
                                 <path d="M9 18V5l12-2v13"></path>
                                 <circle cx="6" cy="18" r="3"></circle>
                                 <circle cx="18" cy="16" r="3"></circle>
@@ -557,22 +640,11 @@
                 </div>
             </div>
             <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-600">
-                <button wire:click="resetFilters"
+                <a href="{{ route('user.analytics') }}" wire:navigate
                     class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                     x-bind:disabled="isLoading">
-                    <span x-show="!isLoading">Reset</span>
-                    <span x-show="isLoading" class="flex items-center">
-                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
-                            fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                            </path>
-                        </svg>
-                        Resetting...
-                    </span>
-                </button>
+                    <span>Reset</span>
+                </a>
                 <button wire:click="applyFilters"
                     class="px-4 py-2 bg-[#ff6b35] text-white rounded-lg text-sm font-medium hover:bg-[#ff8c42] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     x-bind:disabled="isLoading">
@@ -820,12 +892,13 @@
             </div>
         </div>
 
-         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
             <!-- Top Performing Tracks -->
             <div>
                 <div
                     class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Top Performing Tracks or Playlists</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Top Performing Tracks or
+                        Playlists</h3>
                     <div class="space-y-4">
                         @forelse($topSources as $source)
                             <div class="group">
@@ -835,7 +908,9 @@
                                             class="text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-[#ff6b35] transition-colors">
                                             {{ $source['source']['title'] }}
                                         </p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">You</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate capitalize">
+                                            {{ $source['source_type'] == App\Models\Track::class ? 'Track' : 'Playlist' }}
+                                        </p>
                                     </div>
                                     <div class="flex items-center ml-4">
                                         <span
@@ -863,7 +938,10 @@
             <div>
                 <div
                     class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Genre Performance</h3>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Genre Performance</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ $this->getFilterText() }}</p>
+                    </div>
                     <div class="space-y-4">
                         <div class="relative flex justify-center" style="height: 200px;">
                             <canvas id="genreChart"></canvas>
@@ -896,58 +974,105 @@
             </div>
 
             <!-- Quick Stats -->
-            {{-- <div class="space-y-6">
+            <div class="space-y-6">
                 <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] rounded-xl p-6 text-white">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-orange-100 text-sm">{{ $this->getFilterText() }}</p>
-                            @php
-                                $totalGrowth =
-                                    ($data['streams_change'] ?? 0) +
-                                    ($data['likes_change'] ?? 0) +
-                                    ($data['reposts_change'] ?? 0);
-                                $avgGrowth = $totalGrowth / 3;
-                            @endphp
                             <p class="text-2xl font-bold">
-                                {{ $avgGrowth > 0 ? '+' : '' }}{{ number_format($avgGrowth, 1) }}%</p>
+                                {{ $data['growth']['avgGrowth'] > 0 ? '+' : '' }}{{ number_format($data['growth']['avgGrowth'], 1) }}%
+                            </p>
                             <p class="text-orange-100 text-sm">Average Growth</p>
                         </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" class="lucide lucide-trending-up h-8 w-8 text-orange-100">
-                            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
-                            <polyline points="16 7 22 7 22 13"></polyline>
-                        </svg>
+                        @if ($this->getChangeIcon($data['growth']['avgGrowth']) === 'trending-up')
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-trending-up h-10 w-10 text-orange-100">
+                                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                                <polyline points="16 7 22 7 22 13"></polyline>
+                            </svg>
+                        @elseif($this->getChangeIcon($data['growth']['avgGrowth']) === 'trending-down')
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-trending-up h-10 w-10 text-orange-100">
+                                <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline>
+                                <polyline points="16 17 22 17 22 11"></polyline>
+                            </svg>
+                        @else
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="mr-1 h-10 w-10 text-orange-100">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        @endif
                     </div>
                 </div>
 
                 <div
                     class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <h4 class="font-semibold text-gray-900 dark:text-white mb-4">Recent Achievements</h4>
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="font-semibold text-gray-900 dark:text-white">Recent Achievements</h4>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ $this->getFilterText() }}</p>
+                    </div>
                     <div class="space-y-3">
                         @if (isset($data['detailed']) && !empty($data['detailed']))
-                            @if (($data['detailed']['overall_metrics']['total_views']['current_total'] ?? 0) > 10000)
+                            @php
+                                $anyAchievement =
+                                    $this->getChangeIcon(
+                                        $data['detailed']['overall_metrics']['total_views']['change_value'],
+                                    ) === 'trending-up' ||
+                                    $this->getChangeIcon(
+                                        $data['detailed']['overall_metrics']['total_plays']['change_value'],
+                                    ) === 'trending-up' ||
+                                    $this->getChangeIcon(
+                                        $data['detailed']['overall_metrics']['total_likes']['change_value'],
+                                    ) === 'trending-up' ||
+                                    $this->getChangeIcon(
+                                        $data['detailed']['overall_metrics']['total_comments']['change_value'],
+                                    ) === 'trending-up';
+                            @endphp
+                            @if ($anyAchievement)
+                                @if ($this->getChangeIcon($data['detailed']['overall_metrics']['total_views']['change_value']) === 'trending-up')
+                                    <div class="flex items-center">
+                                        <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">Reached
+                                            {{ number_shorten($data['detailed']['overall_metrics']['total_views']['current_total']) }}
+                                            total
+                                            views!</span>
+                                    </div>
+                                @endif
+                                @if ($this->getChangeIcon($data['detailed']['overall_metrics']['total_plays']['change_value']) === 'trending-up')
+                                    <div class="flex items-center">
+                                        <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
+                                        <span
+                                            class="text-sm text-gray-600 dark:text-gray-400">{{ number_format($data['detailed']['overall_metrics']['total_plays']['change_value'], 1) }}%
+                                            growth in streams this period</span>
+                                    </div>
+                                @endif
+                                @if ($this->getChangeIcon($data['detailed']['overall_metrics']['total_likes']['change_value']) === 'trending-up')
+                                    <div class="flex items-center">
+                                        <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">Great engagement with
+                                            {{ number_format($data['detailed']['overall_metrics']['total_likes']['change_value'], 1) }}%
+                                            more likes</span>
+                                    </div>
+                                @endif
+                                @if ($this->getChangeIcon($data['detailed']['overall_metrics']['total_comments']['change_value']) === 'trending-up')
+                                    <div class="flex items-center">
+                                        <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
+                                        <span
+                                            class="text-sm text-gray-600 dark:text-gray-400">{{ number_format($data['detailed']['overall_metrics']['total_comments']['change_value'], 1) }}%
+                                            growth in comments</span>
+                                    </div>
+                                @endif
+                            @else
                                 <div class="flex items-center">
                                     <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
-                                    <span class="text-sm text-gray-600 dark:text-gray-400">Reached
-                                        {{ number_shorten($data['detailed']['overall_metrics']['total_views']['current_total']) }}
-                                        total
-                                        views!</span>
-                                </div>
-                            @endif
-                            @if (($data['streams_change'] ?? 0) > 10)
-                                <div class="flex items-center">
-                                    <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
-                                    <span
-                                        class="text-sm text-gray-600 dark:text-gray-400">{{ number_format($data['streams_change'], 1) }}%
-                                        growth in streams this period</span>
-                                </div>
-                            @endif
-                            @if (($data['likes_change'] ?? 0) > 15)
-                                <div class="flex items-center">
-                                    <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
-                                    <span class="text-sm text-gray-600 dark:text-gray-400">Great engagement with
-                                        {{ number_format($data['likes_change'], 1) }}% more likes</span>
+                                    <span class="text-sm text-gray-600 dark:text-gray-400">No achievements
+                                        unlocked yet!</span>
                                 </div>
                             @endif
                         @else
@@ -959,15 +1084,16 @@
                         @endif
                     </div>
                 </div>
-            </div> --}}
+            </div>
         </div>
 
         <!-- Track Performance Table with Pagination -->
-        {{-- <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
             <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Your Tracks Performance</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Detailed analytics for all your released
-                    tracks
+                    tracks and playlists over <span
+                        class="font-medium text-gray-900 dark:text-white">{{ $this->getFilterText() }} period.</span>
                 </p>
             </div>
             <div class="overflow-x-auto">
@@ -1005,7 +1131,7 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                        @forelse($paginatedTracks as $track)
+                        @forelse($paginatedSources as $source)
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
@@ -1014,23 +1140,25 @@
                                         </div>
                                         <div>
                                             <div class="text-sm font-medium text-gray-900 dark:text-white">
-                                                {{ $track['track_details']->title ?? 'Unknown Track' }}
+                                                {{ $source['source_details']->title ?? 'Unknown Track' }}
                                             </div>
                                             <div class="text-sm text-gray-500 dark:text-gray-400">
-                                                {{ $track['track_details']->genre ?? 'Unknown' }} • You
+                                                {{ $source['source_details']->genre ?? 'Unknown' }} •
+                                                <span
+                                                    class="capitalize text-xs text-gray-500 dark:text-gray-400">{{ $source['source_type'] == App\Models\Track::class ? 'Track' : 'Playlist' }}</span>
                                             </div>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-bold text-gray-900 dark:text-white">
-                                        {{ number_shorten($track['metrics']['total_views']['current_total']) }}
+                                        {{ number_shorten($source['metrics']['total_views']['current_total']) }}
                                     </div>
                                     <div class="text-xs text-gray-500 dark:text-gray-400">streams</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @php
-                                        $changeRate = $track['metrics']['total_views']['change_rate'];
+                                        $changeRate = $source['metrics']['total_views']['change_rate'];
                                         $changeClass = $this->getChangeClass($changeRate);
                                         $changeIcon = $this->getChangeIcon($changeRate);
                                     @endphp
@@ -1066,23 +1194,23 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div class="text-sm font-bold text-gray-900 dark:text-white">
-                                            {{ number_format($track['engagement_rate'], 2) }}%
+                                            {{ number_format($source['engagement_rate'], 2) }}%
                                         </div>
                                         <div class="ml-2 w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                                             <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] h-2 rounded-full transition-all duration-300 max-w-full"
-                                                style="width: {{ $track['engagement_rate'] }}%;"></div>
+                                                style="width: {{ $source['engagement_rate'] }}%;"></div>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                    {{ number_shorten($track['metrics']['total_likes']['current_total']) }}
+                                    {{ number_shorten($source['metrics']['total_likes']['current_total']) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                    {{ number_shorten($track['metrics']['total_reposts']['current_total']) }}
+                                    {{ number_shorten($source['metrics']['total_reposts']['current_total']) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900 dark:text-white">
-                                        {{ Carbon\Carbon::parse($track['track_details']->created_at_soundcloud)->format('d M, Y h:i A') ?? 'Unknown' }}
+                                        {{ Carbon\Carbon::parse($source['source_type'] == App\Models\Track::class ? $source['source_details']->created_at_soundcloud : $source['source_details']->soundcloud_created_at)->format('d M, Y h:i A') ?? 'Unknown' }}
                                     </div>
                                 </td>
                             </tr>
@@ -1095,8 +1223,9 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M9 19V6l12-2v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-2c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-2" />
                                         </svg>
-                                        <p class="text-lg font-medium">No tracks found</p>
-                                        <p class="text-sm mt-2">Upload your first track to start tracking performance!
+                                        <p class="text-lg font-medium">No tracks or playlists found</p>
+                                        <p class="text-sm mt-2">Upload your first track or playlist to start tracking
+                                            performance!
                                         </p>
                                     </div>
                                 </td>
@@ -1106,33 +1235,32 @@
                 </table>
             </div>
 
-            @if ($paginatedTracks instanceof \Illuminate\Pagination\LengthAwarePaginator && $paginatedTracks->hasPages())
+            @if ($paginatedSources instanceof \Illuminate\Pagination\LengthAwarePaginator && $paginatedSources->hasPages())
                 <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                            Showing {{ $paginatedTracks->firstItem() ?? 0 }} to
-                            {{ $paginatedTracks->lastItem() ?? 0 }}
-                            of {{ $paginatedTracks->total() }} tracks
+                            Showing {{ $paginatedSources->firstItem() ?? 0 }} to
+                            {{ $paginatedSources->lastItem() ?? 0 }}
+                            of {{ $paginatedSources->total() }} source
                         </div>
                         <div class="flex items-center space-x-2">
-                            @if ($paginatedTracks->onFirstPage())
+                            @if ($paginatedSources->onFirstPage())
                                 <span
                                     class="px-3 py-2 text-sm text-gray-400 dark:text-gray-500 cursor-not-allowed">Previous</span>
                             @else
-                                <button wire:click="previousPage"
+                                <button wire:click="previousPage('{{ $pageName }}')"
                                     class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                     Previous
                                 </button>
                             @endif
-
                             <div class="flex items-center space-x-1">
                                 @php
-                                    $start = max(1, $paginatedTracks->currentPage() - 2);
-                                    $end = min($paginatedTracks->lastPage(), $paginatedTracks->currentPage() + 2);
+                                    $start = max(1, $paginatedSources->currentPage() - 2);
+                                    $end = min($paginatedSources->lastPage(), $paginatedSources->currentPage() + 2);
                                 @endphp
 
                                 @if ($start > 1)
-                                    <button wire:click="gotoPage(1)"
+                                    <button wire:click="gotoPage(1, '{{ $pageName }}')"
                                         class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                         1
                                     </button>
@@ -1142,30 +1270,31 @@
                                 @endif
 
                                 @for ($page = $start; $page <= $end; $page++)
-                                    @if ($page == $paginatedTracks->currentPage())
+                                    @if ($page == $paginatedSources->currentPage())
                                         <span
                                             class="px-3 py-2 text-sm bg-[#ff6b35] text-white rounded-lg">{{ $page }}</span>
                                     @else
-                                        <button wire:click="gotoPage({{ $page }})"
+                                        <button wire:click="gotoPage({{ $page }}, '{{ $pageName }}')"
                                             class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                             {{ $page }}
                                         </button>
                                     @endif
                                 @endfor
 
-                                @if ($end < $paginatedTracks->lastPage())
-                                    @if ($end < $paginatedTracks->lastPage() - 1)
+                                @if ($end < $paginatedSources->lastPage())
+                                    @if ($end < $paginatedSources->lastPage() - 1)
                                         <span class="px-2 text-gray-400">...</span>
                                     @endif
-                                    <button wire:click="gotoPage({{ $paginatedTracks->lastPage() }})"
+                                    <button
+                                        wire:click="gotoPage({{ $paginatedSources->lastPage() }}, '{{ $pageName }}')"
                                         class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                                        {{ $paginatedTracks->lastPage() }}
+                                        {{ $paginatedSources->lastPage() }}
                                     </button>
                                 @endif
                             </div>
 
-                            @if ($paginatedTracks->hasMorePages())
-                                <button wire:click="nextPage"
+                            @if ($paginatedSources->hasMorePages())
+                                <button wire:click="nextPage('{{ $pageName }}')"
                                     class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                     Next
                                 </button>
@@ -1177,7 +1306,7 @@
                     </div>
                 </div>
             @endif
-        </div> --}}
+        </div>
 
         @push('js')
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

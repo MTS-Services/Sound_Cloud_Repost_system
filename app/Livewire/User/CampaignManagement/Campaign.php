@@ -230,7 +230,7 @@ class Campaign extends Component
 
     public function mount(Request $request)
     {
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
         $this->getAllTrackTypes();
         $this->totalCampaigns();
@@ -245,7 +245,7 @@ class Campaign extends Component
     }
     public function updated($propertyName)
     {
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
             $this->calculateFollowersLimit();
         }
@@ -1363,7 +1363,7 @@ class Campaign extends Component
     public function fetchTracks()
     {
         try {
-            // $this->soundCloudService->syncSelfTracks([]);
+            $this->soundCloudService->syncSelfTracks([]);
 
             // Get all tracks first
             $this->allTracks = Track::where('user_urn', user()->urn)
@@ -1384,7 +1384,7 @@ class Campaign extends Component
     public function fetchPlaylists()
     {
         try {
-            // $this->soundCloudService->syncSelfPlaylists();
+            $this->soundCloudService->syncSelfPlaylists();
 
             // Get all playlists first
             $this->allPlaylists = Playlist::where('user_urn', user()->urn)

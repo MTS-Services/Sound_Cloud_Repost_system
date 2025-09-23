@@ -320,7 +320,7 @@
                             <div class="h-full overflow-y-auto px-4 pb-6 space-y-1">
                                 @if ($activeTab === 'tracks' || $playListTrackShow == true)
                                     @forelse ($tracks as $track_)
-                                        <div wire:click="openRepostsModal({{ $track_->id }})"
+                                        <div wire:click="openRepostsModal( 'track',{{ $track_->id }})"
                                             class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">
                                             <div class="flex-shrink-0">
                                                 <img class="h-12 w-12 rounded object-cover shadow"
@@ -364,7 +364,7 @@
                                     @endif
                                 @elseif($activeTab === 'playlists')
                                     @forelse ($playlists as $playlist_)
-                                        <div wire:click="showPlaylistTracks({{ $playlist_->id }})"
+                                        <div wire:click="openRepostsModal( 'playlist',{{ $playlist_->id }})"
                                             class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700/50 rounded-md transition-colors duration-200">
                                             <div class="flex-shrink-0">
                                                 <img class="h-12 w-12 rounded object-cover shadow"
@@ -497,7 +497,7 @@
 
                     <div class="flex-1 overflow-y-auto">
                         <div class="p-6">
-                            @if ($track)
+                            @if ($music)
                                 {{-- User Info --}}
                                 <div
                                     class="flex justify-between space-x-4 items-center  border border-transparent mb-4">
@@ -528,18 +528,18 @@
                                     class=" flex items-center space-x-4 cursor-pointer  border border-gray-200 dark:border-gray-700  bg-gray-50 dark:bg-slate-700 rounded-md  p-2">
                                     <div class="flex-shrink-0">
                                         <img class="h-18 w-18 rounded-xl object-cover shadow-md"
-                                            src="{{ storage_url($track->artwork_url) }}"
-                                            alt="{{ $track->title }}" />
+                                            src="{{ storage_url($music->artwork_url) }}"
+                                            alt="{{ $music->title }}" />
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
                                             <span
-                                                class="ml-2 text-xs text-gray-400">{{ $track->genre ?? 'No Genre' }}.</span>
+                                                class="ml-2 text-xs text-gray-400">{{ $music->genre ?? 'No Genre' }}.</span>
                                             <strong
-                                                class="text-orange-600 dark:text-orange-400">{{ $track->author_username }}</strong>
+                                                class="text-orange-600 dark:text-orange-400">{{ $music->author_username }}</strong>
                                         </p>
                                         <span
-                                            class="inline-block bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono">{{ $track->isrc }}</span>
+                                            class="inline-block bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono">{{ $music->isrc }}</span>
                                     </div>
                                     <div class="flex-shrink-0">
                                         <i data-lucide="chevron-right"

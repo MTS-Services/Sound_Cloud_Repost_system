@@ -49,7 +49,7 @@ class Member extends Component
     public string $activeTab = 'tracks';
     public ?string $selectedUserUrn = null;
     public ?int $selectedPlaylistId = null;
-    public ?int $selectedTrackId = null;
+    public ?int $selectedMusicId = null;
     public string $searchQuery = '';
     public $creditSpent = 0;
 
@@ -67,7 +67,7 @@ class Member extends Component
 
     public Collection $playlists;
     public Collection $tracks;
-    public ?Track $track = null;
+    public $music = null;
 
     public int $trackLimit = 4;
     public Collection $allTracks;
@@ -124,7 +124,7 @@ class Member extends Component
     {
         $this->genres = AllGenres();
         $this->userinfo = user()->userInfo;
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
     public function updatedSearch()
     {
@@ -185,8 +185,8 @@ class Member extends Component
 
     public function getCredibilityScore(object $user)
     {
-        // $userFollowerAnalysis =  $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers($user));
-        // return $userFollowerAnalysis['averageCredibilityScore'];
+        $userFollowerAnalysis =  $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers($user));
+        return $userFollowerAnalysis['averageCredibilityScore'];
     }
 
     private function performLocalSearch()
@@ -303,11 +303,14 @@ class Member extends Component
 
     public function openModal(string $userUrn)
     {
+        $this->soundCloudService->syncSelfTracks([]);
+        $this->soundCloudService->syncSelfPlaylists();
+
         $this->reset([
             'showModal',
             'user',
             'selectedPlaylistId',
-            'selectedTrackId',
+            'selectedMusicId',
             'activeTab',
             'tracks',
             'playlists',
@@ -327,7 +330,7 @@ class Member extends Component
             $this->showModal = false;
             return;
         }
-        if ($this->user->request_receiveable) {
+        if (requestReceiveable($this->user->urn)) {
             $this->showModal = true;
             $this->activeTab = 'tracks';
 
@@ -337,7 +340,7 @@ class Member extends Component
             $this->allPlaylists = Playlist::self()->get();
             $this->playlists = $this->allPlaylists->take($this->playlistLimit);
         } else {
-            return redirect()->back()->with('error', 'User is Not Request Receiveable');
+            $this->dispatch('alert', type: 'error', message: 'User is Not Request Receiveable');
         }
     }
 
@@ -348,7 +351,7 @@ class Member extends Component
             'user',
             'selectedUserUrn',
             'selectedPlaylistId',
-            'selectedTrackId',
+            'selectedMusicId',
             'activeTab',
             'tracks',
             'playlists',
@@ -361,37 +364,45 @@ class Member extends Component
 
     public function setActiveTab(string $tab)
     {
-        $this->reset(['selectedPlaylistId', 'selectedTrackId', 'searchQuery', 'playListTrackShow']);
+        $this->reset(['selectedPlaylistId', 'selectedMusicId', 'searchQuery', 'playListTrackShow']);
         $this->activeTab = $tab;
         $this->searchSoundcloud();
     }
 
-    public function openRepostsModal(int $trackId)
+    public function openRepostsModal(string $type, int $musicId)
     {
         $this->blockMismatchGenre = UserSetting::where('user_urn', $this->user->urn)->value('block_mismatch_genre');
-        // dd($this->blockMismatchGenre);
-        $trackGenre = $this->trackService->getTrack(encrypt($trackId))->genre;
-        $this->userMismatchGenre = UserGenre::where('user_urn', $this->user->urn)->where('genre', $trackGenre)->first();
-        // dd($trackGenre, $this->userMismatchGenre);
-        $this->reset(['track']);
-        $this->selectedTrackId = $trackId;
-        $this->track = Track::find($trackId);
+        $this->reset(['music']);
+        if ($type === 'playlist') {
+            $playlist = $this->playlistService->getPlaylist(encrypt($musicId), 'id');
+            $playlistGenre = $playlist->genre;
+            $this->userMismatchGenre = UserGenre::where('user_urn', $this->user->urn)->where('genre', $playlistGenre)->first();
+            $this->selectedMusicId = $musicId;
+            $this->music = $playlist;
+        } elseif ($type === 'track') {
+            $trackGenre = $this->trackService->getTrack(encrypt($musicId))->genre;
+            $this->userMismatchGenre = UserGenre::where('user_urn', $this->user->urn)->where('genre', $trackGenre)->first();
+
+            $this->selectedMusicId = $musicId;
+            $this->music = Track::find($musicId);
+        }
+
         $this->showRepostsModal = true;
     }
 
     public function closeRepostModal()
     {
-        $this->reset(['track', 'selectedTrackId', 'selectedPlaylistId', 'showRepostsModal']);
+        $this->reset(['music', 'selectedMusicId', 'selectedPlaylistId', 'showRepostsModal']);
     }
 
     public function createRepostsRequest()
     {
         $this->validate();
-        // $this->soundCloudService->ensureSoundCloudConnection(user());
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->ensureSoundCloudConnection(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $requester = user();
 
-        if (!$this->user || !$this->track) {
+        if (!$this->user || !$this->music) {
             $this->dispatch('alert', type: 'error', message: 'Target user or content not found.');
             return;
         }
@@ -418,7 +429,8 @@ class Member extends Component
                 $repostRequest = RepostRequest::create([
                     'requester_urn' => $requester->urn,
                     'target_user_urn' => $this->user->urn,
-                    'track_urn' => $this->track->urn,
+                    'music_id' => $this->music->id,
+                    'music_type' => get_class($this->music),
                     'credits_spent' => $credit_spent,
                     'description' => $this->description,
                     'likeable' => $this->likeable,
@@ -440,7 +452,7 @@ class Member extends Component
                     'description' => "Repost request for track by " . $requester->name,
                     'metadata' => [
                         'request_type' => 'track',
-                        'target_urn' => $this->track->urn,
+                        'target_urn' => get_class($this->music) == Track::class ? $this->music->urn : $this->music->soundcloud_urn,
                     ],
                     'status' => CreditTransaction::STATUS_SUCCEEDED,
                 ]);
@@ -453,12 +465,12 @@ class Member extends Component
                     'message_data' => [
                         'title' => 'Repost Request Sent',
                         'message' => 'You have sent a repost request to ' . $this->user->name,
-                        'description' => 'You have sent a repost request to ' . $this->user->name . ' for the track "' . $this->track->title . '".',
+                        'description' => 'You have sent a repost request to ' . $this->user->name . ' for the track "' . $this->music->title . '".',
                         'icon' => 'music',
                         'additional_data' => [
                             'Request Sent To' => $this->user->name,
-                            'Track Title' => $this->track->title,
-                            'Track Artist' => $this->track?->user?->name ?? $requester->name,
+                            'Track Title' => $this->music->title,
+                            'Track Artist' => $this->music?->user?->name ?? $requester->name,
                             'Credits Spent' => $credit_spent,
                         ],
                     ],
@@ -473,12 +485,12 @@ class Member extends Component
                     'message_data' => [
                         'title' => 'Repost Request Received',
                         'message' => 'You have received a repost request from ' . $requester->name,
-                        'description' => 'You have received a repost request from ' . $requester->name . ' for the track "' . $this->track->title . '".',
+                        'description' => 'You have received a repost request from ' . $requester->name . ' for the track "' . $this->music->title . '".',
                         'icon' => 'music',
                         'additional_data' => [
                             'Request Received From' => $requester->name,
-                            'Track Title' => $this->track->title,
-                            'Track Artist' => $this->track?->user?->name ?? $requester->name,
+                            'Track Title' => $this->music->title,
+                            'Track Artist' => $this->music?->user?->name ?? $requester->name,
                             'Credits Offered' => $credit_spent,
                         ]
                     ]
@@ -493,7 +505,7 @@ class Member extends Component
                             'email' => $this->user->email,
                             'subject' => 'Repost Request Received',
                             'title' => 'Dear ' . $this->user->name,
-                            'body' => 'You have received a repost request from ' . $requester->name . ' for the track "' . $this->track->title . '".',
+                            'body' => 'You have received a repost request from ' . $requester->name . ' for the track "' . $this->music->title . '".',
                             'url' => route('user.reposts-request'),
                         ],
                     ];
@@ -503,7 +515,7 @@ class Member extends Component
             sleep(1);
             $this->closeRepostModal();
             $this->closeModal();
-            $this->mount();
+            $this->reset();
             $this->dispatch('alert', type: 'success', message: 'Repost request sent successfully!');
         } catch (InvalidArgumentException $e) {
             Log::info('Repost request failed', ['error' => $e->getMessage()]);
