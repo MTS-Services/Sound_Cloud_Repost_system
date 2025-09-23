@@ -10,6 +10,7 @@ use App\Models\Repost;
 use App\Models\Track;
 use App\Models\UserSetting;
 use App\Services\SoundCloud\SoundCloudService;
+use App\Services\User\Mamber\RepostRequestService;
 use App\Services\User\UserSettingsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;
@@ -42,7 +43,7 @@ class RepostRequest extends Component
     public $totalRepostPrice = 0;
     public $request = null;
     public $liked = false;
-    public $commented = null;
+    public $commented = false;
     public $followed = true;
 
 
@@ -56,11 +57,13 @@ class RepostRequest extends Component
 
     protected SoundCloudService $soundCloudService;
     protected UserSettingsService $userSettingsService;
+    protected RepostRequestService $repostRequestService;
 
-    public function boot(SoundCloudService $soundCloudService, UserSettingsService $userSettingsService)
+    public function boot(SoundCloudService $soundCloudService, UserSettingsService $userSettingsService, RepostRequestService $repostRequestService)
     {
         $this->soundCloudService = $soundCloudService;
         $this->userSettingsService = $userSettingsService;
+        $this->repostRequestService = $repostRequestService;
     }
 
     public function mount()
@@ -273,166 +276,18 @@ class RepostRequest extends Component
     }
     public function repost($requestId)
     {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
-        try {
-            if (!$this->canRepost($requestId)) {
-                $this->dispatch('alert', type: 'error', message: 'You cannot repost this request. Please play it for at least 5 seconds first.');
-                return;
-            }
-
-            $currentUserUrn = user()->urn;
-            // Check if the user has already reposted this specific request
-            if (
-                Repost::where('reposter_urn', $currentUserUrn)
-                    ->where('repost_request_id', $requestId)
-                    ->exists()
-            ) {
-
-                $this->dispatch('alert', type: 'error', message: 'You have already reposted this request.');
-                return;
-            }
-
-            // Find the request and load its track
-            $request = ModelsRepostRequest::findOrFail($requestId)->load('track', 'requester');
-
-            // Ensure track is associated with the request
-            if (!$request->track) {
-                $this->dispatch('alert', type: 'error', message: 'Track not found for this request.');
-                return;
-            }
-
-            $soundcloudRepostId = null;
-
-            // Prepare HTTP client with authorization header
-            $httpClient = Http::withHeaders([
-                'Authorization' => 'OAuth ' . user()->token,
-            ]);
-
-            $commentSoundcloud = [
-                'comment' => [
-                    'body' => $this->commented,
-                    'timestamp' => time()
-                ]
-            ];
-
-            $response = null;
-            $like_response = null;
-            $comment_response = null;
-            $follow_response = null;
-
-            // Repost the track to SoundCloud
-            $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$request->track_urn}");
-            if ($this->commented) {
-                $comment_response = $httpClient->post("{$this->baseUrl}/tracks/{$request->track_urn}/comments", $commentSoundcloud);
-                if (!$comment_response->successful()) {
-                    $this->dispatch('alert', type: 'error', message: 'Failed to comment on track.');
-                }
-            }
-            if ($this->liked) {
-                $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$request->track_urn}");
-                if (!$like_response->successful()) {
-                    $this->dispatch('alert', type: 'error', message: 'Failed to like track.');
-                }
-            }
-            if ($this->followed) {
-                $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$request->requester_urn}");
-                if (!$follow_response->successful()) {
-                    $this->dispatch('alert', type: 'error', message: 'Failed to follow user.');
-                }
-            }
-            if ($response->successful()) {
-                $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $request->requester_urn);
-                if ($repostEmailPermission) {
-
-                    $datas = [
-                        [
-                            'email' => $request->requester->email,
-                            'subject' => 'Repost Request Accepted',
-                            'title' => 'Dear ' . $request->requester->name,
-                            'body' => 'Your request for repost has been accepted. Please login to your Repostchain account to listen to the music.',
-                        ],
-                    ];
-                    NotificationMailSent::dispatch($datas);
-                }
-                $soundcloudRepostId = $response->json('id');
-
-                $trackOwnerUrn = $request->track->user?->urn ?? $request->user?->urn;
-                $trackOwnerName = $request->track->user?->name ?? $request->user?->name;
-
-
-                DB::transaction(function () use ($requestId, $request, $currentUserUrn, $soundcloudRepostId, $trackOwnerUrn, $trackOwnerName) {
-                    // Create repost record
-                    $repost = Repost::create([
-                        'reposter_urn' => $currentUserUrn,
-                        'repost_request_id' => $requestId,
-                        'campaign_id' => $request->campaign_id,
-                        'music_id' => $request->track->id,
-                        'music_type' => Track::class,
-                        'soundcloud_repost_id' => $soundcloudRepostId,
-                        'track_owner_urn' => $trackOwnerUrn,
-                        'reposted_at' => now(),
-                        // 'credits_earned' => (float) repostPrice(user()),
-                        'credits_earned' => (float) user()->repost_price,
-                        // Add other necessary fields based on your Repost model
-                    ]);
-                    if ($this->commented) {
-                        $repost->increment('comment_count', 1);
-                    }
-                    if ($this->liked) {
-                        $repost->increment('like_count', 1);
-                    }
-                    if ($this->followed) {
-                        $repost->increment('followowers_count', 1);
-                    }
-
-                    $request->update([
-                        'status' => ModelsRepostRequest::STATUS_APPROVED,
-                        'completed_at' => now(),
-                        'responded_at' => now(),
-                    ]);
-
-                    // Create the CreditTransaction record
-                    CreditTransaction::create([
-                        'receiver_urn' => $currentUserUrn,
-                        'sender_urn' => $request->user?->urn,
-                        'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
-                        'source_id' => $request->id,
-                        'source_type' => RepostRequest::class,
-                        'status' => CreditTransaction::STATUS_SUCCEEDED,
-                        'transaction_type' => CreditTransaction::TYPE_EARN,
-                        'amount' => 0,
-                        // 'credits' => (float) repostPrice(user()) + ($this->commented ? 2 : 0) + ($this->liked ? 2 : 0),
-                        'credits' => (float) repostPrice(user()->repost_price, $this->commented, $this->liked),
-                        'description' => "Repost From Direct Request",
-                        'metadata' => [
-                            'repost_id' => $repost->id,
-                            'repost_request_id' => $request->id,
-                            'soundcloud_repost_id' => $soundcloudRepostId,
-                        ]
-                    ]);
-                });
-                // Mark as reposted in component
-                $this->repostedRequests[] = $requestId;
-
-                $this->dispatch('alert', type: 'success', message: 'Request reposted successfully.');
-            } else {
-                // Log the error response from SoundCloud for debugging
-                Log::error("SoundCloud Repost Failed: " . $response->body(), [
-                    'request_id' => $requestId,
-                    'user_urn' => $currentUserUrn,
-                    'status' => $response->status(),
-                ]);
-                $this->dispatch('alert', type: 'error', message: 'Failed to repost to SoundCloud. Please try again.');
-            }
-        } catch (Throwable $e) {
-            Log::error("Error in repost method: " . $e->getMessage(), [
-                'exception' => $e,
-                'request_id' => $requestId,
-                'user_urn' => user()->urn ?? 'N/A',
-            ]);
-            $this->dispatch('alert', type: 'error', message: 'An unexpected error occurred. Please try again later.');
+        if (!$this->canRepost($requestId)) {
+            $this->dispatch('alert', type: 'error', message: 'You cannot repost this request. Please play it for at least 5 seconds first.');
             return;
         }
+
+        $result = $this->repostRequestService->handleRepost($requestId, $this->commented, $this->liked, $this->followed);
+
+        if ($result['status'] === 'success') {
+            $this->repostedRequests[] = $requestId;
+        }
+
+        $this->dispatch('alert', type: $result['status'], message: $result['message']);
     }
 
     public function declineRepostRequest($requestId)

@@ -21,21 +21,15 @@ use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Throwable;
 use App\Models\Feature;
+use App\Models\Repost;
 use App\Services\User\AnalyticsService;
+use App\Services\User\Mamber\RepostRequestService;
 use Illuminate\Validation\ValidationException;
 
 use function PHPSTORM_META\type;
 
 class Dashboard extends Component
 {
-    protected CreditTransactionService $creditTransactionService;
-    protected SoundCloudService $soundCloudService;
-
-    protected MyCampaignService $myCampaignService;
-    protected AnalyticsService $analyticsService;
-
-    protected FollowerAnalyzer $followerAnalyzer;
-
     protected $soundcloudApiUrl = 'https://api.soundcloud.com';
 
     public $total_credits;
@@ -135,6 +129,12 @@ class Dashboard extends Component
     public $allPlaylistTracks = null;
     public $selectedPlaylistId = null;
 
+    // Confirmation Repost
+    public $request = null;
+    public bool $liked = false;
+    public bool $commented = false;
+    public bool $followed = true;
+
     // Search configuration
     private const MAX_SEARCH_LENGTH = 255;
     private const MIN_SEARCH_LENGTH = 2;
@@ -177,12 +177,21 @@ class Dashboard extends Component
         ];
     }
 
-    public function boot(CreditTransactionService $creditTransactionService, SoundCloudService $soundCloudService, MyCampaignService $myCampaignService, AnalyticsService $analyticsService, FollowerAnalyzer $followerAnalyzer)
+    protected CreditTransactionService $creditTransactionService;
+    protected SoundCloudService $soundCloudService;
+    protected MyCampaignService $myCampaignService;
+    protected AnalyticsService $analyticsService;
+    protected RepostRequestService $repostRequestService;
+
+    protected FollowerAnalyzer $followerAnalyzer;
+
+    public function boot(CreditTransactionService $creditTransactionService, SoundCloudService $soundCloudService, MyCampaignService $myCampaignService, AnalyticsService $analyticsService, RepostRequestService $repostRequestService, FollowerAnalyzer $followerAnalyzer)
     {
         $this->creditTransactionService = $creditTransactionService;
         $this->soundCloudService = $soundCloudService;
         $this->myCampaignService = $myCampaignService;
         $this->analyticsService = $analyticsService;
+        $this->repostRequestService = $repostRequestService;
         $this->followerAnalyzer = $followerAnalyzer;
     }
 
@@ -229,7 +238,8 @@ class Dashboard extends Component
             ->orWhere('status', RepostRequest::STATUS_DECLINE)
             ->count();
 
-        $this->repostRequests = RepostRequest::where('target_user_urn', user()->urn)
+        $this->repostRequests = RepostRequest::where('target_user_urn', user()->urn)->where('status', RepostRequest::STATUS_PENDING)
+            ->where('expired_at', '>', now())
             ->with(['track', 'requester'])
             ->latest()
             ->take(5)
@@ -830,8 +840,7 @@ class Dashboard extends Component
     public function profeature($isChecked)
     {
         if (!proUser()) {
-            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
-            ;
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
         } elseif (($this->credit * 1.5) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;
@@ -1119,6 +1128,23 @@ class Dashboard extends Component
 
             $this->dispatch('alert', type: 'error', message: 'Failed to send repost request. Please try again.');
         }
+    }
+    public function confirmRepost($requestId)
+    {
+        $this->showRepostConfirmationModal = true;
+        $this->request = RepostRequest::findOrFail($requestId)->load('track', 'requester');
+    }
+    public function repost($requestId)
+    {
+        $result = $this->repostRequestService->handleRepost($requestId, $this->commented, $this->liked, $this->followed);
+
+        if ($result['status'] === 'success') {
+            $this->loadDashboardData();
+            $this->dispatch('alert', type: 'success', message: 'Repost request sent successfully.');
+        }
+        $this->showRepostConfirmationModal = false;
+
+        $this->dispatch('alert', type: $result['status'], message: $result['message']);
     }
 
     public function declineRepost($encryptedRequestId)
