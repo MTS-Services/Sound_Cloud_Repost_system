@@ -34,7 +34,6 @@ class Analytics extends Component
     public array $filterOptions = [];
     public array $topSources = [];
     public array $genreBreakdown = [];
-    public $params = [];
 
     protected AnalyticsService $analyticsService;
 
@@ -49,8 +48,6 @@ class Analytics extends Component
 
     public function mount()
     {
-        $this->params = request()->all();
-        // dd($this->params);
         $this->filterOptions = $this->analyticsService->getFilterOptions();
         $this->userGenres = $this->fetchUserGenres();
         $this->selectedGenres = request()->query('selectedGenres', 'Any Genre');
