@@ -287,6 +287,7 @@
         init() {
             // Initial setup
             this.setupCharts();
+            console.log('Genre Breakdown:', this.genreBreakdown);
     
             // Watch for data changes
             this.$watch('$wire.data', (newData, oldData) => {
@@ -859,7 +860,7 @@
             </div>
 
             <!-- Genre Performance -->
-            {{-- <div>
+            <div>
                 <div
                     class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Genre Performance</h3>
@@ -892,7 +893,7 @@
                         </div>
                     </div>
                 </div>
-            </div> --}}
+            </div>
 
             <!-- Quick Stats -->
             {{-- <div class="space-y-6">
