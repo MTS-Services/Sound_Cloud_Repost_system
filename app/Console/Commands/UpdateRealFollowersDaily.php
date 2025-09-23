@@ -27,7 +27,7 @@ class UpdateRealFollowersDaily extends Command
      */
     public function handle()
     {
-        $users = User::active()->get();
-        UpdateRealFollowers::dispatch($users);
+        // $users = User::active()->get();
+        // UpdateRealFollowers::dispatch($users);
     }
 }
