@@ -204,6 +204,7 @@ class AnalyticsService
         ?object $source = null,
         ?string $actionableType = null
     ): Collection {
+        dd($userUrn, $startDate, $endDate, $genres, $source, $actionableType);
         $query = UserAnalytics::query();
 
         if ($userUrn !== null) {
