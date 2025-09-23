@@ -204,7 +204,6 @@ class AnalyticsService
         ?object $source = null,
         ?string $actionableType = null
     ): Collection {
-        dd($userUrn, $startDate, $endDate, $genres, $source, $actionableType);
         $query = UserAnalytics::query();
 
         if ($userUrn !== null) {
@@ -347,7 +346,6 @@ class AnalyticsService
             $query->forGenres($genres);
         }
 
-
         $query->select([
             'source_id',
             'source_type',
@@ -378,14 +376,14 @@ class AnalyticsService
             $periods['current']['start'],
             $periods['current']['end'],
             $genres
-        )->whereIn('source_id', $sourceIdsList);
+        )->whereIn('source_id', $sourceIdsList)->with('actionable');
 
         $previousData = $this->fetchAnalyticsData(
             $userUrn,
             $periods['previous']['start'],
             $periods['previous']['end'],
             $genres
-        )->whereIn('source_id', $sourceIdsList);
+        )->whereIn('source_id', $sourceIdsList)->with('actionable');
 
         $currentMetricsBySource = $this->calculateMetricsBySource($currentData);
         $previousMetricsBySource = $this->calculateMetricsBySource($previousData);
