@@ -41,7 +41,7 @@
                             <i class="fas fa-coins"></i> Credits
                         </span>
                         <span class="font-bold text-orange-600 text-lg">
-                            {{ number_format($payment->creditTransaction?->credits, 2) }}
+                            {{ number_format($payment->credits_purchased, 2) }}
                         </span>
                     </div>
                     <div class="flex justify-between items-center py-3 border-b border-gray-200">
