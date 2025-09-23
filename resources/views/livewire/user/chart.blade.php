@@ -25,7 +25,7 @@
                                 <div>
                                     <h1 class="text-3xl md:text-4xl font-bold mb-2 text-gray-900 dark:text-white">Weekly
                                         Top
-                                        {{ $topTracks->count() }} / 20 Chart</h1>
+                                        {{ $topSources->count() }} / 20 Chart</h1>
                                     <div class="flex items-center gap-4 text-gray-500 dark:text-gray-300">
                                         <div class="flex items-center gap-2">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -104,8 +104,8 @@
                         <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div
                                 class="bg-gray-200 dark:bg-gray-800  backdrop-blur-sm p-4 rounded-xl border border-gray-200 dark:border-gray-700">
-                                <div class="text-2xl font-bold">{{ $topTracks->count() }}</div>
-                                <div class="text-gray-700 dark:text-gray-300 text-sm">Top Tracks</div>
+                                <div class="text-2xl font-bold">{{ $topSources->count() }}</div>
+                                <div class="text-gray-700 dark:text-gray-300 text-sm">Top Tracks / Playlists</div>
                             </div>
                             <div
                                 class="bg-gray-200 dark:bg-gray-800  backdrop-blur-sm p-4 rounded-xl border border-gray-200 dark:border-gray-700">
@@ -123,8 +123,8 @@
                 <div x-data="{ activeTab: @entangle('activeTab').live, playing: @entangle('playing').live }">
                     <div class="flex items-center justify-between mb-6">
                         <div class="flex items-center gap-4">
-                            <h2 class="text-xl font-bold text-gray-800 dark:text-white">{{ $topTracks->count() }}
-                                Tracks
+                            <h2 class="text-xl font-bold text-gray-800 dark:text-white">{{ $topSources->count() }}
+                                Tracks / Playlists
                             </h2>
                         </div>
                         <div
@@ -187,18 +187,18 @@
                             <div
                                 class="grid grid-cols-12 gap-4 p-4 bg-gray-300 dark:bg-gray-700 text-sm font-semibold text-gray-800 dark:text-gray-300 border-b border-gray-300 dark:border-gray-600">
                                 <div class="col-span-1">#</div>
-                                <div class="col-span-4">Track</div>
+                                <div class="col-span-4">Track / Playlist</div>
                                 <div class="col-span-2 text-center">Score</div>
                                 <div class="col-span-2 text-center">Reach</div>
                                 <div class="col-span-2 text-center">Reposts</div>
                                 <div class="col-span-1 text-center">Actions</div>
                             </div>
 
-                            @forelse ($topTracks as $track)
+                            @forelse ($topSources as $source)
                                 <div
                                     class="grid grid-cols-12 gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 border-b border-gray-300 dark:border-gray-700">
 
-                                    @if (proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured)
+                                    @if (proUser($source['source_details']->user_urn) && $source['actionable_details']->is_featured)
                                         <div class="col-span-1 flex items-center">
                                             <div
                                                 class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gradient-to-br from-orange-400 to-orange-600 text-white">
@@ -210,7 +210,7 @@
                                                 </svg>
                                             </div>
                                         </div>
-                                    @elseif (proUser($track['track_details']->user_urn))
+                                    @elseif (proUser($source['source_details']->user_urn))
                                         <div class="col-span-1 flex items-center">
                                             <div
                                                 class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gradient-to-br from-gray-400 to-gray-600 text-white">
@@ -233,49 +233,49 @@
 
                                     <div class="col-span-4 flex items-center gap-3">
                                         <div class="relative group">
-                                            <img src="{{ soundcloud_image($track['track_details']->artwork_url) }}"
-                                                alt="{{ $track['track_details']->title }}"
+                                            <img src="{{ soundcloud_image($source['source_details']->artwork_url) }}"
+                                                alt="{{ $source['source_details']->title }}"
                                                 class="w-12 h-12 rounded-lg object-cover transition-transform duration-300 group-hover:scale-105">
-                                            <a href="{{ $track['track_details']->permalink_url }}" target="_blank"
+                                            <a href="{{ $source['source_details']->permalink_url }}" target="_blank"
                                                 class="absolute inset-0 shadow group-hover:bg-gray-950/20 rounded-lg transition-all duration-300 flex items-center justify-center">
                                                 <x-lucide-external-link
                                                     class="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                             </a>
                                         </div>
                                         <div class="min-w-0 flex-1">
-                                            <a href="{{ $track['track_details']->permalink_url }}" target="_blank"
+                                            <a href="{{ $source['source_details']->permalink_url }}" target="_blank"
                                                 class="font-semibold text-gray-900 dark:text-white truncate cursor-pointer hover:text-orange-400 transition-colors block w-full">
-                                                {{ Str::limit($track['track_details']->title, 30, '...') }}
+                                                {{ Str::limit($source['source_details']->title, 30, '...') }}
                                             </a>
-                                            <a href="{{ route('user.my-account', $track['track_details']->user->name) }}"
+                                            <a href="{{ route('user.my-account', $source['source_details']->user->name) }}"
                                                 class="text-sm text-gray-600 dark:text-gray-400 truncate hover:text-orange-400 transition-colors block">
-                                                {{ $track['track_details']->user->name }}</a>
+                                                {{ $source['source_details']->user->name }}</a>
                                         </div>
                                     </div>
 
                                     <div
                                         class="col-span-2 flex items-center justify-center cursor-pointer hover:text-orange-400 transition-colors">
                                         <span
-                                            class="font-bold text-orange-400">{{ $track['engagement_score'] }}/10</span>
+                                            class="font-bold text-orange-400">{{ $source['engagement_score'] }}/10</span>
                                     </div>
 
                                     <div class="col-span-2 flex items-center justify-center"><span
-                                            class="text-gray-500 dark:text-gray-300">{{ number_shorten($track['metrics']['total_views']['current_total']) }}</span>
+                                            class="text-gray-500 dark:text-gray-300">{{ number_shorten($source['metrics']['total_views']['current_total']) }}</span>
                                     </div>
 
                                     <div class="col-span-2 flex items-center justify-center"><span
-                                            class="text-gray-500 dark:text-gray-300">{{ number_shorten($track['metrics']['total_plays']['current_total']) }}</span>
+                                            class="text-gray-500 dark:text-gray-300">{{ number_shorten($source['metrics']['total_plays']['current_total']) }}</span>
                                     </div>
 
                                     <div class="col-span-1 flex items-center justify-center">
                                         <div class="flex items-center gap-1">
-                                            <button @click="playing('{{ $track['track_details']->urn }}')"
+                                            <button @click="playing('{{ $source['source_details']->urn }}')"
                                                 class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white play-btn"
-                                                :class="{ 'bg-orange-500 text-white': playing === '{{ $track['track_details']->urn }}' }"
-                                                data-title="{{ $track['track_details']->title }}"
-                                                data-artist="{{ $track['track_details']->author_username }}"
-                                                data-cover="{{ $track['track_details']->artwork_url }}"
-                                                data-src="{{ $track['track_details']->stream_url }}">
+                                                :class="{ 'bg-orange-500 text-white': playing === '{{ $source['source_details']->urn }}' }"
+                                                data-title="{{ $source['source_details']->title }}"
+                                                data-artist="{{ $source['source_details']->author_username }}"
+                                                data-cover="{{ $source['source_details']->artwork_url }}"
+                                                data-src="{{ $source['source_details']->stream_url }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -284,8 +284,8 @@
                                                 </svg>
                                             </button>
                                             <button
-                                                wire:click="likeTrack('{{ encrypt($track['actionable_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
-                                                class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white {{ $track['like'] ? 'bg-red-500 text-white shadow-lg' : '' }}"><svg
+                                                wire:click="likeSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']->id) }}')"
+                                                class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white {{ $source['like'] ? 'bg-red-500 text-white shadow-lg' : '' }}"><svg
                                                     xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -296,8 +296,8 @@
                                                 </svg>
                                             </button>
                                             <button
-                                                wire:click="repostTrack('{{ encrypt($track['actionable_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
-                                                class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 {{ $track['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white "><svg
+                                                wire:click="repostSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']->id) }}')"
+                                                class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 {{ $source['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white "><svg
                                                     xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -317,16 +317,16 @@
                     {{-- Grid view --}}
                     <div x-show="activeTab === 'gridView'" class="transition-all duration-500 opacity-100 scale-100">
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            @forelse ($topTracks as $track)
+                            @forelse ($topSources as $source)
                                 <div
-                                    class="bg-gray-200 dark:bg-gray-800 rounded-2xl p-4 border transition-all duration-300 hover:scale-105 hover:shadow-xl shadow-lg {{ proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured
+                                    class="bg-gray-200 dark:bg-gray-800 rounded-2xl p-4 border transition-all duration-300 hover:scale-105 hover:shadow-xl shadow-lg {{ proUser($source['source_details']->user_urn) && $source['actionable_details']->is_featured
                                         ? 'shadow-orange-500/20 border-orange-300 dark:border-orange-500'
-                                        : (proUser($track['track_details']->user_urn)
+                                        : (proUser($source['source_details']->user_urn)
                                             ? 'shadow-gray-500/20 border-gray-500'
                                             : 'shadow-gray-700/20 border-gray-300 dark:border-gray-700') }}">
                                     <div class="relative mb-4">
 
-                                        @if (proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured)
+                                        @if (proUser($source['source_details']->user_urn) && $source['actionable_details']->is_featured)
                                             <div
                                                 class="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold z-10 bg-gradient-to-br from-orange-400 to-orange-600 text-white">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -336,7 +336,7 @@
                                                     <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"></path>
                                                 </svg>
                                             </div>
-                                        @elseif (proUser($track['track_details']->user_urn))
+                                        @elseif (proUser($source['source_details']->user_urn))
                                             <div
                                                 class="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold z-10 bg-gradient-to-br from-gray-400 to-gray-600 text-white">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -353,10 +353,10 @@
                                         @endif
 
                                         <div class="relative group cursor-pointer">
-                                            <img src="{{ soundcloud_image($track['track_details']->artwork_url) }}"
-                                                alt="{{ $track['track_details']->title }}"
+                                            <img src="{{ soundcloud_image($source['source_details']->artwork_url) }}"
+                                                alt="{{ $source['source_details']->title }}"
                                                 class="w-full aspect-square rounded-xl object-cover transition-transform duration-300 group-hover:scale-105">
-                                            <a href="{{ $track['track_details']->permalink_url }}" target="_blank"
+                                            <a href="{{ $source['source_details']->permalink_url }}" target="_blank"
                                                 class="absolute inset-0 bg-gray-950 bg-gray-950/0 group-hover:bg-gray-950/30 rounded-xl transition-all duration-300 flex items-center justify-center">
                                                 <x-lucide-external-link
                                                     class="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -365,22 +365,22 @@
                                         </div>
                                     </div>
                                     <div class="mb-4">
-                                        <a href="{{ $track['track_details']->permalink_url }}" target="_blank"
+                                        <a href="{{ $source['source_details']->permalink_url }}" target="_blank"
                                             class="font-bold text-black dark:text-white mb-1 cursor-pointer hover:text-orange-400 transition-colors truncate block w-full">
-                                            {{ Str::limit($track['track_details']->title, 20, '...') }}</a>
-                                        <a href="{{ route('user.my-account', $track['track_details']->user->name) }}"
+                                            {{ Str::limit($source['source_details']->title, 20, '...') }}</a>
+                                        <a href="{{ route('user.my-account', $source['source_details']->user->name) }}"
                                             class="text-gray-600 dark:text-gray-300 text-sm mb-2 truncate">
-                                            {{ $track['track_details']->user?->name }}</a>
+                                            {{ $source['source_details']->user?->name }}</a>
                                         <span
                                             class="inline-block bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600">
-                                            {{ $track['track_details']->genre ?? 'Unknown' }}
+                                            {{ $source['source_details']->genre ?? 'Unknown' }}
                                         </span>
                                     </div>
                                     <div class="mb-4">
                                         <div
                                             class="text-center cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg p-2 transition-colors">
                                             <div class="text-xl font-bold text-orange-400">
-                                                {{ $track['engagement_score'] }}/10</div>
+                                                {{ $source['engagement_score'] }}/10</div>
                                             <div class="text-xs text-gray-800 dark:text-gray-400">Engagement Score
                                             </div>
                                         </div>
@@ -388,31 +388,31 @@
                                     <div class="grid grid-cols-3 gap-2 mb-4 text-xs text-gray-800 dark:text-gray-400">
                                         <div class="text-center">
                                             <div class="font-semibold text-black dark:text-white">
-                                                {{ number_shorten($track['metrics']['total_views']['current_total']) }}
+                                                {{ number_shorten($source['metrics']['total_views']['current_total']) }}
                                             </div>
                                             <div>Reach</div>
                                         </div>
                                         <div class="text-center">
                                             <div class="font-semibold text-black dark:text-white">
-                                                {{ number_shorten($track['metrics']['total_reposts']['current_total']) }}
+                                                {{ number_shorten($source['metrics']['total_reposts']['current_total']) }}
                                             </div>
                                             <div>Reposts</div>
                                         </div>
                                         <div class="text-center">
                                             <div class="font-semibold text-black dark:text-white">
-                                                {{ number_shorten($track['metrics']['total_likes']['current_total']) }}
+                                                {{ number_shorten($source['metrics']['total_likes']['current_total']) }}
                                             </div>
                                             <div>Plays</div>
                                         </div>
                                     </div>
                                     <div class="flex items-center justify-center gap-2">
-                                        <button @click="playing('{{ $track['track_details']->urn }}')"
+                                        <button @click="playing('{{ $source['source_details']->urn }}')"
                                             class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white hover:shadow-lg border border-gray-600 play-btn"
-                                            :class="{ 'bg-orange-500 text-white': playing === '{{ $track['track_details']->urn }}' }"
-                                            data-title="{{ $track['track_details']->title }}"
-                                            data-artist="{{ $track['track_details']->author_username }}"
-                                            data-cover="{{ $track['track_details']->artwork_url }}"
-                                            data-src="{{ $track['track_details']->stream_url }}">
+                                            :class="{ 'bg-orange-500 text-white': playing === '{{ $source['source_details']->urn }}' }"
+                                            data-title="{{ $source['source_details']->title }}"
+                                            data-artist="{{ $source['source_details']->author_username }}"
+                                            data-cover="{{ $source['source_details']->artwork_url }}"
+                                            data-src="{{ $source['source_details']->stream_url }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -421,8 +421,8 @@
                                             </svg>
                                         </button>
                                         <button
-                                            wire:click="likeTrack('{{ encrypt($track['actionable_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
-                                            class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-600 {{ $track['like'] ? 'bg-red-500 text-white shadow-lg' : '' }}">
+                                            wire:click="likeSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']->id) }}')"
+                                            class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-600 {{ $source['like'] ? 'bg-red-500 text-white shadow-lg' : '' }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -433,8 +433,8 @@
                                             </svg>
                                         </button>
                                         <button
-                                            wire:click="repostTrack('{{ encrypt($track['actionable_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
-                                            class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 {{ $track['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-600"><svg
+                                            wire:click="repostSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']->id) }}')"
+                                            class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 {{ $source['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-600"><svg
                                                 xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -454,15 +454,15 @@
                     <div x-show="activeTab === 'listView'" class="transition-all duration-500 opacity-100 scale-100">
                         <div class="space-y-3">
 
-                            @forelse ($topTracks as $track)
+                            @forelse ($topSources as $source)
                                 <div
-                                    class="relative border rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-900 dark:to-gray-800  shadow-lg {{ proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured
+                                    class="relative border rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-900 dark:to-gray-800  shadow-lg {{ proUser($source['source_details']->user_urn) && $source['actionable_details']->is_featured
                                         ? 'shadow-orange-500/20 border-orange-300 dark:border-orange-500'
-                                        : (proUser($track['track_details']->user_urn)
+                                        : (proUser($source['source_details']->user_urn)
                                             ? 'shadow-gray-500/20 border-gray-500'
                                             : 'shadow-gray-700/20 border-gray-300 dark:border-gray-700') }}">
 
-                                    @if (proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured)
+                                    @if (proUser($source['source_details']->user_urn) && $source['actionable_details']->is_featured)
                                         <div class="absolute -top-2 -right-2 z-10">
                                             <div
                                                 class="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-br from-orange-400 to-orange-600 text-white shadow-lg">
@@ -474,7 +474,7 @@
                                                 </svg>
                                             </div>
                                         </div>
-                                    @elseif (proUser($track['track_details']->user_urn))
+                                    @elseif (proUser($source['source_details']->user_urn))
                                         <div class="absolute -top-2 -right-2 z-10">
                                             <div
                                                 class="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-br from-gray-400 to-gray-600 text-white shadow-lg">
@@ -489,18 +489,18 @@
                                     @endif
                                     <div class="flex items-center gap-4">
                                         <div
-                                            class="w-12 h-12 rounded-full flex items-center justify-center font-bold bg-gradient-to-br shadow-lg text-2xl {{ proUser($track['track_details']->user_urn) && $track['actionable_details']->is_featured
+                                            class="w-12 h-12 rounded-full flex items-center justify-center font-bold bg-gradient-to-br shadow-lg text-2xl {{ proUser($source['source_details']->user_urn) && $source['actionable_details']->is_featured
                                                 ? 'from-orange-400 to-orange-600 text-white'
-                                                : (proUser($track['track_details']->user_urn)
+                                                : (proUser($source['source_details']->user_urn)
                                                     ? 'from-gray-400 to-gray-600 text-white'
                                                     : 'bg-gray-700 text-gray-300 border border-gray-300 dark:border-gray-600') }}">
                                             {{ $loop->iteration }}
                                         </div>
                                         <div class="relative group cursor-pointer">
-                                            <img src="{{ soundcloud_image($track['track_details']->artwork_url) }}"
-                                                alt="{{ $track['track_details']->title }}"
+                                            <img src="{{ soundcloud_image($source['source_details']->artwork_url) }}"
+                                                alt="{{ $source['source_details']->title }}"
                                                 class="rounded-xl object-cover transition-transform duration-300 group-hover:scale-105 w-20 h-20">
-                                            <a href="{{ $track['track_details']->permalink_url }}" target="_blank"
+                                            <a href="{{ $source['source_details']->permalink_url }}" target="_blank"
                                                 class="absolute inset-0 shadow group-hover:bg-gray-950/30 rounded-xl transition-all duration-300 flex items-center justify-center">
                                                 <x-lucide-external-link
                                                     class="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -509,25 +509,25 @@
                                         <div class="flex-1 min-w-0">
                                             <div class="flex items-start justify-between gap-2">
                                                 <div class="flex-1 min-w-0">
-                                                    <a href="{{ $track['track_details']->permalink_url }}"
+                                                    <a href="{{ $source['source_details']->permalink_url }}"
                                                         target="_blank"
                                                         class="font-bold text-black dark:text-white truncate text-lg hover:text-orange-400 transition-colors cursor-pointer block w-full">
-                                                        {{ Str::limit($track['track_details']->title, 30, '...') }}
+                                                        {{ Str::limit($source['source_details']->title, 30, '...') }}
                                                     </a>
-                                                    <a href="{{ route('user.my-account', $track['track_details']->user->name) }}"
+                                                    <a href="{{ route('user.my-account', $source['source_details']->user->name) }}"
                                                         class="text-gray-600 dark:text-gray-300 truncate">
-                                                        {{ $track['track_details']->user->name }}</a>
+                                                        {{ $source['source_details']->user->name }}</a>
                                                     <span
-                                                        class="inline-block mt-1 bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600">{{ $track['track_details']->genre ?? 'Unknown' }}</span>
+                                                        class="inline-block mt-1 bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600">{{ $source['source_details']->genre ?? 'Unknown' }}</span>
                                                 </div>
                                                 <div class="text-right cursor-pointer">
                                                     <div class="text-lg font-bold text-black dark:text-white">
-                                                        {{ $track['engagement_score'] }}/10</div>
+                                                        {{ $source['engagement_score'] }}/10</div>
                                                     <div class="text-xs text-gray-800 dark:text-gray-400">score</div>
                                                 </div>
                                             </div>
                                             <div class="flex flex-wrap gap-1 mt-2">
-                                                @if ($track['actionable_details']->is_featured)
+                                                @if ($source['actionable_details']->is_featured)
                                                     <span
                                                         class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border bg-orange-900 text-orange-300 border-orange-700"><svg
                                                             xmlns="http://www.w3.org/2000/svg" width="24"
@@ -541,7 +541,7 @@
                                                         Featured
                                                     </span>
                                                 @endif
-                                                @if (proUser($track['track_details']->user_urn))
+                                                @if (proUser($source['source_details']->user_urn))
                                                     <span
                                                         class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border bg-blue-900 text-blue-300 border-blue-700">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
@@ -560,31 +560,31 @@
                                             <div class="mt-3 mb-3">
                                                 <div
                                                     class="flex items-center justify-between text-xs text-gray-800 dark:text-gray-400 mb-1">
-                                                    <span>Engagement</span><span>{{ number_format($track['engagement_rate'], 2) }}%</span>
+                                                    <span>Engagement</span><span>{{ number_format($source['engagement_rate'], 2) }}%</span>
                                                 </div>
                                                 <div class="w-full bg-gray-700 rounded-full h-2">
                                                     <div class="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-orange-400 to-orange-600"
-                                                        style="width: {{ $track['engagement_rate'] }}%;"></div>
+                                                        style="width: {{ $source['engagement_rate'] }}%;"></div>
                                                 </div>
                                             </div>
                                             <div class="flex items-center justify-between">
                                                 <div
                                                     class="flex items-center gap-4 text-xs text-gray-800 dark:text-gray-400">
-                                                    <span>{{ number_shorten($track['metrics']['total_reposts']['current_total']) }}
+                                                    <span>{{ number_shorten($source['metrics']['total_reposts']['current_total']) }}
                                                         reposts</span>
-                                                    <span>{{ number_shorten($track['metrics']['total_views']['current_total']) }}
+                                                    <span>{{ number_shorten($source['metrics']['total_views']['current_total']) }}
                                                         reach</span>
-                                                    <span>{{ number_shorten($track['metrics']['total_plays']['current_total']) }}
+                                                    <span>{{ number_shorten($source['metrics']['total_plays']['current_total']) }}
                                                         plays</span>
                                                 </div>
                                                 <div class="flex items-center gap-2">
-                                                    <button @click="playing('{{ $track['track_details']->urn }}')"
+                                                    <button @click="playing('{{ $source['source_details']->urn }}')"
                                                         class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600 play-btn"
-                                                        :class="{ 'bg-orange-500 text-white': playing === '{{ $track['track_details']->urn }}' }"
+                                                        :class="{ 'bg-orange-500 text-white': playing === '{{ $source['source_details']->urn }}' }"
                                                         title="Play"
-                                                        data-title="{{ $track['track_details']->title }}"
-                                                        data-artist="{{ $track['track_details']->author_username }}"
-                                                        data-cover="{{ $track['track_details']->artwork_url }}"
+                                                        data-title="{{ $source['source_details']->title }}"
+                                                        data-artist="{{ $source['source_details']->author_username }}"
+                                                        data-cover="{{ $source['source_details']->artwork_url }}"
                                                         data-src="https://api-v2.soundcloud.com/media/soundcloud:tracks:1252113682/0622321d-02e6-4b77-86aa-a54b4fc4d82d/stream/hls">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                             height="24" viewBox="0 0 24 24" fill="none"
@@ -595,8 +595,8 @@
                                                         </svg>
                                                     </button>
                                                     <button
-                                                        wire:click="likeTrack('{{ encrypt($track['actionable_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
-                                                        class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 {{ $track['like'] ? 'bg-red-500 text-white shadow-lg' : '' }} hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
+                                                        wire:click="likeSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']->id) }}')"
+                                                        class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 {{ $source['like'] ? 'bg-red-500 text-white shadow-lg' : '' }} hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
                                                         title="Like">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                             height="24" viewBox="0 0 24 24" fill="none"
@@ -609,8 +609,8 @@
                                                         </svg>
                                                     </button>
                                                     <button
-                                                        wire:click="repostTrack('{{ encrypt($track['actionable_details']->id) }}','{{ encrypt($track['track_details']->urn) }}')"
-                                                        class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 {{ $track['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }}  hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
+                                                        wire:click="repostSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']->id) }}')"
+                                                        class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 {{ $source['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }}  hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
                                                         title="Repost">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                             height="24" viewBox="0 0 24 24" fill="none"

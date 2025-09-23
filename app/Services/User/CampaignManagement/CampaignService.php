@@ -8,6 +8,7 @@ use App\Models\Campaign;
 use App\Models\CreditTransaction;
 use App\Models\CustomNotification;
 use App\Models\Repost;
+use App\Models\Track;
 use App\Models\UserAnalytics;
 use App\Services\User\AnalyticsService;
 
@@ -213,21 +214,20 @@ class CampaignService
             throw $e;
         }
     }
-    public function repostTrack($campaign, $soundcloudRepostId, $reposter = null)
+    public function repostSource($campaign, $soundcloudRepostId, $reposter = null)
     {
         try {
             DB::transaction(function () use ($campaign, $soundcloudRepostId, $reposter) {
 
-
                 if ($reposter == null) {
                     $reposter = user();
                 }
-                $trackOwnerUrn = $campaign->music->user?->urn ?? $campaign->user_urn;
-                $trackOwnerName = $campaign->music->user?->name ?? $campaign->user?->name;
+                $sourceOwnerUrn = $campaign->music->user?->urn ?? $campaign->user_urn;
+                $sourceOwnerName = $campaign->music->user?->name ?? $campaign->user?->name;
 
                 $repost = Repost::create([
                     'reposter_urn' => $reposter->urn,
-                    'track_owner_urn' => $trackOwnerUrn,
+                    'track_owner_urn' => $sourceOwnerUrn,
                     'campaign_id' => $campaign->id,
                     'soundcloud_repost_id' => $soundcloudRepostId,
                     'reposted_at' => now(),
@@ -247,11 +247,11 @@ class CampaignService
                     'message_data' => [
                         'title' => "Repost successful",
                         'message' => "You've been reposted on a campaign",
-                        'description' => "You've been reposted on a campaign by {$trackOwnerName}.",
+                        'description' => "You've been reposted on a campaign by {$sourceOwnerName}.",
                         'icon' => 'music',
                         'additional_data' => [
-                            'Track Title' => $campaign->music->title,
-                            'Track Artist' => $trackOwnerName,
+                            $campaign->music_type == Track::class ? 'Track' : 'Playlist' . ' Title' => $campaign->music->title,
+                            $campaign->music_type == Track::class ? 'Track' : 'Playlist' . ' Artist' => $sourceOwnerName,
                         ]
                     ]
                 ]);
@@ -266,8 +266,8 @@ class CampaignService
                         'description' => "Your campaign has been reposted by {$reposter->name}.",
                         'icon' => 'music',
                         'additional_data' => [
-                            'Track Title' => $campaign->music->title,
-                            'Track Artist' => $trackOwnerName,
+                            $campaign->music_type == Track::class ? 'Track' : 'Playlist' . ' Title' => $campaign->music->title,
+                            $campaign->music_type == Track::class ? 'Track' : 'Playlist' . ' Artist' => $sourceOwnerName,
                         ]
                     ]
                 ]);

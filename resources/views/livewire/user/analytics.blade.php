@@ -347,7 +347,7 @@
 
                     <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
                         <x-gbutton variant="outline"
-                            class="hover:!bg-[#ff6b35] hover:!text-white bg-white border-gray-300 dark:border-gray-600 w-full"
+                            class="hover:!bg-[#ff6b35] hover:!text-white bg-white border-gray-300 dark:border-gray-600 w-full text-nowrap"
                             x-bind:class="showGrowthTips
                                 ?
                                 '!bg-[#ff6b35] !text-white' :
@@ -367,7 +367,7 @@
                             Filters
                         </button>
 
-                        <select wire:model.live="filter"
+                        {{-- <select wire:model.live="filter"
                             class="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm font-medium focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35] w-full sm:w-auto transition-all duration-200"
                             x-bind:disabled="isLoading">
                             <option value="daily">Today</option>
@@ -376,7 +376,80 @@
                             <option value="last_90_days">Last 90 Days</option>
                             <option value="last_year">Last Year</option>
                             <option value="date_range">Custom Range</option>
-                        </select>
+                        </select> --}}
+
+                        <div x-data="{
+                            open: false,
+                            filter: @entangle('filter'),
+                            options: {
+                                'daily': 'Today',
+                                'last_week': 'Last 7 Days',
+                                'last_month': 'Last 30 Days',
+                                'last_90_days': 'Last 90 Days',
+                                'last_year': 'Last Year',
+                                'date_range': 'Custom Range'
+                            }
+                        }" class="relative w-full sm:w-auto">
+
+                            <!-- Dropdown button -->
+                            <button @click="open = !open" :disabled="isLoading"
+                                class="w-full sm:w-auto px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm font-medium focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35] transition-all duration-200 flex justify-between items-center space-x-2">
+                                <span x-text="options[filter] || 'Select an option'"></span>
+                                <!-- Dropdown arrow icon -->
+                                <svg class="w-4 h-4 text-gray-400 transform transition-transform duration-200"
+                                    :class="{ 'rotate-180': open }" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg> 
+                            </button>
+
+                            <!-- Dropdown menu -->
+                            <div x-show="open" @click.outside="open = false"
+                                x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 scale-95"
+                                x-transition:enter-end="opacity-100 scale-100"
+                                x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-100 scale-100"
+                                x-transition:leave-end="opacity-0 scale-95"
+                                class="absolute z-10 mt-2 w-full sm:w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                <div class="py-1" role="menu" aria-orientation="vertical"
+                                    aria-labelledby="options-menu">
+                                    <!-- Dropdown options -->
+                                    <button
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md"
+                                        role="menuitem" @click="filter = 'daily'; open = false;">
+                                        Today
+                                    </button>
+                                    <button
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md"
+                                        role="menuitem" @click="filter = 'last_week'; open = false;">
+                                        Last 7 Days
+                                    </button>
+                                    <button
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md"
+                                        role="menuitem" @click="filter = 'last_month'; open = false;">
+                                        Last 30 Days
+                                    </button>
+                                    <button
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md"
+                                        role="menuitem" @click="filter = 'last_90_days'; open = false;">
+                                        Last 90 Days
+                                    </button>
+                                    <button
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md"
+                                        role="menuitem" @click="filter = 'last_year'; open = false;">
+                                        Last Year
+                                    </button>
+                                    <button
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md"
+                                        role="menuitem" @click="filter = 'date_range'; open = false;">
+                                        Custom Range
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -435,9 +508,9 @@
                     class="bg-gray-50 dark:bg-gray-700 rounded-lg p-5 shadow-sm border border-gray-100 dark:border-gray-600 hover:shadow-md transition-shadow">
                     <div class="flex items-start">
                         <div class="p-2 rounded-lg bg-[#ff6b35] text-white mr-4 flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="lucide lucide-music h-5 w-5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-music h-5 w-5">
                                 <path d="M9 18V5l12-2v13"></path>
                                 <circle cx="6" cy="18" r="3"></circle>
                                 <circle cx="18" cy="16" r="3"></circle>
@@ -1218,7 +1291,8 @@
                                     @if ($end < $paginatedSources->lastPage() - 1)
                                         <span class="px-2 text-gray-400">...</span>
                                     @endif
-                                    <button wire:click="gotoPage({{ $paginatedSources->lastPage() }}, '{{ $pageName }}')"
+                                    <button
+                                        wire:click="gotoPage({{ $paginatedSources->lastPage() }}, '{{ $pageName }}')"
                                         class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                         {{ $paginatedSources->lastPage() }}
                                     </button>
