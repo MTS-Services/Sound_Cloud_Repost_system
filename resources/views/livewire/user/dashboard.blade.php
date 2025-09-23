@@ -414,7 +414,7 @@
                                 </div>
                                 <div class="flex-1">
                                     <x-gbutton variant="primary" full-width="true"
-                                        wire:click="directRepost('{{ encrypt($request->id) }}')">Repost</x-gbutton>
+                                        wire:click="confirmRepost('{{ $request->id }}')">Repost</x-gbutton>
                                 </div>
                             </div>
                         </div>
@@ -674,6 +674,7 @@
     </div>
     {{-- Create campaign (submit) Modal --}}
     @include('backend.user.includes.campaign-create-modal')
+    @include('backend.user.includes.direct-repost-confirmation-modal')
 
     <div x-data="{ showLowCreditWarningModal: @entangle('showLowCreditWarningModal').live }" x-show="showLowCreditWarningModal" x-cloak
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
