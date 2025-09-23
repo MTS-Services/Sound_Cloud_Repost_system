@@ -17,7 +17,8 @@ use App\Http\Traits\UserModificationTrait;
 class User extends AuthBaseModel implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, UserModificationTrait;
+    // use HasFactory, Notifiable, UserModificationTrait;
+    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -193,49 +194,49 @@ class User extends AuthBaseModel implements MustVerifyEmail
 
         return $this->soundcloud_token_expires_at->isPast();
     }
-    // public function __construct(array $attributes = [])
-    // {
-    //     parent::__construct($attributes);
-    //     $this->appends = array_merge(parent::getAppends(), [
-
-    //         'status_label',
-    //         'status_color',
-    //         'status_btn_label',
-    //         'status_btn_color',
-
-    //         'modified_image',
-    //         'is_pro',
-    //         'repost_price',
-    //         'real_followers',
-    //     ]);
-    // }
-
-    public function __construct(array $attributes = [], FollowerAnalyzer $followerAnalyzer = null, SoundCloudService $soundCloudService = null)
+    public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-
-        // Check if dependencies were injected via the container
-        if ($followerAnalyzer === null) {
-            $followerAnalyzer = app(FollowerAnalyzer::class);
-        }
-        if ($soundCloudService === null) {
-            $soundCloudService = app(SoundCloudService::class);
-        }
-
-        // Call the trait's constructor to initialize the properties
-        $this->bootUserModificationTrait($followerAnalyzer, $soundCloudService);
-
         $this->appends = array_merge(parent::getAppends(), [
+
             'status_label',
             'status_color',
             'status_btn_label',
             'status_btn_color',
+
             'modified_image',
             'is_pro',
             'repost_price',
             'real_followers',
         ]);
     }
+
+    // public function __construct(array $attributes = [], FollowerAnalyzer $followerAnalyzer = null, SoundCloudService $soundCloudService = null)
+    // {
+    //     parent::__construct($attributes);
+
+    //     // Check if dependencies were injected via the container
+    //     if ($followerAnalyzer === null) {
+    //         $followerAnalyzer = app(FollowerAnalyzer::class);
+    //     }
+    //     if ($soundCloudService === null) {
+    //         $soundCloudService = app(SoundCloudService::class);
+    //     }
+
+    //     // Call the trait's constructor to initialize the properties
+    //     $this->bootUserModificationTrait($followerAnalyzer, $soundCloudService);
+
+    //     $this->appends = array_merge(parent::getAppends(), [
+    //         'status_label',
+    //         'status_color',
+    //         'status_btn_label',
+    //         'status_btn_color',
+    //         'modified_image',
+    //         'is_pro',
+    //         'repost_price',
+    //         'real_followers',
+    //     ]);
+    // }
 
     protected function bootUserModificationTrait(FollowerAnalyzer $followerAnalyzer, SoundCloudService $soundCloudService)
     {
@@ -345,11 +346,13 @@ class User extends AuthBaseModel implements MustVerifyEmail
 
     public function getRepostPriceAttribute()
     {
-        return $this->userRepostPrice($this);
+        // return $this->userRepostPrice($this);
+        return 1;
     }
 
     public function getRealFollowersAttribute()
     {
-        return $this->userRealFollowers($this);
+        // return $this->userRealFollowers($this);
+        return 10;
     }
 }

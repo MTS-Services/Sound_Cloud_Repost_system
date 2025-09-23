@@ -287,6 +287,7 @@
         init() {
             // Initial setup
             this.setupCharts();
+            console.log('Genre Breakdown:', this.genreBreakdown);
     
             // Watch for data changes
             this.$watch('$wire.data', (newData, oldData) => {
@@ -819,32 +820,32 @@
             </div>
         </div>
 
-        {{-- <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
             <!-- Top Performing Tracks -->
             <div>
                 <div
                     class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Top Performing Tracks</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Top Performing Tracks or Playlists</h3>
                     <div class="space-y-4">
-                        @forelse($topTracks as $track)
+                        @forelse($topSources as $source)
                             <div class="group">
                                 <div class="flex items-center justify-between mb-2">
                                     <div class="flex-1 min-w-0">
                                         <p
                                             class="text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-[#ff6b35] transition-colors">
-                                            {{ $track['track']['title'] }}
+                                            {{ $source['source']['title'] }}
                                         </p>
                                         <p class="text-xs text-gray-500 dark:text-gray-400 truncate">You</p>
                                     </div>
                                     <div class="flex items-center ml-4">
                                         <span
-                                            class="text-xs text-gray-900 dark:text-white font-medium">{{ number_shorten($track['streams']) }}</span>
+                                            class="text-xs text-gray-900 dark:text-white font-medium">{{ number_shorten($source['streams']) }}</span>
                                         <span class="text-xs text-gray-500 dark:text-gray-400 ml-1">streams</span>
                                     </div>
                                 </div>
                                 <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
                                     <div class="h-2 rounded-full transition-all duration-300"
-                                        style="width: {{ $track['engagement_rate'] }}%; background: linear-gradient(90deg, #ff6b35, #ff6b35cc);">
+                                        style="width: {{ $source['engagement_rate'] }}%; background: linear-gradient(90deg, #ff6b35, #ff6b35cc);">
                                     </div>
                                 </div>
                             </div>
@@ -895,7 +896,7 @@
             </div>
 
             <!-- Quick Stats -->
-            <div class="space-y-6">
+            {{-- <div class="space-y-6">
                 <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] rounded-xl p-6 text-white">
                     <div class="flex items-center justify-between">
                         <div>
@@ -958,8 +959,8 @@
                         @endif
                     </div>
                 </div>
-            </div>
-        </div> --}}
+            </div> --}}
+        </div>
 
         <!-- Track Performance Table with Pagination -->
         {{-- <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
