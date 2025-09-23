@@ -346,6 +346,7 @@ class AnalyticsService
             $query->forGenres($genres);
         }
 
+        dd($query->get());
         $query->select([
             'source_id',
             DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 END) as total_views'),
