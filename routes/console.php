@@ -8,4 +8,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('app:repost-request-expire')->everyMinute();
+Schedule::command('app:update-real-followers-daily')->daily();
 
