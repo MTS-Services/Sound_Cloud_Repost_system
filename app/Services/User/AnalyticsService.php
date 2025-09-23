@@ -222,7 +222,7 @@ class AnalyticsService
             $query->where('actionable_type', $actionableType);
         }
 
-        if ($genres) {
+        if ($genres && !in_array('Any Genre', $genres)) {
             $query->forGenres($genres);
         }
 
@@ -342,7 +342,7 @@ class AnalyticsService
         $query->whereDate('created_at', '>=', $periods['current']['start']->format('Y-m-d'))
             ->whereDate('created_at', '<=', $periods['current']['end']->format('Y-m-d'));
 
-        if ($genres) {
+        if ($genres && !in_array('Any Genre', $genres)) {
             $query->forGenres($genres);
         }
 
