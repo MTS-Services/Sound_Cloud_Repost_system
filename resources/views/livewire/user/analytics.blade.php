@@ -869,7 +869,10 @@
             <div>
                 <div
                     class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Genre Performance</h3>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Genre Performance</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ $this->getFilterText() }}</p>
+                    </div>
                     <div class="space-y-4">
                         <div class="relative flex justify-center" style="height: 200px;">
                             <canvas id="genreChart"></canvas>
@@ -902,58 +905,105 @@
             </div>
 
             <!-- Quick Stats -->
-            {{-- <div class="space-y-6">
+            <div class="space-y-6">
                 <div class="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] rounded-xl p-6 text-white">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-orange-100 text-sm">{{ $this->getFilterText() }}</p>
-                            @php
-                                $totalGrowth =
-                                    ($data['streams_change'] ?? 0) +
-                                    ($data['likes_change'] ?? 0) +
-                                    ($data['reposts_change'] ?? 0);
-                                $avgGrowth = $totalGrowth / 3;
-                            @endphp
                             <p class="text-2xl font-bold">
-                                {{ $avgGrowth > 0 ? '+' : '' }}{{ number_format($avgGrowth, 1) }}%</p>
+                                {{ $data['growth']['avgGrowth'] > 0 ? '+' : '' }}{{ number_format($data['growth']['avgGrowth'], 1) }}%
+                            </p>
                             <p class="text-orange-100 text-sm">Average Growth</p>
                         </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" class="lucide lucide-trending-up h-8 w-8 text-orange-100">
-                            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
-                            <polyline points="16 7 22 7 22 13"></polyline>
-                        </svg>
+                        @if ($this->getChangeIcon($data['growth']['avgGrowth']) === 'trending-up')
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-trending-up h-10 w-10 text-orange-100">
+                                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                                <polyline points="16 7 22 7 22 13"></polyline>
+                            </svg>
+                        @elseif($this->getChangeIcon($data['growth']['avgGrowth']) === 'trending-down')
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-trending-up h-10 w-10 text-orange-100">
+                                <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline>
+                                <polyline points="16 17 22 17 22 11"></polyline>
+                            </svg>
+                        @else
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="mr-1 h-10 w-10 text-orange-100">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        @endif
                     </div>
                 </div>
 
                 <div
                     class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <h4 class="font-semibold text-gray-900 dark:text-white mb-4">Recent Achievements</h4>
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="font-semibold text-gray-900 dark:text-white">Recent Achievements</h4>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ $this->getFilterText() }}</p>
+                    </div>
                     <div class="space-y-3">
                         @if (isset($data['detailed']) && !empty($data['detailed']))
-                            @if (($data['detailed']['overall_metrics']['total_views']['current_total'] ?? 0) > 10000)
+                            @php
+                                $anyAchievement =
+                                    $this->getChangeIcon(
+                                        $data['detailed']['overall_metrics']['total_views']['change_value'],
+                                    ) === 'trending-up' ||
+                                    $this->getChangeIcon(
+                                        $data['detailed']['overall_metrics']['total_plays']['change_value'],
+                                    ) === 'trending-up' ||
+                                    $this->getChangeIcon(
+                                        $data['detailed']['overall_metrics']['total_likes']['change_value'],
+                                    ) === 'trending-up' ||
+                                    $this->getChangeIcon(
+                                        $data['detailed']['overall_metrics']['total_comments']['change_value'],
+                                    ) === 'trending-up';
+                            @endphp
+                            @if ($anyAchievement)
+                                @if ($this->getChangeIcon($data['detailed']['overall_metrics']['total_views']['change_value']) === 'trending-up')
+                                    <div class="flex items-center">
+                                        <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">Reached
+                                            {{ number_shorten($data['detailed']['overall_metrics']['total_views']['current_total']) }}
+                                            total
+                                            views!</span>
+                                    </div>
+                                @endif
+                                @if ($this->getChangeIcon($data['detailed']['overall_metrics']['total_plays']['change_value']) === 'trending-up')
+                                    <div class="flex items-center">
+                                        <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
+                                        <span
+                                            class="text-sm text-gray-600 dark:text-gray-400">{{ number_format($data['detailed']['overall_metrics']['total_plays']['change_value'], 1) }}%
+                                            growth in streams this period</span>
+                                    </div>
+                                @endif
+                                @if ($this->getChangeIcon($data['detailed']['overall_metrics']['total_likes']['change_value']) === 'trending-up')
+                                    <div class="flex items-center">
+                                        <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">Great engagement with
+                                            {{ number_format($data['detailed']['overall_metrics']['total_likes']['change_value'], 1) }}%
+                                            more likes</span>
+                                    </div>
+                                @endif
+                                @if ($this->getChangeIcon($data['detailed']['overall_metrics']['total_comments']['change_value']) === 'trending-up')
+                                    <div class="flex items-center">
+                                        <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
+                                        <span
+                                            class="text-sm text-gray-600 dark:text-gray-400">{{ number_format($data['detailed']['overall_metrics']['total_comments']['change_value'], 1) }}%
+                                            growth in comments</span>
+                                    </div>
+                                @endif
+                            @else
                                 <div class="flex items-center">
                                     <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
-                                    <span class="text-sm text-gray-600 dark:text-gray-400">Reached
-                                        {{ number_shorten($data['detailed']['overall_metrics']['total_views']['current_total']) }}
-                                        total
-                                        views!</span>
-                                </div>
-                            @endif
-                            @if (($data['streams_change'] ?? 0) > 10)
-                                <div class="flex items-center">
-                                    <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
-                                    <span
-                                        class="text-sm text-gray-600 dark:text-gray-400">{{ number_format($data['streams_change'], 1) }}%
-                                        growth in streams this period</span>
-                                </div>
-                            @endif
-                            @if (($data['likes_change'] ?? 0) > 15)
-                                <div class="flex items-center">
-                                    <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
-                                    <span class="text-sm text-gray-600 dark:text-gray-400">Great engagement with
-                                        {{ number_format($data['likes_change'], 1) }}% more likes</span>
+                                    <span class="text-sm text-gray-600 dark:text-gray-400">No achievements
+                                        unlocked yet!</span>
                                 </div>
                             @endif
                         @else
@@ -965,7 +1015,7 @@
                         @endif
                     </div>
                 </div>
-            </div> --}}
+            </div>
         </div>
 
         <!-- Track Performance Table with Pagination -->

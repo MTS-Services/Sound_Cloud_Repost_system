@@ -248,6 +248,7 @@ class Analytics extends Component
      */
     private function transformDataForUI(array $analyticsData): array
     {
+
         $streams = $analyticsData['overall_metrics']['total_plays']['current_total'];
         $likes = $analyticsData['overall_metrics']['total_likes']['current_total'];
         $reposts = $analyticsData['overall_metrics']['total_reposts']['current_total'];
@@ -259,6 +260,7 @@ class Analytics extends Component
         $avgTotal = ($likes + $comments + $reposts + $streams + $followers) / 5;
         $avgEngagementRate =  $views >= $avgTotal ? round(min(100, ($avgTotal / $views) * 100), 2) : 0;
 
+        $avgGrowth =  $this->calculateGrowthMetrics($analyticsData);
         return [
             'streams' => $this->formatNumber($streams),
             'likes' => $this->formatNumber($likes),
@@ -269,6 +271,34 @@ class Analytics extends Component
             'likes_change' => $analyticsData['overall_metrics']['total_likes']['change_rate'] ?? 0,
             'reposts_change' => $analyticsData['overall_metrics']['total_reposts']['change_rate'] ?? 0,
             'engagement_change' => $this->calculateEngagementRateChange($analyticsData),
+            'growth' => $avgGrowth
+        ];
+    }
+
+    private function calculateGrowthMetrics(array $analyticsData): array
+    {
+        $streamsGrowth = $analyticsData['overall_metrics']['total_plays']['change_rate'];
+        $likesGrowth = $analyticsData['overall_metrics']['total_likes']['change_rate'];
+        $repostsGrowth = $analyticsData['overall_metrics']['total_reposts']['change_rate'];
+        $followersGrowth = $analyticsData['overall_metrics']['total_followers']['change_rate'];
+        $commentsGrowth = $analyticsData['overall_metrics']['total_comments']['change_rate'];
+        $viewsGrowth = $analyticsData['overall_metrics']['total_views']['change_rate'];
+
+        // Calculate the number of metrics that have growth.
+        $totalGrowth = $streamsGrowth + $likesGrowth + $repostsGrowth + $followersGrowth + $commentsGrowth + $viewsGrowth;
+        $numberOfMetrics = count(array_filter([$streamsGrowth, $likesGrowth, $repostsGrowth, $followersGrowth, $commentsGrowth, $viewsGrowth]));
+
+        // Calculate and round the average growth to two decimal places.
+        // Ensure you don't divide by zero if you change the number of metrics.
+        $avgGrowth = $numberOfMetrics > 0 ? round($totalGrowth / $numberOfMetrics, 2) : 0;
+
+        return [
+            'streamsGrowth' => $streamsGrowth,
+            'likesGrowth' => $likesGrowth,
+            'repostsGrowth' => $repostsGrowth,
+            'followersGrowth' => $followersGrowth,
+            'commentsGrowth' => $commentsGrowth,
+            'avgGrowth' => $avgGrowth,
         ];
     }
 
