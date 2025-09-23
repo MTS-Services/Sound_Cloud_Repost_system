@@ -43,14 +43,12 @@ class UserPlaneController extends Controller implements HasMiddleware
             'auth:admin', // Applies 'auth:admin' to all methods
 
             // Permission middlewares using the Middleware class
-            new Middleware('permission:permisison-list', only: ['index']),
-            new Middleware('permission:permisison-details', only: ['show']),
-            new Middleware('permission:permisison-create', only: ['create', 'store']),
-            new Middleware('permission:permisison-edit', only: ['edit', 'update']),
-            new Middleware('permission:permisison-delete', only: ['destroy']),
-            new Middleware('permission:permisison-trash', only: ['trash']),
-            new Middleware('permission:permisison-restore', only: ['restore']),
-            new Middleware('permission:permisison-permanent-delete', only: ['permanentDelete']),
+            new Middleware('permission:user-plane-list', only: ['index']),
+            new Middleware('permission:user-plane-details', only: ['show']),
+            new Middleware('permission:user-plane-create', only: ['create', 'store']),
+            new Middleware('permission:user-plane-delete', only: ['destroy']),
+            new Middleware('permission:user-plane-status', only: ['status']),
+ 
             //add more permissions if needed
         ];
     }

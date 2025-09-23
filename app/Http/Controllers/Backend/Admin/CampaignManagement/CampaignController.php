@@ -42,12 +42,6 @@ class CampaignController extends Controller implements HasMiddleware
             // Permission middlewares using the Middleware class
             new Middleware('permission:campaign-list', only: ['index']),
             new Middleware('permission:campaign-details', only: ['show']),
-            new Middleware('permission:campaign-create', only: ['create', 'store']),
-            new Middleware('permission:campaign-edit', only: ['edit', 'update']),
-            new Middleware('permission:campaign-delete', only: ['destroy']),
-            new Middleware('permission:campaign-trash', only: ['trash']),
-            new Middleware('permission:campaign-restore', only: ['restore']),
-            new Middleware('permission:campaign-permanent-delete', only: ['permanentDelete']),
             //add more permissions if needed
         ];
     }

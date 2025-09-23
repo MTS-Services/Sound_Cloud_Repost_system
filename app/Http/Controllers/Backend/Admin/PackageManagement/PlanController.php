@@ -49,6 +49,7 @@ class PlanController extends Controller implements HasMiddleware
             new Middleware('permission:plan-create', only: ['create', 'store']),
             new Middleware('permission:plan-edit', only: ['edit', 'update']),
             new Middleware('permission:plan-delete', only: ['destroy']),
+            new Middleware('permission:plan-details', only: ['show']),
             new Middleware('permission:plan-status', only: ['status']),
             new Middleware('permission:plan-trash', only: ['trash']),
             new Middleware('permission:plan-restore', only: ['restore']),
@@ -96,7 +97,7 @@ class PlanController extends Controller implements HasMiddleware
                 'data-id' => encrypt($model->id),
                 'className' => 'view',
                 'label' => 'Details',
-                'permissions' => ['permission-list', 'permission-delete', 'permission-status']
+                'permissions' => ['permission-details']
             ],
             [
                 'routeName' => 'pm.plan.edit',

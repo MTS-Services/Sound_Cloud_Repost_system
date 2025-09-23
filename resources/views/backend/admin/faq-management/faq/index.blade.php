@@ -10,10 +10,10 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Faq List') }}</h2>
                 <div class="flex items-center gap-2">
-                    <x-button href="{{ route('fm.faq.trash') }}" icon="trash-2" type='secondary' permission="Faq-trash">
+                    <x-button href="{{ route('fm.faq.trash') }}" icon="trash-2" type='secondary' permission="faq-trash">
                         {{ __('Trash') }}
                     </x-button>
-                    <x-button href="{{ route('fm.faq.create') }}" icon="plus" permission="Faq-create">
+                    <x-button href="{{ route('fm.faq.create') }}" icon="plus" permission="faq-create">
                         {{ __('Add') }}
                     </x-button>
                 </div>
