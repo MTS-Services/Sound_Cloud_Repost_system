@@ -238,7 +238,8 @@ class Dashboard extends Component
             ->orWhere('status', RepostRequest::STATUS_DECLINE)
             ->count();
 
-        $this->repostRequests = RepostRequest::where('target_user_urn', user()->urn)
+        $this->repostRequests = RepostRequest::where('target_user_urn', user()->urn)->where('status', RepostRequest::STATUS_PENDING)
+            ->where('expired_at', '>', now())
             ->with(['track', 'requester'])
             ->latest()
             ->take(5)
