@@ -15,8 +15,6 @@ class Analytics extends Component
 {
     use WithPagination;
 
-    public bool $showGrowthTips = false;
-    public bool $showFilters = false;
     public bool $isLoading = false;
 
     #[Url]
@@ -50,7 +48,10 @@ class Analytics extends Component
     {
         $this->filterOptions = $this->analyticsService->getFilterOptions();
         $this->userGenres = $this->fetchUserGenres();
-        $this->selectedGenres = request()->query('selectedGenres', ['']);
+        $this->selectedGenres = request()->query('selectedGenres', ['Any Genre']);
+        $this->startDate = request()->query('startDate', '');
+        $this->endDate = request()->query('endDate', '');
+        $this->filter = request()->query('filter', 'last_week');        
         $this->loadData();
         $this->loadAdditionalData();
         $this->getChartData();
@@ -68,25 +69,6 @@ class Analytics extends Component
             ->toArray();
     }
 
-    public function updatedFilter()
-    {
-        $this->handleFilterChange();
-    }
-
-    public function updatedStartDate()
-    {
-        if ($this->filter === 'date_range') {
-            $this->handleFilterChange();
-        }
-    }
-
-    public function updatedEndDate()
-    {
-        if ($this->filter === 'date_range') {
-            $this->handleFilterChange();
-        }
-    }
-
     /**
      * Handle filter changes with full page reload effect
      */
@@ -94,10 +76,6 @@ class Analytics extends Component
     {
         $this->resetErrorBag();
         $this->resetPage();
-
-        if ($this->filter === 'date_range') {
-            $this->showFilters = true;
-        }
 
         // Start loading state
         $this->isLoading = true;
@@ -412,27 +390,10 @@ class Analytics extends Component
         }
 
         $this->resetPage();
-        $this->showFilters = false;
 
         // Trigger the same reload mechanism
         $this->handleFilterChange();
     }
-
-    /**
-     * Reset all filters with full page reload
-     */
-    public function resetFilters()
-    {
-        $this->selectedGenres = ['Any Genre'];
-        $this->filter = 'last_week';
-        $this->startDate = '';
-        $this->endDate = '';
-        $this->resetPage();
-
-        // Trigger the same reload mechanism
-        $this->handleFilterChange();
-    }
-
     /**
      * Get filter text for display
      */

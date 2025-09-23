@@ -26,8 +26,8 @@
     </div> --}}
 
     <div x-data="{
-        showGrowthTips: @entangle('showGrowthTips').live,
-        showFilters: @entangle('showFilters').live,
+        showGrowthTips: false,
+        showFilters: false,
         selectedFilter: '{{ $filter }}',
         dataCache: {{ Js::from($dataCache) }},
         displayedData: null,
@@ -377,7 +377,6 @@
                             <option value="last_year">Last Year</option>
                             <option value="date_range">Custom Range</option>
                         </select> --}}
-
                         <div x-data="{
                             open: false,
                             filter: @entangle('filter'),
@@ -389,11 +388,11 @@
                                 'last_year': 'Last Year',
                                 'date_range': 'Custom Range'
                             }
-                        }" class="relative w-full sm:w-auto">
+                        }" class="relative w-full">
 
                             <!-- Dropdown button -->
                             <button @click="open = !open" :disabled="isLoading"
-                                class="w-full sm:w-auto px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm font-medium focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35] transition-all duration-200 flex justify-between items-center space-x-2">
+                                class="w-full sm:w-auto px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm font-medium focus:ring-2 focus:ring-[#ff6b35] focus:border-[#ff6b35] transition-all duration-200 flex justify-between items-center space-x-2 text-nowrap">
                                 <span x-text="options[filter] || 'Select an option'"></span>
                                 <!-- Dropdown arrow icon -->
                                 <svg class="w-4 h-4 text-gray-400 transform transition-transform duration-200"
@@ -401,8 +400,9 @@
                                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M19 9l-7 7-7-7"></path>
-                                </svg> 
+                                </svg>
                             </button>
+
 
                             <!-- Dropdown menu -->
                             <div x-show="open" @click.outside="open = false"
@@ -412,38 +412,43 @@
                                 x-transition:leave="transition ease-in duration-150"
                                 x-transition:leave-start="opacity-100 scale-100"
                                 x-transition:leave-end="opacity-0 scale-95"
-                                class="absolute z-10 mt-2 w-full sm:w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                class="absolute z-10 mt-2 w-40 right-0 rounded-md shadow-lg bg-white dark:bg-gray-800 focus:outline-none">
                                 <div class="py-1" role="menu" aria-orientation="vertical"
                                     aria-labelledby="options-menu">
                                     <!-- Dropdown options -->
-                                    <button
-                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md"
+
+                                    {{-- form request() if the current url have any query then set the query and if have filter query then replace ir or set the filter --}}
+                                    <a href="{{ request()->fullUrlWithQuery(['filter' => 'daily']) }}" wire:navigate
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md text-nowrap"
                                         role="menuitem" @click="filter = 'daily'; open = false;">
                                         Today
-                                    </button>
-                                    <button
-                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md"
+                                    </a>
+                                    <a href="{{ request()->fullUrlWithQuery(['filter' => 'last_week']) }}" wire:navigate
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md text-nowrap"
                                         role="menuitem" @click="filter = 'last_week'; open = false;">
                                         Last 7 Days
-                                    </button>
-                                    <button
-                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md"
+                                    </a>
+                                    <a href="{{ request()->fullUrlWithQuery(['filter' => 'last_month']) }}"
+                                        wire:navigate
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md text-nowrap"
                                         role="menuitem" @click="filter = 'last_month'; open = false;">
                                         Last 30 Days
-                                    </button>
-                                    <button
-                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md"
+                                    </a>
+                                    <a href="{{ request()->fullUrlWithQuery(['filter' => 'last_90_days']) }}"
+                                        wire:navigate
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md text-nowrap"
                                         role="menuitem" @click="filter = 'last_90_days'; open = false;">
                                         Last 90 Days
-                                    </button>
-                                    <button
-                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md"
+                                    </a>
+                                    <a href="{{ request()->fullUrlWithQuery(['filter' => 'last_year']) }}" wire:navigate
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md text-nowrap"
                                         role="menuitem" @click="filter = 'last_year'; open = false;">
                                         Last Year
-                                    </button>
+                                    </a>
                                     <button
                                         class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 rounded-md"
-                                        role="menuitem" @click="filter = 'date_range'; open = false;">
+                                        role="menuitem"
+                                        @click="filter = 'date_range'; open = false; showFilters = true; showGrowthTips = false">
                                         Custom Range
                                     </button>
                                 </div>
@@ -635,22 +640,11 @@
                 </div>
             </div>
             <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-600">
-                <button wire:click="resetFilters"
+                <a href="{{ route('user.analytics') }}" wire:navigate
                     class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                     x-bind:disabled="isLoading">
-                    <span x-show="!isLoading">Reset</span>
-                    <span x-show="isLoading" class="flex items-center">
-                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
-                            fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                            </path>
-                        </svg>
-                        Resetting...
-                    </span>
-                </button>
+                    <span>Reset</span>
+                </a>
                 <button wire:click="applyFilters"
                     class="px-4 py-2 bg-[#ff6b35] text-white rounded-lg text-sm font-medium hover:bg-[#ff8c42] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     x-bind:disabled="isLoading">

@@ -55,9 +55,9 @@
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">
-                                <button wire:click="refresh"
+                                <a href="{{ route('user.charts') }}" wire:navigate
                                     class="flex items-center gap-2 bg-gray-200 hover:bg-white dark:bg-gray-800 dark:hover:bg-gray-700 px-4 py-2 rounded-xl transition-all duration-200 font-medium border dark:border-gray-700 text-gray-900 dark:text-white">
-                                    <span wire:loading.remove wire:target="refresh">
+                                  
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round"
@@ -66,25 +66,12 @@
                                             <path d="M21 3v5h-5"></path>
                                             <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
                                             <path d="M8 16H3v5"></path>
-                                        </svg>
-                                    </span>
-                                    <span wire:loading wire:target="refresh" class="animate-spin">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-refresh-cw w-4 h-4">
-                                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
-                                            <path d="M21 3v5h-5"></path>
-                                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
-                                            <path d="M8 16H3v5"></path>
-                                        </svg>
-                                    </span>
+                                        </svg>                               
                                     <span class="hidden sm:inline" wire:loading.remove
                                         wire:target="refresh">Refresh</span>
-                                    <span class="hidden sm:inline" wire:loading
-                                        wire:target="refresh">Refreshing...</span>
+                                   
 
-                                </button>
+                                </a>
                                 <button
                                     class="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-xl transition-all duration-200 font-medium">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
