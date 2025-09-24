@@ -40,7 +40,7 @@
                         Credits</span>
                 </div>
                 <div class="flex items-center space-x-3 p-2 border border-gray-200 dark:border-gray-600 rounded-md">
-                    <img src="{{ soundcloud_image($request->music?->artwork_url) }}" alt="Track Cover"
+                    <img src="{{ auth_storage_url($request->music?->user?->avatar) }}" alt="Track Cover"
                         class="w-12 h-12 rounded-md object-cover">
                     <div>
                         <p class="text-sm font-medium text-gray-900 dark:text-gray-100">
