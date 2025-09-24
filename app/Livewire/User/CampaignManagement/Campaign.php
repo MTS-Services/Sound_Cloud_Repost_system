@@ -191,7 +191,7 @@ class Campaign extends Component
     public $campaign = null;
     public $liked = false;
     public $commented = null;
-    public $following = true;
+    public $followed = true;
     public $alreadyFollowing = false;
 
     public $showSubmitModal = false;
@@ -871,7 +871,7 @@ class Campaign extends Component
         //     'showRepostConfirmationModal',
         //     'commented',
         //     'liked',
-        //     'following',
+        //     'followed',
         // ]);
         $this->reset();
         $this->handleAudioPlay($campaignId);
@@ -930,7 +930,7 @@ class Campaign extends Component
             //     'showRepostConfirmationModal',
             //     'commented',
             //     'liked',
-            //     'following',
+            //     'followed',
             // ]);
         }
         return $canRepost;
@@ -973,9 +973,9 @@ class Campaign extends Component
         $response = $this->soundCloudService->getAuthUserFollowers($this->campaign->music->user);
         if ($response->isNotEmpty()) {
             $already_following = $response->where('urn', user()->urn)->first();
-            Log::info('Repost request Page:- Already following: ' . $already_following['urn'] ?? 'null');
             if ($already_following !== null) {
-                $this->following = false;
+                Log::info('Repost request Page:- Already following');
+                $this->followed = false;
                 $this->alreadyFollowing = true;
             }
         }
@@ -1042,7 +1042,7 @@ class Campaign extends Component
                     if ($this->liked) {
                         $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$musicUrn}");
                     }
-                    if ($this->following) {
+                    if ($this->followed) {
                         $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
                     }
                     break;
@@ -1054,7 +1054,7 @@ class Campaign extends Component
                     if ($this->commented) {
                         $comment_response = $httpClient->post("{$this->baseUrl}/playlists/{$musicUrn}/comments", $commentSoundcloud);
                     }
-                    if ($this->following) {
+                    if ($this->followed) {
                         $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->music?->user?->urn}");
                     }
                     break;
@@ -1065,7 +1065,7 @@ class Campaign extends Component
             $data = [
                 'likeable' => $like_response ? $this->liked : false,
                 'comment' => $comment_response ? $this->commented : false,
-                'follow' => $follow_response ? $this->following : false
+                'follow' => $follow_response ? $this->followed : false
             ];
             if ($response->successful()) {
                 $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
@@ -1085,7 +1085,7 @@ class Campaign extends Component
                 $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.');
                 $this->reset([
                     'liked',
-                    'following',
+                    'followed',
                     'commented',
                 ]);
             } else {
