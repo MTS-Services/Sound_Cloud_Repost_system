@@ -171,7 +171,7 @@ class Analytics extends Component
      */
     private function loadAdditionalData()
     {
-        try {
+        // try {
             $dateRange = $this->getDateRange();
 
             if ($dateRange === false) {
@@ -185,10 +185,10 @@ class Analytics extends Component
                 dateRange: $dateRange
             );
 
-            $this->genreBreakdown = $this->analyticsService->getGenreBreakdown($this->filter, $dateRange, $this->userGenres);
-        } catch (\Exception $e) {
-            logger()->error('Additional data loading failed', ['error' => $e->getMessage()]);
-        }
+            $this->genreBreakdown = $this->analyticsService->getGenreBreakdown($this->filter, $dateRange, null, $this->userGenres);
+        // } catch (\Exception $e) {
+        //     logger()->error('Additional data loading failed', ['error' => $e->getMessage()]);
+        // }
     }
 
     /**

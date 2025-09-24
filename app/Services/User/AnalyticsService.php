@@ -944,7 +944,7 @@ class AnalyticsService
     /**
      * Get genre performance breakdown
      */
-    public function   getGenreBreakdown(?string $filter = 'last_week', ?array $dateRange = null, ?array $genres = null): array
+    public function getGenreBreakdown(?string $filter = 'last_week', ?array $dateRange = null, ?array $genres = null, ?array $userGenres = null): array
     {
         $userUrn = user()->urn;
 
@@ -953,9 +953,16 @@ class AnalyticsService
         $query = UserAnalytics::where('owner_user_urn', $userUrn)
             ->whereDate('created_at', '>=', $periods['current']['start']->format('Y-m-d'))
             ->whereDate('created_at', '<=', $periods['current']['end']->format('Y-m-d'));
+
+        // Check if a genre filter is applied and apply it
         if ($genres && !in_array('Any Genre', $genres)) {
             $query->forGenres($genres);
         }
+        // If userGenres are passed, filter the query by them
+        if ($userGenres && !in_array('Any Genre', $userGenres)) {
+            $query->forGenres($userGenres);
+        }
+
         $genreData = $query->select([
             'genre',
             DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 END) as total_views'),
@@ -967,27 +974,51 @@ class AnalyticsService
         ])
             ->groupBy('genre')
             ->whereNotNull('genre')
-            ->orderByDesc('total_views')
-            ->orderByDesc('total_streams')
-            ->orderByDesc('total_likes')
-            ->orderByDesc('total_reposts')
-            ->orderByDesc('total_followers')
             ->get();
 
-        $genreDataWithAvg = $genreData->map(function ($item) {
-            return [
-                'genre' => $item->genre,
-                'streams' => $item->total_streams,
-                'avg_total' => ($item->total_likes + $item->total_reposts + $item->total_followers + $item->total_streams + $item->total_comments) / 5,
-            ];
-        });
+        // Convert the query results to a collection keyed by genre name for easy lookup
+        $genreDataMap = $genreData->keyBy('genre');
 
-        // 2. Sum up all the 'avg_total' values to get the total for the pie chart
-        $totalAvgSum = $genreDataWithAvg->sum('avg_total');
+        $finalGenreData = collect();
 
-        // 3. Map again to calculate the final percentages based on the new total sum
-        $genreDataWithPercentage = $genreDataWithAvg->map(function ($item) use ($totalAvgSum) {
-            // Handle division by zero
+        // Iterate through the full list of genres provided by the user
+        // This is the key change that ensures all genres are included
+        if ($userGenres) {
+            foreach ($userGenres as $userGenre) {
+                // Find the analytics data for the current genre
+                $dataItem = $genreDataMap->get($userGenre);
+                if ($dataItem) {
+                    // If data exists, use the counts from the database
+                    $finalGenreData->push([
+                        'genre' => $userGenre,
+                        'streams' => $dataItem->total_streams,
+                        'avg_total' => ($dataItem->total_likes + $dataItem->total_reposts + $dataItem->total_followers + $dataItem->total_streams + $dataItem->total_comments) / 5,
+                    ]);
+                } else {
+                    // If no data exists for this genre, add it with all metrics as 0
+                    $finalGenreData->push([
+                        'genre' => $userGenre,
+                        'streams' => 0,
+                        'avg_total' => 0,
+                    ]);
+                }
+            }
+        } else {
+            // Fallback: If no userGenres are provided, just use the data from the query
+            $finalGenreData = $genreData->map(function ($item) {
+                return [
+                    'genre' => $item->genre,
+                    'streams' => $item->total_streams,
+                    'avg_total' => ($item->total_likes + $item->total_reposts + $item->total_followers + $item->total_streams + $item->total_comments) / 5,
+                ];
+            });
+        }
+
+        // Now, calculate the total sum from the complete dataset
+        $totalAvgSum = $finalGenreData->sum('avg_total');
+
+        // Calculate final percentages
+        $genreDataWithPercentage = $finalGenreData->map(function ($item) use ($totalAvgSum) {
             $percentage = ($totalAvgSum > 0) ? round(($item['avg_total'] / $totalAvgSum) * 100, 2) : 0;
             return [
                 'genre' => $item['genre'],
@@ -996,13 +1027,20 @@ class AnalyticsService
             ];
         })->toArray();
 
-        // Check if total percentage is 100% and adjust if necessary due to rounding errors
+        // Adjust for rounding errors
         $totalPercentage = collect($genreDataWithPercentage)->sum('percentage');
         if (count($genreDataWithPercentage) > 0 && abs(100 - $totalPercentage) > 0.01) {
-            // Adjust the first or largest slice to make the total exactly 100
+            usort($genreDataWithPercentage, function ($a, $b) {
+                return $b['percentage'] <=> $a['percentage'];
+            });
             $adjustment = 100 - $totalPercentage;
             $genreDataWithPercentage[0]['percentage'] = round($genreDataWithPercentage[0]['percentage'] + $adjustment, 2);
         }
+
+        // Sort the final array by percentage to match the chart order
+        usort($genreDataWithPercentage, function ($a, $b) {
+            return $b['percentage'] <=> $a['percentage'];
+        });
         return $genreDataWithPercentage;
     }
 }

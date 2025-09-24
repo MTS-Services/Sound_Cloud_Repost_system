@@ -218,7 +218,7 @@ class Dashboard extends Component
         $this->loadDashboardData();
         $this->calculateFollowersLimit();
         $this->userGenres = user()->genres->pluck('genre')->toArray();
-        $this->genreBreakdown = $this->analyticsService->getGenreBreakdown('last_month', null, $this->userGenres);
+        $this->genreBreakdown = $this->analyticsService->getGenreBreakdown('last_month', null, null, $this->userGenres);
     }
 
 
