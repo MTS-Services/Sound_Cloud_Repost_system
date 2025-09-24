@@ -536,7 +536,7 @@
                                             <span
                                                 class="ml-2 text-xs text-gray-400">{{ $music->genre ?? 'No Genre' }}.</span>
                                             <strong
-                                                class="text-orange-600 dark:text-orange-400">{{ $music->author_username }}</strong>
+                                                class="text-orange-600 dark:text-orange-400">{{ $music->title }}</strong>
                                         </p>
                                         <span
                                             class="inline-block bg-gray-100 dark:bg-slate-600 text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 mt-2 font-mono">{{ $music->isrc }}</span>

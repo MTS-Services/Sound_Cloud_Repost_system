@@ -379,6 +379,7 @@ class Member extends Component
     public function openRepostsModal(string $type, int $musicId)
     {
         $this->blockMismatchGenre = UserSetting::where('user_urn', $this->user->urn)->value('block_mismatch_genre');
+        $this->reset(['music']);
         if ($type === 'playlist') {
             $playlist = $this->playlistService->getPlaylist(encrypt($musicId), 'id');
             $playlistGenre = $playlist->genre;
