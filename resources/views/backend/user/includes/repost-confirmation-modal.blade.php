@@ -50,11 +50,12 @@
                 <div class="space-y-2">
                     <label class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
-                            <input type="checkbox" wire:model.live="followed"
-                                {{ $alreadyFollowing ? 'checked disabled' : '' }}
-                                class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 {{ $alreadyFollowing ? 'cursor-not-allowed bg-gray-100' : '' }}">
+                            @if (!$alreadyFollowing)
+                                <input type="checkbox" wire:model.live="followed"
+                                    class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                            @endif
                             <label class="text-sm text-gray-800 dark:text-gray-200">
-                                {{ $alreadyFollowing ? 'You are already following this user' : 'Follow' }}
+                                {{ $alreadyFollowing ? 'You are already following' : 'Follow' }}
                                 <span
                                     class="font-semibold text-orange-500">{{ $campaign->music?->user?->name }}</span></label>
                         </div>

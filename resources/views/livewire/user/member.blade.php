@@ -571,15 +571,18 @@
 
                                     <div class="relative flex items-start group">
                                         <div class="flex h-5 items-center">
-                                            <input id="following" name="following" type="checkbox"
-                                                wire:model="following"
-                                                {{ $alreadyFollowing ? 'checked disabled' : '' }}
-                                                class="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-red-500 {{ $alreadyFollowing ? 'cursor-not-allowed bg-gray-100' : '' }}" />
+                                            @if ($alreadyFollowing)
+                                                <input id="following" name="following" type="checkbox"
+                                                    wire:model="following"
+                                                    class="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-red-500">
+                                            @endif
                                         </div>
                                         <div class="ml-3 text-sm">
-                                            <label for="following" class="font-medium text-orange-600"
-                                                title="{{ $alreadyFollowing ? 'You are already following this user' : 'Check to follow' }}">
-                                                Follow {{ $user->name }}
+                                            <label for="following" class="font-medium">
+                                                <span class="text-orange-600">
+                                                    {{ $alreadyFollowing ? 'You are already following' : 'Follow' }}
+                                                </span>
+                                                {{ $user->name }}
                                             </label>
                                         </div>
                                     </div>
