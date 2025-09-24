@@ -316,6 +316,159 @@ class AnalyticsService
     // }
 
 
+    // public function getPaginatedAnalytics(
+    //     string $filter = 'last_week',
+    //     ?array $dateRange = null,
+    //     ?array $genres = null,
+    //     int $perPage = 10,
+    //     int $page = 1,
+    //     ?string $pageName = 'page',
+    //     ?string $userUrn = null,
+    //     ?string $actionableType = null
+    // ): LengthAwarePaginator {
+    //     $periods = $this->calculatePeriods($filter, $dateRange);
+
+    //     // Build the base query for aggregated track data
+    //     $query = UserAnalytics::query();
+
+    //     if ($userUrn !== null) {
+    //         $query->where('owner_user_urn', $userUrn);
+    //     }
+
+    //     if ($actionableType !== null) {
+    //         $query->where('actionable_type', $actionableType);
+    //     }
+
+    //     $query->whereDate('created_at', '>=', $periods['current']['start']->format('Y-m-d'))
+    //         ->whereDate('created_at', '<=', $periods['current']['end']->format('Y-m-d'));
+
+    //     if ($genres && !in_array('Any Genre', $genres)) {
+    //         $query->forGenres($genres);
+    //     }
+
+    //     $query->select([
+    //         'source_id',
+    //         'source_type',
+    //         'actionable_id',
+    //         'actionable_type',
+    //         'act_user_urn',
+    //         'owner_user_urn',
+    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 END) as total_views'),
+    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_plays'),
+    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_likes'),
+    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 END) as total_reposts'),
+    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_COMMENT . ' THEN 1 END) as total_comments'),
+    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REQUEST . ' THEN 1 END) as total_requests'),
+    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 END) as total_followers'),
+    //     ]);
+
+    //     // Apply groupBy and orderBy, then paginate directly from the query builder
+    //     $paginatedSourceData = $query->groupBy('source_id', 'source_type', 'actionable_id', 'actionable_type', 'act_user_urn', 'owner_user_urn')
+    //         ->orderByDesc('total_views')
+    //         ->orderByDesc('total_reposts')
+    //         ->paginate($perPage, ['*'], $pageName, $page);
+    //     // Get the list of source IDs for the current page
+    //     $sourceIdsList = $paginatedSourceData->pluck('source_id')->toArray();
+
+    //     // Fetch current and previous period data for only the paginated IDs
+    //     $currentData = $this->fetchAnalyticsData(
+    //         $userUrn,
+    //         $periods['current']['start'],
+    //         $periods['current']['end'],
+    //         $genres,
+    //         null,
+    //         $actionableType
+    //     )->whereIn('source_id', $sourceIdsList);
+
+    //     $previousData = $this->fetchAnalyticsData(
+    //         $userUrn,
+    //         $periods['previous']['start'],
+    //         $periods['previous']['end'],
+    //         $genres,
+    //         null,
+    //         $actionableType
+    //     )->whereIn('source_id', $sourceIdsList);
+
+    //     $currentMetricsBySource = $this->calculateMetricsBySource($currentData);
+    //     $previousMetricsBySource = $this->calculateMetricsBySource($previousData);
+
+    //     // Re-key the arrays with the correct source_id to avoid "Undefined array key" errors
+    //     $currentMetricsBySource = collect($currentMetricsBySource)->mapWithKeys(function ($value, $key) {
+    //         $decodedKey = json_decode($key, true);
+    //         return [$decodedKey['id'] => $value];
+    //     })->toArray();
+
+    //     $previousMetricsBySource = collect($previousMetricsBySource)->mapWithKeys(function ($value, $key) {
+    //         $decodedKey = json_decode($key, true);
+    //         return [$decodedKey['id'] => $value];
+    //     })->toArray();
+
+    //     $analytics = $this->buildComparisonResultBySource($currentMetricsBySource, $previousMetricsBySource);
+
+    //     return new LengthAwarePaginator(
+    //         $analytics,
+    //         $paginatedSourceData->total(),
+    //         $paginatedSourceData->perPage(),
+    //         $paginatedSourceData->currentPage(),
+    //         [
+    //             'path' => request()->url(),
+    //             'pageName' => $pageName,
+    //         ]
+    //     );
+
+    //     // Use the paginator's 'through' method to transform the data
+    //     // This keeps the pagination intact while adding the detailed analytics
+    //     // return $paginatedSourceData->through(function ($source) use ($currentMetricsBySource, $previousMetricsBySource) {
+    //     //     $sourceId = $source->source_id;
+
+    //     //     $currentMetrics = $currentMetricsBySource[$sourceId] ?? [
+    //     //         'source_type' => $source->source_type,
+    //     //         'source_details' => $source->source_details,
+    //     //         'actionable_details' => $source->actionable_details,
+    //     //         'metrics' => [
+    //     //             'total_reposts' => 0,
+    //     //             'total_likes' => 0,
+    //     //             'total_comments' => 0,
+    //     //             'total_requests' => 0,
+    //     //             'total_followers' => 0,
+    //     //             'total_views' => 0,
+    //     //         ],
+    //     //     ];
+
+    //     //     $previousMetrics = $previousMetricsBySource[$sourceId] ?? [
+    //     //         'source_type' => $source->source_type,
+    //     //         'source_details' => $source->source_details,
+    //     //         'actionable_details' => $source->actionable_details,
+    //     //         'metrics' => [
+    //     //             'total_reposts' => 0,
+    //     //             'total_likes' => 0,
+    //     //             'total_comments' => 0,
+    //     //             'total_requests' => 0,
+    //     //             'total_followers' => 0,
+    //     //             'total_views' => 0,
+    //     //         ]
+    //     //     ];
+
+    //     //     $result = [
+    //     //         'source_id' => $sourceId,
+    //     //         'metrics' => [
+    //     //             'current' => $currentMetrics,
+    //     //             'previous' => $previousMetrics,
+    //     //             'growth' => [
+    //     //                 'views_growth' => $this->getGrowthPercentage($currentMetrics['metrics']['total_views'], $previousMetrics['metrics']['total_views']),
+    //     //                 'reposts_growth' => $this->getGrowthPercentage($currentMetrics['metrics']['total_reposts'], $previousMetrics['metrics']['total_reposts']),
+    //     //                 'likes_growth' => $this->getGrowthPercentage($currentMetrics['metrics']['total_likes'], $previousMetrics['metrics']['total_likes']),
+    //     //                 'comments_growth' => $this->getGrowthPercentage($currentMetrics['metrics']['total_comments'], $previousMetrics['metrics']['total_comments']),
+    //     //                 'requests_growth' => $this->getGrowthPercentage($currentMetrics['metrics']['total_requests'], $previousMetrics['metrics']['total_requests']),
+    //     //                 'followers_growth' => $this->getGrowthPercentage($currentMetrics['metrics']['total_followers'], $previousMetrics['metrics']['total_followers']),
+    //     //             ],
+    //     //         ]
+    //     //     ];
+
+    //     //     return $result;
+    //     // });
+    // }
+
     public function getPaginatedAnalytics(
         string $filter = 'last_week',
         ?array $dateRange = null,
@@ -328,49 +481,7 @@ class AnalyticsService
     ): LengthAwarePaginator {
         $periods = $this->calculatePeriods($filter, $dateRange);
 
-        // Build the base query for aggregated track data
-        $query = UserAnalytics::query();
-
-        if ($userUrn !== null) {
-            $query->where('owner_user_urn', $userUrn);
-        }
-
-        if ($actionableType !== null) {
-            $query->where('actionable_type', $actionableType);
-        }
-
-        $query->whereDate('created_at', '>=', $periods['current']['start']->format('Y-m-d'))
-            ->whereDate('created_at', '<=', $periods['current']['end']->format('Y-m-d'));
-
-        if ($genres && !in_array('Any Genre', $genres)) {
-            $query->forGenres($genres);
-        }
-
-        $query->select([
-            'source_id',
-            'source_type',
-            'actionable_id',
-            'actionable_type',
-            'act_user_urn',
-            'owner_user_urn',
-            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 END) as total_views'),
-            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_plays'),
-            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_likes'),
-            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 END) as total_reposts'),
-            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_COMMENT . ' THEN 1 END) as total_comments'),
-            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REQUEST . ' THEN 1 END) as total_requests'),
-            DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 END) as total_followers'),
-        ]);
-
-        // Apply groupBy and orderBy, then paginate directly from the query builder
-        $paginatedSourceData = $query->groupBy('source_id', 'source_type', 'actionable_id', 'actionable_type', 'act_user_urn', 'owner_user_urn')
-            ->orderByDesc('total_views')
-            ->orderByDesc('total_reposts')
-            ->paginate($perPage, ['*'], $pageName, $page);
-        // Get the list of source IDs for the current page
-        $sourceIdsList = $paginatedSourceData->pluck('source_id')->toArray();
-
-        // Fetch current and previous period data for only the paginated IDs
+        // Fetch ALL relevant current and previous data without paginating first
         $currentData = $this->fetchAnalyticsData(
             $userUrn,
             $periods['current']['start'],
@@ -378,7 +489,7 @@ class AnalyticsService
             $genres,
             null,
             $actionableType
-        )->whereIn('source_id', $sourceIdsList);
+        );
 
         $previousData = $this->fetchAnalyticsData(
             $userUrn,
@@ -387,86 +498,30 @@ class AnalyticsService
             $genres,
             null,
             $actionableType
-        )->whereIn('source_id', $sourceIdsList);
+        );
 
+        // Calculate metrics for the full dataset
         $currentMetricsBySource = $this->calculateMetricsBySource($currentData);
         $previousMetricsBySource = $this->calculateMetricsBySource($previousData);
 
-        // Re-key the arrays with the correct source_id to avoid "Undefined array key" errors
-        $currentMetricsBySource = collect($currentMetricsBySource)->mapWithKeys(function ($value, $key) {
-            $decodedKey = json_decode($key, true);
-            return [$decodedKey['id'] => $value];
-        })->toArray();
-
-        $previousMetricsBySource = collect($previousMetricsBySource)->mapWithKeys(function ($value, $key) {
-            $decodedKey = json_decode($key, true);
-            return [$decodedKey['id'] => $value];
-        })->toArray();
-
+        // Build the full, unpaginated comparison result
         $analytics = $this->buildComparisonResultBySource($currentMetricsBySource, $previousMetricsBySource);
 
+        // Manually create a paginator from the full collection
+        $total = $analytics->count();
+        $paginatedResults = $analytics->forPage($page, $perPage);
+
+        // Return the new LengthAwarePaginator instance
         return new LengthAwarePaginator(
-            $analytics,
-            $paginatedSourceData->total(),
-            $paginatedSourceData->perPage(),
-            $paginatedSourceData->currentPage(),
+            $paginatedResults,
+            $total,
+            $perPage,
+            $page,
             [
-                'path' => request()->url(),
+                'path' => LengthAwarePaginator::resolveCurrentPath(),
                 'pageName' => $pageName,
             ]
         );
-
-        // Use the paginator's 'through' method to transform the data
-        // This keeps the pagination intact while adding the detailed analytics
-        // return $paginatedSourceData->through(function ($source) use ($currentMetricsBySource, $previousMetricsBySource) {
-        //     $sourceId = $source->source_id;
-
-        //     $currentMetrics = $currentMetricsBySource[$sourceId] ?? [
-        //         'source_type' => $source->source_type,
-        //         'source_details' => $source->source_details,
-        //         'actionable_details' => $source->actionable_details,
-        //         'metrics' => [
-        //             'total_reposts' => 0,
-        //             'total_likes' => 0,
-        //             'total_comments' => 0,
-        //             'total_requests' => 0,
-        //             'total_followers' => 0,
-        //             'total_views' => 0,
-        //         ],
-        //     ];
-
-        //     $previousMetrics = $previousMetricsBySource[$sourceId] ?? [
-        //         'source_type' => $source->source_type,
-        //         'source_details' => $source->source_details,
-        //         'actionable_details' => $source->actionable_details,
-        //         'metrics' => [
-        //             'total_reposts' => 0,
-        //             'total_likes' => 0,
-        //             'total_comments' => 0,
-        //             'total_requests' => 0,
-        //             'total_followers' => 0,
-        //             'total_views' => 0,
-        //         ]
-        //     ];
-
-        //     $result = [
-        //         'source_id' => $sourceId,
-        //         'metrics' => [
-        //             'current' => $currentMetrics,
-        //             'previous' => $previousMetrics,
-        //             'growth' => [
-        //                 'views_growth' => $this->getGrowthPercentage($currentMetrics['metrics']['total_views'], $previousMetrics['metrics']['total_views']),
-        //                 'reposts_growth' => $this->getGrowthPercentage($currentMetrics['metrics']['total_reposts'], $previousMetrics['metrics']['total_reposts']),
-        //                 'likes_growth' => $this->getGrowthPercentage($currentMetrics['metrics']['total_likes'], $previousMetrics['metrics']['total_likes']),
-        //                 'comments_growth' => $this->getGrowthPercentage($currentMetrics['metrics']['total_comments'], $previousMetrics['metrics']['total_comments']),
-        //                 'requests_growth' => $this->getGrowthPercentage($currentMetrics['metrics']['total_requests'], $previousMetrics['metrics']['total_requests']),
-        //                 'followers_growth' => $this->getGrowthPercentage($currentMetrics['metrics']['total_followers'], $previousMetrics['metrics']['total_followers']),
-        //             ],
-        //         ]
-        //     ];
-
-        //     return $result;
-        // });
     }
 
     private function getGrowthPercentage($current, $previous): float
@@ -642,9 +697,43 @@ class AnalyticsService
     //     return $result;
     // }
 
-    private function buildComparisonResultBySource(array $currentMetrics, array $previousMetrics): array
+    // private function buildComparisonResultBySource(array $currentMetrics, array $previousMetrics): array
+    // {
+    //     $result = [];
+    //     $allSources = array_unique(array_merge(array_keys($currentMetrics), array_keys($previousMetrics)));
+
+    //     foreach ($allSources as $source) {
+    //         $current = $currentMetrics[$source] ?? null;
+    //         $previous = $previousMetrics[$source] ?? null;
+
+    //         $sourceDetails = $current['source_details'] ?? $previous['source_details'] ?? null;
+    //         $actionDetails = $current['actionable_details'] ?? $previous['actionable_details'] ?? null;
+
+    //         $sourceResult = [
+    //             'source_type' => $current['source_type'] ?? $previous['source_type'] ?? 'Unknown',
+    //             'source_details' => $sourceDetails,
+    //             'actionable_details' => $actionDetails
+    //         ];
+
+    //         foreach (self::METRICS as $metric) {
+    //             $currentTotal = $current['metrics'][$metric] ?? 0;
+    //             $previousTotal = $previous['metrics'][$metric] ?? 0;
+
+    //             $sourceResult['metrics'][$metric] = [
+    //                 'current_total' => $currentTotal,
+    //                 'previous_total' => $previousTotal,
+    //                 'change_rate' => $this->calculatePercentageChange($currentTotal, $previousTotal)
+    //             ];
+    //         }
+    //         $result[] = $sourceResult;
+    //     }
+
+    //     return $result;
+    // }
+
+    private function buildComparisonResultBySource(array $currentMetrics, array $previousMetrics): Collection
     {
-        $result = [];
+        $result = collect(); // Use a Laravel collection
         $allSources = array_unique(array_merge(array_keys($currentMetrics), array_keys($previousMetrics)));
 
         foreach ($allSources as $source) {
@@ -657,7 +746,8 @@ class AnalyticsService
             $sourceResult = [
                 'source_type' => $current['source_type'] ?? $previous['source_type'] ?? 'Unknown',
                 'source_details' => $sourceDetails,
-                'actionable_details' => $actionDetails
+                'actionable_details' => $actionDetails,
+                'metrics' => [] // Initialize metrics as an empty array
             ];
 
             foreach (self::METRICS as $metric) {
@@ -670,7 +760,7 @@ class AnalyticsService
                     'change_rate' => $this->calculatePercentageChange($currentTotal, $previousTotal)
                 ];
             }
-            $result[] = $sourceResult;
+            $result->push($sourceResult); // Add the item to the collection
         }
 
         return $result;
