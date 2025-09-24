@@ -51,7 +51,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         // Role Routes
         Route::resource('role', RoleController::class);
         Route::controller(RoleController::class)->name('role.')->prefix('role')->group(function () {
-            Route::post('/show/{role}', 'show')->name('show');
+            Route::post('/show/{role}', 'show')->name('details');
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{role}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{role}', 'permanentDelete')->name('permanent-delete');
