@@ -78,15 +78,10 @@ class RepostRequest extends Component
         }
     }
 
-    public function updated($propertyName)
-{
-    $this->soundCloudService->refreshUserTokenIfNeeded(user());
-    
-    // Don't reset component state on certain updates
-    if (!in_array($propertyName, ['activeMainTab'])) {
-        return;
+    public function updated()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
-}
 
     public function updatedActiveMainTab()
     {
@@ -197,7 +192,7 @@ class RepostRequest extends Component
             $this->dispatch('alert', type: 'success', message: 'Request marked as played for 5+ seconds!');
         }
     }
-    public $playCountRecorded = []; // Track per request ID
+
     /**
      * Check if request can be reposted
      */
@@ -206,7 +201,6 @@ class RepostRequest extends Component
         $request = $this->repostRequests->find($requestId);
 
         if (!$request) {
-            Log::warning('Request not found', ['requestId' => $requestId]);
             return false;
         }
 
@@ -219,6 +213,8 @@ class RepostRequest extends Component
             return false;
         }
 
+
+
         // Check if already reposted
         if (in_array($requestId, $this->repostedRequests)) {
             return false;
@@ -227,19 +223,15 @@ class RepostRequest extends Component
         // Must have played for 5+ seconds
         $canRepost = in_array($requestId, $this->playedRequests);
 
-        Log::info('canRepost debug info', [
-            'requestId' => $requestId,
-            'canRepost' => $canRepost,
-            'playedRequests' => $this->playedRequests,
-            'playCountRecorded' => $this->playCountRecorded,
-            'playCountAlreadyRecorded' => isset($this->playCountRecorded[$requestId])
-        ]);
 
-        // Record play analytics when track is played for 5+ seconds (only once per request)
-        if ($canRepost && !isset($this->playCountRecorded[$requestId])) {
-            Log::info('Attempting to record play count', ['requestId' => $requestId]);
+        if ($canRepost && !$this->playCount) {
+            Log::info('Entering playcount logic', ['requestId' => $requestId, 'canRepost' => $canRepost, 'playCount' => $this->playCount]);
+
+            $request = $this->repostRequests->find($requestId);
 
             if ($request && $request->music) {
+                Log::info('Request and music found', ['requestId' => $requestId]);
+
                 try {
                     // Record analytics for the play
                     $response = $this->analyticsService->recordAnalytics(
@@ -249,41 +241,31 @@ class RepostRequest extends Component
                         genre: $request->music->genre ?? 'anyGenre'
                     );
 
-                    Log::info('Analytics response', [
-                        'requestId' => $requestId,
-                        'response' => $response,
-                        'responseType' => gettype($response)
-                    ]);
+                    Log::info('Analytics response', ['requestId' => $requestId, 'response' => $response]);
 
                     // Only increment if analytics recording was successful
                     if ($response !== false && $response !== null) {
                         $request->increment('playback_count');
                         Log::info('Playback count incremented', ['requestId' => $requestId]);
                     } else {
-                        Log::warning('Analytics recording failed or returned null/false', ['requestId' => $requestId]);
+                        Log::warning('Analytics failed - no increment', ['requestId' => $requestId, 'response' => $response]);
                     }
 
-                    // Mark this specific request as recorded (regardless of success)
-                    $this->playCountRecorded[$requestId] = true;
+                    $this->playCount = true;
                 } catch (\Exception $e) {
                     Log::error('Analytics recording failed for repost request', [
                         'requestId' => $requestId,
-                        'error' => $e->getMessage(),
-                        'trace' => $e->getTraceAsString()
+                        'error' => $e->getMessage()
                     ]);
 
-                    // Still mark as recorded to prevent retries
-                    $this->playCountRecorded[$requestId] = true;
+                    $this->playCount = true;
                 }
             } else {
-                Log::warning('Request or music not found', [
-                    'requestId' => $requestId,
-                    'hasRequest' => !!$request,
-                    'hasMusic' => $request ? !!$request->music : false
-                ]);
+                Log::warning('Request or music not found', ['requestId' => $requestId, 'hasRequest' => !!$request, 'hasMusic' => $request ? !!$request->music : false]);
             }
+        } else {
+            Log::info('Playcount condition not met', ['requestId' => $requestId, 'canRepost' => $canRepost, 'playCount' => $this->playCount]);
         }
-
         return $canRepost;
     }
 
@@ -454,9 +436,6 @@ class RepostRequest extends Component
         }
         // Order by created_at desc and paginate
         $this->repostRequests = $query->orderBy('status', 'asc')->take(10)->get();
-        if (!is_array($this->playCountRecorded)) {
-            $this->playCountRecorded = [];
-        }
         Bus::dispatch(new TrackViewCount($this->repostRequests, user()->urn, 'request'));
 
         return $this->repostRequests;
