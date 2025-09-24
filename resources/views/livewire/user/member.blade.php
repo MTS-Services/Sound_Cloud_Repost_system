@@ -571,19 +571,17 @@
 
                                     <div class="relative flex items-start group">
                                         <div class="flex h-5 items-center">
-                                            @if ($alreadyFollowing)
+                                            @if (!$alreadyFollowing)
                                                 <input id="following" name="following" type="checkbox"
                                                     wire:model="following"
                                                     class="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-red-500">
                                             @endif
                                         </div>
                                         <div class="ml-3 text-sm">
-                                            <label for="following" class="font-medium">
-                                                <span class="text-orange-600">
-                                                    {{ $alreadyFollowing ? 'You are already following' : 'Follow' }}
-                                                </span>
-                                                {{ $user->name }}
-                                            </label>
+                                            <label class="text-sm text-gray-800 dark:text-gray-200">
+                                                {{ $alreadyFollowing ? 'You are already following' : 'Follow' }}
+                                                <span
+                                                    class="font-semibold text-orange-500">{{ $user->name }}</span></label>
                                         </div>
                                     </div>
 
