@@ -225,9 +225,13 @@ class RepostRequest extends Component
 
 
         if ($canRepost && !$this->playCount) {
+            Log::info('Entering playcount logic', ['requestId' => $requestId, 'canRepost' => $canRepost, 'playCount' => $this->playCount]);
+
             $request = $this->repostRequests->find($requestId);
 
             if ($request && $request->music) {
+                Log::info('Request and music found', ['requestId' => $requestId]);
+
                 try {
                     // Record analytics for the play
                     $response = $this->analyticsService->recordAnalytics(
@@ -237,9 +241,14 @@ class RepostRequest extends Component
                         genre: $request->music->genre ?? 'anyGenre'
                     );
 
+                    Log::info('Analytics response', ['requestId' => $requestId, 'response' => $response]);
+
                     // Only increment if analytics recording was successful
                     if ($response !== false && $response !== null) {
                         $request->increment('playback_count');
+                        Log::info('Playback count incremented', ['requestId' => $requestId]);
+                    } else {
+                        Log::warning('Analytics failed - no increment', ['requestId' => $requestId, 'response' => $response]);
                     }
 
                     $this->playCount = true;
@@ -249,10 +258,13 @@ class RepostRequest extends Component
                         'error' => $e->getMessage()
                     ]);
 
-                    // Still set playCount to true to prevent repeated attempts
                     $this->playCount = true;
                 }
+            } else {
+                Log::warning('Request or music not found', ['requestId' => $requestId, 'hasRequest' => !!$request, 'hasMusic' => $request ? !!$request->music : false]);
             }
+        } else {
+            Log::info('Playcount condition not met', ['requestId' => $requestId, 'canRepost' => $canRepost, 'playCount' => $this->playCount]);
         }
         return $canRepost;
     }
