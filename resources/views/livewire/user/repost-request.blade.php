@@ -90,7 +90,7 @@
         </div>
     @endif
     @foreach ($repostRequests as $repostRequest)
-        @if ($repostRequest->music && isset($repostRequest->music->permalink_url))
+        @if (!$repostRequest->music && !isset($repostRequest->music->permalink_url))
             @continue;
         @endif
         <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm">
