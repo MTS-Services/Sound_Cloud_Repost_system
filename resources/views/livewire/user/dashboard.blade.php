@@ -485,8 +485,8 @@
                                 <span class="text-slate-400">{{ $request?->music?->genre }}</span>
                             </div>
                             <div class="flex items-start space-x-3 mb-3">
-                                <img src="https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg"
-                                    class="w-8 h-8 rounded-full" alt="">
+                                <img src="{{ $request?->requester?->avatar }}" class="w-8 h-8 rounded-full"
+                                    alt="">
                                 <div class="flex-1">
                                     <h4 class="text-sm font-medium">{{ $request?->requester?->name }}</h4>
                                     <p class="text-slate-400 text-xs">by {{ $request?->requester?->email }}</p>
