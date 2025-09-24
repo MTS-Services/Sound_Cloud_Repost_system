@@ -59,7 +59,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         // Permission Routes
         Route::resource('permission', PermissionController::class);
         Route::controller(PermissionController::class)->name('permission.')->prefix('permission')->group(function () {
-            Route::post('/show/{permission}', 'show')->name('show');
+            Route::post('/show/{permission}', 'show')->name('details');
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{permission}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{permission}', 'permanentDelete')->name('permanent-delete');
