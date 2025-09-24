@@ -222,16 +222,16 @@ class RepostRequest extends Component
         // Must have played for 5+ seconds
         $canRepost = in_array($requestId, $this->playedRequests);
 
-        
+
         if ($canRepost && !$this->playCount) {
             $request = $this->repostRequests->find($requestId);
-
+            dd($request);
             // Record analytics for the play
             $response = $this->analyticsService->recordAnalytics(
                 source: $request->music,
                 actionable: $request,
                 type: UserAnalytics::TYPE_PLAY,
-                genre: $request->music->genre ?? null
+                genre: $request->music->genre ?? 'anyGenre'
             );
 
             if ($response != false || $response != null) {
