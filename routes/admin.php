@@ -43,7 +43,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         // Admin Routes
         Route::resource('admin', AdminController::class);
         Route::controller(AdminController::class)->name('admin.')->prefix('admin')->group(function () {
-            Route::post('/show/{admin}', 'show')->name('show');
+            Route::post('/show/{admin}', 'show')->name('details');
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{admin}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{admin}', 'permanentDelete')->name('permanent-delete');

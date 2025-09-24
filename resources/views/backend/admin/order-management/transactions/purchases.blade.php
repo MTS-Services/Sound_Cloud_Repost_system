@@ -9,7 +9,7 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold text-text-black dark:text-text-white">{{ __('Purchase List') }}</h2>
                 <div class="flex items-center gap-2">
-                    
+
                 </div>
             </div>
         </div>
@@ -59,33 +59,6 @@
                 initializeDataTable(details);
             })
         </script>
-
-        {{-- Details Modal --}}
-        {{-- <script>
-            document.addEventListener('DOMContentLoaded', () => {
-
-                $(document).on('click', '.view', function() {
-                    const id = $(this).data('id');
-                    const route = "{{ route('am.admin.show', ':id') }}";
-
-                    const details = [{
-                            label: '{{ __('Name') }}',
-                            key: 'name',
-                        },
-                        {
-                            label: '{{ __('Amount') }}',
-                            key: 'amount',
-                        },
-                        {
-                            label: '{{ __('Credits') }}',
-                            key: 'credits',
-                        },
-                    ];
-
-                    showDetailsModal(route, id, '{{ __('Credits Details') }}', details);
-                });
-            });
-        </script> --}}
     @endpush
 
 </x-admin::layout>
