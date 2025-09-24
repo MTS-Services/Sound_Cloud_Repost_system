@@ -399,31 +399,29 @@
             <div class="rounded-lg p-4 sm:p-6 shadow-sm dark:bg-slate-800">
                 <h3 class="dark:text-white text-lg font-semibold">Genre Distribution</h3>
                 <p class="text-slate-400 text-sm mb-2">What your audience listens to</p>
-                <div class="flex flex-col justify-center">
-                    <canvas id="genreChart" width="100" height="384"></canvas>
-                    <div class="flex flex-wrap justify-center gap-x-2 gap-y-2 text-xs">
 
-                        @forelse($genreBreakdown as $index => $genre)
-                            @php
-                                $colors = ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'];
-                                $color = $colors[$index % 5];
-                            @endphp
-                            <div class="flex items-center gap-2">
-                                <span class="text-sm"
-                                    style="color: {{ $color }};">{{ $genre['genre'] }}</span>
-                            </div>
-                        @empty
-                            <div class="text-center text-gray-500 dark:text-gray-400 py-8">
-                                <p>No genre data available yet.</p>
-                            </div>
-                        @endforelse
+                <canvas id="genreChart"></canvas>
+                <div class="flex flex-wrap justify-center gap-x-2 gap-y-2 text-xs">
 
-                        {{-- @foreach (user()->genres as $genre)
+                    @forelse($genreBreakdown as $index => $genre)
+                        @php
+                            $colors = ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'];
+                            $color = $colors[$index % 5];
+                        @endphp
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm" style="color: {{ $color }};">{{ $genre['genre'] }}</span>
+                        </div>
+                    @empty
+                        <div class="text-center text-gray-500 dark:text-gray-400 py-8">
+                            <p>No genre data available yet.</p>
+                        </div>
+                    @endforelse
+
+                    {{-- @foreach (user()->genres as $genre)
                             <div class="flex items-center gap-2">
                                 <span class="text-slate-400">{{ $genre->genre }}</span>
                             </div>
                         @endforeach --}}
-                    </div>
                 </div>
             </div>
 
