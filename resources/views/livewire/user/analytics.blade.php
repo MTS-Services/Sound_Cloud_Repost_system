@@ -1090,7 +1090,7 @@
         <!-- Track Performance Table with Pagination -->
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
             <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Your Tracks Performance</h3>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Your Tracks and Playlists Performance</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Detailed analytics for all your released
                     tracks and playlists over <span
                         class="font-medium text-gray-900 dark:text-white">{{ $this->getFilterText() }} period.</span>
@@ -1241,17 +1241,17 @@
                         <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
                             Showing {{ $paginatedSources->firstItem() ?? 0 }} to
                             {{ $paginatedSources->lastItem() ?? 0 }}
-                            of {{ $paginatedSources->total() }} source
+                            of {{ $paginatedSources->total() }} tracks and playlists
                         </div>
                         <div class="flex items-center space-x-2">
                             @if ($paginatedSources->onFirstPage())
                                 <span
                                     class="px-3 py-2 text-sm text-gray-400 dark:text-gray-500 cursor-not-allowed">Previous</span>
                             @else
-                                <button wire:click="previousPage('{{ $pageName }}')"
+                                <a href="{{ $paginatedSources->previousPageUrl($pageName) }}" wire:navigate
                                     class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                     Previous
-                                </button>
+                                </a>
                             @endif
                             <div class="flex items-center space-x-1">
                                 @php
@@ -1260,10 +1260,10 @@
                                 @endphp
 
                                 @if ($start > 1)
-                                    <button wire:click="gotoPage(1, '{{ $pageName }}')"
+                                    <a href="{{ $paginatedSources->url(1, $pageName) }}" wire:navigate
                                         class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                         1
-                                    </button>
+                                    </a>
                                     @if ($start > 2)
                                         <span class="px-2 text-gray-400">...</span>
                                     @endif
@@ -1274,10 +1274,10 @@
                                         <span
                                             class="px-3 py-2 text-sm bg-[#ff6b35] text-white rounded-lg">{{ $page }}</span>
                                     @else
-                                        <button wire:click="gotoPage({{ $page }}, '{{ $pageName }}')"
+                                        <a href="{{ $paginatedSources->url($page, $pageName) }}" wire:navigate
                                             class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                             {{ $page }}
-                                        </button>
+                                        </a>
                                     @endif
                                 @endfor
 
@@ -1285,19 +1285,19 @@
                                     @if ($end < $paginatedSources->lastPage() - 1)
                                         <span class="px-2 text-gray-400">...</span>
                                     @endif
-                                    <button
-                                        wire:click="gotoPage({{ $paginatedSources->lastPage() }}, '{{ $pageName }}')"
+                                    <a href="{{ $paginatedSources->url($paginatedSources->lastPage(), $pageName) }}"
+                                        wire:navigate
                                         class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                         {{ $paginatedSources->lastPage() }}
-                                    </button>
+                                    </a>
                                 @endif
                             </div>
 
                             @if ($paginatedSources->hasMorePages())
-                                <button wire:click="nextPage('{{ $pageName }}')"
+                                <a href="{{ $paginatedSources->nextPageUrl($pageName) }}"
                                     class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                     Next
-                                </button>
+                                </a>
                             @else
                                 <span
                                     class="px-3 py-2 text-sm text-gray-400 dark:text-gray-500 cursor-not-allowed">Next</span>
