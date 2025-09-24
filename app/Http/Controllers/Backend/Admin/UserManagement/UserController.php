@@ -95,7 +95,7 @@ class UserController extends Controller implements HasMiddleware
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = $this->userService->getUsers();
+            $query = $this->userService->getUsers('status', 'desc');
             return DataTables::eloquent($query)
                 ->editColumn('status', fn($user) => "<span class='badge badge-soft {$user->status_color}'>{$user->status_label}</span>")
                 ->addColumn('profile_link', fn($user) => "<a href='{$user->soundcloud_permalink_url}'  target='_blank' class='inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-all bg-blue-100 hover:bg-blue-200 text-blue-700 dark:bg-blue-900/30 dark:hover:bg-blue-800/40 dark:text-blue-400 border border-blue-200 dark:border-blue-700 hover:shadow-sm hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500/50'>Profile</a>")
@@ -436,9 +436,9 @@ class UserController extends Controller implements HasMiddleware
         $data['tracklists'] = $this->trackService->getTrack($trackUrn, 'urn')->load(['user']);
         return view('backend.admin.user-management.tracklist.details', $data);
     }
-    public function playlistShow(string $soudcloud_urn,)
+    public function playlistShow(string $soudcloud_urn, )
     {
-        $data = $this->playlistService->getPlaylist($soudcloud_urn, 'soundcloud_urn',);
+        $data = $this->playlistService->getPlaylist($soudcloud_urn, 'soundcloud_urn', );
         $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
         return response()->json($data);
@@ -598,7 +598,7 @@ class UserController extends Controller implements HasMiddleware
                     'amount' => 0,
                     'credits_purchased' => $order->credits,
                     'status' => Payment::STATUS_SUCCEEDED,
-                    'payment_intent_id' =>  null,
+                    'payment_intent_id' => null,
                     'creater_id' => $order->creater_id,
                     'creater_type' => $order->creater_type,
                 ]);
