@@ -1152,13 +1152,13 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-bold text-gray-900 dark:text-white">
-                                        {{ number_shorten($source['metrics']['total_views']['current_total']) }}
+                                        {{ number_shorten($source['metrics']['total_plays']['current_total']) }}
                                     </div>
                                     <div class="text-xs text-gray-500 dark:text-gray-400">streams</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @php
-                                        $changeRate = $source['metrics']['total_views']['change_rate'];
+                                        $changeRate = $source['metrics']['total_plays']['change_rate'];
                                         $changeClass = $this->getChangeClass($changeRate);
                                         $changeIcon = $this->getChangeIcon($changeRate);
                                     @endphp
