@@ -20,17 +20,17 @@ class AuthBaseModel extends Authenticatable
 
     public function creater_admin()
     {
-        return $this->belongsTo(Admin::class, 'created_by', 'id')->select(['name', 'id']);
+        return $this->belongsTo(Admin::class, 'created_by', 'id')->select(['name', 'id', 'status']);
     }
 
     public function updater_admin()
     {
-        return $this->belongsTo(Admin::class, 'updated_by', 'id')->select(['name', 'id']);
+        return $this->belongsTo(Admin::class, 'updated_by', 'id')->select(['name', 'id', 'status']);
     }
 
     public function deleter_admin()
     {
-        return $this->belongsTo(Admin::class, 'deleted_by', 'id')->select(['name', 'id']);
+        return $this->belongsTo(Admin::class, 'deleted_by', 'id')->select(['name', 'id', 'status']);
     }
 
     public function creater()
