@@ -205,6 +205,10 @@ class SoundCloudService
             $trackIdsInResponse = [];
 
             foreach ($tracksData as $trackData) {
+                // Skip private tracks
+                if (($trackData['sharing'] ?? '') === 'private') {
+                    continue;
+                }
                 $trackIdsInResponse[] = $trackData['id'];
 
                 $userUrn = $trackData['user']['urn'];
@@ -412,6 +416,11 @@ class SoundCloudService
     }
     public function unknownTrackAdd($trackData): int
     {
+        // Skip private playlists
+        if (($trackData['sharing'] ?? '') === 'private') {
+            Log::info('Skipping private playlist');
+            return false;
+        }
         try {
             $userUrn = $trackData['user']['urn'];
             $track_author = User::updateOrCreate([
@@ -449,6 +458,10 @@ class SoundCloudService
     public function unknownPlaylistAdd($playlistData): int
     {
         try {
+            // Skip private playlists
+            if (($playlistData['sharing'] ?? '') === 'private') {
+                return false;
+            }
             DB::transaction(function () use ($playlistData) {
                 $playlistUserUrn = $playlistData['user']['urn'];
                 $track_author = User::updateOrCreate([
@@ -504,6 +517,10 @@ class SoundCloudService
                 $tracksData = $playlistData['tracks'];
 
                 foreach ($tracksData as $trackData) {
+                    // Skip private tracks
+                    if (($trackData['sharing'] ?? '') === 'private') {
+                        continue;
+                    }
                     $userUrn = $trackData['user']['urn'];
                     $track_author = User::updateOrCreate([
                         'urn' => $userUrn,
@@ -630,6 +647,11 @@ class SoundCloudService
             $playlistIdsInResponse = [];
 
             foreach ($playlistsData as $playlistData) {
+                // Skip private playlists
+                if (($playlistData['sharing'] ?? '') === 'private') {
+                    continue;
+                }
+
                 $playlistIdsInResponse[] = $playlistData['id'];
 
                 $playlist = Playlist::updateOrCreate(
@@ -767,10 +789,10 @@ class SoundCloudService
         $httpClient = Http::withHeaders([
             'Authorization' => 'OAuth ' . $user->token,
         ])->attach(
-                'track[asset_data]',
-                file_get_contents($trackData['asset_data']->getRealPath()),
-                $trackData['asset_data']->getClientOriginalName()
-            );
+            'track[asset_data]',
+            file_get_contents($trackData['asset_data']->getRealPath()),
+            $trackData['asset_data']->getClientOriginalName()
+        );
 
         if ($trackData['artwork_data']) {
             $httpClient->attach(
