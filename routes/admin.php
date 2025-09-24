@@ -75,7 +75,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         // Plan Routes
         Route::resource('plan', PlanController::class);
         Route::controller(PlanController::class)->name('plan.')->prefix('plan')->group(function () {
-            Route::post('/show/{plan}', 'show')->name('show');
+            Route::post('/show/{plan}', 'show')->name('details');
             Route::get('/status/{plan}', 'status')->name('status');
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{plan}', 'restore')->name('restore');

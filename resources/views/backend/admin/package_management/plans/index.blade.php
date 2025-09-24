@@ -83,7 +83,7 @@
 
                 $(document).on('click', '.view', function() {
                     const id = $(this).data('id');
-                    const route = "{{ route('pm.plan.show', ':id') }}";
+                    const route = "{{ route('pm.plan.details', ':id') }}";
 
                     const details = [{
                             label: '{{ __('Name') }}',
