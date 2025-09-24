@@ -86,20 +86,21 @@ class SoundCloudController extends Controller
 
         try {
             // Clear SoundCloud data
-            $user->update([
-                // 'soundcloud_id' => null,
-                // 'nickname' => null,
-                // 'avatar' => null,
-                // 'soundcloud_permalink_url' => null,
-                // 'soundcloud_followings_count' => 0,
-                // 'soundcloud_followers_count' => 0,
-                'token' => null,
-                'refresh_token' => null,
-                'expires_in' => null,
-            ]);
+            // $user->update([
+            //     // 'soundcloud_id' => null,
+            //     // 'nickname' => null,
+            //     // 'avatar' => null,
+            //     // 'soundcloud_permalink_url' => null,
+            //     // 'soundcloud_followings_count' => 0,
+            //     // 'soundcloud_followers_count' => 0,
+            //     'token' => null,
+            //     'refresh_token' => null,
+            //     'expires_in' => null,
+            // ]);
+            Auth::guard('web')->logout();
 
             // Optionally, deactivate all tracks
-            $user->soundcloudTracks()->update(['is_active' => false]);
+            // $user->soundcloudTracks()->update(['is_active' => false]);
 
             return redirect()->route('profile')
                 ->with('success', 'Successfully disconnected from SoundCloud.');
