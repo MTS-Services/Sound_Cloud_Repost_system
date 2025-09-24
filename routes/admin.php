@@ -207,7 +207,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         });
         Route::resource('faq-category', FaqCategotyController::class);
         Route::get('status/{faq_category}', [FaqCategotyController::class, 'status'])->name('faq-category.status');
-        Route::post('show/{faq_category}', [FaqCategotyController::class, 'show'])->name('details');
+        Route::post('show/{faq_category}', [FaqCategotyController::class, 'show'])->name('faq-category.details');
         Route::get('trash/bin', [FaqCategotyController::class, 'trash'])->name('faq-category.trash');
         Route::get('restore/{faq_category}', [FaqCategotyController::class, 'restore'])->name('faq-category.restore');
         Route::delete('permanent-delete/{faq_category}', [FaqCategotyController::class, 'permanentDelete'])->name('faq-category.permanent-delete');
