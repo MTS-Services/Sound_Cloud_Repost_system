@@ -304,9 +304,9 @@ class RepostRequest extends Component
 
         $response = $this->soundCloudService->getAuthUserFollowers($this->request->requester);
         if ($response->isNotEmpty()) {
-            $alreadyFollowing = $response->where('urn', $this->request->requester?->urn)->first();
+            $alreadyFollowing = $response->where('urn', user()->urn)->first();
+            Log::info('Already following: ' . $alreadyFollowing->urn);
             if ($alreadyFollowing !== null) {
-                Log::info('Already following: 3');
                 $this->following = false;
                 $this->alreadyFollowing = true;
             }
