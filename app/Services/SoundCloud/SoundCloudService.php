@@ -844,18 +844,7 @@ class SoundCloudService
 
     public function getAuthUserFollowers(?User $user = null)
     {
-        $response = null;
-        if (!$user) {
-            $user = user();
-            $response = $this->makeApiRequest(
-                $user,
-                'get',
-                "/me/followers",
-                [],
-                'Failed to fetch followers from SoundCloud API.'
-            );
-            return collect($response['collection']);
-        }
+        $user = $user ?: user();
         $response = $this->makeApiRequest(
             user(),
             'get',
