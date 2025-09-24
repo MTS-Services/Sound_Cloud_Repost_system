@@ -398,7 +398,7 @@ class Member extends Component
         $response = $this->soundCloudService->getAuthUserFollowers($this->user);
         if ($response->isNotEmpty()) {
             $already_following = $response->where('urn', user()->urn)->first();
-            Log::info('Member Page:- Already following: ' . $already_following->urn ?? 'null');
+            Log::info('Member Page:- Already following: ' . $already_following['urn'] ?? 'null');
             if ($already_following !== null) {
                 $this->following = false;
                 $this->alreadyFollowing = true;
