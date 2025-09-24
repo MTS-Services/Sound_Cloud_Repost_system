@@ -435,7 +435,7 @@ class RepostRequest extends Component
                 break;
         }
         // Order by created_at desc and paginate
-        $this->repostRequests = $query->orderBy('status', 'asc')->take(10)->get();
+        $this->repostRequests = $query->latest()->orderBy('status', 'asc')->take(10)->get();
         Bus::dispatch(new TrackViewCount($this->repostRequests, user()->urn, 'request'));
 
         return $this->repostRequests;
