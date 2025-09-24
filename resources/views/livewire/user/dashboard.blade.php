@@ -166,7 +166,7 @@
         });
     },
 
-    updateCharts() {
+    {{-- updateCharts() {
         if (this.performanceChart) {
             this.performanceChart.data.labels = this.chartData.length > 0 ? this.chartData.map((item) => {
                 const date = new Date(item.date);
@@ -189,7 +189,7 @@
                 this.genreBreakdown.map((item) => item.percentage) : [100];
             this.genreChart.update();
         }
-    },
+    }, --}}
 
     init() {
         // Initialize charts after DOM is ready
@@ -211,7 +211,7 @@
             }
         });
 
-        Livewire.on('initialized', () => {
+        {{-- Livewire.on('initialized', () => {
             this.chartData = $wire.getChartData();
             this.genreBreakdown = $wire.genreBreakdown;
 
@@ -222,7 +222,7 @@
                     this.initializeCharts();
                 }
             });
-        });
+        }); --}}
     }
 }">
     <x-slot name="page_slug">dashboard</x-slot>
