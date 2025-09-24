@@ -7,8 +7,10 @@ use App\Jobs\TrackViewCount;
 use App\Models\CreditTransaction;
 use App\Models\RepostRequest as ModelsRepostRequest;
 use App\Models\Repost;
+use App\Models\UserAnalytics;
 use App\Models\UserSetting;
 use App\Services\SoundCloud\SoundCloudService;
+use App\Services\User\AnalyticsService;
 use App\Services\User\Mamber\RepostRequestService;
 use App\Services\User\UserSettingsService;
 use Illuminate\Http\Request;
@@ -54,12 +56,14 @@ class RepostRequest extends Component
 
     protected SoundCloudService $soundCloudService;
     protected UserSettingsService $userSettingsService;
+    protected ?AnalyticsService $analyticsService = null;
     protected RepostRequestService $repostRequestService;
 
-    public function boot(SoundCloudService $soundCloudService, UserSettingsService $userSettingsService, RepostRequestService $repostRequestService)
+    public function boot(SoundCloudService $soundCloudService, UserSettingsService $userSettingsService, RepostRequestService $repostRequestService, AnalyticsService $analyticsService)
     {
         $this->soundCloudService = $soundCloudService;
         $this->userSettingsService = $userSettingsService;
+        $this->analyticsService = $analyticsService;
         $this->repostRequestService = $repostRequestService;
     }
 
@@ -218,8 +222,22 @@ class RepostRequest extends Component
         // Must have played for 5+ seconds
         $canRepost = in_array($requestId, $this->playedRequests);
 
+        
         if ($canRepost && !$this->playCount) {
-            // $request->increment('playback_count');
+            $request = $this->repostRequests->find($requestId);
+
+            // Record analytics for the play
+            $response = $this->analyticsService->recordAnalytics(
+                source: $request->music,
+                actionable: $request,
+                type: UserAnalytics::TYPE_PLAY,
+                genre: $request->music->genre ?? null
+            );
+
+            if ($response != false || $response != null) {
+                $request->increment('playback_count');
+            }
+
             $this->playCount = true;
         }
 
