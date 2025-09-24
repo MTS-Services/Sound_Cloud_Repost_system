@@ -73,7 +73,7 @@
 
                 $(document).on('click', '.view', function() {
                     const id = $(this).data('id');
-                    const route = "{{ route('am.permission.show', ':id') }}";
+                    const route = "{{ route('am.permission.details', ':id') }}";
 
                     const details = [{
                             label: '{{ __('Prefix') }}',

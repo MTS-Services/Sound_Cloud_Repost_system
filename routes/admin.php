@@ -51,7 +51,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         // Role Routes
         Route::resource('role', RoleController::class);
         Route::controller(RoleController::class)->name('role.')->prefix('role')->group(function () {
-            Route::post('/show/{role}', 'show')->name('show');
+            Route::post('/show/{role}', 'show')->name('details');
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{role}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{role}', 'permanentDelete')->name('permanent-delete');
@@ -59,7 +59,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         // Permission Routes
         Route::resource('permission', PermissionController::class);
         Route::controller(PermissionController::class)->name('permission.')->prefix('permission')->group(function () {
-            Route::post('/show/{permission}', 'show')->name('show');
+            Route::post('/show/{permission}', 'show')->name('details');
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{permission}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{permission}', 'permanentDelete')->name('permanent-delete');
@@ -118,7 +118,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
 
         Route::resource('user-plane', UserPlaneController::class);
         Route::controller(UserPlaneController::class)->name('user-plane.')->prefix('user-plane')->group(function () {
-            Route::post('/show/{user_plane}', 'show')->name('show');
+            Route::post('/show/{user_plane}', 'show')->name('delails');
             Route::get('/status/{user_plane}', 'status')->name('status');
         });
 
