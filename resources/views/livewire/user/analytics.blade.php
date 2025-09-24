@@ -906,7 +906,7 @@
                                     <div class="flex-1 min-w-0">
                                         <p
                                             class="text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-[#ff6b35] transition-colors">
-                                            {{ $source['source']['title'] }}
+                                            {{ $source['source']['title'] ?? 'Unknown' }}
                                         </p>
                                         <p class="text-xs text-gray-500 dark:text-gray-400 truncate capitalize">
                                             {{ $source['source_type'] == App\Models\Track::class ? 'Track' : 'Playlist' }}
@@ -1090,7 +1090,8 @@
         <!-- Track Performance Table with Pagination -->
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
             <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Your Tracks and Playlists Performance</h3>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Your Tracks and Playlists Performance
+                </h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Detailed analytics for all your released
                     tracks and playlists over <span
                         class="font-medium text-gray-900 dark:text-white">{{ $this->getFilterText() }} period.</span>
@@ -1140,10 +1141,10 @@
                                         </div>
                                         <div>
                                             <div class="text-sm font-medium text-gray-900 dark:text-white">
-                                                {{ $source['source_details']->title ?? 'Unknown Track' }}
+                                                {{ $source['source_details']?->title ?? 'Unknown Track' }}
                                             </div>
                                             <div class="text-sm text-gray-500 dark:text-gray-400">
-                                                {{ $source['source_details']->genre ?? 'Unknown' }} •
+                                                {{ $source['source_details']?->genre ?? 'Unknown' }} •
                                                 <span
                                                     class="capitalize text-xs text-gray-500 dark:text-gray-400">{{ $source['source_type'] == App\Models\Track::class ? 'Track' : 'Playlist' }}</span>
                                             </div>
@@ -1210,7 +1211,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900 dark:text-white">
-                                        {{ Carbon\Carbon::parse($source['source_type'] == App\Models\Track::class ? $source['source_details']->created_at_soundcloud : $source['source_details']->soundcloud_created_at)->format('d M, Y h:i A') ?? 'Unknown' }}
+                                        {{ Carbon\Carbon::parse($source['source_type'] == App\Models\Track::class ? $source['source_details']?->created_at_soundcloud ?? 'Unknown' : $source['source_details']?->soundcloud_created_at ?? 'Unknown')->format('d M, Y h:i A') ?? 'Unknown' }}
                                     </div>
                                 </td>
                             </tr>
