@@ -13,7 +13,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-use Log;
 use Yajra\DataTables\Facades\DataTables;
 
 class AdminController extends Controller implements HasMiddleware
@@ -135,16 +134,10 @@ class AdminController extends Controller implements HasMiddleware
      */
     public function show(Request $request, string $id)
     {
-        Log::info('Admin details requested for user ' . decrypt($id));
         $data = $this->adminService->getAdmin($id);
-        Log::info('Step 1');
         $data['creater_name'] = $this->creater_name($data);
-        Log::info('Step 2');
         $data['updater_name'] = $this->updater_name($data);
-        Log::info('Step 3');
-        $data['role_id'] = optional($data->role)->name;
-        Log::info('Step 4');
-        dd($data);
+        $data['role'] = $data->role?->name;
         return response()->json($data);
     }
 
