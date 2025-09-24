@@ -225,23 +225,34 @@ class RepostRequest extends Component
 
         if ($canRepost && !$this->playCount) {
             $request = $this->repostRequests->find($requestId);
-            $request->load(['music', 'requester']);
-            Log::info('Direct Request' . json_encode($request));
-            // Record analytics for the play
-            $response = $this->analyticsService->recordAnalytics(
-                source: $request->music,
-                actionable: $request,
-                type: UserAnalytics::TYPE_PLAY,
-                genre: $request->music->genre ?? 'anyGenre'
-            );
 
-            if ($response != false || $response != null) {
-                $request->increment('playback_count');
+            if ($request && $request->music) {
+                try {
+                    // Record analytics for the play
+                    $response = $this->analyticsService->recordAnalytics(
+                        source: $request->music,
+                        actionable: $request,
+                        type: UserAnalytics::TYPE_PLAY,
+                        genre: $request->music->genre ?? 'anyGenre'
+                    );
+
+                    // Only increment if analytics recording was successful
+                    if ($response !== false && $response !== null) {
+                        $request->increment('playback_count');
+                    }
+
+                    $this->playCount = true;
+                } catch (\Exception $e) {
+                    Log::error('Analytics recording failed for repost request', [
+                        'requestId' => $requestId,
+                        'error' => $e->getMessage()
+                    ]);
+
+                    // Still set playCount to true to prevent repeated attempts
+                    $this->playCount = true;
+                }
             }
-
-            $this->playCount = true;
         }
-
         return $canRepost;
     }
 
