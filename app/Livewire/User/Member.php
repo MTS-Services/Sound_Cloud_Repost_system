@@ -396,6 +396,7 @@ class Member extends Component
         $this->showRepostsModal = true;
 
         $response = $this->soundCloudService->getAuthUserFollowers($this->user);
+        dd($response);
         if ($response->isNotEmpty()) {
             $alreadyFollowing = $response->where('urn', $this->user->urn)->first();
             if ($alreadyFollowing) {
