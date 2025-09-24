@@ -51,7 +51,7 @@ class Analytics extends Component
         $this->selectedGenres = request()->query('selectedGenres', ['Any Genre']);
         $this->startDate = request()->query('startDate', '');
         $this->endDate = request()->query('endDate', '');
-        $this->filter = request()->query('filter', 'last_week');        
+        $this->filter = request()->query('filter', 'last_week');
         $this->loadData();
         $this->loadAdditionalData();
         $this->getChartData();
@@ -62,11 +62,7 @@ class Analytics extends Component
      */
     public function fetchUserGenres(): array
     {
-        return UserGenre::where('user_urn', user()->urn)
-            ->pluck('genre')
-            ->unique()
-            ->values()
-            ->toArray();
+        return user()->genres->pluck('genre')->toArray();
     }
 
     /**
@@ -189,7 +185,7 @@ class Analytics extends Component
                 dateRange: $dateRange
             );
 
-            $this->genreBreakdown = $this->analyticsService->getGenreBreakdown($this->filter, $dateRange, $this->selectedGenres);
+            $this->genreBreakdown = $this->analyticsService->getGenreBreakdown($this->filter, $dateRange, $this->userGenres);
         } catch (\Exception $e) {
             logger()->error('Additional data loading failed', ['error' => $e->getMessage()]);
         }

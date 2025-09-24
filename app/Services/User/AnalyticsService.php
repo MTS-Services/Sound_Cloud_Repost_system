@@ -952,9 +952,7 @@ class AnalyticsService
 
         $query = UserAnalytics::where('owner_user_urn', $userUrn)
             ->whereDate('created_at', '>=', $periods['current']['start']->format('Y-m-d'))
-            ->whereDate('created_at', '<=', $periods['current']['end']->format('Y-m-d'))
-            ->where('type', UserAnalytics::TYPE_VIEW);
-
+            ->whereDate('created_at', '<=', $periods['current']['end']->format('Y-m-d'));
         if ($genres && !in_array('Any Genre', $genres)) {
             $query->forGenres($genres);
         }
@@ -976,21 +974,35 @@ class AnalyticsService
             ->orderByDesc('total_followers')
             ->get();
 
-        $totalViews = $genreData->sum('total_views');
-        $totalStreams = $genreData->sum('total_streams');
-        $totalLikes = $genreData->sum('total_likes');
-        $totalReposts = $genreData->sum('total_reposts');
-        $totalFollowers = $genreData->sum('total_followers');
-        $totalComments = $genreData->sum('total_comments');
-
-        $avgTotal = ($totalLikes + $totalReposts + $totalFollowers + $totalStreams + $totalComments) / 5;
-
-        return $genreData->map(function ($item) use ($totalViews, $avgTotal) {
+        $genreDataWithAvg = $genreData->map(function ($item) {
             return [
                 'genre' => $item->genre,
                 'streams' => $item->total_streams,
-                'percentage' => $totalViews >= $avgTotal ? round(($avgTotal / ($totalViews == 0 ? 1 : $totalViews)) * 100, 2) : 0,
+                'avg_total' => ($item->total_likes + $item->total_reposts + $item->total_followers + $item->total_streams + $item->total_comments) / 5,
+            ];
+        });
+
+        // 2. Sum up all the 'avg_total' values to get the total for the pie chart
+        $totalAvgSum = $genreDataWithAvg->sum('avg_total');
+
+        // 3. Map again to calculate the final percentages based on the new total sum
+        $genreDataWithPercentage = $genreDataWithAvg->map(function ($item) use ($totalAvgSum) {
+            // Handle division by zero
+            $percentage = ($totalAvgSum > 0) ? round(($item['avg_total'] / $totalAvgSum) * 100, 2) : 0;
+            return [
+                'genre' => $item['genre'],
+                'streams' => $item['streams'],
+                'percentage' => $percentage,
             ];
         })->toArray();
+
+        // Check if total percentage is 100% and adjust if necessary due to rounding errors
+        $totalPercentage = collect($genreDataWithPercentage)->sum('percentage');
+        if (count($genreDataWithPercentage) > 0 && abs(100 - $totalPercentage) > 0.01) {
+            // Adjust the first or largest slice to make the total exactly 100
+            $adjustment = 100 - $totalPercentage;
+            $genreDataWithPercentage[0]['percentage'] = round($genreDataWithPercentage[0]['percentage'] + $adjustment, 2);
+        }
+        return $genreDataWithPercentage;
     }
 }
