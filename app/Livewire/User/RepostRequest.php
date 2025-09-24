@@ -225,18 +225,19 @@ class RepostRequest extends Component
 
         if ($canRepost && !$this->playCount) {
             $request = $this->repostRequests->find($requestId);
-            Log::info('Direct Request' . json_encode($request));
+            $request->load(['music', 'requester']);
+            // Log::info('Direct Request' . json_encode($request));
             // Record analytics for the play
-            // $response = $this->analyticsService->recordAnalytics(
-            //     source: $request->music,
-            //     actionable: $request,
-            //     type: UserAnalytics::TYPE_PLAY,
-            //     genre: $request->music->genre ?? 'anyGenre'
-            // );
+            $response = $this->analyticsService->recordAnalytics(
+                source: $request->music,
+                actionable: $request,
+                type: UserAnalytics::TYPE_PLAY,
+                genre: $request->music->genre ?? 'anyGenre'
+            );
 
-            // if ($response != false || $response != null) {
-            //     $request->increment('playback_count');
-            // }
+            if ($response != false || $response != null) {
+                $request->increment('playback_count');
+            }
 
             $this->playCount = true;
         }
