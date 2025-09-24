@@ -399,15 +399,8 @@
             <div class="rounded-lg p-4 sm:p-6 shadow-sm dark:bg-slate-800">
                 <h3 class="dark:text-white text-lg font-semibold">Genre Distribution</h3>
                 <p class="text-slate-400 text-sm mb-2">What your audience listens to</p>
-                <div class="h-60 sm:h-96 flex flex-col justify-between">
-                    <div class="flex-grow flex items-center justify-center my-4">
-                        {{-- <div
-                            class="bg-slate-700/50 rounded-full w-36 h-36 sm:w-40 sm:h-40 flex items-center justify-center">
-                            <img src="https://imgs.search.brave.com/2rHUZ109YlFZLs4tiya8jxlxjLsE_WEUoUMpvFfZANQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NzFRTnBFbDhjckwu/anBn"
-                                alt="">
-                        </div> --}}
-                        <canvas class="w-36 h-36 sm:w-40 sm:h-40" id="genreChart"></canvas>
-                    </div>
+                <div class="flex justify-center">
+                    <canvas class="flex-1" id="genreChart"></canvas>
                     <div class="flex flex-wrap justify-center gap-x-2 gap-y-2 text-xs">
 
                         @forelse($genreBreakdown as $index => $genre)
