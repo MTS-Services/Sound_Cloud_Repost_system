@@ -225,7 +225,7 @@ class RepostRequest extends Component
 
         if ($canRepost && !$this->playCount) {
             $request = $this->repostRequests->find($requestId);
-            dd($request);
+           Log::info('requestId: ' . $requestId);
             // Record analytics for the play
             $response = $this->analyticsService->recordAnalytics(
                 source: $request->music,
