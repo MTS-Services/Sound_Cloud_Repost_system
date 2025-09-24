@@ -1,6 +1,8 @@
 <div x-data="{
     chartData: {{ Js::from($this->getChartData()) }},
     performanceChart: null,
+    genreBreakdown: {{ Js::from($genreBreakdown) }},
+    genreChart: null,
 
     initPerformanceChart() {
         const ctx = document.getElementById('campaignChart');
@@ -127,22 +129,99 @@
         });
     },
 
+    initGenreChart() {
+        const ctx = document.getElementById('genreChart');
+        if (!ctx) return;
+
+        // Check if there's any data with a percentage greater than 0
+        const hasData = this.genreBreakdown.some(item => item.percentage > 0);
+
+        const displayedGenres = hasData ? this.genreBreakdown.filter(item => item.percentage > 0) : [{ genre: 'No Data', percentage: 100 }];
+
+        this.genreChart = new Chart(ctx.getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: displayedGenres.map(item => item.genre),
+                datasets: [{
+                    data: displayedGenres.map(item => item.percentage),
+                    backgroundColor: hasData ? ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'].slice(0, displayedGenres.length) : ['#9ca3af'],
+                    borderColor: '#1f2937',
+                    borderWidth: 2,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return (context.label || '') + ': ' + (context.parsed || 0) + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    },
+
+    updateCharts() {
+        if (this.performanceChart) {
+            this.performanceChart.data.labels = this.chartData.length > 0 ? this.chartData.map((item) => {
+                const date = new Date(item.date);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            }) : ['No Data'];
+
+            const metrics = ['total_views', 'total_plays', 'total_likes', 'total_reposts', 'total_comments'];
+            this.performanceChart.data.datasets.forEach((dataset, index) => {
+                dataset.data = this.chartData.length > 0 ?
+                    this.chartData.map((item) => item[metrics[index]] || 0) : [0];
+            });
+
+            this.performanceChart.update();
+        }
+
+        if (this.genreChart) {
+            this.genreChart.data.labels = this.genreBreakdown.length > 0 ?
+                this.genreBreakdown.map((item) => item.genre) : ['No Data'];
+            this.genreChart.data.datasets[0].data = this.genreBreakdown.length > 0 ?
+                this.genreBreakdown.map((item) => item.percentage) : [100];
+            this.genreChart.update();
+        }
+    },
+
     init() {
         // Initialize charts after DOM is ready
         this.$nextTick(() => {
             if (typeof Chart !== 'undefined') {
                 this.initPerformanceChart();
+                this.initGenreChart();
             } else {
                 // Wait for Chart.js to load
                 const checkChart = () => {
                     if (typeof Chart !== 'undefined') {
                         this.initPerformanceChart();
+                        this.initGenreChart();
                     } else {
                         checkChart();
                     }
                 };
                 checkChart();
             }
+        });
+
+        Livewire.on('initialized', () => {
+            this.chartData = $wire.getChartData();
+            this.genreBreakdown = $wire.genreBreakdown;
+
+            this.$nextTick(() => {
+                if (this.performanceChart) {
+                    this.updateCharts();
+                } else {
+                    this.initializeCharts();
+                }
+            });
         });
     }
 }">
@@ -322,18 +401,35 @@
                 <p class="text-slate-400 text-sm mb-2">What your audience listens to</p>
                 <div class="h-60 sm:h-96 flex flex-col justify-between">
                     <div class="flex-grow flex items-center justify-center my-4">
-                        <div
+                        {{-- <div
                             class="bg-slate-700/50 rounded-full w-36 h-36 sm:w-40 sm:h-40 flex items-center justify-center">
                             <img src="https://imgs.search.brave.com/2rHUZ109YlFZLs4tiya8jxlxjLsE_WEUoUMpvFfZANQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NzFRTnBFbDhjckwu/anBn"
                                 alt="">
-                        </div>
+                        </div> --}}
+                        <canvas class="w-36 h-36 sm:w-40 sm:h-40" id="genreChart"></canvas>
                     </div>
                     <div class="flex flex-wrap justify-center gap-x-2 gap-y-2 text-xs">
-                        @foreach (user()->genres as $genre)
+
+                        @forelse($genreBreakdown as $index => $genre)
+                            @php
+                                $colors = ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'];
+                                $color = $colors[$index % 5];
+                            @endphp
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm"
+                                    style="color: {{ $color }};">{{ $genre['genre'] }}</span>
+                            </div>
+                        @empty
+                            <div class="text-center text-gray-500 dark:text-gray-400 py-8">
+                                <p>No genre data available yet.</p>
+                            </div>
+                        @endforelse
+
+                        {{-- @foreach (user()->genres as $genre)
                             <div class="flex items-center gap-2">
                                 <span class="text-slate-400">{{ $genre->genre }}</span>
                             </div>
-                        @endforeach
+                        @endforeach --}}
                     </div>
                 </div>
             </div>

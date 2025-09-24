@@ -62,7 +62,7 @@ class AnalyticsSeeder extends Seeder
                 'source_type' => get_class($source),
                 'actionable_id' => $actionable->id,
                 'actionable_type' => get_class($actionable),
-                'genre' => $source->target_genre ?? null,
+                'genre' => ['hip-hop', 'pop', 'rock', 'country', 'electronic', 'classical', 'rap', 'reggae', 'soul', 'jazz'][rand(0, 9)],
                 'type' => $i,
                 'ip_address' => '127.0.0.1',
                 'created_at' => Carbon::now()->subDays(rand(1, 60)),
@@ -79,7 +79,7 @@ class AnalyticsSeeder extends Seeder
         for ($j = 0; $j < 20; $j++) {
             $source = $sources->random();
             $sourceType = get_class($source);
-            
+
             $sourceType = array_search($sourceType, Relation::morphMap()) ?: $sourceType;
 
             UserAnalytics::create([

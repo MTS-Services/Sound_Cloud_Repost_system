@@ -135,6 +135,9 @@ class Dashboard extends Component
     public string $commented = '';
     public bool $followed = true;
 
+    public array $genreBreakdown = [];
+    public array $userGenres = [];
+
     // Search configuration
     private const MAX_SEARCH_LENGTH = 255;
     private const MIN_SEARCH_LENGTH = 2;
@@ -213,7 +216,10 @@ class Dashboard extends Component
         }
         $this->loadDashboardData();
         $this->calculateFollowersLimit();
+        $this->userGenres = user()->genres->pluck('genre')->toArray();
+        $this->genreBreakdown = $this->analyticsService->getGenreBreakdown('last_month', null, $this->userGenres);
     }
+
 
     public function updated($propertyName)
     {
@@ -402,7 +408,7 @@ class Dashboard extends Component
     {
         try {
             $this->soundCloudService->syncSelfPlaylists();
-            
+
             $this->allPlaylists = Playlist::where('user_urn', user()->urn)
                 ->latest()
                 ->get();
@@ -1179,9 +1185,9 @@ class Dashboard extends Component
                 null,
                 null
             );
-        } catch (\Exception $e) {
-            logger()->error('Chart data loading failed', ['error' => $e->getMessage()]);
-            return [];
+        } catch (Throwable $e) {
+            Log::error('Chart data loading failed', ['error' => $e->getMessage()]);
+            throw $e;
         }
     }
 
