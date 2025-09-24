@@ -9,14 +9,12 @@ use App\Models\Repost;
 use App\Models\Track;
 use App\Models\User;
 use App\Models\UserSocialInformation;
-use App\Models\UserAnalytics;
 use App\Services\Admin\CreditManagement\CreditTransactionService;
 use App\Services\Admin\UserManagement\UserService;
 use App\Services\PlaylistService;
 use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\TrackService;
-use App\Services\User\AnalyticsService;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Url;
@@ -52,10 +50,6 @@ class MyAccount extends Component
     public ?int $playlistTracksPage = 1;
 
     public $user_urn = null;
-
-    // NEW: Track whether play count should be recorded
-    public bool $shouldRecordPlayCount = false;
-
     // Dependencies (non-serializable) — keep private
     private UserService $userService;
     private CreditTransactionService $creditTransactionService;
@@ -63,28 +57,20 @@ class MyAccount extends Component
     private PlaylistService $playlistService;
     private SoundCloudService $soundCloudService;
     private FollowerAnalyzer $followerAnalyzer;
-    private AnalyticsService $analyticsService;
 
     public $userFollowerAnalysis = [];
+
     public $followerGrowth = 0;
 
     // Livewire v3: boot runs on every request (initial + subsequent)
-    public function boot(
-        UserService $userService,
-        CreditTransactionService $creditTransactionService,
-        TrackService $trackService,
-        SoundCloudService $soundCloudService,
-        PlaylistService $playlistService,
-        FollowerAnalyzer $followerAnalyzer,
-        AnalyticsService $analyticsService
-    ): void {
+    public function boot(UserService $userService, CreditTransactionService $creditTransactionService, TrackService $trackService, SoundCloudService $soundCloudService, PlaylistService $playlistService, FollowerAnalyzer $followerAnalyzer): void
+    {
         $this->userService = $userService;
         $this->creditTransactionService = $creditTransactionService;
         $this->trackService = $trackService;
         $this->soundCloudService = $soundCloudService;
         $this->playlistService = $playlistService;
         $this->followerAnalyzer = $followerAnalyzer;
-        $this->analyticsService = $analyticsService;
     }
 
     public function mount($user_name = null): void
@@ -92,10 +78,6 @@ class MyAccount extends Component
         Log::info('MyAccount mount. step 1');
         $user = $user_name ? User::where('name', $user_name)->first() : user();
         Log::info('MyAccount mount. step 2');
-
-        // NEW: Set play count recording flag based on $user_name parameter
-        $this->shouldRecordPlayCount = $user_name !== null;
-
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
         Log::info('MyAccount mount. step 3');
         $followers = $this->soundCloudService->getAuthUserFollowers();
@@ -130,7 +112,7 @@ class MyAccount extends Component
         Log::info('MyAccount mount. step 16');
         $this->user_urn = $userUrn;
         Log::info('MyAccount mount. step 17');
-        Log::info('MyAccount mount', ['user_urn' => $this->user_urn, 'should_record_play_count' => $this->shouldRecordPlayCount]);
+        Log::info('MyAccount mount', ['user_urn' => $this->user_urn]);
         Log::info('MyAccount mount. step 18');
         if ($this->selectedPlaylistId) {
             Log::info('MyAccount mount. step 19');
@@ -194,114 +176,15 @@ class MyAccount extends Component
     public function syncTracks()
     {
         $this->soundCloudService->syncSelfTracks([]);
+        // SyncedTracks::dispatch(user()->urn);
+        // return back()->with('success', 'Track sync started in background. Please check later.');
     }
-
     public function syncPlaylists()
     {
         $this->soundCloudService->syncSelfPlaylists();
+        // SyncedPlaylists::dispatch(user()->urn);
+        // return back()->with('success', 'Playlist sync started in background.');
     }
-
-    // NEW: Play count analytics methods
-    /**
-     * Handle track play event and record analytics using existing AnalyticsService
-     * Only records if $shouldRecordPlayCount is true (when $user_name was provided)
-     * Each user is only counted once per track (ever, not just recently)
-     */
-    public function handleTrackPlay($trackId, $playlistId = null)
-    {
-        // Early return if play count recording is disabled
-        if (!$this->shouldRecordPlayCount) {
-            Log::info("Play count recording disabled - user_name was null in mount");
-            return;
-        }
-
-        try {
-            // Get the track
-            $track = Track::findOrFail($trackId);
-
-            // Check if this is the track owner's own account - don't record if same user
-            if ($track->user_urn === user()->urn) {
-                Log::info("Track play skipped - user playing their own track: {$trackId}");
-                return;
-            }
-
-            // Check if this user has EVER played this track before (not time-limited)
-            $existingPlay = UserAnalytics::where('owner_user_urn', $track->user_urn)
-                ->where('act_user_urn', user()->urn)
-                ->where('source_id', $trackId)
-                ->where('source_type', Track::class)
-                ->where('type', UserAnalytics::TYPE_PLAY)
-                ->exists();
-
-            if ($existingPlay) {
-                Log::info("Track play skipped - user has already been counted for this track: " . user()->urn . " for track: {$trackId}");
-                return;
-            }
-
-            // Get actionable (playlist) if provided
-            $actionable = null;
-            if ($playlistId) {
-                $actionable = Playlist::findOrFail($playlistId);
-            }
-
-            // Use existing recordAnalytics method with TYPE_PLAY
-            $response = $this->analyticsService->recordAnalytics(
-                source: $track,
-                actionable: $actionable,
-                type: UserAnalytics::TYPE_PLAY,
-                genre: $track->genre ?? 'anyGenre',
-                actUserUrn: user()->urn
-            );
-
-            // Only increment if analytics was recorded successfully
-            if ($response != false && $response != null) {
-                $track->increment('playback_count');
-
-                Log::info("Play count recorded for track: {$trackId} by visitor: " . user()->urn . " (first time for this user)");
-
-                // Dispatch browser event to update UI with new play count
-                $this->dispatch('play-count-recorded', [
-                    'trackId' => $trackId,
-                    'newPlayCount' => $track->fresh()->playback_count
-                ]);
-            }
-        } catch (\Exception $e) {
-            Log::error("Failed to handle track play: " . $e->getMessage(), [
-                'track_id' => $trackId,
-                'playlist_id' => $playlistId,
-                'visitor_urn' => user()->urn,
-                'should_record' => $this->shouldRecordPlayCount,
-                'exception' => $e
-            ]);
-        }
-    }
-
-    /**
-     * Handle playlist track play from playlist detail view
-     */
-    public function playPlaylistTrack($trackId)
-    {
-        if ($this->selectedPlaylistId) {
-            $this->handleTrackPlay($trackId, $this->selectedPlaylistId);
-        } else {
-            $this->handleTrackPlay($trackId);
-        }
-    }
-
-    /**
-     * Handle regular track play from tracks tab
-     */
-    public function playTrack($trackId)
-    {
-        $this->handleTrackPlay($trackId);
-    }
-
-    // Add these listeners to your existing listeners array
-    protected $listeners = [
-        'track-played' => 'handleTrackPlay',
-        'playlist-track-played' => 'playPlaylistTrack',
-    ];
-
     public $instagram = null;
     public $twitter = null;
     public $tiktok = null;
@@ -347,6 +230,7 @@ class MyAccount extends Component
                 ->first();
 
             if ($selectedPlaylist) {
+                // Make sure you have a proper relationship method `tracks()` on Playlist
                 $playlistTracks = $selectedPlaylist->tracks()
                     ->latest('created_at')
                     ->paginate(6, ['*'], 'playlistTracksPage', $this->playlistTracksPage);
@@ -375,34 +259,12 @@ class MyAccount extends Component
             ->sortByDesc('created_at')
             ->take(10);
 
-        // View Count Tracking
+        // View Count
         Bus::chain([
             new TrackViewCount($tracks, user()->urn, 'track'),
             new TrackViewCount($playlists, user()->urn, 'playlist'),
         ])->dispatch();
 
-        // Only record view analytics if viewing someone else's account AND play count recording is enabled
-        if ($this->user_urn !== user()->urn && $this->shouldRecordPlayCount) {
-            // Record view analytics for tracks using existing service
-            foreach ($tracks as $track) {
-                $this->analyticsService->recordAnalytics(
-                    source: $track,
-                    actionable: null,
-                    type: UserAnalytics::TYPE_VIEW,
-                    genre: $track->genre ?? 'anyGenre'
-                );
-            }
-
-            // Record view analytics for playlists using existing service  
-            foreach ($playlists as $playlist) {
-                $this->analyticsService->recordAnalytics(
-                    source: $playlist,
-                    actionable: null,
-                    type: UserAnalytics::TYPE_VIEW,
-                    genre: 'anyGenre'
-                );
-            }
-        }
 
         return view('livewire.user.my-account', [
             'user' => $user,
@@ -412,9 +274,8 @@ class MyAccount extends Component
             'playlistTracks' => $playlistTracks,
             'reposts' => $reposts,
             'transactions' => $transactions,
+            // Also pass down flags used in Blade
             'showPlaylistTracks' => $this->showPlaylistTracks,
-            'isOwnAccount' => $this->user_urn === user()->urn,
-            'shouldRecordPlayCount' => $this->shouldRecordPlayCount, // NEW: Pass to template
         ]);
     }
 }
