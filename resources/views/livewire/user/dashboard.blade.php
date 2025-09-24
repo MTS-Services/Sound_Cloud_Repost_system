@@ -409,13 +409,8 @@
                             $colors = ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'];
                             $color = $colors[$index % 5];
                         @endphp
-                        <div class="flex items-start flex-col justify-center gap-2">
-                            <div class="flex items-center">
-                                <span class="w-3 h-3 rounded-full mr-3 border border-gray-200 dark:border-gray-600"
-                                    style="background-color: {{ $color }};"></span>
-                                <span class="text-sm"
-                                    style="color: {{ $color }};">{{ $genre['genre'] }}</span>
-                            </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm" style="color: {{ $color }};">{{ $genre['genre'] }}</span>
                         </div>
                     @empty
                         <div class="text-center text-gray-500 dark:text-gray-400 py-8">
