@@ -58,7 +58,7 @@ class Admin extends AuthBaseModel implements MustVerifyEmail
     {
         return $this->belongsTo(Role::class, 'role_id')->select(['name', 'id']);
     }
-    
+
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
@@ -88,7 +88,7 @@ class Admin extends AuthBaseModel implements MustVerifyEmail
     }
     public function getStatusLabelAttribute()
     {
-        return self::statusList()[$this->status];
+        return isset($this->status) ? self::statusList()[$this->status] : 'Unknown';
     }
 
     public function getStatusColorAttribute()
@@ -107,6 +107,6 @@ class Admin extends AuthBaseModel implements MustVerifyEmail
     }
     public function getModifiedImageAttribute()
     {
-        return auth_storage_url($this->image);
+        return $this->image ? auth_storage_url($this->image) : '';
     }
 }

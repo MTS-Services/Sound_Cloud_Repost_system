@@ -97,11 +97,11 @@
                             label: '{{ __('Role') }}',
                             key: 'role',
                         },
-                        // {
-                        //     label: '{{ __('Image') }}',
-                        //     key: 'modified_image',
-                        //     type: 'image',
-                        // },
+                        {
+                            label: '{{ __('Image') }}',
+                            key: 'modified_image',
+                            type: 'image',
+                        },
 
                     ];
 
