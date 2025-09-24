@@ -1211,7 +1211,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900 dark:text-white">
-                                        {{ Carbon\Carbon::parse($source['source_type'] == App\Models\Track::class ? $source['source_details']?->created_at_soundcloud ?? 'Unknown' : $source['source_details']?->soundcloud_created_at ?? 'Unknown')->format('d M, Y h:i A') ?? 'Unknown' }}
+                                        {{ Carbon\Carbon::parse($source['source_type'] == App\Models\Track::class ? $source['source_details']?->created_at_soundcloud : $source['source_details']?->soundcloud_created_at)->format('d M, Y h:i A') ?? 'Unknown' }}
                                     </div>
                                 </td>
                             </tr>
