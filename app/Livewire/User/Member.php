@@ -25,6 +25,7 @@ use InvalidArgumentException;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Feature;
+use App\Models\UserAnalytics;
 use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
 use Illuminate\Http\Client\Request;
@@ -57,6 +58,7 @@ class Member extends Component
     public bool $commentable = false;
     public bool $likeable = false;
     public bool $following = true;
+    public bool $alreadyFollowing = false;
 
     // block_mismatch_genre
     public ?bool $blockMismatchGenre = null;
@@ -392,6 +394,15 @@ class Member extends Component
         }
 
         $this->showRepostsModal = true;
+
+        $response = $this->soundCloudService->getAuthUserFollowers($this->user);
+        if ($response['collection']) {
+            $alreadyFollowing = $response['collection']->where('urn', $this->user->urn)->first();
+            if ($alreadyFollowing) {
+                $this->following = true;
+                $this->alreadyFollowing = true;
+            }
+        }
     }
 
     public function closeRepostModal()
@@ -421,6 +432,7 @@ class Member extends Component
                 return;
             } elseif ($follow_response->successful()) {
                 $this->following = 1;
+                // $this->analyticsService->recordAnalytics($this->music, $campaign, UserAnalytics::TYPE_FOLLOW, $this->genre);
             }
         }
         try {
