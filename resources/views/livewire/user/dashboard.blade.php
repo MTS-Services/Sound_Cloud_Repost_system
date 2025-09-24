@@ -400,7 +400,7 @@
                 <h3 class="dark:text-white text-lg font-semibold">Genre Distribution</h3>
                 <p class="text-slate-400 text-sm mb-2">What your audience listens to</p>
                 <div class="flex flex-col justify-center">
-                    <canvas class="flex-1" id="genreChart"></canvas>
+                    <canvas class="flex-grow" id="genreChart"></canvas>
                     <div class="flex flex-wrap justify-center gap-x-2 gap-y-2 text-xs">
 
                         @forelse($genreBreakdown as $index => $genre)
