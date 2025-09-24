@@ -78,10 +78,15 @@ class RepostRequest extends Component
         }
     }
 
-    public function updated()
-    {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+    public function updated($propertyName)
+{
+    $this->soundCloudService->refreshUserTokenIfNeeded(user());
+    
+    // Don't reset component state on certain updates
+    if (!in_array($propertyName, ['activeMainTab'])) {
+        return;
     }
+}
 
     public function updatedActiveMainTab()
     {
@@ -449,6 +454,9 @@ class RepostRequest extends Component
         }
         // Order by created_at desc and paginate
         $this->repostRequests = $query->orderBy('status', 'asc')->take(10)->get();
+        if (!is_array($this->playCountRecorded)) {
+            $this->playCountRecorded = [];
+        }
         Bus::dispatch(new TrackViewCount($this->repostRequests, user()->urn, 'request'));
 
         return $this->repostRequests;
