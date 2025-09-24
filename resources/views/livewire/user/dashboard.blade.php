@@ -402,7 +402,7 @@
 
                 <canvas id="genreChart" style="max-height: 300px !important; vertical-align: baseline !important;"
                     height="300" width="683"></canvas>
-                <div class="flex flex-wrap justify-center gap-x-2 gap-y-2 text-xs">
+                <div class="flex flex-wrap justify-center gap-2 text-xs mt-4">
 
                     @forelse($genreBreakdown as $index => $genre)
                         @php
