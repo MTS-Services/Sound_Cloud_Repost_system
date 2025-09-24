@@ -78,7 +78,7 @@
 
                 $(document).on('click', '.view', function() {
                     const id = $(this).data('id');
-                    const route = "{{ route('um.user-plane.show', ':id') }}";
+                    const route = "{{ route('um.user-plane.details', ':id') }}";
 
                     const details = [
                         {
