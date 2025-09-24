@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PermissionSeeder::class,
             RoleSeeder::class,
-            UserSeeder::class,
+            // UserSeeder::class,
             AdminSeeder::class,
             RoleHasPermissionSeeder::class,
             FeatureSeeder::class,
@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
             // CampaignSeeder::class,
             // RepostRequestSeeder::class,
             CreditSeeder::class,
-            UserInformationSeeder::class,
+            // UserInformationSeeder::class,
             // RepostSeeder::class,
             FaqCategorySeeder::class,
             FaqSeeder::class,
