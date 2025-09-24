@@ -398,7 +398,7 @@
             <!-- Right Section -->
             <div class="rounded-lg p-4 sm:p-6 shadow-sm dark:bg-slate-800">
                 <h3 class="dark:text-white text-lg font-semibold">Genre Distribution</h3>
-                <p class="text-slate-400 text-sm mb-2">What your audience listens to</p>
+                <p class="text-slate-400 text-sm mb-5">What your audience listens to</p>
 
                 <canvas id="genreChart" style="max-height: 300px !important; vertical-align: baseline !important;"
                     height="300" width="683"></canvas>
@@ -413,7 +413,7 @@
                             <span class="text-sm" style="color: {{ $color }};">{{ $genre['genre'] }}</span>
                         </div>
                     @empty
-                        <div class="text-center text-gray-500 dark:text-gray-400 py-8">
+                        <div class="text-center text-gray-500 dark:text-gray-400 py-4">
                             <p>No genre data available yet.</p>
                         </div>
                     @endforelse
