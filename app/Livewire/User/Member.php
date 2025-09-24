@@ -111,8 +111,9 @@ class Member extends Component
     public function updated($propertyName)
     {
         $this->validateOnly($propertyName);
-
-        $this->creditSpent = repostPrice($this->user->repost_price, $this->commentable, $this->likeable);
+        if ($propertyName === 'likeable' || $propertyName === 'commentable') {
+            $this->creditSpent = repostPrice($this->user->repost_price, $this->commentable, $this->likeable);
+        }
         // + ($this->likeable ? 2 : 0)
         // + ($this->commentable ? 2 : 0);
 
