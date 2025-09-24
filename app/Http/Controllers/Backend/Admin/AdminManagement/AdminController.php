@@ -137,7 +137,7 @@ class AdminController extends Controller implements HasMiddleware
         $data = $this->adminService->getAdmin($id);
         $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
-        $data['role'] = $data->role?->name;
+        $data['role_id'] = $data->role?->name;
         return response()->json($data);
     }
 

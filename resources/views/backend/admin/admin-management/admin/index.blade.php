@@ -95,7 +95,7 @@
                         },
                         {
                             label: '{{ __('Role') }}',
-                            key: 'role',
+                            key: 'role_id',
                         },
                         {
                             label: '{{ __('Image') }}',
