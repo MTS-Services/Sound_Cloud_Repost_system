@@ -400,8 +400,8 @@
                 <h3 class="dark:text-white text-lg font-semibold">Genre Distribution</h3>
                 <p class="text-slate-400 text-sm mb-2">What your audience listens to</p>
 
-                <canvas id="genreChart" style="max-height: 200px !important; vertical-align: baseline !important;"
-                    height="200" width="455"></canvas> 
+                <canvas id="genreChart" style="max-height: 250px !important; vertical-align: baseline !important;"
+                    height="250" width="569"></canvas>
                 <div class="flex flex-wrap justify-center gap-x-2 gap-y-2 text-xs">
 
                     @forelse($genreBreakdown as $index => $genre)
@@ -409,8 +409,13 @@
                             $colors = ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'];
                             $color = $colors[$index % 5];
                         @endphp
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm" style="color: {{ $color }};">{{ $genre['genre'] }}</span>
+                        <div class="flex items-start flex-col justify-center gap-2">
+                            <div class="flex items-center">
+                                <span class="w-3 h-3 rounded-full mr-3 border border-gray-200 dark:border-gray-600"
+                                    style="background-color: {{ $color }};"></span>
+                                <span class="text-sm"
+                                    style="color: {{ $color }};">{{ $genre['genre'] }}</span>
+                            </div>
                         </div>
                     @empty
                         <div class="text-center text-gray-500 dark:text-gray-400 py-8">
