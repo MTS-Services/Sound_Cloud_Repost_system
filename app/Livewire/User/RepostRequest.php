@@ -192,7 +192,7 @@ class RepostRequest extends Component
             $this->dispatch('alert', type: 'success', message: 'Request marked as played for 5+ seconds!');
         }
     }
-
+    public $playCountRecorded = []; // Track per request ID
     /**
      * Check if request can be reposted
      */
@@ -223,15 +223,14 @@ class RepostRequest extends Component
         // Must have played for 5+ seconds
         $canRepost = in_array($requestId, $this->playedRequests);
 
+        // Change this property from a single boolean to an array
 
-        if ($canRepost && !$this->playCount) {
-            Log::info('Entering playcount logic', ['requestId' => $requestId, 'canRepost' => $canRepost, 'playCount' => $this->playCount]);
 
+        // Then update your condition:
+        if ($canRepost && !isset($this->playCountRecorded[$requestId])) {
             $request = $this->repostRequests->find($requestId);
 
             if ($request && $request->music) {
-                Log::info('Request and music found', ['requestId' => $requestId]);
-
                 try {
                     // Record analytics for the play
                     $response = $this->analyticsService->recordAnalytics(
@@ -241,30 +240,28 @@ class RepostRequest extends Component
                         genre: $request->music->genre ?? 'anyGenre'
                     );
 
-                    Log::info('Analytics response', ['requestId' => $requestId, 'response' => $response]);
-
                     // Only increment if analytics recording was successful
                     if ($response !== false && $response !== null) {
                         $request->increment('playback_count');
-                        Log::info('Playback count incremented', ['requestId' => $requestId]);
-                    } else {
-                        Log::warning('Analytics failed - no increment', ['requestId' => $requestId, 'response' => $response]);
                     }
 
-                    $this->playCount = true;
+                    // Mark this specific request as recorded
+                    $this->playCountRecorded[$requestId] = true;
                 } catch (\Exception $e) {
                     Log::error('Analytics recording failed for repost request', [
                         'requestId' => $requestId,
                         'error' => $e->getMessage()
                     ]);
 
-                    $this->playCount = true;
+                    $this->playCountRecorded[$requestId] = true;
                 }
-            } else {
-                Log::warning('Request or music not found', ['requestId' => $requestId, 'hasRequest' => !!$request, 'hasMusic' => $request ? !!$request->music : false]);
             }
         } else {
-            Log::info('Playcount condition not met', ['requestId' => $requestId, 'canRepost' => $canRepost, 'playCount' => $this->playCount]);
+            Log::info('Playcount condition not met', [
+                'requestId' => $requestId,
+                'canRepost' => $canRepost,
+                'playCountRecorded' => isset($this->playCountRecorded[$requestId])
+            ]);
         }
         return $canRepost;
     }
