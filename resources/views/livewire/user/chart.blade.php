@@ -440,8 +440,6 @@
                                             </svg>
                                         </button> --}}
                                         @if (isset($source['source_details']))
-                                            )
-
                                             <button
                                                 wire:click="likeSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']?->id) }}')"
                                                 class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-600 {{ $source['like'] ? 'bg-red-500 text-white shadow-lg' : '' }}">
