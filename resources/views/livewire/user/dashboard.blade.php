@@ -390,7 +390,7 @@
                     </a>
                 </div>
                 <div>
-                    <canvas id="campaignChart" width="1000" style="height: 384px; width: 1000px;"
+                    <canvas id="campaignChart" width="1000" style="max-height: 384px; width: 1000px;"
                         height="384"></canvas>
                 </div>
             </div>
@@ -400,8 +400,8 @@
                 <h3 class="dark:text-white text-lg font-semibold">Genre Distribution</h3>
                 <p class="text-slate-400 text-sm mb-2">What your audience listens to</p>
 
-                <canvas id="genreChart"
-                    style="max-height: 200px !important; vertical-align: baseline !important;"></canvas>
+                <canvas id="genreChart" style="max-height: 200px !important; vertical-align: baseline !important;"
+                    height="200" width="455"></canvas>
                 <div class="flex flex-wrap justify-center gap-x-2 gap-y-2 text-xs">
 
                     @forelse($genreBreakdown as $index => $genre)
