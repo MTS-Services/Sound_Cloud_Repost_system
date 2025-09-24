@@ -107,6 +107,6 @@ class Admin extends AuthBaseModel implements MustVerifyEmail
     }
     public function getModifiedImageAttribute()
     {
-        return $this->image ? auth_storage_url($this->image) : '';
+        return auth_storage_url($this->image);
     }
 }
