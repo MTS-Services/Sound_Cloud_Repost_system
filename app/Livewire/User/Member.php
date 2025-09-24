@@ -400,9 +400,9 @@ class Member extends Component
             Log::info('Already following: 1' . $this->user->urn);
             $alreadyFollowing = $response->where('urn', $this->user->urn)->first();
             Log::info('Already following: 2' . $alreadyFollowing);
-            if ($alreadyFollowing) {
+            if ($alreadyFollowing !== null) {
                 Log::info('Already following: 3');
-                $this->following = true;
+                $this->following = false;
                 $this->alreadyFollowing = true;
             }
         }
@@ -435,7 +435,7 @@ class Member extends Component
                 return;
             } elseif ($follow_response->successful()) {
                 $this->following = 1;
-                // $this->analyticsService->recordAnalytics($this->music, $campaign, UserAnalytics::TYPE_FOLLOW, $this->genre);
+                Log::info('Member page-> Followed user: ' . $this->user->urn);
             }
         }
         try {

@@ -43,7 +43,8 @@ class RepostRequest extends Component
     public $request = null;
     public $liked = false;
     public string $commented = '';
-    public $followed = true;
+    public $following = true;
+    public $alreadyFollowing = false;
 
 
     // Listeners for browser events
@@ -300,6 +301,16 @@ class RepostRequest extends Component
         }
         $this->showRepostConfirmationModal = true;
         $this->request = ModelsRepostRequest::findOrFail($requestId)->load('music', 'requester');
+
+        $response = $this->soundCloudService->getAuthUserFollowers($this->request->requester);
+        if ($response->isNotEmpty()) {
+            $alreadyFollowing = $response->where('urn', $this->request->requester?->urn)->first();
+            if ($alreadyFollowing !== null) {
+                Log::info('Already following: 3');
+                $this->following = false;
+                $this->alreadyFollowing = true;
+            }
+        }
     }
     public function repost($requestId)
     {
@@ -308,7 +319,7 @@ class RepostRequest extends Component
             return;
         }
 
-        $result = $this->repostRequestService->handleRepost($requestId, $this->commented, $this->liked, $this->followed);
+        $result = $this->repostRequestService->handleRepost($requestId, $this->commented, $this->liked, $this->following);
 
         if ($result['status'] === 'success') {
             $this->repostedRequests[] = $requestId;
