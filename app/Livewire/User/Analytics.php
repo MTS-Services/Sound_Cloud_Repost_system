@@ -114,11 +114,13 @@ class Analytics extends Component
 
             // Get fresh analytics data
             $freshData = $this->analyticsService->getAnalyticsData(
-                $this->filter,
-                $dateRange,
-                $this->selectedGenres,
-                null,
-                null
+                filter: $this->filter,
+                dateRange: $dateRange,
+                genres: $this->selectedGenres,
+                source: null,
+                actionableType: null,
+                ownerUserUrn: user()->urn,
+                actUserUrn: null
             );
             // Transform data for UI
             $this->data = $this->transformDataForUI($freshData);
@@ -172,20 +174,20 @@ class Analytics extends Component
     private function loadAdditionalData()
     {
         // try {
-            $dateRange = $this->getDateRange();
+        $dateRange = $this->getDateRange();
 
-            if ($dateRange === false) {
-                return;
-            }
+        if ($dateRange === false) {
+            return;
+        }
 
-            $this->topSources = $this->analyticsService->getTopSources(
-                userUrn: user()->urn,
-                limit: 5,
-                filter: $this->filter,
-                dateRange: $dateRange
-            );
+        $this->topSources = $this->analyticsService->getTopSources(
+            userUrn: user()->urn,
+            limit: 5,
+            filter: $this->filter,
+            dateRange: $dateRange
+        );
 
-            $this->genreBreakdown = $this->analyticsService->getGenreBreakdown($this->filter, $dateRange, null, $this->userGenres);
+        $this->genreBreakdown = $this->analyticsService->getGenreBreakdown($this->filter, $dateRange, null, $this->userGenres);
         // } catch (\Exception $e) {
         //     logger()->error('Additional data loading failed', ['error' => $e->getMessage()]);
         // }

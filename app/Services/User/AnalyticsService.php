@@ -138,21 +138,23 @@ class AnalyticsService
         ?array $dateRange = null,
         ?array $genres = null,
         ?object $source = null,
-        ?string $actionableType = null
+        ?string $actionableType = null,
+        ?string $ownerUserUrn = null,
+        ?string $actUserUrn = null
     ): array {
-        $userUrn = user()->urn;
 
         // Get date ranges for current and previous periods
         $periods = $this->calculatePeriods($filter, $dateRange);
 
         // Fetch analytics data for both periods
         $allData = $this->fetchAnalyticsData(
-            $userUrn,
-            $periods['previous']['start'],
-            $periods['current']['end'],
-            $genres,
-            $source,
-            $actionableType
+            ownerUserUrn: $ownerUserUrn,
+            startDate: $periods['previous']['start'],
+            endDate: $periods['current']['end'],
+            genres: $genres,
+            source: $source,
+            actionableType: $actionableType,
+            actUserUrn: $actUserUrn
         );
         // Separate current and previous period data
         $currentData = $allData->filter(function ($item) use ($periods) {
@@ -197,17 +199,22 @@ class AnalyticsService
      * Fetch analytics data from database
      */
     private function fetchAnalyticsData(
-        ?string $userUrn = null,
+        ?string $ownerUserUrn = null,
         Carbon $startDate,
         Carbon $endDate,
         ?array $genres = null,
         ?object $source = null,
-        ?string $actionableType = null
+        ?string $actionableType = null,
+        ?string $actUserUrn = null
     ): Collection {
         $query = UserAnalytics::query();
 
-        if ($userUrn !== null) {
-            $query->where('owner_user_urn', $userUrn);
+        if ($ownerUserUrn !== null) {
+            $query->where('owner_user_urn', $ownerUserUrn);
+        }
+
+        if ($actUserUrn !== null) {
+            $query->where('act_user_urn', $actUserUrn);
         }
 
         $query->whereDate('created_at', '>=', $startDate->format('Y-m-d'))
@@ -483,21 +490,21 @@ class AnalyticsService
 
         // Fetch ALL relevant current and previous data without paginating first
         $currentData = $this->fetchAnalyticsData(
-            $userUrn,
-            $periods['current']['start'],
-            $periods['current']['end'],
-            $genres,
-            null,
-            $actionableType
+            ownerUserUrn: $userUrn,
+            startDate: $periods['current']['start'],
+            endDate: $periods['current']['end'],
+            genres: $genres,
+            source: null,
+            actionableType: $actionableType
         );
 
         $previousData = $this->fetchAnalyticsData(
-            $userUrn,
-            $periods['previous']['start'],
-            $periods['previous']['end'],
-            $genres,
-            null,
-            $actionableType
+            ownerUserUrn: $userUrn,
+            startDate: $periods['previous']['start'],
+            endDate: $periods['previous']['end'],
+            genres: $genres,
+            source: null,
+            actionableType: $actionableType
         );
 
         // Calculate metrics for the full dataset
@@ -936,12 +943,12 @@ class AnalyticsService
         $periods = $this->calculatePeriods($filter, $dateRange);
 
         $data = $this->fetchAnalyticsData(
-            $userUrn,
-            $periods['current']['start'],
-            $periods['current']['end'],
-            $genres,
-            $source,
-            $actionableType
+            ownerUserUrn: $userUrn,
+            startDate: $periods['current']['start'],
+            endDate: $periods['current']['end'],
+            genres: $genres,
+            source: $source,
+            actionableType: $actionableType
         );
 
         // Group by date for chart
