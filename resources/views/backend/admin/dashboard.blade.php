@@ -9,73 +9,236 @@
             x-transition:enter="transition-all duration-500" x-transition:enter-start="opacity-0 translate-y-8"
             x-transition:enter-end="opacity-100 translate-y-0">
 
+            {{-- Total Admin --}}
+            <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0s;"
+                @click="showDetails('admins')">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-purple-200 rounded-xl flex items-center justify-center">
+                        <i data-lucide="shield" class="w-6 h-6 text-purple-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">{{ $admin }}</h3>
+                </div>
+                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Total Admins</p>
+            </div>
+
+            {{-- Active Admin --}}
+            <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0s;"
+                @click="showDetails('active_admin')">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-green-200 rounded-xl flex items-center justify-center">
+                        <i data-lucide="user-cog" class="w-6 h-6 text-green-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">{{ $active_admin }}</h3>
+                </div>
+                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Active Admins</p>
+            </div>
+
             <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0s;"
                 @click="showDetails('users')">
                 <div class="flex items-center justify-between mb-4">
                     <div class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
-                        <i data-lucide="users" class="w-6 h-6 text-blue-400"></i>
+                        <i data-lucide="users" class="w-6 h-6 text-blue-500"></i>
                     </div>
-                    {{-- <div class="text-green-400 text-sm font-medium flex items-center gap-1">
-                        <i data-lucide="trending-up" class="w-3 h-3"></i>
-
-                    </div> --}}
-                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">
-                        {{ $user }}
-                    </h3>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">{{ $user }}</h3>
                 </div>
                 <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Total Users</p>
-
             </div>
 
-            <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0.2s;"
-                @click="showDetails('revenue')">
+            {{-- Active Users --}}
+            <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0s;"
+                @click="showDetails('active_users')">
                 <div class="flex items-center justify-between mb-4">
                     <div class="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
-                        <i data-lucide="trending-up" class="w-6 h-6 text-green-400"></i>
+                        <i data-lucide="user-check" class="w-6 h-6 text-green-500"></i>
                     </div>
-                    {{-- <div class="text-green-400 text-sm font-medium flex items-center gap-1">
-                        <i data-lucide="trending-up" class="w-3 h-3"></i>
-                        +23%
-                    </div> --}}
-                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">
-                        <span>{{ $track }}</span>
-                    </h3>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">{{ $active_user }}</h3>
                 </div>
-                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm ">Total Tracks</p>
-
+                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Active Users</p>
             </div>
 
+            {{-- Total Users Plan --}}
+            <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0s;"
+                @click="showDetails('user_plan')">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-indigo-500/20 rounded-xl flex items-center justify-center">
+                        <i data-lucide="layers" class="w-6 h-6 text-indigo-500"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">{{ $user_plan }}</h3>
+                </div>
+                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Total User Plans</p>
+            </div>
+
+            {{-- Total Tracks --}}
+            <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0.2s;"
+                @click="showDetails('tracks')">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-indigo-500/20 rounded-xl flex items-center justify-center">
+                        <i data-lucide="music" class="w-6 h-6 text-pink-500"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">{{ $track }}</h3>
+                </div>
+                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Total Tracks</p>
+            </div>
+
+            {{-- Total Orders --}}
             <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0.4s;"
                 @click="showDetails('orders')">
                 <div class="flex items-center justify-between mb-4">
                     <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
-                        <i data-lucide="shopping-bag" class="w-6 h-6 text-purple-400"></i>
+                        <i data-lucide="shopping-bag" class="w-6 h-6 text-purple-500"></i>
                     </div>
-                    {{-- <div class="text-red-400 text-sm font-medium flex items-center gap-1">
-                        <i data-lucide="trending-down" class="w-3 h-3"></i>
-                        -5%
-                    </div> --}}
-                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1 ">
-                        {{ $order }}</h3>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">{{ $order }}</h3>
                 </div>
-                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm ">Total Orders</p>
+                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Total Orders</p>
+            </div>
+            {{-- completed Orders --}}
+            <div class="glass-card rounded-2xl p-6 card-hover float interactive-card cursor-pointer transition-transform hover:scale-105"
+                style="animation-delay: 0.4s;" @click="showDetails('completed_order')">
 
+                <div class="flex items-center justify-between mb-4">
+                    <!-- Icon Container -->
+                    <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center shadow-md">
+                        <i data-lucide="check-circle" class="w-6 h-6 text-purple-500"></i>
+                    </div>
+
+                    <!-- Completed Orders Count -->
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-1">
+                        {{ $completed_order }}
+                    </h3>
+                </div>
+
+                <!-- Description -->
+                <p class="text-gray-800/60 dark:text-gray-300 text-sm">
+                    Completed Orders
+                </p>
             </div>
 
+            {{-- Active Campaigns --}}
             <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0.6s;"
-                @click="showDetails('active')">
+                @click="showDetails('active_campaigns')">
                 <div class="flex items-center justify-between mb-4">
                     <div class="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center">
-                        <i data-lucide="activity" class="w-6 h-6 text-yellow-400"></i>
+                        <i data-lucide="megaphone" class="w-6 h-6 text-yellow-500"></i>
                     </div>
-                    {{-- <div class="text-yellow-400 text-sm font-medium flex items-center gap-1">
-                        <div class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
-                        Live
-                    </div> --}}
                     <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">{{ $active_campaign }}</h3>
                 </div>
-                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm ">Active Campaign</p>
+                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Active Campaigns</p>
             </div>
+            {{-- Completed Campaigns --}}
+            <div class="glass-card rounded-2xl p-6 card-hover float interactive-card cursor-pointer transition-transform hover:scale-105"
+                style="animation-delay: 0.6s;" @click="showDetails('completed_campaign')">
+
+                <div class="flex items-center justify-between mb-4">
+                    <!-- Icon Container -->
+                    <div class="w-12 h-12 bg-yellow-700/20 rounded-xl flex items-center justify-center shadow-md">
+                        <i data-lucide="book-check" class="w-6 h-6 text-yellow-900"></i>
+                    </div>
+
+                    <!-- Campaign Count -->
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-1">
+                        {{ $completed_campaign }}
+                    </h3>
+                </div>
+
+                <!-- Description -->
+                <p class="text-gray-800/60 dark:text-gray-300 text-sm">
+                    Completed Campaigns
+                </p>
+            </div>
+
+            {{-- Plans --}}
+            <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0.6s;"
+                @click="showDetails('plans')">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-cyan-500/20 rounded-xl flex items-center justify-center">
+                        <i data-lucide="calendar-range" class="w-6 h-6 text-cyan-500"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">{{ $plan }}</h3>
+                </div>
+                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Active Plans</p>
+            </div>
+
+            {{-- Credits --}}
+            <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0.6s;"
+                @click="showDetails('credits')">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-teal-500/20 rounded-xl flex items-center justify-center">
+                        <i data-lucide="wallet" class="w-6 h-6 text-teal-500"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">{{ $credit }}</h3>
+                </div>
+                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Active Credits</p>
+            </div>
+
+            {{-- Reposts --}}
+            <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0.6s;"
+                @click="showDetails('reposts')">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center">
+                        <i data-lucide="file-text" class="w-6 h-6 text-red-500"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">{{ $report }}</h3>
+                </div>
+                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Total Reposts</p>
+            </div>
+            {{-- Reposts Requests --}}
+            <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0.6s;"
+                @click="showDetails('repost_request')">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-rose-200 rounded-xl flex items-center justify-center">
+                        <i data-lucide="file-clock" class="w-6 h-6 text-rose-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">{{ $repost_request }}</h3>
+                </div>
+                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Total Repost Requests</p>
+            </div>
+            {{-- Payment --}}
+            <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0.6s;"
+                @click="showDetails('payments')">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-rose-200 rounded-xl flex items-center justify-center">
+                        <i data-lucide="credit-card" class="w-6 h-6 text-rose-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">{{ $payments }}</h3>
+                </div>
+                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Total Payments </p>
+            </div>
+
+            {{-- Total Amount --}}
+            <div class="glass-card rounded-2xl p-6 card-hover float interactive-card" style="animation-delay: 0.6s;"
+                @click="showDetails('amount')">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-yellow-200 rounded-xl flex items-center justify-center">
+                        <i data-lucide="banknote" class="w-6 h-6 text-yellow-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-text-white mb-1">{{ $amount }}</h3>
+                </div>
+                <p class="text-gray-800/60 dark:text-text-dark-primary text-sm">Total Amount Purchased</p>
+            </div>
+            {{-- Credit Transactions --}}
+            <div class="glass-card rounded-2xl p-6 card-hover float interactive-card cursor-pointer transition-transform hover:scale-105"
+                style="animation-delay: 0.6s;" @click="showDetails('transactions_credit')">
+
+                <div class="flex items-center justify-between mb-4">
+                    <!-- Icon Container -->
+                    <div
+                        class="w-12 h-12 bg-yellow-100/80 dark:bg-yellow-200/20 rounded-xl flex items-center justify-center shadow-md">
+                        <i data-lucide="dollar-sign" class="w-6 h-6 text-yellow-600"></i>
+                    </div>
+
+                    <!-- Transaction Count -->
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-1">
+                        {{ $transactions_credit }}
+                    </h3>
+                </div>
+
+                <!-- Description -->
+                <p class="text-gray-700/70 dark:text-gray-300 text-sm">Total Credit Transactions </p>
+            </div>
+
+
+
+
         </div>
 
         <!-- Charts Section -->
