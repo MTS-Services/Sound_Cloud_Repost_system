@@ -200,14 +200,14 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         Route::resource('faq', FaqController::class);
         Route::controller(FaqController::class)->name('faq.')->prefix('faq')->group(function () {
             Route::get('/status/{faq}', 'status')->name('status');
-            Route::post('/show/{faq}', 'show')->name('show');
+            Route::post('/show/{faq}', 'show')->name('details');
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{faq}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{faq}', 'permanentDelete')->name('permanent-delete');
         });
         Route::resource('faq-category', FaqCategotyController::class);
         Route::get('status/{faq_category}', [FaqCategotyController::class, 'status'])->name('faq-category.status');
-        Route::post('show/{faq_category}', [FaqCategotyController::class, 'show'])->name('faq-category.show');
+        Route::post('show/{faq_category}', [FaqCategotyController::class, 'show'])->name('details');
         Route::get('trash/bin', [FaqCategotyController::class, 'trash'])->name('faq-category.trash');
         Route::get('restore/{faq_category}', [FaqCategotyController::class, 'restore'])->name('faq-category.restore');
         Route::delete('permanent-delete/{faq_category}', [FaqCategotyController::class, 'permanentDelete'])->name('faq-category.permanent-delete');

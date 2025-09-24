@@ -72,7 +72,7 @@
 
                 $(document).on('click', '.view', function() {
                     const id = $(this).data('id');
-                    const route = "{{ route('fm.faq-category.show', ':id') }}";
+                    const route = "{{ route('fm.faq-category.details', ':id') }}";
 
                     const details = [
                         {
