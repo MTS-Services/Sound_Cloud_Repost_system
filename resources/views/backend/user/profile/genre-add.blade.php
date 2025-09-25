@@ -1,4 +1,4 @@
-{{-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -33,10 +33,7 @@
     </script>
 </head>
 
-<body class="font-sans text-gray-800 leading-relaxed"> --}}
-<x-frontend::layout>
-    <x-slot name="title">Registration Flow</x-slot>
-    <x-slot name="page_slug">registration-flow</x-slot>
+<body class="font-sans text-gray-800 leading-relaxed">
     <div x-data="registrationForm()" x-init="prefillFromServer()" class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
         <!-- Header -->
         <header class="bg-white shadow-sm border-b border-gray-200">
@@ -456,7 +453,6 @@
             }
         }
     </script>
-</x-frontend::layout>
-{{-- </body>
+</body>
 
-    </html> --}}
+</html>
