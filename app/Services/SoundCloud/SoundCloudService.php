@@ -414,6 +414,7 @@ class SoundCloudService
                     continue;
                 }
                 $trackIdsInResponse[] = $trackData['id'];
+                Log::info('track Id:' . $trackData['id']);
 
                 $userUrn = $trackData['user']['urn'];
 
