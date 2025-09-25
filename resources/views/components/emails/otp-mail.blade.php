@@ -1,8 +1,5 @@
 @props(['token', 'name', 'id'])
-{{--
-This Blade template is used for sending email verification links.
-It receives 'token', 'name', and 'id' as props.
---}}
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,6 +9,7 @@ It receives 'token', 'name', and 'id' as props.
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Email Confirmation - RepostChain</title>
+    <link id="favicon" rel="icon" href="{{ storage_url(app_setting('favicon')) }}" type="image/x-icon">
 
     <style type="text/css">
         body,
@@ -263,12 +261,15 @@ It receives 'token', 'name', and 'id' as props.
     </style>
 </head>
 
-<body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #333333;">
+<body
+    style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #333333;">
 
-    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f5f5f5; min-width: 100%;">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0"
+        style="background-color: #f5f5f5; min-width: 100%;">
         <tr>
             <td align="center" valign="top" style="padding: 30px 0;">
-                <table class="main-container" width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; margin: 0 auto; border-spacing: 0; border-collapse: collapse; background-color: #ffffff; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+                <table class="main-container" width="100%" border="0" cellspacing="0" cellpadding="0"
+                    style="max-width: 600px; margin: 0 auto; border-spacing: 0; border-collapse: collapse; background-color: #ffffff; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
                     <tr>
                         <td class="content-cell" style="padding: 40px 30px; background-color: #ffffff; color: #333333;">
                             <div class="logo-container">
@@ -281,7 +282,8 @@ It receives 'token', 'name', and 'id' as props.
                                 <strong>{{ $name }}</strong>, please confirm your email address
                             </div>
 
-                            <a href="{{ route('user.email.verify', ['id' => $id, 'token' => $token]) }}" class="confirm-button">
+                            <a href="{{ route('user.email.verify', ['id' => $id, 'token' => $token]) }}"
+                                class="confirm-button">
                                 Confirm Email In to Newsletter
                             </a>
 
@@ -314,4 +316,5 @@ It receives 'token', 'name', and 'id' as props.
         </tr>
     </table>
 </body>
+
 </html>

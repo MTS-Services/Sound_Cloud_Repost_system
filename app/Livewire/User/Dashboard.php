@@ -239,11 +239,7 @@ class Dashboard extends Component
     {
         $this->total_credits = $this->creditTransactionService->getUserTotalCredits();
 
-        $this->totalCount = RepostRequest::where('requester_urn', user()->urn)
-            ->orWhere('status', RepostRequest::STATUS_PENDING)
-            ->orWhere('status', RepostRequest::STATUS_APPROVED)
-            ->orWhere('status', RepostRequest::STATUS_DECLINE)
-            ->count();
+        $this->totalCount = Repost::where('reposter_urn', user()->urn)->count();
 
         $this->repostRequests = RepostRequest::where('target_user_urn', user()->urn)->where('status', RepostRequest::STATUS_PENDING)
             ->where('expired_at', '>', now())
@@ -846,7 +842,8 @@ class Dashboard extends Component
     public function profeature($isChecked)
     {
         if (!proUser()) {
-            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
+            ;
         } elseif (($this->credit * 1.5) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;

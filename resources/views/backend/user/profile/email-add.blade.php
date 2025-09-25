@@ -8,6 +8,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link id="favicon" rel="icon" href="{{ storage_url(app_setting('favicon')) }}" type="image/x-icon">
     <script>
         tailwind.config = {
             theme: {
@@ -164,7 +165,7 @@
                                         'bg-orange-500 text-white shadow-md': step === currentStep,
                                         'bg-orange-500 text-white border-2 border-orange-500': step < currentStep,
                                         'bg-gray-200 text-gray-600': step > currentStep
-
+                                    
                                     }">
                                     <template x-if="step < currentStep">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"

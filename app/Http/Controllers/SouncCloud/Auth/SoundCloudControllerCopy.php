@@ -25,7 +25,7 @@ use Laravel\Socialite\Facades\Socialite;
 
 use Throwable;
 
-class SoundCloudController extends Controller
+class SoundCloudControllerCopy extends Controller
 {
     public function __construct(protected SoundCloudService $soundCloudService) {}
 
@@ -59,8 +59,9 @@ class SoundCloudController extends Controller
 
             // SyncUserJob::dispatch($user, $soundCloudUser);
 
-            Auth::guard('web')->login($user, true);
             $this->syncUser($user, $soundCloudUser);
+
+            Auth::guard('web')->login($user, true);
 
             return redirect()->intended(route('user.my-account', absolute: false))
                 ->with('success', 'Successfully connected to SoundCloud!');
@@ -120,11 +121,11 @@ class SoundCloudController extends Controller
             DB::transaction(function () use ($user, $soundCloudUser) {
                 Log::info('SoundCloud sync started for syncUserTracks');
                 $this->soundCloudService->syncUserTracks($user, []);
-                // Log::info('SoundCloud sync started for syncUserProductsAndSubscriptions');
-                // $this->soundCloudService->syncUserProductsAndSubscriptions($user, $soundCloudUser);
-                // Log::info('SoundCloud sync started for syncUserPlaylists');
-                // $this->soundCloudService->syncUserPlaylists($user);
-                // Log::info('SoundCloud sync started for syncUserInformation');
+                Log::info('SoundCloud sync started for syncUserProductsAndSubscriptions');
+                $this->soundCloudService->syncUserProductsAndSubscriptions($user, $soundCloudUser);
+                Log::info('SoundCloud sync started for syncUserPlaylists');
+                $this->soundCloudService->syncUserPlaylists($user);
+                Log::info('SoundCloud sync started for syncUserInformation');
                 $this->soundCloudService->syncUserInformation($user, $soundCloudUser);
             });
         } catch (Throwable $e) {
