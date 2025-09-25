@@ -236,13 +236,11 @@ class Campaign extends Component
         $this->getAllTrackTypes();
         $this->totalCampaigns();
         $this->calculateFollowersLimit();
-        if ($this->activeMainTab === 'all') {
-            $this->selectedGenres = !empty($this->selectedGenres) ? $this->selectedGenres : [];
-        } else {
-            $this->selectedGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
-        }
-
-        // $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
+        // if ($this->activeMainTab === 'all') {
+        //     $this->selectedGenres = !empty($this->selectedGenres) ? $this->selectedGenres : [];
+        // } else {
+        //     $this->selectedGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+        // }
     }
     public function updated($propertyName)
     {
@@ -320,13 +318,13 @@ class Campaign extends Component
             case 'recommended_pro':
                 $this->resetPage('recommended_proPage');
                 $this->{$tab . 'Page'} = 1;
-                $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
+                // $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
                 break;
 
             case 'recommended':
                 $this->resetPage('recommendedPage');
                 $this->{$tab . 'Page'} = 1;
-                $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
+                // $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
                 break;
 
             case 'all':
@@ -337,7 +335,7 @@ class Campaign extends Component
 
             default:
                 $this->resetPage('recommended_proPage');
-                $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
+                // $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
         }
 
         $this->totalCampaigns();
@@ -1442,7 +1440,8 @@ class Campaign extends Component
                     $query->isPro();
                 })
                 ->whereHas('music', function ($query) {
-                    $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+                    // $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+                    $userGenres = $this->selectedGenres;
                     $query->whereIn('genre', $userGenres);
                 })->count();
         } else {
@@ -1451,7 +1450,8 @@ class Campaign extends Component
                     $query->isPro();
                 })
                 ->whereHas('music', function ($query) {
-                    $userGenres = user()->genres->pluck('genre')->toArray() ?? [];
+                    // $userGenres = user()->genres->pluck('genre')->toArray() ?? [];
+                    $userGenres = $this->selectedGenres;
                     $query->whereIn('genre', $userGenres);
                 })->count();
         }
@@ -1459,13 +1459,15 @@ class Campaign extends Component
         if ($this->activeMainTab === 'recommended') {
             $this->totalRecommended = $this->getCampaignsQuery()
                 ->whereHas('music', function ($query) {
-                    $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+                    // $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+                    $userGenres = $this->selectedGenres;
                     $query->whereIn('genre', $userGenres);
                 })->count();
         } else {
             $this->totalRecommended = $this->getCampaignsQuery()
                 ->whereHas('music', function ($query) {
-                    $userGenres = user()->genres->pluck('genre')->toArray() ?? [];
+                    // $userGenres = user()->genres->pluck('genre')->toArray() ?? [];
+                    $userGenres = $this->selectedGenres;
                     $query->whereIn('genre', $userGenres);
                 })->count();
         }
@@ -1487,7 +1489,8 @@ class Campaign extends Component
                             $query->isPro();
                         })
                         ->whereHas('music', function ($query) {
-                            $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+                            // $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+                            $userGenres = $this->selectedGenres;
                             $query->whereIn('genre', $userGenres);
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
@@ -1497,7 +1500,8 @@ class Campaign extends Component
                 case 'recommended':
                     $campaigns = $baseQuery
                         ->whereHas('music', function ($query) {
-                            $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+                            // $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+                            $userGenres = $this->selectedGenres;
                             $query->whereIn('genre', $userGenres);
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
@@ -1519,7 +1523,8 @@ class Campaign extends Component
                             $query->isPro();
                         })
                         ->whereHas('music', function ($query) {
-                            $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+                            // $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+                            $userGenres = $this->selectedGenres;
                             $query->whereIn('genre', $userGenres);
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
