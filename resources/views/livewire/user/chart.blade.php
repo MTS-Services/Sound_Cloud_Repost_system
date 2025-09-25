@@ -8,25 +8,27 @@
                     <div class="max-w-4xl mx-auto">
                         <div class="flex items-center justify-between flex-wrap gap-4">
                             <div class="flex items-center gap-3">
-                                <div class="bg-orange-500 p-3 rounded-xl">
+                                <div class="bg-orange-500 p-3 rounded-xl flex justify-center sm:justify-start ">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"
                                         stroke-linecap="round" stroke-linejoin="round"
-                                        class="lucide lucide-trophy w-8 h-8">
+                                        class="lucide lucide-trophy w-6 h-6 sm:w-8 sm:h-8 sm:mt-0">
                                         <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
                                         <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
                                         <path d="M4 22h16"></path>
                                         <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
-                                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22">
-                                        </path>
+                                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
                                         <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
                                     </svg>
                                 </div>
                                 <div>
-                                    <h1 class="text-3xl md:text-4xl font-bold mb-2 text-gray-900 dark:text-white">Weekly
-                                        Top
-                                        {{ $topSources->count() }} / 20 Chart</h1>
-                                    <div class="flex items-center gap-4 text-gray-500 dark:text-gray-300">
+                                    <h1
+                                        class="text-base sm:text-3xl md:text-4xl font-bold mb-2 text-gray-900 dark:text-white">
+                                        Weekly Top {{ $topSources->count() }} / 20 Chart
+                                    </h1>
+                                    <!-- ✅ Responsive fix -->
+                                    <div
+                                        class="flex flex-col sm:flex-row sm:items-center sm:gap-6 gap-2 text-gray-500 dark:text-gray-300">
                                         <div class="flex items-center gap-2">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -37,7 +39,6 @@
                                                 <rect width="18" height="18" x="3" y="4" rx="2"></rect>
                                                 <path d="M3 10h18"></path>
                                             </svg>
-                                            {{-- <span>Week of January 13, 2025</span> --}}
                                             <span>Week of {{ date('F j, Y', strtotime(now()->subDays(7))) }}</span>
                                         </div>
                                         <div class="flex items-center gap-2">
@@ -48,11 +49,11 @@
                                                 <circle cx="12" cy="12" r="10"></circle>
                                                 <polyline points="12 6 12 12 16 14"></polyline>
                                             </svg>
-                                            {{-- <span>Updated 1/13/2025</span> --}}
                                             <span>Updated {{ date('F j, Y', strtotime(now())) }}</span>
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                             <div class="flex items-center gap-2">
                                 <a href="{{ route('user.charts') }}" wire:navigate
@@ -91,17 +92,18 @@
                         <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div
                                 class="bg-gray-200 dark:bg-gray-800  backdrop-blur-sm p-4 rounded-xl border border-gray-200 dark:border-gray-700">
-                                <div class="text-2xl font-bold">{{ $topSources->count() }}</div>
+                                <div class="text-base sm:text-2xl font-bold">{{ $topSources->count() }}</div>
+
                                 <div class="text-gray-700 dark:text-gray-300 text-sm">Top Tracks / Playlists</div>
                             </div>
                             <div
                                 class="bg-gray-200 dark:bg-gray-800  backdrop-blur-sm p-4 rounded-xl border border-gray-200 dark:border-gray-700">
-                                <div class="text-2xl font-bold">Weekly</div>
+                                <div class="ext-base sm:text-2xl font-bold">Weekly</div>
                                 <div class="text-gray-700 dark:text-gray-300 text-sm">Updates</div>
                             </div>
                             <div
                                 class="bg-gray-200 dark:bg-gray-800  backdrop-blur-sm p-4 rounded-xl border border-gray-200 dark:border-gray-700">
-                                <div class="text-2xl font-bold">Live</div>
+                                <div class="ext-base sm:text-2xl font-bold">Live</div>
                                 <div class="text-gray-700 dark:text-gray-300 text-sm">Engagement</div>
                             </div>
                         </div>
@@ -167,170 +169,292 @@
                         </div>
                     </div>
                     {{-- Compact view --}}
-                    <div x-show="activeTab === 'compactView'"
-                        class="transition-all duration-500 opacity-100 scale-100">
-                        <div
-                            class="bg-gray-200 dark:bg-gray-800 rounded-2xl border border-gray-300 dark:border-gray-700 overflow-hidden">
+                  <div x-show="activeTab === 'compactView'"
+     class="transition-all duration-500 opacity-100 scale-100">
+    {{-- This is the container that enables horizontal scrolling on large screens --}}
+    <div class="overflow-x-auto w-full">
+        <div
+            class="bg-gray-200 dark:bg-gray-800 rounded-2xl border border-gray-300 dark:border-gray-700 min-w-[768px]">
+            {{-- Header visible only on medium screens and up --}}
+            <div
+                class="hidden md:grid grid-cols-12 gap-4 p-4 bg-gray-300 dark:bg-gray-700 text-sm font-semibold text-gray-800 dark:text-gray-300 border-b border-gray-300 dark:border-gray-600">
+                <div class="col-span-1">#</div>
+                <div class="col-span-4">Track / Playlist</div>
+                <div class="col-span-2 text-center">Score</div>
+                <div class="col-span-2 text-center">Reach</div>
+                <div class="col-span-2 text-center">Reposts</div>
+                <div class="col-span-1 text-center">Actions</div>
+            </div>
+
+            @forelse ($topSources as $source)
+                {{-- Desktop/Tablet view (hidden on small screens) --}}
+                <div
+                    class="hidden md:grid grid-cols-12 gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 border-b border-gray-300 dark:border-gray-700">
+                    @if (proUser($source['source_details']?->user_urn) && $source['actionable_details']->is_featured)
+                        <div class="col-span-1 flex items-center">
                             <div
-                                class="grid grid-cols-12 gap-4 p-4 bg-gray-300 dark:bg-gray-700 text-sm font-semibold text-gray-800 dark:text-gray-300 border-b border-gray-300 dark:border-gray-600">
-                                <div class="col-span-1">#</div>
-                                <div class="col-span-4">Track / Playlist</div>
-                                <div class="col-span-2 text-center">Score</div>
-                                <div class="col-span-2 text-center">Reach</div>
-                                <div class="col-span-2 text-center">Reposts</div>
-                                <div class="col-span-1 text-center">Actions</div>
+                                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gradient-to-br from-orange-400 to-orange-600 text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                     class="lucide lucide-crown w-3 h-3">
+                                    <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"></path>
+                                </svg>
                             </div>
+                        </div>
+                    @elseif (proUser($source['source_details']?->user_urn))
+                        <div class="col-span-1 flex items-center">
+                            <div
+                                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gradient-to-br from-gray-400 to-gray-600 text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                     class="lucide lucide-crown w-3 h-3">
+                                    <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    @else
+                        <div class="col-span-1 flex items-center">
+                            <div
+                                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gray-700 text-gray-300">
+                                {{ $loop->iteration }}
+                            </div>
+                        </div>
+                    @endif
 
-                            @forelse ($topSources as $source)
-                                <div
-                                    class="grid grid-cols-12 gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 border-b border-gray-300 dark:border-gray-700">
-
-                                    @if (proUser($source['source_details']?->user_urn) && $source['actionable_details']->is_featured)
-                                        <div class="col-span-1 flex items-center">
-                                            <div
-                                                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gradient-to-br from-orange-400 to-orange-600 text-white">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="lucide lucide-crown w-3 h-3">
-                                                    <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"></path>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                    @elseif (proUser($source['source_details']?->user_urn))
-                                        <div class="col-span-1 flex items-center">
-                                            <div
-                                                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gradient-to-br from-gray-400 to-gray-600 text-white">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="lucide lucide-crown w-3 h-3">
-                                                    <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"></path>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                    @else
-                                        <div class="col-span-1 flex items-center">
-                                            <div
-                                                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gray-700 text-gray-300">
-                                                {{ $loop->iteration }}
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    <div class="col-span-4 flex items-center gap-3">
-                                        <div class="relative group">
-                                            <img src="{{ soundcloud_image($source['source_details']?->artwork_url ?? null) }}"
-                                                alt="{{ $source['source_details']?->title ?? 'Unknown' }}"
-                                                class="w-12 h-12 rounded-lg object-cover transition-transform duration-300 group-hover:scale-105">
-                                            <a href="{{ $source['source_details']?->permalink_url ?? '#' }}"
-                                                target="_blank"
-                                                class="absolute inset-0 shadow group-hover:bg-gray-950/20 rounded-lg transition-all duration-300 flex items-center justify-center">
-                                                <x-lucide-external-link
-                                                    class="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                            </a>
-                                        </div>
-                                        <div class="min-w-0 flex-1">
-                                            <a href="{{ $source['source_details']?->permalink_url ?? '#' }}"
-                                                target="_blank"
-                                                class="font-semibold text-gray-900 dark:text-white truncate cursor-pointer hover:text-orange-400 transition-colors block w-full">
-                                                {{ Str::limit($source['source_details']?->title ?? 'Unknown', 30, '...') }}
-                                            </a>
-                                            <a href="{{ route('user.my-account', $source['source_details']?->user?->name ?? 'Unknown') }}"
-                                                class="text-sm text-gray-600 dark:text-gray-400 truncate hover:text-orange-400 transition-colors block">
-                                                {{ $source['source_details']?->user?->name ?? 'Unknown' }}</a>
-                                        </div>
-                                    </div>
-
-                                    <div
-                                        class="col-span-2 flex items-center justify-center cursor-pointer hover:text-orange-400 transition-colors">
-                                        <span
-                                            class="font-bold text-orange-400">{{ $source['engagement_score'] }}/10</span>
-                                    </div>
-
-                                    <div class="col-span-2 flex items-center justify-center"><span
-                                            class="text-gray-500 dark:text-gray-300">{{ number_shorten($source['metrics']['total_views']['current_total']) }}</span>
-                                    </div>
-
-                                    <div class="col-span-2 flex items-center justify-center"><span
-                                            class="text-gray-500 dark:text-gray-300">{{ number_shorten($source['metrics']['total_plays']['current_total']) }}</span>
-                                    </div>
-
-                                    <div class="col-span-1 flex items-center justify-center">
-                                        <div class="flex items-center gap-1">
-                                            {{-- <button @click="playing('{{ $source['source_details']->urn }}')"
-                                                class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white play-btn"
-                                                :class="{ 'bg-orange-500 text-white': playing === '{{ $source['source_details']->urn }}' }"
-                                                data-title="{{ $source['source_details']->title }}"
-                                                data-artist="{{ $source['source_details']->author_username }}"
-                                                data-cover="{{ $source['source_details']->artwork_url }}"
-                                                data-src="{{ $source['source_details']->stream_url }}">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="lucide lucide-play w-3 h-3 ml-0.5">
-                                                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                                </svg>
-                                            </button> --}}
-                                            @if (isset($source['source_details']))
-                                                <button
-                                                    wire:click="likeSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']?->id) }}')"
-                                                    class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white {{ $source['like'] ? 'bg-red-500 text-white shadow-lg' : '' }}"><svg
-                                                        xmlns="http://www.w3.org/2000/svg" width="24"
-                                                        height="24" viewBox="0 0 24 24" fill="none"
-                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                        stroke-linejoin="round" class="lucide lucide-heart w-3 h-3 ">
-                                                        <path
-                                                            d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
-                                                        </path>
-                                                    </svg>
-                                                </button>
-                                                <button
-                                                    wire:click="repostSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']?->id) }}')"
-                                                    class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 {{ $source['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white "><svg
-                                                        xmlns="http://www.w3.org/2000/svg" width="24"
-                                                        height="24" viewBox="0 0 24 24" fill="none"
-                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        class="lucide lucide-rotate-ccw w-3 h-3">
-                                                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8">
-                                                        </path>
-                                                        <path d="M3 3v5h5"></path>
-                                                    </svg>
-                                                </button>
-                                            @else
-                                                <button
-                                                    class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                        height="24" viewBox="0 0 24 24" fill="none"
-                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                        stroke-linejoin="round" class="lucide lucide-heart w-3 h-3">
-                                                        <path
-                                                            d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
-                                                        </path>
-                                                    </svg>
-                                                </button>
-                                                <button
-                                                    class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-green-500 hover:text-white">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                        height="24" viewBox="0 0 24 24" fill="none"
-                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        class="lucide lucide-rotate-ccw w-3 h-3">
-                                                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8">
-                                                        </path>
-                                                        <path d="M3 3v5h5"></path>
-                                                    </svg>
-                                                </button>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                            @empty
-                                <p class="text-center text-gray-500 dark:text-gray-400 py-8">No tracks found.</p>
-                            @endforelse
+                    <div class="col-span-4 flex items-center gap-3">
+                        <div class="relative group">
+                            <img src="{{ soundcloud_image($source['source_details']?->artwork_url ?? null) }}"
+                                 alt="{{ $source['source_details']?->title ?? 'Unknown' }}"
+                                 class="w-12 h-12 rounded-lg object-cover transition-transform duration-300 group-hover:scale-105">
+                            <a href="{{ $source['source_details']?->permalink_url ?? '#' }}"
+                               target="_blank"
+                               class="absolute inset-0 shadow group-hover:bg-gray-950/20 rounded-lg transition-all duration-300 flex items-center justify-center">
+                                <x-lucide-external-link
+                                    class="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            </a>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <a href="{{ $source['source_details']?->permalink_url ?? '#' }}"
+                               target="_blank"
+                               class="font-semibold text-gray-900 dark:text-white truncate cursor-pointer hover:text-orange-400 transition-colors block w-full">
+                                {{ Str::limit($source['source_details']?->title ?? 'Unknown', 30, '...') }}
+                            </a>
+                            <a href="{{ route('user.my-account', $source['source_details']?->user?->name ?? 'Unknown') }}"
+                               class="text-sm text-gray-600 dark:text-gray-400 truncate hover:text-orange-400 transition-colors block">
+                                {{ $source['source_details']?->user?->name ?? 'Unknown' }}</a>
                         </div>
                     </div>
+
+                    <div
+                        class="col-span-2 flex items-center justify-center cursor-pointer hover:text-orange-400 transition-colors">
+                        <span
+                            class="font-bold text-orange-400">{{ $source['engagement_score'] }}/10</span>
+                    </div>
+
+                    <div class="col-span-2 flex items-center justify-center"><span
+                            class="text-gray-500 dark:text-gray-300">{{ number_shorten($source['metrics']['total_views']['current_total']) }}</span>
+                    </div>
+
+                    <div class="col-span-2 flex items-center justify-center"><span
+                            class="text-gray-500 dark:text-gray-300">{{ number_shorten($source['metrics']['total_plays']['current_total']) }}</span>
+                    </div>
+
+                    <div class="col-span-1 flex items-center justify-center">
+                        <div class="flex items-center gap-1">
+                            @if (isset($source['source_details']))
+                                <button
+                                    wire:click="likeSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']?->id) }}')"
+                                    class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white {{ $source['like'] ? 'bg-red-500 text-white shadow-lg' : '' }}"><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="24"
+                                        height="24" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="lucide lucide-heart w-3 h-3 ">
+                                        <path
+                                            d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
+                                        </path>
+                                    </svg>
+                                </button>
+                                <button
+                                    wire:click="repostSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']?->id) }}')"
+                                    class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 {{ $source['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white "><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="24"
+                                        height="24" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="lucide lucide-rotate-ccw w-3 h-3">
+                                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8">
+                                        </path>
+                                        <path d="M3 3v5h5"></path>
+                                    </svg>
+                                </button>
+                            @else
+                                <button
+                                    class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                         height="24" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round" class="lucide lucide-heart w-3 h-3">
+                                        <path
+                                            d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
+                                        </path>
+                                    </svg>
+                                </button>
+                                <button
+                                    class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-green-500 hover:text-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                         height="24" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round"
+                                         class="lucide lucide-rotate-ccw w-3 h-3">
+                                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8">
+                                        </path>
+                                        <path d="M3 3v5h5"></path>
+                                    </svg>
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Mobile View (hidden on medium and larger screens) --}}
+                <div x-data="{ open: false }"
+                     class="md:hidden flex flex-col gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 border-b border-gray-300 dark:border-gray-700">
+                    <div class="flex items-center gap-4 w-full">
+                        {{-- Number/Crown --}}
+                        @if (proUser($source['source_details']?->user_urn) && $source['actionable_details']->is_featured)
+                            <div class="flex-shrink-0">
+                                <div
+                                    class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gradient-to-br from-orange-400 to-orange-600 text-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                         class="lucide lucide-crown w-3 h-3">
+                                        <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        @elseif (proUser($source['source_details']?->user_urn))
+                            <div class="flex-shrink-0">
+                                <div
+                                    class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gradient-to-br from-gray-400 to-gray-600 text-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                         class="lucide lucide-crown w-3 h-3">
+                                        <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        @else
+                            <div class="flex-shrink-0">
+                                <div
+                                    class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gray-700 text-gray-300">
+                                    {{ $loop->iteration }}
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- Track/Playlist Info --}}
+                        <div class="flex items-center gap-3 min-w-0 flex-1">
+                            <div class="relative group flex-shrink-0">
+                                <img src="{{ soundcloud_image($source['source_details']?->artwork_url ?? null) }}"
+                                     alt="{{ $source['source_details']?->title ?? 'Unknown' }}"
+                                     class="w-12 h-12 rounded-lg object-cover transition-transform duration-300 group-hover:scale-105">
+                                <a href="{{ $source['source_details']?->permalink_url ?? '#' }}"
+                                   target="_blank"
+                                   class="absolute inset-0 shadow group-hover:bg-gray-950/20 rounded-lg transition-all duration-300 flex items-center justify-center">
+                                    <x-lucide-external-link
+                                        class="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                </a>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <a href="{{ $source['source_details']?->permalink_url ?? '#' }}"
+                                   target="_blank"
+                                   class="font-semibold text-gray-900 dark:text-white truncate cursor-pointer hover:text-orange-400 transition-colors block w-full">
+                                    {{ Str::limit($source['source_details']?->title ?? 'Unknown', 30, '...') }}
+                                </a>
+                                <a href="{{ route('user.my-account', $source['source_details']?->user?->name ?? 'Unknown') }}"
+                                   class="text-sm text-gray-600 dark:text-gray-400 truncate hover:text-orange-400 transition-colors block">
+                                    {{ $source['source_details']?->user?->name ?? 'Unknown' }}</a>
+                            </div>
+                        </div>
+
+                        {{-- Collapse Button for Mobile --}}
+                        <button @click="open = !open"
+                                class="p-2 rounded-full bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-300 hover:bg-gray-400 dark:hover:bg-gray-600 transition-colors duration-200">
+                            <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                                <path d="m6 9 6 6 6-6"></path>
+                            </svg>
+                            <svg x-show="open" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                                <path d="m18 15-6-6-6 6"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    {{-- Collapsible Details Section for Mobile --}}
+                    <div x-show="open" x-collapse.duration.300ms class="md:grid md:grid-cols-7 flex flex-col gap-4 w-full md:gap-4 md:col-span-7 mt-4 md:mt-0">
+  
+    
+    <div class="flex items-center justify-center gap-4 md:col-span-4">
+        <div class="flex flex-col items-center justify-center flex-1">
+            <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">Reach</span>
+            <span class="text-gray-500 dark:text-gray-300">{{ number_shorten($source['metrics']['total_views']['current_total']) }}</span>
+        </div>
+          <div class="flex flex-col items-center justify-center md:col-span-2">
+        <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">Score</span>
+        <span class="font-bold text-orange-400">{{ $source['engagement_score'] }}/10</span>
+    </div>
+        <div class="flex flex-col items-center justify-center flex-1">
+            <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">Reposts</span>
+            <span class="text-gray-500 dark:text-gray-300">{{ number_shorten($source['metrics']['total_plays']['current_total']) }}</span>
+        </div>
+    </div>
+    
+    <div class="flex items-center justify-center md:col-span-1">
+        <div class="flex items-center gap-2">
+            @if (isset($source['source_details']))
+                <button
+                    wire:click="likeSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']?->id) }}')"
+                    class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white {{ $source['like'] ? 'bg-red-500 text-white shadow-lg' : '' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart w-3 h-3 ">
+                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                    </svg>
+                </button>
+                <button
+                    wire:click="repostSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']?->id) }}')"
+                    class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 {{ $source['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white ">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw w-3 h-3">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                        <path d="M3 3v5h5"></path>
+                    </svg>
+                </button>
+            @else
+                <button
+                    class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart w-3 h-3">
+                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                    </svg>
+                </button>
+                <button
+                    class="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-green-500 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw w-3 h-3">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                        <path d="M3 3v5h5"></path>
+                    </svg>
+                </button>
+            @endif
+        </div>
+    </div>
+</div>
+                </div>
+            @empty
+                <p class="text-center text-gray-500 dark:text-gray-400 py-8">No tracks found.</p>
+            @endforelse
+        </div>
+    </div>
+</div>
                     {{-- Grid view --}}
                     <div x-show="activeTab === 'gridView'" class="transition-all duration-500 opacity-100 scale-100">
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -499,7 +623,7 @@
 
                             @forelse ($topSources as $source)
                                 <div
-                                    class="relative border rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-900 dark:to-gray-800  shadow-lg {{ proUser($source['source_details']?->user_urn) && $source['actionable_details']->is_featured
+                                    class="relative border rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-900 dark:to-gray-800 shadow-lg {{ proUser($source['source_details']?->user_urn) && $source['actionable_details']->is_featured
                                         ? 'shadow-orange-500/20 border-orange-300 dark:border-orange-500'
                                         : (proUser($source['source_details']?->user_urn)
                                             ? 'shadow-gray-500/20 border-gray-500'
@@ -530,25 +654,27 @@
                                             </div>
                                         </div>
                                     @endif
-                                    <div class="flex items-center gap-4">
-                                        <div
-                                            class="w-12 h-12 rounded-full flex items-center justify-center font-bold bg-gradient-to-br shadow-lg text-2xl {{ proUser($source['source_details']?->user_urn) && $source['actionable_details']->is_featured
-                                                ? 'from-orange-400 to-orange-600 text-white'
-                                                : (proUser($source['source_details']?->user_urn)
-                                                    ? 'from-gray-400 to-gray-600 text-white'
-                                                    : 'bg-gray-700 text-gray-300 border border-gray-300 dark:border-gray-600') }}">
-                                            {{ $loop->iteration }}
-                                        </div>
-                                        <div class="relative group cursor-pointer">
-                                            <img src="{{ soundcloud_image($source['source_details']?->artwork_url ?? null) }}"
-                                                alt="{{ $source['source_details']?->title ?? 'Unknown' }}"
-                                                class="rounded-xl object-cover transition-transform duration-300 group-hover:scale-105 w-20 h-20">
-                                            <a href="{{ $source['source_details']?->permalink_url ?? '#' }}"
-                                                target="_blank"
-                                                class="absolute inset-0 shadow group-hover:bg-gray-950/30 rounded-xl transition-all duration-300 flex items-center justify-center">
-                                                <x-lucide-external-link
-                                                    class="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                            </a>
+                                    <div class="flex flex-col md:flex-row md:items-center gap-4">
+                                        <div class="flex items-center gap-4">
+                                            <div
+                                                class="w-12 h-12 rounded-full flex items-center justify-center font-bold bg-gradient-to-br shadow-lg text-2xl {{ proUser($source['source_details']?->user_urn) && $source['actionable_details']->is_featured
+                                                    ? 'from-orange-400 to-orange-600 text-white'
+                                                    : (proUser($source['source_details']?->user_urn)
+                                                        ? 'from-gray-400 to-gray-600 text-white'
+                                                        : 'bg-gray-700 text-gray-300 border border-gray-300 dark:border-gray-600') }}">
+                                                {{ $loop->iteration }}
+                                            </div>
+                                            <div class="relative group cursor-pointer w-20 h-20">
+                                                <img src="{{ soundcloud_image($source['source_details']?->artwork_url ?? null) }}"
+                                                    alt="{{ $source['source_details']?->title ?? 'Unknown' }}"
+                                                    class="rounded-xl object-cover transition-transform duration-300 group-hover:scale-105 w-full h-full">
+                                                <a href="{{ $source['source_details']?->permalink_url ?? '#' }}"
+                                                    target="_blank"
+                                                    class="absolute inset-0 shadow group-hover:bg-gray-950/30 rounded-xl transition-all duration-300 flex items-center justify-center">
+                                                    <x-lucide-external-link
+                                                        class="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                                </a>
+                                            </div>
                                         </div>
                                         <div class="flex-1 min-w-0">
                                             <div class="flex items-start justify-between gap-2">
@@ -623,21 +749,21 @@
                                                 </div>
                                                 <div class="flex items-center gap-2">
                                                     {{-- <button @click="playing('{{ $source['source_details']->urn }}')"
-                                                        class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600 play-btn"
-                                                        :class="{ 'bg-orange-500 text-white': playing === '{{ $source['source_details']->urn }}' }"
-                                                        title="Play"
-                                                        data-title="{{ $source['source_details']->title }}"
-                                                        data-artist="{{ $source['source_details']->author_username }}"
-                                                        data-cover="{{ $source['source_details']->artwork_url }}"
-                                                        data-src="https://api-v2.soundcloud.com/media/soundcloud:tracks:1252113682/0622321d-02e6-4b77-86aa-a54b4fc4d82d/stream/hls">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                            height="24" viewBox="0 0 24 24" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            stroke-linecap="round" stroke-linejoin="round"
-                                                            class="lucide lucide-play w-4 h-4 ml-0.5">
-                                                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                                        </svg>
-                                                    </button> --}}
+                                    class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-orange-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600 play-btn"
+                                    :class="{ 'bg-orange-500 text-white': playing === '{{ $source['source_details']->urn }}' }"
+                                    title="Play"
+                                    data-title="{{ $source['source_details']->title }}"
+                                    data-artist="{{ $source['source_details']->author_username }}"
+                                    data-cover="{{ $source['source_details']->artwork_url }}"
+                                    data-src="https://api-v2.soundcloud.com/media/soundcloud:tracks:1252113682/0622321d-02e6-4b77-86aa-a54b4fc4d82d/stream/hls">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                        height="24" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="lucide lucide-play w-4 h-4 ml-0.5">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button> --}}
                                                     @if (isset($source['source_details']))
                                                         <button
                                                             wire:click="likeSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']?->id) }}')"
@@ -655,7 +781,7 @@
                                                         </button>
                                                         <button
                                                             wire:click="repostSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']?->id) }}')"
-                                                            class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 {{ $source['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }}  hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
+                                                            class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 {{ $source['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600"
                                                             title="Repost">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                                 height="24" viewBox="0 0 24 24" fill="none"
@@ -698,7 +824,6 @@
                                                             </svg>
                                                         </button>
                                                     @endif
-
                                                 </div>
                                             </div>
                                         </div>

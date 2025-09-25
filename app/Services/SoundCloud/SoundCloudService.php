@@ -41,7 +41,7 @@ class SoundCloudService
      */
     protected string $oauthUrl = 'https://api.soundcloud.com';
 
-    public function makeGetApiRequest(string $endpoint, array $options, string $errorMessage): array
+    public function makeGetApiRequest(string $endpoint, string $errorMessage, ?array $options = null): array
     {
         $options['linked_partitioning'] = true;
         return $this->makeApiRequestWithPagination(user: user(), method: 'get', endpoint: $endpoint, errorMessage: $errorMessage, options: $options);
@@ -252,6 +252,32 @@ class SoundCloudService
         );
     }
 
+    public function fetchUserPlaylists(User $user): array
+    {
+        $this->refreshUserTokenIfNeeded(user());
+
+        return $this->makeGetApiRequest(
+            endpoint: '/users/' . $user->urn . '/playlists',
+            errorMessage: 'Failed to fetch user playlists',
+            options: [
+                'access' => 'playable,preview,blocked',
+                'show_tracks' => false,
+            ]
+        );
+    }
+
+    public function fetchUserPlaylistTracks(User $user, string $playlistUrn): array
+    {
+        $this->refreshUserTokenIfNeeded(user());
+
+        return $this->makeGetApiRequest(
+            endpoint: '/playlists/' . $playlistUrn . '/tracks',
+            errorMessage: 'Failed to fetch playlist tracks',
+            options: [
+                'access' => 'playable,preview,blocked',
+            ]
+        );
+    }
     /* ++++++++++++++++++++++ ++++++++++++++++++++++ ++++++++++++++++++++++ *
             *** START OF COMMON HELPER METHODS TO FETCH DATA ***
      * ++++++++++++++++++++++ ++++++++++++++++++++++ ++++++++++++++++++++++ */
@@ -323,7 +349,6 @@ class SoundCloudService
 
             $syncedCount = 0;
             $trackIdsInResponse = [];
-            Log::info('Tracks:' . json_encode($tracksData));
 
             foreach ($tracksData as $trackData) {
                 // Skip private tracks
@@ -405,16 +430,6 @@ class SoundCloudService
                     'author_soundcloud_uri' => $trackData['user']['uri'] ?? null,
                 ];
 
-                // Log::info('Track Data:' . json_encode($commonTrackData));
-
-                // Log::info('Searching for existing track with SoundCloud ID: ' . $trackData['id']);
-
-
-                // $track = Track::where('soundcloud_track_id', $trackData['id'])->first();
-
-                // Log::info('Track:' . json_encode($track));
-
-
                 $track = Track::updateOrCreate(
                     [
                         'soundcloud_track_id' => $trackData['id'],
@@ -423,23 +438,12 @@ class SoundCloudService
                     $commonTrackData
                 );
 
-                // Log::info("Successfully synced track {$track->soundcloud_track_id} for user {$user->urn}.");
-
-                // if ($track_author && $track_author->urn !== $user->urn && is_null($playlist_urn)) {
-                //     Repost::create([
-                //         'reposter_urn' => $user->urn,
-                //         'track_owner_urn' => $track->user_urn,
-                //         'track_id' => $track->id,
-                //         'reposted_at' => $track->created_at_soundcloud
-                //     ]);
-                // } elseif ($playlist_urn) {
                 if ($playlist_urn && $track->urn) {
                     PlaylistTrack::updateOrCreate([
                         'playlist_urn' => $playlist_urn,
                         'track_urn' => $track->urn,
                     ]);
                 }
-                // }
 
                 if ($track->wasRecentlyCreated) {
                     $syncedCount++;
@@ -471,6 +475,95 @@ class SoundCloudService
             return $syncedCount;
         } catch (Exception $e) {
             Log::error('Error syncing user tracks in syncUserTracks', [
+                'user_urn' => $user->urn,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
+    public function syncUserPlaylists(User $user): int
+    {
+        try {
+            $response = $this->fetchUserPlaylists($user);
+            $playlistsData = $response['collection'];
+            $syncedCount = 0;
+            $playlistIdsInResponse = [];
+
+            foreach ($playlistsData as $playlistData) {
+                // Skip private playlists
+                if (($playlistData['sharing'] ?? '') === 'private') {
+                    continue;
+                }
+
+                $playlistIdsInResponse[] = $playlistData['id'];
+
+                $playlist = Playlist::updateOrCreate(
+                    ['soundcloud_id' => $playlistData['id'] ?? null],
+                    [
+                        'user_urn' => $playlistData['user']['urn'] ?? $user->urn,
+                        'soundcloud_urn' => $playlistData['urn'] ?? null,
+                        'soundcloud_kind' => $playlistData['kind'] ?? null,
+                        'title' => $playlistData['title'] ?? null,
+                        'duration' => $playlistData['duration'] ?? 0,
+                        'description' => $playlistData['description'] ?? null,
+                        'permalink' => $playlistData['permalink'] ?? null,
+                        'permalink_url' => $playlistData['permalink_url'] ?? null,
+                        'sharing' => $playlistData['sharing'] ?? null,
+                        'tag_list' => $playlistData['tag_list'] ?? '',
+                        'tags' => $playlistData['tag_list'] ?? '',
+                        'genre' => $playlistData['genre'] ?? null,
+                        'release' => $playlistData['release'] ?? null,
+                        'release_day' => $playlistData['release_day'] ?? null,
+                        'release_month' => $playlistData['release_month'] ?? null,
+                        'release_year' => $playlistData['release_year'] ?? null,
+                        'label_name' => $playlistData['label_name'] ?? null,
+                        'label' => $playlistData['label'] ?? null,
+                        'label_id' => $playlistData['label_id'] ?? null,
+                        'track_count' => $playlistData['track_count'] ?? 0,
+                        'likes_count' => $playlistData['likes_count'] ?? 0,
+                        'streamable' => $playlistData['streamable'] ?? true,
+                        'downloadable' => $playlistData['downloadable'] ?? false,
+                        'purchase_title' => $playlistData['purchase_title'] ?? null,
+                        'purchase_url' => $playlistData['purchase_url'] ?? null,
+                        'artwork_url' => $playlistData['artwork_url'] ?? null,
+                        'embeddable_by' => $playlistData['embeddable_by'] ?? null,
+                        'uri' => $playlistData['uri'] ?? null,
+                        'secret_uri' => $playlistData['secret_uri'] ?? null,
+                        'secret_token' => $playlistData['secret_token'] ?? null,
+                        'tracks_uri' => $playlistData['tracks_uri'] ?? null,
+                        'playlist_type' => $playlistData['playlist_type'] ?? null,
+                        'type' => $playlistData['type'] ?? null,
+                        'soundcloud_created_at' => isset($playlistData['created_at']) ? Carbon::parse($playlistData['created_at'])->toDateTimeString() : null,
+                        'last_modified' => isset($playlistData['last_modified']) ? Carbon::parse($playlistData['last_modified'])->toDateTimeString() : null,
+                    ]
+                );
+
+                $trackResponse = $this->fetchUserPlaylistTracks($user, $playlist->soundcloud_urn);
+                $playlistTrackData = $trackResponse['collection'];
+                if (!empty($playlistTrackData)) {
+                    $this->syncUserTracks($user, $playlistTrackData, $playlist->soundcloud_urn);
+                }
+
+                if ($playlist->wasRecentlyCreated) {
+                    $syncedCount++;
+                }
+            }
+
+            // Deletion logic
+            $playlistsToDelete = Playlist::where('user_urn', $user->urn)
+                ->whereNotIn('soundcloud_id', $playlistIdsInResponse)
+                ->pluck('id');
+
+            if ($playlistsToDelete->isNotEmpty()) {
+                Playlist::destroy($playlistsToDelete);
+                Log::info("Successfully deleted " . count($playlistsToDelete) . " playlists for user {$user->urn} that are no longer present on SoundCloud.");
+            }
+
+            Log::info("Successfully synced {$syncedCount} playlists for user {$user->urn}.");
+            return $syncedCount;
+        } catch (Exception $e) {
+            Log::error('Error syncing user playlists in syncUserPlaylists', [
                 'user_urn' => $user->urn,
                 'error' => $e->getMessage(),
             ]);

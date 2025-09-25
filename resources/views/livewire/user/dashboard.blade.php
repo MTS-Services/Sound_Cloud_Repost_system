@@ -242,16 +242,19 @@
             <!-- Right: Buttons group -->
             <div class="flex flex-col lg:flex-row gap-3 sm:gap-2 w-full sm:w-auto">
                 <!-- Earn Credits -->
-                <x-gbutton variant="secondary" wire:navigate href="{{ route('user.cm.campaigns') }}">
+                <x-gbutton variant="secondary" wire:navigate href="{{ route('user.cm.campaigns') }}"
+                    class="text-sm md:text-xs lg:text-xs">
                     <span>💰</span>{{ __('Earn Credits') }}
                 </x-gbutton>
+
                 <!-- Submit Track -->
-                <x-gbutton variant="primary" wire:click="toggleCampaignsModal">
+                <x-gbutton variant="primary" wire:click="toggleCampaignsModal" class="text-sm md:text-xs lg:text-xs">
                     <span>
                         <x-lucide-plus class="inline-block text-center h-4 w-4 text-white mr-1" />
                     </span>{{ __('Start a new campaign') }}
                 </x-gbutton>
             </div>
+
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
