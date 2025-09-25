@@ -188,8 +188,8 @@ class Member extends Component
 
     public function getCredibilityScore(object $user)
     {
-        // $userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers($user));
-        // return $userFollowerAnalysis['averageCredibilityScore'];
+        $userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers($user));
+        return $userFollowerAnalysis['averageCredibilityScore'];
     }
 
     private function performLocalSearch()
@@ -310,8 +310,8 @@ class Member extends Component
             $this->dispatch('alert', type: 'error', message: 'Please verify your email to send a request.');
             return;
         }
-        // $this->soundCloudService->syncSelfTracks([]);
-        // $this->soundCloudService->syncSelfPlaylists();
+        $this->soundCloudService->syncSelfTracks([]);
+        $this->soundCloudService->syncSelfPlaylists();
 
         $this->reset([
             'showModal',
@@ -396,15 +396,15 @@ class Member extends Component
 
         $this->showRepostsModal = true;
 
-        // $response = $this->soundCloudService->getAuthUserFollowers($this->user);
-        // if ($response->isNotEmpty()) {
-        //     $already_following = $response->where('urn', user()->urn)->first();
-        //     if ($already_following !== null) {
-        //         Log::info('Member Page:- Already following');
-        //         $this->following = false;
-        //         $this->alreadyFollowing = true;
-        //     }
-        // }
+        $response = $this->soundCloudService->getAuthUserFollowers($this->user);
+        if ($response->isNotEmpty()) {
+            $already_following = $response->where('urn', user()->urn)->first();
+            if ($already_following !== null) {
+                Log::info('Member Page:- Already following');
+                $this->following = false;
+                $this->alreadyFollowing = true;
+            }
+        }
     }
 
     public function closeRepostModal()
