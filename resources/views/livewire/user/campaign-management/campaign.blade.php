@@ -367,7 +367,7 @@
         {{-- Right Side --}}
         <div class="w-full lg:w-[25%]">
             <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="2" :dailyRepostMax="26" :responseRate="30"
-                :pendingRequests="10" :requestLimit="35" :credits="{{ userCredits() }}" :campaignLimit="1" />
+                :pendingRequests="10" :requestLimit="35" :credits="userCredits()" :campaignLimit="1" />
         </div>
     </section>
 
