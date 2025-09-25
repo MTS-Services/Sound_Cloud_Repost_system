@@ -10,6 +10,13 @@
         'campaigns',
         'campaignLimit',
     ])
+
+    <style>
+        .prograss-fill {
+            width: 0%;
+        }
+    </style>
+
     <div class="max-w-screen-xl max-h-screen mx-auto flex flex-col gap-y-4">
         <!-- Stats Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:col-span-2">
@@ -34,7 +41,7 @@
                 <div class="text-xl font-semibold mt-3 dark:text-gray-100" id="repost-limit-value">
                     {{ $dailyRepostCurrent }}/{{ $dailyRepostMax }}</div>
                 <div class="mt-2 bg-[#e2e8f0] dark:bg-gray-700 h-1.5 rounded-full overflow-hidden">
-                    <div id="repost-progress" class="bg-orange-500 h-full w-0 transition-all duration-500"
+                    <div id="repost-progress" class="prograss-fill bg-orange-500 h-full transition-all duration-500"
                         data-value="{{ $dailyRepostCurrent }}" data-max="{{ $dailyRepostMax }}"></div>
                 </div>
             </div>
