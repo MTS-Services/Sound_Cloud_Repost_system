@@ -41,93 +41,6 @@ class SoundCloudService
      */
     protected string $oauthUrl = 'https://api.soundcloud.com';
 
-    public function makeApiRequest(User $user, string $method, string $endpoint, array $options, string $errorMessage): array
-    {
-        // Retrieve the refreshed user instance and token to ensure we have the latest data.
-        $user->refresh();
-
-        $allData = [];
-        $nextUrl = "{$this->baseUrl}{$endpoint}";
-
-        // Add query parameters to the initial URL if options are provided
-        if (!empty($options) && $method === 'get') {
-            $queryString = http_build_query($options);
-            $nextUrl .= (strpos($nextUrl, '?') === false ? '?' : '&') . $queryString;
-        }
-
-        do {
-            try {
-                // Parse the URL to separate base URL from query parameters
-                $urlParts = parse_url($nextUrl);
-                $requestUrl = $urlParts['scheme'] . '://' . $urlParts['host'] . $urlParts['path'];
-                $queryParams = [];
-
-                if (isset($urlParts['query'])) {
-                    parse_str($urlParts['query'], $queryParams);
-                }
-
-                // Make the API request
-                $response = Http::withToken($user->token);
-
-                if ($method === 'get') {
-                    $response = $response->get($requestUrl, $queryParams);
-                } else {
-                    $response = $response->$method($requestUrl, $options);
-                }
-
-                if ($response->successful()) {
-                    $data = $response->json();
-
-                    // Handle different response structures
-                    if (isset($data['collection'])) {
-                        // Merge the collection data
-                        $allData = array_merge($allData, $data['collection']);
-
-                        // Check for next page
-                        $nextUrl = $data['next_href'] ?? null;
-                    } elseif (is_array($data)) {
-                        // If it's a direct array, merge it
-                        $allData = array_merge($allData, $data);
-                        $nextUrl = null; // No pagination structure found
-                    } else {
-                        // Single item or different structure
-                        $allData[] = $data;
-                        $nextUrl = null;
-                    }
-
-                    // Add a small delay to avoid rate limiting
-                    if ($nextUrl) {
-                        usleep(100000); // 100ms delay
-                    }
-                } else {
-                    // Log the error for debugging
-                    Log::error('SoundCloud API Error', [
-                        'user_urn' => $user->urn,
-                        'endpoint' => $endpoint,
-                        'status' => $response->status(),
-                        'response_body' => $response->body(),
-                    ]);
-
-                    throw new Exception("{$errorMessage} Status: " . $response->status());
-                }
-            } catch (Exception $e) {
-                // Re-throw the exception after logging
-                Log::error("SoundCloud API Error in {$endpoint}", [
-                    'user_urn' => $user->urn,
-                    'error' => $e->getMessage(),
-                    'next_url' => $nextUrl ?? 'N/A',
-                ]);
-                throw $e;
-            }
-        } while ($nextUrl);
-
-        // Return in the same structure as the original API response
-        return [
-            'collection' => $allData,
-            'total_count' => count($allData)
-        ];
-    }
-
     public function makeGetApiRequest(string $endpoint, array $options, string $errorMessage): array
     {
         $options['linked_partitioning'] = true;
@@ -144,8 +57,6 @@ class SoundCloudService
         $user->refresh();
 
         $this->ensureSoundCloudConnection($user);
-
-
 
         $allData = [];
         $nextUrl = "{$this->baseUrl}{$endpoint}";
@@ -406,7 +317,8 @@ class SoundCloudService
     {
         try {
             if (empty($tracksData)) {
-                $tracksData = $this->fetchUserTracks($user);
+                $response = $this->fetchUserTracks($user);
+                $tracksData = $response['collection'];
             }
 
             $syncedCount = 0;
