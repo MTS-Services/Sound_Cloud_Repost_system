@@ -80,7 +80,7 @@ class RepostRequest extends Component
 
     public function updated()
     {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
     public function updatedActiveMainTab()

@@ -16,24 +16,24 @@
 
             <!-- Stat Card -->
             <div
-                class="bg-white rounded-xl p-4 shadow hover:shadow-lg transition-transform transform hover:-translate-y-1">
-                <div class="flex items-center gap-2 text-[#718096] font-medium">
+                class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow hover:shadow-lg transition-transform transform hover:-translate-y-1">
+                <div class="flex items-center gap-2">
                     <span><x-lucide-bar-chart-2 class="w-6 h-6 text-orange-500" /></span>
-                    <span class="text-sm font-medium text-[#718096]">Earnings per Repost</span>
+                    <span class="text-sm font-medium text-[#718096] dark:text-gray-100">Earnings per Repost</span>
                 </div>
-                <div class="text-xl font-semibold mt-3">{{ $earnings }}</div>
+                <div class="text-xl font-semibold mt-3 dark:text-gray-100">{{ $earnings }}</div>
             </div>
 
             <!-- Repost Limit -->
             <div
-                class="bg-white rounded-xl p-4 shadow hover:shadow-lg transition-transform transform hover:-translate-y-1">
-                <div class="flex items-center gap-2 text-[#718096] font-medium">
+                class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow hover:shadow-lg transition-transform transform hover:-translate-y-1">
+                <div class="flex items-center gap-2 font-medium">
                     <span><x-lucide-gauge-circle class="w-6 h-6 text-orange-500" /></span>
-                    <span class="text-sm font-medium text-[#718096]">Daily repost limit</span>
+                    <span class="text-sm font-medium text-[#718096] dark:text-gray-100">Daily repost limit</span>
                 </div>
-                <div class="text-xl font-semibold mt-3" id="repost-limit-value">
+                <div class="text-xl font-semibold mt-3 dark:text-gray-100" id="repost-limit-value">
                     {{ $dailyRepostCurrent }}/{{ $dailyRepostMax }}</div>
-                <div class="mt-2 bg-[#e2e8f0] h-1.5 rounded-full overflow-hidden">
+                <div class="mt-2 bg-[#e2e8f0] dark:bg-gray-700 h-1.5 rounded-full overflow-hidden">
                     <div id="repost-progress" class="bg-orange-500 h-full w-0 transition-all duration-500"
                         data-value="{{ $dailyRepostCurrent }}" data-max="{{ $dailyRepostMax }}"></div>
                 </div>
@@ -41,28 +41,28 @@
 
             <!-- Response Rate -->
             <div
-                class="bg-white rounded-xl p-4 shadow hover:shadow-lg transition-transform transform hover:-translate-y-1">
-                <div class="flex items-center gap-2 text-[#718096] font-medium">
+                class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow hover:shadow-lg transition-transform transform hover:-translate-y-1">
+                <div class="flex items-center gap-2 font-medium">
                     <span><x-lucide-percent-circle class="w-6 h-6 text-orange-500" /></span>
-                    <span class="text-sm font-medium text-[#718096]">Response Rate</span>
+                    <span class="text-sm font-medium text-[#718096] dark:text-gray-100">Response Rate</span>
                 </div>
                 <div class="flex justify-between items-center mt-3">
-                    <div class="text-xl font-semibold">{{ $responseRate }}%</div>
+                    <div class="text-xl font-semibold dark:text-gray-100">{{ $responseRate }}%</div>
                     <a href="#" class="text-sm font-semibold text-orange-500 hover:underline">Reset</a>
                 </div>
-                <div class="mt-2 bg-[#e2e8f0] h-1.5 rounded-full overflow-hidden">
+                <div class="mt-2 bg-[#e2e8f0] dark:bg-gray-700 dark:text-gray-700 h-1.5 rounded-full overflow-hidden">
                     <div class="bg-orange-500 h-full" style="width: {{ $responseRate }}%"></div>
                 </div>
             </div>
 
             <!-- Pending Requests -->
             <div
-                class="bg-white rounded-xl p-4 shadow hover:shadow-lg transition-transform transform hover:-translate-y-1">
-                <div class="flex items-center gap-2 text-[#718096] font-medium">
+                class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow hover:shadow-lg transition-transform transform hover:-translate-y-1">
+                <div class="flex items-center gap-2">
                     <span><x-lucide-bell class="w-6 h-6 text-orange-500" /></span>
-                    <span class="text-sm font-medium text-[#718096]">Pending Direct Requests</span>
+                    <span class="text-sm font-medium text-[#718096] dark:text-gray-100">Pending Direct Requests</span>
                 </div>
-                <div class="text-xl font-semibold mt-3">{{ $pendingRequests }} / {{ $requestLimit }}</div>
+                <div class="text-xl font-semibold mt-3 dark:text-gray-100">{{ $pendingRequests }} / {{ $requestLimit }}</div>
                 <a href="#" class="inline-block mt-2 text-sm font-semibold text-orange-500 hover:underline">Get
                     higher limit</a>
             </div>
@@ -70,29 +70,29 @@
         </div>
 
         <!-- Promotion Stats -->
-        <div class="bg-white rounded-xl p-4 shadow flex flex-col gap-4">
-            <h3 class="text-xl font-semibold">Promotion Stats</h3>
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow flex flex-col gap-4">
+            <h3 class="text-xl font-semibold dark:text-gray-100">Promotion Stats</h3>
 
             <div class="flex flex-col sm:flex-row justify-around text-center gap-4">
                 <div class="flex-1">
                     <div class="flex items-center justify-center gap-2">
                         <span><x-lucide-credit-card class="w-6 h-6 text-orange-500" /></span>
-                        <div class="text-xl font-semibold">{{ $credits }}</div>
+                        <div class="text-xl font-semibold dark:text-gray-100">{{ $credits }}</div>
                     </div>
-                    <div class="text-sm font-medium text-[#718096]">Available Credits</div>
+                    <div class="text-sm font-medium text-[#718096] dark:text-gray-100">Available Credits</div>
                 </div>
                 <div class="flex-1">
                     <div class="flex items-center justify-center gap-2">
                         <span><x-lucide-signal class="w-6 h-6 text-orange-500" /></span>
-                        <div class="text-xl font-semibold">{{ $campaigns }}/{{ $campaignLimit }}</div>
+                        <div class="text-xl font-semibold dark:text-gray-100">{{ $campaigns }}/{{ $campaignLimit }}</div>
                     </div>
-                    <div class="text-sm font-medium text-[#718096]">Campaign Limit</div>
+                    <div class="text-sm font-medium text-[#718096] dark:text-gray-100">Campaign Limit</div>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <button
-                    class="flex items-center justify-center gap-2 text-sm font-semibold py-2 border border-[#e2e8f0] rounded-lg hover:bg-gray-100 transition">
+                    class="flex items-center justify-center gap-2 text-sm font-semibold py-2 border border-[#e2e8f0] dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-50 transition">
                     <span><x-lucide-shopping-cart class="w-6 h-6 text-orange-500" /></span>
                     Buy more credits
                 </button>
@@ -103,9 +103,9 @@
                 </button>
             </div>
         </div>
-        <div class="bg-white rounded-xl p-4 shadow min-h-56">
-            <h2 class="text-xl font-semibold">About Direct Requests</h2>
-            <p class="text-sm text-[#718096]">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow min-h-56">
+            <h2 class="text-xl font-semibold dark:text-gray-50 mb-2">About Direct Requests</h2>
+            <p class="text-sm text-[#718096] dark:text-gray-100">
                 Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolorum quibusdam, inventore, quidem numquam
                 voluptatibus rem quod beatae vitae repellendus totam odit nostrum velit, in perferendis ut harum minus
                 id molestias debitis! Minus architecto provident reprehenderit tempora, quas consequuntur, voluptas
