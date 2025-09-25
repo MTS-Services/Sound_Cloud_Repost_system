@@ -128,9 +128,10 @@ class SoundCloudService
         ];
     }
 
-    public function makeGetApiRequest(string $endpoint, string $errorMessage): array
+    public function makeGetApiRequest(string $endpoint, array $options, string $errorMessage): array
     {
-        return $this->makeApiRequestWithPagination(user: user(), method: 'get', endpoint: $endpoint, errorMessage: $errorMessage);
+        $options['linked_partitioning'] = true;
+        return $this->makeApiRequestWithPagination(user: user(), method: 'get', endpoint: $endpoint, errorMessage: $errorMessage, options: $options);
     }
 
     public function makeOtherApiRequest(string $method, string $endpoint, array $options, string $errorMessage): array
@@ -138,7 +139,7 @@ class SoundCloudService
         return $this->makeApiRequestWithPagination(user: user(), method: $method, endpoint: $endpoint,  errorMessage: $errorMessage, options: $options);
     }
 
-    protected function makeApiRequestWithPagination(User $user, string $method, string $endpoint, string $errorMessage, ?array $options = null,  ?int $maxPages = null): array
+    protected function makeApiRequestWithPagination(User $user, string $method, string $endpoint, string $errorMessage, array $options,  ?int $maxPages = null): array
     {
         $user->refresh();
 
@@ -333,7 +334,10 @@ class SoundCloudService
 
         return $this->makeGetApiRequest(
             endpoint: '/users/' . $user->urn . '/tracks',
-            errorMessage: 'Failed to fetch user tracks'
+            errorMessage: 'Failed to fetch user tracks',
+            options: [
+                'access' => 'playable,preview,blocked'
+            ]
         );
     }
 
