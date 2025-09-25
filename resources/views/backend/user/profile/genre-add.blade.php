@@ -34,7 +34,7 @@
 </head>
 
 <body class="font-sans text-gray-800 leading-relaxed"> --}}
-<x-frontend::layout>
+<x-user::layout>
     <x-slot name="title">Registration Flow</x-slot>
     <x-slot name="page_slug">registration-flow</x-slot>
     <div x-data="registrationForm()" x-init="prefillFromServer()" class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -456,7 +456,7 @@
             }
         }
     </script>
-</x-frontend::layout>
+</x-user::layout>
 {{-- </body>
 
     </html> --}}
