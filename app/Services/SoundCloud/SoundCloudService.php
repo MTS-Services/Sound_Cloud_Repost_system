@@ -541,7 +541,9 @@ class SoundCloudService
 
                 $trackResponse = $this->fetchUserPlaylistTracks($user, $playlist->soundcloud_urn);
                 $playlistTrackData = $trackResponse['collection'];
-                $this->syncUserTracks($user, $playlistTrackData, $playlist->soundcloud_urn);
+                if (!empty($playlistTrackData)) {
+                    $this->syncUserTracks($user, $playlistTrackData, $playlist->soundcloud_urn);
+                }
 
                 if ($playlist->wasRecentlyCreated) {
                     $syncedCount++;
