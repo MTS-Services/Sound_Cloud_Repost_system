@@ -240,9 +240,11 @@ class Dashboard extends Component
         $this->total_credits = $this->creditTransactionService->getUserTotalCredits();
 
         $this->totalCount = RepostRequest::where('target_user_urn', user()->urn)
-            ->orWhere('status', RepostRequest::STATUS_PENDING)
-            ->orWhere('status', RepostRequest::STATUS_APPROVED)
-            ->orWhere('status', RepostRequest::STATUS_DECLINE)
+            ->where(function ($query) {
+                $query->where('status', RepostRequest::STATUS_PENDING)
+                    ->orWhere('status', RepostRequest::STATUS_APPROVED)
+                    ->orWhere('status', RepostRequest::STATUS_DECLINE);
+            })
             ->count();
 
         $this->repostRequests = RepostRequest::where('target_user_urn', user()->urn)->where('status', RepostRequest::STATUS_PENDING)
