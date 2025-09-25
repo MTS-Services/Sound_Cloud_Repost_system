@@ -47,7 +47,7 @@ class UserNotificationSent implements ShouldBroadcast, ShouldQueue
             'description' => $this->notification->message_data['description'] ?? null,
             'url' => $this->notification->message_data['url'] ?? null,
             'icon' => $this->notification->message_data['icon'] ?? 'cog',
-            'additional_data' => $this->notification->message_data['additional_data'],
+            'additional_data' => isset($this->notification->message_data['additional_data']) ? $this->notification->message_data['additional_data'] : [],
             'timestamp' => timeFormatHuman(now()),
         ];
     }
