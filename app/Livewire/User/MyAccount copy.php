@@ -75,28 +75,51 @@ class MyAccount extends Component
 
     public function mount($user_name = null): void
     {
+        Log::info('MyAccount mount. step 1');
         $user = $user_name ? User::where('name', $user_name)->first() : user();
+        Log::info('MyAccount mount. step 2');
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
-        // $followers = $this->soundCloudService->getAuthUserFollowers();
-        // $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($followers);
-        // $currentWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'this_month');
-        // $lastWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'last_month');
-        // $analyze = $this->followerAnalyzer->syncUserRealFollowers($followers, $user);
-        // $currentWeekFollowers = $currentWeekStats['totalFollowers'];
-        // $lastWeekFollowers = $lastWeekStats['totalFollowers'];
-        // if ($lastWeekFollowers > 0) {
-        //     $this->followerGrowth = ((($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100) > 0 ? ((($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100) : 0;
-        // } else {
-        //     $this->followerGrowth = 0; // Avoid division by zero
-        // }
+        Log::info('MyAccount mount. step 3');
+        $followers = $this->soundCloudService->getAuthUserFollowers();
+        Log::info('MyAccount mount. step 4');
+        $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($followers);
+        Log::info('MyAccount mount. step 5');
+
+        Log::info('MyAccount mount. step 6');
+        $currentWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'this_month');
+        Log::info('MyAccount mount. step 7');
+        $lastWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'last_month');
+        Log::info('MyAccount mount. step 8');
+        $analyze = $this->followerAnalyzer->syncUserRealFollowers($followers, $user);
+        Log::info('MyAccount mount. step 9');
+
+        $currentWeekFollowers = $currentWeekStats['totalFollowers'];
+        Log::info('MyAccount mount. step 10');
+        $lastWeekFollowers = $lastWeekStats['totalFollowers'];
+        Log::info('MyAccount mount. step 11');
+        if ($lastWeekFollowers > 0) {
+            Log::info('MyAccount mount. step 12');
+            $this->followerGrowth = ((($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100) > 0 ? ((($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100) : 0;
+        } else {
+            Log::info('MyAccount mount. step 13');
+            $this->followerGrowth = 0; // Avoid division by zero
+        }
+        Log::info('MyAccount mount. step 14');
         $this->activeTab = request()->query('tab', $this->activeTab);
+        Log::info('MyAccount mount. step 15');
 
         $userUrn = $user->urn ?? user()->urn;
+        Log::info('MyAccount mount. step 16');
         $this->user_urn = $userUrn;
+        Log::info('MyAccount mount. step 17');
+        Log::info('MyAccount mount', ['user_urn' => $this->user_urn]);
+        Log::info('MyAccount mount. step 18');
         if ($this->selectedPlaylistId) {
+            Log::info('MyAccount mount. step 19');
             $this->activeTab = 'playlists';
             $this->showPlaylistTracks = true;
         }
+        Log::info('MyAccount mount. step 20');
         $this->socialLinks();
     }
 
@@ -152,13 +175,13 @@ class MyAccount extends Component
 
     public function syncTracks()
     {
-        // $this->soundCloudService->syncSelfTracks([]);
+        $this->soundCloudService->syncSelfTracks([]);
         // SyncedTracks::dispatch(user()->urn);
         // return back()->with('success', 'Track sync started in background. Please check later.');
     }
     public function syncPlaylists()
     {
-        // $this->soundCloudService->syncSelfPlaylists();
+        $this->soundCloudService->syncSelfPlaylists();
         // SyncedPlaylists::dispatch(user()->urn);
         // return back()->with('success', 'Playlist sync started in background.');
     }
@@ -251,6 +274,7 @@ class MyAccount extends Component
             'playlistTracks' => $playlistTracks,
             'reposts' => $reposts,
             'transactions' => $transactions,
+            // Also pass down flags used in Blade
             'showPlaylistTracks' => $this->showPlaylistTracks,
         ]);
     }
