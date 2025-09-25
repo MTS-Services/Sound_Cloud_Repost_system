@@ -407,6 +407,7 @@ class SoundCloudService
 
             $syncedCount = 0;
             $trackIdsInResponse = [];
+            Log::info('Tracks:' . json_encode($tracksData));
 
             foreach ($tracksData as $trackData) {
                 // Skip private tracks
@@ -414,7 +415,6 @@ class SoundCloudService
                     continue;
                 }
                 $trackIdsInResponse[] = $trackData['id'];
-                Log::info('track Id:' . $trackData['id']);
 
                 $userUrn = $trackData['user']['urn'];
 
