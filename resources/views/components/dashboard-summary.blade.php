@@ -62,7 +62,8 @@
                     <span><x-lucide-bell class="w-6 h-6 text-orange-500" /></span>
                     <span class="text-sm font-medium text-[#718096] dark:text-gray-100">Pending Direct Requests</span>
                 </div>
-                <div class="text-xl font-semibold mt-3 dark:text-gray-100">{{ $pendingRequests }} / {{ $requestLimit }}</div>
+                <div class="text-xl font-semibold mt-3 dark:text-gray-100">{{ $pendingRequests }} / {{ $requestLimit }}
+                </div>
                 <a href="#" class="inline-block mt-2 text-sm font-semibold text-orange-500 hover:underline">Get
                     higher limit</a>
             </div>
@@ -84,7 +85,8 @@
                 <div class="flex-1">
                     <div class="flex items-center justify-center gap-2">
                         <span><x-lucide-signal class="w-6 h-6 text-orange-500" /></span>
-                        <div class="text-xl font-semibold dark:text-gray-100">{{ $campaigns }}/{{ $campaignLimit }}</div>
+                        <div class="text-xl font-semibold dark:text-gray-100">{{ $campaigns }}/{{ $campaignLimit }}
+                        </div>
                     </div>
                     <div class="text-sm font-medium text-[#718096] dark:text-gray-100">Campaign Limit</div>
                 </div>
@@ -124,6 +126,7 @@
 
                 if (!isNaN(currentValue) && !isNaN(maxValue) && maxValue > 0) {
                     const percentage = (currentValue / maxValue) * 100;
+                    progressBar.style.width = '0%';
                     setTimeout(() => {
                         progressBar.style.width = percentage + '%';
                     }, 100);
