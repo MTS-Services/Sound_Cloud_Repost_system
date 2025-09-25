@@ -592,29 +592,30 @@
             </div>
             <div class="flex flex-wrap space-y-4">
                 <div class="flex-1">
-                    <label class="flex items-center text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
-                        <x-lucide-tags class="w-4 h-4 mr-2" />
-                        Genre
-                    </label>
-                    <div class="space-y-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-1 lg:grid-cols-2">
-                        <label class="flex items-center">
-                            <input type="checkbox" name="genre" wire:model="selectedGenres" value="Any Genre"
-                                class="checkbox border-orange-600 bg-transparent checked:border-orange-500 checked:bg-transparent checked:text-orange-600 rounded-full w-5 h-5"
-                                x-bind:disabled="isLoading">
-                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300 capitalize">Any Genre</span>
-                        </label>
-                        @foreach ($userGenres as $genre)
-                            <label class="flex items-center">
-                                <input type="checkbox" name="genre" wire:model="selectedGenres"
-                                    value="{{ $genre }}"
-                                    class="checkbox border-orange-600 bg-transparent checked:border-orange-500 checked:bg-transparent checked:text-orange-600 rounded-full w-5 h-5"
-                                    x-bind:disabled="isLoading">
-                                <span
-                                    class="ml-2 text-sm text-gray-700 dark:text-gray-300 capitalize">{{ $genre }}</span>
-                            </label>
-                        @endforeach
-                    </div>
-                </div>
+    <label class="flex items-center text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
+        <x-lucide-tags class="w-4 h-4 mr-2" />
+        Genre
+    </label>
+    <!-- ✅ Mobile fix: grid-cols-1 default, sm থেকে শুরু আগের মতো -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-2">
+        <label class="flex items-center">
+            <input type="checkbox" name="genre" wire:model="selectedGenres" value="Any Genre"
+                class="checkbox border-orange-600 bg-transparent checked:border-orange-500 checked:bg-transparent checked:text-orange-600 rounded-full w-5 h-5"
+                x-bind:disabled="isLoading">
+            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300 capitalize">Any Genre</span>
+        </label>
+        @foreach ($userGenres as $genre)
+            <label class="flex items-center">
+                <input type="checkbox" name="genre" wire:model="selectedGenres"
+                    value="{{ $genre }}"
+                    class="checkbox border-orange-600 bg-transparent checked:border-orange-500 checked:bg-transparent checked:text-orange-600 rounded-full w-5 h-5"
+                    x-bind:disabled="isLoading">
+                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300 capitalize">{{ $genre }}</span>
+            </label>
+        @endforeach
+    </div>
+</div>
+
                 <div class="flex-1 flex items-start justify-start flex-col">
                     <label class="flex items-center text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
                         <x-lucide-calendar-clock class="w-4 h-4 mr-2" />
