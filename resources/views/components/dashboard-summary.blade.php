@@ -100,16 +100,16 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <button
+                <a href="{{ route('user.add-credits') }}" wire:navigate
                     class="flex items-center justify-center gap-2 text-sm font-semibold py-2 border border-[#e2e8f0] dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-50 transition">
                     <span><x-lucide-shopping-cart class="w-6 h-6 text-orange-500" /></span>
                     Buy more credits
-                </button>
-                <button
+                 </a>
+                <a href="{{ route('user.plans') }}" wire:navigate
                     class="flex items-center justify-center gap-2 text-sm font-semibold py-2 bg-orange-500 text-white rounded-lg hover:opacity-90 transition">
                     <span><x-lucide-rocket class="w-6 h-6 text-white" /></span>
                     Upgrade plan
-                </button>
+                </a>
             </div>
         </div>
         <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow min-h-56">
