@@ -349,7 +349,6 @@ class SoundCloudService
 
             $syncedCount = 0;
             $trackIdsInResponse = [];
-            Log::info('Tracks:' . json_encode($tracksData));
 
             foreach ($tracksData as $trackData) {
                 // Skip private tracks
@@ -540,11 +539,9 @@ class SoundCloudService
                     ]
                 );
 
-                if (!empty($playlistData['tracks'])) {
-                    $trackResponse = $this->fetchUserPlaylistTracks($user, $playlist->soundcloud_urn);
-                    $playlistTrackData = $trackResponse['collection'];
-                    $this->syncUserTracks($user, $playlistTrackData, $playlist->soundcloud_urn);
-                }
+                $trackResponse = $this->fetchUserPlaylistTracks($user, $playlist->soundcloud_urn);
+                $playlistTrackData = $trackResponse['collection'];
+                $this->syncUserTracks($user, $playlistTrackData, $playlist->soundcloud_urn);
 
                 if ($playlist->wasRecentlyCreated) {
                     $syncedCount++;
