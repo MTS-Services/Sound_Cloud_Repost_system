@@ -75,13 +75,17 @@
 
             <div class="flex flex-col sm:flex-row justify-around text-center gap-4">
                 <div class="flex-1">
-                    <span><x-lucide-credit-card class="w-6 h-6 text-orange-500 mb-2 mx-auto" /></span>
-                    <div class="text-xl font-semibold">{{ $credits }}</div>
+                    <div class="flex items-center justify-center gap-2">
+                        <span><x-lucide-credit-card class="w-6 h-6 text-orange-500" /></span>
+                        <div class="text-xl font-semibold">{{ $credits }}</div>
+                    </div>
                     <div class="text-sm font-medium text-[#718096]">Available Credits</div>
                 </div>
                 <div class="flex-1">
-                    <span><x-lucide-signal class="w-6 h-6 text-orange-500 mb-2 mx-auto" /></span>
-                    <div class="text-xl font-semibold">{{ $campaigns }}/{{ $campaignLimit }}</div>
+                    <div class="flex items-center justify-center gap-2">
+                        <span><x-lucide-signal class="w-6 h-6 text-orange-500" /></span>
+                        <div class="text-xl font-semibold">{{ $campaigns }}/{{ $campaignLimit }}</div>
+                    </div>
                     <div class="text-sm font-medium text-[#718096]">Campaign Limit</div>
                 </div>
             </div>

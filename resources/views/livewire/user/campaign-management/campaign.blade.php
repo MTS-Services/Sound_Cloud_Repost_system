@@ -2,14 +2,14 @@
     <x-slot name="page_slug">campaign-feed</x-slot>
 
 
-    <section class="flex flex-col lg:flex-row gap-4">
+    <section class="flex flex-col lg:flex-row gap-4 lg:gap-6">
         {{-- Left Side --}}
         <div class="w-full lg:w-[75%]">
             <!-- Header Section -->
             <div class="w-full mt-6 relative">
                 <!-- Header Tabs & Button -->
                 <div x-data="{ activeMainTab: @entangle('activeMainTab').live }"
-                    class="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-4 pt-3 border-b border-b-gray-200 dark:border-b-gray-700 gap-2 sm:gap-0">
+                    class="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-0 sm:ps-2 pt-3 border-b border-b-gray-200 dark:border-b-gray-700 gap-2 sm:gap-0">
                     <div>
                         <nav class="-mb-px flex space-x-8">
                             <!-- Recommended Pro -->
@@ -366,8 +366,8 @@
         </div>
         {{-- Right Side --}}
         <div class="w-full lg:w-[25%]">
-            <x-dashboard-summary :earnings="20" :dailyRepostCurrent="2" :dailyRepostMax="26" :responseRate="30"
-                :pendingRequests="10" :requestLimit="35" :credits="10" :campaignLimit="1" />
+            <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="2" :dailyRepostMax="26" :responseRate="30"
+                :pendingRequests="10" :requestLimit="35" :credits="{{ userCredits() }}" :campaignLimit="1" />
         </div>
     </section>
 
