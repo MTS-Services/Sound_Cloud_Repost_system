@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{{-- <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -7,6 +7,7 @@
     <title>RepostChain Registration Flow</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link id="favicon" rel="icon" href="{{ storage_url(app_setting('favicon')) }}" type="image/x-icon">
     <script>
         tailwind.config = {
             theme: {
@@ -32,7 +33,10 @@
     </script>
 </head>
 
-<body class="font-sans text-gray-800 leading-relaxed">
+<body class="font-sans text-gray-800 leading-relaxed"> --}}
+<x-frontend::layout>
+    <x-slot name="title">Registration Flow</x-slot>
+    <x-slot name="page_slug">registration-flow</x-slot>
     <div x-data="registrationForm()" x-init="prefillFromServer()" class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
         <!-- Header -->
         <header class="bg-white shadow-sm border-b border-gray-200">
@@ -452,6 +456,7 @@
             }
         }
     </script>
-</body>
+</x-frontend::layout>
+{{-- </body>
 
-</html>
+    </html> --}}

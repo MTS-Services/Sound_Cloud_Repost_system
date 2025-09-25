@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{{-- <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -8,6 +8,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link id="favicon" rel="icon" href="{{ storage_url(app_setting('favicon')) }}" type="image/x-icon">
     <script>
         tailwind.config = {
             theme: {
@@ -145,7 +146,10 @@
     </style>
 </head>
 
-<body class="font-sans text-gray-800 leading-relaxed bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+<body class="font-sans text-gray-800 leading-relaxed bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen"> --}}
+<x-frontend::layout>
+    <x-slot name="title">Registration Flow</x-slot>
+    <x-slot name="page_slug">registration-flow</x-slot>
     <div x-data="registrationForm()" x-init="prefillFromServer()" x-cloak>
         <!-- Header -->
         <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
@@ -164,7 +168,7 @@
                                         'bg-orange-500 text-white shadow-md': step === currentStep,
                                         'bg-orange-500 text-white border-2 border-orange-500': step < currentStep,
                                         'bg-gray-200 text-gray-600': step > currentStep
-
+                                    
                                     }">
                                     <template x-if="step < currentStep">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
@@ -649,6 +653,7 @@
             }
         }
     </script>
-</body>
+</x-frontend::layout>
+{{-- </body>
 
-</html>
+</html> --}}
