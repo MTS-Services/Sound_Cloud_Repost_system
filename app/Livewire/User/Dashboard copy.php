@@ -203,18 +203,18 @@ class Dashboard extends Component
     {
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
-        // $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers());
+        $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers());
 
-        // $lastWeekFollowerPercentage = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers(), 'last_week');
-        // $currentWeekFollowerPercentage = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers(), 'this_week');
-        // $lastWeek = $lastWeekFollowerPercentage['averageCredibilityScore'];
-        // $currentWeek = $currentWeekFollowerPercentage['averageCredibilityScore'];
+        $lastWeekFollowerPercentage = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers(), 'last_week');
+        $currentWeekFollowerPercentage = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers(), 'this_week');
+        $lastWeek = $lastWeekFollowerPercentage['averageCredibilityScore'];
+        $currentWeek = $currentWeekFollowerPercentage['averageCredibilityScore'];
 
-        // if ($lastWeek > 0) {
-        //     $this->followerPercentage = (($currentWeek - $lastWeek) / $lastWeek) * 100;
-        // } else {
-        //     $this->followerPercentage = 0;
-        // }
+        if ($lastWeek > 0) {
+            $this->followerPercentage = (($currentWeek - $lastWeek) / $lastWeek) * 100;
+        } else {
+            $this->followerPercentage = 0;
+        }
         $this->loadDashboardData();
         $this->calculateFollowersLimit();
         $this->userGenres = user()->genres->pluck('genre')->toArray();
@@ -382,7 +382,7 @@ class Dashboard extends Component
     public function fetchTracks()
     {
         try {
-            // $this->soundCloudService->syncSelfTracks([]);
+            $this->soundCloudService->syncSelfTracks([]);
 
             // Get all tracks first
             $this->allTracks = Track::where('user_urn', user()->urn)
@@ -404,7 +404,7 @@ class Dashboard extends Component
     public function fetchPlaylists()
     {
         try {
-            // $this->soundCloudService->syncSelfPlaylists();
+            $this->soundCloudService->syncSelfPlaylists();
 
             $this->allPlaylists = Playlist::where('user_urn', user()->urn)
                 ->latest()
@@ -997,14 +997,14 @@ class Dashboard extends Component
             $urn = $resolvedData['urn'];
             if ($this->activeTab === 'playlists') {
                 if (isset($resolvedData['tracks']) && count($resolvedData['tracks']) > 0) {
-                    // $this->soundCloudService->unknownPlaylistAdd($resolvedData);
+                    $this->soundCloudService->unknownPlaylistAdd($resolvedData);
                     Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
                 } else {
                     $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Playlist URL.');
                 }
             } elseif ($this->activeTab === 'tracks') {
                 if (!isset($resolvedData['tracks'])) {
-                    // $this->soundCloudService->unknownTrackAdd($resolvedData);
+                    $this->soundCloudService->unknownTrackAdd($resolvedData);
                     Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
                 } else {
                     $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Track URL.');
@@ -1136,15 +1136,15 @@ class Dashboard extends Component
     {
         $this->showRepostConfirmationModal = true;
         $this->request = RepostRequest::findOrFail($requestId)->load('music', 'requester');
-        // $response = $this->soundCloudService->getAuthUserFollowers($this->request->requester);
-        // if ($response->isNotEmpty()) {
-        //     $already_following = $response->where('urn', user()->urn)->first();
-        //     if ($already_following !== null) {
-        //         Log::info('Repost request Page:- Already following');
-        //         $this->followed = false;
-        //         $this->alreadyFollowing = true;
-        //     }
-        // }
+        $response = $this->soundCloudService->getAuthUserFollowers($this->request->requester);
+        if ($response->isNotEmpty()) {
+            $already_following = $response->where('urn', user()->urn)->first();
+            if ($already_following !== null) {
+                Log::info('Repost request Page:- Already following');
+                $this->followed = false;
+                $this->alreadyFollowing = true;
+            }
+        }
     }
     public function repost($requestId)
     {
