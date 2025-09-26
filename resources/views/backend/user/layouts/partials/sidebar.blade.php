@@ -45,7 +45,9 @@
                     class="sidebar-item flex items-center px-2 py-1.5 md:px-3 md:py-2.5 rounded-lg transition-colors
                     text-slate-700 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'request') active @endif">
                     <x-heroicon-o-user-plus class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" />
-                    <span class="text-xs md:text-sm">{{ __('Requests') }}</span>
+                    <span class="text-xs md:text-sm">{{ __('Requests') }}<sup wire:poll.visible.10s
+                            class="ml-1 inline-flex items-center rounded-full bg-orange-500 px-2 py-1 text-xs font-semibold text-white @if ($page_slug == 'request') !text-orange-500
+!bg-white @endif">{{ App\Models\RepostRequest::incoming()->pending()->count() }}</sup></span>
                 </a>
             </li>
             <li>
