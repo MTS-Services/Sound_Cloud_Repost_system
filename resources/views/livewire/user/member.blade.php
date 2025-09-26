@@ -19,37 +19,66 @@
             <!-- Search and Filters -->
             <div class="mb-8 flex flex-col lg:flex-row gap-4">
                 <!-- Filter Buttons -->
-                <div class="flex flex-row flex-wrap gap-4">
-                    <!-- Filter by Genre -->
-                    <div class="relative flex-1">
-                        <button @click="openByGenre = !openByGenre"
-                            class="bg-orange-100 !hover:bg-orange-400 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer w-full">
-                            {{ __('Filter by genre') }}
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <div class="relative"> <button @click="openByGenre = !openByGenre"
+                            class="bg-orange-100 !hover:bg-orange-400 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer">
+                            {{ __('Filter by genre') }} <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-chevron-down-icon lucide-chevron-down">
                                 <path d="m6 9 6 6 6-6" />
-                            </svg>
-                        </button>
-                        <!-- dropdown content same as before -->
+                            </svg> </button>
+                        <div x-show="openByGenre" x-transition:enter="transition ease-out duration-100"
+                            @click.outside="openByGenre = false" x-transition:enter-start="transform opacity-0 scale-95"
+                            x-transition:enter-end="transform opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-75"
+                            x-transition:leave-start="transform opacity-100 scale-100"
+                            x-transition:leave-end="transform opacity-0 scale-95"
+                            class="absolute left-0 mt-2 w-56 rounded-md shadow-lg z-100 overflow-hidden">
+                            <div class="bg-white dark:bg-slate-800 max-h-96 overflow-y-auto">
+                                <div class="py-1">
+                                    @forelse ($genres as $genre)
+                                        <button wire:click="filterBygenre('{{ $genre }}')"
+                                            class="block px-4 py-2 text-sm border-b border-gray-100 dark:border-gray-700 w-full text-left {{ in_array($genre, $selectedGenres) ? 'bg-orange-500 hover:bg-orange-500 text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300' }}">
+                                        {{ $genre }} </button> @empty <button
+                                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                            {{ __('No genres found') }} </button>
+                                        @endforelse
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
-                    <!-- Filter by Cost -->
-                    <div class="relative flex-1">
-                        <button @click="openByCost = !openByCost" @click.outside="openByCost = false"
-                            class="bg-orange-100 !hover:bg-orange-400 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer w-full">
-                            {{ __('Filter by cost') }}
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <div class="relative"> <button @click="openByCost = !openByCost" @click.outside="openByCost = false"
+                            class="bg-orange-100 !hover:bg-orange-400 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer">
+                            {{ __('Filter by cost') }} <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-chevron-down-icon lucide-chevron-down">
                                 <path d="m6 9 6 6 6-6" />
-                            </svg>
-                        </button>
-                        <!-- dropdown content same as before -->
+                            </svg> </button>
+                        <div x-show="openByCost" x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="transform opacity-0 scale-95"
+                            x-transition:enter-end="transform opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-75"
+                            x-transition:leave-start="transform opacity-100 scale-100"
+                            x-transition:leave-end="transform opacity-0 scale-95"
+                            class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
+                            <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
+                                <div class="py-1"> <a href="{{ route('user.members') }}" wire:navigate
+                                        wire:click="filterByCost('low_to_high')"
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                        {{ __('High to Low') }} </a> <a href="{{ route('user.members') }}" wire:navigate
+                                        wire:click="filterByCost('high_to_low')"
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                                        {{ __('Low to High') }} </a> </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Search Input -->
-                <div class="flex-1 relative">
-                    <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-gray dark:text-gray-400 "
+                <div class="flex-1 relative mt-2 lg:mt-0">
+                    <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-gray dark:text-gray-400"
                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -58,9 +87,11 @@
                         wire:model.live="search"
                         class="w-full bg-card-blue border border-gray-300 dark:border-gray-600 hover:border-orange-500 transition-colors rounded-md pl-10 pr-4 py-2 text-gray-900 dark:text-white dark:bg-gray-900 placeholder-text-gray focus:outline-none focus:border-orange-500">
                 </div>
-
-
             </div>
+
+
+
+
 
 
 
