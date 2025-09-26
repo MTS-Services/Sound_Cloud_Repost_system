@@ -76,7 +76,7 @@ class MyAccount extends Component
     public function mount($user_name = null): void
     {
         $user = $user_name ? User::where('name', $user_name)->first() : user();
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
         // $followers = $this->soundCloudService->getAuthUserFollowers();
         // $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($followers);
         // $currentWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'this_month');
@@ -102,7 +102,7 @@ class MyAccount extends Component
 
     public function updated()
     {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
     public function updatedActiveTab()
