@@ -17,54 +17,77 @@
                         {{-- User Info --}}
                         <div class="flex-1 text-center w-full sm:text-left ml-0 sm:ml-4">
                             <div
-                                class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 mb-2">
-                                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                                class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-2 text-center sm:text-left">
+                                <h1 class="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
                                     {{ $user->name ?? 'name' }}
                                 </h1>
+
                                 @if (proUser($user->urn))
                                     <span
-                                        class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName($user->urn) }}</span>
+                                        class="mt-1 sm:mt-0 text-xs md:text-sm lg:text-base badge badge-soft badge-warning rounded-full font-semibold">
+                                        {{ userPlanName($user->urn) }}
+                                    </span>
                                 @else
                                     <span
-                                        class="text-sm badge badge-soft badge-info rounded-full font-semibold">{{ userPlanName($user->urn) }}</span>
+                                        class="mt-1 sm:mt-0 text-xs md:text-sm lg:text-base badge badge-soft badge-info rounded-full font-semibold">
+                                        {{ userPlanName($user->urn) }}
+                                    </span>
                                 @endif
                             </div>
-                            <p class="text-lg sm:text-xl text-gray-600 dark:text-slate-200 mb-4">
+
+
+                            <p class="text-base md:text-lg lg:text-xl text-gray-600 dark:text-slate-200 mb-4">
                                 {{ $user->userInfo->followers_count ?? '150' }} Followers
                             </p>
-
                             <div
-                                class="flex flex-col xs:flex-row items-center space-y-2 xs:space-y-0 xs:space-x-4 sm:space-x-6 text-gray-500 dark:text-slate-300 text-xs sm:text-sm">
+                                class="flex flex-col xs:flex-col lg:flex-row space-y-2 xs:space-y-1 lg:space-y-0 text-gray-500 dark:text-slate-300">
+
+                                {{-- MEMBER SINCE --}}
                                 <div class="flex items-center space-x-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="inline w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" fill="none"
                                         stroke="#5c6b80" stroke-width="2" stroke-linecap="round"
                                         stroke-linejoin="round">
                                         <rect x="3" y="5" width="18" height="16" rx="2" />
                                         <path d="M16 3v4M8 3v4M3 9h18" />
                                     </svg>
-                                    <span>MEMBER SINCE {{ $user->created_at->diffForHumans() }}</span>
+                                    <span class="text-[10px] md:text-xs lg:text-sm block">
+                                        MEMBER SINCE {{ $user->created_at->diffForHumans() }}
+                                    </span>
                                 </div>
+
+                                {{-- CITY, COUNTRY --}}
                                 <div class="flex items-center space-x-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
-                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="w-3 h-3 sm:w-4 sm:h-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="w-4 h-4 md:w-5 md:h-5 lg:w-5 lg:h-5 text-gray-500 dark:text-slate-300 flex-shrink-0"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
                                         <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
                                         <circle cx="12" cy="10" r="3"></circle>
                                     </svg>
-                                    <span>{{ $user->userInfo->city ?? 'City' }},
-                                        {{ $user->userInfo->country ?? 'Country' }}</span>
+                                    <span class="text-[10px] md:text-xs lg:text-sm block">
+                                        {{ $user->userInfo->city ?? 'City' }},
+                                        {{ $user->userInfo->country ?? 'Country' }}
+                                    </span>
                                 </div>
+
+
                             </div>
+
+
                         </div>
 
                         {{-- Buttons --}}
                         <div
                             class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
                             <x-gabutton variant="primary" target="_blank"
-                                href="{{ $user->soundcloud_permalink_url ?? '#' }}">
-                                <x-lucide-external-link class="w-6 h-6 mr-1 text-gray-50" />
-                                <span>Visit on Soundcloud</span>
+                                href="{{ $user->soundcloud_permalink_url ?? '#' }}" class="whitespace-nowrap">
+                                <x-lucide-external-link class="w-5 h-5 md:w-5 md:h-5 lg:w-6 lg:h-6 mr-1 text-gray-50" />
+                                <span class="text-sm md:text-xs lg:text-sm">
+                                    Visit on Soundcloud
+                                </span>
                             </x-gabutton>
+
                             @if (user()->urn == $user->urn)
                                 {{-- <x-gbutton variant="primary" wire:click="profileUpdated({{ user()->id }})">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
@@ -164,8 +187,7 @@
                                         <a href="{{ $spotify }}" target="_blank">
                                             <div
                                                 class="w-6 h-6 bg-green-500 rounded-md flex items-center justify-center">
-                                                <svg class="w-4 h-4 text-white" fill="currentColor"
-                                                    viewBox="0 0 24 24">
+                                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                                                     <path
                                                         d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" />
                                                 </svg>
