@@ -47,7 +47,7 @@
                     <x-heroicon-o-user-plus class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" />
                     <span class="text-xs md:text-sm">{{ __('Requests') }}<sup wire:poll.visible.10s
                             class="ml-1 inline-flex items-center rounded-full bg-orange-500 px-2 py-1 text-xs font-semibold text-white @if ($page_slug == 'request') !text-orange-500
-!bg-white @endif">{{ App\Models\RepostRequest::where('status', App\Models\RepostRequest::STATUS_PENDING)->count() }}</sup></span>
+!bg-white @endif">{{ App\Models\RepostRequest::incoming()->pending()->count() }}</sup></span>
                 </a>
             </li>
             <li>
