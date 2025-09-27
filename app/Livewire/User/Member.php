@@ -396,15 +396,15 @@ class Member extends Component
 
         $this->showRepostsModal = true;
 
-        // $response = $this->soundCloudService->getAuthUserFollowers($this->user);
-        // if ($response->isNotEmpty()) {
-        //     $already_following = $response->where('urn', user()->urn)->first();
-        //     if ($already_following !== null) {
-        //         Log::info('Member Page:- Already following');
-        //         $this->following = false;
-        //         $this->alreadyFollowing = true;
-        //     }
-        // }
+        $response = $this->soundCloudService->getAuthUserFollowers($this->user);
+        if ($response->isNotEmpty()) {
+            $already_following = $response->where('urn', user()->urn)->first();
+            if ($already_following !== null) {
+                Log::info('Member Page:- Already following');
+                $this->following = false;
+                $this->alreadyFollowing = true;
+            }
+        }
     }
 
     public function closeRepostModal()

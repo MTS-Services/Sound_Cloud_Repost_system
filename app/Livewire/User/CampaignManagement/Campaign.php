@@ -1512,15 +1512,17 @@ class Campaign extends Component
         try {
             $user = user()->withCount([
                 'reposts as reposts_count_today' => function ($query) {
-                    $query->whereDate('created_at', '>=', Carbon::today());
+                    $query->whereBetween('created_at', [Carbon::today(), Carbon::tomorrow()]);
                 },
                 'campaigns',
-                'requests',
+                'requests' => function ($query) {
+                    $query->pending();
+                },
             ])->first();
 
             $data['dailyRepostCurrent'] = $user->reposts_count_today ?? 0;
-            $data['totalMyCampaign'] = $user->campaigns_count ?? 0;
-            $data['pendingRequests'] = RepostRequest::where('target_user_urn', user()->urn)->pending()->count();
+            $data['totalMyCampaign'] = $user->campaigns ?? 0;
+            $data['pendingRequests'] = $user->requests ?? 0;
             $baseQuery = $this->getCampaignsQuery();
             $baseQuery = $this->applyFilters($baseQuery);
             $campaigns = collect();
