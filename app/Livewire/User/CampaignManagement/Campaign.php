@@ -240,7 +240,7 @@ class Campaign extends Component
         $this->totalCampaigns();
         $this->calculateFollowersLimit();
         if ($this->activeMainTab === 'all') {
-            $this->selectedGenres = !empty($this->selectedGenres) && $this->selectedGenres == ['all'] ? $this->selectedGenres : [];
+            $this->selectedGenres = !empty($this->selectedGenres) && $this->selectedGenres !== ['all'] ? $this->selectedGenres : [];
         } else {
             $this->selectedGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
         }
