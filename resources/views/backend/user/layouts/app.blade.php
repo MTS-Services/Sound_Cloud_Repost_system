@@ -212,28 +212,31 @@
     @if (auth()->guard('web')->check())
         @if (!user()->email_verified_at)
             <div x-show="open" x-transition.opacity.duration.300ms
-                class=" top-0  mb-8 max-w-8xl mx-auto  bg-gray-50 dark:bg-gray-800 border-l-4 border-orange-500 text-black dark:text-white  p-4 shadow-sm flex items-center justify-center z-1 rounded-md relative"
+                class=" top-0  mb-8 max-w-8xl mx-auto  bg-gray-50 dark:bg-gray-800 border-l-4 border-orange-500 text-black dark:text-white  p-2 lg:p-4 shadow-sm flex items-center justify-center z-1 rounded-md relative"
                 role="alert">
                 <div class="flex justify-center items-center gap-1">
-                    <p class="text-sm text-gray-600 dark:text-gray-300">
-                        Please confirm your email address to unlock core platform features.
-                    <form x-data="{ loading: false }" x-ref="form" method="POST"
-                        action="{{ route('user.email.resend.verification') }}"
-                        @submit.prevent="loading = true; $refs.submitButton.disabled = true; $refs.form.submit();">
-                        @csrf
-                        <button type="submit" x-ref="submitButton" :disabled="loading"
-                            class="text-sm font-semibold text-orange-600 hover:underline">
-                            <template x-if="!loading">
-                                <span>Resend confirmation</span>
-                            </template>
-                            <template x-if="loading">
-                                <span>Sending...</span>
-                            </template>
-                        </button>
-                    </form>
-                    </p>
+                    <div class="flex flex-col lg:flex-row gap-1 lg:gap-2">
+                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                            Please confirm your email address to unlock core platform features.
+                        </p>
+                        <form x-data="{ loading: false }" x-ref="form" method="POST"
+                            action="{{ route('user.email.resend.verification') }}"
+                            @submit.prevent="loading = true; $refs.submitButton.disabled = true; $refs.form.submit();"
+                            class="flex items-center justify-end">
+                            @csrf
+                            <button type="submit" x-ref="submitButton" :disabled="loading"
+                                class="text-sm font-semibold text-orange-600 hover:underline">
+                                <template x-if="!loading">
+                                    <span>Resend confirmation</span>
+                                </template>
+                                <template x-if="loading">
+                                    <span>Sending...</span>
+                                </template>
+                            </button>
+                        </form>
+                    </div>
                     <button
-                        class="absolute top-1/2 right-4 transform -translate-y-1/2 transition-colors text-gray-500 dark:text-gray-400 hover:text-gray-700 flex-shrink-0"
+                        class="absolute top-4 right-2 lg:top-1/2 lg:right-4 transform -translate-y-1/2 transition-colors text-gray-500 dark:text-gray-400 hover:text-gray-700 flex-shrink-0"
                         @click="open = false">
                         <x-lucide-x class="w-5 h-5" />
                     </button>
