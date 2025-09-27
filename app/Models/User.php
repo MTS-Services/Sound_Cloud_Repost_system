@@ -180,7 +180,7 @@ class User extends AuthBaseModel implements MustVerifyEmail
     // Helper methods
     public function isSoundCloudConnected(): bool
     {
-        return !empty($this->token);
+        return !is_null($this->token) && !is_null($this->refresh_token);
     }
 
     public function getSoundCloudAvatarAttribute($value): string
