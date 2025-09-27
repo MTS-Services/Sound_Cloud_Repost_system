@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Support\Facades\DB;
 
 class SoundCloudService
@@ -34,22 +35,57 @@ class SoundCloudService
     protected string $resolverUrl = 'https://soundcloud.com/resolve';
 
 
+    /**
+     * Makes an authenticated GET API request to SoundCloud, with pagination.
+     *
+     * This method can be used to make any type of GET API request to SoundCloud.
+     *
+     * @param string $endpoint The API endpoint path (e.g., '/me/tracks').
+     * @param string $errorMessage A user-friendly error message.
+     * @param array $options Request options (e.g., 'query' for GET, 'json' for POST).
+     * @return array The JSON response from the API.
+     * @throws Exception
+     */
     public function makeGetApiRequest(string $endpoint, string $errorMessage, ?array $options = null): array
     {
         $options['linked_partitioning'] = true;
         return $this->makeApiRequestWithPagination(user: user(), method: 'get', endpoint: $endpoint, errorMessage: $errorMessage, options: $options);
     }
 
+    /**
+     * Makes an authenticated API request to SoundCloud, with pagination.
+     *
+     * This method can be used to make any type of API request to SoundCloud, such as GET, POST, PUT, etc.
+     *
+     * @param string $method The HTTP method to use (e.g., 'get', 'post', 'put').
+     * @param string $endpoint The API endpoint path (e.g., '/me/tracks').
+     * @param array $options Request options (e.g., 'query' for GET, 'json' for POST).
+     * @param string $errorMessage A user-friendly error message to display if the request fails.
+     * @return array The JSON response from the API.
+     * @throws Exception
+     */
     public function makeOtherApiRequest(string $method, string $endpoint, array $options, string $errorMessage): array
     {
         return $this->makeApiRequestWithPagination(user: user(), method: $method, endpoint: $endpoint,  errorMessage: $errorMessage, options: $options);
     }
 
+    /**
+     * Makes an authenticated API request to SoundCloud, with pagination.
+     *
+     * @param User $user The user model instance.
+     * @param string $method The HTTP method (e.g., 'get', 'post', 'put').
+     * @param string $endpoint The API endpoint path (e.g., '/me/tracks').
+     * @param string $errorMessage A user-friendly error message.
+     * @param array $options Request options (e.g., 'query' for GET, 'json' for POST).
+     * @param int|null $maxPages The maximum number of pages to fetch (default is null, which means no limit).
+     * @return array The JSON response from the API, including pagination information.
+     * @throws Exception
+     */
     protected function makeApiRequestWithPagination(User $user, string $method, string $endpoint, string $errorMessage, array $options,  ?int $maxPages = null): array
     {
         $user->refresh();
 
-        $this->ensureSoundCloudConnection($user);
+        $this->refreshUserTokenIfNeeded($user);
 
         $allData = [];
         $nextUrl = "{$this->baseUrl}{$endpoint}";
@@ -145,6 +181,15 @@ class SoundCloudService
         ];
     }
 
+    /**
+     * Makes a SoundCloud API request to resolve a URL.
+     *
+     * @param string $endpoint The URL to resolve.
+     * @param string $errorMessage A user-friendly error message.
+     *
+     * @return array The JSON response from the API.
+     * @throws Exception
+     */
     public function makeResolveApiRequest(string $endpoint, string $errorMessage)
     {
         $this->ensureSoundCloudConnection(user: user());
@@ -244,9 +289,10 @@ class SoundCloudService
      */
     public function ensureSoundCloudConnection(User $user): void
     {
-        // This is a good place to check for a basic connection. You might need to add a `isSoundCloudConnected()` method to your User model.
-        // For example: `return !is_null($this->token) && !is_null($this->refresh_token);`
-        if (!$user->token || !$user->refresh_token) {
+        if (!$user->isSoundCloudConnected()) {
+            Log::error('SoundCloud connection required but missing.', [
+                'user_urn' => $user->urn,
+            ]);
             throw new Exception('User is not connected to SoundCloud.');
         }
     }
@@ -259,10 +305,16 @@ class SoundCloudService
             *** START OF COMMON HELPER METHODS TO FETCH DATA ***
      * ++++++++++++++++++++++ ++++++++++++++++++++++ ++++++++++++++++++++++ */
 
+    /**
+     * Fetches the tracks of a user from SoundCloud.
+     *
+     * @param User $user The user model instance.
+     *
+     * @return array The JSON response from the API.
+     * @throws Exception
+     */
     public function fetchUserTracks(User $user): array
     {
-        $this->refreshUserTokenIfNeeded(user());
-
         return $this->makeGetApiRequest(
             endpoint: '/users/' . $user->urn . '/tracks',
             errorMessage: 'Failed to fetch user tracks',
@@ -272,10 +324,15 @@ class SoundCloudService
         );
     }
 
+    /**
+     * Fetches the user's playlists from SoundCloud.
+     *
+     * @param User $user The user model instance.
+     * @return array The JSON response from the API.
+     * @throws Exception
+     */
     public function fetchUserPlaylists(User $user): array
     {
-        $this->refreshUserTokenIfNeeded(user());
-
         return $this->makeGetApiRequest(
             endpoint: '/users/' . $user->urn . '/playlists',
             errorMessage: 'Failed to fetch user playlists',
@@ -286,9 +343,15 @@ class SoundCloudService
         );
     }
 
+    /**
+     * Fetches the tracks of a specific playlist from SoundCloud.
+     *
+     * @param User $user The user model instance.
+     * @param string $playlistUrn The URN of the playlist to fetch tracks from.
+     * @return array The JSON response from the API.
+     */
     public function fetchUserPlaylistTracks(User $user, string $playlistUrn): array
     {
-        $this->refreshUserTokenIfNeeded(user());
         return $this->makeGetApiRequest(
             endpoint: '/playlists/' . $playlistUrn . '/tracks',
             errorMessage: 'Failed to fetch playlist tracks',
@@ -297,6 +360,22 @@ class SoundCloudService
             ]
         );
     }
+
+    /**
+     * Fetches the user's profile information from SoundCloud.
+     *
+     * @param User $user The user model instance.
+     * @return array The JSON response from the API.
+     * @throws Exception
+     */
+    public function fetchUserProfile(User $user): array
+    {
+        return $this->makeGetApiRequest(
+            endpoint: '/users/' . $user->urn,
+            errorMessage: 'Failed to fetch user profile',
+        );
+    }
+
     /* ++++++++++++++++++++++ ++++++++++++++++++++++ ++++++++++++++++++++++ *
             *** START OF COMMON HELPER METHODS TO FETCH DATA ***
      * ++++++++++++++++++++++ ++++++++++++++++++++++ ++++++++++++++++++++++ */
@@ -304,7 +383,15 @@ class SoundCloudService
      *** START OF THE SOUNDCLOUD SYNC METHODS ***
      ---------------------- ---------------------- ----------------------  */
 
-    //   USER INFORMATION SYNC METHOD
+
+    /**
+     * Syncs user information from SoundCloud API into the database.
+     *
+     * @param User $user
+     * @param object $soundCloudUser
+     * @return UserInformation
+     * @throws Exception
+     */
     public function syncUserInformation(User $user, object $soundCloudUser): UserInformation
     {
         try {
@@ -358,6 +445,14 @@ class SoundCloudService
         }
     }
 
+    /**
+     * Sync user tracks from SoundCloud.
+     *
+     * @param User $user
+     * @param array $tracksData
+     * @param ?string $playlist_urn
+     * @return int
+     */
     public function syncUserTracks(User $user, array $tracksData, ?string $playlist_urn = null): int
     {
         try {
@@ -501,6 +596,14 @@ class SoundCloudService
         }
     }
 
+    /**
+     * Sync user playlists from SoundCloud.
+     *
+     * @param User $user
+     * @return int number of playlists synced
+     *
+     * @throws Exception
+     */
     public function syncUserPlaylists(User $user): int
     {
         try {
@@ -590,6 +693,14 @@ class SoundCloudService
         }
     }
 
+    /**
+     * Sync user products and subscriptions.
+     *
+     * Deletes all user subscriptions and re-syncs all products and subscriptions from SoundCloud.
+     *
+     * @param User $user The user to sync.
+     * @param object $soundCloudUser The SoundCloud user data.
+     */
     public function syncUserProductsAndSubscriptions(User $user, object $soundCloudUser): void
     {
         Subscription::where('user_urn', $user->urn)->delete();
@@ -623,6 +734,13 @@ class SoundCloudService
         }
     }
 
+    /**
+     * Given a SoundCloud track URI, returns a direct playable mp3/opus link.
+     *
+     * @param string $trackUri The SoundCloud track URI.
+     *
+     * @return string|null The direct playable mp3/opus link, or null if the API call fails or the track does not exist.
+     */
     public function getMusicSrc(string $trackUri): ?string
     {
         if (!$trackUri) {
@@ -675,5 +793,98 @@ class SoundCloudService
             Log::error("SoundCloud API exception: " . $e->getMessage());
             return null;
         }
+    }
+
+    /**
+     * Retrieves the followers of a user from SoundCloud API.
+     *
+     * @param User|null $user The user to fetch followers for. If null, the current user is used.
+     * @return Collection An array of followers.
+     */
+    public function getAuthUserFollowers(?User $user = null)
+    {
+        $user = $user ?: user();
+        $response = $this->makeGetApiRequest(
+            endpoint: "/users/" . $user->urn . "/followers",
+            errorMessage: 'Failed to fetch urn:' . $user->urn . ' followers from SoundCloud API.'
+        );
+        if (empty($response['collection'])) {
+            return collect([]);
+        }
+        return collect($response['collection']);
+    }
+
+    /**
+     * Calculates the number of credits earned from the given number of followers.
+     *
+     * @param int $followers The number of followers.
+     * @return int The number of credits earned.
+     */
+    public function calculateCreditsFromFollowers(int $followers): int
+    {
+        if ($followers < 100) {
+            return 1;
+        }
+        if ($followers < 1000) {
+            return floor($followers / 100);
+        }
+        if ($followers < 10000) {
+            return floor($followers / 100);
+        }
+        return min(floor($followers / 100), 100);
+    }
+
+
+    /**
+     * Uploads a new track to SoundCloud.
+     *
+     * @param User $user The user submitting the track.
+     * @param array $trackData The track data, including file uploads.
+     * @return array The JSON response from the API.
+     * @throws Exception
+     */
+    public function uploadTrack(User $user, array $trackData): array
+    {
+        $this->refreshUserTokenIfNeeded($user);
+        $user->refresh();
+        $httpClient = Http::withHeaders([
+            'Authorization' => 'OAuth ' . $user->token,
+        ])->attach(
+            'track[asset_data]',
+            file_get_contents($trackData['asset_data']->getRealPath()),
+            $trackData['asset_data']->getClientOriginalName()
+        );
+
+        if ($trackData['artwork_data']) {
+            $httpClient->attach(
+                'track[artwork_data]',
+                file_get_contents($trackData['artwork_data']->getRealPath()),
+                $trackData['artwork_data']->getClientOriginalName()
+            );
+        }
+
+        // Highlighted change: Replaced the old requestBody creation
+        $requestBody = [];
+        foreach ($trackData as $key => $value) {
+            // Only include non-file fields and those with a value
+            if (!in_array($key, ['asset_data', 'artwork_data']) && !empty($value)) {
+                $requestBody["track[{$key}]"] = $value;
+            }
+        }
+
+        $response = $httpClient->post($this->baseUrl . '/tracks', $requestBody);
+
+        $responseData = $response->json();
+        if (!$response->successful() && isset($responseData['id'])) {
+            logger()->warning('SoundCloud API returned a non-2xx status code but successfully uploaded the track.', [
+                'status_code' => $response->status(),
+                'user_urn' => $user->urn,
+                'response_body' => $response->body()
+            ]);
+            return $responseData;
+        }
+
+        $response->throw();
+        return $responseData;
     }
 }
