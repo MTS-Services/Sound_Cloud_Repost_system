@@ -50,12 +50,18 @@ class MyAccount extends Component
     public ?int $playlistTracksPage = 1;
 
     public $user_urn = null;
+
     // Dependencies (non-serializable) — keep private
     private UserService $userService;
+
     private CreditTransactionService $creditTransactionService;
+
     private TrackService $trackService;
+
     private PlaylistService $playlistService;
+
     private SoundCloudService $soundCloudService;
+
     private FollowerAnalyzer $followerAnalyzer;
 
     public $userFollowerAnalysis = [];
@@ -76,7 +82,7 @@ class MyAccount extends Component
     public function mount($user_name = null): void
     {
         $user = $user_name ? User::where('name', $user_name)->first() : user();
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
         // $followers = $this->soundCloudService->getAuthUserFollowers();
         // $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($followers);
         // $currentWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'this_month');
@@ -102,12 +108,12 @@ class MyAccount extends Component
 
     public function updated()
     {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
     public function updatedActiveTab()
     {
-        return $this->redirect(route('user.my-account', $this->user_urn) . '?tab=' . $this->activeTab, navigate: true);
+        return $this->redirect(route('user.my-account', $this->user_urn).'?tab='.$this->activeTab, navigate: true);
     }
 
     public function setActiveTab(string $tab): void
@@ -156,18 +162,26 @@ class MyAccount extends Component
         // SyncedTracks::dispatch(user()->urn);
         // return back()->with('success', 'Track sync started in background. Please check later.');
     }
+
     public function syncPlaylists()
     {
         // $this->soundCloudService->syncSelfPlaylists();
         // SyncedPlaylists::dispatch(user()->urn);
         // return back()->with('success', 'Playlist sync started in background.');
     }
+
     public $instagram = null;
+
     public $twitter = null;
+
     public $tiktok = null;
+
     public $facebook = null;
+
     public $youtube = null;
+
     public $spotify = null;
+
     public $socialLink = [];
 
     public function socialLinks()
@@ -227,6 +241,7 @@ class MyAccount extends Component
                 $repost->source = $source;
                 $repost->source_id = $repost->campaign?->id ?? $repost->request?->id;
                 $repost->source_type = $repost->campaign ? '📢 From Campaign' : ($repost->request ? '🤝 From Request' : '');
+
                 return $repost;
             });
 
@@ -241,7 +256,6 @@ class MyAccount extends Component
             new TrackViewCount($tracks, user()->urn, 'track'),
             new TrackViewCount($playlists, user()->urn, 'playlist'),
         ])->dispatch();
-
 
         return view('livewire.user.my-account', [
             'user' => $user,

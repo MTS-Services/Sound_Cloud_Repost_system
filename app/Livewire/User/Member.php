@@ -127,7 +127,7 @@ class Member extends Component
     {
         $this->genres = AllGenres();
         $this->userinfo = user()->userInfo;
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
     public function updatedSearch()
     {
