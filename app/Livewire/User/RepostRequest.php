@@ -13,6 +13,7 @@ use App\Services\SoundCloud\SoundCloudService;
 use App\Services\User\AnalyticsService;
 use App\Services\User\Mamber\RepostRequestService;
 use App\Services\User\UserSettingsService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
@@ -23,6 +24,7 @@ use Throwable;
 class RepostRequest extends Component
 {
     public $repostRequests;
+    public $pendingRequestCount = 0;
     public $track;
     public $activeMainTab = 'incoming_request'; // Default tab
 
@@ -421,13 +423,15 @@ class RepostRequest extends Component
         $query = ModelsRepostRequest::with(['music', 'targetUser']);
         $tab = request()->query('tab', $this->activeMainTab);
         $this->activeMainTab = $tab;
+        $pendingRequests = $query->where('target_user_urn', user()->urn)->pending();
+        $this->pendingRequestCount = $pendingRequests->count();
 
         switch ($tab) {
             case 'incoming_request':
-                $query->where('target_user_urn', user()->urn)->where('status', ModelsRepostRequest::STATUS_PENDING)->where('expired_at', '>', now());
+                $query = $pendingRequests->where('expired_at', '>', now());
                 break;
             case 'outgoing_request':
-                $query->where('requester_urn', user()->urn)->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED);
+                $query->self()->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED);
                 break;
             case 'previously_reposted':
             case 'accept_requests':
@@ -443,6 +447,20 @@ class RepostRequest extends Component
 
     public function render()
     {
-        return view('livewire.user.repost-request');
+        $user = user()->withCount([
+            'reposts as reposts_count_today' => function ($query) {
+                $query->whereDate('created_at', '>=', Carbon::today());
+            },
+            'campaigns',
+            'requests',
+        ])->first();
+
+        $data['dailyRepostCount'] = $user->reposts_count_today ?? 0;
+        $data['totalMyCampaign'] = $user->campaigns_count ?? 0;
+        return view('livewire.user.repost-request',[
+                'repostRequests' => $this->repostRequests,
+                'data' => $data,
+            ]
+        );
     }
 }
