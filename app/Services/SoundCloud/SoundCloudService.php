@@ -145,7 +145,7 @@ class SoundCloudService
         ];
     }
 
-    public function makeResolveApiRequest(string $endpoint, string $errorMessage): array
+    public function makeResolveApiRequest(string $endpoint, string $errorMessage)
     {
         $this->ensureSoundCloudConnection(user: user());
 
