@@ -240,7 +240,7 @@ class Campaign extends Component
         $this->totalCampaigns();
         $this->calculateFollowersLimit();
         if ($this->activeMainTab === 'all') {
-            $this->selectedGenres = !empty($this->selectedGenres) ? $this->selectedGenres : [];
+            $this->selectedGenres = !empty($this->selectedGenres) && $this->selectedGenres == ['all'] ? $this->selectedGenres : [];
         } else {
             $this->selectedGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
         }
@@ -394,7 +394,7 @@ class Campaign extends Component
         if ($this->activeMainTab != 'all' && $this->selectedGenres !== ['all']) {
             $this->selectedGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
         }
-        if (!empty($this->selectedGenres)) {
+        if (!empty($this->selectedGenres) && $this->selectedGenres != ['all']) {
             $query->whereHas('music', function ($q) {
                 $q->whereIn('genre', $this->selectedGenres);
             });
