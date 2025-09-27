@@ -1521,8 +1521,8 @@ class Campaign extends Component
             ])->first();
 
             $data['dailyRepostCurrent'] = $user->reposts_count_today ?? 0;
-            $data['totalMyCampaign'] = $user->campaigns ?? 0;
-            $data['pendingRequests'] = $user->requests ?? 0;
+            $data['totalMyCampaign'] = count($user->campaigns) ?? 0;
+            $data['pendingRequests'] = count($user->requests) ?? 0;
             $baseQuery = $this->getCampaignsQuery();
             $baseQuery = $this->applyFilters($baseQuery);
             $campaigns = collect();
