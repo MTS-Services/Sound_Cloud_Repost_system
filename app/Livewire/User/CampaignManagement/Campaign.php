@@ -9,6 +9,7 @@ use App\Models\CreditTransaction;
 use App\Models\Feature;
 use App\Models\Playlist;
 use App\Models\Repost;
+use App\Models\RepostRequest;
 use App\Models\Track;
 use App\Models\User;
 use App\Services\PlaylistService;
@@ -28,6 +29,7 @@ use Throwable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\UserAnalytics;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class Campaign extends Component
@@ -1475,6 +1477,9 @@ class Campaign extends Component
     public function render()
     {
         try {
+            $data['dailyRepostCurrent'] = Repost::where('reposter_urn', user()->urn)->whereDate('created_at', '>=', Carbon::today())->count();
+            $data['totalMyCampaign'] = ModelsCampaign::where('user_urn', user()->urn)->count();
+            $data['pendingRequests'] = RepostRequest::where('target_user_urn', user()->urn)->count();
             $baseQuery = $this->getCampaignsQuery();
             $baseQuery = $this->applyFilters($baseQuery);
             $campaigns = collect();
@@ -1530,7 +1535,8 @@ class Campaign extends Component
 
 
             return view('livewire.user.campaign-management.campaign', [
-                'campaigns' => $campaigns
+                'campaigns' => $campaigns,
+                'data' => $data
             ]);
         } catch (\Exception $e) {
             Log::error('Failed to load campaigns: ' . $e->getMessage(), [
