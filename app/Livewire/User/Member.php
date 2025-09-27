@@ -310,8 +310,8 @@ class Member extends Component
             $this->dispatch('alert', type: 'error', message: 'Please verify your email to send a request.');
             return;
         }
-        // $this->soundCloudService->syncSelfTracks([]);
-        // $this->soundCloudService->syncSelfPlaylists();
+        $this->soundCloudService->syncUserTracks(user(), []);
+        $this->soundCloudService->syncUserPlaylists(user());
 
         $this->reset([
             'showModal',
