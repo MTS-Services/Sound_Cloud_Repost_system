@@ -30,16 +30,9 @@ class SoundCloudService
      * @var string
      */
     protected string $baseUrl = 'https://api.soundcloud.com';
-
-    /**
-     * The base URL for the SoundCloud OAuth.
-     *
-     * IMPORTANT: This has been corrected to use the official API domain.
-     * The 'secure.soundcloud.com/oauth2/token' endpoint was causing a 404 error.
-     *
-     * @var string
-     */
     protected string $oauthUrl = 'https://api.soundcloud.com';
+    protected string $resolverUrl = 'https://soundcloud.com/resolve';
+
 
     public function makeGetApiRequest(string $endpoint, string $errorMessage, ?array $options = null): array
     {
@@ -150,6 +143,33 @@ class SoundCloudService
             'total_count' => count($allData),
             'pages_fetched' => $pageCount
         ];
+    }
+
+    public function makeResolveApiRequest(string $endpoint, string $errorMessage): array
+    {
+        $this->ensureSoundCloudConnection(user: user());
+
+        try {
+            $response = Http::get($this->resolverUrl, [
+                'url' => $endpoint,
+                'client_id' => config('services.soundcloud.client_id'),
+            ]);
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            Log::error('SoundCloud Resolve API Error', [
+                'status' => $response->status(),
+                'response_body' => $response->body(),
+            ]);
+
+            throw new Exception("{$errorMessage} Status: " . $response->status());
+        } catch (Exception $e) {
+            Log::error("SoundCloud Resolve API Error in {$endpoint}", [
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
     }
 
     /**
@@ -269,7 +289,6 @@ class SoundCloudService
     public function fetchUserPlaylistTracks(User $user, string $playlistUrn): array
     {
         $this->refreshUserTokenIfNeeded(user());
-
         return $this->makeGetApiRequest(
             endpoint: '/playlists/' . $playlistUrn . '/tracks',
             errorMessage: 'Failed to fetch playlist tracks',
@@ -568,6 +587,93 @@ class SoundCloudService
                 'error' => $e->getMessage(),
             ]);
             throw $e;
+        }
+    }
+
+    public function syncUserProductsAndSubscriptions(User $user, object $soundCloudUser): void
+    {
+        Subscription::where('user_urn', $user->urn)->delete();
+
+        if (isset($soundCloudUser->user['subscriptions']) && is_array($soundCloudUser->user['subscriptions'])) {
+            foreach ($soundCloudUser->user['subscriptions'] as $subscriptionData) {
+                $productDetails = $subscriptionData['product'] ?? null;
+
+                if ($productDetails && isset($productDetails['id']) && isset($productDetails['name'])) {
+                    $product = Product::updateOrCreate(
+                        ['product_id' => $productDetails['id']],
+                        ['name' => $productDetails['name']]
+                    );
+
+                    Subscription::create([
+                        'user_urn' => $user->urn,
+                        'product_id' => $product->id,
+                    ]);
+                } else {
+                    Log::warning('SoundCloud subscription found without complete product data. Skipping.', [
+                        'soundcloud_id' => $soundCloudUser->getId(),
+                        'subscription_data' => $subscriptionData,
+                    ]);
+                }
+            }
+        } else {
+            Log::info('SoundCloud user has no subscriptions or the data format is unexpected.', [
+                'soundcloud_id' => $soundCloudUser->getId(),
+                'subscriptions_data_type' => gettype($soundCloudUser->user['subscriptions'] ?? null),
+            ]);
+        }
+    }
+
+    public function getMusicSrc(string $trackUri): ?string
+    {
+        if (!$trackUri) {
+            return null;
+        }
+
+        $clientId = config('services.soundcloud.client_id');
+
+        try {
+            if (str_starts_with($trackUri, 'soundcloud:tracks:')) {
+                $trackId = str_replace("soundcloud:tracks:", "", $trackUri);
+                $trackUrl = "https://api.soundcloud.com/tracks/" . $trackId;
+            } else {
+                // Otherwise assume it is a normal SoundCloud track URL
+                $trackUrl = $trackUri;
+            }
+
+            // 1. Resolve the track
+            $response = $this->makeResolveApiRequest(endpoint: $trackUrl, errorMessage: 'Failed to resolve track');
+
+            if (!$response) {
+                return null;
+            }
+
+            if (!isset($response['media']['transcodings'])) {
+                return null;
+            }
+
+            // 2. Find a progressive mp3 stream
+            $progressive = collect($response['media']['transcodings'])
+                ->firstWhere('format.protocol', 'progressive');
+
+            if (!$progressive) {
+                return null;
+            }
+
+            // 3. Request the stream endpoint
+            $stream = Http::get($progressive['url'], [
+                'client_id' => $clientId,
+            ]);
+
+            if ($stream->failed()) {
+                Log::error("SoundCloud stream fetch failed", ['url' => $progressive['url']]);
+                return null;
+            }
+
+            return $stream->json('url'); // ✅ direct playable mp3/opus link
+
+        } catch (\Exception $e) {
+            Log::error("SoundCloud API exception: " . $e->getMessage());
+            return null;
         }
     }
 }
