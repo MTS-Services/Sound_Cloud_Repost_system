@@ -968,15 +968,15 @@ class Campaign extends Component
         $this->showRepostConfirmationModal = true;
         $this->campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
 
-        $response = $this->soundCloudService->getAuthUserFollowers($this->campaign->music->user);
-        if ($response->isNotEmpty()) {
-            $already_following = $response->where('urn', user()->urn)->first();
-            if ($already_following !== null) {
-                Log::info('Repost request Page:- Already following');
-                $this->followed = false;
-                $this->alreadyFollowing = true;
-            }
-        }
+        // $response = $this->soundCloudService->getAuthUserFollowers($this->campaign->music->user);
+        // if ($response->isNotEmpty()) {
+        //     $already_following = $response->where('urn', user()->urn)->first();
+        //     if ($already_following !== null) {
+        //         Log::info('Repost request Page:- Already following');
+        //         $this->followed = false;
+        //         $this->alreadyFollowing = true;
+        //     }
+        // }
     }
 
     public function repost($campaignId)
@@ -1372,7 +1372,7 @@ class Campaign extends Component
     public function fetchTracks()
     {
         try {
-            $this->soundCloudService->syncSelfTracks([]);
+            // $this->soundCloudService->syncSelfTracks([]);
 
             // Get all tracks first
             $this->allTracks = Track::where('user_urn', user()->urn)
@@ -1393,7 +1393,7 @@ class Campaign extends Component
     public function fetchPlaylists()
     {
         try {
-            $this->soundCloudService->syncSelfPlaylists();
+            // $this->soundCloudService->syncSelfPlaylists();
 
             // Get all playlists first
             $this->allPlaylists = Playlist::where('user_urn', user()->urn)
