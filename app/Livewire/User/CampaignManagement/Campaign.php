@@ -29,6 +29,7 @@ use Throwable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\UserAnalytics;
+use App\Models\UserPlan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -1476,10 +1477,38 @@ class Campaign extends Component
      */
     public function render()
     {
+
+        // $data = $user->load([
+        //     'userPlans' => function ($query) {
+        //         $query->where('status', UserPlan::STATUS_ACTIVE)
+        //             ->whereDate('end_date', '>=', now());
+        //     },
+        //     'userPlans.plan',
+        //     'userPlans.plan.featureRelations',
+        //     'userPlans.plan.featureRelations.feature'
+        // ]);
+        // $activeUserPlan = $user->userPlans->first(); // Assuming you filtered for one active plan
+
+        // if ($activeUserPlan && $activeUserPlan->plan) {
+        //     foreach ($activeUserPlan->plan->featureRelations as $featureRelation) {
+        //         $featureName = $featureRelation->feature->key; // or 'name'
+        //         $featureValue = $featureRelation->value;
+
+        //         // echo "Feature: {$featureName}, Value: {$featureValue}\n";
+        //     }
+        // }
         try {
-            $data['dailyRepostCurrent'] = Repost::where('reposter_urn', user()->urn)->whereDate('created_at', '>=', Carbon::today())->count();
-            $data['totalMyCampaign'] = ModelsCampaign::where('user_urn', user()->urn)->count();
-            $data['pendingRequests'] = RepostRequest::where('target_user_urn', user()->urn)->count();
+            $user = user()->withCount([
+                    'reposts as reposts_count_today' => function ($query) {
+                        $query->whereDate('created_at', '>=', Carbon::today());
+                    },
+                    'campaigns',
+                    'requests',
+                ])->first();
+    
+            $data['dailyRepostCurrent'] = $user->reposts_count_today ?? 0;
+            $data['totalMyCampaign'] = $user->campaigns_count ?? 0;
+            $data['pendingRequests'] = RepostRequest::where('target_user_urn', user()->urn)->pending()->count();
             $baseQuery = $this->getCampaignsQuery();
             $baseQuery = $this->applyFilters($baseQuery);
             $campaigns = collect();
