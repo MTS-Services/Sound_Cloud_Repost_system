@@ -84,23 +84,7 @@ class SoundCloudController extends Controller
         }
 
         try {
-            // Clear SoundCloud data
-            // $user->update([
-            //     // 'soundcloud_id' => null,
-            //     // 'nickname' => null,
-            //     // 'avatar' => null,
-            //     // 'soundcloud_permalink_url' => null,
-            //     // 'soundcloud_followings_count' => 0,
-            //     // 'soundcloud_followers_count' => 0,
-            //     'token' => null,
-            //     'refresh_token' => null,
-            //     'expires_in' => null,
-            // ]);
             Auth::guard('web')->logout();
-
-            // Optionally, deactivate all tracks
-            // $user->soundcloudTracks()->update(['is_active' => false]);
-
             return redirect()->route('profile')
                 ->with('success', 'Successfully disconnected from SoundCloud.');
         } catch (\Exception $e) {
@@ -118,14 +102,10 @@ class SoundCloudController extends Controller
     {
         try {
             DB::transaction(function () use ($user, $soundCloudUser) {
-                Log::info('SoundCloud sync started for syncUserInformation');
                 $this->soundCloudService->syncUserInformation($user, $soundCloudUser);
-                Log::info('SoundCloud sync started for syncUserTracks');
                 $this->soundCloudService->syncUserTracks($user, []);
-                Log::info('SoundCloud sync started for syncUserPlaylists');
                 $this->soundCloudService->syncUserPlaylists($user);
-                // Log::info('SoundCloud sync started for syncUserProductsAndSubscriptions');
-                // $this->soundCloudService->syncUserProductsAndSubscriptions($user, $soundCloudUser);
+                $this->soundCloudService->syncUserProductsAndSubscriptions($user, $soundCloudUser);
             });
         } catch (Throwable $e) {
             Log::error('SoundCloud sync error', [
@@ -140,39 +120,6 @@ class SoundCloudController extends Controller
     {
 
         try {
-            // $user = User::where('soundcloud_id', $soundCloudUser->getId())->first();
-            // if ($user) {
-            //     $user->update([
-            //         'name' => $soundCloudUser->getName(),
-            //         'nickname' => $soundCloudUser->getNickname(),
-            //         'avatar' => $soundCloudUser->getAvatar(),
-            //         'token' => $soundCloudUser->token,
-            //         'refresh_token' => $soundCloudUser->refreshToken,
-            //         'last_synced_at' => now(),
-            //         'urn' => $soundCloudUser->user['urn']
-            //     ]);
-            // } else {
-            //     $user = User::create([
-            //         'soundcloud_id' => $soundCloudUser->getId(),
-            //         'name' => $soundCloudUser->getName(),
-            //         'nickname' => $soundCloudUser->getNickname(),
-            //         'avatar' => $soundCloudUser->getAvatar(),
-            //         'token' => $soundCloudUser->token,
-            //         'refresh_token' => $soundCloudUser->refreshToken,
-            //         'expires_in' => $soundCloudUser->expiresIn,
-            //         'last_synced_at' => now(),
-            //         'urn' => $soundCloudUser->user['urn']
-            //     ]);
-
-            //     UserCredits::create([
-            //         'user_urn' => $user->urn,
-            //         'amount' => 30,
-            //         'type' => 'bonus',
-            //         'source' => 'soundcloud_sync',
-            //     ]);
-            // }
-
-            // return $user;
             return User::updateOrCreate(
                 ['soundcloud_id' => $soundCloudUser->getId()],
                 [
