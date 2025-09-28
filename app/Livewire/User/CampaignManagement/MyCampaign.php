@@ -732,13 +732,9 @@ class MyCampaign extends Component
                 }
             }
         }
+        $resolvedData = $this->soundCloudService->makeResolveApiRequest($this->searchQuery, 'Failed to resolve SoundCloud URL');
 
-        $response = null;
-        $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
-        dd($response->json());
-
-        if ($response->successful()) {
-            $resolvedData = $response->json();
+        if (isset($resolvedData)) {
             $urn = $resolvedData['urn'];
             if ($this->activeModalTab === 'playlists') {
                 if (isset($resolvedData['tracks']) && count($resolvedData['tracks']) > 0) {
@@ -758,18 +754,6 @@ class MyCampaign extends Component
             $this->processSearchData($urn);
             Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
         } else {
-            if ($this->playListTrackShow == true && $this->activeModalTab === 'tracks') {
-                $this->allPlaylistTracks = collect();
-                $this->tracks = collect();
-            } else {
-                if ($this->activeModalTab === 'tracks') {
-                    $this->allTracks = collect();
-                    $this->tracks = collect();
-                } elseif ($this->activeModalTab === 'playlists') {
-                    $this->allPlaylists = collect();
-                    $this->playlists = collect();
-                }
-            }
             $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
         }
     }
