@@ -372,7 +372,7 @@
         {{-- Right Side --}}
         <div class="w-full lg:w-[25%]">
             <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="$data['dailyRepostCurrent']" :dailyRepostMax="20" :responseRate="0"
-                :pendingRequests="$pendingRequests" :requestLimit="25" :credits="userCredits()" :campaigns="$data['totalMyCampaign']" :campaignLimit="proUser() ? 10 : 2" />
+                :pendingRequests="$pending_requests" :requestLimit="25" :credits="userCredits()" :campaigns="$data['totalMyCampaign']" :campaignLimit="proUser() ? 10 : 2" />
         </div>
     </section>
     {{-- Repost Confirmation Modal --}}
