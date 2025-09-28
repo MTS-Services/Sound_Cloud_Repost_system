@@ -240,14 +240,14 @@ class Campaign extends Component
         $this->totalCampaigns();
         $this->calculateFollowersLimit();
         if ($this->activeMainTab === 'all') {
-            $this->selectedGenres = !empty($this->selectedGenres) ? $this->selectedGenres : [];
+            $this->selectedGenres = !empty($this->selectedGenres) && $this->selectedGenres !== ['all'] ? $this->selectedGenres : [];
         } else {
             $this->selectedGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
         }
     }
     public function updated($propertyName)
     {
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
             $this->calculateFollowersLimit();
         }
@@ -391,10 +391,10 @@ class Campaign extends Component
             });
         }
 
-        if ($this->activeMainTab != 'all') {
+        if ($this->activeMainTab != 'all' && $this->selectedGenres !== ['all']) {
             $this->selectedGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
         }
-        if (!empty($this->selectedGenres)) {
+        if (!empty($this->selectedGenres) && $this->selectedGenres != ['all']) {
             $query->whereHas('music', function ($q) {
                 $q->whereIn('genre', $this->selectedGenres);
             });
@@ -496,6 +496,9 @@ class Campaign extends Component
         $this->{$tab . 'Page'} = 1;
         if (in_array($genre, $this->selectedGenres)) {
             $this->selectedGenres = array_diff($this->selectedGenres, [$genre]);
+            if ($this->selectedGenres == []) {
+                $this->selectedGenres = array_diff($this->selectedGenres, [$genre]) == [] ? ['all'] : [];
+            }
         } else {
             $this->selectedGenres[] = $genre;
         }
@@ -971,15 +974,15 @@ class Campaign extends Component
         $this->showRepostConfirmationModal = true;
         $this->campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
 
-        // $response = $this->soundCloudService->getAuthUserFollowers($this->campaign->music->user);
-        // if ($response->isNotEmpty()) {
-        //     $already_following = $response->where('urn', user()->urn)->first();
-        //     if ($already_following !== null) {
-        //         Log::info('Repost request Page:- Already following');
-        //         $this->followed = false;
-        //         $this->alreadyFollowing = true;
-        //     }
-        // }
+        $response = $this->soundCloudService->getAuthUserFollowers($this->campaign->music->user);
+        if ($response->isNotEmpty()) {
+            $already_following = $response->where('urn', user()->urn)->first();
+            if ($already_following !== null) {
+                Log::info('Repost request Page:- Already following');
+                $this->followed = false;
+                $this->alreadyFollowing = true;
+            }
+        }
     }
 
     public function repost($campaignId)
@@ -1220,44 +1223,52 @@ class Campaign extends Component
             }
         }
 
-        $response = null;
+        // $response = null;
         $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
-
-        if ($response->successful()) {
-            $resolvedData = $response->json();
-            $urn = $resolvedData['urn'];
-            if ($this->activeTab === 'playlists') {
-                if (isset($resolvedData['tracks']) && count($resolvedData['tracks']) > 0) {
-                    $this->soundCloudService->unknownPlaylistAdd($resolvedData);
-                    Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
-                } else {
-                    $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Playlist URL.');
-                }
-            } elseif ($this->activeTab === 'tracks') {
-                if (!isset($resolvedData['tracks'])) {
-                    $this->soundCloudService->unknownTrackAdd($resolvedData);
-                    Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
-                } else {
-                    $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Track URL.');
-                }
-            }
-            $this->processSearchData($urn);
-            Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
-        } else {
-            if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
-                $this->allPlaylistTracks = collect();
-                $this->tracks = collect();
-            } else {
-                if ($this->activeTab === 'tracks') {
-                    $this->allTracks = collect();
-                    $this->tracks = collect();
-                } elseif ($this->activeTab === 'playlists') {
-                    $this->allPlaylists = collect();
-                    $this->playlists = collect();
-                }
-            }
-            $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
+        $resolvedData = $this->soundCloudService->makeResolveApiRequest($this->searchQuery, 'Failed to resolve SoundCloud URL');
+        dd($resolvedData, $response);
+        $urn = $resolvedData['urn'];
+        if ($this->activeTab === 'playlists') {
+        } elseif ($this->activeTab === 'tracks') {
         }
+        $this->processSearchData($urn);
+        Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
+
+        // if ($response->successful()) {
+        //     $resolvedData = $response->json();
+        //     $urn = $resolvedData['urn'];
+        //     if ($this->activeTab === 'playlists') {
+        //         if (isset($resolvedData['tracks']) && count($resolvedData['tracks']) > 0) {
+        //             $this->soundCloudService->unknownPlaylistAdd($resolvedData);
+        //             Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
+        //         } else {
+        //             $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Playlist URL.');
+        //         }
+        //     } elseif ($this->activeTab === 'tracks') {
+        //         if (!isset($resolvedData['tracks'])) {
+        //             // $this->soundCloudService->unknownTrackAdd($resolvedData);
+        //             Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
+        //         } else {
+        //             $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Track URL.');
+        //         }
+        //     }
+        //     $this->processSearchData($urn);
+        //     Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
+        // } else {
+        //     if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
+        //         $this->allPlaylistTracks = collect();
+        //         $this->tracks = collect();
+        //     } else {
+        //         if ($this->activeTab === 'tracks') {
+        //             $this->allTracks = collect();
+        //             $this->tracks = collect();
+        //         } elseif ($this->activeTab === 'playlists') {
+        //             $this->allPlaylists = collect();
+        //             $this->playlists = collect();
+        //         }
+        //     }
+        //     $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
+        // }
     }
 
     protected function processSearchData($urn)
@@ -1375,7 +1386,7 @@ class Campaign extends Component
     public function fetchTracks()
     {
         try {
-            // $this->soundCloudService->syncSelfTracks([]);
+            $this->soundCloudService->syncUserTracks(user(), []);
 
             // Get all tracks first
             $this->allTracks = Track::where('user_urn', user()->urn)
@@ -1396,7 +1407,7 @@ class Campaign extends Component
     public function fetchPlaylists()
     {
         try {
-            // $this->soundCloudService->syncSelfPlaylists();
+            $this->soundCloudService->syncUserPlaylists(user());
 
             // Get all playlists first
             $this->allPlaylists = Playlist::where('user_urn', user()->urn)
@@ -1429,7 +1440,7 @@ class Campaign extends Component
         if ($this->activeMainTab === 'all') {
             $this->totalCampaign = $this->getCampaignsQuery()
                 ->whereHas('music', function ($query) {
-                    if (!empty($this->selectedGenres)) {
+                    if (!empty($this->selectedGenres) && $this->selectedGenres == ['all']) {
                         $query->whereIn('genre', $this->selectedGenres);
                     }
                 })->count();
@@ -1438,14 +1449,20 @@ class Campaign extends Component
         }
 
         if ($this->activeMainTab === 'recommended_pro') {
-            $this->totalRecommendedPro = $this->getCampaignsQuery()
+            $query = $this->getCampaignsQuery()
                 ->whereHas('user', function ($query) {
                     $query->isPro();
-                })
-                ->whereHas('music', function ($query) {
-                    $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+                });
+
+            if ($this->selectedGenres !== ['all']) {
+                $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+
+                $query->whereHas('music', function ($query) use ($userGenres) {
                     $query->whereIn('genre', $userGenres);
-                })->count();
+                });
+            }
+
+            $this->totalRecommendedPro = $query->count();
         } else {
             $this->totalRecommendedPro = $this->getCampaignsQuery()
                 ->whereHas('user', function ($query) {
@@ -1458,11 +1475,14 @@ class Campaign extends Component
         }
 
         if ($this->activeMainTab === 'recommended') {
-            $this->totalRecommended = $this->getCampaignsQuery()
-                ->whereHas('music', function ($query) {
+            $query = $this->getCampaignsQuery();
+            if ($this->selectedGenres !== ['all']) {
+                $query->whereHas('music', function ($query) {
                     $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
                     $query->whereIn('genre', $userGenres);
-                })->count();
+                });
+            }
+            $this->totalRecommended = $query->count();
         } else {
             $this->totalRecommended = $this->getCampaignsQuery()
                 ->whereHas('music', function ($query) {
@@ -1499,46 +1519,50 @@ class Campaign extends Component
         // }
         try {
             $user = user()->withCount([
-                    'reposts as reposts_count_today' => function ($query) {
-                        $query->whereDate('created_at', '>=', Carbon::today());
-                    },
-                    'campaigns',
-                    'requests',
-                ])->first();
-    
+                'reposts as reposts_count_today' => function ($query) {
+                    $query->whereBetween('created_at', [Carbon::today(), Carbon::tomorrow()]);
+                },
+                'campaigns',
+                'requests' => function ($query) {
+                    $query->pending();
+                },
+            ])->first();
+
             $data['dailyRepostCurrent'] = $user->reposts_count_today ?? 0;
-            $data['totalMyCampaign'] = $user->campaigns_count ?? 0;
-            $data['pendingRequests'] = RepostRequest::where('target_user_urn', user()->urn)->pending()->count();
+            $data['totalMyCampaign'] = count($user->campaigns) ?? 0;
+            $data['pendingRequests'] = count($user->requests) ?? 0;
             $baseQuery = $this->getCampaignsQuery();
             $baseQuery = $this->applyFilters($baseQuery);
             $campaigns = collect();
             switch ($this->activeMainTab) {
                 case 'recommended_pro':
-                    $campaigns = $baseQuery
-                        ->whereHas('user', function ($query) {
-                            $query->isPro();
-                        })
-                        ->whereHas('music', function ($query) {
+                    $baseQuery->whereHas('user', function ($query) {
+                        $query->isPro();
+                    });
+                    if ($this->selectedGenres !== ['all']) {
+                        $baseQuery->whereHas('music', function ($query) {
                             $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
                             $query->whereIn('genre', $userGenres);
-                        })
-                        ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
+                        });
+                    }
+                    $campaigns = $baseQuery->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
 
                     break;
 
                 case 'recommended':
-                    $campaigns = $baseQuery
-                        ->whereHas('music', function ($query) {
+                    if ($this->selectedGenres !== ['all']) {
+                        $baseQuery->whereHas('music', function ($query) {
                             $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
                             $query->whereIn('genre', $userGenres);
-                        })
-                        ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
+                        });
+                    }
+                    $campaigns = $baseQuery->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
                     break;
 
                 case 'all':
                     $campaigns = $baseQuery
                         ->whereHas('music', function ($query) {
-                            if (!empty($this->selectedGenres)) {
+                            if (!empty($this->selectedGenres) && $this->selectedGenres != 'all') {
                                 $query->whereIn('genre', $this->selectedGenres);
                             }
                         })
@@ -1546,15 +1570,16 @@ class Campaign extends Component
 
                     break;
                 default:
-                    $campaigns = $baseQuery
-                        ->whereHas('user', function ($query) {
-                            $query->isPro();
-                        })
-                        ->whereHas('music', function ($query) {
+                    $baseQuery->whereHas('user', function ($query) {
+                        $query->isPro();
+                    });
+                    if ($this->selectedGenres !== ['all']) {
+                        $baseQuery->whereHas('music', function ($query) {
                             $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
                             $query->whereIn('genre', $userGenres);
-                        })
-                        ->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
+                        });
+                    }
+                    $campaigns = $baseQuery->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
 
                     break;
             }
