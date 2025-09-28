@@ -12,7 +12,7 @@
             var iframeElementID = iframeElement.id;
             var widget1 = SC.Widget(iframeElement);
             var widget2 = SC.Widget(iframeElementID);
-            console.log(widget1, widget2, iframeElementID);
+            console.log("widget1: ", widget1, "widget2: ", widget2, "iframeElement: ", iframeElementID);
         </script>
     @endpush
 @else
