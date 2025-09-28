@@ -447,35 +447,35 @@
                             href="{{ route('user.reposts-request') }}">View all →</a>
                     @endif
                 </div>
-                @foreach ($repostRequests as $request)
+                @foreach ($repostRequests as $request_)
                     <div class="space-y-4">
                         <div class="shadow-sm rounded-lg p-4">
                             <div class="flex justify-between text-sm mb-3">
                                 <div class="flex items-center space-x-2">
                                     <span class="text-orange-500 font-bold">#{{ $loop->iteration }}</span>
-                                    <span class="text-sm max-w-[200px] truncate">{{ $request?->music?->title }}</span>
+                                    <span class="text-sm max-w-[200px] truncate">{{ $request_?->music?->title }}</span>
                                 </div>
-                                <span class="text-slate-400">{{ $request?->music?->genre }}</span>
+                                <span class="text-slate-400">{{ $request_?->music?->genre }}</span>
                             </div>
                             <div class="flex items-start space-x-3 mb-3">
-                                <img src="{{ $request?->requester?->avatar }}" class="w-8 h-8 rounded-full"
+                                <img src="{{ $request_?->requester?->avatar }}" class="w-8 h-8 rounded-full"
                                     alt="">
                                 <div class="flex-1">
-                                    <h4 class="text-sm font-medium">{{ $request?->requester?->name }}</h4>
-                                    <p class="text-slate-400 text-xs">by {{ $request?->requester?->email }}</p>
+                                    <h4 class="text-sm font-medium">{{ $request_?->requester?->name }}</h4>
+                                    <p class="text-slate-400 text-xs">by {{ $request_?->requester?->email }}</p>
                                 </div>
                                 <span
-                                    class="text-orange-500 font-semibold text-sm">+{{ $request->credits_spent ?? '0' }}
+                                    class="text-orange-500 font-semibold text-sm">+{{ $request_->credits_spent ?? '0' }}
                                     credits</span>
                             </div>
                             <div class="flex space-x-2">
                                 <div class="flex-1">
                                     <x-gbutton variant="secondary" full-width="true"
-                                        wire:click="declineRepost('{{ encrypt($request->id) }}')">Decline</x-gbutton>
+                                        wire:click="declineRepost('{{ encrypt($request_->id) }}')">Decline</x-gbutton>
                                 </div>
                                 <div class="flex-1">
                                     <x-gbutton variant="primary" full-width="true"
-                                        wire:click="confirmRepost('{{ $request->id }}')">Repost</x-gbutton>
+                                        wire:click="confirmRepost('{{ $request_->id }}')">Repost</x-gbutton>
                                 </div>
                             </div>
                         </div>
