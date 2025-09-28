@@ -5,6 +5,16 @@
             src="{{ $getEmbedSrc() }}">
         </iframe>
     </div>
+
+    @push('js')
+        <script>
+            var iframeElement = document.querySelector('iframe');
+            var iframeElementID = iframeElement.id;
+            var widget1 = SC.Widget(iframeElement);
+            var widget2 = SC.Widget(iframeElementID);
+            console.log(widget1, widget2, iframeElementID);
+        </script>
+    @endpush
 @else
     <p>SoundCloud track data not available for embed.</p>
 @endif
