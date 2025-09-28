@@ -129,7 +129,7 @@ class MyAccount extends Component
         $this->activities_score = $activities_score >= 0 ? $activities_score : 0;
 
         $this->chart_data = $this->analyticsService->getChartData(filter: 'current_year', actUserUrn: $user->urn);
-        // dd($this->chart_data);
+        dd($this->chart_data);
     }
 
     public function updated()
