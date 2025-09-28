@@ -213,7 +213,9 @@
                 @if (!$campaign_->music && !isset($campaign_->music->permalink_url))
                     @continue;
                 @endif
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm">
+                {{-- 📢 NEW: Add a class and data attributes to collect playlist info --}}
+                <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm"
+                    data-campaign-id="{{ $campaign_->id }}" data-permalink="{{ $campaign_->music->permalink_url }}">
                     <div class="flex flex-col lg:flex-row" wire:key="featured-{{ $campaign_->id }}">
                         <!-- Left Column - Track Info -->
                         <div
@@ -221,11 +223,19 @@
                             <div class="flex flex-col md:flex-row gap-4">
                                 <!-- Track Details -->
                                 <div class="flex-1 flex flex-col justify-between relative">
-                                    <!-- Your Original SoundCloud Player -->
+                                    {{-- 💡 IMPORTANT: Only render the actual player for the first item --}}
                                     <div id="soundcloud-player-{{ $campaign_->id }}"
                                         data-campaign-id="{{ $campaign_->id }}" wire:ignore>
-                                        <x-sound-cloud.sound-cloud-player :track="$campaign_->music" :height="166"
-                                            :visual="false" />
+                                        @if ($loop->first)
+                                            <x-sound-cloud.sound-cloud-player :track="$campaign_->music" :height="166"
+                                                :visual="false" />
+                                        @else
+                                            <div
+                                                class="h-[166px] flex items-center justify-center bg-gray-100 dark:bg-gray-600">
+                                                <p class="text-gray-500 dark:text-gray-400">Ready to play next:
+                                                    **{{ $campaign_->music->title ?? 'Untitled' }}**</p>
+                                            </div>
+                                        @endif
                                     </div>
                                     <div class="absolute top-2 left-2 flex items-center space-x-2">
                                         @if (!featuredAgain($campaign_->id) && $campaign_->is_featured)
@@ -361,6 +371,95 @@
                     <p>No campaigns available at the moment.</p>
                 </div>
             @endforelse
+
+            @if ($campaigns->isNotEmpty())
+                {{-- **PLAYLIST JAVASCRIPT LOGIC** --}}
+                @push('js')
+                    {{-- Load the SoundCloud Widget API --}}
+                    <script src="https://w.soundcloud.com/player/api.js"></script>
+                    <script>
+                        document.addEventListener('livewire:load', function() {
+                            const campaignCards = document.querySelectorAll('.campaign-card');
+                            if (campaignCards.length === 0) return;
+
+                            // 1. Collect all permalinks into a playlist array
+                            const tracks = Array.from(campaignCards).map(card => ({
+                                id: card.getAttribute('data-campaign-id'),
+                                permalink: card.getAttribute('data-permalink')
+                            }));
+
+                            let currentTrackIndex = 0;
+                            let soundCloudWidget = null;
+                            const firstTrackId = tracks[0].id;
+                            const initialIframe = document.getElementById(`sc-player-${firstTrackId}`).querySelector('iframe');
+
+                            // Function to play the next track
+                            function playNextTrack() {
+                                currentTrackIndex++;
+
+                                if (currentTrackIndex < tracks.length) {
+                                    const nextTrack = tracks[currentTrackIndex];
+                                    const nextPermalink = nextTrack.permalink;
+
+                                    console.log(`Auto-playing next track: ${nextTrack.id}`);
+
+                                    // 3. Use the widget.load() method to switch the track
+                                    // The existing listeners (like FINISH) persist after loading a new track.
+                                    soundCloudWidget.load(nextPermalink, {
+                                        auto_play: true,
+                                        visual: false
+                                    });
+
+                                    // Optional: Visually highlight the now-playing track and scroll to it
+                                    campaignCards.forEach(card => card.classList.remove('border-2', 'border-orange-500',
+                                        'shadow-lg'));
+                                    const nextCard = document.querySelector(`[data-campaign-id="${nextTrack.id}"]`);
+                                    if (nextCard) {
+                                        nextCard.classList.add('border-2', 'border-orange-500', 'shadow-lg');
+                                        // Scroll the campaign into view smoothly
+                                        nextCard.scrollIntoView({
+                                            behavior: 'smooth',
+                                            block: 'center'
+                                        });
+                                    }
+
+                                } else {
+                                    console.log("Playlist finished. Resetting list highlight.");
+                                    campaignCards.forEach(card => card.classList.remove('border-2', 'border-orange-500',
+                                        'shadow-lg'));
+                                    // Optional: Start over or dispatch a Livewire event to load new data
+                                }
+                            }
+
+                            // Function to initialize the player and listen for events
+                            function initializePlayer(iframeElement) {
+                                if (!iframeElement) return;
+
+                                // 2. Initialize the widget
+                                soundCloudWidget = SC.Widget(iframeElement);
+
+                                // 4. Bind the FINISH event to trigger the next track
+                                soundCloudWidget.bind(SC.Widget.Events.FINISH, function() {
+                                    playNextTrack();
+                                });
+
+                                // Optional: Highlight the first card when the player is ready
+                                soundCloudWidget.bind(SC.Widget.Events.READY, function() {
+                                    console.log('SoundCloud Widget ready for first track.');
+                                    campaignCards[0].classList.add('border-2', 'border-orange-500', 'shadow-lg');
+                                });
+                            }
+
+                            // Start the process by initializing the first track's player
+                            if (initialIframe) {
+                                initializePlayer(initialIframe);
+                            } else {
+                                console.error("Initial SoundCloud iframe not found. Check if $loop->first condition is working.");
+                            }
+                        });
+                    </script>
+                @endpush
+            @endif
 
             @if (isset($campaigns) && method_exists($campaigns, 'hasPages') && $campaigns->hasPages())
                 <div class="mt-6">
