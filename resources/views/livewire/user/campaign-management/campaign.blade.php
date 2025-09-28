@@ -378,7 +378,11 @@
                                 });
                             });
 
-                            // var iframe = document.getElementById('sc-player-{{ $track->id }}');
+
+                        })();
+                    </script>
+                    {{-- 
+                    // var iframe = document.getElementById('sc-player-{{ $track->id }}');
                             // if (!iframe) {
                             //     console.warn(
                             //         'SoundCloud iframe with ID sc-player-{{ $track->id }} not found. Cannot initialize widget.');
@@ -460,9 +464,7 @@
                             // if (typeof SC !== 'undefined' && SC.Widget) {
                             //     initSoundCloudWidget();
                             // }
-
-                        })();
-                    </script>
+                    --}}
                 @endpush
             @endif
 
