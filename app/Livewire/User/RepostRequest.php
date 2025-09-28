@@ -9,6 +9,7 @@ use App\Models\Playlist;
 use App\Models\RepostRequest as ModelsRepostRequest;
 use App\Models\Repost;
 use App\Models\Track;
+use App\Models\User;
 use App\Models\UserAnalytics;
 use App\Models\UserSetting;
 use App\Services\SoundCloud\SoundCloudService;
