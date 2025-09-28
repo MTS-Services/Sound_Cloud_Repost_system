@@ -376,7 +376,7 @@
         {{-- Right Side --}}
         <div class="w-full xl:w-[25%]">
             <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="$data['dailyRepostCurrent']" :dailyRepostMax="20" :responseRate="30"
-                :pendingRequests="$data['pendingRequests']" :requestLimit="25" :credits="userCredits()" :campaigns="$data['totalMyCampaign']" :campaignLimit="proUser() ? 10 : 2" />
+                :pendingRequests="$data['pending_requests']" :requestLimit="25" :credits="userCredits()" :campaigns="$data['totalMyCampaign']" :campaignLimit="proUser() ? 10 : 2" />
         </div>
 
     </section>
