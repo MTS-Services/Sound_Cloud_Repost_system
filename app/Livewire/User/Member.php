@@ -245,20 +245,20 @@ class Member extends Component
         }
     }
 
-    protected function resolveSoundcloudUrl()
-    {
-        $response = Http::get("{$this->soundcloudApiUrl}/resolve", [
-            'url' => $this->searchQuery,
-            'client_id' => $this->soundcloudClientId,
-        ]);
+    // protected function resolveSoundcloudUrl()
+    // {
+    //     $response = Http::get("{$this->soundcloudApiUrl}/resolve", [
+    //         'url' => $this->searchQuery,
+    //         'client_id' => $this->soundcloudClientId,
+    //     ]);
 
-        if ($response->successful()) {
-            $this->processResolvedData($response->json());
-        } else {
-            $this->resetCollections();
-            $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
-        }
-    }
+    //     if ($response->successful()) {
+    //         $this->processResolvedData($response->json());
+    //     } else {
+    //         $this->resetCollections();
+    //         $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
+    //     }
+    // }
 
     protected function processResolvedData(array $data)
     {
@@ -281,6 +281,116 @@ class Member extends Component
             } else {
                 $this->resetCollections();
                 $this->dispatch('alert', type: 'error', message: 'The provided URL is not a playlist.');
+            }
+        }
+    }
+
+    protected function resolveSoundcloudUrl()
+    {
+        // if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
+        //     $baseUrl = strtok($this->searchQuery, '?');
+        //     $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
+        //         ->whereRaw("SUBSTRING_INDEX(permalink_url, '?', 1) = ?", [$baseUrl])
+        //         ->get();
+        //     if ($tracksFromDb->isNotEmpty()) {
+        //         $this->allPlaylistTracks = $tracksFromDb;
+        //         $this->tracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
+        //         $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+        //         return;
+        //     }
+        // } else {
+        //     if ($this->activeTab == 'tracks') {
+        //         $baseUrl = strtok($this->searchQuery, '?');
+        //         $tracksFromDb = Track::whereRaw("SUBSTRING_INDEX(permalink_url, '?', 1) = ?", [$baseUrl])
+        //             ->get();
+
+        //         if ($tracksFromDb->isNotEmpty()) {
+        //             $this->activeTab = 'tracks';
+        //             $this->allTracks = $tracksFromDb;
+        //             $this->tracks = $this->allTracks->take($this->trackLimit);
+        //             $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+        //             return;
+        //         }
+        //     }
+
+        //     if ($this->activeTab == 'playlists') {
+        //         $baseUrl = strtok($this->searchQuery, '?');
+        //         $playlistsFromDb = Playlist::whereRaw("SUBSTRING_INDEX(permalink_url, '?', 1) = ?", [$baseUrl])
+        //             ->get();
+
+        //         if ($playlistsFromDb->isNotEmpty()) {
+        //             $this->activeTab = 'playlists';
+        //             $this->allPlaylists = $playlistsFromDb;
+        //             $this->playlists = $this->allPlaylists->take($this->playlistLimit);
+        //             $this->hasMorePlaylists = $this->playlists->count() === $this->playlistLimit;
+        //             return;
+        //         }
+        //     }
+        // }
+
+        $resolvedData = $this->soundCloudService->makeResolveApiRequest($this->searchQuery, 'Failed to resolve SoundCloud URL');
+        if (isset($resolvedData) && $resolvedData != null) {
+            $urn = $resolvedData['urn'];
+            if ($this->activeTab === 'playlists') {
+                if (isset($resolvedData['tracks']) && count($resolvedData['tracks']) > 0) {
+                    $this->soundCloudService->unknownPlaylistAdd($resolvedData);
+                    Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
+                } else {
+                    $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Playlist URL.');
+                }
+            } elseif ($this->activeTab === 'tracks') {
+                if (!isset($resolvedData['tracks'])) {
+                    $this->soundCloudService->unknownTrackAdd($resolvedData);
+                    Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
+                } else {
+                    $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Track URL.');
+                }
+            }
+            $this->processSearchData($urn);
+            Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
+        } else {
+            $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
+        }
+    }
+
+    protected function processSearchData($urn)
+    {
+        if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
+            $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
+                ->where('soundcloud_urn', $urn)
+                ->get();
+
+            if ($tracksFromDb->isNotEmpty()) {
+                $this->allPlaylistTracks = $tracksFromDb;
+                $this->tracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
+                // $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+                return;
+            }
+        } else {
+            if ($this->activeTab == 'tracks') {
+                $tracksFromDb = Track::where('urn', $urn)
+                    ->get();
+
+                if ($tracksFromDb->isNotEmpty()) {
+                    $this->activeTab = 'tracks';
+                    $this->allTracks = $tracksFromDb;
+                    $this->tracks = $this->allTracks->take($this->trackLimit);
+                    // $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+                    return;
+                }
+            }
+
+            if ($this->activeTab == 'playlists') {
+                $playlistsFromDb = Playlist::where('soundcloud_urn', $urn)
+                    ->get();
+
+                if ($playlistsFromDb->isNotEmpty()) {
+                    $this->activeTab = 'playlists';
+                    $this->allPlaylists = $playlistsFromDb;
+                    $this->playlists = $this->allPlaylists->take($this->playlistLimit);
+                    // $this->hasMorePlaylists = $this->playlists->count() === $this->playlistLimit;
+                    return;
+                }
             }
         }
     }

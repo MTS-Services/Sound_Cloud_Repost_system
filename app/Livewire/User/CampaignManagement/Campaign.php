@@ -1181,7 +1181,6 @@ class Campaign extends Component
 
     protected function resolveSoundcloudUrl()
     {
-
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
             $baseUrl = strtok($this->searchQuery, '?');
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
