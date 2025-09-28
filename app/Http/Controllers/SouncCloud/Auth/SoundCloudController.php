@@ -31,8 +31,9 @@ class SoundCloudController extends Controller
     protected SoundCloudService $soundCloudService;
     protected FollowerAnalyzer $followerAnalyzer;
 
-    public function __construct(SoundCloudService $soundCloudService) {
+    public function __construct(SoundCloudService $soundCloudService, FollowerAnalyzer $followerAnalyzer) {
         $this->soundCloudService = $soundCloudService;
+        $this->followerAnalyzer = $followerAnalyzer;
     }
 
     public function redirect(): RedirectResponse
