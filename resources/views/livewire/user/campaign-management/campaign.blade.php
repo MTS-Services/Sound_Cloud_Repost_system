@@ -358,20 +358,27 @@
                         </div>
                     </div>
                 </div>
+            @empty
+                <div class="text-center text-gray-500 dark:text-gray-400 mt-6">
+                    <p>No campaigns available at the moment.</p>
+                </div>
+            @endforelse
 
+            @if ($campaigns->isNotEmpty())
+                {{-- **PLAYLIST JAVASCRIPT LOGIC** --}}
                 @push('js')
                     <script>
                         (function() {
                             // All iframes
                             var iframes = document.querySelectorAll('iframe');
+                            var if = document.getElementById('sc-player-{{ $track->id }}');
                             iframes.forEach(function(iframe) {
                                 iframe.addEventListener('load', function() {
                                     iframe.contentWindow.postMessage('ready', '*');
                                     console.log('iframe loaded', iframe);
                                 });
                             });
-                        })
-                        ();
+                        })();
                     </script>
                     {{-- 
                     // var iframe = document.getElementById('sc-player-{{ $track->id }}');
@@ -458,11 +465,7 @@
                             // }
                     --}}
                 @endpush
-            @empty
-                <div class="text-center text-gray-500 dark:text-gray-400 mt-6">
-                    <p>No campaigns available at the moment.</p>
-                </div>
-            @endforelse
+            @endif
 
             @if (isset($campaigns) && method_exists($campaigns, 'hasPages') && $campaigns->hasPages())
                 <div class="mt-6">
