@@ -480,7 +480,7 @@ class RepostRequest extends Component
 
         $data['dailyRepostCurrent'] = $user->reposts_count_today ?? 0;
         $data['totalMyCampaign'] = $user->campaigns_count ?? 0;
-        $data['pending_requests'] = $user->requests_count ?? 0;
+        $data['pendingRequests'] = $user->requests_count ?? 0;
         return view(
             'livewire.user.repost-request',
             [
