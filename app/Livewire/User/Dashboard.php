@@ -1146,6 +1146,10 @@ class Dashboard extends Component
     }
     public function confirmRepost($requestId)
     {
+        $this->reset([
+            'showRepostConfirmationModal',
+            'request',  
+        ]);
         $this->showRepostConfirmationModal = true;
         $this->request = RepostRequest::findOrFail($requestId)->load('music', 'requester');
         $response = $this->soundCloudService->getAuthUserFollowers($this->request->requester);
