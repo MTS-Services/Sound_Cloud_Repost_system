@@ -16,6 +16,7 @@ use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\TrackService;
 use App\Services\User\AnalyticsService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Url;
@@ -85,7 +86,7 @@ class MyAccount extends Component
     public function mount($user_name = null): void
     {
         $user = $user_name ? User::where('name', $user_name)->first() : user();
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $this->getAnalyticsData($user);
 
         $this->activeTab = request()->query('tab', $this->activeTab);
@@ -127,7 +128,7 @@ class MyAccount extends Component
         $activities_score = ($following_analytics + $repost_analytics + $like_activity + $comment_activity + $play_activity + $view_activity) / 6;
         $this->activities_score = $activities_score >= 0 ? $activities_score : 0;
 
-        $this->chart_data = $this->analyticsService->getChartData(filter: 'last_year', actUserUrn: $user->urn);
+        $this->chart_data = $this->analyticsService->getChartData(filter: 'current_year', actUserUrn: $user->urn);
         // dd($this->chart_data);
     }
 

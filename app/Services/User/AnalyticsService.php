@@ -389,7 +389,7 @@ class AnalyticsService
             'last_month' => $now->copy()->subMonths(1)->startOfDay(),
             'last_90_days' => $now->copy()->subDays(90)->startOfDay(),
             'last_year' => $now->copy()->subYears(1)->startOfYear(),
-            'current_year' => $now->copy()->startOfYear(),
+            'current_year' => $now->startOfYear(),
             default => $now->copy()->subWeeks(1)->startOfDay(),
         };
     }
