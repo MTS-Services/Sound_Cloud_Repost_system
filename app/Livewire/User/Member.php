@@ -245,89 +245,8 @@ class Member extends Component
         }
     }
 
-    // protected function resolveSoundcloudUrl()
-    // {
-    //     $response = Http::get("{$this->soundcloudApiUrl}/resolve", [
-    //         'url' => $this->searchQuery,
-    //         'client_id' => $this->soundcloudClientId,
-    //     ]);
-
-    //     if ($response->successful()) {
-    //         $this->processResolvedData($response->json());
-    //     } else {
-    //         $this->resetCollections();
-    //         $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
-    //     }
-    // }
-
-    protected function processResolvedData(array $data)
-    {
-        if ($this->activeTab === 'tracks') {
-            if ($data['kind'] === 'track') {
-                $localTrack = Track::self()->where('urn', $data['urn'])->first();
-                $this->allTracks = $localTrack ? collect([$localTrack]) : collect();
-                $this->tracks = $this->allTracks->take($this->trackLimit);
-            } elseif ($data['kind'] === 'user') {
-                $this->fetchUserTracks($data['id']);
-            } else {
-                $this->resetCollections();
-                $this->dispatch('alert', type: 'error', message: 'The provided URL is not a track or user profile.');
-            }
-        } elseif ($this->activeTab === 'playlists') {
-            if ($data['kind'] === 'playlist') {
-                $localPlaylist = Playlist::self()->where('soundcloud_urn', $data['urn'])->first();
-                $this->allPlaylists = $localPlaylist ? collect([$localPlaylist]) : collect();
-                $this->playlists = $this->allPlaylists->take($this->playlistLimit);
-            } else {
-                $this->resetCollections();
-                $this->dispatch('alert', type: 'error', message: 'The provided URL is not a playlist.');
-            }
-        }
-    }
-
     protected function resolveSoundcloudUrl()
     {
-        // if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
-        //     $baseUrl = strtok($this->searchQuery, '?');
-        //     $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
-        //         ->whereRaw("SUBSTRING_INDEX(permalink_url, '?', 1) = ?", [$baseUrl])
-        //         ->get();
-        //     if ($tracksFromDb->isNotEmpty()) {
-        //         $this->allPlaylistTracks = $tracksFromDb;
-        //         $this->tracks = $this->allPlaylistTracks->take($this->playlistTrackLimit);
-        //         $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
-        //         return;
-        //     }
-        // } else {
-        //     if ($this->activeTab == 'tracks') {
-        //         $baseUrl = strtok($this->searchQuery, '?');
-        //         $tracksFromDb = Track::whereRaw("SUBSTRING_INDEX(permalink_url, '?', 1) = ?", [$baseUrl])
-        //             ->get();
-
-        //         if ($tracksFromDb->isNotEmpty()) {
-        //             $this->activeTab = 'tracks';
-        //             $this->allTracks = $tracksFromDb;
-        //             $this->tracks = $this->allTracks->take($this->trackLimit);
-        //             $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
-        //             return;
-        //         }
-        //     }
-
-        //     if ($this->activeTab == 'playlists') {
-        //         $baseUrl = strtok($this->searchQuery, '?');
-        //         $playlistsFromDb = Playlist::whereRaw("SUBSTRING_INDEX(permalink_url, '?', 1) = ?", [$baseUrl])
-        //             ->get();
-
-        //         if ($playlistsFromDb->isNotEmpty()) {
-        //             $this->activeTab = 'playlists';
-        //             $this->allPlaylists = $playlistsFromDb;
-        //             $this->playlists = $this->allPlaylists->take($this->playlistLimit);
-        //             $this->hasMorePlaylists = $this->playlists->count() === $this->playlistLimit;
-        //             return;
-        //         }
-        //     }
-        // }
-
         $resolvedData = $this->soundCloudService->makeResolveApiRequest($this->searchQuery, 'Failed to resolve SoundCloud URL');
         if (isset($resolvedData) && $resolvedData != null) {
             $urn = $resolvedData['urn'];
@@ -502,6 +421,9 @@ class Member extends Component
 
             $this->selectedMusicId = $musicId;
             $this->music = Track::find($musicId);
+            $favariteTracks = $this->soundCloudService->fetchTracksFavorites($this->music);
+            dd($favariteTracks);
+
         }
 
         $this->showRepostsModal = true;

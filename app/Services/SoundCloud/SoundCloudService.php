@@ -1120,4 +1120,14 @@ class SoundCloudService
             throw $e;
         }
     }
+    public function fetchTracksFavorites(Track $track): array
+    {
+        return $this->makeGetApiRequest(
+            endpoint: '/tracks/' . $track->urn . '/favoriters',
+            errorMessage: 'Failed to fetch favorites tracks',
+            options: [
+                'access' => 'playable,preview,blocked'
+            ]
+        );
+    }
 }
