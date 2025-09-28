@@ -413,7 +413,7 @@
                                                                 </div>
 
                                                                 <!-- Activity grid -->
-                                                                <div class="flex-1">
+                                                                {{-- <div class="flex-1">
                                                                     <div class="grid grid-cols-53 gap-1"
                                                                         style="grid-template-columns: repeat(53, minmax(0, 1fr));">
                                                                         @php
@@ -469,6 +469,93 @@
                                                                             <div class="w-3 h-3 rounded-sm {{ $colorClass }} transition-all duration-200 hover:scale-110 hover:ring-1 hover:ring-gray-400 dark:hover:ring-gray-300 cursor-pointer"
                                                                                 data-tooltip="true"
                                                                                 data-date="{{ $date }}"
+                                                                                data-activity="{{ $hasData ? number_format($activityRate, 1) . '%' : 'No data' }}"
+                                                                                title="{{ $tooltipText }}"></div>
+                                                                        @endfor
+                                                                    </div>
+                                                                </div> --}}
+                                                                <div class="flex-1">
+                                                                    <div class="grid grid-cols-53 gap-1"
+                                                                        style="grid-template-columns: repeat(53, minmax(0, 1fr));">
+                                                                        @php
+                                                                            $totalDays = 371; // 53 weeks × 7 days
+                                                                            $dataCount = count($chart_data);
+
+                                                                            // Calculate the start date (371 days ago from today)
+                                                                            $startDate = now()->subDays($totalDays - 1);
+                                                                        @endphp
+
+                                                                        @for ($dayIndex = 0; $dayIndex < $totalDays; $dayIndex++)
+                                                                            @php
+                                                                                // Calculate the actual date for this grid position
+                                                                                $currentDate = $startDate
+                                                                                    ->copy()
+                                                                                    ->addDays($dayIndex);
+
+                                                                                // Get data for this day if available, otherwise use default values
+                                                                                $activityRate = 0;
+                                                                                $hasData = false;
+
+                                                                                // Find matching data for this specific date
+                                                                                // Option 1: Loop through data (safer but slower)
+                                                                                foreach ($chart_data as $dataItem) {
+                                                                                    if (
+                                                                                        isset($dataItem['date']) &&
+                                                                                        Carbon\Carbon::parse(
+                                                                                            $dataItem['date'],
+                                                                                        )->format('Y-m-d') ===
+                                                                                            $currentDate->format(
+                                                                                                'Y-m-d',
+                                                                                            )
+                                                                                    ) {
+                                                                                        $activityRate =
+                                                                                            $dataItem[
+                                                                                                'avg_activities_rate'
+                                                                                            ] ?? 0;
+                                                                                        $hasData = true;
+                                                                                        break;
+                                                                                    }
+                                                                                }
+
+                                                                                // Option 2: If your chart_data is keyed by date string (faster)
+                                                                                // $dateKey = $currentDate->format('Y-m-d');
+                                                                                // if (isset($chart_data[$dateKey])) {
+                                                                                //     $activityRate = $chart_data[$dateKey]['avg_activities_rate'] ?? 0;
+                                                                                //     $hasData = true;
+                                                                                // }
+
+                                                                                // Determine color class based on activity rate
+                                                                                $colorClass =
+                                                                                    'bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700'; // Default for no data/0 activity
+
+                                                                                if ($activityRate > 75) {
+                                                                                    $colorClass =
+                                                                                        'bg-orange-600 dark:bg-orange-500';
+                                                                                } elseif ($activityRate > 50) {
+                                                                                    $colorClass =
+                                                                                        'bg-orange-500 dark:bg-orange-400';
+                                                                                } elseif ($activityRate > 25) {
+                                                                                    $colorClass =
+                                                                                        'bg-orange-400 dark:bg-orange-300';
+                                                                                } elseif ($activityRate > 0) {
+                                                                                    $colorClass =
+                                                                                        'bg-orange-200 dark:bg-orange-600';
+                                                                                }
+
+                                                                                $formattedDate = $currentDate->format(
+                                                                                    'M j, Y',
+                                                                                );
+                                                                                $tooltipText = $hasData
+                                                                                    ? number_format($activityRate, 1) .
+                                                                                        '% activity on ' .
+                                                                                        $formattedDate
+                                                                                    : 'No activity data on ' .
+                                                                                        $formattedDate;
+                                                                            @endphp
+
+                                                                            <div class="w-3 h-3 rounded-sm {{ $colorClass }} transition-all duration-200 hover:scale-110 hover:ring-1 hover:ring-gray-400 dark:hover:ring-gray-300 cursor-pointer"
+                                                                                data-tooltip="true"
+                                                                                data-date="{{ $formattedDate }}"
                                                                                 data-activity="{{ $hasData ? number_format($activityRate, 1) . '%' : 'No data' }}"
                                                                                 title="{{ $tooltipText }}"></div>
                                                                         @endfor
