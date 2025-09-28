@@ -1,340 +1,6 @@
 <div wire:poll.1s="updatePlayingTimes">
     <x-slot name="page_slug">campaign-feed</x-slot>
 
-    @push('cs')
-        <script>
-            // Global Playlist Controller for SoundCloud Widgets
-            (function() {
-                'use strict';
-
-                // Prevent multiple initializations
-                if (window.SoundCloudPlaylistController) {
-                    console.log('SoundCloud Playlist Controller already initialized');
-                    return;
-                }
-
-                class SoundCloudPlaylistController {
-                    constructor() {
-                        this.widgets = new Map(); // Store widget instances
-                        this.playlist = []; // Store track data in order
-                        this.currentTrackIndex = -1;
-                        this.currentWidget = null;
-                        this.isPlaying = false;
-                        this.apiLoaded = false;
-
-                        this.init();
-                    }
-
-                    init() {
-                        console.log('Initializing SoundCloud Playlist Controller...');
-                        this.loadSoundCloudAPI();
-                        this.setupMessageListener();
-
-                        // Wait for DOM to be ready, then discover tracks
-                        if (document.readyState === 'loading') {
-                            document.addEventListener('DOMContentLoaded', () => this.discoverTracks());
-                        } else {
-                            this.discoverTracks();
-                        }
-                    }
-
-                    loadSoundCloudAPI() {
-                        if (typeof SC !== 'undefined' && SC.Widget) {
-                            console.log('SoundCloud API already loaded');
-                            this.apiLoaded = true;
-                            this.initializeWidgets();
-                            return;
-                        }
-
-                        // Check if script is already being loaded
-                        if (document.querySelector('script[src="https://w.soundcloud.com/player/api.js"]')) {
-                            console.log('SoundCloud API script already loading...');
-                            return;
-                        }
-
-                        const script = document.createElement('script');
-                        script.src = 'https://w.soundcloud.com/player/api.js';
-                        script.async = true;
-
-                        script.onload = () => {
-                            console.log('SoundCloud API loaded successfully');
-                            this.apiLoaded = true;
-                            this.initializeWidgets();
-                        };
-
-                        script.onerror = () => {
-                            console.error('Failed to load SoundCloud API');
-                        };
-
-                        document.head.appendChild(script);
-                    }
-
-                    discoverTracks() {
-                        console.log('Discovering tracks...');
-
-                        // Find all campaign containers with permalink data
-                        const campaignContainers = document.querySelectorAll('[data-permalink]');
-                        this.playlist = [];
-
-                        campaignContainers.forEach((container, index) => {
-                            const permalinkUrl = container.getAttribute('data-permalink');
-                            const playerContainer = container.querySelector('[data-campaign-id]');
-
-                            if (playerContainer && permalinkUrl) {
-                                const campaignId = playerContainer.getAttribute('data-campaign-id');
-                                const iframe = playerContainer.querySelector('iframe[id^="sc-player-"]');
-
-                                if (iframe) {
-                                    const trackData = {
-                                        index: index,
-                                        campaignId: campaignId,
-                                        permalinkUrl: permalinkUrl,
-                                        iframeId: iframe.id,
-                                        iframe: iframe,
-                                        container: container
-                                    };
-
-                                    this.playlist.push(trackData);
-                                    console.log(
-                                        `Track discovered: ${trackData.iframeId}, Campaign: ${campaignId}`);
-                                }
-                            }
-                        });
-
-                        console.log(`Total tracks discovered: ${this.playlist.length}`);
-
-                        if (this.apiLoaded) {
-                            this.initializeWidgets();
-                        }
-                    }
-
-                    initializeWidgets() {
-                        if (!this.apiLoaded || typeof SC === 'undefined' || !SC.Widget) {
-                            console.error('SoundCloud API not available for widget initialization');
-                            return;
-                        }
-
-                        console.log('Initializing widgets...');
-
-                        this.playlist.forEach((track, index) => {
-                            try {
-                                const widget = SC.Widget(track.iframe);
-                                this.widgets.set(track.iframeId, {
-                                    widget: widget,
-                                    trackData: track,
-                                    index: index
-                                });
-
-                                // Bind events
-                                widget.bind(SC.Widget.Events.READY, () => {
-                                    console.log(`Widget ready: ${track.iframeId}`);
-                                });
-
-                                widget.bind(SC.Widget.Events.PLAY, () => {
-                                    console.log(`Track playing: ${track.iframeId}`);
-                                    this.handleTrackPlay(track, widget);
-                                });
-
-                                widget.bind(SC.Widget.Events.PAUSE, () => {
-                                    console.log(`Track paused: ${track.iframeId}`);
-                                    this.handleTrackPause(track, widget);
-                                });
-
-                                widget.bind(SC.Widget.Events.FINISH, () => {
-                                    console.log(`Track finished: ${track.iframeId}`);
-                                    this.handleTrackFinish(track, widget);
-                                });
-
-                            } catch (error) {
-                                console.error(`Error initializing widget for ${track.iframeId}:`, error);
-                            }
-                        });
-                    }
-
-                    handleTrackPlay(track, widget) {
-                        // Pause other tracks if any are playing
-                        if (this.currentWidget && this.currentWidget !== widget) {
-                            try {
-                                this.currentWidget.pause();
-                            } catch (error) {
-                                console.warn('Error pausing previous track:', error);
-                            }
-                        }
-
-                        this.currentWidget = widget;
-                        this.currentTrackIndex = track.index;
-                        this.isPlaying = true;
-
-                        // Send message to parent/components
-                        this.sendMessage('soundcloud-play', track);
-                    }
-
-                    handleTrackPause(track, widget) {
-                        this.isPlaying = false;
-                        this.sendMessage('soundcloud-pause', track);
-                    }
-
-                    handleTrackFinish(track, widget) {
-                        console.log(`Track ${track.iframeId} finished, looking for next track...`);
-
-                        this.isPlaying = false;
-                        this.sendMessage('soundcloud-finish', track);
-
-                        // Auto-play next track
-                        this.playNextTrack();
-                    }
-
-                    playNextTrack() {
-                        const nextIndex = this.currentTrackIndex + 1;
-
-                        if (nextIndex < this.playlist.length) {
-                            console.log(`Playing next track: index ${nextIndex}`);
-
-                            const nextTrack = this.playlist[nextIndex];
-                            const widgetData = this.widgets.get(nextTrack.iframeId);
-
-                            if (widgetData && widgetData.widget) {
-                                try {
-                                    // Small delay to ensure previous track is fully stopped
-                                    setTimeout(() => {
-                                        widgetData.widget.play();
-                                    }, 500);
-                                } catch (error) {
-                                    console.error('Error playing next track:', error);
-                                }
-                            } else {
-                                console.warn(`Widget not found for next track: ${nextTrack.iframeId}`);
-                            }
-                        } else {
-                            console.log('Reached end of playlist');
-                            this.currentTrackIndex = -1;
-                            this.currentWidget = null;
-                        }
-                    }
-
-                    playPreviousTrack() {
-                        const prevIndex = this.currentTrackIndex - 1;
-
-                        if (prevIndex >= 0) {
-                            console.log(`Playing previous track: index ${prevIndex}`);
-
-                            const prevTrack = this.playlist[prevIndex];
-                            const widgetData = this.widgets.get(prevTrack.iframeId);
-
-                            if (widgetData && widgetData.widget) {
-                                try {
-                                    setTimeout(() => {
-                                        widgetData.widget.play();
-                                    }, 500);
-                                } catch (error) {
-                                    console.error('Error playing previous track:', error);
-                                }
-                            }
-                        } else {
-                            console.log('Already at beginning of playlist');
-                        }
-                    }
-
-                    // Public method to manually play a specific track
-                    playTrack(campaignId) {
-                        const track = this.playlist.find(t => t.campaignId === campaignId);
-                        if (track) {
-                            const widgetData = this.widgets.get(track.iframeId);
-                            if (widgetData && widgetData.widget) {
-                                try {
-                                    widgetData.widget.play();
-                                } catch (error) {
-                                    console.error('Error playing specific track:', error);
-                                }
-                            }
-                        }
-                    }
-
-                    sendMessage(type, track) {
-                        const message = {
-                            type: type,
-                            track: {
-                                campaignId: track.campaignId,
-                                permalinkUrl: track.permalinkUrl,
-                                iframeId: track.iframeId
-                            },
-                            playlistInfo: {
-                                currentIndex: this.currentTrackIndex,
-                                totalTracks: this.playlist.length,
-                                isPlaying: this.isPlaying
-                            }
-                        };
-
-                        // Send to parent window (if in iframe)
-                        window.parent.postMessage(message, '*');
-
-                        // Dispatch custom event for local listeners
-                        window.dispatchEvent(new CustomEvent('soundcloud-playlist-event', {
-                            detail: message
-                        }));
-                    }
-
-                    setupMessageListener() {
-                        // Listen for external control commands
-                        window.addEventListener('message', (event) => {
-                            if (event.data.type === 'playlist-control') {
-                                switch (event.data.command) {
-                                    case 'next':
-                                        this.playNextTrack();
-                                        break;
-                                    case 'previous':
-                                        this.playPreviousTrack();
-                                        break;
-                                    case 'play':
-                                        if (event.data.campaignId) {
-                                            this.playTrack(event.data.campaignId);
-                                        }
-                                        break;
-                                }
-                            }
-                        });
-                    }
-
-                    // Method to refresh playlist (useful for dynamic content updates)
-                    refreshPlaylist() {
-                        console.log('Refreshing playlist...');
-                        this.widgets.clear();
-                        this.playlist = [];
-                        this.currentTrackIndex = -1;
-                        this.currentWidget = null;
-                        this.isPlaying = false;
-
-                        this.discoverTracks();
-                    }
-
-                    // Get current playlist status
-                    getStatus() {
-                        return {
-                            currentIndex: this.currentTrackIndex,
-                            totalTracks: this.playlist.length,
-                            isPlaying: this.isPlaying,
-                            currentTrack: this.currentTrackIndex >= 0 ? this.playlist[this.currentTrackIndex] : null
-                        };
-                    }
-                }
-
-                // Initialize the global controller
-                window.SoundCloudPlaylistController = new SoundCloudPlaylistController();
-
-                // Expose some methods globally for easy access
-                window.playlistControl = {
-                    next: () => window.SoundCloudPlaylistController.playNextTrack(),
-                    previous: () => window.SoundCloudPlaylistController.playPreviousTrack(),
-                    play: (campaignId) => window.SoundCloudPlaylistController.playTrack(campaignId),
-                    refresh: () => window.SoundCloudPlaylistController.refreshPlaylist(),
-                    status: () => window.SoundCloudPlaylistController.getStatus()
-                };
-
-                console.log('SoundCloud Playlist Controller initialized successfully');
-            })();
-        </script>
-    @endpush
-
     <section class="flex flex-col lg:flex-row gap-4 lg:gap-6">
         {{-- Left Side --}}
         <div class="w-full lg:w-[75%]">
@@ -349,10 +15,10 @@
                             <!-- Recommended Pro -->
                             <button
                                 @click="
-                                    activeMainTab = 'recommended_pro';
-                                    $wire.setActiveMainTab('recommended_pro');
-                                    $nextTick(() => initializeSoundCloudWidgets());
-                                "
+                    activeMainTab = 'recommended_pro';
+                    $wire.setActiveMainTab('recommended_pro');
+                    $nextTick(() => initializeSoundCloudWidgets());
+                "
                                 :class="activeMainTab === 'recommended_pro'
                                     ?
                                     'border-orange-500 text-orange-600 border-b-2' :
@@ -366,10 +32,10 @@
                             <!-- Recommended -->
                             <button
                                 @click="
-                                    activeMainTab = 'recommended';
-                                    $wire.setActiveMainTab('recommended');
-                                    $nextTick(() => initializeSoundCloudWidgets());
-                                "
+                    activeMainTab = 'recommended';
+                    $wire.setActiveMainTab('recommended');
+                    $nextTick(() => initializeSoundCloudWidgets());
+                "
                                 :class="activeMainTab === 'recommended'
                                     ?
                                     'border-orange-500 text-orange-600 border-b-2' :
@@ -543,48 +209,26 @@
                 </div>
             </div>
 
-            {{-- Include the playlist controller script once --}}
-            @push('js')
-                <script src="{{ asset('js/soundcloud-playlist-controller.js') }}"></script>
-            @endpush
-
             @forelse ($campaigns as $campaign_)
                 @if (!$campaign_->music && !isset($campaign_->music->permalink_url))
                     @continue;
                 @endif
-                {{-- 📢 IMPORTANT: Add playlist-specific data attributes --}}
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm playlist-item"
-                    data-permalink="{{ $campaign_->music->permalink_url }}" data-campaign-id="{{ $campaign_->id }}"
-                    data-track-title="{{ $campaign_->music->title ?? 'Untitled' }}"
-                    data-track-genre="{{ $campaign_->music->genre ?? 'Unknown Genre' }}">
+                {{-- 📢 NEW: Add a class and data attributes to collect playlist info --}}
+                <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm"
+                    data-permalink="{{ $campaign_->music->permalink_url }}">
                     <div class="flex flex-col lg:flex-row" wire:key="featured-{{ $campaign_->id }}">
                         <!-- Left Column - Track Info -->
                         <div
-                            class="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 relative">
+                            class="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
                             <div class="flex flex-col md:flex-row gap-4">
                                 <!-- Track Details -->
                                 <div class="flex-1 flex flex-col justify-between relative">
-                                    {{-- IMPORTANT: The data-campaign-id is crucial for the playlist controller --}}
+                                    {{-- 💡 IMPORTANT: Only render the actual player for the first item --}}
                                     <div id="soundcloud-player-{{ $campaign_->id }}"
                                         data-campaign-id="{{ $campaign_->id }}" wire:ignore>
                                         <x-sound-cloud.sound-cloud-player :track="$campaign_->music" :height="166"
                                             :visual="false" />
                                     </div>
-
-                                    {{-- Playing indicator --}}
-                                    <div class="playing-indicator absolute top-2 right-2 hidden">
-                                        <div
-                                            class="flex items-center space-x-1 bg-green-500 text-white px-2 py-1 rounded-full text-xs">
-                                            <svg class="w-3 h-3 animate-pulse" fill="currentColor"
-                                                viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd"
-                                                    d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.617.812L6.29 15.064a2 2 0 01-2.45-2.612l.853-5.123a2 2 0 011.948-1.611H9a1 1 0 01.383.848z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-                                            <span>Playing</span>
-                                        </div>
-                                    </div>
-
                                     <div class="absolute top-2 left-2 flex items-center space-x-2">
                                         @if (!featuredAgain($campaign_->id) && $campaign_->is_featured)
                                             <div
@@ -643,6 +287,13 @@
                                                     wire:navigate
                                                     class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                     RepostChain Profile</a>
+                                                {{-- <button
+                                                class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
+                                                all content from this
+                                                member</button>
+                                            <button
+                                                class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
+                                                this track</button> --}}
                                             </div>
                                         </div>
                                     </div>
@@ -681,6 +332,8 @@
                                                     <circle cx="8" cy="9" r="3" fill="none"
                                                         stroke="currentColor" stroke-width="2" />
                                                 </svg>
+                                                {{-- <span>{{ repostPrice() }}
+                                            Repost</span> --}}
                                                 <span>{{ user()->repost_price }}
                                                     Repost</span>
                                             </button>
@@ -711,118 +364,108 @@
                 </div>
             @endforelse
 
-            {{-- Playlist Control UI (Optional) --}}
-            <div class="fixed bottom-4 right-4 z-50" id="playlist-controls" style="display: none;">
-                <div class="bg-gray-800 text-white p-3 rounded-lg shadow-lg">
-                    <div class="flex items-center space-x-3">
-                        <button onclick="playlistControl.previous()" class="p-2 hover:bg-gray-700 rounded">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path
-                                    d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
-                            </svg>
-                        </button>
-                        <div class="text-sm">
-                            <div id="current-track">No track playing</div>
-                        </div>
-                        <button onclick="playlistControl.next()" class="p-2 hover:bg-gray-700 rounded">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path
-                                    d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798L4.555 5.168z" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            @push('js')
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        // UI updates for playlist events
-                        window.addEventListener('soundcloud-playlist-event', function(event) {
-                            const detail = event.detail;
-
-                            // Remove playing class from all tracks
-                            document.querySelectorAll('.playlist-item').forEach(item => {
-                                item.classList.remove('playing');
-                                item.querySelector('.playing-indicator')?.classList.add('hidden');
+            @if ($campaigns->isNotEmpty())
+                {{-- **PLAYLIST JAVASCRIPT LOGIC** --}}
+                @push('js')
+                    <script>
+                        (function() {
+                            // All iframes
+                            var iframes = document.querySelectorAll('iframe');
+                            var if = document.getElementById('sc-player-{{ $track->id }}');
+                            iframes.forEach(function(iframe) {
+                                iframe.addEventListener('load', function() {
+                                    iframe.contentWindow.postMessage('ready', '*');
+                                    console.log('iframe loaded', iframe);
+                                });
                             });
+                        })();
+                    </script>
+                    {{-- 
+                    // var iframe = document.getElementById('sc-player-{{ $track->id }}');
+                            // if (!iframe) {
+                            //     console.warn(
+                            //         'SoundCloud iframe with ID sc-player-{{ $track->id }} not found. Cannot initialize widget.');
+                            //     return;
+                            // }
 
-                            // Add playing class to current track
-                            if (detail.type === 'soundcloud-play' && detail.track.campaignId) {
-                                const currentTrack = document.querySelector(
-                                    `[data-campaign-id="${detail.track.campaignId}"]`);
-                                if (currentTrack) {
-                                    currentTrack.classList.add('playing');
-                                    currentTrack.querySelector('.playing-indicator')?.classList.remove('hidden');
-                                }
-                            }
+                            // // Function to load the API script if needed, then initialize the widget
+                            // function loadSoundCloudApiAndInit() {
+                            //     // Check if the global SC object and Widget class are available
+                            //     if (typeof SC === 'undefined' || !SC.Widget) {
+                            //         // API not loaded: load the script
+                            //         var script = document.createElement('script');
+                            //         script.src = 'https://w.soundcloud.com/player/api.js';
+                            //         script.async = true;
 
-                            // Update playlist controls
-                            const controls = document.getElementById('playlist-controls');
-                            const currentTrackDisplay = document.getElementById('current-track');
+                            //         // Prevent adding the script multiple times if this component is rendered several times
+                            //         if (!document.querySelector('script[src="https://w.soundcloud.com/player/api.js"]')) {
+                            //             document.body.appendChild(script);
+                            //         }
 
-                            if (detail.playlistInfo.isPlaying) {
-                                controls.style.display = 'block';
-                                const trackElement = document.querySelector(
-                                    `[data-campaign-id="${detail.track.campaignId}"]`);
-                                const trackTitle = trackElement?.getAttribute('data-track-title') || 'Unknown';
-                                currentTrackDisplay.textContent =
-                                    `${detail.playlistInfo.currentIndex + 1}/${detail.playlistInfo.totalTracks} - ${trackTitle}`;
-                            } else {
-                                if (detail.type === 'soundcloud-finish' && detail.playlistInfo.currentIndex === -1) {
-                                    controls.style.display = 'none';
-                                    currentTrackDisplay.textContent = 'No track playing';
-                                }
-                            }
-                        });
+                            //         // We rely on the main playlist script for full initialization,
+                            //         // but keep this fallback for non-playlist pages if necessary.
+                            //         script.onload = function() {
+                            //             console.log('SoundCloud Widget API loaded dynamically (from component).');
+                            //             // initSoundCloudWidget(); // Removed: Prevent duplicate initialization of listeners
+                            //         };
+                            //         script.onerror = function() {
+                            //             console.error('Failed to load SoundCloud Widget API.');
+                            //         };
+                            //     } else {
+                            //         // API already loaded: only initialize if this is the first player, otherwise rely on the main playlist controller
+                            //         // This component's direct initialization is now redundant for playlist control.
+                            //         // initSoundCloudWidget(); // Removed: Prevent duplicate initialization of listeners
+                            //     }
+                            // }
 
-                        // Handle Livewire updates - refresh playlist when content changes
-                        document.addEventListener('livewire:navigated', function() {
-                            console.log('Livewire navigated - refreshing playlist');
-                            setTimeout(() => {
-                                if (window.playlistControl) {
-                                    window.playlistControl.refresh();
-                                }
-                            }, 1000);
-                        });
+                            // // Note: The post-message event binding is now typically handled by the main playlist controller
+                            // // to avoid conflicting event handlers, but we will keep the postMessage logic here
+                            // // in case this player is used outside the main playlist structure.
+                            // function initSoundCloudWidget() {
+                            //     // Final check before trying to initialize
+                            //     if (typeof SC === 'undefined' || !SC.Widget) {
+                            //         console.error('SC.Widget is not available (component level).');
+                            //         return;
+                            //     }
 
-                        // Handle Livewire component updates
-                        Livewire.hook('morph.updated', ({
-                            el,
-                            component
-                        }) => {
-                            console.log('Livewire component updated - refreshing playlist');
-                            setTimeout(() => {
-                                if (window.playlistControl) {
-                                    window.playlistControl.refresh();
-                                }
-                            }, 500);
-                        });
-                    });
+                            //     var widget = SC.Widget(iframe);
+                            //     var trackData = @json($track);
 
-                    // Add custom CSS for playing indicator
-                    const style = document.createElement('style');
-                    style.textContent = `
-                        .playlist-item.playing {
-                            border-left: 4px solid #10b981;
-                        }
+                            //     // Helper function to send post messages
+                            //     const postMessage = (type) => {
+                            //         window.parent.postMessage({
+                            //             type: type,
+                            //             track: trackData,
+                            //             iframeId: 'sc-player-{{ $track->id }}'
+                            //         }, '*'); // Using '*' for origin allows communication regardless of hosting domain
+                            //         console.log(`SoundCloud event: ${type} sent for: ${trackData.title}`);
+                            //     };
 
-                        .playing-indicator {
-                            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-                        }
+                            //     widget.bind(SC.Widget.Events.PLAY, function() {
+                            //         postMessage('soundcloud-play');
+                            //     });
+                            //     widget.bind(SC.Widget.Events.PAUSE, function() {
+                            //         postMessage('soundcloud-pause');
+                            //     });
+                            //     widget.bind(SC.Widget.Events.FINISH, function() {
+                            //         postMessage('soundcloud-finish');
+                            //     });
+                            //     widget.bind(SC.Widget.Events.READY, function() {
+                            //         console.log(`SoundCloud Widget ready for track: ${trackData.title} (component level).`);
+                            //     });
+                            // }
 
-                        @keyframes pulse {
-                            0%, 100% {
-                                opacity: 1;
-                            }
-                            50% {
-                                opacity: .5;
-                            }
-                        }
-                        `;
-                    document.head.appendChild(style);
-                </script>
-            @endpush
+                            // // For a true playlist, we only need the API loaded. The main JS handles control.
+                            // // However, we call this to ensure the events are broadcast even if the main playlist controller is not running.
+                            // loadSoundCloudApiAndInit();
+
+                            // // If the API is already loaded, we can attempt to initialize for event broadcasting.
+                            // if (typeof SC !== 'undefined' && SC.Widget) {
+                            //     initSoundCloudWidget();
+                            // }
+                    --}}
+                @endpush
+            @endif
 
             @if (isset($campaigns) && method_exists($campaigns, 'hasPages') && $campaigns->hasPages())
                 <div class="mt-6">
