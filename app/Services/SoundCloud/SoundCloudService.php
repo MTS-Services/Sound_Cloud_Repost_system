@@ -704,8 +704,12 @@ class SoundCloudService
     {
         $user = $user ?? user();
         $repsonse = $this->getAuthUserFollowers($user);
-        dd($repsonse);
-        $this->followerAnalyzer->syncUserRealFollowers([],$user);
+        $itemsArray = [];
+        if ($repsonse->isNotEmpty() && isset($repsonse[0])) {
+            $itemsArray = $repsonse[0]['items'];
+        }
+        dd($itemsArray);
+        $this->followerAnalyzer->syncUserRealFollowers([], $user);
     }
 
 
