@@ -1128,10 +1128,10 @@ class SoundCloudService
             ]
         );
     }
-    public function fetchPlaylistFavorites(Playlist $playlist): array
+    public function fetchPlaylistFavorites($user_urn): array
     {
         return $this->makeGetApiRequest(
-            endpoint: '/users/' . $playlist->soundcloud_urn . '/likes/playlists',
+            endpoint: '/users/' . $user_urn . '/likes/playlists',
             errorMessage: 'Failed to fetch favorites playlists',
             options: [
                 'access' => 'playable,preview,blocked'

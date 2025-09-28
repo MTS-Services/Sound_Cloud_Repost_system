@@ -980,10 +980,8 @@ class Campaign extends Component
                 $favoriteData = $this->soundCloudService->fetchTracksFavorites($this->campaign->music);
                 $searchUrn = user()->urn;
             }elseif($this->campaign->music_type == Playlist::class){
-                $favoriteData = $this->soundCloudService->fetchPlaylistFavorites($this->campaign->music);
+                $favoriteData = $this->soundCloudService->fetchPlaylistFavorites(user()->urn);
                 $searchUrn = $this->campaign->music->soundcloud_urn;
-                dd($favoriteData, $searchUrn);
-                
             }
             $collection = collect($favoriteData['collection']);
             
