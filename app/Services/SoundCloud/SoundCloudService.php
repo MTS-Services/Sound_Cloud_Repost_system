@@ -20,6 +20,13 @@ use Illuminate\Support\Facades\DB;
 class SoundCloudService
 {
 
+    protected FollowerAnalyzer $followerAnalyzer;
+
+    public function __construct(FollowerAnalyzer $followerAnalyzer)
+    {
+        $this->followerAnalyzer = $followerAnalyzer;
+    }
+
 
     /* ============================================================================ *
                 *** SOUNDCLOUD API REQUESTS AND CONFIGARATIONS ***
@@ -691,6 +698,16 @@ class SoundCloudService
             throw $e;
         }
     }
+
+
+    public function syncUserRealFollowers(?User $user = null)
+    {
+        $user = $user ?? user();
+        $repsonse = $this->getAuthUserFollowers($user);
+        dd($repsonse);
+        $this->followerAnalyzer->syncUserRealFollowers([],$user);
+    }
+
 
     /**
      * Sync user products and subscriptions.

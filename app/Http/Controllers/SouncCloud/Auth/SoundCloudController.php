@@ -29,11 +29,10 @@ use Throwable;
 class SoundCloudController extends Controller
 {
     protected SoundCloudService $soundCloudService;
-    protected FollowerAnalyzer $followerAnalyzer;
 
-    public function __construct(SoundCloudService $soundCloudService, FollowerAnalyzer $followerAnalyzer) {
+    public function __construct(SoundCloudService $soundCloudService)
+    {
         $this->soundCloudService = $soundCloudService;
-        $this->followerAnalyzer = $followerAnalyzer;
     }
 
     public function redirect(): RedirectResponse
@@ -113,7 +112,7 @@ class SoundCloudController extends Controller
                 $this->soundCloudService->syncUserTracks($user, []);
                 $this->soundCloudService->syncUserPlaylists($user);
                 $this->soundCloudService->syncUserProductsAndSubscriptions($user, $soundCloudUser);
-                $this->followerAnalyzer->syncUserRealFollowers([], $user);
+                $this->soundCloudService->syncUserRealFollowers($user);
             });
         } catch (Throwable $e) {
             Log::error('SoundCloud sync error', [
