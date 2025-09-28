@@ -8,7 +8,7 @@
             <div class="w-full mt-6 relative">
                 <!-- Header Tabs & Button -->
                 <div x-data="{ activeMainTab: @entangle('activeMainTab').live }"
-                    class="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-0 sm:ps-2 pt-3 border-b border-b-gray-200 dark:border-b-gray-700 gap-2 sm:gap-0">
+                    class="flex flex-col-reverse sm:flex-row items-center justify-between px-2 sm:px-0 sm:ps-2 pt-3 border-b border-b-gray-200 dark:border-b-gray-700 gap-2 sm:gap-0">
 
                     <div>
                         <nav class="-mb-px flex space-x-8">
