@@ -367,88 +367,101 @@
             @if ($campaigns->isNotEmpty())
                 {{-- **PLAYLIST JAVASCRIPT LOGIC** --}}
                 @push('js')
-                    {{-- Load the SoundCloud Widget API --}}
-                    <script src="https://w.soundcloud.com/player/api.js"></script>
                     <script>
-                        document.addEventListener('livewire:load', function() {
-                            const campaignCards = document.querySelectorAll('.campaign-card');
-                            if (campaignCards.length === 0) return;
-
-                            // 1. Collect all permalinks into a playlist array
-                            const tracks = Array.from(campaignCards).map(card => ({
-                                id: card.getAttribute('data-campaign-id'),
-                                permalink: card.getAttribute('data-permalink')
-                            }));
-
-                            let currentTrackIndex = 0;
-                            let soundCloudWidget = null;
-                            const firstTrackId = tracks[0].id;
-                            const initialIframe = document.getElementById(`sc-player-${firstTrackId}`).querySelector('iframe');
-
-                            // Function to play the next track
-                            function playNextTrack() {
-                                currentTrackIndex++;
-
-                                if (currentTrackIndex < tracks.length) {
-                                    const nextTrack = tracks[currentTrackIndex];
-                                    const nextPermalink = nextTrack.permalink;
-
-                                    console.log(`Auto-playing next track: ${nextTrack.id}`);
-
-                                    // 3. Use the widget.load() method to switch the track
-                                    // The existing listeners (like FINISH) persist after loading a new track.
-                                    soundCloudWidget.load(nextPermalink, {
-                                        auto_play: true,
-                                        visual: false
-                                    });
-
-                                    // Optional: Visually highlight the now-playing track and scroll to it
-                                    campaignCards.forEach(card => card.classList.remove('border-2', 'border-orange-500',
-                                        'shadow-lg'));
-                                    const nextCard = document.querySelector(`[data-campaign-id="${nextTrack.id}"]`);
-                                    if (nextCard) {
-                                        nextCard.classList.add('border-2', 'border-orange-500', 'shadow-lg');
-                                        // Scroll the campaign into view smoothly
-                                        nextCard.scrollIntoView({
-                                            behavior: 'smooth',
-                                            block: 'center'
-                                        });
-                                    }
-
-                                } else {
-                                    console.log("Playlist finished. Resetting list highlight.");
-                                    campaignCards.forEach(card => card.classList.remove('border-2', 'border-orange-500',
-                                        'shadow-lg'));
-                                    // Optional: Start over or dispatch a Livewire event to load new data
-                                }
-                            }
-
-                            // Function to initialize the player and listen for events
-                            function initializePlayer(iframeElement) {
-                                if (!iframeElement) return;
-
-                                // 2. Initialize the widget
-                                soundCloudWidget = SC.Widget(iframeElement);
-
-                                // 4. Bind the FINISH event to trigger the next track
-                                soundCloudWidget.bind(SC.Widget.Events.FINISH, function() {
-                                    playNextTrack();
+                        (function() {
+                            // All iframes
+                            var iframes = document.querySelectorAll('iframe');
+                            iframes.forEach(function(iframe) {
+                                iframe.addEventListener('load', function() {
+                                    iframe.contentWindow.postMessage('ready', '*');
+                                    console.log('iframe loaded', iframe.id);
                                 });
+                            });
 
-                                // Optional: Highlight the first card when the player is ready
-                                soundCloudWidget.bind(SC.Widget.Events.READY, function() {
-                                    console.log('SoundCloud Widget ready for first track.');
-                                    campaignCards[0].classList.add('border-2', 'border-orange-500', 'shadow-lg');
-                                });
-                            }
+                            // var iframe = document.getElementById('sc-player-{{ $track->id }}');
+                            // if (!iframe) {
+                            //     console.warn(
+                            //         'SoundCloud iframe with ID sc-player-{{ $track->id }} not found. Cannot initialize widget.');
+                            //     return;
+                            // }
 
-                            // Start the process by initializing the first track's player
-                            if (initialIframe) {
-                                initializePlayer(initialIframe);
-                            } else {
-                                console.error("Initial SoundCloud iframe not found. Check if $loop->first condition is working.");
-                            }
-                        });
+                            // // Function to load the API script if needed, then initialize the widget
+                            // function loadSoundCloudApiAndInit() {
+                            //     // Check if the global SC object and Widget class are available
+                            //     if (typeof SC === 'undefined' || !SC.Widget) {
+                            //         // API not loaded: load the script
+                            //         var script = document.createElement('script');
+                            //         script.src = 'https://w.soundcloud.com/player/api.js';
+                            //         script.async = true;
+
+                            //         // Prevent adding the script multiple times if this component is rendered several times
+                            //         if (!document.querySelector('script[src="https://w.soundcloud.com/player/api.js"]')) {
+                            //             document.body.appendChild(script);
+                            //         }
+
+                            //         // We rely on the main playlist script for full initialization,
+                            //         // but keep this fallback for non-playlist pages if necessary.
+                            //         script.onload = function() {
+                            //             console.log('SoundCloud Widget API loaded dynamically (from component).');
+                            //             // initSoundCloudWidget(); // Removed: Prevent duplicate initialization of listeners
+                            //         };
+                            //         script.onerror = function() {
+                            //             console.error('Failed to load SoundCloud Widget API.');
+                            //         };
+                            //     } else {
+                            //         // API already loaded: only initialize if this is the first player, otherwise rely on the main playlist controller
+                            //         // This component's direct initialization is now redundant for playlist control.
+                            //         // initSoundCloudWidget(); // Removed: Prevent duplicate initialization of listeners
+                            //     }
+                            // }
+
+                            // // Note: The post-message event binding is now typically handled by the main playlist controller
+                            // // to avoid conflicting event handlers, but we will keep the postMessage logic here
+                            // // in case this player is used outside the main playlist structure.
+                            // function initSoundCloudWidget() {
+                            //     // Final check before trying to initialize
+                            //     if (typeof SC === 'undefined' || !SC.Widget) {
+                            //         console.error('SC.Widget is not available (component level).');
+                            //         return;
+                            //     }
+
+                            //     var widget = SC.Widget(iframe);
+                            //     var trackData = @json($track);
+
+                            //     // Helper function to send post messages
+                            //     const postMessage = (type) => {
+                            //         window.parent.postMessage({
+                            //             type: type,
+                            //             track: trackData,
+                            //             iframeId: 'sc-player-{{ $track->id }}'
+                            //         }, '*'); // Using '*' for origin allows communication regardless of hosting domain
+                            //         console.log(`SoundCloud event: ${type} sent for: ${trackData.title}`);
+                            //     };
+
+                            //     widget.bind(SC.Widget.Events.PLAY, function() {
+                            //         postMessage('soundcloud-play');
+                            //     });
+                            //     widget.bind(SC.Widget.Events.PAUSE, function() {
+                            //         postMessage('soundcloud-pause');
+                            //     });
+                            //     widget.bind(SC.Widget.Events.FINISH, function() {
+                            //         postMessage('soundcloud-finish');
+                            //     });
+                            //     widget.bind(SC.Widget.Events.READY, function() {
+                            //         console.log(`SoundCloud Widget ready for track: ${trackData.title} (component level).`);
+                            //     });
+                            // }
+
+                            // // For a true playlist, we only need the API loaded. The main JS handles control.
+                            // // However, we call this to ensure the events are broadcast even if the main playlist controller is not running.
+                            // loadSoundCloudApiAndInit();
+
+                            // // If the API is already loaded, we can attempt to initialize for event broadcasting.
+                            // if (typeof SC !== 'undefined' && SC.Widget) {
+                            //     initSoundCloudWidget();
+                            // }
+
+                        })();
                     </script>
                 @endpush
             @endif
