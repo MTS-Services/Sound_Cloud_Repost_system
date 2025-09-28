@@ -114,6 +114,7 @@ class AnalyticsService
         'last_month' => 'Last 30 days',
         'last_90_days' => 'Last 90 days',
         'last_year' => 'Last 365 days',
+        'current_year' => 'Current Year',
         'date_range' => 'Custom Date Range'
     ];
 
@@ -236,245 +237,7 @@ class AnalyticsService
         return $query->get();
     }
 
-    /**
-     * Get paginated track analytics data
-     */
-    // public function getPaginatedAnalytics(
-    //     string $filter = 'last_week',
-    //     ?array $dateRange = null,
-    //     ?array $genres = null,
-    //     int $perPage = 10,
-    //     int $page = 1,
-    //     ?string $pageName = 'page',
-    //     ?string $userUrn = null,
-    //     ?string $actionableType = null
-    // ): LengthAwarePaginator {
-    //     $periods = $this->calculatePeriods($filter, $dateRange);
 
-    //     // Build the base query for aggregated track data
-    //     $query = UserAnalytics::select([
-    //         'source_id',
-    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 END) as total_views'),
-    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_plays'),
-    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_likes'),
-    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 END) as total_reposts'),
-    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_COMMENT . ' THEN 1 END) as total_comments'),
-    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REQUEST . ' THEN 1 END) as total_requests'),
-    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 END) as total_followers'),
-    //     ]);
-
-    //     if ($userUrn !== null) {
-    //         $query->where('owner_user_urn', $userUrn);
-    //     }
-
-    //     if ($actionableType !== null) {
-    //         $query->where('actionable_type', $actionableType);
-    //     }
-
-    //     $query->whereDate('created_at', '>=', $periods['current']['start']->format('Y-m-d'))
-    //         ->whereDate('created_at', '<=', $periods['current']['end']->format('Y-m-d'));
-
-    //     if ($genres) {
-    //         $query->forGenres($genres);
-    //     }
-
-    //     // Apply groupBy and orderBy, then paginate directly from the query builder
-    //     $paginatedSourceData = $query->groupBy('source_id')
-    //         ->orderByDesc('total_views')
-    //         ->orderByDesc('total_reposts')
-    //         ->paginate($perPage, ['*'], $pageName, $page);
-
-    //     // Get detailed analytics for paginated sources
-    //     $analytics = [];
-    //     if ($paginatedSourceData->isNotEmpty()) {
-    //         $sourceIdsList = $paginatedSourceData->pluck('source_id')->toArray();
-
-    //         // Fetch current and previous period data for only the paginated IDs
-    //         $currentData = $this->fetchAnalyticsData(
-    //             $userUrn,
-    //             $periods['current']['start'],
-    //             $periods['current']['end'],
-    //             $genres
-    //         )->whereIn('source_id', $sourceIdsList);
-
-    //         $previousData = $this->fetchAnalyticsData(
-    //             $userUrn,
-    //             $periods['previous']['start'],
-    //             $periods['previous']['end'],
-    //             $genres
-    //         )->whereIn('source_id', $sourceIdsList);
-
-    //         $currentMetricsBySource = $this->calculateMetricsBySource($currentData);
-    //         $previousMetricsBySource = $this->calculateMetricsBySource($previousData);
-    //         $analytics = $this->buildComparisonResultBySource($currentMetricsBySource, $previousMetricsBySource);
-    //     }
-
-    //     // Return the paginated data with the correct total and items per page
-    //     return new LengthAwarePaginator(
-    //         $analytics,
-    //         $paginatedSourceData->total(),
-    //         $paginatedSourceData->perPage(),
-    //         $paginatedSourceData->currentPage(),
-    //         [
-    //             'path' => request()->url(),
-    //             'pageName' => $pageName,
-    //         ]
-    //     );
-    // }
-
-
-    // public function getPaginatedAnalytics(
-    //     string $filter = 'last_week',
-    //     ?array $dateRange = null,
-    //     ?array $genres = null,
-    //     int $perPage = 10,
-    //     int $page = 1,
-    //     ?string $pageName = 'page',
-    //     ?string $userUrn = null,
-    //     ?string $actionableType = null
-    // ): LengthAwarePaginator {
-    //     $periods = $this->calculatePeriods($filter, $dateRange);
-
-    //     // Build the base query for aggregated track data
-    //     $query = UserAnalytics::query();
-
-    //     if ($userUrn !== null) {
-    //         $query->where('owner_user_urn', $userUrn);
-    //     }
-
-    //     if ($actionableType !== null) {
-    //         $query->where('actionable_type', $actionableType);
-    //     }
-
-    //     $query->whereDate('created_at', '>=', $periods['current']['start']->format('Y-m-d'))
-    //         ->whereDate('created_at', '<=', $periods['current']['end']->format('Y-m-d'));
-
-    //     if ($genres && !in_array('Any Genre', $genres)) {
-    //         $query->forGenres($genres);
-    //     }
-
-    //     $query->select([
-    //         'source_id',
-    //         'source_type',
-    //         'actionable_id',
-    //         'actionable_type',
-    //         'act_user_urn',
-    //         'owner_user_urn',
-    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 END) as total_views'),
-    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_plays'),
-    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_likes'),
-    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 END) as total_reposts'),
-    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_COMMENT . ' THEN 1 END) as total_comments'),
-    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REQUEST . ' THEN 1 END) as total_requests'),
-    //         DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 END) as total_followers'),
-    //     ]);
-
-    //     // Apply groupBy and orderBy, then paginate directly from the query builder
-    //     $paginatedSourceData = $query->groupBy('source_id', 'source_type', 'actionable_id', 'actionable_type', 'act_user_urn', 'owner_user_urn')
-    //         ->orderByDesc('total_views')
-    //         ->orderByDesc('total_reposts')
-    //         ->paginate($perPage, ['*'], $pageName, $page);
-    //     // Get the list of source IDs for the current page
-    //     $sourceIdsList = $paginatedSourceData->pluck('source_id')->toArray();
-
-    //     // Fetch current and previous period data for only the paginated IDs
-    //     $currentData = $this->fetchAnalyticsData(
-    //         $userUrn,
-    //         $periods['current']['start'],
-    //         $periods['current']['end'],
-    //         $genres,
-    //         null,
-    //         $actionableType
-    //     )->whereIn('source_id', $sourceIdsList);
-
-    //     $previousData = $this->fetchAnalyticsData(
-    //         $userUrn,
-    //         $periods['previous']['start'],
-    //         $periods['previous']['end'],
-    //         $genres,
-    //         null,
-    //         $actionableType
-    //     )->whereIn('source_id', $sourceIdsList);
-
-    //     $currentMetricsBySource = $this->calculateMetricsBySource($currentData);
-    //     $previousMetricsBySource = $this->calculateMetricsBySource($previousData);
-
-    //     // Re-key the arrays with the correct source_id to avoid "Undefined array key" errors
-    //     $currentMetricsBySource = collect($currentMetricsBySource)->mapWithKeys(function ($value, $key) {
-    //         $decodedKey = json_decode($key, true);
-    //         return [$decodedKey['id'] => $value];
-    //     })->toArray();
-
-    //     $previousMetricsBySource = collect($previousMetricsBySource)->mapWithKeys(function ($value, $key) {
-    //         $decodedKey = json_decode($key, true);
-    //         return [$decodedKey['id'] => $value];
-    //     })->toArray();
-
-    //     $analytics = $this->buildComparisonResultBySource($currentMetricsBySource, $previousMetricsBySource);
-
-    //     return new LengthAwarePaginator(
-    //         $analytics,
-    //         $paginatedSourceData->total(),
-    //         $paginatedSourceData->perPage(),
-    //         $paginatedSourceData->currentPage(),
-    //         [
-    //             'path' => request()->url(),
-    //             'pageName' => $pageName,
-    //         ]
-    //     );
-
-    //     // Use the paginator's 'through' method to transform the data
-    //     // This keeps the pagination intact while adding the detailed analytics
-    //     // return $paginatedSourceData->through(function ($source) use ($currentMetricsBySource, $previousMetricsBySource) {
-    //     //     $sourceId = $source->source_id;
-
-    //     //     $currentMetrics = $currentMetricsBySource[$sourceId] ?? [
-    //     //         'source_type' => $source->source_type,
-    //     //         'source_details' => $source->source_details,
-    //     //         'actionable_details' => $source->actionable_details,
-    //     //         'metrics' => [
-    //     //             'total_reposts' => 0,
-    //     //             'total_likes' => 0,
-    //     //             'total_comments' => 0,
-    //     //             'total_requests' => 0,
-    //     //             'total_followers' => 0,
-    //     //             'total_views' => 0,
-    //     //         ],
-    //     //     ];
-
-    //     //     $previousMetrics = $previousMetricsBySource[$sourceId] ?? [
-    //     //         'source_type' => $source->source_type,
-    //     //         'source_details' => $source->source_details,
-    //     //         'actionable_details' => $source->actionable_details,
-    //     //         'metrics' => [
-    //     //             'total_reposts' => 0,
-    //     //             'total_likes' => 0,
-    //     //             'total_comments' => 0,
-    //     //             'total_requests' => 0,
-    //     //             'total_followers' => 0,
-    //     //             'total_views' => 0,
-    //     //         ]
-    //     //     ];
-
-    //     //     $result = [
-    //     //         'source_id' => $sourceId,
-    //     //         'metrics' => [
-    //     //             'current' => $currentMetrics,
-    //     //             'previous' => $previousMetrics,
-    //     //             'growth' => [
-    //     //                 'views_growth' => $this->getGrowthPercentage($currentMetrics['metrics']['total_views'], $previousMetrics['metrics']['total_views']),
-    //     //                 'reposts_growth' => $this->getGrowthPercentage($currentMetrics['metrics']['total_reposts'], $previousMetrics['metrics']['total_reposts']),
-    //     //                 'likes_growth' => $this->getGrowthPercentage($currentMetrics['metrics']['total_likes'], $previousMetrics['metrics']['total_likes']),
-    //     //                 'comments_growth' => $this->getGrowthPercentage($currentMetrics['metrics']['total_comments'], $previousMetrics['metrics']['total_comments']),
-    //     //                 'requests_growth' => $this->getGrowthPercentage($currentMetrics['metrics']['total_requests'], $previousMetrics['metrics']['total_requests']),
-    //     //                 'followers_growth' => $this->getGrowthPercentage($currentMetrics['metrics']['total_followers'], $previousMetrics['metrics']['total_followers']),
-    //     //             ],
-    //     //         ]
-    //     //     ];
-
-    //     //     return $result;
-    //     // });
-    // }
 
     public function getPaginatedAnalytics(
         string $filter = 'last_week',
@@ -616,6 +379,7 @@ class AnalyticsService
             'last_month' => $now->copy()->subDays(29)->startOfDay(),
             'last_90_days' => $now->copy()->subDays(89)->startOfDay(),
             'last_year' => $now->copy()->subDays(364)->startOfDay(),
+            'current_year' => $now->copy()->startOfYear(),
             default => $now->copy()->subDays(6)->startOfDay(),
         };
     }
@@ -937,18 +701,25 @@ class AnalyticsService
         ?array $dateRange = null,
         ?array $genres = null,
         ?object $source = null,
-        ?string $actionableType = null
+        ?string $actionableType = null,
+        ?string $ownerUserUrn = null,
+        ?string $actUserUrn = null
     ): array {
-        $userUrn = user()->urn;
+        if ($actUserUrn == null) {
+            $ownerUserUrn = $ownerUserUrn ?? user()->urn;
+        } else {
+            $ownerUserUrn = null;
+        }
         $periods = $this->calculatePeriods($filter, $dateRange);
 
         $data = $this->fetchAnalyticsData(
-            ownerUserUrn: $userUrn,
+            ownerUserUrn: $ownerUserUrn,
             startDate: $periods['current']['start'],
             endDate: $periods['current']['end'],
             genres: $genres,
             source: $source,
-            actionableType: $actionableType
+            actionableType: $actionableType,
+            actUserUrn: $actUserUrn
         );
 
         // Group by date for chart
@@ -956,15 +727,26 @@ class AnalyticsService
             return Carbon::parse($item->created_at)->format('Y-m-d');
         })->map(function ($group, $date) {
             $typeGroups = $group->groupBy('type');
+            $total_plays = $typeGroups->get(UserAnalytics::TYPE_PLAY, collect())->count();
+            $total_likes = $typeGroups->get(UserAnalytics::TYPE_LIKE, collect())->count();
+            $total_comments = $typeGroups->get(UserAnalytics::TYPE_COMMENT, collect())->count();
+            $total_views = $typeGroups->get(UserAnalytics::TYPE_VIEW, collect())->count();
+            $total_requests = $typeGroups->get(UserAnalytics::TYPE_REQUEST, collect())->count();
+            $total_reposts = $typeGroups->get(UserAnalytics::TYPE_REPOST, collect())->count();
+            $total_followers = $typeGroups->get(UserAnalytics::TYPE_FOLLOW, collect())->count();
+            $avg_total = ($total_plays + $total_likes + $total_comments + $total_requests + $total_reposts + $total_followers) / 6;
+            $avg_activities_rate = $total_views >= $avg_total ? round(min(100, ($avg_total / $total_views) * 100), 2) : 0;
             return [
                 'date' => $date,
-                'total_plays' => $typeGroups->get(UserAnalytics::TYPE_PLAY, collect())->count(),
-                'total_likes' => $typeGroups->get(UserAnalytics::TYPE_LIKE, collect())->count(),
-                'total_comments' => $typeGroups->get(UserAnalytics::TYPE_COMMENT, collect())->count(),
-                'total_views' => $typeGroups->get(UserAnalytics::TYPE_VIEW, collect())->count(),
-                'total_requests' => $typeGroups->get(UserAnalytics::TYPE_REQUEST, collect())->count(),
-                'total_reposts' => $typeGroups->get(UserAnalytics::TYPE_REPOST, collect())->count(),
-                'total_followers' => $typeGroups->get(UserAnalytics::TYPE_FOLLOW, collect())->count(),
+                'total_plays' => $total_plays,
+                'total_likes' => $total_likes,
+                'total_comments' => $total_comments,
+                'total_views' => $total_views,
+                'total_requests' => $total_requests,
+                'total_reposts' => $total_reposts,
+                'total_followers' => $total_followers,
+                'avg_activities_rate' => round($avg_activities_rate, 2),
+
             ];
         })->values()->toArray();
         return $chartData;

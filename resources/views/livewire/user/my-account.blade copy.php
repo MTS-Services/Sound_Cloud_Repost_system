@@ -1,27 +1,5 @@
 <section>
     <x-slot name="page_slug">{{ user()->urn == $user->urn ? 'my-account' : '' }}</x-slot>
-    @push('cs')
-        <style>
-            .activity-chart-container [data-tooltip="true"]:hover {
-                transform: scale(1.2);
-            }
-
-            .grid-cols-53 {
-                grid-template-columns: repeat(53, minmax(12px, 1fr));
-            }
-
-            @media (max-width: 640px) {
-                .grid-cols-53 {
-                    grid-template-columns: repeat(53, 10px);
-                }
-
-                .activity-chart-container .w-3 {
-                    width: 10px;
-                    height: 10px;
-                }
-            }
-        </style>
-    @endpush
 
     <section class="flex-1 overflow-auto">
         <div class="min-h-screen">
@@ -369,154 +347,159 @@
                                                 </div>
                                             </div>
 
-                                            <div class="md:col-span-3 mt-3 sm:mt-4 overflow-hidden">
+                                            <div class="md:col-span-3 mt-3 sm:mt-4">
                                                 <h4
                                                     class="text-gray-900 dark:text-white font-medium mb-2 sm:mb-3 text-sm sm:text-base">
                                                     Activity Score
                                                 </h4>
-
-                                                <!-- GitHub-style contribution chart -->
-                                                <div class="activity-chart-container">
-                                                    <!-- Chart wrapper with proper responsive handling -->
-                                                    <div class="overflow-hidden">
-                                                        <div class="min-w-full" style="min-width: 720px;">
-                                                            <!-- Month labels -->
-                                                            <div
-                                                                class="grid grid-cols-12 gap-1 mb-2 text-xs text-gray-500 dark:text-slate-400">
-                                                                <div class="col-span-1"></div>
-                                                                <!-- Space for day labels -->
-                                                                <div class="text-center">Jan</div>
-                                                                <div class="text-center">Feb</div>
-                                                                <div class="text-center">Mar</div>
-                                                                <div class="text-center">Apr</div>
-                                                                <div class="text-center">May</div>
-                                                                <div class="text-center">Jun</div>
-                                                                <div class="text-center">Jul</div>
-                                                                <div class="text-center">Aug</div>
-                                                                <div class="text-center">Sep</div>
-                                                                <div class="text-center">Oct</div>
-                                                                <div class="text-center">Nov</div>
-                                                            </div>
-
-                                                            <!-- Chart grid -->
-                                                            <div class="flex">
-                                                                <!-- Day labels -->
-                                                                <div
-                                                                    class="flex flex-col justify-between text-xs text-gray-500 dark:text-slate-400 mr-2">
-                                                                    <span class="h-3 flex items-center">Mon</span>
-                                                                    <span class="h-3 flex items-center">Tue</span>
-                                                                    <span class="h-3 flex items-center">Wed</span>
-                                                                    <span class="h-3 flex items-center">Thu</span>
-                                                                    <span class="h-3 flex items-center">Fri</span>
-                                                                    <span class="h-3 flex items-center">Sat</span>
-                                                                    <span class="h-3 flex items-center">Sun</span>
-                                                                </div>
-
-                                                                <!-- Activity grid -->
-                                                                <div class="flex-1">
-                                                                    <div class="grid grid-cols-53 gap-1"
-                                                                        style="grid-template-columns: repeat(53, minmax(0, 1fr));">
-                                                                        @php
-                                                                            $totalDays = 371; // 53 weeks × 7 days
-                                                                            $dataCount = count($chart_data);
-                                                                        @endphp
-
-                                                                        @for ($dayIndex = 0; $dayIndex < $totalDays; $dayIndex++)
-                                                                            @php
-                                                                                // Get data for this day if available, otherwise use default values
-                                                                                $activityRate = 0;
-                                                                                $hasData = false;
-
-                                                                                if (
-                                                                                    $dayIndex < $dataCount &&
-                                                                                    isset($chart_data[$dayIndex])
-                                                                                ) {
-                                                                                    $activityRate =
-                                                                                        $chart_data[$dayIndex][
-                                                                                            'avg_activities_rate'
-                                                                                        ] ?? 0;
-                                                                                    $hasData = true;
-                                                                                }
-
-                                                                                // Determine color class based on activity rate
-                                                                                $colorClass =
-                                                                                    'bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700'; // Default for no data/0 activity
-
-                                                                                if ($activityRate > 75) {
-                                                                                    $colorClass =
-                                                                                        'bg-orange-600 dark:bg-orange-500';
-                                                                                } elseif ($activityRate > 50) {
-                                                                                    $colorClass =
-                                                                                        'bg-orange-500 dark:bg-orange-400';
-                                                                                } elseif ($activityRate > 25) {
-                                                                                    $colorClass =
-                                                                                        'bg-orange-400 dark:bg-orange-300';
-                                                                                } elseif ($activityRate > 0) {
-                                                                                    $colorClass =
-                                                                                        'bg-orange-200 dark:bg-orange-600';
-                                                                                }
-
-                                                                                $date = now()
-                                                                                    ->subDays($totalDays - $dayIndex)
-                                                                                    ->format('M j, Y');
-                                                                                $tooltipText = $hasData
-                                                                                    ? number_format($activityRate, 1) .
-                                                                                        '% activity on ' .
-                                                                                        $date
-                                                                                    : 'No activity data on ' . $date;
-                                                                            @endphp
-
-                                                                            <div class="w-3 h-3 rounded-sm {{ $colorClass }} transition-all duration-200 hover:scale-110 hover:ring-1 hover:ring-gray-400 dark:hover:ring-gray-300 cursor-pointer"
-                                                                                data-tooltip="true"
-                                                                                data-date="{{ $date }}"
-                                                                                data-activity="{{ $hasData ? number_format($activityRate, 1) . '%' : 'No data' }}"
-                                                                                title="{{ $tooltipText }}"></div>
-                                                                        @endfor
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                <div class="grid grid-cols-10 gap-1">
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500">
                                                     </div>
-                                                </div>
-
-                                                <!-- Legend and info -->
-                                                <div
-                                                    class="flex items-center justify-between text-xxs sm:text-xs text-gray-500 dark:text-slate-400 mt-3 sm:mt-4">
-                                                    <span>Last 12 months</span>
-                                                    <div class="flex items-center space-x-2">
-                                                        <span class="hidden sm:inline">Less</span>
-                                                        <div class="flex items-center space-x-1">
-                                                            <div
-                                                                class="w-2 h-2 bg-gray-100 dark:bg-slate-800 rounded-sm border border-gray-200 dark:border-slate-600">
-                                                            </div>
-                                                            <div
-                                                                class="w-2 h-2 bg-orange-200 dark:bg-orange-600 rounded-sm">
-                                                            </div>
-                                                            <div
-                                                                class="w-2 h-2 bg-orange-400 dark:bg-orange-300 rounded-sm">
-                                                            </div>
-                                                            <div
-                                                                class="w-2 h-2 bg-orange-500 dark:bg-orange-400 rounded-sm">
-                                                            </div>
-                                                            <div
-                                                                class="w-2 h-2 bg-orange-600 dark:bg-orange-500 rounded-sm">
-                                                            </div>
-                                                        </div>
-                                                        <span class="hidden sm:inline">More</span>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500">
                                                     </div>
-                                                </div>
-
-                                                <!-- Enhanced tooltip -->
-                                                <div id="activity-tooltip"
-                                                    class="fixed z-50 px-3 py-2 text-xs text-white bg-gray-900 dark:bg-black rounded-md shadow-lg pointer-events-none opacity-0 transition-opacity duration-200"
-                                                    style="transform: translateY(-100%);">
-                                                    <div class="font-medium" id="tooltip-content"></div>
                                                     <div
-                                                        class="w-2 h-2 bg-gray-900 dark:bg-black absolute top-full left-1/2 transform -translate-x-1/2 rotate-45">
+                                                        class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500">
+                                                    </div>
+                                                    <div
+                                                        class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500">
+                                                    </div>
+                                                    {{-- More activity dots... --}}
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600">
+                                                    </div>
+                                                    <div
+                                                        class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600">
+                                                    </div>
+                                                    <div
+                                                        class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600">
+                                                    </div>
+                                                    <div
+                                                        class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                                    </div>
+                                                    <div
+                                                        class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                                    </div>
+                                                    {{-- Continue with remaining dots --}}
+                                                    <div
+                                                        class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                                    </div>
+                                                    <div
+                                                        class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                                    </div>
+                                                    <div
+                                                        class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                                    </div>
+                                                    <div
+                                                        class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                                    </div>
+                                                    <div
+                                                        class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500">
+                                                    </div>
+                                                    <div
+                                                        class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                                    </div>
+                                                    <div
+                                                        class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600">
+                                                    </div>
+                                                    {{-- Final row --}}
+                                                    <div
+                                                        class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                                    </div>
+                                                    <div
+                                                        class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500">
+                                                    </div>
+                                                    <div
+                                                        class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500">
+                                                    </div>
+                                                    {{-- Last 10 --}}
+                                                    <div
+                                                        class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600">
+                                                    </div>
+                                                    <div
+                                                        class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-500">
+                                                    </div>
+                                                    <div
+                                                        class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600">
+                                                    </div>
+                                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-orange-600">
+                                                    </div>
+                                                    <div
+                                                        class="w-2 h-2 sm:w-3 sm:h-3 rounded-sm bg-gray-300 dark:bg-slate-700">
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-center justify-between text-xxs sm:text-xs text-gray-500 dark:text-slate-400 mt-1 sm:mt-2">
+                                                    <span>Last 5 weeks</span>
+                                                    <div class="flex items-center space-x-1 sm:space-x-2">
+                                                        <span>Now</span>
+                                                        <div class="flex items-center space-x-1">
+                                                            <span class="hidden sm:inline">Low</span>
+                                                            <div
+                                                                class="w-1 h-1 sm:w-2 sm:h-2 bg-gray-300 dark:bg-slate-700 rounded-sm">
+                                                            </div>
+                                                            <div
+                                                                class="w-1 h-1 sm:w-2 sm:h-2 bg-orange-600 rounded-sm">
+                                                            </div>
+                                                            <div
+                                                                class="w-1 h-1 sm:w-2 sm:h-2 bg-orange-500 rounded-sm">
+                                                            </div>
+                                                            <span class="hidden sm:inline">High</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
@@ -921,37 +904,5 @@
             </div>
         </div>
     </section>
-
-    @push('js')
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const tooltip = document.getElementById('activity-tooltip');
-                const tooltipContent = document.getElementById('tooltip-content');
-                const activitySquares = document.querySelectorAll('[data-tooltip="true"]');
-
-                activitySquares.forEach(square => {
-                    square.addEventListener('mouseenter', function(e) {
-                        const date = e.target.getAttribute('data-date');
-                        const activity = e.target.getAttribute('data-activity');
-
-                        tooltipContent.innerHTML = `<strong>${activity} activity</strong><br>${date}`;
-
-                        const rect = e.target.getBoundingClientRect();
-                        const tooltipRect = tooltip.getBoundingClientRect();
-
-                        tooltip.style.left = `${rect.left + rect.width / 2 - tooltipRect.width / 2}px`;
-                        tooltip.style.top = `${rect.top - 10}px`;
-                        tooltip.classList.remove('opacity-0');
-                        tooltip.classList.add('opacity-100');
-                    });
-
-                    square.addEventListener('mouseleave', function() {
-                        tooltip.classList.remove('opacity-100');
-                        tooltip.classList.add('opacity-0');
-                    });
-                });
-            });
-        </script>
-    @endpush
 
 </section>
