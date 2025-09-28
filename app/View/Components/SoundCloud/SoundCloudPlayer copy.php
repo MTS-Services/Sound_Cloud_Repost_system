@@ -37,15 +37,15 @@ class SoundCloudPlayer extends Component
      */
     public function __construct(
         $track,
-        $height = null,
-        $autoPlay = true,
+        $height = null, // Set to null to allow default based on visual
+        $autoPlay = false,
         $color = '#ff5500',
         $hideRelated = false,
         $showComments = true,
         $showUser = true,
         $showReposts = false,
         $showTeaser = true,
-        $visual = false
+        $visual = false // Default to compact player (visual=false)
     ) {
         $this->track = $track;
         $this->autoPlay = $autoPlay;
@@ -57,6 +57,7 @@ class SoundCloudPlayer extends Component
         $this->showTeaser = $showTeaser;
         $this->visual = $visual;
 
+        // Set default height based on visual mode if not explicitly provided
         if (is_null($height)) {
             $this->height = $this->visual ? 300 : 166;
         } else {
@@ -64,6 +65,21 @@ class SoundCloudPlayer extends Component
         }
     }
 
+    /**
+     * Get the view / contents that represent the component.
+     *
+     * @return \Illuminate\Contracts\View\View|\Closure|string
+     */
+    public function render()
+    {
+        return view('components.sound-cloud.sound-cloud-player');
+    }
+
+    /**
+     * Generate the SoundCloud embed URL.
+     *
+     * @return string|null
+     */
     public function getEmbedSrc()
     {
         if (!isset($this->track->uri)) {
@@ -74,7 +90,7 @@ class SoundCloudPlayer extends Component
 
         $params = [
             'url' => $soundcloudApiUrl,
-            'color' => str_replace('#', '%23', $this->color),
+            'color' => str_replace('#', '%23', $this->color), // URL encode #
             'auto_play' => $this->autoPlay ? 'true' : 'false',
             // 'hide_related' => $this->hideRelated ? 'true' : 'false',
             // 'show_comments' => $this->showComments ? 'true' : 'false',
@@ -108,8 +124,5 @@ class SoundCloudPlayer extends Component
         return "https://w.soundcloud.com/player/?" . implode('&', $queryParams);
     }
 
-    public function render()
-    {
-        return view('components.sound-cloud.sound-cloud-player');
-    }
+    
 }
