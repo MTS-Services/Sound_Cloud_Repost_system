@@ -226,16 +226,11 @@
                                     {{-- 💡 IMPORTANT: Only render the actual player for the first item --}}
                                     <div id="soundcloud-player-{{ $campaign_->id }}"
                                         data-campaign-id="{{ $campaign_->id }}" wire:ignore>
-                                        @if ($loop->first)
+                                        <div id="soundcloud-player-{{ $campaign_->id }}"
+                                            data-campaign-id="{{ $campaign_->id }}" wire:ignore>
                                             <x-sound-cloud.sound-cloud-player :track="$campaign_->music" :height="166"
                                                 :visual="false" />
-                                        @else
-                                            <div
-                                                class="h-[166px] flex items-center justify-center bg-gray-100 dark:bg-gray-600">
-                                                <p class="text-gray-500 dark:text-gray-400">Ready to play next:
-                                                    **{{ $campaign_->music->title ?? 'Untitled' }}**</p>
-                                            </div>
-                                        @endif
+                                        </div>
                                     </div>
                                     <div class="absolute top-2 left-2 flex items-center space-x-2">
                                         @if (!featuredAgain($campaign_->id) && $campaign_->is_featured)
