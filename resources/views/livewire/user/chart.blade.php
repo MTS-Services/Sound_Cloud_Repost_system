@@ -169,70 +169,168 @@
                         </div>
                     </div>
                     {{-- Compact view --}}
-                  <div x-show="activeTab === 'compactView'"
-    class="transition-all duration-500 opacity-100 scale-100">
+                    <div x-show="activeTab === 'compactView'"
+                        class="transition-all duration-500 opacity-100 scale-100">
 
-    {{-- Mobile এ scroll hidden, md থেকে scroll চালু --}}
-    <div class="overflow-x-hidden md:overflow-x-auto w-full">
-        <div
-            class="bg-gray-200 dark:bg-gray-800 rounded-2xl border border-gray-300 dark:border-gray-700 min-w-0 md:min-w-[768px]">
+                        {{-- Mobile: card mode with vertical spacing; Desktop/Tablet: grid table --}}
+                        <div class="space-y-3 md:space-y-0 overflow-x-auto w-full">
 
-            {{-- Header visible only on medium screens and up --}}
-            <div
-                class="hidden md:grid grid-cols-12 gap-4 p-4 bg-gray-300 dark:bg-gray-700 text-sm font-semibold text-gray-800 dark:text-gray-300 border-b border-gray-300 dark:border-gray-600">
-                <div class="col-span-1">#</div>
-                <div class="col-span-4">Track / Playlist</div>
-                <div class="col-span-2 text-center">Score</div>
-                <div class="col-span-2 text-center">Reach</div>
-                <div class="col-span-2 text-center">Reposts</div>
-                <div class="col-span-1 text-center">Actions</div>
-            </div>
+                            {{-- Desktop/Tablet Table --}}
+                            <div
+                                class="hidden md:block min-w-[768px] bg-gray-200 dark:bg-gray-800 rounded-2xl border border-gray-300 dark:border-gray-700 overflow-hidden">
 
-            {{-- Data Rows --}}
-            @forelse ($topSources as $index => $source)
-                {{-- Desktop/Tablet row --}}
-                <div
-                    class="hidden md:grid grid-cols-12 gap-4 items-center p-4 border-b border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">
-                    <div class="col-span-1 font-semibold">{{ $index + 1 }}</div>
-                    <div class="col-span-4 truncate">{{ $source['source_details']?->title ?? 'Unknown' }}</div>
-                    <div class="col-span-2 text-center">{{ $source['score'] ?? 0 }}</div>
-                    <div class="col-span-2 text-center">{{ $source['reach'] ?? 0 }}</div>
-                    <div class="col-span-2 text-center">{{ $source['reposts'] ?? 0 }}</div>
-                    <div class="col-span-1 text-center">
-                        <button class="px-2 py-1 bg-blue-500 text-white rounded">Action</button>
-                    </div>
-                </div>
+                                {{-- Table Header --}}
+                                <div
+                                    class="grid grid-cols-12 gap-4 p-4 bg-gray-300 dark:bg-gray-700 text-sm font-semibold text-gray-800 dark:text-gray-300 border-b border-gray-300 dark:border-gray-600">
+                                    <div class="col-span-1">#</div>
+                                    <div class="col-span-4">Track / Playlist</div>
+                                    <div class="col-span-2 text-center">Score</div>
+                                    <div class="col-span-2 text-center">Reach</div>
+                                    <div class="col-span-2 text-center">Reposts</div>
+                                    <div class="col-span-1 text-center">Actions</div>
+                                </div>
 
-                {{-- Mobile dropdown card --}}
-                <div class="md:hidden border-b border-gray-300 dark:border-gray-600">
-                    <button @click="openRow === {{ $index }} ? openRow = null : openRow = {{ $index }}"
-                        class="w-full flex items-center justify-between p-4 text-gray-900 dark:text-gray-100">
-                        <span class="font-medium truncate">{{ $source['source_details']?->title ?? 'Unknown' }}</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            stroke-width="1.5" stroke="currentColor"
-                            class="w-5 h-5 transform transition-transform"
-                            :class="{ 'rotate-180': openRow === {{ $index }} }">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                        </svg>
-                    </button>
+                                {{-- Table Rows --}}
+                                @forelse ($topSources as $source)
+                                    <div
+                                        class="grid grid-cols-12 gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 border-b border-gray-300 dark:border-gray-700">
+                                        {{-- Rank / Badge --}}
+                                        <div class="col-span-1 flex items-center justify-center">
+                                            @if (proUser($source['source_details']?->user_urn) && $source['actionable_details']->is_featured)
+                                                <div
+                                                    class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gradient-to-br from-orange-400 to-orange-600 text-white">
+                                                    <x-lucide-crown class="w-3 h-3" />
+                                                </div>
+                                            @elseif (proUser($source['source_details']?->user_urn))
+                                                <div
+                                                    class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gradient-to-br from-gray-400 to-gray-600 text-white">
+                                                    <x-lucide-crown class="w-3 h-3" />
+                                                </div>
+                                            @else
+                                                <div
+                                                    class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gray-700 text-gray-300">
+                                                    {{ $loop->iteration }}
+                                                </div>
+                                            @endif
+                                        </div>
 
-                    <div x-show="openRow === {{ $index }}" x-collapse>
-                        <div class="p-4 space-y-2 text-sm text-gray-800 dark:text-gray-200">
-                            <p><span class="font-semibold">Score:</span> {{ $source['score'] ?? 0 }}</p>
-                            <p><span class="font-semibold">Reach:</span> {{ $source['reach'] ?? 0 }}</p>
-                            <p><span class="font-semibold">Reposts:</span> {{ $source['reposts'] ?? 0 }}</p>
-                            <button class="mt-2 px-3 py-1 bg-blue-500 text-white rounded">Action</button>
+                                        {{-- Track / Playlist --}}
+                                        <div class="col-span-4 flex items-center gap-3">
+                                            <div class="relative group">
+                                                <img src="{{ soundcloud_image($source['source_details']?->artwork_url ?? null) }}"
+                                                    alt="{{ $source['source_details']?->title ?? 'Unknown' }}"
+                                                    class="w-12 h-12 rounded-lg object-cover transition-transform duration-300 group-hover:scale-105">
+                                                <a href="{{ $source['source_details']?->permalink_url ?? '#' }}"
+                                                    target="_blank"
+                                                    class="absolute inset-0 shadow group-hover:bg-gray-950/20 rounded-lg transition-all duration-300 flex items-center justify-center">
+                                                    <x-lucide-external-link
+                                                        class="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                                </a>
+                                            </div>
+                                            <div class="min-w-0 flex-1">
+                                                <a href="{{ $source['source_details']?->permalink_url ?? '#' }}"
+                                                    target="_blank"
+                                                    class="font-semibold text-gray-900 dark:text-white truncate hover:text-orange-400 block w-full">
+                                                    {{ Str::limit($source['source_details']?->title ?? 'Unknown', 30, '...') }}
+                                                </a>
+                                                <a href="{{ route('user.my-account', $source['source_details']?->user?->name ?? 'Unknown') }}"
+                                                    class="text-sm text-gray-600 dark:text-gray-400 truncate hover:text-orange-400 block">
+                                                    {{ $source['source_details']?->user?->name ?? 'Unknown' }}
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        {{-- Score --}}
+                                        <div
+                                            class="col-span-2 flex items-center justify-center font-bold text-orange-400">
+                                            {{ $source['engagement_score'] }}/10
+                                        </div>
+
+                                        {{-- Reach --}}
+                                        <div
+                                            class="col-span-2 flex items-center justify-center text-gray-500 dark:text-gray-300">
+                                            {{ number_shorten($source['metrics']['total_views']['current_total']) }}
+                                        </div>
+
+                                        {{-- Reposts --}}
+                                        <div
+                                            class="col-span-2 flex items-center justify-center text-gray-500 dark:text-gray-300">
+                                            {{ number_shorten($source['metrics']['total_plays']['current_total']) }}
+                                        </div>
+
+                                        {{-- Actions --}}
+                                        <div class="col-span-1 flex items-center justify-center space-x-1">
+                                            @if (isset($source['source_details']))
+                                                <button
+                                                    wire:click="likeSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']?->id) }}')"
+                                                    class="w-8 h-8 rounded-full flex items-center justify-center transition duration-200 {{ $source['like'] ? 'bg-red-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-red-500 hover:text-white">
+                                                    <x-lucide-heart class="w-3 h-3" />
+                                                </button>
+                                                <button
+                                                    wire:click="repostSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']?->id) }}')"
+                                                    class="w-8 h-8 rounded-full flex items-center justify-center transition duration-200 {{ $source['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white">
+                                                    <x-lucide-rotate-ccw class="w-3 h-3" />
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p class="text-center text-gray-500 dark:text-gray-400 py-8">No tracks found.</p>
+                                @endforelse
+                            </div>
+
+                            {{-- Mobile: Card Mode --}}
+                            <div class="md:hidden flex flex-col space-y-3">
+                                @forelse($topSources as $source)
+                                    <div
+                                        class="bg-gray-200 dark:bg-gray-800 p-4 rounded-2xl border border-gray-300 dark:border-gray-700 flex flex-col gap-2">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-3">
+                                                <div
+                                                    class="w-10 h-10 rounded-full bg-gray-700 text-gray-300 flex items-center justify-center font-bold text-sm">
+                                                    {{ $loop->iteration }}
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="font-semibold text-gray-900 dark:text-white truncate">
+                                                        {{ Str::limit($source['source_details']?->title ?? 'Unknown', 30, '...') }}
+                                                    </p>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400 truncate">
+                                                        {{ $source['source_details']?->user?->name ?? 'Unknown' }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <span
+                                                    class="font-bold text-orange-400">{{ $source['engagement_score'] }}/10</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex justify-between text-gray-500 dark:text-gray-300 text-sm">
+                                            <span>Reach:
+                                                {{ number_shorten($source['metrics']['total_views']['current_total']) }}</span>
+                                            <span>Reposts:
+                                                {{ number_shorten($source['metrics']['total_plays']['current_total']) }}</span>
+                                        </div>
+                                        <div class="flex items-center justify-end space-x-2">
+                                            @if (isset($source['source_details']))
+                                                <button
+                                                    wire:click="likeSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']?->id) }}')"
+                                                    class="w-8 h-8 rounded-full flex items-center justify-center {{ $source['like'] ? 'bg-red-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-red-500 hover:text-white">
+                                                    <x-lucide-heart class="w-3 h-3" />
+                                                </button>
+                                                <button
+                                                    wire:click="repostSource('{{ encrypt($source['actionable_details']->id) }}','{{ encrypt($source['source_details']?->id) }}')"
+                                                    class="w-8 h-8 rounded-full flex items-center justify-center {{ $source['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white">
+                                                    <x-lucide-rotate-ccw class="w-3 h-3" />
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p class="text-center text-gray-500 dark:text-gray-400 py-8">No tracks found.</p>
+                                @endforelse
+                            </div>
                         </div>
                     </div>
-                </div>
-            @empty
-                <p class="text-center text-gray-500 dark:text-gray-400 py-8">No tracks found.</p>
-            @endforelse
 
-        </div>
-    </div>
-</div>
 
                     {{-- Grid view --}}
                     <div x-show="activeTab === 'gridView'" class="transition-all duration-500 opacity-100 scale-100">
