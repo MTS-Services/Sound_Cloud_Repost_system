@@ -132,6 +132,7 @@ class Dashboard extends Component
     // Confirmation Repost
     public $request = null;
     public bool $liked = false;
+    public bool $alreadyLiked = false;
     public string $commented = '';
     public bool $followed = true;
     public bool $alreadyFollowing = false;
@@ -1119,15 +1120,33 @@ class Dashboard extends Component
     {
         $this->showRepostConfirmationModal = true;
         $this->request = RepostRequest::findOrFail($requestId)->load('music', 'requester');
-        // $response = $this->soundCloudService->getAuthUserFollowers($this->request->requester);
-        // if ($response->isNotEmpty()) {
-        //     $already_following = $response->where('urn', user()->urn)->first();
-        //     if ($already_following !== null) {
-        //         Log::info('Repost request Page:- Already following');
-        //         $this->followed = false;
-        //         $this->alreadyFollowing = true;
-        //     }
-        // }
+        $response = $this->soundCloudService->getAuthUserFollowers($this->request->requester);
+        if ($response->isNotEmpty()) {
+            $already_following = $response->where('urn', user()->urn)->first();
+            if ($already_following !== null) {
+                Log::info('Repost request Page:- Already following');
+                $this->followed = false;
+                $this->alreadyFollowing = true;
+            }
+        }
+
+        if ($this->request->music) {
+            if ($this->request->music_type == Track::class) {
+                $favoriteData = $this->soundCloudService->fetchTracksFavorites($this->request->music);
+                $searchUrn = user()->urn;
+            } elseif ($this->request->music_type == Playlist::class) {
+                $favoriteData = $this->soundCloudService->fetchPlaylistFavorites(user()->urn);
+                $searchUrn = $this->request->music->soundcloud_urn;
+            }
+            $collection = collect($favoriteData['collection']);
+            $found = $collection->first(function ($item) use ($searchUrn) {
+                return isset($item['urn']) && $item['urn'] === $searchUrn;
+            });
+            if ($found) {
+                $this->liked = false;
+                $this->alreadyLiked = true;
+            }
+        }
     }
     public function repost($requestId)
     {

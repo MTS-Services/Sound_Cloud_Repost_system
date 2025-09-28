@@ -34,7 +34,8 @@
             <div class="px-6 py-4 space-y-5">
                 <div class="flex items-start justify-between">
                     <h3 class="text-lg font-medium uppercase text-gray-900 dark:text-white">Repost</h3>
-                    <span class="text-sm text-gray-700 dark:text-gray-300"><span class="font-medium text-orange-500">{{ user()->repost_price }}</span>
+                    <span class="text-sm text-gray-700 dark:text-gray-300"><span
+                            class="font-medium text-orange-500">{{ user()->repost_price }}</span>
                         Credit{{ user()->repost_price > 1 ? 's' : '' }}</span>
                 </div>
                 <div class="flex items-center space-x-3 p-2 border border-gray-200 dark:border-gray-600 rounded-md">
@@ -71,11 +72,13 @@
                             <span
                                 class="text-sm text-gray-800 dark:text-gray-200">{{ __('Activate HeartPush') }}</span>
                         @else
-                            <span class="text-sm text-orange-500">{{ __('Already Liked this Track') }}</span>
+                            <span class="text-sm text-orange-500">Already Liked this
+                                {{ $campaign->music_type == App\Models\Track::class ? 'Track' : 'Playlist' }}</span>
                         @endif
                     </label>
                     @if (!$alreadyLiked)
-                    <span class="text-sm text-gray-700 dark:text-gray-300">+<span class="font-medium text-orange-500">2</span> Credits</span>
+                        <span class="text-sm text-gray-700 dark:text-gray-300">+<span
+                                class="font-medium text-orange-500">2</span> Credits</span>
                     @endif
                 </div>
 
@@ -85,7 +88,8 @@
                         <div class="flex items-center justify-between">
                             <span class="text-sm font-medium text-gray-800 dark:text-gray-200">Comment on this
                                 track (optional)</span>
-                            <span class="text-sm text-gray-700 dark:text-gray-300">+<span class="font-medium text-orange-500">2</span> Credits</span>
+                            <span class="text-sm text-gray-700 dark:text-gray-300">+<span
+                                    class="font-medium text-orange-500">2</span> Credits</span>
                         </div>
                         <textarea rows="3" placeholder="What did you like about the track?" wire:model.live="commented"
                             class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"></textarea>

@@ -71,12 +71,20 @@
                 @if ($request->likeable)
                     <div class="flex items-center justify-between border-t pt-3 dark:border-gray-700">
                         <label class="flex items-center space-x-2">
-                            <input type="checkbox" wire:model.live="liked"
-                                class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                            <span
-                                class="text-sm text-gray-800 dark:text-gray-200">{{ __('Activate HeartPush') }}</span>
+                            @if (!$alreadyLiked)
+                                <input type="checkbox" wire:model.live="liked"
+                                    class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                <span
+                                    class="text-sm text-gray-800 dark:text-gray-200">{{ __('Activate HeartPush') }}</span>
+                            @else
+                                <span class="text-sm text-orange-500">Already Liked this
+                                    {{ $campaign->music_type == App\Models\Track::class ? 'Track' : 'Playlist' }}</span>
+                            @endif
                         </label>
-                        <span class="text-sm text-gray-700 dark:text-gray-300">+2 credits</span>
+                        @if (!$alreadyLiked)
+                            <span class="text-sm text-gray-700 dark:text-gray-300">+<span
+                                    class="font-medium text-orange-500">2</span> Credits</span>
+                        @endif
                     </div>
                 @endif
                 <!-- Comment Plus -->

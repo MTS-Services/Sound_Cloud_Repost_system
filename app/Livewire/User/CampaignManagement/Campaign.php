@@ -976,19 +976,17 @@ class Campaign extends Component
         $this->campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
 
         if ($this->campaign->music) {
-            if($this->campaign->music_type == Track::class){
+            if ($this->campaign->music_type == Track::class) {
                 $favoriteData = $this->soundCloudService->fetchTracksFavorites($this->campaign->music);
                 $searchUrn = user()->urn;
-            }elseif($this->campaign->music_type == Playlist::class){
+            } elseif ($this->campaign->music_type == Playlist::class) {
                 $favoriteData = $this->soundCloudService->fetchPlaylistFavorites(user()->urn);
                 $searchUrn = $this->campaign->music->soundcloud_urn;
             }
             $collection = collect($favoriteData['collection']);
-            
             $found = $collection->first(function ($item) use ($searchUrn) {
                 return isset($item['urn']) && $item['urn'] === $searchUrn;
             });
-
             if ($found) {
                 $this->liked = false;
                 $this->alreadyLiked = true;

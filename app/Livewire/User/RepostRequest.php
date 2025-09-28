@@ -5,8 +5,10 @@ namespace App\Livewire\User;
 use App\Jobs\NotificationMailSent;
 use App\Jobs\TrackViewCount;
 use App\Models\CreditTransaction;
+use App\Models\Playlist;
 use App\Models\RepostRequest as ModelsRepostRequest;
 use App\Models\Repost;
+use App\Models\Track;
 use App\Models\UserAnalytics;
 use App\Models\UserSetting;
 use App\Services\SoundCloud\SoundCloudService;
@@ -44,6 +46,7 @@ class RepostRequest extends Component
     public $totalRepostPrice = 0;
     public $request = null;
     public $liked = false;
+    public $alreadyLiked = false;
     public string $commented = '';
     public $following = true;
     public $alreadyFollowing = false;
@@ -310,7 +313,7 @@ class RepostRequest extends Component
     public function confirmRepost($requestId)
     {
         if (!$this->canRepost($requestId)) {
-            $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
+            $this->dispatch('alert', type: 'error', message: 'You cannot repost this request. Please play it for at least 5 seconds first.');
             return;
         }
         $this->showRepostConfirmationModal = true;
@@ -323,6 +326,24 @@ class RepostRequest extends Component
                 Log::info('Repost request Page:- Already following');
                 $this->following = false;
                 $this->alreadyFollowing = true;
+            }
+        }
+
+        if ($this->request->music) {
+            if ($this->request->music_type == Track::class) {
+                $favoriteData = $this->soundCloudService->fetchTracksFavorites($this->request->music);
+                $searchUrn = user()->urn;
+            } elseif ($this->request->music_type == Playlist::class) {
+                $favoriteData = $this->soundCloudService->fetchPlaylistFavorites(user()->urn);
+                $searchUrn = $this->request->music->soundcloud_urn;
+            }
+            $collection = collect($favoriteData['collection']);
+            $found = $collection->first(function ($item) use ($searchUrn) {
+                return isset($item['urn']) && $item['urn'] === $searchUrn;
+            });
+            if ($found) {
+                $this->liked = false;
+                $this->alreadyLiked = true;
             }
         }
     }
@@ -457,7 +478,9 @@ class RepostRequest extends Component
 
         $data['dailyRepostCount'] = $user->reposts_count_today ?? 0;
         $data['totalMyCampaign'] = $user->campaigns_count ?? 0;
-        return view('livewire.user.repost-request',[
+        return view(
+            'livewire.user.repost-request',
+            [
                 'repostRequests' => $this->repostRequests,
                 'data' => $data,
             ]
