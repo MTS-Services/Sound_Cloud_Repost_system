@@ -977,14 +977,15 @@ class Campaign extends Component
 
         if ($this->campaign->music) {
             if($this->campaign->music_type == Track::class){
-                $favariteData = $this->soundCloudService->fetchTracksFavorites($this->campaign->music);
+                $favoriteData = $this->soundCloudService->fetchTracksFavorites($this->campaign->music);
                 $searchUrn = user()->urn;
             }elseif($this->campaign->music_type == Playlist::class){
-                $favariteData = $this->soundCloudService->fetchPlaylistFavorites($this->campaign->music);
+                $favoriteData = $this->soundCloudService->fetchPlaylistFavorites($this->campaign->music);
                 $searchUrn = $this->campaign->music->soundcloud_urn;
+                dd($favoriteData, $searchUrn);
                 
             }
-            $collection = collect($favariteData['collection']);
+            $collection = collect($favoriteData['collection']);
             
             $found = $collection->first(function ($item) use ($searchUrn) {
                 return isset($item['urn']) && $item['urn'] === $searchUrn;
