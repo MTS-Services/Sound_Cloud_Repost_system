@@ -32,7 +32,7 @@ class SoundCloudService
      */
     protected string $baseUrl = 'https://api.soundcloud.com';
     protected string $oauthUrl = 'https://api.soundcloud.com';
-    protected string $resolverUrl = 'https://soundcloud.com/resolve';
+    protected string $resolverUrl = 'https://api.soundcloud.com/resolve';
 
 
     /**
@@ -195,10 +195,7 @@ class SoundCloudService
         $this->ensureSoundCloudConnection(user: user());
 
         try {
-            $response = Http::withToken(user()->token)->get("{$this->resolverUrl}?url={$endpoint}");
-            // $response = Http::get($this->resolverUrl, [
-            //     'url' => $endpoint
-            // ]);
+            $response = Http::withToken(user()->token)->get($this->resolverUrl . '?url=' . $endpoint);
             if ($response->successful()) {
                 return $response->json();
             }
