@@ -78,7 +78,7 @@
                                     class="text-sm text-gray-800 dark:text-gray-200">{{ __('Activate HeartPush') }}</span>
                             @else
                                 <span class="text-sm text-orange-500">Already Liked this
-                                    {{ $campaign->music_type == App\Models\Track::class ? 'Track' : 'Playlist' }}</span>
+                                    {{ $request->music_type == App\Models\Track::class ? 'Track' : 'Playlist' }}</span>
                             @endif
                         </label>
                         @if (!$alreadyLiked)
