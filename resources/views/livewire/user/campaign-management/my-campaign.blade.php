@@ -62,10 +62,10 @@
                                             alt="Sample Track 3" class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
                                         <div class="flex-1">
                                             <div
-                                                class="flex flex-col sm:flex-row sm:items-center sm:line-clamp-2 2xl:line-clamp-none  sm:space-x-3 mb-2 text-center sm:text-left">
+                                                class="flex flex-col sm:flex-row sm:items-center  sm:space-x-3 mb-2 text-center sm:text-left">
                                                 <h3
                                                     class="text-black dark:text-gray-100 font-semibold text-lg 
-                                                          sm:line-clamp-2 2xl:line-clamp-none">
+                                                          line-clamp-2">
                                                     {{ $campaign_->music?->title }}
                                                 </h3>
 
