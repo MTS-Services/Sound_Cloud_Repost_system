@@ -705,10 +705,8 @@ class SoundCloudService
         try {
             $user = $user ?? user();
             $repsonse = $this->getAuthUserFollowers($user);
-            $itemsArray = $repsonse->toArray();
-            $this->followerAnalyzer->syncUserRealFollowers($itemsArray, $user);
-            Log::info("Successfully synced real followers for user {$user->urn}.");
-            return count($itemsArray);
+            $this->followerAnalyzer->syncUserRealFollowers($repsonse, $user);
+            Log::info("Successfully synced real followers for user {$user->urn}.");  
         } catch (Exception $e) {
             Log::error('Error syncing user real followers in syncUserRealFollowers', [
                 'user_urn' => $user->urn,

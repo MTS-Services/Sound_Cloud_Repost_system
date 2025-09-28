@@ -682,8 +682,6 @@ class FollowerAnalyzer
     public function syncUserRealFollowers($followers, $user)
     {
         // Fetch followers from SoundCloud API
-
-
         if (empty($followers)) {
             $user->real_followers = 0;
             $user->real_followers_percentage = 100;
