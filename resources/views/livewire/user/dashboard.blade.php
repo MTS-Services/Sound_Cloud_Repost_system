@@ -339,7 +339,8 @@
                         {{ $activities_score ? number_format($activities_score, 2) : '0.00' }}%</p>
                     <p
                         class="text-sm flex items-center space-x-1 {{ $activities_change_rate >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                        <span>{{ $activities_change_rate ?? '0.00' }}% from
+                        <span>{{ $activities_change_rate >= 0 ? '+' : '-' }}{{ $activities_change_rate ?? '0.00' }}%
+                            from
                             last week</span>
                     </p>
                 </div>
