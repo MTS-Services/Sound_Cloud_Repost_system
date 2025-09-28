@@ -238,18 +238,19 @@
                     </div>
                 </div>
                 <div class="space-y-2">
-                    <p class="text-2xl font-bold text-slate-700 dark:text-white">{{ userCredits() }}</p>
+                    <p class="text-2xl font-bold text-slate-700 dark:text-white">{{ number_format(userCredits(), 2) }}
+                    </p>
                     @if ($creditPercentage >= 0)
                         <p class="text-sm flex items-center space-x-1 text-green-400">
-                            <span>+{{ $creditPercentage }}% from last week</span>
+                            <span>+{{ number_format($creditPercentage, 2) }}% from last week</span>
                         </p>
                     @elseif($creditPercentage < 0)
                         <p class="text-sm flex items-center space-x-1 text-red-400">
-                            <span>{{ $creditPercentage }}% from last week</span>
+                            <span>{{ number_format($creditPercentage, 2) }}% from last week</span>
                         </p>
                     @else
                         <p class="text-sm flex items-center space-x-1 text-gray-400">
-                            <span>0% from last week</span>
+                            <span>0.00% from last week</span>
                         </p>
                     @endif
                 </div>
@@ -269,18 +270,18 @@
                     </div>
                 </div>
                 <div class="space-y-2">
-                    <p class="text-2xl font-bold text-slate-700 dark:text-white">{{ $totalCams }}</p>
+                    <p class="text-2xl font-bold text-slate-700 dark:text-white">{{ number_format($totalCams, 2) }}</p>
                     @if ($campaignPercentage >= 0)
                         <p class="text-sm flex items-center space-x-1 text-green-400">
-                            <span>+{{ $campaignPercentage }}% from last week</span>
+                            <span>+{{ number_format($campaignPercentage, 2) }}% from last week</span>
                         </p>
                     @elseif($campaignPercentage < 0)
                         <p class="text-sm flex items-center space-x-1 text-red-400">
-                            <span>{{ $campaignPercentage }}% from last week</span>
+                            <span>{{ number_format($campaignPercentage, 2) }}% from last week</span>
                         </p>
                     @else
                         <p class="text-sm flex items-center space-x-1 text-gray-400">
-                            <span>0% from last week</span>
+                            <span>0.00% from last week</span>
                         </p>
                     @endif
                 </div>
@@ -302,18 +303,19 @@
                     </div>
                 </div>
                 <div class="space-y-2">
-                    <p class="text-2xl font-bold text-slate-700 dark:text-white">{{ $totalCount }}</p>
+                    <p class="text-2xl font-bold text-slate-700 dark:text-white">{{ number_format($totalCount, 2) }}
+                    </p>
                     @if ($repostRequestPercentage >= 0)
                         <p class="text-sm flex items-center space-x-1 text-green-400">
-                            <span>+{{ $repostRequestPercentage }}% from last week</span>
+                            <span>+{{ number_format($repostRequestPercentage, 2) }}% from last week</span>
                         </p>
                     @elseif($repostRequestPercentage < 0)
                         <p class="text-sm flex items-center space-x-1 text-red-400">
-                            <span>{{ $repostRequestPercentage }}% from last week</span>
+                            <span>{{ number_format($repostRequestPercentage, 2) }}% from last week</span>
                         </p>
                     @else
                         <p class="text-sm flex items-center space-x-1 text-gray-400">
-                            <span>0% from last week</span>
+                            <span>0.00% from last week</span>
                         </p>
                     @endif
                 </div>
@@ -334,10 +336,10 @@
                 </div>
                 <div class="space-y-2">
                     <p class="text-2xl font-bold text-slate-700 dark:text-white">
-                        {{ number_format($activities_score, 2) }}%</p>
+                        {{ $activities_score ? number_format($activities_score, 2) : '0.00' }}%</p>
                     <p
                         class="text-sm flex items-center space-x-1 {{ $activities_change_rate >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                        <span>{{ $activities_change_rate }}% from
+                        <span>{{ $activities_change_rate ?? '0.00' }}% from
                             last week</span>
                     </p>
                 </div>
