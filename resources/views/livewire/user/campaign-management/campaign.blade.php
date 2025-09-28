@@ -215,7 +215,7 @@
                 @endif
                 {{-- 📢 NEW: Add a class and data attributes to collect playlist info --}}
                 <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm"
-                    data-campaign-id="{{ $campaign_->id }}" data-permalink="{{ $campaign_->music->permalink_url }}">
+                    data-permalink="{{ $campaign_->music->permalink_url }}">
                     <div class="flex flex-col lg:flex-row" wire:key="featured-{{ $campaign_->id }}">
                         <!-- Left Column - Track Info -->
                         <div
@@ -226,11 +226,8 @@
                                     {{-- 💡 IMPORTANT: Only render the actual player for the first item --}}
                                     <div id="soundcloud-player-{{ $campaign_->id }}"
                                         data-campaign-id="{{ $campaign_->id }}" wire:ignore>
-                                        <div id="soundcloud-player-{{ $campaign_->id }}"
-                                            data-campaign-id="{{ $campaign_->id }}" wire:ignore>
-                                            <x-sound-cloud.sound-cloud-player :track="$campaign_->music" :height="166"
-                                                :visual="false" />
-                                        </div>
+                                        <x-sound-cloud.sound-cloud-player :track="$campaign_->music" :height="166"
+                                            :visual="false" />
                                     </div>
                                     <div class="absolute top-2 left-2 flex items-center space-x-2">
                                         @if (!featuredAgain($campaign_->id) && $campaign_->is_featured)
