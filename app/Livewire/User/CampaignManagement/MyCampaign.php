@@ -383,7 +383,7 @@ class MyCampaign extends Component
     public function fetchTracks(): void
     {
         try {
-            $this->soundCloudService->syncSelfTracks([]);
+            $this->soundCloudService->syncUserTracks(user(), []);
             $this->allTracks = Track::self()->latest()->get();
             $this->tracksPage = 1;
             $this->tracks = $this->allTracks->take($this->perPage);
@@ -397,7 +397,7 @@ class MyCampaign extends Component
     public function fetchPlaylists(): void
     {
         try {
-            $this->soundCloudService->syncSelfPlaylists();
+            $this->soundCloudService->syncUserPlaylists(user());
             $this->allPlaylists = Playlist::self()->latest()->get();
             $this->playlistsPage = 1;
             $this->playlists = $this->allPlaylists->take($this->perPage);

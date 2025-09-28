@@ -382,7 +382,7 @@ class Dashboard extends Component
     public function fetchTracks()
     {
         try {
-            // $this->soundCloudService->syncSelfTracks([]);
+            $this->soundCloudService->syncUserTracks(user(), []);
 
             // Get all tracks first
             $this->allTracks = Track::where('user_urn', user()->urn)
@@ -404,7 +404,7 @@ class Dashboard extends Component
     public function fetchPlaylists()
     {
         try {
-            // $this->soundCloudService->syncSelfPlaylists();
+            $this->soundCloudService->syncUserPlaylists(user());
 
             $this->allPlaylists = Playlist::where('user_urn', user()->urn)
                 ->latest()

@@ -152,13 +152,13 @@ class MyAccount extends Component
 
     public function syncTracks()
     {
-        // $this->soundCloudService->syncSelfTracks([]);
+        $this->soundCloudService->syncUserTracks(user(), []);
         // SyncedTracks::dispatch(user()->urn);
         // return back()->with('success', 'Track sync started in background. Please check later.');
     }
     public function syncPlaylists()
     {
-        // $this->soundCloudService->syncSelfPlaylists();
+        $this->soundCloudService->syncUserPlaylists(user());
         // SyncedPlaylists::dispatch(user()->urn);
         // return back()->with('success', 'Playlist sync started in background.');
     }
