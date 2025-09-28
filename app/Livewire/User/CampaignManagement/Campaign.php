@@ -1513,7 +1513,7 @@ class Campaign extends Component
         //     }
         // }
         try {
-            $user = user()->withCount([
+            $user = User::withCount([
                 'reposts as reposts_count_today' => function ($query) {
                     $query->whereBetween('created_at', [Carbon::today(), Carbon::tomorrow()]);
                 },
@@ -1521,11 +1521,12 @@ class Campaign extends Component
                 'requests' => function ($query) {
                     $query->pending();
                 },
-            ])->first();
+            ])->find(user()->id);
 
             $data['dailyRepostCurrent'] = $user->reposts_count_today ?? 0;
-            $data['totalMyCampaign'] = count($user->campaigns) ?? 0;
-            $data['pendingRequests'] = count($user->requests) ?? 0;
+            $data['totalMyCampaign'] = $user->campaigns_count ?? 0;
+            $data['pendingRequests'] = $user->requests_count ?? 0;
+
             $baseQuery = $this->getCampaignsQuery();
             $baseQuery = $this->applyFilters($baseQuery);
             $campaigns = collect();

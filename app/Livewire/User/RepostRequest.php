@@ -467,16 +467,19 @@ class RepostRequest extends Component
 
     public function render()
     {
-        $user = user()->withCount([
+        $user = User::withCount([
             'reposts as reposts_count_today' => function ($query) {
-                $query->whereDate('created_at', '>=', Carbon::today());
+                $query->whereBetween('created_at', [Carbon::today(), Carbon::tomorrow()]);
             },
             'campaigns',
-            'requests',
-        ])->first();
+            'requests' => function ($query) {
+                $query->pending();
+            },
+        ])->find(user()->id);
 
-        $data['dailyRepostCount'] = $user->reposts_count_today ?? 0;
+        $data['dailyRepostCurrent'] = $user->reposts_count_today ?? 0;
         $data['totalMyCampaign'] = $user->campaigns_count ?? 0;
+        $data['pendingRequests'] = $user->requests_count ?? 0;
         return view(
             'livewire.user.repost-request',
             [
