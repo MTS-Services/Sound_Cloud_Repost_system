@@ -38,7 +38,7 @@ class SoundCloudPlayer extends Component
     public function __construct(
         $track,
         $height = null,
-        $autoPlay = true,
+        $autoPlay = false,
         $color = '#ff5500',
         $hideRelated = false,
         $showComments = true,
