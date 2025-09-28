@@ -601,11 +601,13 @@ class SoundCloudService
      *
      * @throws Exception
      */
-    public function syncUserPlaylists(User $user): int
+    public function syncUserPlaylists(User $user, ?array $playlistsData = null): int
     {
         try {
-            $response = $this->fetchUserPlaylists($user);
-            $playlistsData = $response['collection'];
+            if (is_null($playlistsData)) {
+                $response = $this->fetchUserPlaylists($user);
+                $playlistsData = $response['collection'];
+            }
             $syncedCount = 0;
             $playlistIdsInResponse = [];
 
