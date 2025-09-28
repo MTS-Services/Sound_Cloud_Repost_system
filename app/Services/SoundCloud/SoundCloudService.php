@@ -196,8 +196,7 @@ class SoundCloudService
 
         try {
             $response = Http::get($this->resolverUrl, [
-                'url' => $endpoint,
-                'client_id' => config('services.soundcloud.client_id'),
+                'url' => $endpoint
             ]);
             if ($response->successful()) {
                 return $response->json();
