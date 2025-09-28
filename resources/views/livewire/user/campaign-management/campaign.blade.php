@@ -374,7 +374,7 @@
                             iframes.forEach(function(iframe) {
                                 iframe.addEventListener('load', function() {
                                     iframe.contentWindow.postMessage('ready', '*');
-                                    console.log('iframe loaded', iframe.id);
+                                    console.log('iframe loaded', iframe);
                                 });
                             });
 
