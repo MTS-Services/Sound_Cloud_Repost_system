@@ -116,61 +116,78 @@
                         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                     }) : ['No Data'],
                     datasets: [{
-                        label: 'Views',
-                        data: this.chartData.length > 0 ? this.chartData.map((item) => item.total_views || 0) : [0],
-                        borderColor: '#E9E294',
-                        backgroundColor: 'rgba(233, 226, 148, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#E9E294',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#E9E294',
-                    }, {
-                        label: 'Streams',
-                        data: this.chartData.length > 0 ? this.chartData.map((item) => item.total_plays || 0) : [0],
-                        borderColor: '#ff6b35',
-                        backgroundColor: 'rgba(255, 107, 53, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#ff6b35',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#ff6b35',
-                    }, {
-                        label: 'Likes',
-                        data: this.chartData.length > 0 ? this.chartData.map((item) => item.total_likes || 0) : [0],
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#10b981',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#10b981',
-                    }, {
-                        label: 'Reposts',
-                        data: this.chartData.length > 0 ? this.chartData.map((item) => item.total_reposts || 0) : [0],
-                        borderColor: '#8b5cf6',
-                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#8b5cf6',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#8b5cf6',
-                    }, {
-                        label: 'Comments',
-                        data: this.chartData.length > 0 ? this.chartData.map((item) => item.total_comments || 0) : [0],
-                        borderColor: '#f59e0b',
-                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#f59e0b',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#f59e0b',
-                    }]
+                            label: 'Views',
+                            data: this.chartData.length > 0 ? this.chartData.map((item) => item.total_views || 0) : [0],
+                            borderColor: '#E9E294',
+                            backgroundColor: 'rgba(233, 226, 148, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#E9E294',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: '#E9E294',
+                        },
+                        {
+                            label: 'Streams',
+                            data: this.chartData.length > 0 ? this.chartData.map((item) => item.total_plays || 0) : [0],
+                            borderColor: '#ff6b35',
+                            backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#ff6b35',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: '#ff6b35',
+                        },
+                        {
+                            label: 'Likes',
+                            data: this.chartData.length > 0 ? this.chartData.map((item) => item.total_likes || 0) : [0],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#10b981',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: '#10b981',
+                        },
+                        {
+                            label: 'Reposts',
+                            data: this.chartData.length > 0 ? this.chartData.map((item) => item.total_reposts || 0) : [0],
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#8b5cf6',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: '#8b5cf6',
+                        },
+                        {
+                            label: 'Comments',
+                            data: this.chartData.length > 0 ? this.chartData.map((item) => item.total_comments || 0) : [0],
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#f59e0b',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: '#f59e0b',
+                        },
+                        {
+                            label: 'Followers',
+                            data: this.chartData.length > 0 ? this.chartData.map((item) => item.total_followers || 0) : [0],
+                            borderColor: '#f5540b',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#f5540b',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: '#f5540b',
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
@@ -292,7 +309,6 @@
         init() {
             // Initial setup
             this.setupCharts();
-            console.log('Genre Breakdown:', this.genreBreakdown);
     
             // Watch for data changes
             this.$watch('$wire.data', (newData, oldData) => {
@@ -592,29 +608,30 @@
             </div>
             <div class="flex flex-wrap space-y-4">
                 <div class="flex-1">
-    <label class="flex items-center text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
-        <x-lucide-tags class="w-4 h-4 mr-2" />
-        Genre
-    </label>
-    <!-- ✅ Mobile fix: grid-cols-1 default, sm থেকে শুরু আগের মতো -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-2">
-        <label class="flex items-center">
-            <input type="checkbox" name="genre" wire:model="selectedGenres" value="Any Genre"
-                class="checkbox border-orange-600 bg-transparent checked:border-orange-500 checked:bg-transparent checked:text-orange-600 rounded-full w-5 h-5"
-                x-bind:disabled="isLoading">
-            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300 capitalize">Any Genre</span>
-        </label>
-        @foreach ($userGenres as $genre)
-            <label class="flex items-center">
-                <input type="checkbox" name="genre" wire:model="selectedGenres"
-                    value="{{ $genre }}"
-                    class="checkbox border-orange-600 bg-transparent checked:border-orange-500 checked:bg-transparent checked:text-orange-600 rounded-full w-5 h-5"
-                    x-bind:disabled="isLoading">
-                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300 capitalize">{{ $genre }}</span>
-            </label>
-        @endforeach
-    </div>
-</div>
+                    <label class="flex items-center text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
+                        <x-lucide-tags class="w-4 h-4 mr-2" />
+                        Genre
+                    </label>
+                    <!-- ✅ Mobile fix: grid-cols-1 default, sm থেকে শুরু আগের মতো -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-2">
+                        <label class="flex items-center">
+                            <input type="checkbox" name="genre" wire:model="selectedGenres" value="Any Genre"
+                                class="checkbox border-orange-600 bg-transparent checked:border-orange-500 checked:bg-transparent checked:text-orange-600 rounded-full w-5 h-5"
+                                x-bind:disabled="isLoading">
+                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300 capitalize">Any Genre</span>
+                        </label>
+                        @foreach ($userGenres as $genre)
+                            <label class="flex items-center">
+                                <input type="checkbox" name="genre" wire:model="selectedGenres"
+                                    value="{{ $genre }}"
+                                    class="checkbox border-orange-600 bg-transparent checked:border-orange-500 checked:bg-transparent checked:text-orange-600 rounded-full w-5 h-5"
+                                    x-bind:disabled="isLoading">
+                                <span
+                                    class="ml-2 text-sm text-gray-700 dark:text-gray-300 capitalize">{{ $genre }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
 
                 <div class="flex-1 flex items-start justify-start flex-col">
                     <label class="flex items-center text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
