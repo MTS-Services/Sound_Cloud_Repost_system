@@ -318,7 +318,7 @@ class RepostRequest extends Component
         }
         $this->showRepostConfirmationModal = true;
         $this->request = ModelsRepostRequest::findOrFail($requestId)->load('music', 'requester');
-
+        dd($this->request->requester);
         $response = $this->soundCloudService->getAuthUserFollowers($this->request->requester);
         if ($response->isNotEmpty()) {
             $already_following = $response->where('urn', user()->urn)->first();
