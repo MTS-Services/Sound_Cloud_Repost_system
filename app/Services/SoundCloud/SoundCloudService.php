@@ -196,6 +196,7 @@ class SoundCloudService
 
         try {
             $response = Http::withToken(user()->token)->get($this->resolverUrl . '?url=' . $endpoint);
+            dd($endpoint, $response->json());
             // $response = Http::get($this->resolverUrl, [
             //     'url' => $endpoint
             // ]);
