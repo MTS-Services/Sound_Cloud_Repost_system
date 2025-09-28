@@ -65,8 +65,12 @@
                 <!-- Like Plus -->
                 <div class="flex items-center justify-between border-t pt-3 dark:border-gray-700">
                     <label class="flex items-center space-x-2">
+                        @if(!$alreadyLiked)
                         <input type="checkbox" wire:model.live="liked"
                             class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                        @else
+                            <span class="text-sm text-orange-500">{{ __('Already Liked') }}</span>
+                        @endif
                         <span class="text-sm text-gray-800 dark:text-gray-200">{{ __('Activate HeartPush') }}</span>
                     </label>
                     <span class="text-sm text-gray-700 dark:text-gray-300">+2 credits</span>

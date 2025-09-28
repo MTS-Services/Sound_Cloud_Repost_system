@@ -193,6 +193,7 @@ class Campaign extends Component
     public $totalRepostPrice = 0;
     public $campaign = null;
     public $liked = false;
+    public $alreadyLiked = false;
     public $commented = null;
     public $followed = true;
     public $alreadyFollowing = false;
@@ -983,9 +984,8 @@ class Campaign extends Component
             });
 
             if ($found) {
-                dd($found);
-            } else {
-                dd("User not found");
+                $this->liked = false;
+                $this->alreadyLiked = true;
             }
         } elseif ($this->campaign->music_type == Playlist::class) {
         }
